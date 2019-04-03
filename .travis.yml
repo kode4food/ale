@@ -1,0 +1,21 @@
+language: go
+sudo: false
+
+go:
+  - 1.11.x
+
+before_install:
+  - GO111MODULE=off go get github.com/mattn/goveralls
+
+install:
+  - GO111MODULE=off go get gitlab.com/kode4food/go-snapshot
+  - GO111MODULE=off go get -u golang.org/x/tools/cmd/stringer
+  - GO111MODULE=off go get -u golang.org/x/lint/golint
+
+env:
+  - GO111MODULE=on
+
+script:
+  - $GOPATH/bin/go-snapshot -pkg assets -out internal/assets/assets.go internal/docstring/*.md internal/bootstrap/*.lisp
+  - make test
+  - $GOPATH/bin/goveralls -service=travis-ci -ignore=internal/bootstrap/*.go,internal/assets/assets.go
