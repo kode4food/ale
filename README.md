@@ -23,9 +23,7 @@ cat somefile.lisp | ale
 
 ## How To Start The REPL
 Ale has a very crude Read-Eval-Print Loop that will be more than happy
-to start if you call it with no arguments from the terminal:
-
-<img src="docs/img/repl.jpeg" />
+to start if you invoke `ale` with no arguments from your shell.
 
 ## Current Status
 Still a work in progress, and the compiler is pretty fragile, but that will
