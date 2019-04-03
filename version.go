@@ -2,7 +2,7 @@ package ale
 
 const (
 	// AppName is the name of the application
-	AppName = "Ale"
+	AppName = "Ale (A Lisp Environment)"
 
 	// Version is the current version
 	Version = "0.1"
