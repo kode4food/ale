@@ -27,34 +27,4 @@ to start if you invoke `ale` with no arguments from your shell.
 
 ## Current Status
 Still a work in progress, and the compiler is pretty fragile, but that will
-change rapidly. The current built-in forms are:
-
-  * Basics: `read` `eval` `do`
-  * Branching: `if` `not` `unless` `when` `when-not` `cond` `and` `or`
-  * Numeric: `+` `-` `*` `/` `mod` `=` `!=` `<` `>` `<=` `>=` `inf` `-inf` `inc` `dec` `range`
-  * Numeric Predicates: `inf?` `-inf?` `nan?` `even?` `odd?`
-  * Values: `def` `let` `if-let` `when-let` `declare`
-  * Symbols and Keywords: `sym` `gensym` `sym?` `local?` `keyword?`
-  * Functions: `defn` `fn` `apply` `partial` `apply?` `special-form?`
-  * Function Composition: `juxt` `comp`
-  * Threading: `->` `->>` `some->` `some->>` `as->` `cond->` `cond->>`
-  * Macros: `defmacro` `macroexpand1` `macroexpand` `macroexpand-all` `macro?`
-  * Errors: `error` `raise` `panic` `try` `assert-args`
-  * Quoting: `quote` `syntax-quote`
-  * Predicates: `eq` `atom?` `nil?`
-  * Sequences: `seq` `cons` `conj` `first` `rest` `last` `for-each` `seq?`
-  * Lists: `list` `to-list` `list?`
-  * Vectors: `vector` `to-vector` `vector?`
-  * Associative Arrays: `assoc` `to-assoc` `assoc?`
-  * Counted Sequences: `len` `len?`
-  * Indexed Sequences: `nth` `indexed?`
-  * Mapped Sequences: `get` `.` `mapped?`
-  * Comprehensions: `concat` `map` `filter` `reduce` `take` `take-while` `drop`
-  * Lazy Sequences: `lazy-seq` `partition`
-  * Concurrency: `go` `chan` `generate` `future` `promise` `promise?`
-  * Strings: `str` `str!` `str?`
-  * I/O: `print` `println` `pr` `prn` `with-open`
-  * Operating System: `time` `*env*` `*args*` `*out*` `*err*` `*in*`
-
-Documentation for most of these forms may be viewed in the REPL using the
-`doc` function.
+change rapidly. Fine out more at [Ale's Home](https://www.ale-lang.org)
