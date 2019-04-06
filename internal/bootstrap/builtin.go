@@ -2,13 +2,11 @@ package bootstrap
 
 import (
 	"fmt"
-	"os"
 
 	"gitlab.com/kode4food/ale/api"
 	"gitlab.com/kode4food/ale/internal/builtin"
 	"gitlab.com/kode4food/ale/internal/compiler/arity"
 	"gitlab.com/kode4food/ale/internal/compiler/special"
-	"gitlab.com/kode4food/ale/stdlib"
 )
 
 // Error messages
@@ -17,7 +15,6 @@ const (
 )
 
 const (
-	defSpecialName = "def-special"
 	defBuiltInName = "def-builtin"
 
 	orMore = -1
@@ -34,13 +31,6 @@ func (b *bootstrap) variables() {
 	ns := b.manager.GetRootNamespace()
 	ns.Bind("*newline*", api.String("\n"))
 	ns.Bind("*space*", api.String(" "))
-
-	ns.Bind("*env*", builtin.Env())
-	ns.Bind("*args*", builtin.Args())
-
-	ns.Bind("*in*", builtin.MakeReader(os.Stdin, stdlib.LineInput))
-	ns.Bind("*out*", builtin.MakeWriter(os.Stdout, stdlib.StrOutput))
-	ns.Bind("*err*", builtin.MakeWriter(os.Stderr, stdlib.StrOutput))
 }
 
 func (b *bootstrap) specialForms() {

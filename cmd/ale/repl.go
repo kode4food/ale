@@ -53,7 +53,7 @@ var (
 	openers = map[rune]rune{')': '(', ']': '[', '}': '{'}
 	closers = map[rune]rune{'(': ')', '[': ']', '{': '}'}
 
-	ns = namespace.NewManager().GetUserNamespace()
+	ns = bootstrap.TopLevelManager().GetUserNamespace()
 )
 
 // NewREPL instantiates a new REPL instance
@@ -181,15 +181,15 @@ func isEmptyString(s string) bool {
 }
 
 func toError(i interface{}) error {
+	if i == nil {
+		return nil
+	}
 	switch typed := i.(type) {
 	case error:
 		return typed
 	case api.Value:
 		return fmt.Errorf(typed.String())
 	default:
-		if i == nil {
-			return nil
-		}
 		panic(fmt.Errorf("non-standard error: %s", i))
 	}
 }

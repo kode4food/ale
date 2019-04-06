@@ -8,14 +8,13 @@ import (
 	"gitlab.com/kode4food/ale/internal/assert"
 	. "gitlab.com/kode4food/ale/internal/assert/helpers"
 	"gitlab.com/kode4food/ale/internal/bootstrap"
-	"gitlab.com/kode4food/ale/internal/namespace"
 	"gitlab.com/kode4food/ale/read"
 )
 
 func TestBasicEval(t *testing.T) {
 	as := assert.New(t)
 
-	manager := namespace.NewManager()
+	manager := bootstrap.NullManager()
 	bootstrap.Into(manager)
 	ns := manager.GetUserNamespace()
 
@@ -40,7 +39,7 @@ func TestBasicEval(t *testing.T) {
 func TestBuiltIns(t *testing.T) {
 	as := assert.New(t)
 
-	manager := namespace.NewManager()
+	manager := bootstrap.NullManager()
 	bootstrap.Into(manager)
 	b := manager.GetUserNamespace()
 	ns := manager.GetRootNamespace()

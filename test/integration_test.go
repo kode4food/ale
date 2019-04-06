@@ -9,11 +9,10 @@ import (
 	"gitlab.com/kode4food/ale/internal/assert"
 	. "gitlab.com/kode4food/ale/internal/assert/helpers"
 	"gitlab.com/kode4food/ale/internal/bootstrap"
-	"gitlab.com/kode4food/ale/internal/namespace"
 )
 
 var (
-	manager = namespace.NewManager()
+	manager = bootstrap.NullManager()
 	ready   bool
 )
 

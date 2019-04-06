@@ -8,7 +8,6 @@ import (
 	"gitlab.com/kode4food/ale/internal/assert"
 	. "gitlab.com/kode4food/ale/internal/assert/helpers"
 	"gitlab.com/kode4food/ale/internal/bootstrap"
-	"gitlab.com/kode4food/ale/internal/namespace"
 )
 
 func TestQuote(t *testing.T) {
@@ -50,7 +49,7 @@ func TestQuote(t *testing.T) {
 func TestUnquote(t *testing.T) {
 	as := assert.New(t)
 
-	manager := namespace.NewManager()
+	manager := bootstrap.NullManager()
 	bootstrap.Into(manager)
 	ns := manager.GetUserNamespace()
 
