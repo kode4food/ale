@@ -35,7 +35,7 @@ const (
 	UnknownType     = "unknown type: %v"
 )
 
-// ParseInteger attempts to parse a string representing an int into a Float
+// ParseInteger attempts to parse a string representing a 64-bit integer
 func ParseInteger(s String) Integer {
 	ns := string(s)
 	if res, err := strconv.ParseInt(ns, 0, 64); err == nil {
@@ -50,7 +50,8 @@ func (i Integer) Cmp(n Number) Comparison {
 	case Integer:
 		if i > typed {
 			return GreaterThan
-		} else if i < typed {
+		}
+		if i < typed {
 			return LessThan
 		}
 		return EqualTo
@@ -61,7 +62,8 @@ func (i Integer) Cmp(n Number) Comparison {
 		l := Float(i)
 		if l > typed {
 			return GreaterThan
-		} else if l < typed {
+		}
+		if l < typed {
 			return LessThan
 		}
 		return EqualTo
@@ -142,7 +144,7 @@ func (i Integer) IsNegInf() bool { return false }
 // String converts this Integer to a string
 func (i Integer) String() string { return fmt.Sprintf("%d", i) }
 
-// ParseFloat attempts to parse a string representing a float into a Float
+// ParseFloat attempts to parse a string representing a 64-bit float
 func ParseFloat(s String) Float {
 	ns := string(s)
 	if res, err := strconv.ParseFloat(ns, 64); err == nil {
@@ -160,9 +162,11 @@ func (f Float) Cmp(n Number) Comparison {
 	case Float:
 		if math.IsNaN(float64(typed)) {
 			return Incomparable
-		} else if f > typed {
+		}
+		if f > typed {
 			return GreaterThan
-		} else if f < typed {
+		}
+		if f < typed {
 			return LessThan
 		}
 		return EqualTo
@@ -170,7 +174,8 @@ func (f Float) Cmp(n Number) Comparison {
 		r := Float(typed)
 		if f > r {
 			return GreaterThan
-		} else if f < r {
+		}
+		if f < r {
 			return LessThan
 		}
 		return EqualTo

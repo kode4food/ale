@@ -44,7 +44,6 @@ func verifyJumps(code []Code) {
 		if oc == CondJump || oc == Jump {
 			off := int(code[i+1])
 			if off < i || off > len(code) {
-				fmt.Println(CodeToString(code, -1))
 				panic(fmt.Sprintf("invalid jump offset: %d", off))
 			}
 		}
@@ -58,7 +57,6 @@ func verifyStackSize(code []Code) {
 	}
 	a.calculateStackSize()
 	if a.endSize != 0 {
-		fmt.Println(CodeToString(code, -1))
 		panic(fmt.Sprintf("invalid stack end-state: %d", a.endSize))
 	}
 }
