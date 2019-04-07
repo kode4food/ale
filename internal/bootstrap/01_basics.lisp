@@ -1,5 +1,8 @@
 ;;;; ale bootstrap: basics
 
+(def *pos-inf* (/ 1.0 0.0))
+(def *neg-inf* (/ -1.0 0.0))
+
 (defmacro defn
   [name & forms]
   `(def ~name (fn ~name ~@forms)))

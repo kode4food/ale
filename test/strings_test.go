@@ -22,6 +22,6 @@ func TestStr(t *testing.T) {
 }
 
 func TestReadableStr(t *testing.T) {
-	testCode(t, "(str! \"hello\nyou\")", S("\"hello\nyou\""))
+	testCode(t, "(str! \"hello\nyou\")", S("\"hello\\nyou\""))
 	testCode(t, `(str! "hello" "you")`, S(`"hello" "you"`))
 }

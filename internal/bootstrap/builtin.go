@@ -21,16 +21,9 @@ const (
 )
 
 func (b *bootstrap) builtIns() {
-	b.variables()
 	b.specialForms()
 	b.initialFunctions()
 	b.availableFunctions()
-}
-
-func (b *bootstrap) variables() {
-	ns := b.manager.GetRootNamespace()
-	ns.Bind("*newline*", api.String("\n"))
-	ns.Bind("*space*", api.String(" "))
 }
 
 func (b *bootstrap) specialForms() {

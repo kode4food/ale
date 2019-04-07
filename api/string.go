@@ -1,7 +1,7 @@
 package api
 
 import (
-	"regexp"
+	"bytes"
 	"unicode/utf8"
 )
 
@@ -10,7 +10,15 @@ type String string
 
 const emptyStr = String("")
 
-var escape = regexp.MustCompile(`[\\"]`)
+var unescapeTable = map[string]string{
+	"\\": "\\\\",
+	"\n": "\\n",
+	"\t": "\\t",
+	"\f": "\\f",
+	"\b": "\\b",
+	"\r": "\\r",
+	"\"": "\\\"",
+}
 
 // First returns the first character of the String
 func (s String) First() Value {
@@ -111,10 +119,18 @@ func (s String) String() string {
 
 // Quote quotes and escapes a string
 func (s String) Quote() string {
-	r := escape.ReplaceAllStringFunc(string(s), func(e string) string {
-		return "\\" + e
-	})
-	return `"` + r + `"`
+	var buf bytes.Buffer
+	buf.WriteString(`"`)
+	for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {
+		ch := string(f.(String))
+		if res, ok := unescapeTable[ch]; ok {
+			buf.WriteString(res)
+		} else {
+			buf.WriteString(ch)
+		}
+	}
+	buf.WriteString(`"`)
+	return buf.String()
 }
 
 // MaybeQuoteString converts Values to strings, quoting wrapped Strings

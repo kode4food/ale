@@ -1,5 +1,8 @@
 ;;;; ale bootstrap: i/o
 
+(def *space*   "\s")
+(def *newline* "\n")
+
 (defn pr-map-with-nil
   [func seq]
   (map

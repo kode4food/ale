@@ -68,8 +68,12 @@ const (
 var (
 	escaped    = regexp.MustCompile(`\\\\|\\"|\\[^\\"]`)
 	escapedMap = map[string]string{
-		`\\`: `\`,
-		`\"`: `"`,
+		`\n`: "\n",
+		`\s`: " ",
+		`\t`: "\t",
+		`\f`: "\f",
+		`\b`: "\b",
+		`\r`: "\r",
 	}
 
 	matchers = matchEntries{
@@ -165,7 +169,7 @@ func unescape(s string) string {
 		if r, ok := escapedMap[e]; ok {
 			return r
 		}
-		return e
+		return e[1:]
 	})
 	return r
 }
