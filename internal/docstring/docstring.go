@@ -2,18 +2,19 @@ package docstring
 
 import (
 	"fmt"
-	"regexp"
 	"strings"
+
+	"gitlab.com/kode4food/ale/api"
 
 	"gitlab.com/kode4food/ale/internal/assets"
 )
 
-const prefix = "internal/docstring/"
-
-var (
-	firstLine = regexp.MustCompile(`^names\: ([^\n]+)\n`)
-	cache     = map[string]string{}
+const (
+	prefix = "internal/docstring/"
+	names  = api.Name("names")
 )
+
+var cache = map[string]string{}
 
 // Get resolves documentation using snapshot assets
 func Get(n string) string {
@@ -39,11 +40,10 @@ func ensureCache() {
 	for _, filename := range assets.AssetNames() {
 		if strings.HasPrefix(filename, prefix) {
 			doc := string(assets.MustGet(filename))
-			if sm := firstLine.FindStringSubmatch(doc); sm != nil {
-				names := strings.Split(sm[1], " ")
-				rest := doc[len(sm[0]):]
-				for _, name := range names {
-					cache[name] = rest
+			meta, _ := ParseMarkdown(doc)
+			if names, ok := meta.Get(names); ok {
+				for _, name := range names.(api.Vector) {
+					cache[name.String()] = doc
 				}
 			} else {
 				n := filename[len(prefix) : len(filename)-3]

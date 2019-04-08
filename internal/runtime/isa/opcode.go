@@ -24,7 +24,6 @@ const (
 	Gte                       // Greater or Equal To
 	Jump                      // Absolute Jump
 	Load                      // Retrieve Local Value
-	Resolve                   // Resolve Global Symbol
 	Lt                        // Less Than Comparison
 	Lte                       // Less or Equal To
 	MakeCall                  // Make Value Callable
@@ -42,6 +41,7 @@ const (
 	Panic                     // Abnormally Halt
 	Pop                       // Discard Value
 	PosInfinity               // Positive Infinity
+	Resolve                   // Resolve Global Symbol
 	RestArg                   // Retrieve Arguments Tail
 	Return                    // Return Value
 	ReturnFalse               // Return False

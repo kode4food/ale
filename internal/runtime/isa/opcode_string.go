@@ -27,24 +27,24 @@ func _() {
 	_ = x[Gte-16]
 	_ = x[Jump-17]
 	_ = x[Load-18]
-	_ = x[Resolve-19]
-	_ = x[Lt-20]
-	_ = x[Lte-21]
-	_ = x[MakeCall-22]
-	_ = x[MakeTruthy-23]
-	_ = x[Mod-24]
-	_ = x[Mul-25]
-	_ = x[Neg-26]
-	_ = x[NegInfinity-27]
-	_ = x[NegOne-28]
-	_ = x[Neq-29]
-	_ = x[Nil-30]
-	_ = x[NoOp-31]
-	_ = x[Not-32]
-	_ = x[One-33]
-	_ = x[Panic-34]
-	_ = x[Pop-35]
-	_ = x[PosInfinity-36]
+	_ = x[Lt-19]
+	_ = x[Lte-20]
+	_ = x[MakeCall-21]
+	_ = x[MakeTruthy-22]
+	_ = x[Mod-23]
+	_ = x[Mul-24]
+	_ = x[Neg-25]
+	_ = x[NegInfinity-26]
+	_ = x[NegOne-27]
+	_ = x[Neq-28]
+	_ = x[Nil-29]
+	_ = x[NoOp-30]
+	_ = x[Not-31]
+	_ = x[One-32]
+	_ = x[Panic-33]
+	_ = x[Pop-34]
+	_ = x[PosInfinity-35]
+	_ = x[Resolve-36]
 	_ = x[RestArg-37]
 	_ = x[Return-38]
 	_ = x[ReturnFalse-39]
@@ -58,9 +58,9 @@ func _() {
 	_ = x[Zero-47]
 }
 
-const _Opcode_name = "AdditionRetrieve Argument ValueRetrieve Argument CountBind GlobalCall FunctionZero-Arg CallOne-Arg CallRetrieve Closure ValueConditional JumpRetrieve ConstantDeclare GlobalDivisionDuplicate ValueNumeric EqualityPush FalseGreater ThanGreater or Equal ToAbsolute JumpRetrieve Local ValueResolve Global SymbolLess Than ComparisonLess or Equal ToMake Value CallableMake Value BooleanRemainderMultiplicationNegationPush Negative InfinityPush Negative OneNumeric InequalityPush NilNon-OperatorBoolean NegationPush OneAbnormally HaltDiscard ValuePositive InfinityRetrieve Arguments TailReturn ValueReturn FalseReturn NilReturn TruePush Current FunctionStore LocalSubtractionPush TruePush TwoPush Zero"
+const _Opcode_name = "AdditionRetrieve Argument ValueRetrieve Argument CountBind GlobalCall FunctionZero-Arg CallOne-Arg CallRetrieve Closure ValueConditional JumpRetrieve ConstantDeclare GlobalDivisionDuplicate ValueNumeric EqualityPush FalseGreater ThanGreater or Equal ToAbsolute JumpRetrieve Local ValueLess Than ComparisonLess or Equal ToMake Value CallableMake Value BooleanRemainderMultiplicationNegationPush Negative InfinityPush Negative OneNumeric InequalityPush NilNon-OperatorBoolean NegationPush OneAbnormally HaltDiscard ValuePositive InfinityResolve Global SymbolRetrieve Arguments TailReturn ValueReturn FalseReturn NilReturn TruePush Current FunctionStore LocalSubtractionPush TruePush TwoPush Zero"
 
-var _Opcode_index = [...]uint16{0, 8, 31, 54, 65, 78, 91, 103, 125, 141, 158, 172, 180, 195, 211, 221, 233, 252, 265, 285, 306, 326, 342, 361, 379, 388, 402, 410, 432, 449, 467, 475, 487, 503, 511, 526, 539, 556, 579, 591, 603, 613, 624, 645, 656, 667, 676, 684, 693}
+var _Opcode_index = [...]uint16{0, 8, 31, 54, 65, 78, 91, 103, 125, 141, 158, 172, 180, 195, 211, 221, 233, 252, 265, 285, 305, 321, 340, 358, 367, 381, 389, 411, 428, 446, 454, 466, 482, 490, 505, 518, 535, 556, 579, 591, 603, 613, 624, 645, 656, 667, 676, 684, 693}
 
 func (i Opcode) String() string {
 	if i >= Opcode(len(_Opcode_index)-1) {

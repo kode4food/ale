@@ -1,10 +1,8 @@
-names: eq !eq
-# (eq form form+) tests if a set of values are identical to the first
-Will return _false_ as soon as it encounters a form that is not identical to the first. Otherwise will return _true_.
-
-## An Example
-
-    (def h "hello")
-    (eq "hello" h)
-
-Like most predicates, this function can also be negated by prepending the /!/ character. In this case, _true_ will be returned if not all forms are equal.
+---
+title: "equal to (=)"
+date: 2019-04-06T12:19:22+02:00
+description: "tests a set of numbers for numeric equality"
+names: ["="]
+usage: "(= form+)"
+tags: ["relational", "number"]
+---

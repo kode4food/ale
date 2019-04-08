@@ -13,8 +13,16 @@ func Add(args ...api.Value) api.Value {
 
 // Sub will subtract one number from the previous, in turn
 func Sub(args ...api.Value) api.Value {
-	var res = args[0].(api.Number)
-	for _, n := range args[1:] {
+	var res api.Number
+	var rest api.Values
+	if len(args) > 1 {
+		res = args[0].(api.Number)
+		rest = args[1:]
+	} else {
+		res = api.Integer(0)
+		rest = args
+	}
+	for _, n := range rest {
 		res = res.Sub(n.(api.Number))
 	}
 	return res
@@ -58,7 +66,7 @@ func Eq(args ...api.Value) api.Value {
 	return api.True
 }
 
-// Neq returns true any of the numbers is not equal to the others
+// Neq returns true if any of the numbers is not equal to the others
 func Neq(args ...api.Value) api.Value {
 	if Eq(args...) == api.True {
 		return api.False

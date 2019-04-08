@@ -1,9 +1,18 @@
-# (rest seq) returns the rest of the sequence
-This function will return a sequence that excludes the first element of the specified sequence. It would be beneficial to check for a valid sequence using `(seq? seq)` before calling /first/ or /rest/.
+---
+title: "rest"
+date: 2019-04-06T12:19:22+02:00
+description: "returns the rest of the sequence"
+names: ["rest"]
+usage: "(rest seq)"
+tags: ["sequence"]
+---
+This function will return a sequence that excludes the first element of the specified sequence. It would be beneficial to check for a valid sequence using `(seq? seq)` before calling `first` or `rest`.
 
-## An Example
+#### An Example
 
-  (def x '(99 64 32 48))
-  (rest x)
+```clojure
+(def x '(99 64 32 48))
+(rest x)
+```
 
- This example will return _(64 32 48)_.
+This example will return _(64 32 48)_.

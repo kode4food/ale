@@ -255,7 +255,7 @@ func formatForREPL(s string) string {
 
 func help(args ...api.Value) api.Value {
 	arity.AssertFixed(0, len(args))
-	md := string(docstring.Get("repl-help"))
+	md := string(docstring.Get("help"))
 	fmt.Println(formatForREPL(md))
 	return nothing
 }

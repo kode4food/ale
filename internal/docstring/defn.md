@@ -1,14 +1,23 @@
-# (defn name [args] form+) binds a namespace function
-Will bind a function by name to the current namespace, which is /user/ by default.
+---
+title: "defn"
+date: 2019-04-06T12:19:22+02:00
+description: "binds a namespace function"
+names: ["defn"]
+usage: "(defn name [args] form*)"
+tags: ["function", "binding"]
+---
+Will bind a function by name to the current namespace, which is *user* by default.
 
-## An Example
+#### An Example
 
-  (defn fib
-    [i]
-    (cond
-      (= i 0) 0
-      (= i 1) 1
-      (= i 2) 1
-      :else   (+ (fib (- i 2)) (fib (- i 1)))))
+```clojure
+(defn fib
+  [i]
+  (cond
+    (= i 0) 0
+    (= i 1) 1
+    (= i 2) 1
+    :else   (+ (fib (- i 2)) (fib (- i 1)))))
+```
 
-This example performs recursion with no tail call optimization, and no memoization. For a more performant and stack-friendly fibonacci sequence generation example, see the documentation of /lazy-seq/.
+This example performs recursion with no tail call optimization, and no memoization. For a more performant and stack-friendly fibonacci sequence generation example, see the documentation of `lazy-seq`.

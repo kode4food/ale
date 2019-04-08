@@ -1,10 +1,21 @@
-# (-> expr forms**) threads value through calls as their first argument
-Evaluates /expr/ and threads it through the supplied forms as their first argument. Any form that is not already a function call will be converted into one before threading.
+---
+title: "thread first (->)"
+description: "threads value through calls as their first argument"
+date: 2019-04-06T12:19:22+02:00
+names: ["->"]
+usage: "(-> expr forms*)"
+tags: ["function"]
+---
+Evaluates *expr* and threads it through the supplied forms as their first argument. Any form that is not already a function call will be converted into one before threading.
 
-## An Example
+#### An Example
 
-  (-> 0 (+ 10) (** 2) (// 5))
+```clojure
+(-> 0 (+ 10) (* 2) (/ 5))
+```
 
-Will expand to `(// (** (+ 0 10) 2) 5)` and return _4_. In order to better visualize what's going on, one might choose to insert a /,/ as a placeholder for the threaded value.
+Will expand to `(/ (* (+ 0 10) 2) 5)` and return _4_. In order to better visualize what's going on, one might choose to insert a `,` as a placeholder for the threaded value.
 
-  (-> 0 (+ , 10) (** , 2) (// , 5))
+```clojure
+(-> 0 (+ , 10) (* , 2) (/ , 5))
+```
