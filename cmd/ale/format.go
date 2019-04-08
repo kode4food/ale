@@ -59,11 +59,11 @@ func formatMarkdown(s string) string {
 
 	var pre []string
 	if desc, ok := meta.Get(descName); ok {
-		pre = append(pre, fmt.Sprintf("# **%s**", desc))
+		pre = append(pre, fmt.Sprintf("# %s", desc))
 	}
 	if usage, ok := meta.Get(usageName); ok {
 		pre = append(pre, "")
-		pre = append(pre, fmt.Sprintf("**Usage**: `%s`", usage))
+		pre = append(pre, fmt.Sprintf("Usage: `%s`", usage))
 		pre = append(pre, "")
 	}
 

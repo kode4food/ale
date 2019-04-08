@@ -4,13 +4,13 @@ package main
 
 const (
 	esc      = "\033["
-	red      = esc + "31m"
-	green    = esc + "32m"
-	yellow   = esc + "33m"
 	cyan     = esc + "36m"
 	dgray    = esc + "90m"
-	lyellow  = esc + "93m"
+	green    = esc + "32m"
 	lblue    = esc + "94m"
+	lmagenta = esc + "35m"
+	red      = esc + "31m"
+	yellow   = esc + "33m"
 	bold     = esc + "1m"
 	italic   = esc + "3m"
 	reset    = esc + "0m"
@@ -18,7 +18,7 @@ const (
 	paired   = esc + "7m"
 	nlMarker = "␤"
 
-	h1     = lyellow
+	h1     = lmagenta + bold
 	h2     = yellow
 	code   = lblue
 	result = green
@@ -29,15 +29,15 @@ var farewells = []string{
 	"Au revoir!",
 	"Bye for now!",
 	"Ciao!",
+	"Hoşçakal!",
 	"Tchau!",
 	"Tschüss!",
-	"Hoşçakal!",
 	"Αντίο!",
 	"До свидания!",
 	"अलविदा!",
 	"안녕!",
-	"再见!",
 	"じゃあね",
+	"再见!",
 }
 
 // Paint implements the Painter interface

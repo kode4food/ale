@@ -3,13 +3,13 @@
 package main
 
 const (
-	red      = ""
-	green    = ""
-	yellow   = ""
 	cyan     = ""
 	dgray    = ""
-	lyellow  = ""
+	green    = ""
 	lblue    = ""
+	lmagenta = ""
+	red      = ""
+	yellow   = ""
 	bold     = ""
 	italic   = ""
 	reset    = ""
@@ -17,7 +17,7 @@ const (
 	paired   = ""
 	nlMarker = "\\"
 
-	h1     = lyellow
+	h1     = lmagenta + bold
 	h2     = yellow
 	code   = lblue
 	result = green
@@ -28,9 +28,9 @@ var farewells = []string{
 	"Au revoir!",
 	"Bye for now!",
 	"Ciao!",
+	"Hoşçakal!",
 	"Tchau!",
 	"Tschüss!",
-	"Hoşçakal!",
 }
 
 // Paint implements the Painter interface
