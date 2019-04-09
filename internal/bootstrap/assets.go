@@ -28,7 +28,7 @@ func (b *bootstrap) assets() {
 		}
 	}()
 
-	ns := b.manager.GetRootNamespace()
+	ns := b.manager.GetRoot()
 	for _, filename = range assets.AssetNames() {
 		if !strings.HasPrefix(filename, prefix) {
 			continue

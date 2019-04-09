@@ -6,7 +6,7 @@ names: ["defn"]
 usage: "(defn name [args] form*)"
 tags: ["function", "binding"]
 ---
-Will bind a function by name to the current namespace, which is *user* by default.
+Will bind a function by name to the current namespace.
 
 #### An Example
 

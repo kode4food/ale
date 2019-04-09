@@ -1,5 +1,7 @@
 ;;;; ale bootstrap: i/o
 
+(declare *in* *out* *err*)
+
 (def *space*   "\s")
 (def *newline* "\n")
 

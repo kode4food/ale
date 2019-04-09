@@ -9,10 +9,11 @@ import (
 	"gitlab.com/kode4food/ale/internal/assert"
 	. "gitlab.com/kode4food/ale/internal/assert/helpers"
 	"gitlab.com/kode4food/ale/internal/bootstrap"
+	"gitlab.com/kode4food/ale/internal/namespace"
 )
 
 var (
-	manager = bootstrap.NullManager()
+	manager = namespace.NewManager()
 	ready   bool
 )
 
@@ -36,7 +37,7 @@ func runCode(src string) api.Value {
 		bootstrap.Into(manager)
 		ready = true
 	}
-	ns := manager.GetAnonymousNamespace()
+	ns := manager.GetAnonymous()
 	return eval.String(ns, api.String(src))
 }
 

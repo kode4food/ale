@@ -8,15 +8,16 @@ import (
 	"gitlab.com/kode4food/ale/internal/assert"
 	. "gitlab.com/kode4food/ale/internal/assert/helpers"
 	"gitlab.com/kode4food/ale/internal/bootstrap"
+	"gitlab.com/kode4food/ale/internal/namespace"
 	"gitlab.com/kode4food/ale/read"
 )
 
 func TestBasicEval(t *testing.T) {
 	as := assert.New(t)
 
-	manager := bootstrap.NullManager()
+	manager := namespace.NewManager()
 	bootstrap.Into(manager)
-	ns := manager.GetUserNamespace()
+	ns := manager.GetAnonymous()
 
 	v1 := eval.String(ns, "(if true 1 0)")
 	as.Integer(1, v1)
@@ -39,10 +40,10 @@ func TestBasicEval(t *testing.T) {
 func TestBuiltIns(t *testing.T) {
 	as := assert.New(t)
 
-	manager := bootstrap.NullManager()
+	manager := namespace.NewManager()
 	bootstrap.Into(manager)
-	b := manager.GetUserNamespace()
-	ns := manager.GetRootNamespace()
+	b := manager.GetAnonymous()
+	ns := manager.GetRoot()
 
 	ns.Bind("hello", api.ApplicativeFunction(func(_ ...api.Value) api.Value {
 		return S("there")

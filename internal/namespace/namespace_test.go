@@ -12,17 +12,17 @@ func TestChaining(t *testing.T) {
 	as := assert.New(t)
 
 	manager := namespace.NewManager()
-	root := manager.GetRootNamespace()
+	root := manager.GetRoot()
 	root.Bind(api.Name("in-parent"), api.True)
 
-	user := manager.GetUserNamespace()
-	user.Bind(api.Name("in-child"), api.True)
+	ns := manager.GetAnonymous()
+	ns.Bind(api.Name("in-child"), api.True)
 
-	v1, ok := user.Resolve(api.Name("in-parent"))
+	v1, ok := ns.Resolve(api.Name("in-parent"))
 	as.True(ok)
 	as.True(v1)
 
-	v2, ok := user.Resolve(api.Name("in-child"))
+	v2, ok := ns.Resolve(api.Name("in-child"))
 	as.True(ok)
 	as.True(v2)
 
@@ -31,7 +31,7 @@ func TestChaining(t *testing.T) {
 	as.Nil(v3)
 
 	s1 := api.NewLocalSymbol("in-parent")
-	v4, ok := namespace.ResolveSymbol(user, s1)
+	v4, ok := namespace.ResolveSymbol(ns, s1)
 	as.True(ok)
 	as.True(v4)
 
@@ -40,7 +40,7 @@ func TestChaining(t *testing.T) {
 	as.True(v5)
 
 	s2 := api.NewLocalSymbol("in-child")
-	v6, ok := namespace.ResolveSymbol(user, s2)
+	v6, ok := namespace.ResolveSymbol(ns, s2)
 	as.True(ok)
 	as.True(v6)
 
@@ -49,7 +49,7 @@ func TestChaining(t *testing.T) {
 	as.Nil(v7)
 
 	s3 := api.NewQualifiedSymbol("in-parent", "ale")
-	v8, ok := namespace.ResolveSymbol(user, s3)
+	v8, ok := namespace.ResolveSymbol(ns, s3)
 	as.True(ok)
 	as.True(v8)
 }

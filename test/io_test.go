@@ -31,14 +31,14 @@ func testOutput(t *testing.T, src, expected string) {
 	w := stdlib.NewWriter(buf, stdlib.StrOutput)
 
 	manager := namespace.NewManager()
-	ns := manager.GetRootNamespace()
+	ns := manager.GetRoot()
 	ns.Bind(stdoutName, api.Object{
 		builtin.WriterKey: w,
 		builtin.WriteKey:  bindWrite(w),
 	})
 	bootstrap.Into(manager)
 
-	anon := manager.GetAnonymousNamespace()
+	anon := manager.GetAnonymous()
 	eval.String(anon, api.String(src))
 
 	as.String(expected, buf.String())

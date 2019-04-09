@@ -80,7 +80,7 @@ func Associative(e encoder.Type, a api.Associative) {
 
 func resolveBuiltIn(e encoder.Type, sym api.Symbol) *api.Function {
 	manager := e.Globals().Manager()
-	root := manager.GetRootNamespace()
+	root := manager.GetRoot()
 	res := namespace.MustResolveSymbol(root, sym)
 	return res.(*api.Function)
 }

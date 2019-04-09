@@ -43,7 +43,7 @@ func (b *bootstrap) initialFunctions() {
 	manager := b.manager
 
 	defBuiltIn := func(args ...api.Value) api.Value {
-		ns := manager.GetRootNamespace()
+		ns := manager.GetRoot()
 		n := args[0].(api.LocalSymbol).Name()
 		if nf, ok := b.funcMap[n]; ok {
 			ns.Bind(n, nf)
@@ -52,7 +52,7 @@ func (b *bootstrap) initialFunctions() {
 		panic(fmt.Errorf(BuiltInNotFound, n))
 	}
 
-	ns := b.manager.GetRootNamespace()
+	ns := b.manager.GetRoot()
 	ns.Bind(defBuiltInName, api.NormalFunction(defBuiltIn))
 }
 

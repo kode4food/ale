@@ -27,12 +27,6 @@ const (
 	// RootDomain stores built-ins
 	RootDomain = api.Name("ale")
 
-	// LocalsDomain is where all local names are interned
-	LocalsDomain = api.Name("")
-
-	// UserDomain stores user defined vars
-	UserDomain = api.Name("user")
-
 	// AnonymousDomain identifies an anonymous namespace
 	AnonymousDomain = api.Name("*anon*")
 )
@@ -63,27 +57,22 @@ func (m *Manager) Get(domain api.Name, res Resolver) Type {
 	return r
 }
 
-// GetRootNamespace returns the root namespace, where built-ins go
-func (m *Manager) GetRootNamespace() Type {
+// GetRoot returns the root namespace, where built-ins go
+func (m *Manager) GetRoot() Type {
 	return m.Get(RootDomain, func() Type {
 		return m.New(RootDomain)
 	})
 }
 
-// GetUserNamespace returns the namespace for the user domain
-func (m *Manager) GetUserNamespace() Type {
-	return m.GetQualified(UserDomain)
-}
-
-// GetAnonymousNamespace returns an anonymous (non-resolvable) namespace
-func (m *Manager) GetAnonymousNamespace() Type {
-	root := m.GetRootNamespace()
+// GetAnonymous returns an anonymous (non-resolvable) namespace
+func (m *Manager) GetAnonymous() Type {
+	root := m.GetRoot()
 	return newChild(root, AnonymousDomain)
 }
 
 // GetQualified returns the namespace for the specified domain.
 func (m *Manager) GetQualified(n api.Name) Type {
-	root := m.GetRootNamespace()
+	root := m.GetRoot()
 	if n == RootDomain {
 		return root
 	}

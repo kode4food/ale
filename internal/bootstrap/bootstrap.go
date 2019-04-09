@@ -33,7 +33,7 @@ func Into(manager *namespace.Manager) {
 // standard in/out/err file streams.
 func TopLevelManager() *namespace.Manager {
 	manager := namespace.NewManager()
-	ns := manager.GetRootNamespace()
+	ns := manager.GetRoot()
 	ns.Bind("*env*", builtin.Env())
 	ns.Bind("*args*", builtin.Args())
 	ns.Bind("*in*", builtin.MakeReader(os.Stdin, stdlib.LineInput))
@@ -42,12 +42,11 @@ func TopLevelManager() *namespace.Manager {
 	return manager
 }
 
-// NullManager configures a manager that is completely isolated from the
-// top-level of the system. No *env*, *args*, or access to the standard
-// in/out/err file streams is granted.
-func NullManager() *namespace.Manager {
+// DevNullManager configures a manager that is completely isolated from
+// the top-level of the system. All I/O is rerouted to and from /dev/null
+func DevNullManager() *namespace.Manager {
 	manager := namespace.NewManager()
-	ns := manager.GetRootNamespace()
+	ns := manager.GetRoot()
 	devNull, _ := os.Open(os.DevNull)
 	ns.Bind("*in*", builtin.MakeReader(devNull, stdlib.LineInput))
 	ns.Bind("*out*", builtin.MakeWriter(devNull, stdlib.StrOutput))

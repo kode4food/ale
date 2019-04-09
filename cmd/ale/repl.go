@@ -23,6 +23,9 @@ import (
 	"gitlab.com/kode4food/ale/read"
 )
 
+// UserDomain is the name of the namespace that the REPL starts in
+const UserDomain = api.Name("user")
+
 const (
 	domain = cyan + "%s" + reset + " "
 	prompt = domain + "[%d]> " + code
@@ -53,7 +56,7 @@ var (
 	openers = map[rune]rune{')': '(', ']': '[', '}': '{'}
 	closers = map[rune]rune{'(': ')', '[': ']', '{': '}'}
 
-	ns = bootstrap.TopLevelManager().GetUserNamespace()
+	ns = bootstrap.TopLevelManager().GetQualified(UserDomain)
 )
 
 // NewREPL instantiates a new REPL instance
@@ -274,7 +277,7 @@ func doc(args ...api.Value) api.Value {
 }
 
 func getBuiltInsNamespace() namespace.Type {
-	return ns.Manager().GetRootNamespace()
+	return ns.Manager().GetRoot()
 }
 
 func registerBuiltIn(n api.Name, v api.Value) {
