@@ -112,7 +112,7 @@ func formatLine(l string) string {
 
 func formatContent(doc string) string {
 	var buf bytes.Buffer
-	var src = doc
+	var src = strings.TrimSpace(doc)
 	for len(src) > 0 {
 		if f, sm, ok := firstFormatterMatch(src); ok {
 			start := sm[0]

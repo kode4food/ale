@@ -6,7 +6,6 @@ names: ["lazy-seq"]
 usage: "(lazy-seq form*)"
 tags: ["sequence"]
 ---
-
 #### An Example:
 
 ```clojure
