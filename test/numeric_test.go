@@ -30,7 +30,7 @@ func TestNestedNumber(t *testing.T) {
 }
 
 func TestNonNumber(t *testing.T) {
-	e := intfErr("api.String", "api.Number", "Add")
+	e := interfaceErr("api.String", "api.Number", "Add")
 	testBadCode(t, `(+ 99 "hello")`, e)
 	testBadCode(t, `(+ "hello")`, e)
 }
@@ -78,7 +78,7 @@ func TestCompare(t *testing.T) {
 }
 
 func TestBadCompare(t *testing.T) {
-	e := intfErr("api.String", "api.Number", "Add")
+	e := interfaceErr("api.String", "api.Number", "Add")
 	testBadCode(t, `(< 99 "hello")`, e)
 	testBadCode(t, `(< "hello" "there")`, e)
 }

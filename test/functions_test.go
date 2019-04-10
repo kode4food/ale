@@ -31,7 +31,7 @@ func TestBadLambda(t *testing.T) {
 	e := typeErr("api.Integer", "*api.List")
 	testBadCode(t, `(fn 99 "hello")`, e)
 
-	e = intfErr("api.qualifiedSymbol", "api.LocalSymbol", "LocalSymbol")
+	e = interfaceErr("api.qualifiedSymbol", "api.LocalSymbol", "LocalSymbol")
 	testBadCode(t, `(fn foo/bar [] "hello")`, e)
 }
 
@@ -43,7 +43,7 @@ func TestApply(t *testing.T) {
 			[1 2 3])
 	`, F(6))
 
-	e := intfErr("api.Integer", "api.Caller", "Caller")
+	e := interfaceErr("api.Integer", "api.Caller", "Caller")
 	testBadCode(t, `(apply 32 [1 2 3])`, e)
 }
 

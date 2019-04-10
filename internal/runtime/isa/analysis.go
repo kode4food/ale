@@ -164,7 +164,7 @@ func maxInt(left, right int) int {
 	return right
 }
 
-// CodeToString converts a code array to a string form for debuggign
+// CodeToString converts a code array to a string form for debugging
 func CodeToString(code []Code, PC int) string {
 	var buf bytes.Buffer
 	buf.WriteString(fmt.Sprintf("PC = %d\n", PC))

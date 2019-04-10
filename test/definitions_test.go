@@ -21,7 +21,7 @@ func TestFunction(t *testing.T) {
 }
 
 func TestBadFunction(t *testing.T) {
-	symErr := intfErr("api.Integer", "api.LocalSymbol", "LocalSymbol")
+	symErr := interfaceErr("api.Integer", "api.LocalSymbol", "LocalSymbol")
 	listErr := typeErr("api.Integer", "*api.List")
 	vecErr := typeErr("api.Integer", "api.Vector")
 

@@ -17,7 +17,7 @@ var (
 	ready   bool
 )
 
-func intfErr(concrete, intf, method string) error {
+func interfaceErr(concrete, intf, method string) error {
 	err := "interface conversion: %s is not %s: missing method %s"
 	return fmt.Errorf(fmt.Sprintf(err, concrete, intf, method))
 }
@@ -25,11 +25,6 @@ func intfErr(concrete, intf, method string) error {
 func typeErr(concrete, expected string) error {
 	err := "interface conversion: api.Value is %s, not %s"
 	return fmt.Errorf(fmt.Sprintf(err, concrete, expected))
-}
-
-func fullTypeErr(incoming, concrete, expected string) error {
-	err := "interface conversion: %s is %s, not %s"
-	return fmt.Errorf(fmt.Sprintf(err, incoming, concrete, expected))
 }
 
 func runCode(src string) api.Value {
