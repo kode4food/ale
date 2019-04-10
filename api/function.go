@@ -31,7 +31,6 @@ const (
 	NormalCall                        // Normal
 	MacroCall                         // Macro
 	SpecialCall                       // Special
-	UnboundCall                       // Unbound
 )
 
 // ApplicativeFunction wraps an applicative function call
@@ -63,14 +62,6 @@ func SpecialFunction(c Call) *Function {
 	return &Function{
 		Call:       c,
 		Convention: SpecialCall,
-	}
-}
-
-// UnboundFunction marks a function as not-yet-bound
-func UnboundFunction(c Call) *Function {
-	return &Function{
-		Call:       c,
-		Convention: UnboundCall,
 	}
 }
 
@@ -111,11 +102,6 @@ func (v *Function) IsMacro() bool {
 // IsSpecial returns whether or not this function is special
 func (v *Function) IsSpecial() bool {
 	return v.Convention == SpecialCall
-}
-
-// IsBound returns whether or not this function is bound
-func (v *Function) IsBound() bool {
-	return v.Convention != UnboundCall
 }
 
 // CheckArity checks to see if the argument count is valid

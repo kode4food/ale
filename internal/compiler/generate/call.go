@@ -51,10 +51,8 @@ func callSymbol(e encoder.Type, s api.Symbol, args api.Values) {
 			callApplicative(e, typed, args)
 			return
 		case *api.Function:
-			if typed.IsBound() {
-				callFunction(e, typed, args)
-				return
-			}
+			callFunction(e, typed, args)
+			return
 		}
 	}
 	callDynamic(e, s, args)

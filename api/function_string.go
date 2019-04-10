@@ -12,12 +12,11 @@ func _() {
 	_ = x[NormalCall-1]
 	_ = x[MacroCall-2]
 	_ = x[SpecialCall-3]
-	_ = x[UnboundCall-4]
 }
 
-const _Convention_name = "ApplicativeNormalMacroSpecialUnbound"
+const _Convention_name = "ApplicativeNormalMacroSpecial"
 
-var _Convention_index = [...]uint8{0, 11, 17, 22, 29, 36}
+var _Convention_index = [...]uint8{0, 11, 17, 22, 29}
 
 func (i Convention) String() string {
 	if i < 0 || i >= Convention(len(_Convention_index)-1) {
