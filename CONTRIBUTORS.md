@@ -2,10 +2,10 @@
 
 Five simple steps:
 
-1. Create a [GitHub Issue](https://github.com/kode4food/cheeseburger/issues)
+1. Create a [GitLab Issue](https://gitlab.com/kode4food/ale/issues)
    to propose and discuss your potential contribution.
 
-2. Fork our [Git Repository](https://github.com/kode4food/cheeseburger)
+2. Fork our [Git Repository](https://gitlab.com/kode4food/ale)
 
 3. Issue an empty pull request.
 
