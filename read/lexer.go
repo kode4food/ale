@@ -186,7 +186,7 @@ func ratioState(sm []string) *Token {
 	comp := strings.Split(sm[0], "/")
 	num := int64(api.ParseInteger(api.String(comp[0])))
 	den := int64(api.ParseInteger(api.String(comp[1])))
-	res := api.Float(float64(num / den))
+	res := api.Float(float64(num) / float64(den))
 	return makeToken(Number, res)
 }
 
