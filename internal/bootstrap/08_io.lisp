@@ -35,7 +35,7 @@
 
 (defn paired-vector?
   [val]
-  (and (is-vector val) (= (mod (len val) 2) 0)))
+  (and (is-vector val) (is-paired val)))
 
 (defn with-open-close
   [val]

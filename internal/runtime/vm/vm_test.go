@@ -18,9 +18,9 @@ var constants = api.Values{
 }
 
 func makeCode(coders []isa.Coder) api.Call {
-	code := make([]isa.Code, len(coders))
+	code := make([]isa.Word, len(coders))
 	for i, c := range coders {
-		code[i] = c.Code()
+		code[i] = c.Word()
 	}
 	exec := vm.NewClosure(&vm.Config{
 		Code:      code,

@@ -1,5 +1,6 @@
 ---
 names: ["help"]
+draft: true
 ---
 **(help)**       Display this help message
 **(doc form)**   Display documentation. Example: `(doc go)`

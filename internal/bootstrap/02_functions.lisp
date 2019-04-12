@@ -5,9 +5,9 @@
   ([clause]
    (raise "assert-args clauses must be paired"))
   ([& clauses]
-   `(cond
-      ~(clauses 0) (assert-args ~@(rest (rest clauses)))
-      :else        (raise ~(clauses 1)))))
+   `(if ~(clauses 0)
+      (assert-args ~@(rest (rest clauses)))
+      (raise ~(clauses 1)))))
 
 (defn no-op
   [])

@@ -1,9 +1,14 @@
 ---
+title: "use"
+description: "changes namespace"
 names: ["use"]
+usage: "(use ns)"
+draft: true
 ---
-# (use ns) changes namespace
 Changes the current namespace. This is a REPL-only function.
 
-## An Example
+#### An Example
 
-  (use foo)
+```clojure
+(use foo)
+```

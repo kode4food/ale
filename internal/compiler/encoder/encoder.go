@@ -2,6 +2,7 @@ package encoder
 
 import (
 	"gitlab.com/kode4food/ale/api"
+	"gitlab.com/kode4food/ale/internal/compiler/analysis"
 	"gitlab.com/kode4food/ale/internal/namespace"
 	"gitlab.com/kode4food/ale/internal/runtime/isa"
 )
@@ -16,13 +17,13 @@ type (
 		Child() Type
 		NamedChild(api.Name) Type
 
-		Globals() namespace.Type
-		Append(...isa.Coder)
-		Code() []isa.Code
+		Append(isa.Opcode, ...isa.Coder)
+		Code() []isa.Word
 		StackSize() int
 
 		NewLabel() *Label
 
+		Globals() namespace.Type
 		Constants() api.Values
 		AddConstant(api.Value) isa.Index
 
@@ -51,9 +52,10 @@ type (
 		name      api.Name
 		args      argsStack
 		locals    []Locals
-		code      []isa.Code
+		code      isa.Instructions
 		maxLocal  int
 		nextLocal int
+		nextLabel int
 	}
 )
 
@@ -64,7 +66,7 @@ func newEncoder(globals namespace.Type) *encoder {
 		closure:   api.Names{},
 		args:      argsStack{},
 		locals:    []Locals{{}},
-		code:      []isa.Code{},
+		code:      isa.Instructions{},
 	}
 }
 
@@ -80,7 +82,7 @@ func (e *encoder) child() *encoder {
 		closure:   api.Names{},
 		args:      argsStack{},
 		locals:    []Locals{{}},
-		code:      []isa.Code{},
+		code:      isa.Instructions{},
 	}
 }
 
@@ -105,6 +107,26 @@ func (e *encoder) Parent() Type {
 	return e.parent
 }
 
+// Append adds instructions to the Type's eventual output
+func (e *encoder) Append(oc isa.Opcode, args ...isa.Coder) {
+	words := make([]isa.Word, len(args))
+	for i, a := range args {
+		words[i] = a.Word()
+	}
+	e.code = append(e.code, isa.New(oc, words...))
+}
+
+// Word returns the encoder's resulting VM instructions
+func (e *encoder) Code() []isa.Word {
+	return isa.Flatten(e.code)
+}
+
+// StackSize returns the encoder's calculated stack size
+func (e *encoder) StackSize() int {
+	res, _ := analysis.CalculateStackSize(e.code)
+	return res
+}
+
 // Globals returns the global name/value map
 func (e *encoder) Globals() namespace.Type {
 	if e.globals != nil {
@@ -114,28 +136,6 @@ func (e *encoder) Globals() namespace.Type {
 		return e.parent.Globals()
 	}
 	return nil
-}
-
-// Append adds instructions to the Type's eventual output
-func (e *encoder) Append(code ...isa.Coder) {
-	for _, c := range code {
-		e.code = append(e.code, c.Code())
-	}
-}
-
-// Code returns the encoder's resulting VM instructions
-func (e *encoder) Code() []isa.Code {
-	ec := e.code
-	res := make([]isa.Code, len(ec))
-	copy(res, ec)
-	isa.Verify(res)
-	return res
-}
-
-// StackSize returns the encoder's calculated stack size
-func (e *encoder) StackSize() int {
-	res, _ := isa.CalculateStackSize(e.code)
-	return res
 }
 
 func (e *encoder) String() string {

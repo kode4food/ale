@@ -1,5 +1,8 @@
 ---
+title: "quit"
+description: "quits the REPL"
 names: ["quit"]
+usage: "(quit)"
+draft: true
 ---
-# (quit) quits the REPL
 Immediately exits the Ale REPL. This is a REPL-only function.

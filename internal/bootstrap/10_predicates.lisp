@@ -58,3 +58,4 @@
 
 (def-predicate is-even "even")
 (def-predicate is-odd "odd")
+(def-predicate is-paired "paired")

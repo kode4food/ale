@@ -14,7 +14,7 @@ type (
 	Config struct {
 		Globals    namespace.Type
 		Constants  api.Values
-		Code       []isa.Code
+		Code       []isa.Word
 		StackSize  int
 		LocalCount int
 	}

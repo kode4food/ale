@@ -1,9 +1,14 @@
 ---
+title: "doc"
+description: "displays documentation"
 names: ["doc"]
+usage: "(doc form)"
+draft: true
 ---
-# (doc form) displays documentation
 Displays the documentation for the specified form, if any exists. This is a REPL-only function.
 
-## An Example
+#### An Example
 
-  (doc async)
+```clojure
+(doc async)
+```

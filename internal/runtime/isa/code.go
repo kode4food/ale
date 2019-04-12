@@ -3,52 +3,73 @@ package isa
 import "fmt"
 
 type (
-	// Code represents the atomic unit of the ISA's Code stream
-	Code uint
+	// Word represents the atomic unit of the ISA's code stream
+	Word uint
 
 	// Index represents a lookup offset for value arrays
-	Index Code
+	Index Word
 
 	// Count represents a count of values
-	Count Code
+	Count Word
 
 	// Offset represents a relative program counter offset for jumps
-	Offset Code
+	Offset Word
 
-	// Coder allows a value to return an ISA Code
+	// Coder allows a value to return an ISA Word
 	Coder interface {
-		Code() Code
+		Word() Word
 	}
+
+	// Instruction represents a single instruction and its arguments
+	Instruction struct {
+		Opcode
+		Args []Word
+	}
+
+	// Instructions represents a set of Instructions
+	Instructions []*Instruction
 )
 
-// Code makes Code a Coder
-func (c Code) Code() Code {
-	return c
-}
+// Error messages
+const (
+	BadInstructionArgs = "instruction argument mismatch: %s"
+)
 
-// Code makes Index a Coder
-func (i Index) Code() Code {
-	return Code(i)
+// Word makes Index a Coder
+func (i Index) Word() Word {
+	return Word(i)
 }
 
 func (i Index) String() string {
 	return fmt.Sprintf("index(%d)", i)
 }
 
-// Code makes Count a Coder
-func (c Count) Code() Code {
-	return Code(c)
+// Word makes Count a Coder
+func (c Count) Word() Word {
+	return Word(c)
 }
 
 func (c Count) String() string {
 	return fmt.Sprintf("count(%d)", c)
 }
 
-// Code makes Offset a Coder
-func (o Offset) Code() Code {
-	return Code(o)
+// Word makes Offset a Coder
+func (o Offset) Word() Word {
+	return Word(o)
 }
 
 func (o Offset) String() string {
 	return fmt.Sprintf("offset(%d)", o)
+}
+
+// New creates a new Instruction instance
+func New(oc Opcode, args ...Word) *Instruction {
+	effect := MustGetEffect(oc)
+	if len(args) != effect.Size-1 {
+		panic(fmt.Sprintf(BadInstructionArgs, oc))
+	}
+	return &Instruction{
+		Opcode: oc,
+		Args:   args,
+	}
 }

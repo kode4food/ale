@@ -1,7 +1,10 @@
 package isa
 
-// Opcode represents an Instruction's operation Code
-type Opcode Code
+// Opcode represents an Instruction's operation Word
+type Opcode Word
+
+// Label is an internal Opcode
+const Label Opcode = 256
 
 //go:generate stringer -type=Opcode -linecomment
 const (
@@ -55,7 +58,7 @@ const (
 	Zero                      // Push Zero
 )
 
-// Code makes Opcode a Coder
-func (i Opcode) Code() Code {
-	return Code(i)
+// Word makes Opcode a Coder
+func (i Opcode) Word() Word {
+	return Word(i)
 }

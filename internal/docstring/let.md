@@ -6,7 +6,7 @@ names: ["let"]
 usage: "(let [<name form>+] form+)"
 tags: ["binding"]
 ---
-Will create a new local scope, binding the specified values to that scope by name. It will then evaluate the specified forms within that scope and return the result of the last evaluation.
+Will create a new local scope, binding the specified values to that scope by name. It will then evaluate the specified forms within that scope and return the result of the last evaluation. Ale's version of `let` behaves like `let*` in other Lisps.
 
 #### An Example
 

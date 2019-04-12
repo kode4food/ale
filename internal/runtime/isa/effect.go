@@ -1,5 +1,12 @@
 package isa
 
+import "fmt"
+
+// Error messages
+const (
+	EffectNotDeclared = "effect not declared for opcode: %s"
+)
+
 // Effect captures how an instruction affects the stack and PC
 type Effect struct {
 	Size  int
@@ -29,6 +36,7 @@ var Effects = map[Opcode]*Effect{
 	Gt:          {Size: 1, Pop: 2, Push: 1},
 	Gte:         {Size: 1, Pop: 2, Push: 1},
 	Jump:        {Size: 2},
+	Label:       {Size: 2},
 	Load:        {Size: 2, Push: 1},
 	Lt:          {Size: 1, Pop: 2, Push: 1},
 	Lte:         {Size: 1, Pop: 2, Push: 1},
@@ -59,4 +67,12 @@ var Effects = map[Opcode]*Effect{
 	True:        {Size: 1, Push: 1},
 	Two:         {Size: 1, Push: 1},
 	Zero:        {Size: 1, Push: 1},
+}
+
+// MustGetEffect gives you effect information or explodes violently
+func MustGetEffect(oc Opcode) *Effect {
+	if effect, ok := Effects[oc]; ok {
+		return effect
+	}
+	panic(fmt.Sprintf(EffectNotDeclared, oc.String()))
 }

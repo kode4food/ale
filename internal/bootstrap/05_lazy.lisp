@@ -27,7 +27,8 @@
 (defmacro for-each
   [seq-exprs & body]
   (assert-args
-   (is-even (len seq-exprs)) "for-each bindings must be a key-seq vector")
+   (is-vector seq-exprs) "for-each bindings must be a vector"
+   (is-paired seq-exprs) "for-each bindings must be paired")
   (let [name# (seq-exprs 0)
         seq#  (seq-exprs 1)]
     (if (> (len seq-exprs) 2)

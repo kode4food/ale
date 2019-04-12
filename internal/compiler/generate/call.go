@@ -86,15 +86,18 @@ func callDynamic(e encoder.Type, v api.Value, args api.Values) {
 	switch al {
 	case 0:
 		Value(e, v)
-		e.Append(isa.MakeCall, isa.Call0)
+		e.Append(isa.MakeCall)
+		e.Append(isa.Call0)
 	case 1:
 		applicativeArgs(e, args)
 		Value(e, v)
-		e.Append(isa.MakeCall, isa.Call1)
+		e.Append(isa.MakeCall)
+		e.Append(isa.Call1)
 	default:
 		applicativeArgs(e, args)
 		Value(e, v)
-		e.Append(isa.MakeCall, isa.Call, isa.Count(al))
+		e.Append(isa.MakeCall)
+		e.Append(isa.Call, isa.Count(al))
 	}
 }
 

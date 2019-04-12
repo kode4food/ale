@@ -8,6 +8,7 @@ func _() {
 	// An "invalid array index" compiler error signifies that the constant values have changed.
 	// Re-run the stringer command to generate them again.
 	var x [1]struct{}
+	_ = x[Label-256]
 	_ = x[Add-0]
 	_ = x[Arg-1]
 	_ = x[ArgLen-2]
@@ -58,13 +59,22 @@ func _() {
 	_ = x[Zero-47]
 }
 
-const _Opcode_name = "AdditionRetrieve Argument ValueRetrieve Argument CountBind GlobalCall FunctionZero-Arg CallOne-Arg CallRetrieve Closure ValueConditional JumpRetrieve ConstantDeclare GlobalDivisionDuplicate ValueNumeric EqualityPush FalseGreater ThanGreater or Equal ToAbsolute JumpRetrieve Local ValueLess Than ComparisonLess or Equal ToMake Value CallableMake Value BooleanRemainderMultiplicationNegationPush Negative InfinityPush Negative OneNumeric InequalityPush NilNon-OperatorBoolean NegationPush OneAbnormally HaltDiscard ValuePositive InfinityResolve Global SymbolRetrieve Arguments TailReturn ValueReturn FalseReturn NilReturn TruePush Current FunctionStore LocalSubtractionPush TruePush TwoPush Zero"
+const (
+	_Opcode_name_0 = "AdditionRetrieve Argument ValueRetrieve Argument CountBind GlobalCall FunctionZero-Arg CallOne-Arg CallRetrieve Closure ValueConditional JumpRetrieve ConstantDeclare GlobalDivisionDuplicate ValueNumeric EqualityPush FalseGreater ThanGreater or Equal ToAbsolute JumpRetrieve Local ValueLess Than ComparisonLess or Equal ToMake Value CallableMake Value BooleanRemainderMultiplicationNegationPush Negative InfinityPush Negative OneNumeric InequalityPush NilNon-OperatorBoolean NegationPush OneAbnormally HaltDiscard ValuePositive InfinityResolve Global SymbolRetrieve Arguments TailReturn ValueReturn FalseReturn NilReturn TruePush Current FunctionStore LocalSubtractionPush TruePush TwoPush Zero"
+	_Opcode_name_1 = "Label"
+)
 
-var _Opcode_index = [...]uint16{0, 8, 31, 54, 65, 78, 91, 103, 125, 141, 158, 172, 180, 195, 211, 221, 233, 252, 265, 285, 305, 321, 340, 358, 367, 381, 389, 411, 428, 446, 454, 466, 482, 490, 505, 518, 535, 556, 579, 591, 603, 613, 624, 645, 656, 667, 676, 684, 693}
+var (
+	_Opcode_index_0 = [...]uint16{0, 8, 31, 54, 65, 78, 91, 103, 125, 141, 158, 172, 180, 195, 211, 221, 233, 252, 265, 285, 305, 321, 340, 358, 367, 381, 389, 411, 428, 446, 454, 466, 482, 490, 505, 518, 535, 556, 579, 591, 603, 613, 624, 645, 656, 667, 676, 684, 693}
+)
 
 func (i Opcode) String() string {
-	if i >= Opcode(len(_Opcode_index)-1) {
+	switch {
+	case 0 <= i && i <= 47:
+		return _Opcode_name_0[_Opcode_index_0[i]:_Opcode_index_0[i+1]]
+	case i == 256:
+		return _Opcode_name_1
+	default:
 		return "Opcode(" + strconv.FormatInt(int64(i), 10) + ")"
 	}
-	return _Opcode_name[_Opcode_index[i]:_Opcode_index[i+1]]
 }

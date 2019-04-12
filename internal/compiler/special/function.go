@@ -103,10 +103,8 @@ func (fe *funcEncoder) encodeCall() {
 		name := names[i]
 		generate.Symbol(e, api.NewLocalSymbol(name))
 	}
-	e.Append(
-		isa.Const, idx,
-		isa.Call, isa.Count(nl),
-	)
+	e.Append(isa.Const, idx)
+	e.Append(isa.Call, isa.Count(nl))
 }
 
 func (fe *funcEncoder) makeClosure() api.Call {

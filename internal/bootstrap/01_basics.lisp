@@ -33,6 +33,10 @@
   [value]
   (= (mod value 2) 1))
 
+(defn is-paired
+  [value]
+  (is-even (len value)))
+
 (defn inc
   [value]
   (+ value 1))
