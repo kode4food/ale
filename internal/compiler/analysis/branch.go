@@ -1,81 +1,114 @@
 package analysis
 
-import (
-	"fmt"
-
-	"gitlab.com/kode4food/ale/internal/runtime/isa"
-)
+import "gitlab.com/kode4food/ale/internal/runtime/isa"
 
 type (
-	// Branches is returned when a Branch analysis is performed
-	Branches struct {
-		Prologue   isa.Instructions
-		ThenBranch isa.Instructions
-		ElseBranch isa.Instructions
-		Epilogue   isa.Instructions
+	// Node is returned when a Branch analysis is performed
+	Node interface {
+		Base() isa.Offset
 	}
 
-	splitResult struct {
-		thenBranch isa.Instructions
-		elseBranch isa.Instructions
-		epilogue   isa.Instructions
+	// Instructions represents a series of non-branching instructions
+	Instructions interface {
+		Node
+		Code() isa.Instructions
+	}
+
+	// Branches represents a branching junction
+	Branches interface {
+		Node
+		Prologue() Instructions
+		ThenBranch() Node
+		ElseBranch() Node
+		Epilogue() Node
+	}
+
+	instructions struct {
+		base isa.Offset
+		code isa.Instructions
+	}
+
+	branches struct {
+		base       isa.Offset
+		prologue   Instructions
+		thenBranch Node
+		elseBranch Node
+		epilogue   Node
 	}
 )
 
 // Branch performs conditional branch analysis
-func Branch(code isa.Instructions) *Branches {
+func Branch(code isa.Instructions) Node {
+	return branchFrom(0, code)
+}
+
+func branchFrom(base isa.Offset, code isa.Instructions) Node {
 	for pc, inst := range code {
 		oc := inst.Opcode
 		if oc != isa.CondJump {
 			continue
 		}
-		if rs, ok := splitCondJump(code[pc:]); ok {
-			return &Branches{
-				Prologue:   code[0 : pc+1],
-				ThenBranch: rs.thenBranch,
-				ElseBranch: rs.elseBranch,
-				Epilogue:   rs.epilogue,
+		if rs := splitCond(base+isa.Offset(pc), code[pc:]); rs != nil {
+			rs.base = base
+			rs.prologue = &instructions{
+				base: base,
+				code: code[0 : pc+1],
 			}
+			return rs
 		}
 	}
-	return &Branches{Prologue: code}
-}
-
-func findLabel(code isa.Instructions, lbl isa.Index) int {
-	ic := isa.Word(lbl)
-	for pc, inst := range code {
-		if inst.Opcode == isa.Label && inst.Args[0] == ic {
-			return pc
-		}
+	return &instructions{
+		base: base,
+		code: code,
 	}
-	return -1
 }
 
-func mustFindLabel(code isa.Instructions, lbl isa.Index) int {
-	if res := findLabel(code, lbl); res >= 0 {
-		return res
-	}
-	panic(fmt.Sprintf("label not anchored: %d", lbl))
-}
-
-func splitCondJump(code isa.Instructions) (*splitResult, bool) {
+func splitCond(base isa.Offset, code isa.Instructions) *branches {
 	thenIdx := isa.Index(code[0].Args[0])
 	thenLabel := findLabel(code, thenIdx)
 	if thenLabel <= 0 {
-		return nil, false // not part of this block
+		return nil // not part of this block
 	}
 
 	prev := code[thenLabel-1]
 	if prev.Opcode != isa.Jump {
-		return nil, false // not created with build.Cond
+		return nil // not created with build.Cond
 	}
 
 	elseRes := code[1:thenLabel]
 	endLabel := findLabel(code, isa.Index(prev.Args[0]))
 	thenRes := code[thenLabel:endLabel]
-	return &splitResult{
-		thenBranch: thenRes,
-		elseBranch: elseRes,
-		epilogue:   code[endLabel:],
-	}, true
+	return &branches{
+		thenBranch: branchFrom(base+isa.Offset(thenLabel), thenRes),
+		elseBranch: branchFrom(base+1, elseRes),
+		epilogue:   branchFrom(base+isa.Offset(endLabel), code[endLabel:]),
+	}
+}
+
+func (i *instructions) Base() isa.Offset {
+	return i.base
+}
+
+func (i *instructions) Code() isa.Instructions {
+	return i.code
+}
+
+func (b *branches) Base() isa.Offset {
+	return b.base
+}
+
+func (b *branches) Prologue() Instructions {
+	return b.prologue
+}
+
+func (b *branches) ThenBranch() Node {
+	return b.thenBranch
+}
+
+func (b *branches) ElseBranch() Node {
+	return b.elseBranch
+}
+
+func (b *branches) Epilogue() Node {
+	return b.epilogue
 }

@@ -80,15 +80,15 @@ func newReader(lexer api.Sequence) *reader {
 	}
 }
 
-func (r *reader) nextToken() (*Token, bool) {
+func (r *reader) nextToken() *Token {
 	if t, ok := r.iter.Next(); ok {
-		return t.(*Token), true
+		return t.(*Token)
 	}
-	return nil, false
+	return nil
 }
 
 func (r *reader) nextValue() (api.Value, bool) {
-	if t, ok := r.nextToken(); ok {
+	if t := r.nextToken(); t != nil {
 		return r.value(t), true
 	}
 	return nil, false
@@ -146,7 +146,7 @@ func (r *reader) list() api.Value {
 	}
 
 	rest = func() *api.List {
-		if t, ok := r.nextToken(); ok {
+		if t := r.nextToken(); t != nil {
 			return handle(t)
 		}
 		panic(fmt.Errorf(ListNotClosed))
@@ -159,7 +159,7 @@ func (r *reader) vector() api.Value {
 	res := make(api.Vector, 0)
 
 	for {
-		if t, ok := r.nextToken(); ok {
+		if t := r.nextToken(); t != nil {
 			switch t.Type {
 			case VectorEnd:
 				return res
@@ -178,7 +178,7 @@ func (r *reader) associative() api.Value {
 	mp := make(api.Vector, 2)
 
 	for idx := 0; ; idx++ {
-		if t, ok := r.nextToken(); ok {
+		if t := r.nextToken(); t != nil {
 			switch t.Type {
 			case MapEnd:
 				if idx%2 == 0 {
