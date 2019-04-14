@@ -136,6 +136,7 @@ func (b *bootstrap) availableFunctions() {
 
 	b.applicative("raise", builtin.Raise, 1)
 	b.applicative("recover", builtin.Recover, 2)
+	b.applicative("defer", builtin.Defer, 2)
 
 	b.applicative("current-time", builtin.CurrentTime, 0)
 }

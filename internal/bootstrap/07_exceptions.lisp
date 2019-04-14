@@ -21,7 +21,6 @@
 (defn is-finally
   [clause parsed]
   (and (is-call 'finally clause)
-       (not (is-seq (:finally parsed)))
        (not (is-seq (:catch parsed)))
        (not (is-seq (:block parsed)))))
 
@@ -30,20 +29,24 @@
   (!or (is-call 'catch clause)
        (is-call 'finally clause)))
 
+(defn try-append
+  [parsed keyword clause]
+  (conj parsed [keyword (conj (keyword parsed) clause)]))
+
 (defn try-prepend
   [parsed keyword clause]
-  (conj parsed [keyword (cons clause (get parsed keyword))]))
+  (conj parsed [keyword (cons clause (keyword parsed))]))
 
 (defn try-parse
   [clauses]
   (unless (is-seq clauses)
-          {:block () :catch () :finally ()}
+          {:block () :catch () :finally []}
           (let [f (first clauses)
                 r (rest clauses)
                 p (try-parse r)]
             (cond
               (is-catch f p)   (try-prepend p :catch f)
-              (is-finally f p) (try-prepend p :finally f)
+              (is-finally f p) (try-append  p :finally f)
               (is-expr f p)    (try-prepend p :block f)
               :else            (raise "malformed try-catch-finally")))))
 
@@ -58,8 +61,7 @@
 
 (defn try-catch-branch
   [clauses err-sym]
-  (assert-args
-   (is-seq clauses) "catch branch not paired")
+  (assert-args (is-seq clauses) "catch branch not paired")
   (lazy-seq
    (let [clause (first clauses)
          var    ((clause 1) 0)
@@ -80,6 +82,10 @@
         (try-catch-predicate pred err-sym)
         (try-catch-branch clauses err-sym))))))
 
+(defn try-body
+  [clauses]
+  `(fn [] [false (do ~@clauses)]))
+
 (defn try-catch
   [clauses]
   (let [err (gensym "err")]
@@ -88,22 +94,28 @@
          ~@(apply list (try-catch-clauses clauses err))
          :else [true ~err]))))
 
-(defn try-finally
-  [clauses]
-  (map
-   (fn [clause] (first (rest clause)))
-   clauses))
+(defn try-catch-finally
+  [parsed]
+  (let [block   (:block parsed)
+        recover (:catch parsed)
+        cleanup (:finally parsed)]
+    (cond (is-seq cleanup)
+          (let [first# (rest (first cleanup))
+                rest#  (conj parsed [:finally (rest cleanup)])]
+            `(ale/defer
+               (fn [] ~(try-catch-finally rest#))
+               (fn [] ~@first#)))
+
+          (is-seq recover)
+          `(let [rec# (ale/recover ~(try-body block) ~(try-catch recover))
+                 err# (rec# 0)
+                 res# (rec# 1)]
+             (if err# (raise res#) res#))
+
+          (is-seq block) `(do ~@block)
+
+          :else nil)))
 
 (defmacro try
   [& clauses]
-  (assert-args
-   (is-seq clauses) "try-catch-finally requires at least one clause")
-  (let [parsed  (try-parse clauses)
-        block   (:block parsed)
-        catches (:catch parsed)
-        finally (:finally parsed)]
-    `(let [rec# (recover (fn [] [false (do ~@block)]) ~(try-catch catches))
-           err# (rec# 0)
-           res# (rec# 1)]
-       ~@(try-finally finally)
-       (if err# (raise res#) res#))))
+  (try-catch-finally (try-parse clauses)))

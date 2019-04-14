@@ -114,6 +114,7 @@
 
 (def-builtin raise)
 (def-builtin recover)
+(def-builtin defer)
 
 ;; current time
 

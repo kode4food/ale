@@ -25,6 +25,15 @@ func Recover(args ...api.Value) (res api.Value) {
 	return body()
 }
 
+// Defer invokes a cleanup function, no matter what has happened
+func Defer(args ...api.Value) (res api.Value) {
+	body := args[0].(api.Caller).Caller()
+	cleanup := args[1].(api.Caller).Caller()
+
+	defer cleanup()
+	return body()
+}
+
 // Read performs the standard LISP read of a string
 func Read(args ...api.Value) api.Value {
 	v := args[0]

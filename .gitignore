@@ -30,6 +30,7 @@ _testmain.go
 .vscode
 *.iml
 *~
+\#*#
 
 *.sublime-workspace
 *.sublime-project
