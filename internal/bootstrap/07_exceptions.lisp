@@ -102,12 +102,12 @@
     (cond (is-seq cleanup)
           (let [first# (rest (first cleanup))
                 rest#  (conj parsed [:finally (rest cleanup)])]
-            `(ale/defer
+            `(defer
                (fn [] ~(try-catch-finally rest#))
                (fn [] ~@first#)))
 
           (is-seq recover)
-          `(let [rec# (ale/recover ~(try-body block) ~(try-catch recover))
+          `(let [rec# (recover ~(try-body block) ~(try-catch recover))
                  err# (rec# 0)
                  res# (rec# 1)]
              (if err# (raise res#) res#))

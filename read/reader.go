@@ -5,6 +5,7 @@ import (
 	"regexp"
 
 	"gitlab.com/kode4food/ale/api"
+	"gitlab.com/kode4food/ale/internal/namespace"
 	"gitlab.com/kode4food/ale/stdlib"
 )
 
@@ -41,10 +42,10 @@ type reader struct {
 var (
 	keywordIdentifier = regexp.MustCompile(`^:[^(){}\[\]\s,]+`)
 
-	quoteSym    = api.NewQualifiedSymbol("quote", "ale")
-	syntaxSym   = api.NewQualifiedSymbol("syntax-quote", "ale")
-	unquoteSym  = api.NewQualifiedSymbol("unquote", "ale")
-	splicingSym = api.NewQualifiedSymbol("unquote-splicing", "ale")
+	quoteSym    = namespace.RootSymbol("quote")
+	syntaxSym   = namespace.RootSymbol("syntax-quote")
+	unquoteSym  = namespace.RootSymbol("unquote")
+	splicingSym = namespace.RootSymbol("unquote-splicing")
 
 	specialNames = map[api.Name]api.Value{
 		"true":  api.True,

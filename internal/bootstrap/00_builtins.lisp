@@ -22,9 +22,8 @@
 
 ;; macros
 
-(def-builtin defmacro)
 (def-builtin quote)
-(def-builtin syntax-quote)
+(def-builtin defmacro)
 (def-builtin macroexpand-1)
 (def-builtin macroexpand)
 (def-builtin is-macro)

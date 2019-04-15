@@ -1,6 +1,7 @@
 ;;;; ale bootstrap: basics
 
 (declare *env* *args*)
+(declare syntax-quote)
 
 (def *pos-inf* (/ 1.0 0.0))
 (def *neg-inf* (/ -1.0 0.0))

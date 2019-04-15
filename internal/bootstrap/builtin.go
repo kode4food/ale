@@ -34,6 +34,7 @@ func (b *bootstrap) specialForms() {
 	b.special("eval", special.Eval)
 	b.special("declare", special.Declare)
 	b.special("def", special.Bind)
+	b.special("quote", special.Quote)
 	b.special("defmacro", special.DefMacro)
 	b.special("macroexpand-1", special.MacroExpand1)
 	b.special("macroexpand", special.MacroExpand)
@@ -63,10 +64,7 @@ func (b *bootstrap) availableFunctions() {
 	b.applicative("is-atom", builtin.IsAtom, 1)
 	b.applicative("is-keyword", builtin.IsKeyword, 1)
 
-	b.normal("quote", builtin.Quote, 1)
-	b.macro("syntax-quote", builtin.SyntaxQuote, 1)
 	b.applicative("is-macro", builtin.IsMacro, 1)
-
 	b.applicative("sym", builtin.Sym, 1)
 	b.applicative("gensym", builtin.GenSym, 0, 1)
 	b.applicative("is-symbol", builtin.IsSymbol, 1)

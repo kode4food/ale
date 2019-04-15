@@ -13,6 +13,7 @@ type (
 		Manager() *Manager
 		Domain() api.Name
 		Resolve(api.Name) (api.Value, bool)
+		In(api.Name) (Type, bool)
 		IsDeclared(api.Name) bool
 		Declare(api.Name)
 		IsBound(api.Name) bool
@@ -24,6 +25,10 @@ type (
 		domain   api.Name
 		entries  entries
 		entMutex sync.RWMutex
+	}
+
+	anonymous struct {
+		Type
 	}
 
 	entry struct {
@@ -39,15 +44,6 @@ const (
 	NameAlreadyBound = "name is already bound in namespace: %s"
 )
 
-// New constructs a new namespace
-func (m *Manager) New(n api.Name) Type {
-	return &namespace{
-		manager: m,
-		entries: entries{},
-		domain:  n,
-	}
-}
-
 func (ns *namespace) Manager() *Manager {
 	return ns.manager
 }
@@ -59,6 +55,15 @@ func (ns *namespace) Resolve(n api.Name) (api.Value, bool) {
 		return res.value, res.bound
 	}
 	return api.Nil, false
+}
+
+func (ns *namespace) In(n api.Name) (Type, bool) {
+	ns.entMutex.RLock()
+	defer ns.entMutex.RUnlock()
+	if _, ok := ns.entries[n]; ok {
+		return ns, true
+	}
+	return nil, false
 }
 
 func (ns *namespace) IsDeclared(n api.Name) bool {
@@ -102,4 +107,8 @@ func (ns *namespace) Bind(n api.Name, v api.Value) {
 
 func (ns *namespace) Domain() api.Name {
 	return ns.domain
+}
+
+func (*anonymous) In(api.Name) (Type, bool) {
+	return nil, false
 }

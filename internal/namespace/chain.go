@@ -27,6 +27,13 @@ func (ns *chainedNamespace) Domain() api.Name {
 	return ns.child.Domain()
 }
 
+func (ns *chainedNamespace) In(n api.Name) (Type, bool) {
+	if ns, ok := ns.child.In(n); ok {
+		return ns, true
+	}
+	return ns.parent.In(n)
+}
+
 func (ns *chainedNamespace) Resolve(n api.Name) (api.Value, bool) {
 	if ns.child.IsDeclared(n) {
 		return ns.child.Resolve(n)

@@ -1,4 +1,4 @@
-package builtin
+package macro
 
 import (
 	"fmt"
@@ -9,43 +9,33 @@ import (
 )
 
 type syntaxEnv struct {
-	genSyms map[string]api.Symbol
+	namespace namespace.Type
+	genSyms   map[string]api.Symbol
 }
 
-const (
-	// UnsupportedSyntaxQuote is raised when something can't be quoted
-	UnsupportedSyntaxQuote = "unsupported type in syntax quote: %s"
-
-	quoteName           = "quote"
-	listName            = "list"
-	vectorName          = "vector"
-	assocName           = "assoc"
-	applyName           = "apply"
-	concatName          = "concat"
-	unquoteName         = "unquote"
-	unquoteSplicingName = "unquote-splicing"
-)
+// UnsupportedSyntaxQuote is raised when something can't be quoted
+const UnsupportedSyntaxQuote = "unsupported type in syntax quote: %s"
 
 var (
-	quoteSym  = api.NewQualifiedSymbol(quoteName, namespace.RootDomain)
-	listSym   = api.NewQualifiedSymbol(listName, namespace.RootDomain)
-	vectorSym = api.NewQualifiedSymbol(vectorName, namespace.RootDomain)
-	assocSym  = api.NewQualifiedSymbol(assocName, namespace.RootDomain)
-	applySym  = api.NewQualifiedSymbol(applyName, namespace.RootDomain)
-	concatSym = api.NewQualifiedSymbol(concatName, namespace.RootDomain)
+	quoteSym  = namespace.RootSymbol("quote")
+	syntaxSym = namespace.RootSymbol("syntax-quote")
+	listSym   = namespace.RootSymbol("list")
+	vectorSym = namespace.RootSymbol("vector")
+	assocSym  = namespace.RootSymbol("assoc")
+	applySym  = namespace.RootSymbol("apply")
+	concatSym = namespace.RootSymbol("concat")
+
+	unquoteSym  = namespace.RootSymbol("unquote")
+	splicingSym = namespace.RootSymbol("unquote-splicing")
 )
 
-// Quote returns the provided value without evaluating it
-func Quote(args ...api.Value) api.Value {
-	return args[0]
-}
-
 // SyntaxQuote performs syntax quoting on the provided value
-func SyntaxQuote(args ...api.Value) api.Value {
+func SyntaxQuote(ns namespace.Type, value api.Value) api.Value {
 	sc := &syntaxEnv{
-		genSyms: make(map[string]api.Symbol),
+		namespace: ns,
+		genSyms:   make(map[string]api.Symbol),
 	}
-	return sc.quote(args[0])
+	return sc.quote(value)
 }
 
 func (se *syntaxEnv) quote(v api.Value) api.Value {
@@ -67,7 +57,7 @@ func (se *syntaxEnv) quoteSymbol(s api.Symbol) api.Value {
 	if gs, ok := se.generateSymbol(s); ok {
 		return api.NewList(quoteSym, gs)
 	}
-	return api.NewList(quoteSym, s)
+	return api.NewList(quoteSym, se.qualifySymbol(s))
 }
 
 func (se *syntaxEnv) generateSymbol(s api.Symbol) (api.Symbol, bool) {
@@ -132,33 +122,37 @@ func (se *syntaxEnv) quoteElements(s api.Sequence) api.Value {
 	return api.NewList(res...).Prepend(concatSym)
 }
 
-func isWrapperCall(n api.Name, v api.Value) (api.Value, bool) {
-	if l, ok := isBuiltInCall(n, v); ok {
+func (se *syntaxEnv) qualifySymbol(s api.Symbol) api.Value {
+	if q, ok := s.(api.QualifiedSymbol); ok {
+		return q
+	}
+	name := s.Name()
+	if ns, ok := se.namespace.In(name); ok {
+		return api.NewQualifiedSymbol(name, ns.Domain())
+	}
+	return s
+}
+
+func isWrapperCall(s api.Symbol, v api.Value) (api.Value, bool) {
+	if l, ok := isBuiltInCall(s, v); ok {
 		return l.Rest().First(), true
 	}
 	return api.Nil, false
 }
 
-func isBuiltInDomain(s api.Symbol) bool {
-	if qs, ok := s.(api.QualifiedSymbol); ok {
-		return qs.Domain() == namespace.RootDomain
-	}
-	return false
-}
-
-func isBuiltInCall(n api.Name, v api.Value) (*api.List, bool) {
+func isBuiltInCall(s api.Symbol, v api.Value) (*api.List, bool) {
 	if l, ok := v.(*api.List); ok && l.Count() > 0 {
-		if s, ok := l.First().(api.Symbol); ok {
-			return l, isBuiltInDomain(s) && s.Name() == n
+		if call, ok := l.First().(api.Symbol); ok {
+			return l, call == s
 		}
 	}
 	return nil, false
 }
 
 func isUnquote(v api.Value) (api.Value, bool) {
-	return isWrapperCall(unquoteName, v)
+	return isWrapperCall(unquoteSym, v)
 }
 
 func isUnquoteSplicing(v api.Value) (api.Value, bool) {
-	return isWrapperCall(unquoteSplicingName, v)
+	return isWrapperCall(splicingSym, v)
 }

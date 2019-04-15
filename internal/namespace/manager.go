@@ -31,10 +31,24 @@ const (
 	AnonymousDomain = api.Name("*anon*")
 )
 
+// RootSymbol returns a symbol qualified by the root domain
+func RootSymbol(name api.Name) api.Symbol {
+	return api.NewQualifiedSymbol(name, RootDomain)
+}
+
 // NewManager creates a new synchronous namespace map
 func NewManager() *Manager {
 	return &Manager{
 		data: map[api.Name]Type{},
+	}
+}
+
+// New constructs a new namespace
+func (m *Manager) New(n api.Name) Type {
+	return &namespace{
+		manager: m,
+		entries: entries{},
+		domain:  n,
 	}
 }
 
@@ -67,7 +81,9 @@ func (m *Manager) GetRoot() Type {
 // GetAnonymous returns an anonymous (non-resolvable) namespace
 func (m *Manager) GetAnonymous() Type {
 	root := m.GetRoot()
-	return newChild(root, AnonymousDomain)
+	return chain(root, &anonymous{
+		Type: m.New(AnonymousDomain),
+	})
 }
 
 // GetQualified returns the namespace for the specified domain.

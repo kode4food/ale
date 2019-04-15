@@ -48,7 +48,7 @@ func TestChaining(t *testing.T) {
 	as.False(ok)
 	as.Nil(v7)
 
-	s3 := api.NewQualifiedSymbol("in-parent", "ale")
+	s3 := namespace.RootSymbol("in-parent")
 	v8, ok := namespace.ResolveSymbol(ns, s3)
 	as.True(ok)
 	as.True(v8)

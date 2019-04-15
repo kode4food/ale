@@ -16,9 +16,9 @@ const (
 )
 
 var (
-	listSym   = api.NewQualifiedSymbol("list", "ale")
-	vectorSym = api.NewQualifiedSymbol("vector", "ale")
-	assocSym  = api.NewQualifiedSymbol("assoc", "ale")
+	listSym   = namespace.RootSymbol("list")
+	vectorSym = namespace.RootSymbol("vector")
+	assocSym  = namespace.RootSymbol("assoc")
 )
 
 // Block encodes a set of expressions, returning only the final evaluation

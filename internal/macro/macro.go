@@ -23,11 +23,14 @@ func Expand1(ns namespace.Type, v api.Value) api.Value {
 func expand1(ns namespace.Type, v api.Value) (api.Value, bool) {
 	if l, ok := v.(*api.List); ok {
 		if s, ok := l.First().(api.Symbol); ok {
+			args := stdlib.SequenceToVector(l.Rest())
 			if v, ok := namespace.ResolveSymbol(ns, s); ok {
 				if m, ok := v.(*api.Function); ok && m.IsMacro() {
-					args := stdlib.SequenceToVector(l.Rest())
 					return m.Call(args...), true
 				}
+			}
+			if s == syntaxSym {
+				return SyntaxQuote(ns, args[0]), true
 			}
 		}
 	}
