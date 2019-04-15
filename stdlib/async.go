@@ -227,8 +227,10 @@ func (p *promise) Resolve() api.Value {
 
 	cond := p.cond
 	cond.L.Lock()
-	cond.Wait()
-	cond.L.Unlock()
+	defer cond.L.Unlock()
+	for atomic.LoadUint32(&p.state) != promiseDelivered {
+		cond.Wait()
+	}
 	return p.val
 }
 
