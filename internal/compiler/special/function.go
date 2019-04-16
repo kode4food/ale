@@ -3,14 +3,13 @@ package special
 import (
 	"fmt"
 
-	"gitlab.com/kode4food/ale/internal/macro"
-	"gitlab.com/kode4food/ale/internal/namespace"
-
 	"gitlab.com/kode4food/ale/api"
 	"gitlab.com/kode4food/ale/internal/compiler/arity"
 	"gitlab.com/kode4food/ale/internal/compiler/build"
 	"gitlab.com/kode4food/ale/internal/compiler/encoder"
 	"gitlab.com/kode4food/ale/internal/compiler/generate"
+	"gitlab.com/kode4food/ale/internal/macro"
+	"gitlab.com/kode4food/ale/internal/namespace"
 	"gitlab.com/kode4food/ale/internal/runtime/isa"
 	"gitlab.com/kode4food/ale/internal/runtime/vm"
 )

@@ -3,13 +3,12 @@ package bootstrap
 import (
 	"fmt"
 
-	"gitlab.com/kode4food/ale/internal/macro"
-
 	"gitlab.com/kode4food/ale/api"
 	"gitlab.com/kode4food/ale/internal/builtin"
 	"gitlab.com/kode4food/ale/internal/compiler/arity"
 	"gitlab.com/kode4food/ale/internal/compiler/encoder"
 	"gitlab.com/kode4food/ale/internal/compiler/special"
+	"gitlab.com/kode4food/ale/internal/macro"
 )
 
 // Error messages

@@ -7,7 +7,7 @@ type Call func(Type, ...api.Value)
 
 // Type makes Call a typed value
 func (Call) Type() api.Name {
-	return "Special"
+	return "Encoder"
 }
 
 func (c Call) String() string {

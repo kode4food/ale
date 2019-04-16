@@ -4,9 +4,8 @@ import (
 	"fmt"
 	"strings"
 
-	"gitlab.com/kode4food/ale/internal/compiler/arity"
-
 	"gitlab.com/kode4food/ale/api"
+	"gitlab.com/kode4food/ale/internal/compiler/arity"
 	"gitlab.com/kode4food/ale/internal/namespace"
 )
 

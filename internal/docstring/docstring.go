@@ -5,7 +5,6 @@ import (
 	"strings"
 
 	"gitlab.com/kode4food/ale/api"
-
 	"gitlab.com/kode4food/ale/internal/assets"
 )
 
