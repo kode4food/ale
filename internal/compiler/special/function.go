@@ -38,24 +38,20 @@ const (
 )
 
 // Fn encodes a lambda
-func Fn(args ...api.Value) api.Value {
-	e, args := splitEncoder(args)
+func Fn(e encoder.Type, args ...api.Value) {
 	name, vars := parseFunction(args)
 	fe := makeFunctionEncoder(e, name, vars)
 	encodeTo(e, fe, api.ApplicativeCall)
-	return api.Nil
 }
 
 // DefMacro encodes and registers a macro
-func DefMacro(args ...api.Value) api.Value {
-	e, args := splitEncoder(args)
+func DefMacro(e encoder.Type, args ...api.Value) {
 	name, vars := parseNamedFunction(args)
 	fe := makeFunctionEncoder(e, name, vars)
 	encodeTo(e, fe, api.MacroCall)
 	generate.Literal(e, fe.Name())
 	e.Append(isa.Bind)
 	generate.Literal(e, fe.Name())
-	return api.Nil
 }
 
 func encodeTo(e encoder.Type, fe *funcEncoder, c api.Convention) {

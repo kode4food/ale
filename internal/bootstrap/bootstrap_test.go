@@ -6,6 +6,7 @@ import (
 	"gitlab.com/kode4food/ale/api"
 	"gitlab.com/kode4food/ale/internal/assert"
 	"gitlab.com/kode4food/ale/internal/bootstrap"
+	"gitlab.com/kode4food/ale/internal/compiler/encoder"
 	"gitlab.com/kode4food/ale/stdlib"
 )
 
@@ -48,7 +49,6 @@ func TestBootstrapInto(t *testing.T) {
 	v, ok := ns.Resolve("def")
 	as.True(ok)
 
-	fn, ok := v.(*api.Function)
+	_, ok = v.(encoder.Call)
 	as.True(ok)
-	as.True(fn.IsSpecial())
 }

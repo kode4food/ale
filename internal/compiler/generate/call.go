@@ -47,6 +47,9 @@ func callSymbol(e encoder.Type, s api.Symbol, args api.Values) {
 	globals := e.Globals()
 	if v, ok := namespace.ResolveSymbol(globals, s); ok {
 		switch typed := v.(type) {
+		case encoder.Call:
+			typed(e, args...)
+			return
 		case api.Call:
 			callApplicative(e, typed, args)
 			return
@@ -64,8 +67,6 @@ func callFunction(e encoder.Type, f *api.Function, args api.Values) {
 		panic(err)
 	}
 	switch f.Convention {
-	case api.SpecialCall:
-		callSpecial(e, f.Call, args)
 	case api.ApplicativeCall:
 		callApplicative(e, f.Call, args)
 	case api.NormalCall, api.MacroCall:
@@ -74,11 +75,6 @@ func callFunction(e encoder.Type, f *api.Function, args api.Values) {
 		c := f.Convention
 		panic(fmt.Sprintf(UnknownConvention, c))
 	}
-}
-
-func callSpecial(e encoder.Type, generate api.Call, args api.Values) {
-	specialArgs := append(api.Values{e}, args...)
-	generate(specialArgs...)
 }
 
 func callDynamic(e encoder.Type, v api.Value, args api.Values) {

@@ -18,19 +18,12 @@ const (
 	UnpairedBindings = "bindings must be paired"
 )
 
-func splitEncoder(args api.Values) (encoder.Type, api.Values) {
-	e := args[0].(encoder.Type)
-	return e, args[1:]
-}
-
 // Eval encodes an evaluation
-func Eval(args ...api.Value) api.Value {
-	e, args := splitEncoder(args)
+func Eval(e encoder.Type, args ...api.Value) {
 	arity.AssertFixed(1, len(args))
 	generate.Value(e, args[0])
 	generate.Literal(e, evalFor(e.Globals()))
 	e.Append(isa.Call1)
-	return api.Nil
 }
 
 func evalFor(ns namespace.Type) api.Call {
@@ -40,15 +33,12 @@ func evalFor(ns namespace.Type) api.Call {
 }
 
 // Do encodes a set of expressions, returning only the final evaluation
-func Do(args ...api.Value) api.Value {
-	e, args := splitEncoder(args)
+func Do(e encoder.Type, args ...api.Value) {
 	generate.Block(e, api.Vector(args))
-	return api.Nil
 }
 
 // If encodes an (if cond then else) form
-func If(args ...api.Value) api.Value {
-	e, args := splitEncoder(args)
+func If(e encoder.Type, args ...api.Value) {
 	al := arity.AssertRanged(2, 3, len(args))
 	build.Cond(e,
 		func() {
@@ -66,12 +56,10 @@ func If(args ...api.Value) api.Value {
 			}
 		},
 	)
-	return api.Nil
 }
 
 // Let encodes a (let [bindings] & body) form
-func Let(args ...api.Value) api.Value {
-	e, args := splitEncoder(args)
+func Let(e encoder.Type, args ...api.Value) {
 	arity.AssertMinimum(2, len(args))
 	bindings := args[0].(api.Vector)
 	lb := len(bindings)
@@ -92,5 +80,4 @@ func Let(args ...api.Value) api.Value {
 	for i := 0; i < lb; i += 2 {
 		e.PopLocals()
 	}
-	return api.Nil
 }

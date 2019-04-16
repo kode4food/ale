@@ -5,24 +5,28 @@ import (
 
 	"gitlab.com/kode4food/ale/api"
 	"gitlab.com/kode4food/ale/internal/builtin"
+	"gitlab.com/kode4food/ale/internal/compiler/encoder"
 	"gitlab.com/kode4food/ale/internal/namespace"
 	"gitlab.com/kode4food/ale/stdlib"
 )
 
 type (
 	bootstrap struct {
-		manager *namespace.Manager
-		funcMap funcMap
+		manager    *namespace.Manager
+		specialMap specialMap
+		funcMap    funcMap
 	}
 
-	funcMap map[api.Name]*api.Function
+	specialMap map[api.Name]encoder.Call
+	funcMap    map[api.Name]*api.Function
 )
 
 // Into sets up initial built-ins and assets
 func Into(manager *namespace.Manager) {
 	b := &bootstrap{
-		manager: manager,
-		funcMap: funcMap{},
+		manager:    manager,
+		specialMap: specialMap{},
+		funcMap:    funcMap{},
 	}
 	b.builtIns()
 	b.assets()

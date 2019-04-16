@@ -10,8 +10,8 @@ import (
 )
 
 func TestFunctionPredicates(t *testing.T) {
-	testCode(t, `(apply? if)`, api.True)
-	testCode(t, `(!apply? if)`, api.False)
+	testCode(t, `(apply? if)`, api.False)
+	testCode(t, `(!apply? if)`, api.True)
 	testCode(t, `(special? def)`, api.True)
 	testCode(t, `(!special? def)`, api.False)
 	testCode(t, `(apply? 99)`, api.False)

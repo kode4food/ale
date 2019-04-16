@@ -2,6 +2,7 @@ package builtin
 
 import (
 	"gitlab.com/kode4food/ale/api"
+	"gitlab.com/kode4food/ale/internal/compiler/encoder"
 	"gitlab.com/kode4food/ale/stdlib"
 )
 
@@ -43,8 +44,8 @@ func IsApply(args ...api.Value) api.Value {
 
 // IsSpecial tests whether not a function is a special form
 func IsSpecial(args ...api.Value) api.Value {
-	if f, ok := args[0].(*api.Function); ok {
-		return api.Bool(f.IsSpecial())
+	if _, ok := args[0].(encoder.Call); ok {
+		return api.True
 	}
 	return api.False
 }

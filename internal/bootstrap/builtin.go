@@ -6,16 +6,19 @@ import (
 	"gitlab.com/kode4food/ale/api"
 	"gitlab.com/kode4food/ale/internal/builtin"
 	"gitlab.com/kode4food/ale/internal/compiler/arity"
+	"gitlab.com/kode4food/ale/internal/compiler/encoder"
 	"gitlab.com/kode4food/ale/internal/compiler/special"
 )
 
 // Error messages
 const (
 	BuiltInNotFound = "built-in not found: %s"
+	SpecialNotFound = "special form not found: %s"
 )
 
 const (
 	defBuiltInName = "def-builtin"
+	defSpecialName = "def-special"
 
 	orMore = -1
 )
@@ -48,13 +51,24 @@ func (b *bootstrap) initialFunctions() {
 		n := args[0].(api.LocalSymbol).Name()
 		if nf, ok := b.funcMap[n]; ok {
 			ns.Bind(n, nf)
-			return nf
+			return args[0]
 		}
 		panic(fmt.Errorf(BuiltInNotFound, n))
 	}
 
+	defSpecial := func(args ...api.Value) api.Value {
+		ns := manager.GetRoot()
+		n := args[0].(api.LocalSymbol).Name()
+		if sf, ok := b.specialMap[n]; ok {
+			ns.Bind(n, sf)
+			return args[0]
+		}
+		panic(fmt.Errorf(SpecialNotFound, n))
+	}
+
 	ns := b.manager.GetRoot()
 	ns.Bind(defBuiltInName, api.NormalFunction(defBuiltIn))
+	ns.Bind(defSpecialName, api.NormalFunction(defSpecial))
 }
 
 func (b *bootstrap) availableFunctions() {
@@ -154,9 +168,8 @@ func (b *bootstrap) macro(name api.Name, call api.Call, arity ...int) {
 	b.builtIn(name, fn, arity...)
 }
 
-func (b *bootstrap) special(name api.Name, call api.Call) {
-	fn := api.SpecialFunction(call)
-	b.builtIn(name, fn)
+func (b *bootstrap) special(name api.Name, call encoder.Call) {
+	b.specialMap[name] = call
 }
 
 func (b *bootstrap) builtIn(name api.Name, fn *api.Function, a ...int) {

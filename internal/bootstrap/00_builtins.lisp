@@ -1,18 +1,18 @@
 ;;;; ale bootstrap: builtin
 
-(def-builtin do)
-(def-builtin if)
-(def-builtin let)
-(def-builtin fn)
+(def-special do)
+(def-special if)
+(def-special let)
+(def-special fn)
 
 (def-builtin read)
-(def-builtin eval)
+(def-special eval)
 (def-builtin is-eq)
 
 ;; globals
 
-(def-builtin declare)
-(def-builtin def)
+(def-special declare)
+(def-special def)
 
 ;; basic predicates
 
@@ -22,10 +22,10 @@
 
 ;; macros
 
-(def-builtin quote)
-(def-builtin defmacro)
-(def-builtin macroexpand-1)
-(def-builtin macroexpand)
+(def-special quote)
+(def-special defmacro)
+(def-special macroexpand-1)
+(def-special macroexpand)
 (def-builtin is-macro)
 
 ;; symbols
