@@ -29,7 +29,6 @@ type (
 const (
 	ApplicativeCall Convention = iota // Applicative
 	NormalCall                        // Normal
-	MacroCall                         // Macro
 )
 
 // ApplicativeFunction wraps an applicative function call
@@ -45,14 +44,6 @@ func NormalFunction(c Call) *Function {
 	return &Function{
 		Call:       c,
 		Convention: NormalCall,
-	}
-}
-
-// MacroFunction wraps a macro
-func MacroFunction(c Call) *Function {
-	return &Function{
-		Call:       c,
-		Convention: MacroCall,
 	}
 }
 
@@ -83,11 +74,6 @@ func (v *Function) IsApplicative() bool {
 // IsNormal returns whether or not this function is normal
 func (v *Function) IsNormal() bool {
 	return v.Convention == NormalCall
-}
-
-// IsMacro returns whether or not this function is a macro
-func (v *Function) IsMacro() bool {
-	return v.Convention == MacroCall
 }
 
 // CheckArity checks to see if the argument count is valid

@@ -69,7 +69,7 @@ func callFunction(e encoder.Type, f *api.Function, args api.Values) {
 	switch f.Convention {
 	case api.ApplicativeCall:
 		callApplicative(e, f.Call, args)
-	case api.NormalCall, api.MacroCall:
+	case api.NormalCall:
 		callNormal(e, f.Call, args)
 	default:
 		c := f.Convention

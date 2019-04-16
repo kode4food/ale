@@ -10,12 +10,11 @@ func _() {
 	var x [1]struct{}
 	_ = x[ApplicativeCall-0]
 	_ = x[NormalCall-1]
-	_ = x[MacroCall-2]
 }
 
-const _Convention_name = "ApplicativeNormalMacro"
+const _Convention_name = "ApplicativeNormal"
 
-var _Convention_index = [...]uint8{0, 11, 17, 22}
+var _Convention_index = [...]uint8{0, 11, 17}
 
 func (i Convention) String() string {
 	if i < 0 || i >= Convention(len(_Convention_index)-1) {

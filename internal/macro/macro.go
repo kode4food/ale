@@ -25,12 +25,9 @@ func expand1(ns namespace.Type, v api.Value) (api.Value, bool) {
 		if s, ok := l.First().(api.Symbol); ok {
 			args := stdlib.SequenceToVector(l.Rest())
 			if v, ok := namespace.ResolveSymbol(ns, s); ok {
-				if m, ok := v.(*api.Function); ok && m.IsMacro() {
-					return m.Call(args...), true
+				if m, ok := v.(Call); ok {
+					return m(ns, args...), true
 				}
-			}
-			if s == syntaxSym {
-				return SyntaxQuote(ns, args[0]), true
 			}
 		}
 	}

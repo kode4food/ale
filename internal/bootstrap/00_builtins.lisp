@@ -27,6 +27,7 @@
 (def-special macroexpand-1)
 (def-special macroexpand)
 (def-builtin is-macro)
+(def-macro syntax-quote)
 
 ;; symbols
 

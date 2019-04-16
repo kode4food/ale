@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"strings"
 
+	"gitlab.com/kode4food/ale/internal/compiler/arity"
+
 	"gitlab.com/kode4food/ale/api"
 	"gitlab.com/kode4food/ale/internal/namespace"
 )
@@ -30,7 +32,9 @@ var (
 )
 
 // SyntaxQuote performs syntax quoting on the provided value
-func SyntaxQuote(ns namespace.Type, value api.Value) api.Value {
+func SyntaxQuote(ns namespace.Type, args ...api.Value) api.Value {
+	arity.AssertFixed(1, len(args))
+	value := args[0]
 	sc := &syntaxEnv{
 		namespace: ns,
 		genSyms:   make(map[string]api.Symbol),

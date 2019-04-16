@@ -6,6 +6,7 @@ import (
 	"gitlab.com/kode4food/ale/api"
 	"gitlab.com/kode4food/ale/internal/builtin"
 	"gitlab.com/kode4food/ale/internal/compiler/encoder"
+	"gitlab.com/kode4food/ale/internal/macro"
 	"gitlab.com/kode4food/ale/internal/namespace"
 	"gitlab.com/kode4food/ale/stdlib"
 )
@@ -13,10 +14,12 @@ import (
 type (
 	bootstrap struct {
 		manager    *namespace.Manager
+		macroMap   macroMap
 		specialMap specialMap
 		funcMap    funcMap
 	}
 
+	macroMap   map[api.Name]macro.Call
 	specialMap map[api.Name]encoder.Call
 	funcMap    map[api.Name]*api.Function
 )
@@ -25,6 +28,7 @@ type (
 func Into(manager *namespace.Manager) {
 	b := &bootstrap{
 		manager:    manager,
+		macroMap:   macroMap{},
 		specialMap: specialMap{},
 		funcMap:    funcMap{},
 	}

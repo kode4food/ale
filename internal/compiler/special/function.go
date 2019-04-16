@@ -3,6 +3,9 @@ package special
 import (
 	"fmt"
 
+	"gitlab.com/kode4food/ale/internal/macro"
+	"gitlab.com/kode4food/ale/internal/namespace"
+
 	"gitlab.com/kode4food/ale/api"
 	"gitlab.com/kode4food/ale/internal/compiler/arity"
 	"gitlab.com/kode4food/ale/internal/compiler/build"
@@ -41,30 +44,38 @@ const (
 func Fn(e encoder.Type, args ...api.Value) {
 	name, vars := parseFunction(args)
 	fe := makeFunctionEncoder(e, name, vars)
-	encodeTo(e, fe, api.ApplicativeCall)
+	arityChecker := fe.makeArityChecker()
+	fe.encodeCall()
+	generate.Literal(e, api.Call(func(args ...api.Value) api.Value {
+		return &api.Function{
+			Call:         args[0].(api.Call),
+			Convention:   api.ApplicativeCall,
+			ArityChecker: arityChecker,
+		}
+	}))
+	e.Append(isa.Call1)
 }
 
 // DefMacro encodes and registers a macro
 func DefMacro(e encoder.Type, args ...api.Value) {
 	name, vars := parseNamedFunction(args)
 	fe := makeFunctionEncoder(e, name, vars)
-	encodeTo(e, fe, api.MacroCall)
+	arityChecker := fe.makeArityChecker()
+	fe.encodeCall()
+	generate.Literal(e, api.Call(func(args ...api.Value) api.Value {
+		body := args[0].(api.Call)
+		wrapper := func(_ namespace.Type, args ...api.Value) api.Value {
+			if err := arityChecker(len(args)); err != nil {
+				panic(err)
+			}
+			return body(args...)
+		}
+		return macro.Call(wrapper)
+	}))
+	e.Append(isa.Call1)
 	generate.Literal(e, fe.Name())
 	e.Append(isa.Bind)
 	generate.Literal(e, fe.Name())
-}
-
-func encodeTo(e encoder.Type, fe *funcEncoder, c api.Convention) {
-	fe.encodeCall()
-	arityChecker := fe.makeArityChecker()
-	generate.Literal(e, api.Call(func(args ...api.Value) api.Value {
-		return &api.Function{
-			Call:         args[0].(api.Call),
-			Convention:   c,
-			ArityChecker: arityChecker,
-		}
-	}))
-	e.Append(isa.Call1)
 }
 
 func makeFunctionEncoder(e encoder.Type, n api.Name, v variants) *funcEncoder {

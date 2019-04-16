@@ -3,6 +3,8 @@ package bootstrap
 import (
 	"fmt"
 
+	"gitlab.com/kode4food/ale/internal/macro"
+
 	"gitlab.com/kode4food/ale/api"
 	"gitlab.com/kode4food/ale/internal/builtin"
 	"gitlab.com/kode4food/ale/internal/compiler/arity"
@@ -14,11 +16,13 @@ import (
 const (
 	BuiltInNotFound = "built-in not found: %s"
 	SpecialNotFound = "special form not found: %s"
+	MacroNotFound   = "macro not found: %s"
 )
 
 const (
 	defBuiltInName = "def-builtin"
 	defSpecialName = "def-special"
+	defMacroName   = "def-macro"
 
 	orMore = -1
 )
@@ -47,6 +51,7 @@ func (b *bootstrap) initialFunctions() {
 	manager := b.manager
 
 	defBuiltIn := func(args ...api.Value) api.Value {
+		arity.AssertFixed(1, len(args))
 		ns := manager.GetRoot()
 		n := args[0].(api.LocalSymbol).Name()
 		if nf, ok := b.funcMap[n]; ok {
@@ -57,6 +62,7 @@ func (b *bootstrap) initialFunctions() {
 	}
 
 	defSpecial := func(args ...api.Value) api.Value {
+		arity.AssertFixed(1, len(args))
 		ns := manager.GetRoot()
 		n := args[0].(api.LocalSymbol).Name()
 		if sf, ok := b.specialMap[n]; ok {
@@ -66,9 +72,20 @@ func (b *bootstrap) initialFunctions() {
 		panic(fmt.Errorf(SpecialNotFound, n))
 	}
 
+	defMacro := func(args ...api.Value) api.Value {
+		ns := manager.GetRoot()
+		n := args[0].(api.LocalSymbol).Name()
+		if sf, ok := b.macroMap[n]; ok {
+			ns.Bind(n, sf)
+			return args[0]
+		}
+		panic(fmt.Errorf(MacroNotFound, n))
+	}
+
 	ns := b.manager.GetRoot()
 	ns.Bind(defBuiltInName, api.NormalFunction(defBuiltIn))
 	ns.Bind(defSpecialName, api.NormalFunction(defSpecial))
+	ns.Bind(defMacroName, api.NormalFunction(defMacro))
 }
 
 func (b *bootstrap) availableFunctions() {
@@ -78,6 +95,7 @@ func (b *bootstrap) availableFunctions() {
 	b.applicative("is-atom", builtin.IsAtom, 1)
 	b.applicative("is-keyword", builtin.IsKeyword, 1)
 
+	b.macro("syntax-quote", macro.SyntaxQuote)
 	b.applicative("is-macro", builtin.IsMacro, 1)
 	b.applicative("sym", builtin.Sym, 1)
 	b.applicative("gensym", builtin.GenSym, 0, 1)
@@ -158,9 +176,8 @@ func (b *bootstrap) applicative(name api.Name, call api.Call, arity ...int) {
 	b.builtIn(name, fn, arity...)
 }
 
-func (b *bootstrap) macro(name api.Name, call api.Call, arity ...int) {
-	fn := api.MacroFunction(call)
-	b.builtIn(name, fn, arity...)
+func (b *bootstrap) macro(name api.Name, call macro.Call) {
+	b.macroMap[name] = call
 }
 
 func (b *bootstrap) special(name api.Name, call encoder.Call) {
