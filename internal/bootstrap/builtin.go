@@ -153,11 +153,6 @@ func (b *bootstrap) availableFunctions() {
 	b.applicative("current-time", builtin.CurrentTime, 0)
 }
 
-func (b *bootstrap) normal(name api.Name, call api.Call, arity ...int) {
-	fn := api.NormalFunction(call)
-	b.builtIn(name, fn, arity...)
-}
-
 func (b *bootstrap) applicative(name api.Name, call api.Call, arity ...int) {
 	fn := api.ApplicativeFunction(call)
 	b.builtIn(name, fn, arity...)
