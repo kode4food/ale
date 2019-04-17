@@ -5,11 +5,11 @@ import (
 	"testing"
 
 	"gitlab.com/kode4food/ale/api"
+	"gitlab.com/kode4food/ale/bootstrap"
+	"gitlab.com/kode4food/ale/bootstrap/builtin"
 	"gitlab.com/kode4food/ale/eval"
 	"gitlab.com/kode4food/ale/internal/assert"
-	"gitlab.com/kode4food/ale/internal/bootstrap"
-	"gitlab.com/kode4food/ale/internal/builtin"
-	"gitlab.com/kode4food/ale/internal/namespace"
+	"gitlab.com/kode4food/ale/namespace"
 	"gitlab.com/kode4food/ale/stdlib"
 )
 

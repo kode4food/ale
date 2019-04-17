@@ -7,7 +7,7 @@ import (
 
 	"gitlab.com/kode4food/ale/api"
 	"gitlab.com/kode4food/ale/eval"
-	"gitlab.com/kode4food/ale/internal/namespace"
+	"gitlab.com/kode4food/ale/namespace"
 	"gitlab.com/kode4food/ale/read"
 )
 

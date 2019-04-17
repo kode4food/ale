@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"testing"
 
+	"gitlab.com/kode4food/ale/compiler/special"
 	. "gitlab.com/kode4food/ale/internal/assert/helpers"
-	"gitlab.com/kode4food/ale/internal/compiler/special"
 )
 
 func TestDefinitions(t *testing.T) {

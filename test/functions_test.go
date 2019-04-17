@@ -5,8 +5,8 @@ import (
 	"testing"
 
 	"gitlab.com/kode4food/ale/api"
+	"gitlab.com/kode4food/ale/compiler/special"
 	. "gitlab.com/kode4food/ale/internal/assert/helpers"
-	"gitlab.com/kode4food/ale/internal/compiler/special"
 )
 
 func TestFunctionPredicates(t *testing.T) {

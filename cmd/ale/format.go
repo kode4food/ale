@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"gitlab.com/kode4food/ale/api"
-	"gitlab.com/kode4food/ale/internal/docstring"
+	"gitlab.com/kode4food/ale/cmd/ale/docstring"
 )
 
 // This is *not* a full-featured markdown formatter, or even a compliant

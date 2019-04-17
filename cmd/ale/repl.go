@@ -15,11 +15,11 @@ import (
 	"github.com/chzyer/readline"
 	"gitlab.com/kode4food/ale"
 	"gitlab.com/kode4food/ale/api"
+	"gitlab.com/kode4food/ale/bootstrap"
+	"gitlab.com/kode4food/ale/cmd/ale/docstring"
+	"gitlab.com/kode4food/ale/compiler/arity"
 	"gitlab.com/kode4food/ale/eval"
-	"gitlab.com/kode4food/ale/internal/bootstrap"
-	"gitlab.com/kode4food/ale/internal/compiler/arity"
-	"gitlab.com/kode4food/ale/internal/docstring"
-	"gitlab.com/kode4food/ale/internal/namespace"
+	"gitlab.com/kode4food/ale/namespace"
 	"gitlab.com/kode4food/ale/read"
 )
 
