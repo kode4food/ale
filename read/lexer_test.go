@@ -8,7 +8,6 @@ import (
 	"gitlab.com/kode4food/ale/internal/assert"
 	. "gitlab.com/kode4food/ale/internal/assert/helpers"
 	"gitlab.com/kode4food/ale/read"
-	"gitlab.com/kode4food/ale/stdlib"
 )
 
 func makeToken(t read.TokenType, v api.Value) *read.Token {
@@ -23,15 +22,18 @@ func assertToken(as *assert.Wrapper, like *read.Token, value *read.Token) {
 }
 
 func assertTokenSequence(as *assert.Wrapper, s api.Sequence, tokens []*read.Token) {
-	iter := stdlib.Iterate(s)
+	var f api.Value
+	var r = s
+	var ok bool
 	for _, l := range tokens {
-		v, ok := iter.Next()
+		f, r, ok = r.Split()
 		as.True(ok)
-		assertToken(as, l, v.(*read.Token))
+		assertToken(as, l, f.(*read.Token))
 	}
-	v, ok := iter.Next()
+	f, r, ok = r.Split()
 	as.False(ok)
-	as.Nil(v)
+	as.Nil(f)
+	as.False(r.IsSequence())
 }
 
 func TestCreateLexer(t *testing.T) {

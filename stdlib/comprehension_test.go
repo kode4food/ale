@@ -112,12 +112,6 @@ func TestFilteredAndMapped(t *testing.T) {
 	as.False(r1.IsSequence())
 }
 
-func testNext(as *assert.Wrapper, i *stdlib.Iterator, expected api.Value) {
-	v, ok := i.Next()
-	as.True(ok)
-	as.Equal(expected, v)
-}
-
 func TestConcat(t *testing.T) {
 	as := assert.New(t)
 
@@ -128,24 +122,6 @@ func TestConcat(t *testing.T) {
 	l5 := api.EmptyList
 
 	w1 := stdlib.Concat(l1, l2, l3, l4, l5)
-	w2 := w1.Prepend(S("I was prepended"))
-
-	it := stdlib.Iterate(w2)
-
-	testNext(as, it, S("I was prepended"))
-	testNext(as, it, S("first"))
-	testNext(as, it, S("middle"))
-	testNext(as, it, S("last"))
-	testNext(as, it, I(1))
-	testNext(as, it, I(2))
-	testNext(as, it, I(3))
-	testNext(as, it, S("blah1"))
-	testNext(as, it, S("blah2"))
-	testNext(as, it, S("blah3"))
-
-	_, ok := it.Next()
-	as.False(ok)
-
 	expect := `("first" "middle" "last" 1 2 3 "blah1" "blah2" "blah3")`
 	as.String(expect, api.MakeSequenceStr(w1))
 }

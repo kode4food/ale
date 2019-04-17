@@ -8,7 +8,6 @@ import (
 	"gitlab.com/kode4food/ale/internal/assert"
 	. "gitlab.com/kode4food/ale/internal/assert/helpers"
 	"gitlab.com/kode4food/ale/read"
-	"gitlab.com/kode4food/ale/stdlib"
 )
 
 func TestCreateReader(t *testing.T) {
@@ -26,20 +25,19 @@ func TestReadList(t *testing.T) {
 	list, ok := v.(*api.List)
 	as.True(ok)
 
-	i := stdlib.Iterate(list)
-	val, ok := i.Next()
+	f, r, ok := list.Split()
 	as.True(ok)
-	as.Integer(99, val)
+	as.Integer(99, f)
 
-	val, ok = i.Next()
+	f, r, ok = r.Split()
 	as.True(ok)
-	as.String("hello", val)
+	as.String("hello", f)
 
-	val, ok = i.Next()
+	f, r, ok = r.Split()
 	as.True(ok)
-	as.Float(55.12, val)
+	as.Float(55.12, f)
 
-	_, ok = i.Next()
+	f, r, ok = r.Split()
 	as.False(ok)
 }
 
@@ -82,36 +80,34 @@ func TestReadNestedList(t *testing.T) {
 	list, ok := v.(*api.List)
 	as.True(ok)
 
-	i1 := stdlib.Iterate(list)
-	val, ok := i1.Next()
+	f, r, ok := list.Split()
 	as.True(ok)
-	as.Integer(99, val)
+	as.Integer(99, f)
 
 	// get nested list
-	val, ok = i1.Next()
+	f, r, ok = r.Split()
 	as.True(ok)
-	list2, ok := val.(*api.List)
+	list2, ok := f.(*api.List)
 	as.True(ok)
 
 	// iterate over the rest of top-level list
-	val, ok = i1.Next()
+	f, r, ok = r.Split()
 	as.True(ok)
-	as.Float(55.12, val)
+	as.Float(55.12, f)
 
-	_, ok = i1.Next()
+	f, r, ok = r.Split()
 	as.False(ok)
 
 	// iterate over the nested list
-	i2 := stdlib.Iterate(list2)
-	val, ok = i2.Next()
+	f, r, ok = list2.Split()
 	as.True(ok)
-	as.String("hello", val)
+	as.String("hello", f)
 
-	val, ok = i2.Next()
+	f, r, ok = r.Split()
 	as.True(ok)
-	as.String("there", val)
+	as.String("there", f)
 
-	_, ok = i2.Next()
+	f, r, ok = r.Split()
 	as.False(ok)
 }
 

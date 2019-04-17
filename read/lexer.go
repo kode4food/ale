@@ -9,11 +9,9 @@ import (
 	"gitlab.com/kode4food/ale/stdlib"
 )
 
+// Error messages
 const (
-	// UnmatchedState is the error returned when the lexer state is invalid
-	UnmatchedState = "unmatched lexing state"
-
-	// StringNotTerminated is returned when the lexer sees a bad string
+	UnmatchedState      = "unmatched lexing state"
 	StringNotTerminated = "string has no closing quote"
 )
 

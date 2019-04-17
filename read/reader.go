@@ -6,38 +6,24 @@ import (
 
 	"gitlab.com/kode4food/ale/api"
 	"gitlab.com/kode4food/ale/namespace"
-	"gitlab.com/kode4food/ale/stdlib"
 )
 
-const (
-	// PrefixedNotPaired is thrown when a Quote is not completed
-	PrefixedNotPaired = "end of file reached before completing %s"
-
-	// ListNotClosed is thrown when EOF is reached inside a List
-	ListNotClosed = "end of file reached with open list"
-
-	// UnmatchedListEnd is thrown if a list is ended without being started
-	UnmatchedListEnd = "encountered ')' with no open list"
-
-	// VectorNotClosed is thrown when EOF is reached inside a Vector
-	VectorNotClosed = "end of file reached with open vector"
-
-	// UnmatchedVectorEnd is thrown if a vector is ended without being started
-	UnmatchedVectorEnd = "encountered ']' with no open vector"
-
-	// MapNotClosed is thrown when EOF is reached inside a Manager
-	MapNotClosed = "end of file reached with open map"
-
-	// UnmatchedMapEnd is thrown if a list is ended without being started
-	UnmatchedMapEnd = "encountered '}' with no open map"
-
-	// MapNotPaired is thrown if a map doesn't have an even number of elements
-	MapNotPaired = "map does not contain an even number of elements"
-)
-
+// reader is a stateful iteration interface for a token stream
 type reader struct {
-	iter *stdlib.Iterator
+	seq api.Sequence
 }
+
+// Error messages
+const (
+	PrefixedNotPaired  = "end of file reached before completing %s"
+	ListNotClosed      = "end of file reached with open list"
+	UnmatchedListEnd   = "encountered ')' with no open list"
+	VectorNotClosed    = "end of file reached with open vector"
+	UnmatchedVectorEnd = "encountered ']' with no open vector"
+	MapNotClosed       = "end of file reached with open map"
+	UnmatchedMapEnd    = "encountered '}' with no open map"
+	MapNotPaired       = "map does not contain an even number of elements"
+)
 
 var (
 	keywordIdentifier = regexp.MustCompile(`^:[^(){}\[\]\s,]+`)
@@ -54,38 +40,20 @@ var (
 	}
 )
 
-// FromString converts the raw source into unexpanded data structures
-func FromString(src api.String) api.Sequence {
-	l := Scan(src)
-	return FromScanner(l)
-}
-
-// FromScanner returns a Lazy Sequence of scanned data structures
-func FromScanner(lexer api.Sequence) api.Sequence {
-	var res stdlib.LazyResolver
-	r := newReader(lexer)
-
-	res = func() (api.Value, api.Sequence, bool) {
-		if f, ok := r.nextValue(); ok {
-			return f, stdlib.NewLazySequence(res), true
-		}
-		return api.Nil, api.EmptyList, false
-	}
-
-	return stdlib.NewLazySequence(res)
-}
-
 func newReader(lexer api.Sequence) *reader {
 	return &reader{
-		iter: stdlib.Iterate(lexer),
+		seq: lexer,
 	}
 }
 
 func (r *reader) nextToken() *Token {
-	if t, ok := r.iter.Next(); ok {
-		return t.(*Token)
+	s := r.seq
+	if !s.IsSequence() {
+		return nil
 	}
-	return nil
+	f := s.First()
+	r.seq = s.Rest()
+	return f.(*Token)
 }
 
 func (r *reader) nextValue() (api.Value, bool) {
