@@ -14,8 +14,10 @@ type syntaxEnv struct {
 	genSyms   map[string]api.Symbol
 }
 
-// UnsupportedSyntaxQuote is raised when something can't be quoted
-const UnsupportedSyntaxQuote = "unsupported type in syntax quote: %s"
+// Error messages
+const (
+	UnsupportedSyntaxQuote = "unsupported type in syntax quote: %s"
+)
 
 var (
 	quoteSym  = namespace.RootSymbol("quote")

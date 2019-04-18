@@ -13,10 +13,11 @@ func getCall(v api.Value) api.Call {
 // Apply performs a parameterized function call
 func Apply(args ...api.Value) api.Value {
 	fn := getCall(args[0])
-	if len(args) == 2 {
+	al := len(args)
+	if al == 2 {
 		return fn(stdlib.SequenceToVector(args[1].(api.Sequence))...)
 	}
-	last := len(args) - 1
+	last := al - 1
 	ls := stdlib.SequenceToVector(args[last].(api.Sequence))
 	prependedArgs := append(args[1:last], ls...)
 	return fn(prependedArgs...)

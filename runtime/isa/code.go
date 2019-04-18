@@ -1,6 +1,9 @@
 package isa
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 type (
 	// Word represents the atomic unit of the ISA's code stream
@@ -72,4 +75,14 @@ func New(oc Opcode, args ...Word) *Instruction {
 		Opcode: oc,
 		Args:   args,
 	}
+}
+
+func (i *Instruction) String() string {
+	args := i.Args
+	strs := make([]string, len(args))
+	for i, a := range args {
+		strs[i] = fmt.Sprintf("%d", a)
+	}
+	joined := strings.Join(strs, ", ")
+	return fmt.Sprintf("%s(%s)", i.Opcode, joined)
 }

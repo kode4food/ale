@@ -334,13 +334,13 @@ func NewClosure(cfg *Config) api.Call {
 			case isa.Return:
 				return stack[SP+1]
 
-			case isa.ReturnNil:
+			case isa.RetNil:
 				return api.Nil
 
-			case isa.ReturnTrue:
+			case isa.RetTrue:
 				return api.True
 
-			case isa.ReturnFalse:
+			case isa.RetFalse:
 				return api.False
 
 			default:

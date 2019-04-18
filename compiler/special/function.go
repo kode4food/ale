@@ -115,7 +115,7 @@ func (fe *funcEncoder) encodeCall() {
 
 func (fe *funcEncoder) makeClosure() api.Call {
 	if len(fe.variants) == 0 {
-		fe.Append(isa.ReturnNil)
+		fe.Append(isa.RetNil)
 	} else {
 		fe.makeVariants(fe.variants)
 	}
@@ -173,7 +173,7 @@ func (fe *funcEncoder) makeCond(v *variant) {
 func (fe *funcEncoder) makeThen(v *variant) {
 	body := v.body
 	if !body.IsSequence() {
-		fe.Append(isa.ReturnNil)
+		fe.Append(isa.RetNil)
 		return
 	}
 
