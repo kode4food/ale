@@ -25,3 +25,45 @@ func TestGo(t *testing.T) {
 	<-done
 	as.True(called)
 }
+
+func TestChan(t *testing.T) {
+	as := assert.New(t)
+
+	ch := builtin.Chan().(api.Mapped)
+	emit, ok1 := ch.Get(builtin.EmitKey)
+	closeChan, ok2 := ch.Get(builtin.CloseKey)
+	seq, ok3 := ch.Get(builtin.SequenceKey)
+	as.True(ok1)
+	as.True(ok2)
+	as.True(ok3)
+
+	go func() {
+		emit.(*api.Function).Call(S("hello"))
+		closeChan.(*api.Function).Call()
+	}()
+
+	f, r, ok := seq.(api.Sequence).Split()
+	as.String("hello", f)
+	as.False(r.IsSequence())
+	as.True(ok)
+}
+
+func TestPromise(t *testing.T) {
+	as := assert.New(t)
+
+	p1 := builtin.Promise(S("with initial"))
+	as.True(builtin.IsPromise(p1))
+	res := p1.(api.Caller).Caller()()
+	as.String("with initial", res)
+
+	p2 := builtin.Promise()
+	go func() {
+		p2.(api.Caller).Caller()(S("no initial"))
+	}()
+	res = p2.(api.Caller).Caller()()
+	as.String("no initial", res)
+	as.False(builtin.IsPromise(res))
+
+	defer as.ExpectPanic("can't deliver a promise twice")
+	p1.(api.Caller).Caller()(S("new value"))
+}

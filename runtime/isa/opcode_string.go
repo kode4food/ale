@@ -60,12 +60,12 @@ func _() {
 }
 
 const (
-	_Opcode_name_0 = "AddArgArgLenBindCallCall0Call1ClosureCondJumpConstDeclareDivDupEqFalseGtGteJumpLoadLtLteMakeCallMakeTruthyModMulNegNegInfinityNegOneNeqNilNoOpNotOnePanicPopPosInfinityResolveRestArgReturnReturnFalseReturnNilReturnTrueSelfStoreSubTrueTwoZero"
+	_Opcode_name_0 = "AddArgArgLenBindCallCall0Call1ClosureCondJumpConstDeclareDivDupEqFalseGtGteJumpLoadLtLteMakeCallMakeTruthyModMulNegNegInfNegOneNeqNilNoOpNotOnePanicPopPosInfResolveRestArgReturnRetFalseRetNilRetTrueSelfStoreSubTrueTwoZero"
 	_Opcode_name_1 = "Label"
 )
 
 var (
-	_Opcode_index_0 = [...]uint8{0, 3, 6, 12, 16, 20, 25, 30, 37, 45, 50, 57, 60, 63, 65, 70, 72, 75, 79, 83, 85, 88, 96, 106, 109, 112, 115, 126, 132, 135, 138, 142, 145, 148, 153, 156, 167, 174, 181, 187, 198, 207, 217, 221, 226, 229, 233, 236, 240}
+	_Opcode_index_0 = [...]uint8{0, 3, 6, 12, 16, 20, 25, 30, 37, 45, 50, 57, 60, 63, 65, 70, 72, 75, 79, 83, 85, 88, 96, 106, 109, 112, 115, 121, 127, 130, 133, 137, 140, 143, 148, 151, 157, 164, 171, 177, 185, 191, 198, 202, 207, 210, 214, 217, 221}
 )
 
 func (i Opcode) String() string {
