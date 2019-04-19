@@ -18,6 +18,5 @@ env:
 script:
   - $GOPATH/bin/go-snapshot -pkg assets -out internal/assets/assets.go docstring/*.md bootstrap/lisp/*.lisp
   - make test
-  - $GOPATH/bin/goveralls -service=travis-ci -ignore=internal/assets/assets.go,runtime/isa/opcode_string.go,compiler/encoder/scope_string.go,api/function_string.go,api/comparison_string.go
-  
- 
+  - $GOPATH/bin/goveralls -service=travis-ci -ignore=internal/assets/assets.go,runtime/isa/opcode_string.go,compiler/encoder/scope_string.go,data/function_string.go,data/comparison_string.go
+

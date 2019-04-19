@@ -59,7 +59,7 @@ func TestBadNumbers(t *testing.T) {
 	testBadNumber(data.ExpectedInteger, "0b01109")
 	testBadNumber(data.ExpectedInteger, "123j-k")
 	testBadNumber(data.ExpectedFloat, "1.2j-k")
-	//testBadNumber(api.ExpectedRatio, "1/2p")
+	//testBadNumber(data.ExpectedRatio, "1/2p")
 }
 
 func TestCompare(t *testing.T) {
