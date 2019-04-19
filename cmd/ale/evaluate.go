@@ -5,7 +5,7 @@ import (
 	"io/ioutil"
 	"os"
 
-	"gitlab.com/kode4food/ale/api"
+	"gitlab.com/kode4food/ale/data"
 	"gitlab.com/kode4food/ale/eval"
 	"gitlab.com/kode4food/ale/namespace"
 	"gitlab.com/kode4food/ale/read"
@@ -34,8 +34,8 @@ func EvaluateFile() {
 	}
 }
 
-func evalBuffer(ns namespace.Type, src []byte) api.Value {
-	r := read.FromString(api.String(src))
+func evalBuffer(ns namespace.Type, src []byte) data.Value {
+	r := read.FromString(data.String(src))
 	return eval.Block(ns, r)
 }
 

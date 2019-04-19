@@ -3,10 +3,10 @@ package special
 import (
 	"fmt"
 
-	"gitlab.com/kode4food/ale/api"
 	"gitlab.com/kode4food/ale/compiler/arity"
 	"gitlab.com/kode4food/ale/compiler/encoder"
 	"gitlab.com/kode4food/ale/compiler/generate"
+	"gitlab.com/kode4food/ale/data"
 	"gitlab.com/kode4food/ale/macro"
 	"gitlab.com/kode4food/ale/namespace"
 	"gitlab.com/kode4food/ale/runtime/isa"
@@ -20,9 +20,9 @@ type (
 	}
 
 	variant struct {
-		args api.Names
+		args data.Names
 		rest bool
-		body api.Sequence
+		body data.Sequence
 	}
 
 	variants []*variant
@@ -34,35 +34,35 @@ const (
 )
 
 const (
-	allArgsName = api.Name("*args*")
-	restMarker  = api.Name("&")
+	allArgsName = data.Name("*args*")
+	restMarker  = data.Name("&")
 )
 
 // Fn encodes a lambda
-func Fn(e encoder.Type, args ...api.Value) {
+func Fn(e encoder.Type, args ...data.Value) {
 	name, vars := parseFunction(args)
 	fe := makeFunctionEncoder(e, name, vars)
 	arityChecker := fe.makeArityChecker()
 	fe.encodeCall()
-	generate.Literal(e, api.Call(func(args ...api.Value) api.Value {
-		return &api.Function{
-			Call:         args[0].(api.Call),
-			Convention:   api.ApplicativeCall,
+	generate.Literal(e, data.Call(func(args ...data.Value) data.Value {
+		return &data.Function{
+			Call:         args[0].(data.Call),
+			Convention:   data.ApplicativeCall,
 			ArityChecker: arityChecker,
 		}
 	}))
-	e.Append(isa.Call1)
+	e.Emit(isa.Call1)
 }
 
 // DefMacro encodes and registers a macro
-func DefMacro(e encoder.Type, args ...api.Value) {
+func DefMacro(e encoder.Type, args ...data.Value) {
 	name, vars := parseNamedFunction(args)
 	fe := makeFunctionEncoder(e, name, vars)
 	arityChecker := fe.makeArityChecker()
 	fe.encodeCall()
-	generate.Literal(e, api.Call(func(args ...api.Value) api.Value {
-		body := args[0].(api.Call)
-		wrapper := func(_ namespace.Type, args ...api.Value) api.Value {
+	generate.Literal(e, data.Call(func(args ...data.Value) data.Value {
+		body := args[0].(data.Call)
+		wrapper := func(_ namespace.Type, args ...data.Value) data.Value {
 			if err := arityChecker(len(args)); err != nil {
 				panic(err)
 			}
@@ -70,23 +70,23 @@ func DefMacro(e encoder.Type, args ...api.Value) {
 		}
 		return macro.Call(wrapper)
 	}))
-	e.Append(isa.Call1)
+	e.Emit(isa.Call1)
 	generate.Literal(e, fe.Name())
-	e.Append(isa.Bind)
+	e.Emit(isa.Bind)
 	generate.Literal(e, fe.Name())
 }
 
-func makeFunctionEncoder(e encoder.Type, n api.Name, v variants) *funcEncoder {
+func makeFunctionEncoder(e encoder.Type, n data.Name, v variants) *funcEncoder {
 	child := makeChildEncoder(e, n)
 	res := &funcEncoder{
 		Type:     child,
 		variants: v,
 	}
-	res.PushArgs(api.Names{allArgsName}, true)
+	res.PushArgs(data.Names{allArgsName}, true)
 	return res
 }
 
-func makeChildEncoder(e encoder.Type, n api.Name) encoder.Type {
+func makeChildEncoder(e encoder.Type, n data.Name) encoder.Type {
 	if n != "" {
 		return e.NamedChild(n)
 	}
@@ -106,15 +106,15 @@ func (fe *funcEncoder) encodeCall() {
 	idx := e.AddConstant(fn)
 	for i := nl - 1; i >= 0; i-- {
 		name := names[i]
-		generate.Symbol(e, api.NewLocalSymbol(name))
+		generate.Symbol(e, data.NewLocalSymbol(name))
 	}
-	e.Append(isa.Const, idx)
-	e.Append(isa.Call, isa.Count(nl))
+	e.Emit(isa.Const, idx)
+	e.Emit(isa.Call, isa.Count(nl))
 }
 
-func (fe *funcEncoder) makeClosure() api.Call {
+func (fe *funcEncoder) makeClosure() data.Call {
 	if len(fe.variants) == 0 {
-		fe.Append(isa.RetNil)
+		fe.Emit(isa.RetNil)
 	} else {
 		fe.makeVariants(fe.variants)
 	}
@@ -129,8 +129,8 @@ func (fe *funcEncoder) makeClosure() api.Call {
 
 func (fe *funcEncoder) makeVariants(vars variants) {
 	if len(vars) == 0 {
-		generate.Literal(fe, api.String("no matching argument pattern"))
-		fe.Append(isa.Panic)
+		generate.Literal(fe, data.String("no matching argument pattern"))
+		fe.Emit(isa.Panic)
 		return
 	}
 
@@ -142,7 +142,7 @@ func (fe *funcEncoder) makeVariants(vars variants) {
 	)
 }
 
-func (fe *funcEncoder) makeArityChecker() api.ArityChecker {
+func (fe *funcEncoder) makeArityChecker() data.ArityChecker {
 	v0 := fe.variants[0]
 	lower, upper := v0.arityRange()
 	for _, s := range fe.variants[1:] {
@@ -158,60 +158,60 @@ func (fe *funcEncoder) makeArityChecker() api.ArityChecker {
 }
 
 func (fe *funcEncoder) makeCond(v *variant) {
-	fe.Append(isa.ArgLen)
+	fe.Emit(isa.ArgLen)
 	al := len(v.args)
 	if v.rest {
-		generate.Literal(fe, api.Integer(al-1))
-		fe.Append(isa.Gte)
+		generate.Literal(fe, data.Integer(al-1))
+		fe.Emit(isa.Gte)
 		return
 	}
-	generate.Literal(fe, api.Integer(al))
-	fe.Append(isa.Eq)
+	generate.Literal(fe, data.Integer(al))
+	fe.Emit(isa.Eq)
 }
 
 func (fe *funcEncoder) makeThen(v *variant) {
 	body := v.body
 	if !body.IsSequence() {
-		fe.Append(isa.RetNil)
+		fe.Emit(isa.RetNil)
 		return
 	}
 
 	fe.PushArgs(v.args, v.rest)
 	fe.PushLocals()
 	generate.Block(fe, v.body)
-	fe.Append(isa.Return)
+	fe.Emit(isa.Return)
 	fe.PopLocals()
 	fe.PopArgs()
 }
 
-func parseNamedFunction(args api.Vector) (api.Name, variants) {
-	name := args[0].(api.LocalSymbol).Name()
+func parseNamedFunction(args data.Vector) (data.Name, variants) {
+	name := args[0].(data.LocalSymbol).Name()
 	vars := parseFunctionVariants(args[1:])
 	return name, vars
 }
 
-func parseFunction(args api.Vector) (api.Name, variants) {
+func parseFunction(args data.Vector) (data.Name, variants) {
 	name, r := parseOptionalName(args)
 	vars := parseFunctionVariants(r)
 	return name, vars
 }
 
-func parseOptionalName(args api.Vector) (api.Name, api.Vector) {
-	if s, ok := args[0].(api.Symbol); ok {
-		ls := s.(api.LocalSymbol)
+func parseOptionalName(args data.Vector) (data.Name, data.Vector) {
+	if s, ok := args[0].(data.Symbol); ok {
+		ls := s.(data.LocalSymbol)
 		return ls.Name(), args[1:]
 	}
 	return "", args
 }
 
-func (v *variant) fixedArgs() api.Names {
+func (v *variant) fixedArgs() data.Names {
 	if v.rest {
 		return v.args[0 : len(v.args)-1]
 	}
 	return v.args
 }
 
-func (v *variant) restArg() (api.Name, bool) {
+func (v *variant) restArg() (data.Name, bool) {
 	if v.rest {
 		return v.args[len(v.args)-1], true
 	}
@@ -226,22 +226,22 @@ func (v *variant) arityRange() (int, int) {
 	return fl, fl
 }
 
-func parseFunctionVariants(s api.Sequence) variants {
-	if _, ok := s.First().(api.Vector); ok {
+func parseFunctionVariants(s data.Sequence) variants {
+	if _, ok := s.First().(data.Vector); ok {
 		v := parseFunctionVariant(s)
 		return variants{v}
 	}
 	var res variants
 	for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {
-		v := parseFunctionVariant(f.(*api.List))
+		v := parseFunctionVariant(f.(*data.List))
 		res = append(res, v)
 	}
 	return res
 }
 
-func parseFunctionVariant(s api.Sequence) *variant {
+func parseFunctionVariant(s data.Sequence) *variant {
 	f, body, _ := s.Split()
-	argNames, restArg := parseArgNames(f.(api.Vector))
+	argNames, restArg := parseArgNames(f.(data.Vector))
 	return &variant{
 		args: argNames,
 		rest: restArg,
@@ -249,10 +249,10 @@ func parseFunctionVariant(s api.Sequence) *variant {
 	}
 }
 
-func parseArgNames(s api.Sequence) (api.Names, bool) {
-	var an api.Names
+func parseArgNames(s data.Sequence) (data.Names, bool) {
+	var an data.Names
 	for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {
-		n := f.(api.LocalSymbol).Name()
+		n := f.(data.LocalSymbol).Name()
 		if n == restMarker {
 			rn := parseRestArg(r)
 			return append(an, rn), true
@@ -262,9 +262,9 @@ func parseArgNames(s api.Sequence) (api.Names, bool) {
 	return an, false
 }
 
-func parseRestArg(s api.Sequence) api.Name {
+func parseRestArg(s data.Sequence) data.Name {
 	if f, r, ok := s.Split(); ok {
-		n := f.(api.Symbol).Name()
+		n := f.(data.Symbol).Name()
 		if n != restMarker && !r.IsSequence() {
 			return n
 		}

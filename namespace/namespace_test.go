@@ -3,7 +3,7 @@ package namespace_test
 import (
 	"testing"
 
-	"gitlab.com/kode4food/ale/api"
+	"gitlab.com/kode4food/ale/data"
 	"gitlab.com/kode4food/ale/internal/assert"
 	"gitlab.com/kode4food/ale/namespace"
 )
@@ -13,24 +13,24 @@ func TestChaining(t *testing.T) {
 
 	manager := namespace.NewManager()
 	root := manager.GetRoot()
-	root.Bind(api.Name("in-parent"), api.True)
+	root.Bind(data.Name("in-parent"), data.True)
 
 	ns := manager.GetAnonymous()
-	ns.Bind(api.Name("in-child"), api.True)
+	ns.Bind(data.Name("in-child"), data.True)
 
-	v1, ok := ns.Resolve(api.Name("in-parent"))
+	v1, ok := ns.Resolve(data.Name("in-parent"))
 	as.True(ok)
 	as.True(v1)
 
-	v2, ok := ns.Resolve(api.Name("in-child"))
+	v2, ok := ns.Resolve(data.Name("in-child"))
 	as.True(ok)
 	as.True(v2)
 
-	v3, ok := root.Resolve(api.Name("in-child"))
+	v3, ok := root.Resolve(data.Name("in-child"))
 	as.False(ok)
 	as.Nil(v3)
 
-	s1 := api.NewLocalSymbol("in-parent")
+	s1 := data.NewLocalSymbol("in-parent")
 	v4, ok := namespace.ResolveSymbol(ns, s1)
 	as.True(ok)
 	as.True(v4)
@@ -39,7 +39,7 @@ func TestChaining(t *testing.T) {
 	as.True(ok)
 	as.True(v5)
 
-	s2 := api.NewLocalSymbol("in-child")
+	s2 := data.NewLocalSymbol("in-child")
 	v6, ok := namespace.ResolveSymbol(ns, s2)
 	as.True(ok)
 	as.True(v6)

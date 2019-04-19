@@ -3,8 +3,8 @@ package main_test
 import (
 	"testing"
 
-	"gitlab.com/kode4food/ale/api"
 	main "gitlab.com/kode4food/ale/cmd/ale"
+	"gitlab.com/kode4food/ale/data"
 	"gitlab.com/kode4food/ale/internal/assert"
 )
 
@@ -15,8 +15,8 @@ func TestREPL(t *testing.T) {
 	as.NotNil(r)
 }
 
-func asFunction(as *assert.Wrapper, v api.Value) api.Call {
-	if f, ok := v.(*api.Function); ok {
+func asFunction(as *assert.Wrapper, v data.Value) data.Call {
+	if f, ok := v.(*data.Function); ok {
 		return f.Call
 	}
 	as.Fail("value is not a function")
@@ -32,7 +32,7 @@ func TestBuiltInUse(t *testing.T) {
 	as.NotNil(v)
 	use := asFunction(as, v)
 
-	nsName := api.NewLocalSymbol("test-ns")
+	nsName := data.NewLocalSymbol("test-ns")
 	nothing := use(nsName)
 	as.NotNil(nothing)
 

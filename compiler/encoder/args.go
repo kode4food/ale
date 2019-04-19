@@ -1,20 +1,20 @@
 package encoder
 
 import (
-	"gitlab.com/kode4food/ale/api"
+	"gitlab.com/kode4food/ale/data"
 	"gitlab.com/kode4food/ale/runtime/isa"
 )
 
 type (
 	argsInfo struct {
-		names api.Names
+		names data.Names
 		rest  bool
 	}
 
 	argsStack []*argsInfo
 )
 
-func (e *encoder) PushArgs(names api.Names, rest bool) {
+func (e *encoder) PushArgs(names data.Names, rest bool) {
 	e.args = append(e.args, &argsInfo{
 		names: names,
 		rest:  rest,
@@ -27,7 +27,7 @@ func (e *encoder) PopArgs() {
 	e.args = args[0 : al-1]
 }
 
-func (e *encoder) ResolveArg(l api.LocalSymbol) (isa.Index, bool, bool) {
+func (e *encoder) ResolveArg(l data.LocalSymbol) (isa.Index, bool, bool) {
 	lookup := l.Name()
 	args := e.args
 	for i := len(args) - 1; i >= 0; i-- {
@@ -39,7 +39,7 @@ func (e *encoder) ResolveArg(l api.LocalSymbol) (isa.Index, bool, bool) {
 	return 0, false, false
 }
 
-func (a *argsInfo) resolveArg(lookup api.Name) (isa.Index, bool, bool) {
+func (a *argsInfo) resolveArg(lookup data.Name) (isa.Index, bool, bool) {
 	for idx, n := range a.names {
 		if n == lookup {
 			nl := len(a.names)

@@ -14,9 +14,9 @@ func Branch(e encoder.Type, cond, thenBranch, elseBranch Builder) {
 	endLabel := e.NewLabel()
 
 	cond()
-	e.Append(isa.CondJump, thenLabel)
+	e.Emit(isa.CondJump, thenLabel)
 	elseBranch()
-	e.Append(isa.Jump, endLabel)
+	e.Emit(isa.Jump, endLabel)
 	thenLabel.DropAnchor()
 	thenBranch()
 	endLabel.DropAnchor()

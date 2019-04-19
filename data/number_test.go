@@ -1,10 +1,10 @@
-package api_test
+package data_test
 
 import (
 	"fmt"
 	"testing"
 
-	"gitlab.com/kode4food/ale/api"
+	"gitlab.com/kode4food/ale/data"
 	"gitlab.com/kode4food/ale/internal/assert"
 	. "gitlab.com/kode4food/ale/internal/assert/helpers"
 )
@@ -12,23 +12,23 @@ import (
 func TestParseFloat(t *testing.T) {
 	as := assert.New(t)
 
-	n1 := api.ParseFloat("12.8")
+	n1 := data.ParseFloat("12.8")
 	n2 := F(12.8)
 	as.Equal(n1, n2)
 
-	defer as.ExpectPanic(fmt.Sprintf(api.ExpectedFloat, S(`'splosion!`)))
-	api.ParseFloat("'splosion!")
+	defer as.ExpectPanic(fmt.Sprintf(data.ExpectedFloat, S(`'splosion!`)))
+	data.ParseFloat("'splosion!")
 }
 
 func TestParseInteger(t *testing.T) {
 	as := assert.New(t)
 
-	n3 := api.ParseInteger("37")
+	n3 := data.ParseInteger("37")
 	n4 := I(37)
 	as.Equal(n3, n4)
 
-	defer as.ExpectPanic(fmt.Sprintf(api.ExpectedInteger, S(`'splosion!`)))
-	api.ParseInteger("'splosion!")
+	defer as.ExpectPanic(fmt.Sprintf(data.ExpectedInteger, S(`'splosion!`)))
+	data.ParseInteger("'splosion!")
 }
 
 func TestEqualTo(t *testing.T) {
@@ -37,44 +37,44 @@ func TestEqualTo(t *testing.T) {
 	n2 := F(20.0)
 	n5 := F(25.75)
 
-	as.Compare(api.EqualTo, n1, n2)
-	as.Compare(api.EqualTo, n2, n1)
-	as.Compare(api.EqualTo, n1, n1)
-	as.Compare(api.EqualTo, n5, n5)
+	as.Compare(data.EqualTo, n1, n2)
+	as.Compare(data.EqualTo, n2, n1)
+	as.Compare(data.EqualTo, n1, n1)
+	as.Compare(data.EqualTo, n5, n5)
 }
 
 func TestLessThan(t *testing.T) {
 	as := assert.New(t)
-	n1 := api.ParseFloat("12.8")
+	n1 := data.ParseFloat("12.8")
 	n2 := F(12.9)
 	n3 := I(20)
 	n4 := F(20.0)
 	n5 := F(25.75)
 	n6 := I(25)
 
-	as.Compare(api.LessThan, n1, n2)
-	as.Compare(api.LessThan, n1, n3)
-	as.Compare(api.LessThan, n2, n3)
-	as.Compare(api.LessThan, n2, n4)
-	as.Compare(api.LessThan, n3, n5)
-	as.Compare(api.LessThan, n3, n6)
+	as.Compare(data.LessThan, n1, n2)
+	as.Compare(data.LessThan, n1, n3)
+	as.Compare(data.LessThan, n2, n3)
+	as.Compare(data.LessThan, n2, n4)
+	as.Compare(data.LessThan, n3, n5)
+	as.Compare(data.LessThan, n3, n6)
 }
 
 func TestGreaterThan(t *testing.T) {
 	as := assert.New(t)
-	n1 := api.ParseFloat("12.8")
+	n1 := data.ParseFloat("12.8")
 	n2 := F(12.9)
 	n3 := I(20)
 	n4 := F(20.0)
 	n5 := F(25.75)
 	n6 := I(25)
 
-	as.Compare(api.GreaterThan, n2, n1)
-	as.Compare(api.GreaterThan, n3, n1)
-	as.Compare(api.GreaterThan, n3, n2)
-	as.Compare(api.GreaterThan, n4, n2)
-	as.Compare(api.GreaterThan, n5, n3)
-	as.Compare(api.GreaterThan, n6, n3)
+	as.Compare(data.GreaterThan, n2, n1)
+	as.Compare(data.GreaterThan, n3, n1)
+	as.Compare(data.GreaterThan, n3, n2)
+	as.Compare(data.GreaterThan, n4, n2)
+	as.Compare(data.GreaterThan, n5, n3)
+	as.Compare(data.GreaterThan, n6, n3)
 }
 
 func TestMultiplication(t *testing.T) {
@@ -150,7 +150,7 @@ func TestSubtraction(t *testing.T) {
 
 func TestStringifyNumbers(t *testing.T) {
 	as := assert.New(t)
-	n1 := api.ParseFloat("12.8")
+	n1 := data.ParseFloat("12.8")
 	n2 := F(12.9)
 	n3 := F(20)
 

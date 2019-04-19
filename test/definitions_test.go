@@ -21,9 +21,9 @@ func TestFunction(t *testing.T) {
 }
 
 func TestBadFunction(t *testing.T) {
-	symErr := interfaceErr("api.Integer", "api.LocalSymbol", "LocalSymbol")
-	listErr := typeErr("api.Integer", "*api.List")
-	vecErr := typeErr("api.Integer", "api.Vector")
+	symErr := interfaceErr("data.Integer", "data.LocalSymbol", "LocalSymbol")
+	listErr := typeErr("data.Integer", "*data.List")
+	vecErr := typeErr("data.Integer", "data.Vector")
 
 	testBadCode(t, `(defn blah [name 99 bad] (name))`, symErr)
 	testBadCode(t, `(defn blah 99 (name))`, listErr)

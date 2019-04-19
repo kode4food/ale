@@ -3,8 +3,8 @@ package builtin_test
 import (
 	"testing"
 
-	"gitlab.com/kode4food/ale/api"
 	"gitlab.com/kode4food/ale/bootstrap/builtin"
+	"gitlab.com/kode4food/ale/data"
 	"gitlab.com/kode4food/ale/internal/assert"
 	. "gitlab.com/kode4food/ale/internal/assert/helpers"
 )
@@ -12,7 +12,7 @@ import (
 func TestRead(t *testing.T) {
 	as := assert.New(t)
 
-	r1 := builtin.Read(S("[1 2 3]")).(api.Vector)
+	r1 := builtin.Read(S("[1 2 3]")).(data.Vector)
 
 	v2, ok := r1.ElementAt(0)
 	as.True(ok)
@@ -47,14 +47,14 @@ func TestRecover(t *testing.T) {
 	as := assert.New(t)
 	var triggered = false
 	builtin.Recover(
-		api.Call(func(_ ...api.Value) api.Value {
+		data.Call(func(_ ...data.Value) data.Value {
 			builtin.Raise(S("blowed up!"))
 			return S("wrong")
 		}),
-		api.Call(func(args ...api.Value) api.Value {
+		data.Call(func(args ...data.Value) data.Value {
 			as.String("blowed up!", args[0])
 			triggered = true
-			return api.Nil
+			return data.Nil
 		}),
 	)
 	as.True(triggered)
@@ -70,13 +70,13 @@ func TestDefer(t *testing.T) {
 	}()
 
 	builtin.Defer(
-		api.Call(func(_ ...api.Value) api.Value {
+		data.Call(func(_ ...data.Value) data.Value {
 			builtin.Raise(S("blowed up!"))
 			return S("wrong")
 		}),
-		api.Call(func(_ ...api.Value) api.Value {
+		data.Call(func(_ ...data.Value) data.Value {
 			triggered = true
-			return api.Nil
+			return data.Nil
 		}),
 	)
 }

@@ -5,7 +5,7 @@ import (
 	"os"
 	"strings"
 
-	"gitlab.com/kode4food/ale/api"
+	"gitlab.com/kode4food/ale/data"
 	"gitlab.com/kode4food/ale/eval"
 	"gitlab.com/kode4food/ale/internal/assets"
 )
@@ -33,7 +33,7 @@ func (b *bootstrap) assets() {
 		if !strings.HasPrefix(filename, prefix) {
 			continue
 		}
-		src := api.String(assets.MustGet(filename))
+		src := data.String(assets.MustGet(filename))
 		eval.String(ns, src)
 	}
 }

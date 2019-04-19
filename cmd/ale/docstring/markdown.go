@@ -4,7 +4,7 @@ import (
 	"regexp"
 	"strings"
 
-	"gitlab.com/kode4food/ale/api"
+	"gitlab.com/kode4food/ale/data"
 	"gitlab.com/kode4food/ale/read"
 )
 
@@ -13,8 +13,8 @@ var keyValue = regexp.MustCompile(`^([^:]+):\s*(.*)$`)
 // ParseMarkdown parses the kind of markdown document that might be processed
 // by a static site generator. It will parse any prologue parameters into the
 // resulting object and return the remaining content as individual lines
-func ParseMarkdown(doc string) (api.Object, []string) {
-	obj := api.Object{}
+func ParseMarkdown(doc string) (data.Object, []string) {
+	obj := data.Object{}
 	lines := strings.Split(doc, "\n")
 	if strings.TrimSpace(lines[0]) != "---" {
 		return obj, lines
@@ -33,7 +33,7 @@ func ParseMarkdown(doc string) (api.Object, []string) {
 	return obj, lines[rest:]
 }
 
-func parseKeyValue(l string) (n api.Name, v api.Value, ok bool) {
+func parseKeyValue(l string) (n data.Name, v data.Value, ok bool) {
 	defer func() {
 		if rec := recover(); rec != nil {
 			ok = false
@@ -41,8 +41,8 @@ func parseKeyValue(l string) (n api.Name, v api.Value, ok bool) {
 	}()
 
 	if sm := keyValue.FindStringSubmatch(l); sm != nil {
-		name := api.Name(sm[1])
-		value := read.FromString(api.String(sm[2])).First()
+		name := data.Name(sm[1])
+		value := read.FromString(data.String(sm[2])).First()
 		return name, value, true
 	}
 	return "", nil, false

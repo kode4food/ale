@@ -3,12 +3,12 @@ package test
 import (
 	"testing"
 
-	"gitlab.com/kode4food/ale/api"
+	"gitlab.com/kode4food/ale/data"
 	. "gitlab.com/kode4food/ale/internal/assert/helpers"
 )
 
 func TestCond(t *testing.T) {
-	testCode(t, `(cond)`, api.Nil)
+	testCode(t, `(cond)`, data.Nil)
 
 	testCode(t, `
 		(cond
@@ -30,7 +30,7 @@ func TestCond(t *testing.T) {
 		(cond
 			false "goodbye"
 			nil   "nope")
-	`, api.Nil)
+	`, data.Nil)
 
 	testCode(t, `
 		(cond

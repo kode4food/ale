@@ -3,8 +3,8 @@ package eval_test
 import (
 	"testing"
 
-	"gitlab.com/kode4food/ale/api"
 	"gitlab.com/kode4food/ale/bootstrap"
+	"gitlab.com/kode4food/ale/data"
 	"gitlab.com/kode4food/ale/eval"
 	"gitlab.com/kode4food/ale/internal/assert"
 	. "gitlab.com/kode4food/ale/internal/assert/helpers"
@@ -29,7 +29,7 @@ func TestBasicEval(t *testing.T) {
 	as.Integer(1, v3)
 
 	eval.String(ns, "(def x 99)")
-	v4, ok := ns.Resolve(api.Name("x"))
+	v4, ok := ns.Resolve(data.Name("x"))
 	as.True(ok)
 	as.Integer(99, v4)
 
@@ -45,7 +45,7 @@ func TestBuiltIns(t *testing.T) {
 	b := manager.GetAnonymous()
 	ns := manager.GetRoot()
 
-	ns.Bind("hello", api.ApplicativeFunction(func(_ ...api.Value) api.Value {
+	ns.Bind("hello", data.ApplicativeFunction(func(_ ...data.Value) data.Value {
 		return S("there")
 	}))
 

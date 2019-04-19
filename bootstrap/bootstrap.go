@@ -3,9 +3,9 @@ package bootstrap
 import (
 	"os"
 
-	"gitlab.com/kode4food/ale/api"
 	"gitlab.com/kode4food/ale/bootstrap/builtin"
 	"gitlab.com/kode4food/ale/compiler/encoder"
+	"gitlab.com/kode4food/ale/data"
 	"gitlab.com/kode4food/ale/macro"
 	"gitlab.com/kode4food/ale/namespace"
 	"gitlab.com/kode4food/ale/stdlib"
@@ -19,9 +19,9 @@ type (
 		funcMap    funcMap
 	}
 
-	macroMap   map[api.Name]macro.Call
-	specialMap map[api.Name]encoder.Call
-	funcMap    map[api.Name]*api.Function
+	macroMap   map[data.Name]macro.Call
+	specialMap map[data.Name]encoder.Call
+	funcMap    map[data.Name]*data.Function
 )
 
 // Into sets up initial built-ins and assets

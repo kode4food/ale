@@ -4,19 +4,19 @@ import (
 	"bufio"
 	"io"
 
-	"gitlab.com/kode4food/ale/api"
+	"gitlab.com/kode4food/ale/data"
 )
 
 type (
 	// Reader is used to retrieve values from a File
 	Reader interface {
-		api.Sequence
+		data.Sequence
 	}
 
 	// Writer is used to emit values to a File
 	Writer interface {
-		api.Value
-		Write(api.Value)
+		data.Value
+		Write(data.Value)
 	}
 
 	// Closer is used to close a File
@@ -25,10 +25,10 @@ type (
 	}
 
 	// OutputFunc is a callback used to marshal values to a Writer
-	OutputFunc func(*bufio.Writer, api.Value)
+	OutputFunc func(*bufio.Writer, data.Value)
 
 	// InputFunc is a callback used to unmarshal values from a Reader
-	InputFunc func(*bufio.Reader) (api.Value, bool)
+	InputFunc func(*bufio.Reader) (data.Value, bool)
 
 	wrappedWriter struct {
 		writer *bufio.Writer
@@ -46,11 +46,11 @@ func NewReader(r io.Reader, i InputFunc) Reader {
 	var resolver LazyResolver
 	br := bufio.NewReader(r)
 
-	resolver = func() (api.Value, api.Sequence, bool) {
+	resolver = func() (data.Value, data.Sequence, bool) {
 		if v, ok := i(br); ok {
 			return v, NewLazySequence(resolver), true
 		}
-		return api.Nil, api.EmptyList, false
+		return data.Nil, data.EmptyList, false
 	}
 
 	return NewLazySequence(resolver)
@@ -71,7 +71,7 @@ func NewWriter(w io.Writer, o OutputFunc) Writer {
 	return wrapped
 }
 
-func (w *wrappedWriter) Write(v api.Value) {
+func (w *wrappedWriter) Write(v data.Value) {
 	w.output(w.writer, v)
 	w.writer.Flush()
 }
@@ -82,10 +82,10 @@ func (w *wrappedClosingWriter) Close() {
 }
 
 func (w *wrappedWriter) String() string {
-	return api.DumpString(w)
+	return data.DumpString(w)
 }
 
-func (w *wrappedWriter) Type() api.Name {
+func (w *wrappedWriter) Type() data.Name {
 	return "writer"
 }
 
@@ -94,26 +94,26 @@ func stringToBytes(s string) []byte {
 }
 
 // StrOutput is the standard string-based output function
-func StrOutput(w *bufio.Writer, v api.Value) {
+func StrOutput(w *bufio.Writer, v data.Value) {
 	w.Write(stringToBytes(v.String()))
 }
 
 // LineInput is the standard single line input function
-func LineInput(r *bufio.Reader) (api.Value, bool) {
+func LineInput(r *bufio.Reader) (data.Value, bool) {
 	l, err := r.ReadBytes('\n')
 	if err == nil {
-		return api.String(l[0 : len(l)-1]), true
+		return data.String(l[0 : len(l)-1]), true
 	}
 	if err == io.EOF && len(l) > 0 {
-		return api.String(l), true
+		return data.String(l), true
 	}
-	return api.Nil, false
+	return data.Nil, false
 }
 
 // RuneInput is the standard single rune input function
-func RuneInput(r *bufio.Reader) (api.Value, bool) {
+func RuneInput(r *bufio.Reader) (data.Value, bool) {
 	if c, _, err := r.ReadRune(); err == nil {
-		return api.String(string(c)), true
+		return data.String(string(c)), true
 	}
-	return api.Nil, false
+	return data.Nil, false
 }

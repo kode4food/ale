@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"gitlab.com/kode4food/ale/api"
+	"gitlab.com/kode4food/ale/data"
 	"gitlab.com/kode4food/ale/internal/assert"
 	"gitlab.com/kode4food/ale/runtime/isa"
 )
@@ -21,9 +21,9 @@ func TestCoders(t *testing.T) {
 	for i, c := range in1 {
 		out1[i] = c.Word()
 	}
-	as.Integer(99, api.Integer(out1[0]))
-	as.Integer(5, api.Integer(out1[1]))
-	as.Integer(37, api.Integer(out1[2]))
+	as.Integer(99, data.Integer(out1[0]))
+	as.Integer(5, data.Integer(out1[1]))
+	as.Integer(37, data.Integer(out1[2]))
 }
 
 func TestInstructions(t *testing.T) {

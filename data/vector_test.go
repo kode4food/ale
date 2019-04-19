@@ -1,9 +1,9 @@
-package api_test
+package data_test
 
 import (
 	"testing"
 
-	"gitlab.com/kode4food/ale/api"
+	"gitlab.com/kode4food/ale/data"
 	"gitlab.com/kode4food/ale/internal/assert"
 	. "gitlab.com/kode4food/ale/internal/assert/helpers"
 )
@@ -13,18 +13,18 @@ func TestVector(t *testing.T) {
 
 	v1 := V(S("hello"), S("how"), S("are"), S("you?"))
 	as.Integer(4, v1.Count())
-	as.Integer(4, api.Count(v1))
+	as.Integer(4, data.Count(v1))
 
 	r, ok := v1.ElementAt(2)
 	as.True(ok)
 	as.String("are", r)
 	as.String(`["hello" "how" "are" "you?"]`, v1)
 
-	v2 := v1.Prepend(S("oh")).(api.Vector)
+	v2 := v1.Prepend(S("oh")).(data.Vector)
 	as.Integer(5, v2.Count())
 	as.Integer(4, v1.Count())
 
-	v3 := v2.Conjoin(S("good?")).(api.Vector)
+	v3 := v2.Conjoin(S("good?")).(data.Vector)
 	r, ok = v3.ElementAt(5)
 	as.True(ok)
 	as.String("good?", r)
@@ -42,7 +42,7 @@ func TestVector(t *testing.T) {
 func TestEmptyVector(t *testing.T) {
 	as := assert.New(t)
 
-	v := api.EmptyVector
+	v := data.EmptyVector
 	as.Nil(v.First())
 	as.String("[]", v)
 	as.String("[]", v.Rest())

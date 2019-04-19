@@ -1,38 +1,38 @@
 package builtin
 
 import (
-	"gitlab.com/kode4food/ale/api"
+	"gitlab.com/kode4food/ale/data"
 	"gitlab.com/kode4food/ale/stdlib"
 )
 
 const (
 	// ChannelKey is the key used to identify a Channel
-	ChannelKey = api.Keyword("channel")
+	ChannelKey = data.Keyword("channel")
 
 	// EmitKey is the key used to emit to a Channel
-	EmitKey = api.Keyword("emit")
+	EmitKey = data.Keyword("emit")
 
 	// SequenceKey is the key used to retrieve the Sequence from a Channel
-	SequenceKey = api.Keyword("seq")
+	SequenceKey = data.Keyword("seq")
 )
 
-var channelPrototype = api.Object{
-	ChannelKey: api.True,
+var channelPrototype = data.Object{
+	ChannelKey: data.True,
 }
 
 // Go runs the provided function asynchronously
-func Go(args ...api.Value) api.Value {
-	fn := args[0].(api.Caller)
+func Go(args ...data.Value) data.Value {
+	fn := args[0].(data.Caller)
 	restArgs := args[1:]
 	go fn.Caller()(restArgs...)
-	return api.Nil
+	return data.Nil
 }
 
 // Chan instantiates a new go channel
-func Chan(_ ...api.Value) api.Value {
+func Chan(_ ...data.Value) data.Value {
 	e, s := stdlib.NewChannel()
 
-	return channelPrototype.Extend(api.Object{
+	return channelPrototype.Extend(data.Object{
 		EmitKey:     bindWriter(e),
 		CloseKey:    bindCloser(e),
 		SequenceKey: s,
@@ -40,7 +40,7 @@ func Chan(_ ...api.Value) api.Value {
 }
 
 // Promise instantiates a new eventually-fulfilled promise
-func Promise(args ...api.Value) api.Value {
+func Promise(args ...data.Value) data.Value {
 	if len(args) == 0 {
 		return stdlib.NewPromise()
 	}
@@ -50,7 +50,7 @@ func Promise(args ...api.Value) api.Value {
 }
 
 // IsPromise returns whether or not the specified value is a promise
-func IsPromise(args ...api.Value) api.Value {
+func IsPromise(args ...data.Value) data.Value {
 	_, ok := args[0].(stdlib.Promise)
-	return api.Bool(ok)
+	return data.Bool(ok)
 }

@@ -3,7 +3,7 @@ package test
 import (
 	"testing"
 
-	"gitlab.com/kode4food/ale/api"
+	"gitlab.com/kode4food/ale/data"
 	. "gitlab.com/kode4food/ale/internal/assert/helpers"
 )
 
@@ -20,7 +20,7 @@ func TestPromise(t *testing.T) {
 	testCode(t, `
 		(def p1 (promise))
 		(promise? p1)
-	`, api.True)
+	`, data.True)
 
 	testCode(t, `
 		(def p2 (promise "hello"))

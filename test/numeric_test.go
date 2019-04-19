@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"gitlab.com/kode4food/ale/api"
+	"gitlab.com/kode4food/ale/data"
 	. "gitlab.com/kode4food/ale/internal/assert/helpers"
 )
 
@@ -31,20 +31,20 @@ func TestNestedNumber(t *testing.T) {
 }
 
 func TestNonNumber(t *testing.T) {
-	testCode(t, `(is-pos-inf (/ 99.0 0))`, api.True)
-	testCode(t, `(is-pos-inf 99)`, api.False)
-	testCode(t, `(is-pos-inf "hello")`, api.False)
+	testCode(t, `(is-pos-inf (/ 99.0 0))`, data.True)
+	testCode(t, `(is-pos-inf 99)`, data.False)
+	testCode(t, `(is-pos-inf "hello")`, data.False)
 
-	testCode(t, `(is-neg-inf (/ -99.0 0))`, api.True)
-	testCode(t, `(is-neg-inf -99)`, api.False)
-	testCode(t, `(is-neg-inf "hello")`, api.False)
+	testCode(t, `(is-neg-inf (/ -99.0 0))`, data.True)
+	testCode(t, `(is-neg-inf -99)`, data.False)
+	testCode(t, `(is-neg-inf "hello")`, data.False)
 
-	testCode(t, `(is-nan 99)`, api.False)
-	testCode(t, `(is-nan "hello")`, api.False)
+	testCode(t, `(is-nan 99)`, data.False)
+	testCode(t, `(is-nan "hello")`, data.False)
 }
 
 func TestBadMaths(t *testing.T) {
-	e := interfaceErr("api.String", "api.Number", "Add")
+	e := interfaceErr("data.String", "data.Number", "Add")
 
 	testBadCode(t, `(+ 99 "hello")`, e)
 	testBadCode(t, `(+ "hello")`, e)
@@ -52,48 +52,48 @@ func TestBadMaths(t *testing.T) {
 
 func TestBadNumbers(t *testing.T) {
 	testBadNumber := func(err string, ns string) {
-		testBadCode(t, ns, fmt.Errorf(err, api.String(ns)))
+		testBadCode(t, ns, fmt.Errorf(err, data.String(ns)))
 	}
 
-	testBadNumber(api.ExpectedInteger, "0xfkk")
-	testBadNumber(api.ExpectedInteger, "0b01109")
-	testBadNumber(api.ExpectedInteger, "123j-k")
-	testBadNumber(api.ExpectedFloat, "1.2j-k")
+	testBadNumber(data.ExpectedInteger, "0xfkk")
+	testBadNumber(data.ExpectedInteger, "0b01109")
+	testBadNumber(data.ExpectedInteger, "123j-k")
+	testBadNumber(data.ExpectedFloat, "1.2j-k")
 	//testBadNumber(api.ExpectedRatio, "1/2p")
 }
 
 func TestCompare(t *testing.T) {
-	testCode(t, `(= 1 1)`, api.True)
-	testCode(t, `(= 1 1 1 1 '1 1 1)`, api.True)
-	testCode(t, `(= 1 2)`, api.False)
-	testCode(t, `(= 1 1 1 1 2 1 1 1)`, api.False)
+	testCode(t, `(= 1 1)`, data.True)
+	testCode(t, `(= 1 1 1 1 '1 1 1)`, data.True)
+	testCode(t, `(= 1 2)`, data.False)
+	testCode(t, `(= 1 1 1 1 2 1 1 1)`, data.False)
 
-	testCode(t, `(!= 1 1)`, api.False)
-	testCode(t, `(!= 1 1 1 1 '1 1 1)`, api.False)
-	testCode(t, `(!= 1 2)`, api.True)
-	testCode(t, `(!= 1 1 1 1 2 1 1 1)`, api.True)
+	testCode(t, `(!= 1 1)`, data.False)
+	testCode(t, `(!= 1 1 1 1 '1 1 1)`, data.False)
+	testCode(t, `(!= 1 2)`, data.True)
+	testCode(t, `(!= 1 1 1 1 2 1 1 1)`, data.True)
 
-	testCode(t, `(> 1 1)`, api.False)
-	testCode(t, `(> 2 1)`, api.True)
-	testCode(t, `(> 1 2)`, api.False)
-	testCode(t, `(> 1 2 3 4 5)`, api.False)
-	testCode(t, `(> 5 4 3 2 1)`, api.True)
-	testCode(t, `(>= 1 1)`, api.True)
-	testCode(t, `(>= 0 1)`, api.False)
-	testCode(t, `(>= 1 0)`, api.True)
+	testCode(t, `(> 1 1)`, data.False)
+	testCode(t, `(> 2 1)`, data.True)
+	testCode(t, `(> 1 2)`, data.False)
+	testCode(t, `(> 1 2 3 4 5)`, data.False)
+	testCode(t, `(> 5 4 3 2 1)`, data.True)
+	testCode(t, `(>= 1 1)`, data.True)
+	testCode(t, `(>= 0 1)`, data.False)
+	testCode(t, `(>= 1 0)`, data.True)
 
-	testCode(t, `(< 1 1)`, api.False)
-	testCode(t, `(< 2 1)`, api.False)
-	testCode(t, `(< 1 2)`, api.True)
-	testCode(t, `(< 1 2 3 4 5)`, api.True)
-	testCode(t, `(< 5 4 3 2 1)`, api.False)
-	testCode(t, `(<= 1 1)`, api.True)
-	testCode(t, `(<= 0 1)`, api.True)
-	testCode(t, `(<= 1 0)`, api.False)
+	testCode(t, `(< 1 1)`, data.False)
+	testCode(t, `(< 2 1)`, data.False)
+	testCode(t, `(< 1 2)`, data.True)
+	testCode(t, `(< 1 2 3 4 5)`, data.True)
+	testCode(t, `(< 5 4 3 2 1)`, data.False)
+	testCode(t, `(<= 1 1)`, data.True)
+	testCode(t, `(<= 0 1)`, data.True)
+	testCode(t, `(<= 1 0)`, data.False)
 }
 
 func TestBadCompare(t *testing.T) {
-	e := interfaceErr("api.String", "api.Number", "Add")
+	e := interfaceErr("data.String", "data.Number", "Add")
 	testBadCode(t, `(< 99 "hello")`, e)
 	testBadCode(t, `(< "hello" "there")`, e)
 }

@@ -4,13 +4,13 @@ import (
 	"fmt"
 	"strings"
 
-	"gitlab.com/kode4food/ale/api"
+	"gitlab.com/kode4food/ale/data"
 	"gitlab.com/kode4food/ale/internal/assets"
 )
 
 const (
 	prefix = "docstring/"
-	names  = api.Name("names")
+	names  = data.Name("names")
 )
 
 var cache = map[string]string{}
@@ -41,7 +41,7 @@ func ensureCache() {
 			doc := string(assets.MustGet(filename))
 			meta, _ := ParseMarkdown(doc)
 			if names, ok := meta.Get(names); ok {
-				for _, name := range names.(api.Vector) {
+				for _, name := range names.(data.Vector) {
 					cache[name.String()] = doc
 				}
 			} else {

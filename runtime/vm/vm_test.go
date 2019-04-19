@@ -3,21 +3,21 @@ package vm_test
 import (
 	"testing"
 
-	"gitlab.com/kode4food/ale/api"
+	"gitlab.com/kode4food/ale/data"
 	"gitlab.com/kode4food/ale/internal/assert"
 	. "gitlab.com/kode4food/ale/internal/assert/helpers"
 	"gitlab.com/kode4food/ale/runtime/isa"
 	"gitlab.com/kode4food/ale/runtime/vm"
 )
 
-var constants = api.Values{
+var constants = data.Values{
 	I(5),
 	I(6),
 	S("a thrown error"),
-	api.Call(numLoopSum),
+	data.Call(numLoopSum),
 }
 
-func makeCode(coders []isa.Coder) api.Call {
+func makeCode(coders []isa.Coder) data.Call {
 	code := make([]isa.Word, len(coders))
 	for i, c := range coders {
 		code[i] = c.Word()
@@ -27,15 +27,15 @@ func makeCode(coders []isa.Coder) api.Call {
 		Constants: constants,
 		StackSize: 16,
 	})
-	return exec(S("closure")).(api.Call)
+	return exec(S("closure")).(data.Call)
 }
 
-func runCode(coders []isa.Coder) api.Value {
+func runCode(coders []isa.Coder) data.Value {
 	fn := makeCode(coders)
 	return fn(S("arg"))
 }
 
-func testResult(t *testing.T, res api.Value, code []isa.Coder) {
+func testResult(t *testing.T, res data.Value, code []isa.Coder) {
 	as := assert.New(t)
 	r := runCode(code)
 	as.Equal(res, r)

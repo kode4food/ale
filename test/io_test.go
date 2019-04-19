@@ -4,9 +4,9 @@ import (
 	"bytes"
 	"testing"
 
-	"gitlab.com/kode4food/ale/api"
 	"gitlab.com/kode4food/ale/bootstrap"
 	"gitlab.com/kode4food/ale/bootstrap/builtin"
+	"gitlab.com/kode4food/ale/data"
 	"gitlab.com/kode4food/ale/eval"
 	"gitlab.com/kode4food/ale/internal/assert"
 	"gitlab.com/kode4food/ale/namespace"
@@ -15,8 +15,8 @@ import (
 
 const stdoutName = "*out*"
 
-func bindWrite(w stdlib.Writer) api.Call {
-	return func(args ...api.Value) api.Value {
+func bindWrite(w stdlib.Writer) data.Call {
+	return func(args ...data.Value) data.Value {
 		for _, af := range args {
 			w.Write(af)
 		}
@@ -32,14 +32,14 @@ func testOutput(t *testing.T, src, expected string) {
 
 	manager := namespace.NewManager()
 	ns := manager.GetRoot()
-	ns.Bind(stdoutName, api.Object{
+	ns.Bind(stdoutName, data.Object{
 		builtin.WriterKey: w,
 		builtin.WriteKey:  bindWrite(w),
 	})
 	bootstrap.Into(manager)
 
 	anon := manager.GetAnonymous()
-	eval.String(anon, api.String(src))
+	eval.String(anon, data.String(src))
 
 	as.String(expected, buf.String())
 }

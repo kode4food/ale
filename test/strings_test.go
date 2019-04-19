@@ -3,7 +3,7 @@ package test
 import (
 	"testing"
 
-	"gitlab.com/kode4food/ale/api"
+	"gitlab.com/kode4food/ale/data"
 	. "gitlab.com/kode4food/ale/internal/assert/helpers"
 )
 
@@ -14,11 +14,11 @@ func TestStr(t *testing.T) {
 
 	testCode(t, `
 	  (str? "hello" "there")
-	`, api.True)
+	`, data.True)
 
 	testCode(t, `
 	  (str? "hello" 99)
-	`, api.False)
+	`, data.False)
 }
 
 func TestReadableStr(t *testing.T) {

@@ -4,13 +4,13 @@ import (
 	"fmt"
 	"regexp"
 
-	"gitlab.com/kode4food/ale/api"
+	"gitlab.com/kode4food/ale/data"
 	"gitlab.com/kode4food/ale/namespace"
 )
 
 // reader is a stateful iteration interface for a token stream
 type reader struct {
-	seq api.Sequence
+	seq data.Sequence
 }
 
 // Error messages
@@ -33,14 +33,14 @@ var (
 	unquoteSym  = namespace.RootSymbol("unquote")
 	splicingSym = namespace.RootSymbol("unquote-splicing")
 
-	specialNames = map[api.Name]api.Value{
-		"true":  api.True,
-		"false": api.False,
-		"nil":   api.Nil,
+	specialNames = map[data.Name]data.Value{
+		"true":  data.True,
+		"false": data.False,
+		"nil":   data.Nil,
 	}
 )
 
-func newReader(lexer api.Sequence) *reader {
+func newReader(lexer data.Sequence) *reader {
 	return &reader{
 		seq: lexer,
 	}
@@ -56,14 +56,14 @@ func (r *reader) nextToken() *Token {
 	return f.(*Token)
 }
 
-func (r *reader) nextValue() (api.Value, bool) {
+func (r *reader) nextValue() (data.Value, bool) {
 	if t := r.nextToken(); t != nil {
 		return r.value(t), true
 	}
 	return nil, false
 }
 
-func (r *reader) value(t *Token) api.Value {
+func (r *reader) value(t *Token) data.Value {
 	switch t.Type {
 	case QuoteMarker:
 		return r.prefixed(quoteSym)
@@ -92,29 +92,29 @@ func (r *reader) value(t *Token) api.Value {
 	}
 }
 
-func (r *reader) prefixed(s api.Symbol) api.Value {
+func (r *reader) prefixed(s data.Symbol) data.Value {
 	if v, ok := r.nextValue(); ok {
-		return api.NewList(s, v)
+		return data.NewList(s, v)
 	}
 	panic(fmt.Errorf(PrefixedNotPaired, s))
 }
 
-func (r *reader) list() api.Value {
-	var handle func(t *Token) *api.List
-	var rest func() *api.List
+func (r *reader) list() data.Value {
+	var handle func(t *Token) *data.List
+	var rest func() *data.List
 
-	handle = func(t *Token) *api.List {
+	handle = func(t *Token) *data.List {
 		switch t.Type {
 		case ListEnd:
-			return api.EmptyList
+			return data.EmptyList
 		default:
 			v := r.value(t)
 			l := rest()
-			return l.Prepend(v).(*api.List)
+			return l.Prepend(v).(*data.List)
 		}
 	}
 
-	rest = func() *api.List {
+	rest = func() *data.List {
 		if t := r.nextToken(); t != nil {
 			return handle(t)
 		}
@@ -124,8 +124,8 @@ func (r *reader) list() api.Value {
 	return rest()
 }
 
-func (r *reader) vector() api.Value {
-	res := make(api.Vector, 0)
+func (r *reader) vector() data.Value {
+	res := make(data.Vector, 0)
 
 	for {
 		if t := r.nextToken(); t != nil {
@@ -142,16 +142,16 @@ func (r *reader) vector() api.Value {
 	}
 }
 
-func (r *reader) associative() api.Value {
-	res := make([]api.Vector, 0)
-	mp := make(api.Vector, 2)
+func (r *reader) associative() data.Value {
+	res := make([]data.Vector, 0)
+	mp := make(data.Vector, 2)
 
 	for idx := 0; ; idx++ {
 		if t := r.nextToken(); t != nil {
 			switch t.Type {
 			case MapEnd:
 				if idx%2 == 0 {
-					return api.NewAssociative(res...)
+					return data.NewAssociative(res...)
 				}
 				panic(fmt.Errorf(MapNotPaired))
 			default:
@@ -161,7 +161,7 @@ func (r *reader) associative() api.Value {
 				} else {
 					mp[1] = e
 					res = append(res, mp)
-					mp = make(api.Vector, 2)
+					mp = make(data.Vector, 2)
 				}
 			}
 		} else {
@@ -170,15 +170,15 @@ func (r *reader) associative() api.Value {
 	}
 }
 
-func readIdentifier(t *Token) api.Value {
-	n := api.Name(t.Value.(api.String))
+func readIdentifier(t *Token) data.Value {
+	n := data.Name(t.Value.(data.String))
 	if v, ok := specialNames[n]; ok {
 		return v
 	}
 
 	s := string(n)
 	if keywordIdentifier.MatchString(s) {
-		return api.Keyword(n[1:])
+		return data.Keyword(n[1:])
 	}
-	return api.ParseSymbol(n)
+	return data.ParseSymbol(n)
 }

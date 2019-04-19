@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"testing"
 
-	"gitlab.com/kode4food/ale/api"
 	"gitlab.com/kode4food/ale/bootstrap"
+	"gitlab.com/kode4food/ale/data"
 	"gitlab.com/kode4food/ale/eval"
 	"gitlab.com/kode4food/ale/internal/assert"
 	. "gitlab.com/kode4food/ale/internal/assert/helpers"
@@ -23,20 +23,20 @@ func interfaceErr(concrete, intf, method string) error {
 }
 
 func typeErr(concrete, expected string) error {
-	err := "interface conversion: api.Value is %s, not %s"
+	err := "interface conversion: data.Value is %s, not %s"
 	return fmt.Errorf(fmt.Sprintf(err, concrete, expected))
 }
 
-func runCode(src string) api.Value {
+func runCode(src string) data.Value {
 	if !ready {
 		bootstrap.Into(manager)
 		ready = true
 	}
 	ns := manager.GetAnonymous()
-	return eval.String(ns, api.String(src))
+	return eval.String(ns, data.String(src))
 }
 
-func testCode(t *testing.T, src string, expect api.Value) {
+func testCode(t *testing.T, src string, expect data.Value) {
 	as := assert.New(t)
 	as.Equal(expect, runCode(src))
 }
@@ -57,9 +57,9 @@ func TestDo(t *testing.T) {
 }
 
 func TestTrueFalse(t *testing.T) {
-	testCode(t, `true`, api.True)
-	testCode(t, `false`, api.False)
-	testCode(t, `nil`, api.Nil)
+	testCode(t, `true`, data.True)
+	testCode(t, `false`, data.False)
+	testCode(t, `nil`, data.Nil)
 }
 
 func TestReadEval(t *testing.T) {

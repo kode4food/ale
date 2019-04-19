@@ -3,15 +3,15 @@ package test
 import (
 	"testing"
 
-	"gitlab.com/kode4food/ale/api"
+	"gitlab.com/kode4food/ale/data"
 	. "gitlab.com/kode4food/ale/internal/assert/helpers"
 )
 
 func TestMacroPredicates(t *testing.T) {
-	testCode(t, `(macro? cond)`, api.True)
-	testCode(t, `(!macro? cond)`, api.False)
-	testCode(t, `(macro? if)`, api.False)
-	testCode(t, `(!macro? if)`, api.True)
+	testCode(t, `(macro? cond)`, data.True)
+	testCode(t, `(!macro? cond)`, data.False)
+	testCode(t, `(macro? if)`, data.False)
+	testCode(t, `(!macro? if)`, data.True)
 }
 
 func TestMacroReplace(t *testing.T) {

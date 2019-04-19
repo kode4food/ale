@@ -3,9 +3,9 @@ package bootstrap_test
 import (
 	"testing"
 
-	"gitlab.com/kode4food/ale/api"
 	"gitlab.com/kode4food/ale/bootstrap"
 	"gitlab.com/kode4food/ale/compiler/encoder"
+	"gitlab.com/kode4food/ale/data"
 	"gitlab.com/kode4food/ale/internal/assert"
 	"gitlab.com/kode4food/ale/stdlib"
 )
@@ -35,7 +35,7 @@ func TestTopLevelManager(t *testing.T) {
 	args, ok := ns.Resolve("*args*")
 	as.True(ok)
 
-	_, ok = args.(api.Vector)
+	_, ok = args.(data.Vector)
 	as.True(ok)
 }
 

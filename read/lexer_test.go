@@ -4,13 +4,13 @@ import (
 	"fmt"
 	"testing"
 
-	"gitlab.com/kode4food/ale/api"
+	"gitlab.com/kode4food/ale/data"
 	"gitlab.com/kode4food/ale/internal/assert"
 	. "gitlab.com/kode4food/ale/internal/assert/helpers"
 	"gitlab.com/kode4food/ale/read"
 )
 
-func makeToken(t read.TokenType, v api.Value) *read.Token {
+func makeToken(t read.TokenType, v data.Value) *read.Token {
 	return &read.Token{
 		Type:  t,
 		Value: v,
@@ -21,8 +21,8 @@ func assertToken(as *assert.Wrapper, like *read.Token, value *read.Token) {
 	as.Equal(like.Type, value.Type)
 }
 
-func assertTokenSequence(as *assert.Wrapper, s api.Sequence, tokens []*read.Token) {
-	var f api.Value
+func assertTokenSequence(as *assert.Wrapper, s data.Sequence, tokens []*read.Token) {
+	var f data.Value
 	var r = s
 	var ok bool
 	for _, l := range tokens {
@@ -40,7 +40,7 @@ func TestCreateLexer(t *testing.T) {
 	as := assert.New(t)
 	l := read.Scan("hello")
 	as.NotNil(l)
-	as.String(`([1 "hello"])`, api.MakeSequenceStr(l))
+	as.String(`([1 "hello"])`, data.MakeSequenceStr(l))
 }
 
 func TestWhitespace(t *testing.T) {
@@ -74,7 +74,7 @@ func TestNumbers(t *testing.T) {
 		makeToken(read.Number, F(4058634439)),
 	})
 
-	defer as.ExpectPanic(fmt.Sprintf(api.ExpectedInteger, api.String("0xffj-k")))
+	defer as.ExpectPanic(fmt.Sprintf(data.ExpectedInteger, data.String("0xffj-k")))
 	read.Scan("0xffj-k").First()
 }
 

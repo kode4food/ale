@@ -1,28 +1,28 @@
 package stdlib
 
-import "gitlab.com/kode4food/ale/api"
+import "gitlab.com/kode4food/ale/data"
 
 type (
 	// LazyResolver is used to resolve the elements of a lazy Sequence
-	LazyResolver func() (api.Value, api.Sequence, bool)
+	LazyResolver func() (data.Value, data.Sequence, bool)
 
 	lazySequence struct {
 		once     Do
 		resolver LazyResolver
 
 		isSeq  bool
-		result api.Value
-		rest   api.Sequence
+		result data.Value
+		rest   data.Sequence
 	}
 )
 
 // NewLazySequence creates a new lazy Sequence based on the provided resolver
-func NewLazySequence(r LazyResolver) api.Sequence {
+func NewLazySequence(r LazyResolver) data.Sequence {
 	return &lazySequence{
 		once:     Once(),
 		resolver: r,
-		result:   api.Nil,
-		rest:     api.EmptyList,
+		result:   data.Nil,
+		rest:     data.EmptyList,
 	}
 }
 
@@ -38,20 +38,20 @@ func (l *lazySequence) IsSequence() bool {
 	return l.resolve().isSeq
 }
 
-func (l *lazySequence) First() api.Value {
+func (l *lazySequence) First() data.Value {
 	return l.resolve().result
 }
 
-func (l *lazySequence) Rest() api.Sequence {
+func (l *lazySequence) Rest() data.Sequence {
 	return l.resolve().rest
 }
 
-func (l *lazySequence) Split() (api.Value, api.Sequence, bool) {
+func (l *lazySequence) Split() (data.Value, data.Sequence, bool) {
 	r := l.resolve()
 	return r.result, r.rest, l.isSeq
 }
 
-func (l *lazySequence) Prepend(v api.Value) api.Sequence {
+func (l *lazySequence) Prepend(v data.Value) data.Sequence {
 	return &lazySequence{
 		once:   Never(),
 		isSeq:  true,
@@ -60,10 +60,10 @@ func (l *lazySequence) Prepend(v api.Value) api.Sequence {
 	}
 }
 
-func (l *lazySequence) Type() api.Name {
+func (l *lazySequence) Type() data.Name {
 	return "lazy-sequence"
 }
 
 func (l *lazySequence) String() string {
-	return api.DumpString(l)
+	return data.DumpString(l)
 }

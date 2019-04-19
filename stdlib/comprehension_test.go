@@ -3,7 +3,7 @@ package stdlib_test
 import (
 	"testing"
 
-	"gitlab.com/kode4food/ale/api"
+	"gitlab.com/kode4food/ale/data"
 	"gitlab.com/kode4food/ale/internal/assert"
 	. "gitlab.com/kode4food/ale/internal/assert/helpers"
 	"gitlab.com/kode4food/ale/stdlib"
@@ -12,8 +12,8 @@ import (
 func TestMap(t *testing.T) {
 	as := assert.New(t)
 
-	concatTest := func(args ...api.Value) api.Value {
-		return S("this is the " + string(args[0].(api.String)))
+	concatTest := func(args ...data.Value) data.Value {
+		return S("this is the " + string(args[0].(data.String)))
 	}
 
 	l := L(S("first"), S("middle"), S("last"))
@@ -44,8 +44,8 @@ func TestMap(t *testing.T) {
 func TestMapParallel(t *testing.T) {
 	as := assert.New(t)
 
-	addTest := func(args ...api.Value) api.Value {
-		return args[0].(api.Integer) + args[1].(api.Integer)
+	addTest := func(args ...data.Value) data.Value {
+		return args[0].(data.Integer) + args[1].(data.Integer)
 	}
 
 	s1 := L(I(1), I(2), I(3), I(4))
@@ -65,8 +65,8 @@ func TestMapParallel(t *testing.T) {
 func TestFilter(t *testing.T) {
 	as := assert.New(t)
 
-	filterTest := func(args ...api.Value) api.Value {
-		return B(string(args[0].(api.String)) != "filtered out")
+	filterTest := func(args ...data.Value) data.Value {
+		return B(string(args[0].(data.String)) != "filtered out")
 	}
 
 	l := L(S("first"), S("filtered out"), S("last"))
@@ -92,13 +92,13 @@ func TestFilteredAndMapped(t *testing.T) {
 	as := assert.New(t)
 
 	l := L(S("first"), S("middle"), S("last"))
-	fn1 := func(args ...api.Value) api.Value {
-		return B(string(args[0].(api.String)) != "middle")
+	fn1 := func(args ...data.Value) data.Value {
+		return B(string(args[0].(data.String)) != "middle")
 	}
 	w1 := stdlib.Filter(l, fn1)
 
-	fn2 := func(args ...api.Value) api.Value {
-		return S("this is the " + string(args[0].(api.String)))
+	fn2 := func(args ...data.Value) data.Value {
+		return S("this is the " + string(args[0].(data.String)))
 	}
 	w2 := stdlib.Map(w1, fn2)
 
@@ -116,21 +116,21 @@ func TestConcat(t *testing.T) {
 	as := assert.New(t)
 
 	l1 := L(S("first"), S("middle"), S("last"))
-	l2 := api.EmptyList
+	l2 := data.EmptyList
 	l3 := V(I(1), I(2), I(3))
 	l4 := L(S("blah1"), S("blah2"), S("blah3"))
-	l5 := api.EmptyList
+	l5 := data.EmptyList
 
 	w1 := stdlib.Concat(l1, l2, l3, l4, l5)
 	expect := `("first" "middle" "last" 1 2 3 "blah1" "blah2" "blah3")`
-	as.String(expect, api.MakeSequenceStr(w1))
+	as.String(expect, data.MakeSequenceStr(w1))
 }
 
 func TestReduce(t *testing.T) {
 	as := assert.New(t)
 
-	add := func(args ...api.Value) api.Value {
-		return args[0].(api.Integer) + args[1].(api.Integer)
+	add := func(args ...data.Value) data.Value {
+		return args[0].(data.Integer) + args[1].(data.Integer)
 	}
 
 	as.Integer(30, stdlib.Reduce(V(I(10), I(20)), add))
@@ -142,9 +142,9 @@ func TestTakeDrop(t *testing.T) {
 	as := assert.New(t)
 
 	s1 := []string{"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"}
-	v1 := api.EmptyVector
+	v1 := data.EmptyVector
 	for _, e := range s1 {
-		v1 = v1.Conjoin(S(e)).(api.Vector)
+		v1 = v1.Conjoin(S(e)).(data.Vector)
 	}
 
 	t1 := stdlib.Take(v1, 4)
@@ -155,11 +155,11 @@ func TestTakeDrop(t *testing.T) {
 	d3 := stdlib.Drop(t3, 6)
 	d4 := stdlib.Drop(t3, 8)
 
-	as.String(`("1" "2" "3" "4")`, api.MakeSequenceStr(t1))
-	as.String(`("0" "1" "2" "3" "4")`, api.MakeSequenceStr(t2))
-	as.String(`("5" "6" "7" "8" "9" "10")`, api.MakeSequenceStr(d1))
-	as.String(`("4" "5" "6" "7" "8" "9" "10")`, api.MakeSequenceStr(d2))
-	as.String(`("5" "6" "7" "8" "9" "10")`, api.MakeSequenceStr(t3))
+	as.String(`("1" "2" "3" "4")`, data.MakeSequenceStr(t1))
+	as.String(`("0" "1" "2" "3" "4")`, data.MakeSequenceStr(t2))
+	as.String(`("5" "6" "7" "8" "9" "10")`, data.MakeSequenceStr(d1))
+	as.String(`("4" "5" "6" "7" "8" "9" "10")`, data.MakeSequenceStr(d2))
+	as.String(`("5" "6" "7" "8" "9" "10")`, data.MakeSequenceStr(t3))
 	as.False(d3.IsSequence())
 	as.False(d4.IsSequence())
 }

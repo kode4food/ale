@@ -33,6 +33,6 @@ func (l *Label) DropAnchor() {
 		panic("label has already been anchored")
 	}
 	e := l.encoder
-	e.Append(isa.Label, l.number)
+	e.Emit(isa.Label, l.number)
 	l.anchored = true
 }

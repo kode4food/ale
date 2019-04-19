@@ -1,9 +1,9 @@
-package api_test
+package data_test
 
 import (
 	"testing"
 
-	"gitlab.com/kode4food/ale/api"
+	"gitlab.com/kode4food/ale/data"
 	"gitlab.com/kode4food/ale/internal/assert"
 	. "gitlab.com/kode4food/ale/internal/assert/helpers"
 )
@@ -18,10 +18,10 @@ func TestNames(t *testing.T) {
 func TestTruthy(t *testing.T) {
 	as := assert.New(t)
 
-	as.Truthy(api.True)
+	as.Truthy(data.True)
 	as.Truthy(L(S("Hello")))
 	as.Truthy(S("hello"))
 
-	as.Falsey(api.Nil)
-	as.Falsey(api.False)
+	as.Falsey(data.Nil)
+	as.Falsey(data.False)
 }

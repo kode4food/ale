@@ -3,7 +3,7 @@ package arity
 import (
 	"fmt"
 
-	"gitlab.com/kode4food/ale/api"
+	"gitlab.com/kode4food/ale/data"
 )
 
 // Error messages
@@ -14,7 +14,7 @@ const (
 )
 
 // MakeChecker produces an arity checker based on its parameters
-func MakeChecker(arity ...int) api.ArityChecker {
+func MakeChecker(arity ...int) data.ArityChecker {
 	al := len(arity)
 	switch {
 	case al == 0:
@@ -39,7 +39,7 @@ func AssertFixed(fixed, count int) int {
 }
 
 // MakeFixedChecker generates a fixed arity checker
-func MakeFixedChecker(fixed int) api.ArityChecker {
+func MakeFixedChecker(fixed int) data.ArityChecker {
 	return func(count int) error {
 		if count != fixed {
 			return fmt.Errorf(BadFixedArity, count, fixed)
@@ -57,7 +57,7 @@ func AssertMinimum(min, count int) int {
 }
 
 // MakeMinimumChecker generates a minimum arity checker
-func MakeMinimumChecker(min int) api.ArityChecker {
+func MakeMinimumChecker(min int) data.ArityChecker {
 	return func(count int) error {
 		if count < min {
 			return fmt.Errorf(BadMinimumArity, count, min)
@@ -75,7 +75,7 @@ func AssertRanged(min, max, count int) int {
 }
 
 // MakeRangedChecker generates a ranged arity checker
-func MakeRangedChecker(min, max int) api.ArityChecker {
+func MakeRangedChecker(min, max int) data.ArityChecker {
 	return func(count int) error {
 		if count < min || count > max {
 			return fmt.Errorf(BadRangedArity, count, min, max)

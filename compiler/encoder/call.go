@@ -1,15 +1,15 @@
 package encoder
 
-import "gitlab.com/kode4food/ale/api"
+import "gitlab.com/kode4food/ale/data"
 
 // Call represents a code-generating function for the compiler
-type Call func(Type, ...api.Value)
+type Call func(Type, ...data.Value)
 
 // Type makes Call a typed value
-func (Call) Type() api.Name {
+func (Call) Type() data.Name {
 	return "Encoder"
 }
 
 func (c Call) String() string {
-	return api.DumpString(c)
+	return data.DumpString(c)
 }

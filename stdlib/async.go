@@ -6,7 +6,7 @@ import (
 	"sync"
 	"sync/atomic"
 
-	"gitlab.com/kode4food/ale/api"
+	"gitlab.com/kode4food/ale/data"
 )
 
 type (
@@ -19,13 +19,13 @@ type (
 
 	// Promise represents a Value that will eventually be resolved
 	Promise interface {
-		api.Value
-		Deliver(api.Value) api.Value
-		Resolve() api.Value
+		data.Value
+		Deliver(data.Value) data.Value
+		Resolve() data.Value
 	}
 
 	channelResult struct {
-		value api.Value
+		value data.Value
 		error interface{}
 	}
 
@@ -44,13 +44,13 @@ type (
 
 		isSeq  bool
 		result channelResult
-		rest   api.Sequence
+		rest   data.Sequence
 	}
 
 	promise struct {
 		cond  *sync.Cond
 		state uint32
-		val   api.Value
+		val   data.Value
 	}
 )
 
@@ -70,7 +70,7 @@ const (
 	channelClosed
 )
 
-var emptyResult = channelResult{value: api.Nil, error: nil}
+var emptyResult = channelResult{value: data.Nil, error: nil}
 
 func (ch *channelWrapper) Close() {
 	if status := atomic.LoadUint32(&ch.status); status != channelClosed {
@@ -80,7 +80,7 @@ func (ch *channelWrapper) Close() {
 }
 
 // NewChannel produces a Emitter and Sequence pair
-func NewChannel() (Emitter, api.Sequence) {
+func NewChannel() (Emitter, data.Sequence) {
 	seq := make(chan channelResult, 0)
 	ch := &channelWrapper{
 		seq:    seq,
@@ -104,7 +104,7 @@ func NewChannelEmitter(ch *channelWrapper) Emitter {
 }
 
 // Write will send a Value to the Go chan
-func (e *channelEmitter) Write(v api.Value) {
+func (e *channelEmitter) Write(v data.Value) {
 	if s := atomic.LoadUint32(&e.ch.status); s == channelReady {
 		e.ch.seq <- channelResult{v, nil}
 	}
@@ -116,7 +116,7 @@ func (e *channelEmitter) Write(v api.Value) {
 // Error will send an Error to the Go chan
 func (e *channelEmitter) Error(err interface{}) {
 	if s := atomic.LoadUint32(&e.ch.status); s == channelReady {
-		e.ch.seq <- channelResult{api.Nil, err}
+		e.ch.seq <- channelResult{data.Nil, err}
 	}
 	e.Close()
 }
@@ -127,21 +127,21 @@ func (e *channelEmitter) Close() {
 	e.ch.Close()
 }
 
-func (e *channelEmitter) Type() api.Name {
+func (e *channelEmitter) Type() data.Name {
 	return "channel-emitter"
 }
 
 func (e *channelEmitter) String() string {
-	return api.DumpString(e)
+	return data.DumpString(e)
 }
 
 // NewChannelSequence produces a new Sequence whose values come from a Go chan
-func NewChannelSequence(ch *channelWrapper) api.Sequence {
+func NewChannelSequence(ch *channelWrapper) data.Sequence {
 	r := &channelSequence{
 		once:   Once(),
 		ch:     ch,
 		result: emptyResult,
-		rest:   api.EmptyList,
+		rest:   data.EmptyList,
 	}
 	runtime.SetFinalizer(r, func(c *channelSequence) {
 		defer func() { recover() }()
@@ -173,20 +173,20 @@ func (c *channelSequence) IsSequence() bool {
 	return c.resolve().isSeq
 }
 
-func (c *channelSequence) First() api.Value {
+func (c *channelSequence) First() data.Value {
 	return c.resolve().result.value
 }
 
-func (c *channelSequence) Rest() api.Sequence {
+func (c *channelSequence) Rest() data.Sequence {
 	return c.resolve().rest
 }
 
-func (c *channelSequence) Split() (api.Value, api.Sequence, bool) {
+func (c *channelSequence) Split() (data.Value, data.Sequence, bool) {
 	r := c.resolve()
 	return r.result.value, r.rest, r.isSeq
 }
 
-func (c *channelSequence) Prepend(v api.Value) api.Sequence {
+func (c *channelSequence) Prepend(v data.Value) data.Sequence {
 	return &channelSequence{
 		once:   Never(),
 		isSeq:  true,
@@ -195,12 +195,12 @@ func (c *channelSequence) Prepend(v api.Value) api.Sequence {
 	}
 }
 
-func (c *channelSequence) Type() api.Name {
+func (c *channelSequence) Type() data.Name {
 	return "channel-sequence"
 }
 
 func (c *channelSequence) String() string {
-	return api.DumpString(c)
+	return data.DumpString(c)
 }
 
 // NewPromise instantiates a new Promise
@@ -211,8 +211,8 @@ func NewPromise() Promise {
 	}
 }
 
-func (p *promise) Caller() api.Call {
-	return func(args ...api.Value) api.Value {
+func (p *promise) Caller() data.Call {
+	return func(args ...data.Value) data.Value {
 		if len(args) > 0 {
 			return p.Deliver(args[0])
 		}
@@ -220,7 +220,7 @@ func (p *promise) Caller() api.Call {
 	}
 }
 
-func (p *promise) Resolve() api.Value {
+func (p *promise) Resolve() data.Value {
 	if atomic.LoadUint32(&p.state) == promiseDelivered {
 		return p.val
 	}
@@ -234,14 +234,14 @@ func (p *promise) Resolve() api.Value {
 	return p.val
 }
 
-func (p *promise) checkNewValue(v api.Value) api.Value {
+func (p *promise) checkNewValue(v data.Value) data.Value {
 	if v == p.val {
 		return p.val
 	}
 	panic(fmt.Errorf(ExpectedUndelivered))
 }
 
-func (p *promise) Deliver(v api.Value) api.Value {
+func (p *promise) Deliver(v data.Value) data.Value {
 	if atomic.LoadUint32(&p.state) == promiseDelivered {
 		return p.checkNewValue(v)
 	}
@@ -261,10 +261,10 @@ func (p *promise) Deliver(v api.Value) api.Value {
 	return p.checkNewValue(v)
 }
 
-func (p *promise) Type() api.Name {
+func (p *promise) Type() data.Name {
 	return "promise"
 }
 
 func (p *promise) String() string {
-	return api.DumpString(p)
+	return data.DumpString(p)
 }

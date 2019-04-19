@@ -4,14 +4,14 @@ import (
 	"fmt"
 	"sync"
 
-	"gitlab.com/kode4food/ale/api"
+	"gitlab.com/kode4food/ale/data"
 )
 
 type (
 	// Manager maintains a mapping of domain names to namespaces
 	Manager struct {
 		sync.RWMutex
-		data map[api.Name]Type
+		data map[data.Name]Type
 	}
 
 	// Resolver resolves a namespace instance
@@ -25,26 +25,26 @@ const (
 
 const (
 	// RootDomain stores built-ins
-	RootDomain = api.Name("ale")
+	RootDomain = data.Name("ale")
 
 	// AnonymousDomain identifies an anonymous namespace
-	AnonymousDomain = api.Name("*anon*")
+	AnonymousDomain = data.Name("*anon*")
 )
 
 // RootSymbol returns a symbol qualified by the root domain
-func RootSymbol(name api.Name) api.Symbol {
-	return api.NewQualifiedSymbol(name, RootDomain)
+func RootSymbol(name data.Name) data.Symbol {
+	return data.NewQualifiedSymbol(name, RootDomain)
 }
 
 // NewManager creates a new synchronous namespace map
 func NewManager() *Manager {
 	return &Manager{
-		data: map[api.Name]Type{},
+		data: map[data.Name]Type{},
 	}
 }
 
 // New constructs a new namespace
-func (m *Manager) New(n api.Name) Type {
+func (m *Manager) New(n data.Name) Type {
 	return &namespace{
 		manager: m,
 		entries: entries{},
@@ -53,7 +53,7 @@ func (m *Manager) New(n api.Name) Type {
 }
 
 // Get returns a mapped namespace or instantiates a new one to be cached
-func (m *Manager) Get(domain api.Name, res Resolver) Type {
+func (m *Manager) Get(domain data.Name, res Resolver) Type {
 	m.RLock()
 	r, ok := m.data[domain]
 	m.RUnlock()
@@ -87,7 +87,7 @@ func (m *Manager) GetAnonymous() Type {
 }
 
 // GetQualified returns the namespace for the specified domain.
-func (m *Manager) GetQualified(n api.Name) Type {
+func (m *Manager) GetQualified(n data.Name) Type {
 	root := m.GetRoot()
 	if n == RootDomain {
 		return root
@@ -100,9 +100,9 @@ func (m *Manager) GetQualified(n api.Name) Type {
 // ResolveSymbol attempts to resolve a symbol. If it's a qualified symbol,
 // it will be retrieved directly from the identified namespace. Otherwise
 // it will be searched in the current namespace
-func ResolveSymbol(ns Type, s api.Symbol) (api.Value, bool) {
+func ResolveSymbol(ns Type, s data.Symbol) (data.Value, bool) {
 	manager := ns.Manager()
-	if q, ok := s.(api.QualifiedSymbol); ok {
+	if q, ok := s.(data.QualifiedSymbol); ok {
 		qns := manager.GetQualified(q.Domain())
 		return qns.Resolve(q.Name())
 	}
@@ -110,7 +110,7 @@ func ResolveSymbol(ns Type, s api.Symbol) (api.Value, bool) {
 }
 
 // MustResolveSymbol attempts to resolve a symbol or explodes violently
-func MustResolveSymbol(ns Type, s api.Symbol) api.Value {
+func MustResolveSymbol(ns Type, s data.Symbol) data.Value {
 	if v, ok := ResolveSymbol(ns, s); ok {
 		return v
 	}

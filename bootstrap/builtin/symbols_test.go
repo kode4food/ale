@@ -3,8 +3,8 @@ package builtin_test
 import (
 	"testing"
 
-	"gitlab.com/kode4food/ale/api"
 	"gitlab.com/kode4food/ale/bootstrap/builtin"
+	"gitlab.com/kode4food/ale/data"
 	"gitlab.com/kode4food/ale/internal/assert"
 	. "gitlab.com/kode4food/ale/internal/assert/helpers"
 )
@@ -12,7 +12,7 @@ import (
 func TestSymbols(t *testing.T) {
 	as := assert.New(t)
 
-	s1 := api.NewQualifiedSymbol("hello", "ale")
+	s1 := data.NewQualifiedSymbol("hello", "ale")
 	as.True(builtin.IsSymbol(s1))
 	as.False(builtin.IsLocal(s1))
 	as.True(builtin.IsQualified(s1))

@@ -3,8 +3,8 @@ package generate
 import (
 	"fmt"
 
-	"gitlab.com/kode4food/ale/api"
 	"gitlab.com/kode4food/ale/compiler/encoder"
+	"gitlab.com/kode4food/ale/data"
 	"gitlab.com/kode4food/ale/namespace"
 	"gitlab.com/kode4food/ale/runtime/isa"
 	"gitlab.com/kode4food/ale/stdlib"
@@ -22,7 +22,7 @@ var (
 )
 
 // Block encodes a set of expressions, returning only the final evaluation
-func Block(e encoder.Type, s api.Sequence) {
+func Block(e encoder.Type, s data.Sequence) {
 	f, r, ok := s.Split()
 	if !ok {
 		Nil(e)
@@ -30,21 +30,21 @@ func Block(e encoder.Type, s api.Sequence) {
 	}
 	Value(e, f)
 	for f, r, ok = r.Split(); ok; f, r, ok = r.Split() {
-		e.Append(isa.Pop)
+		e.Emit(isa.Pop)
 		Value(e, f)
 	}
 }
 
 // Sequence encodes a sequence
-func Sequence(e encoder.Type, s api.Sequence) {
+func Sequence(e encoder.Type, s data.Sequence) {
 	switch typed := s.(type) {
-	case api.String:
+	case data.String:
 		Literal(e, typed)
-	case *api.List:
+	case *data.List:
 		Call(e, typed)
-	case api.Vector:
+	case data.Vector:
 		Vector(e, typed)
-	case api.Associative:
+	case data.Associative:
 		Associative(e, typed)
 	default:
 		panic(fmt.Errorf(CannotCompile, s))
@@ -52,24 +52,24 @@ func Sequence(e encoder.Type, s api.Sequence) {
 }
 
 // List encodes a list
-func List(e encoder.Type, l *api.List) {
+func List(e encoder.Type, l *data.List) {
 	f := resolveBuiltIn(e, listSym)
 	args := stdlib.SequenceToValues(l)
 	callApplicative(e, f.Call, args)
 }
 
 // Vector encodes a vector
-func Vector(e encoder.Type, v api.Vector) {
+func Vector(e encoder.Type, v data.Vector) {
 	f := resolveBuiltIn(e, vectorSym)
-	callApplicative(e, f.Call, api.Values(v))
+	callApplicative(e, f.Call, data.Values(v))
 }
 
 // Associative encodes an associative array
-func Associative(e encoder.Type, a api.Associative) {
-	args := make(api.Values, a.Count()*2)
+func Associative(e encoder.Type, a data.Associative) {
+	args := make(data.Values, a.Count()*2)
 	var i int
 	for f, r, ok := a.Split(); ok; f, r, ok = r.Split() {
-		v := f.(api.Vector)
+		v := f.(data.Vector)
 		args[i], _ = v.ElementAt(0)
 		args[i+1], _ = v.ElementAt(1)
 		i += 2
@@ -78,9 +78,9 @@ func Associative(e encoder.Type, a api.Associative) {
 	callApplicative(e, f.Call, args)
 }
 
-func resolveBuiltIn(e encoder.Type, sym api.Symbol) *api.Function {
+func resolveBuiltIn(e encoder.Type, sym data.Symbol) *data.Function {
 	manager := e.Globals().Manager()
 	root := manager.GetRoot()
 	res := namespace.MustResolveSymbol(root, sym)
-	return res.(*api.Function)
+	return res.(*data.Function)
 }

@@ -3,12 +3,12 @@ package encoder
 import (
 	"fmt"
 
-	"gitlab.com/kode4food/ale/api"
+	"gitlab.com/kode4food/ale/data"
 	"gitlab.com/kode4food/ale/runtime/isa"
 )
 
 // Locals tracks local variable assignments
-type Locals map[api.Name]isa.Index
+type Locals map[data.Name]isa.Index
 
 func (e *encoder) LocalCount() int {
 	return e.maxLocal
@@ -40,7 +40,7 @@ func (e *encoder) allocLocal() isa.Index {
 	return idx
 }
 
-func (e *encoder) AddLocal(n api.Name) isa.Index {
+func (e *encoder) AddLocal(n data.Name) isa.Index {
 	scope := e.peekLocals()
 	if _, ok := scope[n]; ok {
 		panic(fmt.Sprintf("name duplicated in scope: %s", n))
@@ -50,7 +50,7 @@ func (e *encoder) AddLocal(n api.Name) isa.Index {
 	return idx
 }
 
-func (e *encoder) ResolveLocal(l api.LocalSymbol) (isa.Index, bool) {
+func (e *encoder) ResolveLocal(l data.LocalSymbol) (isa.Index, bool) {
 	n := l.Name()
 	scopes := e.locals
 	for i := len(scopes) - 1; i >= 0; i-- {

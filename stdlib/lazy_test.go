@@ -3,7 +3,7 @@ package stdlib_test
 import (
 	"testing"
 
-	"gitlab.com/kode4food/ale/api"
+	"gitlab.com/kode4food/ale/data"
 	"gitlab.com/kode4food/ale/internal/assert"
 	. "gitlab.com/kode4food/ale/internal/assert/helpers"
 	"gitlab.com/kode4food/ale/stdlib"
@@ -14,9 +14,9 @@ func TestLazySeq(t *testing.T) {
 	as := assert.New(t)
 
 	i := 0
-	inc = func() (api.Value, api.Sequence, bool) {
+	inc = func() (data.Value, data.Sequence, bool) {
 		if i >= 10 {
-			return api.Nil, api.EmptyList, false
+			return data.Nil, data.EmptyList, false
 		}
 		i++
 		first := F(float64(i))

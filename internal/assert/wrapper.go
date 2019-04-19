@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"gitlab.com/kode4food/ale/api"
+	"gitlab.com/kode4food/ale/data"
 )
 
 type (
@@ -38,7 +38,7 @@ func (w *Wrapper) String(expect string, expr Any) {
 		w.Assertions.Equal(expect, s)
 		return
 	}
-	if v, ok := expr.(api.Value); ok {
+	if v, ok := expr.(data.Value); ok {
 		w.Assertions.Equal(expect, v.String())
 		return
 	}
@@ -47,7 +47,7 @@ func (w *Wrapper) String(expect string, expr Any) {
 
 // Float tests a Value for float equality
 func (w *Wrapper) Float(expect float64, expr Any) {
-	if n, ok := expr.(api.Float); ok {
+	if n, ok := expr.(data.Float); ok {
 		w.Assertions.Equal(expect, float64(n))
 		return
 	}
@@ -55,7 +55,7 @@ func (w *Wrapper) Float(expect float64, expr Any) {
 		w.Assertions.Equal(expect, float64(n))
 		return
 	}
-	if i, ok := expr.(api.Integer); ok {
+	if i, ok := expr.(data.Integer); ok {
 		w.Assertions.Equal(expect, float64(i))
 		return
 	}
@@ -64,7 +64,7 @@ func (w *Wrapper) Float(expect float64, expr Any) {
 
 // Integer tests a Value for integer equality
 func (w *Wrapper) Integer(expect int64, expr Any) {
-	if i, ok := expr.(api.Integer); ok {
+	if i, ok := expr.(data.Integer); ok {
 		w.Assertions.Equal(expect, int64(i))
 		return
 	}
@@ -72,7 +72,7 @@ func (w *Wrapper) Integer(expect int64, expr Any) {
 		w.Assertions.Equal(expect, int64(i))
 		return
 	}
-	if n, ok := expr.(api.Float); ok {
+	if n, ok := expr.(data.Float); ok {
 		w.Assertions.Equal(expect, int64(n))
 		return
 	}
@@ -81,19 +81,19 @@ func (w *Wrapper) Integer(expect int64, expr Any) {
 
 // Equal tests a Value for some kind of equality. Performs checks to do so
 func (w *Wrapper) Equal(expect Any, expr Any) {
-	if s, ok := expect.(api.String); ok {
+	if s, ok := expect.(data.String); ok {
 		w.String(string(s), expr)
 		return
 	}
-	if n1, ok := expect.(api.Integer); ok {
+	if n1, ok := expect.(data.Integer); ok {
 		w.Integer(int64(n1), expr)
 		return
 	}
-	if n1, ok := expect.(api.Float); ok {
+	if n1, ok := expect.(data.Float); ok {
 		w.Float(float64(n1), expr)
 		return
 	}
-	if s, ok := expect.(api.Value); ok {
+	if s, ok := expect.(data.Value); ok {
 		w.String(s.String(), expr)
 		return
 	}
@@ -102,7 +102,7 @@ func (w *Wrapper) Equal(expect Any, expr Any) {
 
 // True tests a Value for boolean true
 func (w *Wrapper) True(expr Any) {
-	if b, ok := expr.(api.Bool); ok {
+	if b, ok := expr.(data.Bool); ok {
 		w.Assertions.True(bool(b))
 		return
 	}
@@ -110,13 +110,13 @@ func (w *Wrapper) True(expr Any) {
 }
 
 // Truthy tests a Value for system-specific Truthy
-func (w *Wrapper) Truthy(expr api.Value) {
-	w.Assertions.True(api.Truthy(expr))
+func (w *Wrapper) Truthy(expr data.Value) {
+	w.Assertions.True(data.Truthy(expr))
 }
 
 // False tests a Value for boolean false
 func (w *Wrapper) False(expr Any) {
-	if b, ok := expr.(api.Bool); ok {
+	if b, ok := expr.(data.Bool); ok {
 		w.Assertions.False(bool(b))
 		return
 	}
@@ -124,18 +124,18 @@ func (w *Wrapper) False(expr Any) {
 }
 
 // Falsey tests a Value for system-specific Falsey
-func (w *Wrapper) Falsey(expr api.Value) {
-	w.Assertions.False(api.Truthy(expr))
+func (w *Wrapper) Falsey(expr data.Value) {
+	w.Assertions.False(data.Truthy(expr))
 }
 
 // Contains check if the expected string is in the provided Value
-func (w *Wrapper) Contains(expect string, expr api.Value) {
+func (w *Wrapper) Contains(expect string, expr data.Value) {
 	val := expr.String()
 	w.Assertions.True(strings.Contains(val, expect))
 }
 
 // NotContains checks if the expected string is not in the provided Value
-func (w *Wrapper) NotContains(expect string, expr api.Value) {
+func (w *Wrapper) NotContains(expect string, expr data.Value) {
 	val := expr.String()
 	w.Assertions.False(strings.Contains(val, expect))
 }
@@ -151,7 +151,7 @@ func (w *Wrapper) NotIdentical(expect Any, expr Any) {
 }
 
 // Compare tests if the Comparison of two Numbers is correct
-func (w *Wrapper) Compare(c api.Comparison, l api.Number, r api.Number) {
+func (w *Wrapper) Compare(c data.Comparison, l data.Number, r data.Number) {
 	w.Assertions.Equal(c, l.Cmp(r))
 }
 

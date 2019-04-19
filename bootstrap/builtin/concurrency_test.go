@@ -3,8 +3,8 @@ package builtin_test
 import (
 	"testing"
 
-	"gitlab.com/kode4food/ale/api"
 	"gitlab.com/kode4food/ale/bootstrap/builtin"
+	"gitlab.com/kode4food/ale/data"
 	"gitlab.com/kode4food/ale/internal/assert"
 	. "gitlab.com/kode4food/ale/internal/assert/helpers"
 )
@@ -14,12 +14,12 @@ func TestGo(t *testing.T) {
 	done := make(chan bool, 0)
 
 	var called bool
-	fn := api.Call(func(args ...api.Value) api.Value {
+	fn := data.Call(func(args ...data.Value) data.Value {
 		res := builtin.Str(args...)
 		as.String("helloworld", res)
 		called = true
 		done <- true
-		return api.Nil
+		return data.Nil
 	})
 	builtin.Go(fn, S("hello"), S("world"))
 	<-done
@@ -29,7 +29,7 @@ func TestGo(t *testing.T) {
 func TestChan(t *testing.T) {
 	as := assert.New(t)
 
-	ch := builtin.Chan().(api.Mapped)
+	ch := builtin.Chan().(data.Mapped)
 	emit, ok1 := ch.Get(builtin.EmitKey)
 	closeChan, ok2 := ch.Get(builtin.CloseKey)
 	seq, ok3 := ch.Get(builtin.SequenceKey)
@@ -38,11 +38,11 @@ func TestChan(t *testing.T) {
 	as.True(ok3)
 
 	go func() {
-		emit.(*api.Function).Call(S("hello"))
-		closeChan.(*api.Function).Call()
+		emit.(*data.Function).Call(S("hello"))
+		closeChan.(*data.Function).Call()
 	}()
 
-	f, r, ok := seq.(api.Sequence).Split()
+	f, r, ok := seq.(data.Sequence).Split()
 	as.String("hello", f)
 	as.False(r.IsSequence())
 	as.True(ok)

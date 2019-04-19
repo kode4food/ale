@@ -1,4 +1,4 @@
-package api
+package data
 
 type (
 	// Comparison represents the result of a equality comparison

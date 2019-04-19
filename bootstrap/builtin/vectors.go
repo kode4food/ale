@@ -1,14 +1,14 @@
 package builtin
 
-import "gitlab.com/kode4food/ale/api"
+import "gitlab.com/kode4food/ale/data"
 
 // Vector creates a new vector
-func Vector(args ...api.Value) api.Value {
-	return api.Vector(args)
+func Vector(args ...data.Value) data.Value {
+	return data.Vector(args)
 }
 
 // IsVector returns whether or not the provided value is a vector
-func IsVector(args ...api.Value) api.Value {
-	_, ok := args[0].(api.Vector)
-	return api.Bool(ok)
+func IsVector(args ...data.Value) data.Value {
+	_, ok := args[0].(data.Vector)
+	return data.Bool(ok)
 }

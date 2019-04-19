@@ -1,14 +1,14 @@
-package api_test
+package data_test
 
 import (
 	"testing"
 
-	"gitlab.com/kode4food/ale/api"
+	"gitlab.com/kode4food/ale/data"
 	"gitlab.com/kode4food/ale/internal/assert"
 	. "gitlab.com/kode4food/ale/internal/assert/helpers"
 )
 
-func getTestMap() api.Associative {
+func getTestMap() data.Associative {
 	return A(
 		V(K("name"), S("Ale")),
 		V(K("age"), I(99)),
@@ -20,7 +20,7 @@ func TestAssociative(t *testing.T) {
 	as := assert.New(t)
 	m1 := getTestMap()
 
-	as.Integer(3, api.Count(m1))
+	as.Integer(3, data.Count(m1))
 
 	nameKey := K("name")
 	as.Equal(N("name"), nameKey.Name())
@@ -48,7 +48,7 @@ func TestAssociativeSequence(t *testing.T) {
 	m1 := getTestMap()
 
 	first := m1.First()
-	if e, ok := first.(api.Vector); ok {
+	if e, ok := first.(data.Vector); ok {
 		k, _ := e.ElementAt(0)
 		v, _ := e.ElementAt(1)
 		as.Equal(K("name"), k)
@@ -66,13 +66,13 @@ func TestAssociativePrepend(t *testing.T) {
 	as := assert.New(t)
 	m1 := getTestMap()
 
-	m2 := m1.Prepend(V(K("foo"), S("bar"))).(api.Associative)
+	m2 := m1.Prepend(V(K("foo"), S("bar"))).(data.Associative)
 	as.NotIdentical(m1, m2)
 
 	r, ok := m2.Get(K("foo"))
 	as.True(ok)
 	as.String("bar", r)
 
-	defer as.ExpectPanic(api.ExpectedPair)
+	defer as.ExpectPanic(data.ExpectedPair)
 	m2.Conjoin(F(99))
 }

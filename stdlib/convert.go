@@ -4,43 +4,43 @@ import (
 	"bytes"
 	"fmt"
 
-	"gitlab.com/kode4food/ale/api"
+	"gitlab.com/kode4food/ale/data"
 )
 
 // SequenceToList takes any sequence and converts it to a List
-func SequenceToList(s api.Sequence) *api.List {
+func SequenceToList(s data.Sequence) *data.List {
 	switch typed := s.(type) {
-	case *api.List:
+	case *data.List:
 		return typed
-	case api.Counted:
-		res := make(api.Vector, typed.Count())
+	case data.Counted:
+		res := make(data.Vector, typed.Count())
 		idx := 0
 		for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {
 			res[idx] = f
 			idx++
 		}
-		return api.NewList(res...)
+		return data.NewList(res...)
 	default:
 		return uncountedToList(typed)
 	}
 }
 
-func uncountedToList(s api.Sequence) *api.List {
-	return api.NewList(uncountedToVector(s)...)
+func uncountedToList(s data.Sequence) *data.List {
+	return data.NewList(uncountedToVector(s)...)
 }
 
 // SequenceToValues takes any sequence and converts it to a value array
-func SequenceToValues(s api.Sequence) api.Values {
-	return api.Values(SequenceToVector(s))
+func SequenceToValues(s data.Sequence) data.Values {
+	return data.Values(SequenceToVector(s))
 }
 
 // SequenceToVector takes any sequence and converts it to a vector
-func SequenceToVector(s api.Sequence) api.Vector {
+func SequenceToVector(s data.Sequence) data.Vector {
 	switch typed := s.(type) {
-	case api.Vector:
+	case data.Vector:
 		return typed
-	case api.Counted:
-		res := make(api.Vector, typed.Count())
+	case data.Counted:
+		res := make(data.Vector, typed.Count())
 		idx := 0
 		for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {
 			res[idx] = f
@@ -52,8 +52,8 @@ func SequenceToVector(s api.Sequence) api.Vector {
 	}
 }
 
-func uncountedToVector(s api.Sequence) api.Vector {
-	res := api.Vector{}
+func uncountedToVector(s data.Sequence) data.Vector {
+	res := data.Vector{}
 	for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {
 		res = append(res, f)
 	}
@@ -61,54 +61,54 @@ func uncountedToVector(s api.Sequence) api.Vector {
 }
 
 // SequenceToAssociative takes any sequence and converts it to an Associative
-func SequenceToAssociative(s api.Sequence) api.Associative {
+func SequenceToAssociative(s data.Sequence) data.Associative {
 	switch typed := s.(type) {
-	case api.Associative:
+	case data.Associative:
 		return typed
-	case api.Counted:
+	case data.Counted:
 		l := typed.Count()
 		if l%2 != 0 {
-			panic(fmt.Errorf(api.ExpectedPair))
+			panic(fmt.Errorf(data.ExpectedPair))
 		}
 		ml := l / 2
-		r := make([]api.Vector, ml)
+		r := make([]data.Vector, ml)
 		i := s
-		var k, v api.Value
+		var k, v data.Value
 		for idx := 0; idx < ml; idx++ {
 			k, i, _ = i.Split()
 			v, i, _ = i.Split()
-			r[idx] = api.Vector{k, v}
+			r[idx] = data.Vector{k, v}
 		}
-		return api.Associative(r)
+		return data.Associative(r)
 	default:
 		return uncountedToAssociative(s)
 	}
 }
 
-func uncountedToAssociative(s api.Sequence) api.Associative {
-	res := make([]api.Vector, 0)
-	var v api.Value
+func uncountedToAssociative(s data.Sequence) data.Associative {
+	res := make([]data.Vector, 0)
+	var v data.Value
 	for k, r, ok := s.Split(); ok; k, r, ok = r.Split() {
 		if v, r, ok = r.Split(); ok {
-			res = append(res, api.Vector{k, v})
+			res = append(res, data.Vector{k, v})
 		} else {
-			panic(fmt.Errorf(api.ExpectedPair))
+			panic(fmt.Errorf(data.ExpectedPair))
 		}
 	}
-	return api.Associative(res)
+	return data.Associative(res)
 }
 
 // SequenceToStr takes any sequence and attempts to convert it to a String
-func SequenceToStr(s api.Sequence) api.String {
-	if st, ok := s.(api.String); ok {
+func SequenceToStr(s data.Sequence) data.String {
+	if st, ok := s.(data.String); ok {
 		return st
 	}
 	var buf bytes.Buffer
 	for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {
-		if f == api.Nil {
+		if f == data.Nil {
 			continue
 		}
 		buf.WriteString(f.String())
 	}
-	return api.String(buf.String())
+	return data.String(buf.String())
 }

@@ -24,7 +24,7 @@ func TestDefinitions(t *testing.T) {
 func TestLetBindings(t *testing.T) {
 	testBadCode(t, `
 		(let 99 "hello")
-	`, typeErr("api.Integer", "api.Vector"))
+	`, typeErr("data.Integer", "data.Vector"))
 
 	testBadCode(t, `
 		(let [a blah b] "hello")

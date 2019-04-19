@@ -1,36 +1,36 @@
 package builtin
 
 import (
-	"gitlab.com/kode4food/ale/api"
 	"gitlab.com/kode4food/ale/compiler"
+	"gitlab.com/kode4food/ale/data"
 )
 
 // IsIdentical returns whether or not the two values represent the same object
-func IsIdentical(args ...api.Value) api.Value {
+func IsIdentical(args ...data.Value) data.Value {
 	l := args[0]
 	for _, f := range args[1:] {
 		if l != f {
-			return api.False
+			return data.False
 		}
 	}
-	return api.True
+	return data.True
 }
 
 // IsAtom returns whether or not the provided value is atomic
-func IsAtom(args ...api.Value) api.Value {
+func IsAtom(args ...data.Value) data.Value {
 	if compiler.IsEvaluable(args[0]) {
-		return api.False
+		return data.False
 	}
-	return api.True
+	return data.True
 }
 
 // IsNil returns whether or not the provided value is nil
-func IsNil(args ...api.Value) api.Value {
-	return api.Bool(args[0] == api.Nil)
+func IsNil(args ...data.Value) data.Value {
+	return data.Bool(args[0] == data.Nil)
 }
 
 // IsKeyword returns whether or not the provided value is a keyword
-func IsKeyword(args ...api.Value) api.Value {
-	_, ok := args[0].(api.Keyword)
-	return api.Bool(ok)
+func IsKeyword(args ...data.Value) data.Value {
+	_, ok := args[0].(data.Keyword)
+	return data.Bool(ok)
 }

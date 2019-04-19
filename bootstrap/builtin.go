@@ -3,11 +3,11 @@ package bootstrap
 import (
 	"fmt"
 
-	"gitlab.com/kode4food/ale/api"
 	"gitlab.com/kode4food/ale/bootstrap/builtin"
 	"gitlab.com/kode4food/ale/compiler/arity"
 	"gitlab.com/kode4food/ale/compiler/encoder"
 	"gitlab.com/kode4food/ale/compiler/special"
+	"gitlab.com/kode4food/ale/data"
 	"gitlab.com/kode4food/ale/macro"
 )
 
@@ -49,10 +49,10 @@ func (b *bootstrap) specialForms() {
 func (b *bootstrap) initialFunctions() {
 	manager := b.manager
 
-	defBuiltIn := func(args ...api.Value) api.Value {
+	defBuiltIn := func(args ...data.Value) data.Value {
 		arity.AssertFixed(1, len(args))
 		ns := manager.GetRoot()
-		n := args[0].(api.LocalSymbol).Name()
+		n := args[0].(data.LocalSymbol).Name()
 		if nf, ok := b.funcMap[n]; ok {
 			ns.Bind(n, nf)
 			return args[0]
@@ -60,10 +60,10 @@ func (b *bootstrap) initialFunctions() {
 		panic(fmt.Errorf(BuiltInNotFound, n))
 	}
 
-	defSpecial := func(args ...api.Value) api.Value {
+	defSpecial := func(args ...data.Value) data.Value {
 		arity.AssertFixed(1, len(args))
 		ns := manager.GetRoot()
-		n := args[0].(api.LocalSymbol).Name()
+		n := args[0].(data.LocalSymbol).Name()
 		if sf, ok := b.specialMap[n]; ok {
 			ns.Bind(n, sf)
 			return args[0]
@@ -71,9 +71,9 @@ func (b *bootstrap) initialFunctions() {
 		panic(fmt.Errorf(SpecialNotFound, n))
 	}
 
-	defMacro := func(args ...api.Value) api.Value {
+	defMacro := func(args ...data.Value) data.Value {
 		ns := manager.GetRoot()
-		n := args[0].(api.LocalSymbol).Name()
+		n := args[0].(data.LocalSymbol).Name()
 		if sf, ok := b.macroMap[n]; ok {
 			ns.Bind(n, sf)
 			return args[0]
@@ -82,9 +82,9 @@ func (b *bootstrap) initialFunctions() {
 	}
 
 	ns := b.manager.GetRoot()
-	ns.Bind(defBuiltInName, api.NormalFunction(defBuiltIn))
-	ns.Bind(defSpecialName, api.NormalFunction(defSpecial))
-	ns.Bind(defMacroName, api.NormalFunction(defMacro))
+	ns.Bind(defBuiltInName, data.NormalFunction(defBuiltIn))
+	ns.Bind(defSpecialName, data.NormalFunction(defSpecial))
+	ns.Bind(defMacroName, data.NormalFunction(defMacro))
 }
 
 func (b *bootstrap) availableFunctions() {
@@ -170,20 +170,20 @@ func (b *bootstrap) availableFunctions() {
 	b.applicative("current-time", builtin.CurrentTime, 0)
 }
 
-func (b *bootstrap) applicative(name api.Name, call api.Call, arity ...int) {
-	fn := api.ApplicativeFunction(call)
+func (b *bootstrap) applicative(name data.Name, call data.Call, arity ...int) {
+	fn := data.ApplicativeFunction(call)
 	b.builtIn(name, fn, arity...)
 }
 
-func (b *bootstrap) macro(name api.Name, call macro.Call) {
+func (b *bootstrap) macro(name data.Name, call macro.Call) {
 	b.macroMap[name] = call
 }
 
-func (b *bootstrap) special(name api.Name, call encoder.Call) {
+func (b *bootstrap) special(name data.Name, call encoder.Call) {
 	b.specialMap[name] = call
 }
 
-func (b *bootstrap) builtIn(name api.Name, fn *api.Function, a ...int) {
+func (b *bootstrap) builtIn(name data.Name, fn *data.Function, a ...int) {
 	fn.ArityChecker = arity.MakeChecker(a...)
 	b.funcMap[name] = fn
 }

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"gitlab.com/kode4food/ale/api"
+	"gitlab.com/kode4food/ale/data"
 	"gitlab.com/kode4food/ale/internal/assert"
 	. "gitlab.com/kode4food/ale/internal/assert/helpers"
 	"gitlab.com/kode4food/ale/read"
@@ -22,7 +22,7 @@ func TestReadList(t *testing.T) {
 	l := read.Scan(`(99 "hello" 55.12)`)
 	tr := read.FromScanner(l)
 	v := tr.First()
-	list, ok := v.(*api.List)
+	list, ok := v.(*data.List)
 	as.True(ok)
 
 	f, r, ok := list.Split()
@@ -46,7 +46,7 @@ func TestReadVector(t *testing.T) {
 	l := read.Scan(`[99 "hello" 55.12]`)
 	tr := read.FromScanner(l)
 	v := tr.First()
-	vector, ok := v.(api.Vector)
+	vector, ok := v.(data.Vector)
 	as.True(ok)
 
 	res, ok := vector.ElementAt(0)
@@ -67,7 +67,7 @@ func TestReadMap(t *testing.T) {
 	l := read.Scan(`{:name "blah" :age 99}`)
 	tr := read.FromScanner(l)
 	v := tr.First()
-	m, ok := v.(api.Associative)
+	m, ok := v.(data.Associative)
 	as.True(ok)
 	as.Integer(2, m.Count())
 }
@@ -77,7 +77,7 @@ func TestReadNestedList(t *testing.T) {
 	l := read.Scan(`(99 ("hello" "there") 55.12)`)
 	tr := read.FromScanner(l)
 	v := tr.First()
-	list, ok := v.(*api.List)
+	list, ok := v.(*data.List)
 	as.True(ok)
 
 	f, r, ok := list.Split()
@@ -87,7 +87,7 @@ func TestReadNestedList(t *testing.T) {
 	// get nested list
 	f, r, ok = r.Split()
 	as.True(ok)
-	list2, ok := f.(*api.List)
+	list2, ok := f.(*data.List)
 	as.True(ok)
 
 	// iterate over the rest of top-level list
@@ -118,7 +118,7 @@ func testReaderError(t *testing.T, src string, err error) {
 
 	l := read.Scan(S(src))
 	tr := read.FromScanner(l)
-	api.Last(tr)
+	data.Last(tr)
 }
 
 func TestReaderErrors(t *testing.T) {

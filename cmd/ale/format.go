@@ -6,8 +6,8 @@ import (
 	"regexp"
 	"strings"
 
-	"gitlab.com/kode4food/ale/api"
 	"gitlab.com/kode4food/ale/cmd/ale/docstring"
+	"gitlab.com/kode4food/ale/data"
 )
 
 // This is *not* a full-featured markdown formatter, or even a compliant
@@ -25,8 +25,8 @@ type (
 )
 
 const (
-	usageName = api.Name("usage")
-	descName  = api.Name("description")
+	usageName = data.Name("usage")
+	descName  = data.Name("description")
 )
 
 var (

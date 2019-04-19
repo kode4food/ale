@@ -1,4 +1,4 @@
-package api
+package data
 
 // List contains a node to a singly-linked List
 type List struct {

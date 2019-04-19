@@ -1,8 +1,8 @@
 package encoder
 
 import (
-	"gitlab.com/kode4food/ale/api"
 	"gitlab.com/kode4food/ale/compiler/internal/analysis"
+	"gitlab.com/kode4food/ale/data"
 	"gitlab.com/kode4food/ale/namespace"
 	"gitlab.com/kode4food/ale/runtime/isa"
 )
@@ -10,46 +10,46 @@ import (
 type (
 	// Type exposes an interface for stateful compiler encoding
 	Type interface {
-		api.Value
+		data.Value
 
-		Name() api.Name
+		Name() data.Name
 		Parent() Type
 		Child() Type
-		NamedChild(api.Name) Type
+		NamedChild(data.Name) Type
 
-		Append(isa.Opcode, ...isa.Coder)
+		Emit(isa.Opcode, ...isa.Coder)
 		Code() []isa.Word
 		StackSize() int
 
 		NewLabel() *Label
 
 		Globals() namespace.Type
-		Constants() api.Values
-		AddConstant(api.Value) isa.Index
+		Constants() data.Values
+		AddConstant(data.Value) isa.Index
 
-		Closure() api.Names
-		ResolveClosure(api.LocalSymbol) (isa.Index, bool)
+		Closure() data.Names
+		ResolveClosure(data.LocalSymbol) (isa.Index, bool)
 
-		PushArgs(api.Names, bool)
+		PushArgs(data.Names, bool)
 		PopArgs()
-		ResolveArg(api.LocalSymbol) (isa.Index, bool, bool)
+		ResolveArg(data.LocalSymbol) (isa.Index, bool, bool)
 
 		LocalCount() int
 		PushLocals()
 		PopLocals()
-		AddLocal(api.Name) isa.Index
-		ResolveLocal(api.LocalSymbol) (isa.Index, bool)
+		AddLocal(data.Name) isa.Index
+		ResolveLocal(data.LocalSymbol) (isa.Index, bool)
 
-		ResolveScope(api.LocalSymbol) (Scope, bool)
-		InScope(api.LocalSymbol) bool
+		ResolveScope(data.LocalSymbol) (Scope, bool)
+		InScope(data.LocalSymbol) bool
 	}
 
 	encoder struct {
 		parent    Type
 		globals   namespace.Type
-		constants api.Values
-		closure   api.Names
-		name      api.Name
+		constants data.Values
+		closure   data.Names
+		name      data.Name
 		args      argsStack
 		locals    []Locals
 		code      isa.Instructions
@@ -62,8 +62,8 @@ type (
 func newEncoder(globals namespace.Type) *encoder {
 	return &encoder{
 		globals:   globals,
-		constants: api.Values{},
-		closure:   api.Names{},
+		constants: data.Values{},
+		closure:   data.Names{},
 		args:      argsStack{},
 		locals:    []Locals{{}},
 		code:      isa.Instructions{},
@@ -78,8 +78,8 @@ func NewEncoder(globals namespace.Type) Type {
 func (e *encoder) child() *encoder {
 	return &encoder{
 		parent:    e,
-		constants: api.Values{},
-		closure:   api.Names{},
+		constants: data.Values{},
+		closure:   data.Names{},
 		args:      argsStack{},
 		locals:    []Locals{{}},
 		code:      isa.Instructions{},
@@ -91,14 +91,14 @@ func (e *encoder) Child() Type {
 	return e.child()
 }
 
-func (e *encoder) NamedChild(name api.Name) Type {
+func (e *encoder) NamedChild(name data.Name) Type {
 	res := e.child()
 	res.name = name
 	return res
 }
 
 // Name returns the name of this encoder (example: a function's name)
-func (e *encoder) Name() api.Name {
+func (e *encoder) Name() data.Name {
 	return e.name
 }
 
@@ -107,8 +107,8 @@ func (e *encoder) Parent() Type {
 	return e.parent
 }
 
-// Append adds instructions to the Type's eventual output
-func (e *encoder) Append(oc isa.Opcode, args ...isa.Coder) {
+// Emit adds instructions to the Type's eventual output
+func (e *encoder) Emit(oc isa.Opcode, args ...isa.Coder) {
 	words := make([]isa.Word, len(args))
 	for i, a := range args {
 		words[i] = a.Word()

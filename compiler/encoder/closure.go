@@ -1,16 +1,16 @@
 package encoder
 
 import (
-	"gitlab.com/kode4food/ale/api"
+	"gitlab.com/kode4food/ale/data"
 	"gitlab.com/kode4food/ale/runtime/isa"
 )
 
 // Closure calculates the enclosed names for this encoder
-func (e *encoder) Closure() api.Names {
+func (e *encoder) Closure() data.Names {
 	return e.closure
 }
 
-func (e *encoder) ResolveClosure(l api.LocalSymbol) (isa.Index, bool) {
+func (e *encoder) ResolveClosure(l data.LocalSymbol) (isa.Index, bool) {
 	closure := e.closure
 	lookup := l.Name()
 	for idx, n := range closure {

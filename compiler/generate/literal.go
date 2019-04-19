@@ -1,53 +1,53 @@
 package generate
 
 import (
-	"gitlab.com/kode4food/ale/api"
 	"gitlab.com/kode4food/ale/compiler/encoder"
+	"gitlab.com/kode4food/ale/data"
 	"gitlab.com/kode4food/ale/runtime/isa"
 )
 
 // Literal encodes a literal (constant) value
-func Literal(e encoder.Type, v api.Value) {
+func Literal(e encoder.Type, v data.Value) {
 	switch typed := v.(type) {
-	case api.NilType:
+	case data.NilType:
 		Nil(e)
-	case api.Integer, api.Float:
+	case data.Integer, data.Float:
 		Number(e, typed)
-	case api.Bool:
+	case data.Bool:
 		Bool(e, typed)
 	default:
 		index := e.AddConstant(v)
-		e.Append(isa.Const, index)
+		e.Emit(isa.Const, index)
 	}
 }
 
 // Nil encodes a Nil
 func Nil(e encoder.Type) {
-	e.Append(isa.Nil)
+	e.Emit(isa.Nil)
 }
 
 // Number encodes an Integer or Float
-func Number(e encoder.Type, n api.Value) {
+func Number(e encoder.Type, n data.Value) {
 	switch n {
-	case api.Integer(0):
-		e.Append(isa.Zero)
-	case api.Integer(1):
-		e.Append(isa.One)
-	case api.Integer(2):
-		e.Append(isa.Two)
-	case api.Integer(-1):
-		e.Append(isa.NegOne)
+	case data.Integer(0):
+		e.Emit(isa.Zero)
+	case data.Integer(1):
+		e.Emit(isa.One)
+	case data.Integer(2):
+		e.Emit(isa.Two)
+	case data.Integer(-1):
+		e.Emit(isa.NegOne)
 	default:
 		index := e.AddConstant(n)
-		e.Append(isa.Const, index)
+		e.Emit(isa.Const, index)
 	}
 }
 
 // Bool encodes a Bool
-func Bool(e encoder.Type, n api.Bool) {
+func Bool(e encoder.Type, n data.Bool) {
 	if n {
-		e.Append(isa.True)
+		e.Emit(isa.True)
 	} else {
-		e.Append(isa.False)
+		e.Emit(isa.False)
 	}
 }

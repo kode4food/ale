@@ -1,6 +1,6 @@
 package encoder
 
-import "gitlab.com/kode4food/ale/api"
+import "gitlab.com/kode4food/ale/data"
 
 // Scope describes the scope of a name
 type Scope int
@@ -13,7 +13,7 @@ const (
 	ClosureScope
 )
 
-func (e *encoder) ResolveScope(l api.LocalSymbol) (Scope, bool) {
+func (e *encoder) ResolveScope(l data.LocalSymbol) (Scope, bool) {
 	if _, ok := e.ResolveLocal(l); ok {
 		return LocalScope, true
 	}
@@ -31,7 +31,7 @@ func (e *encoder) ResolveScope(l api.LocalSymbol) (Scope, bool) {
 	return -1, false
 }
 
-func (e *encoder) InScope(l api.LocalSymbol) bool {
+func (e *encoder) InScope(l data.LocalSymbol) bool {
 	_, ok := e.ResolveScope(l)
 	return ok
 }

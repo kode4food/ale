@@ -1,4 +1,4 @@
-package api
+package data
 
 // Keyword is a Value that represents a Name that resolves to itself
 type Keyword Name

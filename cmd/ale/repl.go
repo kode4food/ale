@@ -14,17 +14,17 @@ import (
 
 	"github.com/chzyer/readline"
 	"gitlab.com/kode4food/ale"
-	"gitlab.com/kode4food/ale/api"
 	"gitlab.com/kode4food/ale/bootstrap"
 	"gitlab.com/kode4food/ale/cmd/ale/docstring"
 	"gitlab.com/kode4food/ale/compiler/arity"
+	"gitlab.com/kode4food/ale/data"
 	"gitlab.com/kode4food/ale/eval"
 	"gitlab.com/kode4food/ale/namespace"
 	"gitlab.com/kode4food/ale/read"
 )
 
 // UserDomain is the name of the namespace that the REPL starts in
-const UserDomain = api.Name("user")
+const UserDomain = data.Name("user")
 
 const (
 	domain = cyan + "%s" + reset + " "
@@ -150,7 +150,7 @@ func (r *REPL) evalBuffer() (completed bool) {
 		}
 	}()
 
-	res := eval.String(ns, api.String(r.buf.String()))
+	res := eval.String(ns, data.String(r.buf.String()))
 	r.outputResult(res)
 	return true
 }
@@ -160,8 +160,8 @@ func (r *REPL) outputResult(v any) {
 		return
 	}
 	var sv any
-	if s, ok := v.(api.Value); ok {
-		sv = api.MaybeQuoteString(s)
+	if s, ok := v.(data.Value); ok {
+		sv = data.MaybeQuoteString(s)
 	} else {
 		sv = v
 	}
@@ -190,7 +190,7 @@ func toError(i interface{}) error {
 	switch typed := i.(type) {
 	case error:
 		return typed
-	case api.Value:
+	case data.Value:
 		return fmt.Errorf(typed.String())
 	default:
 		panic(fmt.Errorf("non-standard error: %s", i))
@@ -205,9 +205,9 @@ func isRecoverable(err error) bool {
 		msg == read.StringNotTerminated
 }
 
-func use(args ...api.Value) api.Value {
+func use(args ...data.Value) data.Value {
 	arity.AssertFixed(1, len(args))
-	n := args[0].(api.LocalSymbol).Name()
+	n := args[0].(data.LocalSymbol).Name()
 	old := ns
 	ns = ns.Manager().GetQualified(n)
 	if old != ns {
@@ -216,7 +216,7 @@ func use(args ...api.Value) api.Value {
 	return nothing
 }
 
-func shutdown(args ...api.Value) api.Value {
+func shutdown(args ...data.Value) data.Value {
 	arity.AssertFixed(0, len(args))
 	t := time.Now().UTC().UnixNano()
 	rs := rand.NewSource(t)
@@ -227,14 +227,14 @@ func shutdown(args ...api.Value) api.Value {
 	return nothing
 }
 
-func debugInfo(args ...api.Value) api.Value {
+func debugInfo(args ...data.Value) data.Value {
 	arity.AssertFixed(0, len(args))
 	runtime.GC()
 	fmt.Println("Number of goroutines: ", runtime.NumGoroutine())
 	return nothing
 }
 
-func cls(args ...api.Value) api.Value {
+func cls(args ...data.Value) data.Value {
 	arity.AssertFixed(0, len(args))
 	fmt.Println(clear)
 	return nothing
@@ -256,16 +256,16 @@ func formatForREPL(s string) string {
 	return strings.Join(out, "\n")
 }
 
-func help(args ...api.Value) api.Value {
+func help(args ...data.Value) data.Value {
 	arity.AssertFixed(0, len(args))
 	md := string(docstring.Get("help"))
 	fmt.Println(formatForREPL(md))
 	return nothing
 }
 
-func doc(args ...api.Value) api.Value {
+func doc(args ...data.Value) data.Value {
 	arity.AssertFixed(1, len(args))
-	sym := args[0].(api.LocalSymbol)
+	sym := args[0].(data.LocalSymbol)
 	name := string(sym.Name())
 	if docstring.Exists(name) {
 		docStr := docstring.Get(name)
@@ -280,7 +280,7 @@ func getBuiltInsNamespace() namespace.Type {
 	return ns.Manager().GetRoot()
 }
 
-func registerBuiltIn(n api.Name, v api.Value) {
+func registerBuiltIn(n data.Name, v data.Value) {
 	ns := getBuiltInsNamespace()
 	ns.Bind(n, v)
 }
@@ -291,12 +291,12 @@ func GetNS() namespace.Type {
 }
 
 func registerREPLBuiltIns() {
-	registerBuiltIn("use", api.NormalFunction(use))
-	registerBuiltIn("quit", api.ApplicativeFunction(shutdown))
-	registerBuiltIn("debug", api.ApplicativeFunction(debugInfo))
-	registerBuiltIn("cls", api.ApplicativeFunction(cls))
-	registerBuiltIn("help", api.ApplicativeFunction(help))
-	registerBuiltIn("doc", api.NormalFunction(doc))
+	registerBuiltIn("use", data.NormalFunction(use))
+	registerBuiltIn("quit", data.ApplicativeFunction(shutdown))
+	registerBuiltIn("debug", data.ApplicativeFunction(debugInfo))
+	registerBuiltIn("cls", data.ApplicativeFunction(cls))
+	registerBuiltIn("help", data.ApplicativeFunction(help))
+	registerBuiltIn("doc", data.NormalFunction(doc))
 }
 
 func getScreenWidth() int {

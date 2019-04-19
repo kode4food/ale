@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 
-	"gitlab.com/kode4food/ale/api"
+	"gitlab.com/kode4food/ale/data"
 	"gitlab.com/kode4food/ale/namespace"
 	"gitlab.com/kode4food/ale/runtime/isa"
 )
@@ -13,14 +13,14 @@ type (
 	// Config encapsulates the initial environment of a virtual machine
 	Config struct {
 		Globals    namespace.Type
-		Constants  api.Values
+		Constants  data.Values
 		Code       []isa.Word
 		StackSize  int
 		LocalCount int
 	}
 
 	// Closure passes enclosed state into a Caller
-	Closure func(...api.Value) api.Call
+	Closure func(...data.Value) data.Call
 )
 
 // Error messages
@@ -29,7 +29,7 @@ const (
 )
 
 // NewClosure returns a Closure based on the virtual machine configuration
-func NewClosure(cfg *Config) api.Call {
+func NewClosure(cfg *Config) data.Call {
 	globals := cfg.Globals
 	constants := cfg.Constants
 	code := cfg.Code
@@ -37,12 +37,12 @@ func NewClosure(cfg *Config) api.Call {
 	localCount := cfg.LocalCount
 	stackInit := stackSize - 1
 
-	return func(closure ...api.Value) api.Value {
-		var self api.Call
+	return func(closure ...data.Value) data.Value {
+		var self data.Call
 
-		self = func(args ...api.Value) api.Value {
-			stack := make(api.Values, stackSize)
-			locals := make(api.Values, localCount)
+		self = func(args ...data.Value) data.Value {
+			stack := make(data.Values, stackSize)
+			locals := make(data.Values, localCount)
 			var PC = 0
 			var SP = stackInit
 			goto opSwitch
@@ -62,37 +62,37 @@ func NewClosure(cfg *Config) api.Call {
 				goto nextPC
 
 			case isa.Nil:
-				stack[SP] = api.Nil
+				stack[SP] = data.Nil
 				SP--
 				goto nextPC
 
 			case isa.Zero:
-				stack[SP] = api.Integer(0)
+				stack[SP] = data.Integer(0)
 				SP--
 				goto nextPC
 
 			case isa.One:
-				stack[SP] = api.Integer(1)
+				stack[SP] = data.Integer(1)
 				SP--
 				goto nextPC
 
 			case isa.NegOne:
-				stack[SP] = api.Integer(-1)
+				stack[SP] = data.Integer(-1)
 				SP--
 				goto nextPC
 
 			case isa.Two:
-				stack[SP] = api.Integer(2)
+				stack[SP] = data.Integer(2)
 				SP--
 				goto nextPC
 
 			case isa.True:
-				stack[SP] = api.True
+				stack[SP] = data.True
 				SP--
 				goto nextPC
 
 			case isa.False:
-				stack[SP] = api.False
+				stack[SP] = data.False
 				SP--
 				goto nextPC
 
@@ -113,12 +113,12 @@ func NewClosure(cfg *Config) api.Call {
 			case isa.RestArg:
 				PC++
 				idx := isa.Index(code[PC])
-				stack[SP] = api.Vector(args[idx:])
+				stack[SP] = data.Vector(args[idx:])
 				SP--
 				goto nextPC
 
 			case isa.ArgLen:
-				stack[SP] = api.Integer(len(args))
+				stack[SP] = data.Integer(len(args))
 				SP--
 				goto nextPC
 
@@ -145,22 +145,22 @@ func NewClosure(cfg *Config) api.Call {
 
 			case isa.Resolve:
 				SP1 := SP + 1
-				sym := stack[SP1].(api.Symbol)
+				sym := stack[SP1].(data.Symbol)
 				val := namespace.MustResolveSymbol(globals, sym)
 				stack[SP1] = val
 				goto nextPC
 
 			case isa.Declare:
 				SP++
-				name := stack[SP].(api.Name)
+				name := stack[SP].(data.Name)
 				globals.Declare(name)
 				goto nextPC
 
 			case isa.Bind:
 				SP++
-				name := stack[SP].(api.Name)
+				name := stack[SP].(data.Name)
 				SP++
-				val := stack[SP].(api.Value)
+				val := stack[SP].(data.Value)
 				globals.Bind(name, val)
 				goto nextPC
 
@@ -176,125 +176,125 @@ func NewClosure(cfg *Config) api.Call {
 			case isa.Add:
 				SP++
 				SP1 := SP + 1
-				right := stack[SP].(api.Integer)
-				left := stack[SP1].(api.Integer)
-				stack[SP1] = api.Integer(left + right)
+				right := stack[SP].(data.Integer)
+				left := stack[SP1].(data.Integer)
+				stack[SP1] = data.Integer(left + right)
 				goto nextPC
 
 			case isa.Sub:
 				SP++
 				SP1 := SP + 1
-				right := stack[SP].(api.Integer)
-				left := stack[SP1].(api.Integer)
-				stack[SP1] = api.Integer(left - right)
+				right := stack[SP].(data.Integer)
+				left := stack[SP1].(data.Integer)
+				stack[SP1] = data.Integer(left - right)
 				goto nextPC
 
 			case isa.Mul:
 				SP++
 				SP1 := SP + 1
-				right := stack[SP].(api.Integer)
-				left := stack[SP1].(api.Integer)
-				stack[SP1] = api.Integer(left * right)
+				right := stack[SP].(data.Integer)
+				left := stack[SP1].(data.Integer)
+				stack[SP1] = data.Integer(left * right)
 				goto nextPC
 
 			case isa.Div:
 				SP++
 				SP1 := SP + 1
-				right := stack[SP].(api.Integer)
-				left := stack[SP1].(api.Integer)
-				stack[SP1] = api.Integer(left / right)
+				right := stack[SP].(data.Integer)
+				left := stack[SP1].(data.Integer)
+				stack[SP1] = data.Integer(left / right)
 				goto nextPC
 
 			case isa.Mod:
 				SP++
 				SP1 := SP + 1
-				right := stack[SP].(api.Integer)
-				left := stack[SP1].(api.Integer)
-				stack[SP1] = api.Integer(left % right)
+				right := stack[SP].(data.Integer)
+				left := stack[SP1].(data.Integer)
+				stack[SP1] = data.Integer(left % right)
 				goto nextPC
 
 			case isa.Eq:
 				SP++
 				SP1 := SP + 1
-				right := stack[SP].(api.Integer)
-				left := stack[SP1].(api.Integer)
-				stack[SP1] = api.Bool(left == right)
+				right := stack[SP].(data.Integer)
+				left := stack[SP1].(data.Integer)
+				stack[SP1] = data.Bool(left == right)
 				goto nextPC
 
 			case isa.Neq:
 				SP++
 				SP1 := SP + 1
-				right := stack[SP].(api.Integer)
-				left := stack[SP1].(api.Integer)
-				stack[SP1] = api.Bool(left != right)
+				right := stack[SP].(data.Integer)
+				left := stack[SP1].(data.Integer)
+				stack[SP1] = data.Bool(left != right)
 				goto nextPC
 
 			case isa.Lt:
 				SP++
 				SP1 := SP + 1
-				right := stack[SP].(api.Integer)
-				left := stack[SP1].(api.Integer)
-				stack[SP1] = api.Bool(left < right)
+				right := stack[SP].(data.Integer)
+				left := stack[SP1].(data.Integer)
+				stack[SP1] = data.Bool(left < right)
 				goto nextPC
 
 			case isa.Lte:
 				SP++
 				SP1 := SP + 1
-				right := stack[SP].(api.Integer)
-				left := stack[SP1].(api.Integer)
-				stack[SP1] = api.Bool(left <= right)
+				right := stack[SP].(data.Integer)
+				left := stack[SP1].(data.Integer)
+				stack[SP1] = data.Bool(left <= right)
 				goto nextPC
 
 			case isa.Gt:
 				SP++
 				SP1 := SP + 1
-				right := stack[SP].(api.Integer)
-				left := stack[SP1].(api.Integer)
-				stack[SP1] = api.Bool(left > right)
+				right := stack[SP].(data.Integer)
+				left := stack[SP1].(data.Integer)
+				stack[SP1] = data.Bool(left > right)
 				goto nextPC
 
 			case isa.Gte:
 				SP++
 				SP1 := SP + 1
-				right := stack[SP].(api.Integer)
-				left := stack[SP1].(api.Integer)
-				stack[SP1] = api.Bool(left >= right)
+				right := stack[SP].(data.Integer)
+				left := stack[SP1].(data.Integer)
+				stack[SP1] = data.Bool(left >= right)
 				goto nextPC
 
 			case isa.Neg:
 				SP1 := SP + 1
-				val := stack[SP1].(api.Integer)
-				stack[SP1] = api.Integer(-val)
+				val := stack[SP1].(data.Integer)
+				stack[SP1] = data.Integer(-val)
 				goto nextPC
 
 			case isa.Not:
 				SP1 := SP + 1
-				val := stack[SP1].(api.Bool)
-				stack[SP1] = api.Bool(!val)
+				val := stack[SP1].(data.Bool)
+				stack[SP1] = data.Bool(!val)
 				goto nextPC
 
 			case isa.MakeTruthy:
 				SP1 := SP + 1
-				val := api.Truthy(stack[SP1])
-				stack[SP1] = api.Bool(val)
+				val := data.Truthy(stack[SP1])
+				stack[SP1] = data.Bool(val)
 				goto nextPC
 
 			case isa.MakeCall:
 				SP1 := SP + 1
-				val := stack[SP1].(api.Caller)
+				val := stack[SP1].(data.Caller)
 				stack[SP1] = val.Caller()
 				goto nextPC
 
 			case isa.Call0:
 				SP1 := SP + 1
-				fn := stack[SP1].(api.Call)
+				fn := stack[SP1].(data.Call)
 				stack[SP1] = fn()
 				goto nextPC
 
 			case isa.Call1:
 				SP++
 				SP1 := SP + 1
-				fn := stack[SP].(api.Call)
+				fn := stack[SP].(data.Call)
 				arg := stack[SP1]
 				stack[SP1] = fn(arg)
 				goto nextPC
@@ -303,10 +303,10 @@ func NewClosure(cfg *Config) api.Call {
 				PC++
 				SP1 := SP + 1
 				SP2 := SP1 + 1
-				fn := stack[SP1].(api.Call)
+				fn := stack[SP1].(data.Call)
 				argCount := isa.Count(code[PC])
 				RES := SP1 + int(argCount)
-				args := make([]api.Value, argCount)
+				args := make([]data.Value, argCount)
 				copy(args, stack[SP2:])
 				stack[RES] = fn(args...)
 				SP = RES - 1
@@ -319,7 +319,7 @@ func NewClosure(cfg *Config) api.Call {
 
 			case isa.CondJump:
 				SP++
-				val := stack[SP].(api.Bool)
+				val := stack[SP].(data.Bool)
 				if val {
 					off := isa.Offset(code[PC+1])
 					PC = int(off)
@@ -335,13 +335,13 @@ func NewClosure(cfg *Config) api.Call {
 				return stack[SP+1]
 
 			case isa.RetNil:
-				return api.Nil
+				return data.Nil
 
 			case isa.RetTrue:
-				return api.True
+				return data.True
 
 			case isa.RetFalse:
-				return api.False
+				return data.False
 
 			default:
 				panic(fmt.Errorf(ErrUnknownOpcode, op))

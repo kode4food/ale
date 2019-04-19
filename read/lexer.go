@@ -5,7 +5,7 @@ import (
 	"regexp"
 	"strings"
 
-	"gitlab.com/kode4food/ale/api"
+	"gitlab.com/kode4food/ale/data"
 	"gitlab.com/kode4food/ale/stdlib"
 )
 
@@ -44,7 +44,7 @@ type (
 	// Token is a lexer value
 	Token struct {
 		Type  TokenType
-		Value api.Value
+		Value data.Value
 	}
 
 	tokenizer func([]string) *Token
@@ -106,25 +106,25 @@ var (
 )
 
 // Scan creates a new lexer Sequence
-func Scan(src api.String) api.Sequence {
+func Scan(src data.String) data.Sequence {
 	var resolver stdlib.LazyResolver
 	s := string(src)
 
-	resolver = func() (api.Value, api.Sequence, bool) {
+	resolver = func() (data.Value, data.Sequence, bool) {
 		if t, rs := matchToken(s); t.Type != endOfFile {
 			s = rs
 			return t, stdlib.NewLazySequence(resolver), true
 		}
-		return api.Nil, api.EmptyList, false
+		return data.Nil, data.EmptyList, false
 	}
 
 	l := stdlib.NewLazySequence(resolver)
 	return stdlib.Filter(l, notWhitespace)
 }
 
-func notWhitespace(args ...api.Value) api.Value {
+func notWhitespace(args ...data.Value) data.Value {
 	t := args[0].(*Token)
-	return api.Bool(t.Type != Whitespace && t.Type != Comment)
+	return data.Bool(t.Type != Whitespace && t.Type != Comment)
 }
 
 func matchToken(src string) (*Token, string) {
@@ -140,10 +140,10 @@ func matchToken(src string) (*Token, string) {
 
 // String converts this Value into a string
 func (t *Token) String() string {
-	return api.Vector{api.Integer(t.Type), t.Value}.String()
+	return data.Vector{data.Integer(t.Type), t.Value}.String()
 }
 
-func makeToken(t TokenType, v api.Value) *Token {
+func makeToken(t TokenType, v data.Value) *Token {
 	return &Token{
 		Type:  t,
 		Value: v,
@@ -152,7 +152,7 @@ func makeToken(t TokenType, v api.Value) *Token {
 
 func tokenState(t TokenType) tokenizer {
 	return func(sm []string) *Token {
-		return makeToken(t, api.String(sm[0]))
+		return makeToken(t, data.String(sm[0]))
 	}
 }
 
@@ -177,24 +177,24 @@ func stringState(sm []string) *Token {
 		panic(fmt.Errorf(StringNotTerminated))
 	}
 	s := unescape(sm[2])
-	return makeToken(String, api.String(s))
+	return makeToken(String, data.String(s))
 }
 
 func ratioState(sm []string) *Token {
 	comp := strings.Split(sm[0], "/")
-	num := int64(api.ParseInteger(api.String(comp[0])))
-	den := int64(api.ParseInteger(api.String(comp[1])))
-	res := api.Float(float64(num) / float64(den))
+	num := int64(data.ParseInteger(data.String(comp[0])))
+	den := int64(data.ParseInteger(data.String(comp[1])))
+	res := data.Float(float64(num) / float64(den))
 	return makeToken(Number, res)
 }
 
 func floatState(sm []string) *Token {
-	v := api.ParseFloat(api.String(sm[0]))
+	v := data.ParseFloat(data.String(sm[0]))
 	return makeToken(Number, v)
 }
 
 func integerState(sm []string) *Token {
-	v := api.ParseInteger(api.String(sm[0]))
+	v := data.ParseInteger(data.String(sm[0]))
 	return makeToken(Number, v)
 }
 
