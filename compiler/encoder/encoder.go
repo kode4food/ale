@@ -118,6 +118,7 @@ func (e *encoder) Emit(oc isa.Opcode, args ...isa.Coder) {
 
 // Word returns the encoder's resulting VM instructions
 func (e *encoder) Code() []isa.Word {
+	analysis.Verify(e.code)
 	return isa.Flatten(e.code)
 }
 
