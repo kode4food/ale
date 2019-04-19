@@ -5,7 +5,6 @@ import "gitlab.com/kode4food/ale/data"
 // Scope describes the scope of a name
 type Scope int
 
-//go:generate stringer -type=Scope -linecomment
 const (
 	LocalScope Scope = iota
 	ArgScope

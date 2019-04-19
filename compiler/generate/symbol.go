@@ -42,7 +42,7 @@ func resolveLocal(e encoder.Type, l data.LocalSymbol) {
 			idx, _ := e.ResolveClosure(l)
 			e.Emit(isa.Closure, idx)
 		default:
-			panic(fmt.Sprintf("unknown scope type: %s", scope))
+			panic("unknown scope type")
 		}
 		return
 	}

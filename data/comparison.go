@@ -10,10 +10,9 @@ type (
 	}
 )
 
-//go:generate stringer -type=Comparison -linecomment
 const (
-	LessThan     Comparison = iota - 1 // Less Than
-	EqualTo                            // Equal To
-	GreaterThan                        // Greater Than
-	Incomparable                       // Not Comparable
+	LessThan Comparison = iota - 1
+	EqualTo
+	GreaterThan
+	Incomparable
 )
