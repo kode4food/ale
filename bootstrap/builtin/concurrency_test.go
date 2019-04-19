@@ -53,17 +53,17 @@ func TestPromise(t *testing.T) {
 
 	p1 := builtin.Promise(S("with initial"))
 	as.True(builtin.IsPromise(p1))
-	res := p1.(api.Caller).Caller()()
+	res := getCall(p1)()
 	as.String("with initial", res)
 
 	p2 := builtin.Promise()
 	go func() {
-		p2.(api.Caller).Caller()(S("no initial"))
+		getCall(p2)(S("no initial"))
 	}()
-	res = p2.(api.Caller).Caller()()
+	res = getCall(p2)()
 	as.String("no initial", res)
 	as.False(builtin.IsPromise(res))
 
 	defer as.ExpectPanic("can't deliver a promise twice")
-	p1.(api.Caller).Caller()(S("new value"))
+	getCall(p1)(S("new value"))
 }

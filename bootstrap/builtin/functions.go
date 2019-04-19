@@ -39,8 +39,10 @@ func bindFunction(bound api.Call, outer api.Values) api.Call {
 
 // IsApply tests whether or not a value is callable
 func IsApply(args ...api.Value) api.Value {
-	_, ok := args[0].(api.Caller)
-	return api.Bool(ok)
+	if _, ok := args[0].(api.Caller); ok {
+		return api.True
+	}
+	return api.False
 }
 
 // IsSpecial tests whether not a function is a special form

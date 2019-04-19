@@ -9,28 +9,43 @@ import (
 )
 
 func TestBasicNumber(t *testing.T) {
-	testCode(t, `(+)`, F(0))
-	testCode(t, `(*)`, F(1))
-	testCode(t, `(+ 1 1)`, F(2.0))
-	testCode(t, `(* 4 4)`, F(16.0))
-	testCode(t, `(+ 5 4)`, F(9.0))
-	testCode(t, `(* 12 3)`, F(36.0))
-	testCode(t, `(- 10 4)`, F(6.0))
-	testCode(t, `(- 10 4 2)`, F(4.0))
-	testCode(t, `(/ 10 2)`, F(5.0))
-	testCode(t, `(/ 10 2 5)`, F(1.0))
-	testCode(t, `(mod 10 3)`, F(1.0))
-	testCode(t, `(mod 100 8 7)`, F(4.0))
+	testCode(t, `(+)`, I(0))
+	testCode(t, `(*)`, I(1))
+	testCode(t, `(+ 1 1)`, I(2))
+	testCode(t, `(* 4 4)`, I(16))
+	testCode(t, `(+ 5 4)`, I(9))
+	testCode(t, `(* 12 3)`, I(36))
+	testCode(t, `(- 10 4)`, I(6))
+	testCode(t, `(- 10 4 2)`, I(4))
+	testCode(t, `(- 5)`, I(-5))
+	testCode(t, `(/ 10 2)`, I(5))
+	testCode(t, `(/ 10 2 5)`, I(1))
+	testCode(t, `(mod 10 3)`, I(1))
+	testCode(t, `(mod 100 8 7)`, I(4))
 }
 
 func TestNestedNumber(t *testing.T) {
-	testCode(t, `(/ 10 (- 5 3))`, F(5.0))
-	testCode(t, `(* 5 (- 5 3))`, F(10.0))
-	testCode(t, `(/ 10 (/ 6 3))`, F(5.0))
+	testCode(t, `(/ 10 (- 5 3))`, I(5))
+	testCode(t, `(* 5 (- 5 3))`, I(10))
+	testCode(t, `(/ 10 (/ 6 3))`, I(5))
 }
 
 func TestNonNumber(t *testing.T) {
+	testCode(t, `(is-pos-inf (/ 99.0 0))`, api.True)
+	testCode(t, `(is-pos-inf 99)`, api.False)
+	testCode(t, `(is-pos-inf "hello")`, api.False)
+
+	testCode(t, `(is-neg-inf (/ -99.0 0))`, api.True)
+	testCode(t, `(is-neg-inf -99)`, api.False)
+	testCode(t, `(is-neg-inf "hello")`, api.False)
+
+	testCode(t, `(is-nan 99)`, api.False)
+	testCode(t, `(is-nan "hello")`, api.False)
+}
+
+func TestBadMaths(t *testing.T) {
 	e := interfaceErr("api.String", "api.Number", "Add")
+
 	testBadCode(t, `(+ 99 "hello")`, e)
 	testBadCode(t, `(+ "hello")`, e)
 }
