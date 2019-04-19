@@ -48,7 +48,7 @@ func newReader(lexer data.Sequence) *reader {
 
 func (r *reader) nextToken() *Token {
 	s := r.seq
-	if !s.IsSequence() {
+	if s.IsEmpty() {
 		return nil
 	}
 	f := s.First()

@@ -36,11 +36,11 @@ func TestChannel(t *testing.T) {
 		as.Float(1, seq.First())
 		as.Float(2, seq.Rest().First())
 		as.Float(3, seq.Rest().Rest().First())
-		as.True(seq.Rest().Rest().Rest().IsSequence())
+		as.False(seq.Rest().Rest().Rest().IsEmpty())
 		as.String("foo", seq.Rest().Rest().Rest().First())
-		as.True(seq.Rest().Rest().Rest().Rest().IsSequence())
+		as.False(seq.Rest().Rest().Rest().Rest().IsEmpty())
 		as.String("bar", seq.Rest().Rest().Rest().Rest().First())
-		as.False(seq.Rest().Rest().Rest().Rest().Rest().IsSequence())
+		as.True(seq.Rest().Rest().Rest().Rest().Rest().IsEmpty())
 		wg.Done()
 	}
 

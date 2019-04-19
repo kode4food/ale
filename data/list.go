@@ -33,12 +33,12 @@ func (l *List) Rest() Sequence {
 	return l.rest
 }
 
-// IsSequence returns whether or not this List has any elements
-func (l *List) IsSequence() bool {
-	return l != EmptyList
+// IsEmpty returns whether or not this sequence is empty
+func (l *List) IsEmpty() bool {
+	return l == EmptyList
 }
 
-// Split breaks the List into its components (first, rest, isSequence)
+// Split breaks the List into its components (first, rest, ok)
 func (l *List) Split() (Value, Sequence, bool) {
 	return l.first, l.rest, l != EmptyList
 }

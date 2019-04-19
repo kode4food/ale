@@ -29,7 +29,7 @@ func TestMap(t *testing.T) {
 	as.String("this is the last", v3)
 
 	r1 := w.Rest().Rest().Rest()
-	as.False(r1.IsSequence())
+	as.True(r1.IsEmpty())
 
 	p1 := w.Prepend(S("not mapped"))
 	p2 := p1.Prepend(S("also not mapped"))
@@ -59,7 +59,7 @@ func TestMapParallel(t *testing.T) {
 	as.Float(24, w.Rest().Rest().Rest().First())
 
 	s3 := w.Rest().Rest().Rest().Rest()
-	as.False(s3.IsSequence())
+	as.True(s3.IsEmpty())
 }
 
 func TestFilter(t *testing.T) {
@@ -79,7 +79,7 @@ func TestFilter(t *testing.T) {
 	as.String("last", v2)
 
 	r1 := w.Rest().Rest()
-	as.False(r1.IsSequence())
+	as.True(r1.IsEmpty())
 
 	p := w.Prepend(S("filtered out"))
 	v4 := p.First()
@@ -109,7 +109,7 @@ func TestFilteredAndMapped(t *testing.T) {
 	as.String("this is the last", v2)
 
 	r1 := w2.Rest().Rest()
-	as.False(r1.IsSequence())
+	as.True(r1.IsEmpty())
 }
 
 func TestConcat(t *testing.T) {
@@ -160,6 +160,6 @@ func TestTakeDrop(t *testing.T) {
 	as.String(`("5" "6" "7" "8" "9" "10")`, data.MakeSequenceStr(d1))
 	as.String(`("4" "5" "6" "7" "8" "9" "10")`, data.MakeSequenceStr(d2))
 	as.String(`("5" "6" "7" "8" "9" "10")`, data.MakeSequenceStr(t3))
-	as.False(d3.IsSequence())
-	as.False(d4.IsSequence())
+	as.True(d3.IsEmpty())
+	as.True(d4.IsEmpty())
 }

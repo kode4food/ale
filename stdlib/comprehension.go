@@ -121,7 +121,7 @@ func Drop(s data.Sequence, count data.Integer) data.Sequence {
 	next := s
 
 	first = func() (data.Value, data.Sequence, bool) {
-		for i := data.Integer(0); i < count && next.IsSequence(); i++ {
+		for i := data.Integer(0); i < count && !next.IsEmpty(); i++ {
 			next = next.Rest()
 		}
 		return rest()

@@ -22,7 +22,7 @@
 
 (defn comp-outer
   [func args rest-funcs]
-  (if (is-seq rest-funcs)
+  (if (seq rest-funcs)
     (comp-outer (first rest-funcs) (list func args) (rest rest-funcs))
     (list func args)))
 

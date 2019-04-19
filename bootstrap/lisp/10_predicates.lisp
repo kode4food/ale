@@ -3,7 +3,7 @@
 (defn predicate-lazy-seq
   [func coll]
   (lazy-seq
-   (if (is-seq coll)
+   (if (seq coll)
      (let [f (func (first coll))]
        (if f
          (cons f (predicate-lazy-seq func (rest coll)))
@@ -34,6 +34,7 @@
 (def-predicate is-nil "nil")
 (def-predicate is-str "str")
 (def-predicate is-seq "seq")
+(def-predicate is-empty "empty")
 (def-predicate is-len "len")
 (def-predicate is-indexed "indexed")
 (def-predicate is-assoc "assoc")

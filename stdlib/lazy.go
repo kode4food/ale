@@ -10,7 +10,7 @@ type (
 		once     Do
 		resolver LazyResolver
 
-		isSeq  bool
+		ok     bool
 		result data.Value
 		rest   data.Sequence
 	}
@@ -28,14 +28,14 @@ func NewLazySequence(r LazyResolver) data.Sequence {
 
 func (l *lazySequence) resolve() *lazySequence {
 	l.once(func() {
-		l.result, l.rest, l.isSeq = l.resolver()
+		l.result, l.rest, l.ok = l.resolver()
 		l.resolver = nil
 	})
 	return l
 }
 
-func (l *lazySequence) IsSequence() bool {
-	return l.resolve().isSeq
+func (l *lazySequence) IsEmpty() bool {
+	return !l.resolve().ok
 }
 
 func (l *lazySequence) First() data.Value {
@@ -48,13 +48,13 @@ func (l *lazySequence) Rest() data.Sequence {
 
 func (l *lazySequence) Split() (data.Value, data.Sequence, bool) {
 	r := l.resolve()
-	return r.result, r.rest, l.isSeq
+	return r.result, r.rest, l.ok
 }
 
 func (l *lazySequence) Prepend(v data.Value) data.Sequence {
 	return &lazySequence{
 		once:   Never(),
-		isSeq:  true,
+		ok:     true,
 		result: v,
 		rest:   l,
 	}

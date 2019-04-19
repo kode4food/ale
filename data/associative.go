@@ -56,12 +56,12 @@ func (a Associative) Rest() Sequence {
 	return EmptyAssociative
 }
 
-// IsSequence returns whether or not this Associative has any pairs
-func (a Associative) IsSequence() bool {
-	return len(a) > 0
+// IsEmpty returns whether or not this sequence is empty
+func (a Associative) IsEmpty() bool {
+	return len(a) == 0
 }
 
-// Split breaks the Associative into its components (first, rest, isSequence)
+// Split breaks the Associative into its components (first, rest, ok)
 func (a Associative) Split() (Value, Sequence, bool) {
 	if len(a) > 0 {
 		return a[0], a[1:], true

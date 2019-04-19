@@ -42,7 +42,7 @@ type (
 		once Do
 		ch   *channelWrapper
 
-		isSeq  bool
+		ok     bool
 		result channelResult
 		rest   data.Sequence
 	}
@@ -157,8 +157,8 @@ func (c *channelSequence) resolve() *channelSequence {
 	c.once(func() {
 		runtime.SetFinalizer(c, nil)
 		ch := c.ch
-		if result, isSeq := <-ch.seq; isSeq {
-			c.isSeq = isSeq
+		if result, ok := <-ch.seq; ok {
+			c.ok = ok
 			c.result = result
 			c.rest = NewChannelSequence(ch)
 		}
@@ -169,8 +169,8 @@ func (c *channelSequence) resolve() *channelSequence {
 	return c
 }
 
-func (c *channelSequence) IsSequence() bool {
-	return c.resolve().isSeq
+func (c *channelSequence) IsEmpty() bool {
+	return !c.resolve().ok
 }
 
 func (c *channelSequence) First() data.Value {
@@ -183,13 +183,13 @@ func (c *channelSequence) Rest() data.Sequence {
 
 func (c *channelSequence) Split() (data.Value, data.Sequence, bool) {
 	r := c.resolve()
-	return r.result.value, r.rest, r.isSeq
+	return r.result.value, r.rest, r.ok
 }
 
 func (c *channelSequence) Prepend(v data.Value) data.Sequence {
 	return &channelSequence{
 		once:   Never(),
-		isSeq:  true,
+		ok:     true,
 		result: channelResult{value: v, error: nil},
 		rest:   c,
 	}

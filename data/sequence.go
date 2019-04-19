@@ -10,7 +10,7 @@ type (
 		Rest() Sequence
 		Split() (Value, Sequence, bool)
 		Prepend(Value) Sequence
-		IsSequence() bool
+		IsEmpty() bool
 	}
 
 	// Conjoiner is a Sequence that can be Conjoined in some way
@@ -70,7 +70,7 @@ func Count(v Value) int {
 
 // Last returns the final element of a Sequence, possibly by scanning
 func Last(s Sequence) (Value, bool) {
-	if !s.IsSequence() {
+	if s.IsEmpty() {
 		return Nil, false
 	}
 

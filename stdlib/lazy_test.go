@@ -24,7 +24,7 @@ func TestLazySeq(t *testing.T) {
 	}
 
 	l := stdlib.NewLazySequence(inc).Prepend(F(0))
-	as.True(l.IsSequence())
+	as.False(l.IsEmpty())
 	as.Float(0, l.First())
 	as.Float(1, l.Rest().First())
 	as.Float(2, l.Rest().Rest().First())

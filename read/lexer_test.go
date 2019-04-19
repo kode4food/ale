@@ -33,7 +33,7 @@ func assertTokenSequence(as *assert.Wrapper, s data.Sequence, tokens []*read.Tok
 	f, r, ok = r.Split()
 	as.False(ok)
 	as.Nil(f)
-	as.False(r.IsSequence())
+	as.True(r.IsEmpty())
 }
 
 func TestCreateLexer(t *testing.T) {

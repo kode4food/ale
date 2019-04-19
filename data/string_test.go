@@ -23,8 +23,8 @@ func TestStr(t *testing.T) {
 	as.String("h", s1.First())
 	as.String("ello", s1.Rest())
 
-	as.True(s1.IsSequence())
-	as.False(S("").IsSequence())
+	as.False(s1.IsEmpty())
+	as.True(S("").IsEmpty())
 
 	s2 := s1.Prepend(S("s"))
 	as.Integer(6, data.Count(s2))

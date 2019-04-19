@@ -23,7 +23,7 @@ func TestList(t *testing.T) {
 
 	as.Equal(n1, l1.First())
 	as.Equal(data.EmptyList, l1.Rest())
-	as.False(l1.Rest().IsSequence())
+	as.True(l1.Rest().IsEmpty())
 
 	n2 := F(20.5)
 	l2 := l1.Prepend(n2).(*data.List)

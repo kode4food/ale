@@ -8,7 +8,7 @@ func fetchSequence(args data.Vector) data.Sequence {
 
 // Seq attempts to convert the provided value to a sequence, or returns nil
 func Seq(args ...data.Value) data.Value {
-	if s, ok := args[0].(data.Sequence); ok {
+	if s, ok := args[0].(data.Sequence); ok && !s.IsEmpty() {
 		return s
 	}
 	return data.Nil
@@ -70,10 +70,18 @@ func Get(args ...data.Value) data.Value {
 	return res
 }
 
-// IsSeq returns whether or not the provided value is a non-empty sequence
+// IsSeq returns whether or not the provided value is a sequence
 func IsSeq(args ...data.Value) data.Value {
-	s, ok := args[0].(data.Sequence)
-	return data.Bool(ok && s.IsSequence())
+	if _, ok := args[0].(data.Sequence); ok {
+		return data.True
+	}
+	return data.False
+}
+
+// IsEmpty returns whether or not the provided sequence is empty
+func IsEmpty(args ...data.Value) data.Value {
+	s := args[0].(data.Sequence)
+	return data.Bool(s.IsEmpty())
 }
 
 // IsLen returns whether or not the provided value is a countable sequence

@@ -44,9 +44,9 @@ func (s String) Split() (Value, Sequence, bool) {
 	return Nil, emptyStr, false
 }
 
-// IsSequence returns true if the String is not empty
-func (s String) IsSequence() bool {
-	return len(s) != 0
+// IsEmpty returns whether or not this sequence is empty
+func (s String) IsEmpty() bool {
+	return len(s) == 0
 }
 
 // Prepend prepends a Value to the beginning of the String. If the Value

@@ -23,7 +23,7 @@ func TestDevNullManager(t *testing.T) {
 	as.True(ok)
 	r, ok := in.(stdlib.Reader)
 	as.True(ok)
-	as.False(r.IsSequence())
+	as.True(r.IsEmpty())
 }
 
 func TestTopLevelManager(t *testing.T) {

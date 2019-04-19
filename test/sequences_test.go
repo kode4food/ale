@@ -9,8 +9,10 @@ import (
 
 func TestSequences(t *testing.T) {
 	testCode(t, `(seq? [1 2 3])`, data.True)
-	testCode(t, `(seq? ())`, data.False)
+	testCode(t, `(seq? ())`, data.True)
+	testCode(t, `(seq ())`, data.Nil)
 	testCode(t, `(seq? 99)`, data.False)
+	testCode(t, `(seq 99)`, data.Nil)
 }
 
 func TestToAssoc(t *testing.T) {

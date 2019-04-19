@@ -44,7 +44,7 @@ func TestChan(t *testing.T) {
 
 	f, r, ok := seq.(data.Sequence).Split()
 	as.String("hello", f)
-	as.False(r.IsSequence())
+	as.True(r.IsEmpty())
 	as.True(ok)
 }
 

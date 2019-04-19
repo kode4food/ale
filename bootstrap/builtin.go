@@ -120,6 +120,7 @@ func (b *bootstrap) availableFunctions() {
 	b.applicative("vector", builtin.Vector)
 
 	b.applicative("is-seq", builtin.IsSeq, 1)
+	b.applicative("is-empty", builtin.IsEmpty, 1)
 	b.applicative("is-len", builtin.IsLen, 1)
 	b.applicative("is-indexed", builtin.IsIndexed, 1)
 	b.applicative("is-assoc", builtin.IsAssoc, 1)

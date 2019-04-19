@@ -59,6 +59,7 @@
 (def-builtin vector)
 
 (def-builtin is-seq)
+(def-builtin is-empty)
 (def-builtin is-len)
 (def-builtin is-indexed)
 (def-builtin is-assoc)

@@ -171,7 +171,7 @@ func (fe *funcEncoder) makeCond(v *variant) {
 
 func (fe *funcEncoder) makeThen(v *variant) {
 	body := v.body
-	if !body.IsSequence() {
+	if body.IsEmpty() {
 		fe.Emit(isa.RetNil)
 		return
 	}
@@ -265,7 +265,7 @@ func parseArgNames(s data.Sequence) (data.Names, bool) {
 func parseRestArg(s data.Sequence) data.Name {
 	if f, r, ok := s.Split(); ok {
 		n := f.(data.Symbol).Name()
-		if n != restMarker && !r.IsSequence() {
+		if n != restMarker && r.IsEmpty() {
 			return n
 		}
 	}

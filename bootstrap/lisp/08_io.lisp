@@ -12,10 +12,10 @@
    seq))
 
 (defn pr [& forms]
-  (let [seq (pr-map-with-nil str! forms)]
-    (if (is-seq seq)
-      (. *out* :write (first seq)))
-    (for-each [elem (rest seq)]
+  (let [mapped (pr-map-with-nil str! forms)]
+    (if (seq mapped)
+      (. *out* :write (first mapped)))
+    (for-each [elem (rest mapped)]
               (. *out* :write *space* elem))))
 
 (defn prn [& forms]
@@ -23,10 +23,10 @@
   (. *out* :write *newline*))
 
 (defn print [& forms]
-  (let [seq (pr-map-with-nil str forms)]
-    (if (is-seq seq)
-      (. *out* :write (first seq)))
-    (for-each [elem (rest seq)]
+  (let [mapped (pr-map-with-nil str forms)]
+    (if (seq mapped)
+      (. *out* :write (first mapped)))
+    (for-each [elem (rest mapped)]
               (. *out* :write *space* elem))))
 
 (defn println [& forms]

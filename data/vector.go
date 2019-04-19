@@ -37,12 +37,12 @@ func (v Vector) Rest() Sequence {
 	return EmptyVector
 }
 
-// IsSequence returns whether or not this Vector has any elements
-func (v Vector) IsSequence() bool {
-	return len(v) > 0
+// IsEmpty returns whether or not this sequence is empty
+func (v Vector) IsEmpty() bool {
+	return len(v) == 0
 }
 
-// Split breaks the Vector into its components (first, rest, isSequence)
+// Split breaks the Vector into its components (first, rest, ok)
 func (v Vector) Split() (Value, Sequence, bool) {
 	lv := len(v)
 	if lv > 1 {

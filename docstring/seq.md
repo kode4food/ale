@@ -6,7 +6,7 @@ names: ["seq"]
 usage: "(seq form)"
 tags: ["sequence", "conversion"]
 ---
-Will attempt to convert the provided form to a sequence if it isn't already. If the form cannot be converted, _nil_ will be returned.
+Will attempt to convert the provided form to a sequence if it isn't already. If the form cannot be converted, or if the resulting sequence is empty, _nil_ will be returned.
 
 #### An Example
 
