@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"gitlab.com/kode4food/ale/api"
-
 	"gitlab.com/kode4food/ale/internal/assert"
 	"gitlab.com/kode4food/ale/runtime/isa"
 )
@@ -38,6 +37,13 @@ func TestCoders(t *testing.T) {
 	as.Integer(99, api.Integer(out1[0]))
 	as.Integer(5, api.Integer(out1[1]))
 	as.Integer(37, api.Integer(out1[2]))
+}
+
+func TestOpcodeStringers(t *testing.T) {
+	as := assert.New(t)
+
+	as.String("CondJump", fmt.Sprintf("%s", isa.CondJump))
+	as.String("Label", fmt.Sprintf("%s", isa.Label))
 }
 
 func TestInstructions(t *testing.T) {
