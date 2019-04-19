@@ -5,7 +5,6 @@ import (
 
 	"gitlab.com/kode4food/ale/api"
 	"gitlab.com/kode4food/ale/compiler/arity"
-	"gitlab.com/kode4food/ale/compiler/build"
 	"gitlab.com/kode4food/ale/compiler/encoder"
 	"gitlab.com/kode4food/ale/compiler/generate"
 	"gitlab.com/kode4food/ale/eval"
@@ -40,7 +39,7 @@ func Do(e encoder.Type, args ...api.Value) {
 // If encodes an (if cond then else) form
 func If(e encoder.Type, args ...api.Value) {
 	al := arity.AssertRanged(2, 3, len(args))
-	build.Cond(e,
+	generate.Branch(e,
 		func() {
 			generate.Value(e, args[0])
 			e.Append(isa.MakeTruthy)

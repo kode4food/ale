@@ -5,7 +5,6 @@ import (
 
 	"gitlab.com/kode4food/ale/api"
 	"gitlab.com/kode4food/ale/compiler/arity"
-	"gitlab.com/kode4food/ale/compiler/build"
 	"gitlab.com/kode4food/ale/compiler/encoder"
 	"gitlab.com/kode4food/ale/compiler/generate"
 	"gitlab.com/kode4food/ale/macro"
@@ -136,7 +135,7 @@ func (fe *funcEncoder) makeVariants(vars variants) {
 	}
 
 	v := vars[0]
-	build.Cond(fe,
+	generate.Branch(fe,
 		func() { fe.makeCond(v) },
 		func() { fe.makeThen(v) },
 		func() { fe.makeVariants(vars[1:]) },
