@@ -1,4 +1,4 @@
-package test
+package builtin_test
 
 import (
 	"bytes"
@@ -44,7 +44,7 @@ func testOutput(t *testing.T, src, expected string) {
 	as.String(expected, buf.String())
 }
 
-func TestIO(t *testing.T) {
+func TestIOEval(t *testing.T) {
 	testOutput(t, `
 		(println "hello" "there")
 	`, "hello there\n")

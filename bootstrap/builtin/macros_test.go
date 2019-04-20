@@ -1,21 +1,24 @@
-package test
+package builtin_test
 
 import (
 	"testing"
 
 	"gitlab.com/kode4food/ale/data"
+	"gitlab.com/kode4food/ale/internal/assert"
 	. "gitlab.com/kode4food/ale/internal/assert/helpers"
 )
 
-func TestMacroPredicates(t *testing.T) {
-	testCode(t, `(macro? cond)`, data.True)
-	testCode(t, `(!macro? cond)`, data.False)
-	testCode(t, `(macro? if)`, data.False)
-	testCode(t, `(!macro? if)`, data.True)
+func TestMacroPredicatesEval(t *testing.T) {
+	as := assert.New(t)
+	as.EvalTo(`(macro? cond)`, data.True)
+	as.EvalTo(`(!macro? cond)`, data.False)
+	as.EvalTo(`(macro? if)`, data.False)
+	as.EvalTo(`(!macro? if)`, data.True)
 }
 
-func TestMacroReplace(t *testing.T) {
-	testCode(t, `
+func TestMacroReplaceEval(t *testing.T) {
+	as := assert.New(t)
+	as.EvalTo(`
 		(defmacro foo
 			[& args]
 			(to-list (cons 'str (cons "hello" args))))
@@ -24,8 +27,9 @@ func TestMacroReplace(t *testing.T) {
 	`, S(`hello123`))
 }
 
-func TestMacroExpand(t *testing.T) {
-	testCode(t, `
+func TestMacroExpandEval(t *testing.T) {
+	as := assert.New(t)
+	as.EvalTo(`
 		(defmacro foo1
 			[& args]
 			(to-list (cons 'str (cons "hello" args))))
@@ -33,7 +37,7 @@ func TestMacroExpand(t *testing.T) {
 		(macroexpand-1 '(foo1 1 2 3))
 	`, S(`(str "hello" 1 2 3)`))
 
-	testCode(t, `
+	as.EvalTo(`
 		(defmacro foo1
 			[& args]
 			(to-list (cons 'str (cons "hello" args))))

@@ -1,14 +1,26 @@
 package builtin_test
 
 import (
+	"fmt"
 	"testing"
 
 	"gitlab.com/kode4food/ale/bootstrap"
 	"gitlab.com/kode4food/ale/bootstrap/builtin"
+	"gitlab.com/kode4food/ale/compiler/special"
 	"gitlab.com/kode4food/ale/data"
 	"gitlab.com/kode4food/ale/internal/assert"
 	. "gitlab.com/kode4food/ale/internal/assert/helpers"
 )
+
+func interfaceErr(concrete, intf, method string) error {
+	err := "interface conversion: %s is not %s: missing method %s"
+	return fmt.Errorf(fmt.Sprintf(err, concrete, intf, method))
+}
+
+func typeErr(concrete, expected string) error {
+	err := "interface conversion: data.Value is %s, not %s"
+	return fmt.Errorf(fmt.Sprintf(err, concrete, expected))
+}
 
 func getCall(v data.Value) data.Call {
 	return v.(data.Caller).Caller()
@@ -42,7 +54,7 @@ func TestPartial(t *testing.T) {
 	as.String(`["1" "2" "7" "9"]`, v2)
 }
 
-func TestPredicates(t *testing.T) {
+func TestFunctionPredicates(t *testing.T) {
 	as := assert.New(t)
 
 	manager := bootstrap.DevNullManager()
@@ -56,4 +68,67 @@ func TestPredicates(t *testing.T) {
 	as.True(ok)
 	as.True(builtin.IsSpecial(ifFunc))
 	as.False(builtin.IsApply(ifFunc))
+}
+
+func TestFunctionPredicatesEval(t *testing.T) {
+	as := assert.New(t)
+	as.EvalTo(`(apply? if)`, data.False)
+	as.EvalTo(`(!apply? if)`, data.True)
+	as.EvalTo(`(special? def)`, data.True)
+	as.EvalTo(`(!special? def)`, data.False)
+	as.EvalTo(`(apply? 99)`, data.False)
+	as.EvalTo(`(!apply? 99)`, data.True)
+}
+
+func TestLambdaEval(t *testing.T) {
+	as := assert.New(t)
+	as.EvalTo(`
+		(def call (fn [func] (func)))
+		(let [greeting "hello"]
+			(let [foo (fn [] greeting)]
+				(call foo)))
+	`, S("hello"))
+}
+
+func TestBadLambdaEval(t *testing.T) {
+	as := assert.New(t)
+
+	e := typeErr("data.Integer", "*data.List")
+	as.PanicWith(`(fn 99 "hello")`, e)
+
+	e = interfaceErr("data.qualifiedSymbol", "data.LocalSymbol", "LocalSymbol")
+	as.PanicWith(`(fn foo/bar [] "hello")`, e)
+}
+
+func TestApplyEval(t *testing.T) {
+	as := assert.New(t)
+	as.EvalTo(`(apply + [1 2 3])`, F(6))
+	as.EvalTo(`
+		(apply
+			(fn add [x y z] (+ x y z))
+			[1 2 3])
+	`, F(6))
+
+	e := interfaceErr("data.Integer", "data.Caller", "Caller")
+	as.PanicWith(`(apply 32 [1 2 3])`, e)
+}
+
+func TestRestFunctionsEval(t *testing.T) {
+	as := assert.New(t)
+	as.EvalTo(`
+		(def test (fn [f & r] (apply vector (cons f r))))
+		(test 1 2 3 4 5 6 7)
+	`, data.String("[1 2 3 4 5 6 7]"))
+
+	as.PanicWith(`
+		(fn [x y &] "explode")
+	`, fmt.Errorf(special.InvalidRestArgument, "[]"))
+
+	as.PanicWith(`
+		(fn [x y & z g] "explode")
+	`, fmt.Errorf(special.InvalidRestArgument, "[z g]"))
+
+	as.PanicWith(`
+		(fn [x y & & z] "explode")
+	`, fmt.Errorf(special.InvalidRestArgument, "[& z]"))
 }

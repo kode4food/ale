@@ -1,4 +1,4 @@
-package test
+package builtin_test
 
 import (
 	"testing"
@@ -11,11 +11,11 @@ import (
 	"gitlab.com/kode4food/ale/namespace"
 )
 
-func TestQuote(t *testing.T) {
+func TestQuoteEval(t *testing.T) {
 	as := assert.New(t)
 
-	r1 := runCode("(quote (blah 2 3))").(*data.List)
-	r2 := runCode("'(blah 2 3)").(*data.List)
+	r1 := as.Eval("(quote (blah 2 3))").(*data.List)
+	r2 := as.Eval("'(blah 2 3)").(*data.List)
 
 	v1, ok := r1.ElementAt(0)
 	v2, _ := r2.ElementAt(0)
@@ -47,7 +47,7 @@ func TestQuote(t *testing.T) {
 	as.Integer(3, v1)
 }
 
-func TestUnquote(t *testing.T) {
+func TestUnquoteEval(t *testing.T) {
 	as := assert.New(t)
 
 	manager := namespace.NewManager()
@@ -59,8 +59,9 @@ func TestUnquote(t *testing.T) {
 	as.String("[123 (ale/unquote foo)]", r1)
 }
 
-func TestUnquoteMacro(t *testing.T) {
-	testCode(t,
+func TestUnquoteMacroEval(t *testing.T) {
+	as := assert.New(t)
+	as.EvalTo(
 		"(defmacro test [x & y] `(~x ~@y {:hello 99}))"+
 			"(test vector 1 2 3)",
 		S("[1 2 3 {:hello 99}]"),

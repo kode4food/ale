@@ -1,32 +1,35 @@
-package test
+package builtin_test
 
 import (
 	"fmt"
 	"testing"
 
 	"gitlab.com/kode4food/ale/compiler/special"
+	"gitlab.com/kode4food/ale/internal/assert"
 	. "gitlab.com/kode4food/ale/internal/assert/helpers"
 )
 
-func TestDefinitions(t *testing.T) {
-	testCode(t, `
+func TestDefinitionsEval(t *testing.T) {
+	as := assert.New(t)
+	as.EvalTo(`
 		(def foo "bar")
 		foo
 	`, S("bar"))
 
-	testCode(t, `
+	as.EvalTo(`
 		(def return-local (fn []
 			(let [foo "local"] foo)))
 		(return-local)
 	`, S("local"))
 }
 
-func TestLetBindings(t *testing.T) {
-	testBadCode(t, `
+func TestLetBindingsEval(t *testing.T) {
+	as := assert.New(t)
+	as.PanicWith(`
 		(let 99 "hello")
 	`, typeErr("data.Integer", "data.Vector"))
 
-	testBadCode(t, `
+	as.PanicWith(`
 		(let [a blah b] "hello")
 	`, fmt.Errorf(special.UnpairedBindings))
 }

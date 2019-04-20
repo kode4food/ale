@@ -67,3 +67,34 @@ func TestPromise(t *testing.T) {
 	defer as.ExpectPanic("can't deliver a promise twice")
 	getCall(p1)(S("new value"))
 }
+
+func TestGenerateEval(t *testing.T) {
+	as := assert.New(t)
+	as.EvalTo(`
+		(def g (generate
+			(emit 99)
+			(emit 100 1000)))
+		(apply + g)
+	`, F(1199))
+}
+
+func TestPromiseEval(t *testing.T) {
+	as := assert.New(t)
+	as.EvalTo(`
+		(def p1 (promise))
+		(promise? p1)
+	`, data.True)
+
+	as.EvalTo(`
+		(def p2 (promise "hello"))
+		(p2)
+	`, S("hello"))
+}
+
+func TestFutureEval(t *testing.T) {
+	as := assert.New(t)
+	as.EvalTo(`
+		(def p (future "hello"))
+		(p)
+	`, S("hello"))
+}

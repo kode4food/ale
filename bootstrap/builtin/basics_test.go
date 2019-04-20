@@ -80,3 +80,26 @@ func TestDefer(t *testing.T) {
 		}),
 	)
 }
+
+func TestDoEval(t *testing.T) {
+	as := assert.New(t)
+	as.EvalTo(`
+		(do
+			55
+			(if true 99 33))
+	`, F(99))
+}
+
+func TestTrueFalseEval(t *testing.T) {
+	as := assert.New(t)
+	as.EvalTo(`true`, data.True)
+	as.EvalTo(`false`, data.False)
+	as.EvalTo(`nil`, data.Nil)
+}
+
+func TestReadEval(t *testing.T) {
+	as := assert.New(t)
+	as.EvalTo(`
+		(eval (read "(str \"hello\" \"you\" \"test\")"))
+	`, S("helloyoutest"))
+}

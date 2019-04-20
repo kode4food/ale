@@ -1,16 +1,18 @@
-package test
+package builtin_test
 
 import (
 	"testing"
 
 	"gitlab.com/kode4food/ale/data"
+	"gitlab.com/kode4food/ale/internal/assert"
 	. "gitlab.com/kode4food/ale/internal/assert/helpers"
 )
 
-func TestCond(t *testing.T) {
-	testCode(t, `(cond)`, data.Nil)
+func TestCondEval(t *testing.T) {
+	as := assert.New(t)
+	as.EvalTo(`(cond)`, data.Nil)
 
-	testCode(t, `
+	as.EvalTo(`
 		(cond
 			false "goodbye"
 			nil   "nope"
@@ -18,7 +20,7 @@ func TestCond(t *testing.T) {
 			"hi"  "ignored")
 	`, S("hello"))
 
-	testCode(t, `
+	as.EvalTo(`
 		(cond
 			false "goodbye"
 			nil   "nope"
@@ -26,21 +28,21 @@ func TestCond(t *testing.T) {
 			"hi"  "ignored")
 	`, S("hello"))
 
-	testCode(t, `
+	as.EvalTo(`
 		(cond
 			false "goodbye"
 			nil   "nope")
 	`, data.Nil)
 
-	testCode(t, `
+	as.EvalTo(`
 		(cond
 			true "hello"
 			99)
 	`, S("hello"))
 
-	testCode(t, `(cond 99)`, F(99))
+	as.EvalTo(`(cond 99)`, F(99))
 
-	testCode(t, `
+	as.EvalTo(`
 		(cond
 			false "hello"
 			99)
