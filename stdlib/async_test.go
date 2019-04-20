@@ -5,6 +5,8 @@ import (
 	"testing"
 	"time"
 
+	"gitlab.com/kode4food/ale/data"
+
 	"gitlab.com/kode4food/ale/internal/assert"
 	. "gitlab.com/kode4food/ale/internal/assert/helpers"
 	"gitlab.com/kode4food/ale/stdlib"
@@ -33,6 +35,10 @@ func TestChannel(t *testing.T) {
 	}
 
 	check := func() {
+		f, _, ok := seq.Split()
+		as.Float(1, f)
+		as.True(ok)
+
 		as.Float(1, seq.First())
 		as.Float(2, seq.Rest().First())
 		as.Float(3, seq.Rest().Rest().First())
@@ -68,4 +74,22 @@ func TestPromise(t *testing.T) {
 
 	defer as.ExpectPanic(stdlib.ExpectedUndelivered)
 	p1.Deliver(S("goodbye"))
+}
+
+func TestPromiseCaller(t *testing.T) {
+	as := assert.New(t)
+	p1 := stdlib.NewPromise()
+	c1 := p1.(data.Caller).Caller()
+
+	go func() {
+		time.Sleep(time.Millisecond * 50)
+		c1(S("hello"))
+	}()
+
+	as.String("hello", c1())
+	c1(S("hello"))
+	as.String("hello", c1())
+
+	defer as.ExpectPanic(stdlib.ExpectedUndelivered)
+	c1(S("goodbye"))
 }
