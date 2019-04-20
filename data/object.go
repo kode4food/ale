@@ -91,9 +91,6 @@ func (o Object) String() string {
 	buf.WriteString("{")
 	idx := 0
 	for k, v := range o.Flatten() {
-		if k == prototypeKey {
-			continue
-		}
 		if idx > 0 {
 			buf.WriteString(", ")
 		}

@@ -1,6 +1,7 @@
 package data_test
 
 import (
+	"fmt"
 	"testing"
 
 	"gitlab.com/kode4food/ale/compiler/arity"
@@ -42,5 +43,5 @@ func TestNormalFunction(t *testing.T) {
 
 	as.Nil(f1.CheckArity(0))
 	err := f1.CheckArity(2)
-	as.EqualError(err, "got 2 arguments, expected 0")
+	as.EqualError(err, fmt.Sprintf(arity.BadFixedArity, 2, 0))
 }
