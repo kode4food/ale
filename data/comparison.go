@@ -10,6 +10,7 @@ type (
 	}
 )
 
+// Comparison results
 const (
 	LessThan Comparison = iota - 1
 	EqualTo

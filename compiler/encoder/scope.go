@@ -5,6 +5,7 @@ import "gitlab.com/kode4food/ale/data"
 // Scope describes the scope of a name
 type Scope int
 
+// Scope locations
 const (
 	LocalScope Scope = iota
 	ArgScope
