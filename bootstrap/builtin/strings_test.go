@@ -27,4 +27,5 @@ func TestReadableStrEval(t *testing.T) {
 	as := assert.New(t)
 	as.EvalTo("(str! \"hello\nyou\")", S("\"hello\\nyou\""))
 	as.EvalTo(`(str! "hello" "you")`, S(`"hello" "you"`))
+	as.EvalTo(`(str!)`, S(""))
 }

@@ -245,13 +245,21 @@ func (f Float) Mod(n Number) Number {
 }
 
 // IsNaN returns whether or not this Float is not a number
-func (f Float) IsNaN() bool { return math.IsNaN(float64(f)) }
+func (f Float) IsNaN() bool {
+	return math.IsNaN(float64(f))
+}
 
 // IsPosInf returns whether or not this Float represents positive infinity
-func (f Float) IsPosInf() bool { return math.IsInf(float64(f), 1) }
+func (f Float) IsPosInf() bool {
+	return math.IsInf(float64(f), 1)
+}
 
 // IsNegInf returns whether or not this Float represents negative infinity
-func (f Float) IsNegInf() bool { return math.IsInf(float64(f), -1) }
+func (f Float) IsNegInf() bool {
+	return math.IsInf(float64(f), -1)
+}
 
 // String converts this Float to a string
-func (f Float) String() string { return fmt.Sprintf("%g", f) }
+func (f Float) String() string {
+	return fmt.Sprintf("%g", f)
+}

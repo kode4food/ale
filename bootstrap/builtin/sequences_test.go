@@ -12,6 +12,8 @@ func TestSequencesEval(t *testing.T) {
 	as := assert.New(t)
 	as.EvalTo(`(seq? [1 2 3])`, data.True)
 	as.EvalTo(`(seq? ())`, data.True)
+	as.EvalTo(`(empty? ())`, data.True)
+	as.EvalTo(`(empty? '(1))`, data.False)
 	as.EvalTo(`(seq ())`, data.Nil)
 	as.EvalTo(`(seq? 99)`, data.False)
 	as.EvalTo(`(seq 99)`, data.Nil)

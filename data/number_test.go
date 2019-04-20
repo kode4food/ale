@@ -2,6 +2,7 @@ package data_test
 
 import (
 	"fmt"
+	"math"
 	"testing"
 
 	"gitlab.com/kode4food/ale/data"
@@ -146,6 +147,46 @@ func TestSubtraction(t *testing.T) {
 	as.Float(15.0, n2.Sub(n3))
 	as.Float(2.25, n5.Sub(n6))
 	as.Integer(15, n1.Sub(n3))
+}
+
+func TestInfiniteNumbers(t *testing.T) {
+	as := assert.New(t)
+
+	as.False(I(98).IsPosInf())
+	as.False(I(0).IsNegInf())
+
+	posInf := F(1).Div(F(0))
+	negInf := F(-1).Div(F(0))
+
+	as.True(posInf.IsPosInf())
+	as.False(posInf.IsNegInf())
+	as.True(negInf.IsNegInf())
+	as.False(negInf.IsPosInf())
+
+	as.Compare(data.GreaterThan, posInf, I(1))
+	as.Compare(data.LessThan, negInf, I(1))
+	as.Compare(data.LessThan, I(1), posInf)
+	as.Compare(data.GreaterThan, I(1), negInf)
+
+	as.Compare(data.LessThan, negInf, F(1))
+	as.Compare(data.GreaterThan, posInf, F(1))
+	as.Compare(data.LessThan, F(1), posInf)
+	as.Compare(data.GreaterThan, F(1), negInf)
+}
+
+func TestNonNumbers(t *testing.T) {
+	as := assert.New(t)
+
+	nan := F(math.Log(-1.0))
+
+	as.True(nan.IsNaN())
+	as.False(F(35.5).IsNaN())
+	as.False(I(35).IsNaN())
+
+	as.Compare(data.Incomparable, F(1), nan)
+	as.Compare(data.Incomparable, nan, F(1))
+	as.Compare(data.Incomparable, I(1), nan)
+	as.Compare(data.Incomparable, nan, I(1))
 }
 
 func TestStringifyNumbers(t *testing.T) {

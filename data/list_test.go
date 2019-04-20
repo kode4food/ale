@@ -43,3 +43,24 @@ func TestList(t *testing.T) {
 	as.False(ok)
 	as.Equal(data.Nil, r)
 }
+
+func TestListConjoin(t *testing.T) {
+	as := assert.New(t)
+
+	l1 := L(I(99))
+	l2 := l1.Conjoin(I(98))
+
+	as.String("(99)", l1)
+	as.String("(98 99)", l2)
+}
+
+func TestListCaller(t *testing.T) {
+	as := assert.New(t)
+
+	l1 := L(I(99), I(37))
+	c1 := l1.Caller()
+	as.Integer(99, c1(I(0)))
+	as.Integer(37, c1(I(1)))
+	as.Nil(c1(I(2)))
+	as.String("defaulted", c1(I(2), S("defaulted")))
+}

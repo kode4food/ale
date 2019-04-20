@@ -63,11 +63,6 @@ func (v Vector) Conjoin(a Value) Sequence {
 	return append(v, a)
 }
 
-// Concat concatenates two vectors
-func (v Vector) Concat(a Vector) Vector {
-	return append(v, a...)
-}
-
 // Caller turns Vector into a callable type
 func (v Vector) Caller() Call {
 	return makeIndexedCall(v)

@@ -62,6 +62,26 @@ func TestAssociativeSequence(t *testing.T) {
 
 }
 
+func TestAssociativeSplit(t *testing.T) {
+	as := assert.New(t)
+	m1 := getTestMap()
+
+	f, r, ok := m1.Split()
+	as.True(ok)
+	as.False(r.IsEmpty())
+	v, ok := f.(data.Vector)
+	as.True(ok)
+	as.Integer(2, v.Count())
+
+	f, ok = v.ElementAt(0)
+	as.True(ok)
+	as.String(":name", f)
+
+	f, ok = v.ElementAt(1)
+	as.True(ok)
+	as.String("Ale", f)
+}
+
 func TestAssociativePrepend(t *testing.T) {
 	as := assert.New(t)
 	m1 := getTestMap()
@@ -75,4 +95,28 @@ func TestAssociativePrepend(t *testing.T) {
 
 	defer as.ExpectPanic(data.ExpectedPair)
 	m2.Conjoin(F(99))
+}
+
+func TestEmptyAssociative(t *testing.T) {
+	as := assert.New(t)
+
+	m1 := data.EmptyAssociative
+	as.Nil(m1.First())
+	as.True(m1.IsEmpty())
+	as.True(m1.Rest().IsEmpty())
+
+	f, r, ok := m1.Split()
+	as.Nil(f)
+	as.True(r.IsEmpty())
+	as.False(ok)
+}
+
+func TestAssociativeCaller(t *testing.T) {
+	as := assert.New(t)
+
+	m1 := getTestMap()
+	c := m1.Caller()
+	as.String("Ale", c(K("name")))
+	as.Nil(c(K("unknown")))
+	as.String("defaulted", c(K("unknown"), S("defaulted")))
 }

@@ -33,8 +33,9 @@ func TestSymbolParsing(t *testing.T) {
 	as := assert.New(t)
 
 	s1 := data.ParseSymbol("domain/name1").(data.QualifiedSymbol)
-	as.String("domain", string(s1.Domain()))
-	as.String("name1", string(s1.Name()))
+	as.String("domain", s1.Domain())
+	as.String("name1", s1.Name())
+	as.String("domain/name1", s1)
 
 	s2 := data.ParseSymbol("/name2")
 	if _, ok := s2.(data.QualifiedSymbol); ok {
@@ -42,9 +43,16 @@ func TestSymbolParsing(t *testing.T) {
 	}
 
 	s3 := data.ParseSymbol("name3")
-	as.String("name3", string(s3.Name()))
+	as.String("name3", s3.Name())
 
 	s4 := data.ParseSymbol("one/too/").(data.QualifiedSymbol)
-	as.String("one", string(s4.Domain()))
-	as.String("too/", string(s4.Name()))
+	as.String("one", s4.Domain())
+	as.String("too/", s4.Name())
+}
+
+func TestSymbolGeneration(t *testing.T) {
+	as := assert.New(t)
+
+	s1 := data.NewGeneratedSymbol("hello")
+	as.Contains("x-hello-gensym-", s1)
 }
