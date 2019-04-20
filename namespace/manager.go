@@ -94,15 +94,15 @@ func (m *Manager) GetQualified(n data.Name) Type {
 	}
 	return m.Get(n, func() Type {
 		return newChild(root, n)
-	}).(Type)
+	})
 }
 
 // ResolveSymbol attempts to resolve a symbol. If it's a qualified symbol,
 // it will be retrieved directly from the identified namespace. Otherwise
 // it will be searched in the current namespace
 func ResolveSymbol(ns Type, s data.Symbol) (data.Value, bool) {
-	manager := ns.Manager()
 	if q, ok := s.(data.QualifiedSymbol); ok {
+		manager := ns.Manager()
 		qns := manager.GetQualified(q.Domain())
 		return qns.Resolve(q.Name())
 	}

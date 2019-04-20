@@ -11,7 +11,7 @@ import (
 
 // Error messages
 const (
-	GlobalNotDeclared = "symbol not declared in namespace: %s"
+	SymbolNotDeclared = "symbol not declared in namespace: %s"
 )
 
 // Symbol encodes a symbol retrieval
@@ -68,7 +68,7 @@ func resolveFromEncoder(e encoder.Type, l data.LocalSymbol) {
 		return
 	}
 	if !globals.IsDeclared(name) {
-		panic(fmt.Errorf(GlobalNotDeclared, name))
+		panic(fmt.Errorf(SymbolNotDeclared, name))
 	}
 	resolveFromNamespace(e, globals, l)
 }

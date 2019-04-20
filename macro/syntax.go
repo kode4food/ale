@@ -21,7 +21,6 @@ const (
 
 var (
 	quoteSym  = namespace.RootSymbol("quote")
-	syntaxSym = namespace.RootSymbol("syntax-quote")
 	listSym   = namespace.RootSymbol("list")
 	vectorSym = namespace.RootSymbol("vector")
 	assocSym  = namespace.RootSymbol("assoc")
