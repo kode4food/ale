@@ -42,16 +42,16 @@ func TestApply(t *testing.T) {
 	as.String(`["4" "5" "6"]`, v3)
 }
 
-func TestPartial(t *testing.T) {
+func TestPartialEval(t *testing.T) {
 	as := assert.New(t)
 
-	vCall := data.Call(builtin.Vector)
-	p1 := builtin.Partial(vCall, S("1"), S("2"))
-	v1 := getCall(p1)(S("3"), S("4"), S("5"))
-	v2 := getCall(p1)(S("7"), S("9"))
+	as.EvalTo(`
+		(let [plus3 (partial +)]
+			(plus3 1 1 1))`, I(3))
 
-	as.String(`["1" "2" "3" "4" "5"]`, v1)
-	as.String(`["1" "2" "7" "9"]`, v2)
+	as.EvalTo(`
+		(let [plus3 (partial + 1 2)]
+			(plus3 1 1 1))`, I(6))
 }
 
 func TestFunctionPredicates(t *testing.T) {

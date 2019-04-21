@@ -9,6 +9,14 @@
       (assert-args ~@(rest (rest clauses)))
       (raise ~(clauses 1)))))
 
+(defn partial
+  ([func] func)
+  ([func & first-args]
+    (assert-args
+      (is-apply func) "partial requires a function")
+   (fn [& rest-args]
+     (apply func (concat first-args rest-args)))))
+
 (defn no-op
   [])
 

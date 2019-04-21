@@ -145,7 +145,6 @@ func (b *bootstrap) availableFunctions() {
 	b.applicative("is-neg-inf", builtin.IsNegInf, 1)
 	b.applicative("is-nan", builtin.IsNaN, 1)
 
-	b.applicative("partial", builtin.Partial, 1, orMore)
 	b.applicative("apply", builtin.Apply, 2, orMore)
 	b.applicative("is-apply", builtin.IsApply, 1)
 	b.applicative("is-special", builtin.IsSpecial, 1)

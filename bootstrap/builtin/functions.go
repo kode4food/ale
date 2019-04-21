@@ -23,20 +23,6 @@ func Apply(args ...data.Value) data.Value {
 	return fn(prependedArgs...)
 }
 
-// Partial creates a partially bound version of a function
-func Partial(args ...data.Value) data.Value {
-	bound := getCall(args[0])
-	values := args[1:]
-	return bindFunction(bound, values)
-}
-
-func bindFunction(bound data.Call, outer data.Values) data.Call {
-	return func(inner ...data.Value) data.Value {
-		args := append(outer, inner...)
-		return bound(args...)
-	}
-}
-
 // IsApply tests whether or not a value is callable
 func IsApply(args ...data.Value) data.Value {
 	if _, ok := args[0].(data.Caller); ok {

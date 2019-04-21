@@ -88,7 +88,6 @@
 
 ;; functions
 
-(def-builtin partial)
 (def-builtin apply)
 (def-builtin is-apply)
 (def-builtin is-special)
