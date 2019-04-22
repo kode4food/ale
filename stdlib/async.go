@@ -42,21 +42,16 @@ type (
 		once Do
 		ch   *channelWrapper
 
-		ok     bool
 		result channelResult
 		rest   data.Sequence
+		ok     bool
 	}
 
 	promise struct {
-		cond  *sync.Cond
-		state uint32
-		val   data.Value
+		cond      *sync.Cond
+		value     data.Value
+		delivered bool
 	}
-)
-
-const (
-	promiseUndelivered uint32 = iota
-	promiseDelivered
 )
 
 // Error messages
@@ -73,7 +68,7 @@ const (
 var emptyResult = channelResult{value: data.Nil, error: nil}
 
 func (ch *channelWrapper) Close() {
-	if status := atomic.LoadUint32(&ch.status); status != channelClosed {
+	if atomic.LoadUint32(&ch.status) != channelClosed {
 		atomic.StoreUint32(&ch.status, channelClosed)
 		close(ch.seq)
 	}
@@ -96,7 +91,7 @@ func NewChannelEmitter(ch *channelWrapper) Emitter {
 	}
 	runtime.SetFinalizer(r, func(e *channelEmitter) {
 		defer func() { recover() }()
-		if s := atomic.LoadUint32(&ch.status); s != channelClosed {
+		if atomic.LoadUint32(&ch.status) != channelClosed {
 			e.Close()
 		}
 	})
@@ -105,17 +100,17 @@ func NewChannelEmitter(ch *channelWrapper) Emitter {
 
 // Write will send a Value to the Go chan
 func (e *channelEmitter) Write(v data.Value) {
-	if s := atomic.LoadUint32(&e.ch.status); s == channelReady {
+	if atomic.LoadUint32(&e.ch.status) == channelReady {
 		e.ch.seq <- channelResult{v, nil}
 	}
-	if s := atomic.LoadUint32(&e.ch.status); s == channelCloseRequested {
+	if atomic.LoadUint32(&e.ch.status) == channelCloseRequested {
 		e.Close()
 	}
 }
 
 // Error will send an Error to the Go chan
 func (e *channelEmitter) Error(err interface{}) {
-	if s := atomic.LoadUint32(&e.ch.status); s == channelReady {
+	if atomic.LoadUint32(&e.ch.status) == channelReady {
 		e.ch.seq <- channelResult{data.Nil, err}
 	}
 	e.Close()
@@ -145,7 +140,7 @@ func NewChannelSequence(ch *channelWrapper) data.Sequence {
 	}
 	runtime.SetFinalizer(r, func(c *channelSequence) {
 		defer func() { recover() }()
-		if s := atomic.LoadUint32(&c.ch.status); s == channelReady {
+		if atomic.LoadUint32(&c.ch.status) == channelReady {
 			atomic.StoreUint32(&c.ch.status, channelCloseRequested)
 			<-ch.seq // consume whatever is there
 		}
@@ -206,8 +201,7 @@ func (c *channelSequence) String() string {
 // NewPromise instantiates a new Promise
 func NewPromise() Promise {
 	return &promise{
-		cond:  sync.NewCond(new(sync.Mutex)),
-		state: promiseUndelivered,
+		cond: sync.NewCond(new(sync.Mutex)),
 	}
 }
 
@@ -221,44 +215,36 @@ func (p *promise) Caller() data.Call {
 }
 
 func (p *promise) Resolve() data.Value {
-	if atomic.LoadUint32(&p.state) == promiseDelivered {
-		return p.val
-	}
-
 	cond := p.cond
 	cond.L.Lock()
 	defer cond.L.Unlock()
-	for atomic.LoadUint32(&p.state) != promiseDelivered {
-		cond.Wait()
+
+	if p.delivered {
+		return p.value
 	}
-	return p.val
+	cond.Wait()
+	return p.value
 }
 
 func (p *promise) checkNewValue(v data.Value) data.Value {
-	if v == p.val {
-		return p.val
+	if v == p.value {
+		return p.value
 	}
 	panic(fmt.Errorf(ExpectedUndelivered))
 }
 
 func (p *promise) Deliver(v data.Value) data.Value {
-	if atomic.LoadUint32(&p.state) == promiseDelivered {
-		return p.checkNewValue(v)
-	}
-
 	cond := p.cond
 	cond.L.Lock()
 	defer cond.L.Unlock()
 
-	if p.state == promiseUndelivered {
-		p.val = v
-		atomic.StoreUint32(&p.state, promiseDelivered)
-		cond.Broadcast()
-		return v
+	if p.delivered {
+		return p.checkNewValue(v)
 	}
-
-	cond.Wait()
-	return p.checkNewValue(v)
+	p.value = v
+	p.delivered = true
+	cond.Broadcast()
+	return v
 }
 
 func (p *promise) Type() data.Name {

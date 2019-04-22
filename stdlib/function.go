@@ -1,9 +1,6 @@
 package stdlib
 
-import (
-	"sync"
-	"sync/atomic"
-)
+import "sync"
 
 // Do is a callback interface for eventually triggering some action
 type Do func(func())
@@ -19,15 +16,13 @@ func Once() Do {
 	var mutex sync.Mutex
 
 	return func(f func()) {
-		if atomic.LoadUint32(&state) == doneOnce {
-			return
-		}
-
 		mutex.Lock()
 		defer mutex.Unlock()
 
 		if state == doneNever {
-			defer atomic.StoreUint32(&state, doneOnce)
+			defer func() {
+				state = doneOnce
+			}()
 			f()
 		}
 	}
