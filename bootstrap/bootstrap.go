@@ -55,7 +55,7 @@ func TopLevelManager() *namespace.Manager {
 func DevNullManager() *namespace.Manager {
 	manager := namespace.NewManager()
 	ns := manager.GetRoot()
-	devNull, _ := os.Open(os.DevNull)
+	devNull, _ := os.OpenFile(os.DevNull, os.O_RDWR, 0666)
 	ns.Bind("*in*", builtin.MakeReader(devNull, stdlib.LineInput))
 	ns.Bind("*out*", builtin.MakeWriter(devNull, stdlib.StrOutput))
 	ns.Bind("*err*", builtin.MakeWriter(devNull, stdlib.StrOutput))
