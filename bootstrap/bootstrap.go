@@ -42,11 +42,11 @@ func Into(manager *namespace.Manager) {
 func TopLevelManager() *namespace.Manager {
 	manager := namespace.NewManager()
 	ns := manager.GetRoot()
-	ns.Bind("*env*", builtin.Env())
-	ns.Bind("*args*", builtin.Args())
-	ns.Bind("*in*", builtin.MakeReader(os.Stdin, stdlib.LineInput))
-	ns.Bind("*out*", builtin.MakeWriter(os.Stdout, stdlib.StrOutput))
-	ns.Bind("*err*", builtin.MakeWriter(os.Stderr, stdlib.StrOutput))
+	ns.Declare("*env*").Bind(builtin.Env())
+	ns.Declare("*args*").Bind(builtin.Args())
+	ns.Declare("*in*").Bind(builtin.MakeReader(os.Stdin, stdlib.LineInput))
+	ns.Declare("*out*").Bind(builtin.MakeWriter(os.Stdout, stdlib.StrOutput))
+	ns.Declare("*err*").Bind(builtin.MakeWriter(os.Stderr, stdlib.StrOutput))
 	return manager
 }
 
@@ -56,8 +56,8 @@ func DevNullManager() *namespace.Manager {
 	manager := namespace.NewManager()
 	ns := manager.GetRoot()
 	devNull, _ := os.OpenFile(os.DevNull, os.O_RDWR, 0666)
-	ns.Bind("*in*", builtin.MakeReader(devNull, stdlib.LineInput))
-	ns.Bind("*out*", builtin.MakeWriter(devNull, stdlib.StrOutput))
-	ns.Bind("*err*", builtin.MakeWriter(devNull, stdlib.StrOutput))
+	ns.Declare("*in*").Bind(builtin.MakeReader(devNull, stdlib.LineInput))
+	ns.Declare("*out*").Bind(builtin.MakeWriter(devNull, stdlib.StrOutput))
+	ns.Declare("*err*").Bind(builtin.MakeWriter(devNull, stdlib.StrOutput))
 	return manager
 }

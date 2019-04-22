@@ -27,32 +27,13 @@ func (ns *chainedNamespace) Domain() data.Name {
 	return ns.child.Domain()
 }
 
-func (ns *chainedNamespace) In(n data.Name) (Type, bool) {
-	if ns, ok := ns.child.In(n); ok {
-		return ns, true
-	}
-	return ns.parent.In(n)
+func (ns *chainedNamespace) Declare(n data.Name) Entry {
+	return ns.child.Declare(n)
 }
 
-func (ns *chainedNamespace) Resolve(n data.Name) (data.Value, bool) {
-	if ns.child.IsDeclared(n) {
-		return ns.child.Resolve(n)
+func (ns *chainedNamespace) Resolve(n data.Name) (Entry, bool) {
+	if e, ok := ns.child.Resolve(n); ok {
+		return e, true
 	}
 	return ns.parent.Resolve(n)
-}
-
-func (ns *chainedNamespace) IsDeclared(n data.Name) bool {
-	return ns.child.IsDeclared(n)
-}
-
-func (ns *chainedNamespace) Declare(n data.Name) {
-	ns.child.Declare(n)
-}
-
-func (ns *chainedNamespace) IsBound(n data.Name) bool {
-	return ns.child.IsBound(n)
-}
-
-func (ns *chainedNamespace) Bind(n data.Name, v data.Value) {
-	ns.child.Bind(n, v)
 }

@@ -54,7 +54,7 @@ func TestUnquoteEval(t *testing.T) {
 	bootstrap.Into(manager)
 	ns := manager.GetAnonymous()
 
-	ns.Bind("foo", data.Float(456))
+	ns.Declare("foo").Bind(data.Float(456))
 	r1 := eval.String(ns, `'[123 ~foo]`)
 	as.String("[123 (ale/unquote foo)]", r1)
 }

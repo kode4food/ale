@@ -32,7 +32,7 @@ func testOutput(t *testing.T, src, expected string) {
 
 	manager := namespace.NewManager()
 	ns := manager.GetRoot()
-	ns.Bind(stdoutName, data.Object{
+	ns.Declare(stdoutName).Bind(data.Object{
 		builtin.WriterKey: w,
 		builtin.WriteKey:  bindWrite(w),
 	})

@@ -19,9 +19,9 @@ func TestDevNullManager(t *testing.T) {
 	_, ok := ns.Resolve("*args*")
 	as.False(ok)
 
-	in, ok := ns.Resolve("*in*")
-	as.True(ok)
-	r, ok := in.(stdlib.Reader)
+	e, ok := ns.Resolve("*in*")
+	as.True(ok && e.IsBound())
+	r, ok := e.Value().(stdlib.Reader)
 	as.True(ok)
 	as.True(r.IsEmpty())
 }
@@ -32,10 +32,10 @@ func TestTopLevelManager(t *testing.T) {
 	manager := bootstrap.TopLevelManager()
 	ns := manager.GetRoot()
 
-	args, ok := ns.Resolve("*args*")
-	as.True(ok)
+	e, ok := ns.Resolve("*args*")
+	as.True(ok && e.IsBound())
 
-	_, ok = args.(data.Vector)
+	_, ok = e.Value().(data.Vector)
 	as.True(ok)
 }
 
@@ -46,9 +46,9 @@ func TestBootstrapInto(t *testing.T) {
 	bootstrap.Into(manager)
 	ns := manager.GetRoot()
 
-	v, ok := ns.Resolve("def")
-	as.True(ok)
+	e, ok := ns.Resolve("def")
+	as.True(ok && e.IsBound())
 
-	_, ok = v.(encoder.Call)
+	_, ok = e.Value().(encoder.Call)
 	as.True(ok)
 }

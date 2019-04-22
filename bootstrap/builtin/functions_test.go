@@ -64,10 +64,10 @@ func TestFunctionPredicates(t *testing.T) {
 	as.False(builtin.IsSpecial(f1))
 	as.True(builtin.IsApply(f1))
 
-	ifFunc, ok := manager.GetRoot().Resolve("if")
-	as.True(ok)
-	as.True(builtin.IsSpecial(ifFunc))
-	as.False(builtin.IsApply(ifFunc))
+	e, ok := manager.GetRoot().Resolve("if")
+	as.True(ok && e.IsBound())
+	as.True(builtin.IsSpecial(e.Value()))
+	as.False(builtin.IsApply(e.Value()))
 }
 
 func TestFunctionPredicatesEval(t *testing.T) {

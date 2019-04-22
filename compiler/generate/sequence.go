@@ -81,6 +81,6 @@ func Associative(e encoder.Type, a data.Associative) {
 func resolveBuiltIn(e encoder.Type, sym data.Symbol) *data.Function {
 	manager := e.Globals().Manager()
 	root := manager.GetRoot()
-	res := namespace.MustResolveSymbol(root, sym)
+	res := namespace.MustResolveValue(root, sym)
 	return res.(*data.Function)
 }

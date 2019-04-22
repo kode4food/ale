@@ -282,7 +282,7 @@ func getBuiltInsNamespace() namespace.Type {
 
 func registerBuiltIn(n data.Name, v data.Value) {
 	ns := getBuiltInsNamespace()
-	ns.Bind(n, v)
+	ns.Declare(n).Bind(v)
 }
 
 // GetNS allows the tests to get at the namespace

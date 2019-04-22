@@ -27,10 +27,10 @@ func TestBuiltInUse(t *testing.T) {
 	as := assert.New(t)
 
 	ns1 := main.GetNS()
-	v, ok := ns1.Resolve("use")
-	as.True(ok)
-	as.NotNil(v)
-	use := asFunction(as, v)
+	e, ok := ns1.Resolve("use")
+	as.True(ok && e.IsBound())
+	as.NotNil(e.Value())
+	use := asFunction(as, e.Value())
 
 	nsName := data.NewLocalSymbol("test-ns")
 	nothing := use(nsName)

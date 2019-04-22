@@ -54,7 +54,7 @@ func (b *bootstrap) initialFunctions() {
 		ns := manager.GetRoot()
 		n := args[0].(data.LocalSymbol).Name()
 		if nf, ok := b.funcMap[n]; ok {
-			ns.Bind(n, nf)
+			ns.Declare(n).Bind(nf)
 			return args[0]
 		}
 		panic(fmt.Errorf(BuiltInNotFound, n))
@@ -65,7 +65,7 @@ func (b *bootstrap) initialFunctions() {
 		ns := manager.GetRoot()
 		n := args[0].(data.LocalSymbol).Name()
 		if sf, ok := b.specialMap[n]; ok {
-			ns.Bind(n, sf)
+			ns.Declare(n).Bind(sf)
 			return args[0]
 		}
 		panic(fmt.Errorf(SpecialNotFound, n))
@@ -75,16 +75,16 @@ func (b *bootstrap) initialFunctions() {
 		ns := manager.GetRoot()
 		n := args[0].(data.LocalSymbol).Name()
 		if sf, ok := b.macroMap[n]; ok {
-			ns.Bind(n, sf)
+			ns.Declare(n).Bind(sf)
 			return args[0]
 		}
 		panic(fmt.Errorf(MacroNotFound, n))
 	}
 
 	ns := b.manager.GetRoot()
-	ns.Bind(defBuiltInName, data.NormalFunction(defBuiltIn))
-	ns.Bind(defSpecialName, data.NormalFunction(defSpecial))
-	ns.Bind(defMacroName, data.NormalFunction(defMacro))
+	ns.Declare(defBuiltInName).Bind(data.NormalFunction(defBuiltIn))
+	ns.Declare(defSpecialName).Bind(data.NormalFunction(defSpecial))
+	ns.Declare(defMacroName).Bind(data.NormalFunction(defMacro))
 }
 
 func (b *bootstrap) availableFunctions() {

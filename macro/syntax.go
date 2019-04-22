@@ -131,8 +131,8 @@ func (se *syntaxEnv) qualifySymbol(s data.Symbol) data.Value {
 		return q
 	}
 	name := s.Name()
-	if ns, ok := se.namespace.In(name); ok {
-		return data.NewQualifiedSymbol(name, ns.Domain())
+	if e, ok := se.namespace.Resolve(name); ok {
+		return data.NewQualifiedSymbol(name, e.Owner().Domain())
 	}
 	return s
 }

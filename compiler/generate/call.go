@@ -45,7 +45,7 @@ func callSymbol(e encoder.Type, s data.Symbol, args data.Values) {
 		}
 	}
 	globals := e.Globals()
-	if v, ok := namespace.ResolveSymbol(globals, s); ok {
+	if v, ok := namespace.ResolveValue(globals, s); ok {
 		switch typed := v.(type) {
 		case encoder.Call:
 			typed(e, args...)

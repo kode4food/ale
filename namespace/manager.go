@@ -20,7 +20,7 @@ type (
 
 // Error messages
 const (
-	SymbolNotBound = "symbol not bound in namespace: %s"
+	SymbolNotDeclared = "symbol not declared in namespace: %s"
 )
 
 const (
@@ -100,7 +100,7 @@ func (m *Manager) GetQualified(n data.Name) Type {
 // ResolveSymbol attempts to resolve a symbol. If it's a qualified symbol,
 // it will be retrieved directly from the identified namespace. Otherwise
 // it will be searched in the current namespace
-func ResolveSymbol(ns Type, s data.Symbol) (data.Value, bool) {
+func ResolveSymbol(ns Type, s data.Symbol) (Entry, bool) {
 	if q, ok := s.(data.QualifiedSymbol); ok {
 		manager := ns.Manager()
 		qns := manager.GetQualified(q.Domain())
@@ -109,10 +109,18 @@ func ResolveSymbol(ns Type, s data.Symbol) (data.Value, bool) {
 	return ns.Resolve(s.Name())
 }
 
-// MustResolveSymbol attempts to resolve a symbol or explodes violently
-func MustResolveSymbol(ns Type, s data.Symbol) data.Value {
-	if v, ok := ResolveSymbol(ns, s); ok {
+// ResolveValue attempts to resolve a symbol to a bound value
+func ResolveValue(ns Type, s data.Symbol) (data.Value, bool) {
+	if e, ok := ResolveSymbol(ns, s); ok && e.IsBound() {
+		return e.Value(), true
+	}
+	return data.Nil, false
+}
+
+// MustResolveValue attempts to resolve a value or explodes violently
+func MustResolveValue(ns Type, s data.Symbol) data.Value {
+	if v, ok := ResolveValue(ns, s); ok {
 		return v
 	}
-	panic(fmt.Errorf(SymbolNotBound, s))
+	panic(fmt.Errorf(SymbolNotDeclared, s))
 }

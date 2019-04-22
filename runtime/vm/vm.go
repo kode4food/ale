@@ -146,7 +146,7 @@ func NewClosure(cfg *Config) data.Call {
 			case isa.Resolve:
 				SP1 := SP + 1
 				sym := stack[SP1].(data.Symbol)
-				val := namespace.MustResolveSymbol(globals, sym)
+				val := namespace.MustResolveValue(globals, sym)
 				stack[SP1] = val
 				goto nextPC
 
@@ -161,7 +161,7 @@ func NewClosure(cfg *Config) data.Call {
 				name := stack[SP].(data.Name)
 				SP++
 				val := stack[SP].(data.Value)
-				globals.Bind(name, val)
+				globals.Declare(name).Bind(val)
 				goto nextPC
 
 			case isa.Dup:

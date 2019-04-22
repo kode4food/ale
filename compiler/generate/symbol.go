@@ -63,11 +63,12 @@ func resolveGlobal(e encoder.Type, s data.Symbol) {
 func resolveFromEncoder(e encoder.Type, l data.LocalSymbol) {
 	globals := e.Globals()
 	name := l.Name()
-	if v, ok := globals.Resolve(name); ok {
-		Literal(e, v)
+	ge, ok := globals.Resolve(name)
+	if ok && ge.IsBound() {
+		Literal(e, ge.Value())
 		return
 	}
-	if !globals.IsDeclared(name) {
+	if ge.Owner() != globals {
 		panic(fmt.Errorf(SymbolNotDeclared, name))
 	}
 	resolveFromNamespace(e, globals, l)
@@ -75,9 +76,8 @@ func resolveFromEncoder(e encoder.Type, l data.LocalSymbol) {
 
 func resolveFromNamespace(e encoder.Type, ns namespace.Type, s data.Symbol) {
 	name := s.Name()
-	if ns.IsBound(name) {
-		v, _ := ns.Resolve(name)
-		Literal(e, v)
+	if ne, ok := ns.Resolve(name); ok && ne.Owner() == ns && ne.IsBound() {
+		Literal(e, ne.Value())
 		return
 	}
 	Literal(e, s)

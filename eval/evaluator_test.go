@@ -29,12 +29,12 @@ func TestBasicEval(t *testing.T) {
 	as.Integer(1, v3)
 
 	eval.String(ns, "(def x 99)")
-	v4, ok := ns.Resolve(data.Name("x"))
-	as.True(ok)
-	as.Integer(99, v4)
+	e, ok := ns.Resolve(data.Name("x"))
+	as.True(ok && e.IsBound())
+	as.Integer(99, e.Value())
 
-	v5 := eval.String(ns, "(and true true)")
-	as.True(v5)
+	v4 := eval.String(ns, "(and true true)")
+	as.True(v4)
 }
 
 func TestBuiltIns(t *testing.T) {
@@ -45,9 +45,11 @@ func TestBuiltIns(t *testing.T) {
 	b := manager.GetAnonymous()
 	ns := manager.GetRoot()
 
-	ns.Bind("hello", data.ApplicativeFunction(func(_ ...data.Value) data.Value {
-		return S("there")
-	}))
+	ns.Declare("hello").Bind(
+		data.ApplicativeFunction(func(_ ...data.Value) data.Value {
+			return S("there")
+		}),
+	)
 
 	l := read.Scan(`(hello)`)
 	tr := read.FromScanner(l)
