@@ -58,9 +58,9 @@ func (v Vector) Prepend(p Value) Sequence {
 	return append(Vector{p}, v...)
 }
 
-// Conjoin appends an element to the end of the Vector
-func (v Vector) Conjoin(a Value) Sequence {
-	return append(v, a)
+// Append appends an element to the end of the Vector
+func (v Vector) Append(args ...Value) Sequence {
+	return append(v, args...)
 }
 
 // Caller turns Vector into a callable type

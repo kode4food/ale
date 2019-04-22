@@ -52,11 +52,6 @@ func (l *List) Prepend(v Value) Sequence {
 	}
 }
 
-// Conjoin appends an element to the beginning of the List
-func (l *List) Conjoin(v Value) Sequence {
-	return l.Prepend(v)
-}
-
 // Count returns the number of elements in the List
 func (l *List) Count() int {
 	return l.count

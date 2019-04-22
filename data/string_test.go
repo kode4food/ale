@@ -30,15 +30,15 @@ func TestStr(t *testing.T) {
 	as.Integer(6, data.Count(s2))
 	as.String("shello", s2)
 
-	s3 := s1.Conjoin(S("z"))
-	as.Integer(6, data.Count(s3))
-	as.String("helloz", s3)
+	s3 := s1.Append(S("z"), S("y"))
+	as.Integer(7, data.Count(s3))
+	as.String("hellozy", s3)
 
 	l1 := s1.Prepend(F(99))
 	as.Integer(6, data.Count(l1))
 	as.String(`(99 "h" "e" "l" "l" "o")`, l1)
 
-	v1 := s1.Conjoin(F(99))
+	v1 := s1.Append(F(99))
 	as.Integer(6, data.Count(v1))
 	as.String(`["h" "e" "l" "l" "o" 99]`, v1)
 

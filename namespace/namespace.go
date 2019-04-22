@@ -32,8 +32,9 @@ type (
 	}
 
 	entry struct {
-		bound bool
-		value data.Value
+		value   data.Value
+		bound   bool
+		private bool
 	}
 
 	entries map[data.Name]*entry

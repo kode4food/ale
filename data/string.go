@@ -59,6 +59,21 @@ func (s String) Prepend(v Value) Sequence {
 	return s.list().Prepend(v)
 }
 
+// Append appends values to the end of the String. If the values are
+// single characters, the resulting String will be retained in native
+// form, otherwise a Vector is returned.
+func (s String) Append(args ...Value) Sequence {
+	var res = s
+	for i, arg := range args {
+		if e, ok := arg.(String); ok && len(e) == 1 {
+			res = String(res + e)
+		} else {
+			return res.vector().Append(args[i:]...)
+		}
+	}
+	return res
+}
+
 func (s String) list() *List {
 	c := []rune(string(s))
 	r := EmptyList
@@ -66,16 +81,6 @@ func (s String) list() *List {
 		r = r.Prepend(String(c[i])).(*List)
 	}
 	return r
-}
-
-// Conjoin appends a Value to the end of the String. If the Value is a
-// single character, the resulting String will be retained in native
-// form, otherwise a Vector is returned.
-func (s String) Conjoin(v Value) Sequence {
-	if e, ok := v.(String); ok && len(e) == 1 {
-		return String(s + e)
-	}
-	return s.vector().Conjoin(v)
 }
 
 func (s String) vector() Vector {

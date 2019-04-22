@@ -92,9 +92,6 @@ func TestAssociativePrepend(t *testing.T) {
 	r, ok := m2.Get(K("foo"))
 	as.True(ok)
 	as.String("bar", r)
-
-	defer as.ExpectPanic(data.ExpectedPair)
-	m2.Conjoin(F(99))
 }
 
 func TestEmptyAssociative(t *testing.T) {

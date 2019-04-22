@@ -13,10 +13,10 @@ type (
 		IsEmpty() bool
 	}
 
-	// Conjoiner is a Sequence that can be Conjoined in some way
-	Conjoiner interface {
+	// Appender is a Sequence that can be appended to
+	Appender interface {
 		Sequence
-		Conjoin(Value) Sequence
+		Append(...Value) Sequence
 	}
 
 	// IndexedSequence is a Sequence that provides an Indexed interface

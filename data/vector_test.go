@@ -26,7 +26,7 @@ func TestVector(t *testing.T) {
 	as.Integer(5, v2.Count())
 	as.Integer(4, v1.Count())
 
-	v3 := v2.Conjoin(S("good?")).(data.Vector)
+	v3 := v2.Append(S("good?")).(data.Vector)
 	r, ok = v3.ElementAt(5)
 	as.True(ok)
 	as.String("good?", r)

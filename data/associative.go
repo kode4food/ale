@@ -77,11 +77,6 @@ func (a Associative) Prepend(v Value) Sequence {
 	panic(fmt.Errorf(ExpectedPair))
 }
 
-// Conjoin inserts a pair at the beginning of the Associative
-func (a Associative) Conjoin(v Value) Sequence {
-	return a.Prepend(v)
-}
-
 // Caller turns Associative into a callable type
 func (a Associative) Caller() Call {
 	return makeMappedCall(a)

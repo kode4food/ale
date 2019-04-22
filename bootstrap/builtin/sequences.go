@@ -42,9 +42,9 @@ func Cons(args ...data.Value) data.Value {
 
 // Conj conjoins a value to the provided sequence in some way
 func Conj(args ...data.Value) data.Value {
-	s := args[0].(data.Conjoiner)
+	s := args[0].(data.Appender)
 	for _, f := range args[1:] {
-		s = s.Conjoin(f).(data.Conjoiner)
+		s = s.Append(f).(data.Appender)
 	}
 	return s
 }
