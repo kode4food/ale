@@ -1,7 +1,5 @@
 package data
 
-import "fmt"
-
 type (
 	// Call is the basic function type
 	Call func(...Value) Value
@@ -63,7 +61,7 @@ func (v *Function) Caller() Call {
 
 // Type returns the type for a function
 func (v *Function) Type() Name {
-	return Name(fmt.Sprintf("%s", v.Convention))
+	return Name(v.Convention.String())
 }
 
 // IsApplicative returns whether or not this function is applicative

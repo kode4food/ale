@@ -69,7 +69,7 @@ func (o Offset) String() string {
 func New(oc Opcode, args ...Word) *Instruction {
 	effect := MustGetEffect(oc)
 	if len(args) != effect.Size-1 {
-		panic(fmt.Sprintf(BadInstructionArgs, oc))
+		panic(fmt.Sprintf(BadInstructionArgs, oc.String()))
 	}
 	return &Instruction{
 		Opcode: oc,
@@ -84,5 +84,5 @@ func (i *Instruction) String() string {
 		strs[i] = fmt.Sprintf("%d", a)
 	}
 	joined := strings.Join(strs, ", ")
-	return fmt.Sprintf("%s(%s)", i.Opcode, joined)
+	return fmt.Sprintf("%s(%s)", i.Opcode.String(), joined)
 }
