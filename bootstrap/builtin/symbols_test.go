@@ -1,9 +1,11 @@
 package builtin_test
 
 import (
+	"fmt"
 	"testing"
 
 	"gitlab.com/kode4food/ale/bootstrap/builtin"
+	"gitlab.com/kode4food/ale/compiler/generate"
 	"gitlab.com/kode4food/ale/data"
 	"gitlab.com/kode4food/ale/internal/assert"
 	. "gitlab.com/kode4food/ale/internal/assert/helpers"
@@ -39,4 +41,14 @@ func TestGenerated(t *testing.T) {
 
 	s2 := builtin.GenSym(S("blah"))
 	as.Contains("x-blah-gensym-", s2)
+}
+
+func TestResolveEval(t *testing.T) {
+	as := assert.New(t)
+
+	as.EvalTo(`(let [x 99] x)`, data.Integer(99))
+
+	err := fmt.Errorf(generate.SymbolNotDeclared, "hello")
+	as.PanicWith(`hello`, err)
+	as.PanicWith(`(let [hello 99] hello) hello`, err)
 }
