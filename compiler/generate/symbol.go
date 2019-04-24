@@ -64,12 +64,12 @@ func resolveFromEncoder(e encoder.Type, l data.LocalSymbol) {
 	globals := e.Globals()
 	name := l.Name()
 	ge, ok := globals.Resolve(name)
-	if ok && ge.IsBound() {
+	if !ok {
+		panic(fmt.Errorf(SymbolNotDeclared, name))
+	}
+	if ge.IsBound() {
 		Literal(e, ge.Value())
 		return
-	}
-	if ge.Owner() != globals {
-		panic(fmt.Errorf(SymbolNotDeclared, name))
 	}
 	resolveFromNamespace(e, globals, l)
 }
