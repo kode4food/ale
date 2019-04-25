@@ -7,7 +7,7 @@ import (
 	"gitlab.com/kode4food/ale/internal/assert"
 )
 
-func TestLocalSymbolInterning(t *testing.T) {
+func TestLocalSymbolEquality(t *testing.T) {
 	as := assert.New(t)
 
 	sym1 := data.NewLocalSymbol("hello")
@@ -18,7 +18,7 @@ func TestLocalSymbolInterning(t *testing.T) {
 	as.NotIdentical(sym1, sym2)
 }
 
-func TestQualifiedSymbolInterning(t *testing.T) {
+func TestQualifiedSymbolEquality(t *testing.T) {
 	as := assert.New(t)
 
 	sym1 := data.NewQualifiedSymbol("hello", "domain")

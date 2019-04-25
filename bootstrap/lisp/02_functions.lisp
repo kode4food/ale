@@ -15,7 +15,7 @@
     (assert-args
       (is-apply func) "partial requires a function")
    (fn [& rest-args]
-     (apply func (concat first-args rest-args)))))
+     (apply func (append first-args rest-args)))))
 
 (defn no-op
   [])

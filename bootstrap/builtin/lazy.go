@@ -32,12 +32,6 @@ func Concat(args ...data.Value) data.Value {
 		return data.EmptyList
 	case 1:
 		return args[0].(data.Sequence)
-	case 2:
-		if a, ok := args[0].(data.Appender); ok {
-			rest := args[1].(data.Sequence)
-			return a.Append(stdlib.SequenceToVector(rest)...)
-		}
-		fallthrough
 	default:
 		return stdlib.Concat(args...)
 	}

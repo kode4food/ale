@@ -103,6 +103,7 @@
 
 (def-builtin lazy-seq*)
 (def-builtin concat)
+(def-builtin append)
 (def-builtin filter)
 (def-builtin map)
 (def-builtin take)

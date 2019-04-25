@@ -1,6 +1,9 @@
 package builtin
 
-import "gitlab.com/kode4food/ale/data"
+import (
+	"gitlab.com/kode4food/ale/data"
+	"gitlab.com/kode4food/ale/stdlib"
+)
 
 func fetchSequence(args data.Vector) data.Sequence {
 	return args[0].(data.Sequence)
@@ -42,11 +45,23 @@ func Cons(args ...data.Value) data.Value {
 
 // Conj conjoins a value to the provided sequence in some way
 func Conj(args ...data.Value) data.Value {
-	s := args[0].(data.Appender)
-	for _, f := range args[1:] {
-		s = s.Append(f).(data.Appender)
+	a0 := args[0]
+	if a, ok := a0.(data.Appender); ok {
+		return a.Append(args[1:]...)
+	}
+	s := a0.(data.Sequence)
+	for _, v := range args[1:] {
+		s = s.Prepend(v)
 	}
 	return s
+}
+
+// Append combines two sequences if the first is an Appender
+func Append(args ...data.Value) data.Value {
+	a := args[0].(data.Appender)
+	s := args[1].(data.Sequence)
+	values := stdlib.SequenceToValues(s)
+	return a.Append(values...)
 }
 
 // Len returns the size of the provided sequence

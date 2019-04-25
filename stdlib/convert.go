@@ -26,21 +26,16 @@ func SequenceToList(s data.Sequence) *data.List {
 }
 
 func uncountedToList(s data.Sequence) *data.List {
-	return data.NewList(uncountedToVector(s)...)
+	return data.NewList(uncountedToValues(s)...)
 }
 
 // SequenceToValues takes any sequence and converts it to a value array
 func SequenceToValues(s data.Sequence) data.Values {
-	return data.Values(SequenceToVector(s))
-}
-
-// SequenceToVector takes any sequence and converts it to a vector
-func SequenceToVector(s data.Sequence) data.Vector {
 	switch typed := s.(type) {
 	case data.Vector:
-		return typed
+		return data.Values(typed)
 	case data.Counted:
-		res := make(data.Vector, typed.Count())
+		res := make(data.Values, typed.Count())
 		idx := 0
 		for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {
 			res[idx] = f
@@ -48,16 +43,21 @@ func SequenceToVector(s data.Sequence) data.Vector {
 		}
 		return res
 	default:
-		return uncountedToVector(s)
+		return uncountedToValues(s)
 	}
 }
 
-func uncountedToVector(s data.Sequence) data.Vector {
-	res := data.Vector{}
+func uncountedToValues(s data.Sequence) data.Values {
+	res := data.Values{}
 	for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {
 		res = append(res, f)
 	}
 	return res
+}
+
+// SequenceToVector takes any sequence and converts it to a vector
+func SequenceToVector(s data.Sequence) data.Vector {
+	return data.Vector(SequenceToValues(s))
 }
 
 // SequenceToAssociative takes any sequence and converts it to an Associative

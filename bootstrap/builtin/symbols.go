@@ -4,7 +4,7 @@ import "gitlab.com/kode4food/ale/data"
 
 const anonName = data.Name("anon")
 
-// Sym instantiates a new symbol (not interned)
+// Sym instantiates a new symbol
 func Sym(args ...data.Value) data.Value {
 	if s, ok := args[0].(data.Symbol); ok {
 		return s

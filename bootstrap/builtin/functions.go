@@ -15,10 +15,10 @@ func Apply(args ...data.Value) data.Value {
 	fn := getCall(args[0])
 	al := len(args)
 	if al == 2 {
-		return fn(stdlib.SequenceToVector(args[1].(data.Sequence))...)
+		return fn(stdlib.SequenceToValues(args[1].(data.Sequence))...)
 	}
 	last := al - 1
-	ls := stdlib.SequenceToVector(args[last].(data.Sequence))
+	ls := stdlib.SequenceToValues(args[last].(data.Sequence))
 	prependedArgs := append(args[1:last], ls...)
 	return fn(prependedArgs...)
 }

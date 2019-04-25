@@ -156,6 +156,7 @@ func (b *bootstrap) availableFunctions() {
 
 	b.applicative("lazy-seq*", builtin.LazySequence, 1)
 	b.applicative("concat", builtin.Concat)
+	b.applicative("append", builtin.Append)
 	b.applicative("filter", builtin.Filter, 2)
 	b.applicative("map", builtin.Map, 2, orMore)
 	b.applicative("take", builtin.Take, 2)
