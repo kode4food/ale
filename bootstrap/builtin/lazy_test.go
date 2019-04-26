@@ -99,6 +99,11 @@ func TestTakeDropEval(t *testing.T) {
 		(def x (concat '(1 2 3 4) [5 6 7 8]))
 		(nth (apply vector (drop 3 x)) 0)
 	`, F(4))
+
+	as.EvalRaises(`(drop 99 57)`, "coll must be a sequence")
+	as.EvalRaises(`(drop 1.5 [1 2 3])`, "count must be an integer")
+	as.EvalRaises(`(take 99 57)`, "coll must be a sequence")
+	as.EvalRaises(`(take 50.1 [1 2 3])`, "count must be an integer")
 }
 
 func TestLazySeqEval(t *testing.T) {

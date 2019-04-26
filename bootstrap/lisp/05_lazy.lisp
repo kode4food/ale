@@ -78,10 +78,8 @@
             (partition count step (drop step coll)))))))
 
 (defn range
-  ([]
-   (range 0 nil 1))
-  ([last]
-   (range 0 last (if (> last 0) 1 -1)))
+  ([]     (range 0 nil 1))
+  ([last] (range 0 last (if (> last 0) 1 -1)))
   ([first last]
    (if (> last first)
      (range first last 1)
