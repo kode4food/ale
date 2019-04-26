@@ -138,7 +138,7 @@ func TestReduce(t *testing.T) {
 	as.Integer(100, stdlib.Reduce(V(I(10), I(20), I(30), I(40)), add))
 }
 
-func TestTakeDrop(t *testing.T) {
+func TestDrop(t *testing.T) {
 	as := assert.New(t)
 
 	s1 := []string{"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"}
@@ -147,19 +147,9 @@ func TestTakeDrop(t *testing.T) {
 		v1 = v1.Append(S(e)).(data.Vector)
 	}
 
-	t1 := stdlib.Take(v1, 4)
-	t2 := t1.Prepend(S("0"))
 	d1 := stdlib.Drop(v1, 4)
 	d2 := d1.Prepend(S("4"))
-	t3 := stdlib.Take(d1, 6)
-	d3 := stdlib.Drop(t3, 6)
-	d4 := stdlib.Drop(t3, 8)
 
-	as.String(`("1" "2" "3" "4")`, data.MakeSequenceStr(t1))
-	as.String(`("0" "1" "2" "3" "4")`, data.MakeSequenceStr(t2))
 	as.String(`("5" "6" "7" "8" "9" "10")`, data.MakeSequenceStr(d1))
 	as.String(`("4" "5" "6" "7" "8" "9" "10")`, data.MakeSequenceStr(d2))
-	as.String(`("5" "6" "7" "8" "9" "10")`, data.MakeSequenceStr(t3))
-	as.True(d3.IsEmpty())
-	as.True(d4.IsEmpty())
 }

@@ -121,12 +121,13 @@ func (b *bootstrap) availableFunctions() {
 
 	b.applicative("is-seq", builtin.IsSeq, 1)
 	b.applicative("is-empty", builtin.IsEmpty, 1)
-	b.applicative("is-len", builtin.IsLen, 1)
+	b.applicative("is-counted", builtin.IsCounted, 1)
 	b.applicative("is-indexed", builtin.IsIndexed, 1)
 	b.applicative("is-assoc", builtin.IsAssoc, 1)
 	b.applicative("is-mapped", builtin.IsMapped, 1)
 	b.applicative("is-list", builtin.IsList, 1)
 	b.applicative("is-vector", builtin.IsVector, 1)
+	b.applicative("is-appender", builtin.IsAppender, 1)
 
 	b.applicative("+", builtin.Add)
 	b.applicative("-", builtin.Sub, 1, orMore)
@@ -156,10 +157,9 @@ func (b *bootstrap) availableFunctions() {
 
 	b.applicative("lazy-seq*", builtin.LazySequence, 1)
 	b.applicative("concat", builtin.Concat)
-	b.applicative("append", builtin.Append)
+	b.applicative("append", builtin.Append, 2)
 	b.applicative("filter", builtin.Filter, 2)
 	b.applicative("map", builtin.Map, 2, orMore)
-	b.applicative("take", builtin.Take, 2)
 	b.applicative("drop", builtin.Drop, 2)
 	b.applicative("reduce", builtin.Reduce, 2, 3)
 	b.applicative("for-each*", builtin.ForEach, 2)

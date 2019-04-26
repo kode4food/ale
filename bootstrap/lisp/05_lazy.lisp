@@ -16,10 +16,25 @@
   [& seqs]
   `(apply vector (concat ~@seqs)))
 
+(defn take-
+  [count coll]
+  (lazy-seq
+   (when-let [s (and (> count 0) (seq coll))]
+     (cons (first s)
+           (take- (dec count) (rest s))))))
+
+(defn take
+  [count coll]
+  (assert-args
+   (= (mod count 1) 0) "count must be an integer"
+   (>= count 0)        "count must be non-negative"
+   (seq coll)          "coll must be a sequence")
+  (take- count coll))
+
 (defn take-while
   [pred coll]
   (lazy-seq
-   (when-let [s coll]
+   (when-let [s (seq coll)]
      (when (pred (first s))
        (cons (first s)
              (take-while pred (rest s)))))))

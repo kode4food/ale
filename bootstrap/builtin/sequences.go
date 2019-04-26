@@ -5,10 +5,6 @@ import (
 	"gitlab.com/kode4food/ale/stdlib"
 )
 
-func fetchSequence(args data.Vector) data.Sequence {
-	return args[0].(data.Sequence)
-}
-
 // Seq attempts to convert the provided value to a sequence, or returns nil
 func Seq(args ...data.Value) data.Value {
 	if s, ok := args[0].(data.Sequence); ok && !s.IsEmpty() {
@@ -19,18 +15,19 @@ func Seq(args ...data.Value) data.Value {
 
 // First returns the first value in the sequence
 func First(args ...data.Value) data.Value {
-	return fetchSequence(args).First()
+	return args[0].(data.Sequence).First()
 }
 
 // Rest returns the sequence elements after the first value
 func Rest(args ...data.Value) data.Value {
-	return fetchSequence(args).Rest()
+	return args[0].(data.Sequence).Rest()
 }
 
 // Last returns the final element of the sequence
 func Last(args ...data.Value) data.Value {
 	var l data.Value
-	for f, r, ok := fetchSequence(args).Split(); ok; f, r, ok = r.Split() {
+	s := args[0].(data.Sequence)
+	for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {
 		l = f
 	}
 	return l
@@ -66,7 +63,7 @@ func Append(args ...data.Value) data.Value {
 
 // Len returns the size of the provided sequence
 func Len(args ...data.Value) data.Value {
-	s := fetchSequence(args)
+	s := args[0].(data.Sequence)
 	l := data.Count(s)
 	return data.Integer(l)
 }
@@ -99,8 +96,8 @@ func IsEmpty(args ...data.Value) data.Value {
 	return data.Bool(s.IsEmpty())
 }
 
-// IsLen returns whether or not the provided value is a countable sequence
-func IsLen(args ...data.Value) data.Value {
+// IsCounted returns whether or not the provided value is a countable sequence
+func IsCounted(args ...data.Value) data.Value {
 	_, ok := args[0].(data.CountedSequence)
 	return data.Bool(ok)
 }

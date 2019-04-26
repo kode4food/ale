@@ -54,13 +54,6 @@ func Map(args ...data.Value) data.Value {
 	return stdlib.MapParallel(data.Vector(args[1:]), fn.Caller())
 }
 
-// Take returns the first 'n' elements of the provided sequence
-func Take(args ...data.Value) data.Value {
-	n := args[0].(data.Integer)
-	s := args[1].(data.Sequence)
-	return stdlib.Take(s, n)
-}
-
 // Drop discards the first 'n' elements of the provided sequence
 func Drop(args ...data.Value) data.Value {
 	n := args[0].(data.Integer)
