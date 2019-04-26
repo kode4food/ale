@@ -160,7 +160,6 @@ func (b *bootstrap) availableFunctions() {
 	b.applicative("append", builtin.Append, 2)
 	b.applicative("filter", builtin.Filter, 2)
 	b.applicative("map", builtin.Map, 2, orMore)
-	b.applicative("drop", builtin.Drop, 2)
 	b.applicative("reduce", builtin.Reduce, 2, 3)
 	b.applicative("for-each*", builtin.ForEach, 2)
 

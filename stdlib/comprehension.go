@@ -98,29 +98,6 @@ func Concat(s ...data.Value) data.Sequence {
 	return NewLazySequence(res)
 }
 
-// Drop creates a Sequence based on dropping the first elements of the source
-func Drop(s data.Sequence, count data.Integer) data.Sequence {
-	var first, rest LazyResolver
-	next := s
-
-	first = func() (data.Value, data.Sequence, bool) {
-		for i := data.Integer(0); i < count && !next.IsEmpty(); i++ {
-			next = next.Rest()
-		}
-		return rest()
-	}
-
-	rest = func() (data.Value, data.Sequence, bool) {
-		if f, r, ok := next.Split(); ok {
-			next = r
-			return f, NewLazySequence(rest), true
-		}
-		return data.Nil, data.EmptyList, false
-	}
-
-	return NewLazySequence(first)
-}
-
 // Reduce performs a reduce operation over a Sequence, starting with the
 // first two elements of that sequence.
 func Reduce(s data.Sequence, reduce data.Call) data.Value {

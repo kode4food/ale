@@ -137,19 +137,3 @@ func TestReduce(t *testing.T) {
 	as.Integer(60, stdlib.Reduce(V(I(10), I(20), I(30)), add))
 	as.Integer(100, stdlib.Reduce(V(I(10), I(20), I(30), I(40)), add))
 }
-
-func TestDrop(t *testing.T) {
-	as := assert.New(t)
-
-	s1 := []string{"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"}
-	v1 := data.EmptyVector
-	for _, e := range s1 {
-		v1 = v1.Append(S(e)).(data.Vector)
-	}
-
-	d1 := stdlib.Drop(v1, 4)
-	d2 := d1.Prepend(S("4"))
-
-	as.String(`("5" "6" "7" "8" "9" "10")`, data.MakeSequenceStr(d1))
-	as.String(`("4" "5" "6" "7" "8" "9" "10")`, data.MakeSequenceStr(d2))
-}

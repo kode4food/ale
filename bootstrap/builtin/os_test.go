@@ -15,5 +15,5 @@ func TestCurrentTime(t *testing.T) {
 	t1 := time.Now().UnixNano()
 	t2 := int64(builtin.CurrentTime().(data.Integer))
 
-	as.Equal(t1-(t1%100000), t2-(t2%100000))
+	as.Equal(t1-(t1%1000000), t2-(t2%1000000))
 }

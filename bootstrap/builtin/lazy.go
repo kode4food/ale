@@ -54,13 +54,6 @@ func Map(args ...data.Value) data.Value {
 	return stdlib.MapParallel(data.Vector(args[1:]), fn.Caller())
 }
 
-// Drop discards the first 'n' elements of the provided sequence
-func Drop(args ...data.Value) data.Value {
-	n := args[0].(data.Integer)
-	s := args[1].(data.Sequence)
-	return stdlib.Drop(s, n)
-}
-
 // Reduce consumes the provided sequence, aggregating its values in some way
 func Reduce(args ...data.Value) data.Value {
 	fn := args[0].(data.Caller)

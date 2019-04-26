@@ -20,7 +20,6 @@
 (def-builtin cons)
 (def-builtin current-time)
 (def-builtin defer)
-(def-builtin drop)
 (def-builtin filter)
 (def-builtin first)
 (def-builtin for-each*)

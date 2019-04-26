@@ -16,28 +16,41 @@
   [& seqs]
   `(apply vector (concat ~@seqs)))
 
-(defn take-
+(defn take'
   [count coll]
   (lazy-seq
    (when-let [s (and (> count 0) (seq coll))]
      (cons (first s)
-           (take- (dec count) (rest s))))))
+           (take' (dec count) (rest s))))))
 
 (defn take
   [count coll]
   (assert-args
    (= (mod count 1) 0) "count must be an integer"
-   (>= count 0)        "count must be non-negative"
-   (seq coll)          "coll must be a sequence")
-  (take- count coll))
+   (is-seq coll)       "coll must be a sequence")
+  (take' count coll))
 
 (defn take-while
   [pred coll]
   (lazy-seq
    (when-let [s (seq coll)]
-     (when (pred (first s))
-       (cons (first s)
-             (take-while pred (rest s)))))))
+     (let [fs (first s)]
+       (when (pred fs)
+         (cons fs (take-while pred (rest s))))))))
+
+(defn drop'
+  [count coll]
+  (let [s (seq coll)]
+    (if (and s (> count 0))
+      (drop' (dec count) (rest s))
+      s)))
+
+(defn drop
+  [count coll]
+  (assert-args
+   (= (mod count 1) 0) "count must be an integer"
+   (is-seq coll)       "coll must be a sequence")
+  (lazy-seq (drop' count coll)))
 
 (defmacro for-each
   [seq-exprs & body]
