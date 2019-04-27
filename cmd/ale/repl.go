@@ -23,6 +23,18 @@ import (
 	"gitlab.com/kode4food/ale/read"
 )
 
+type (
+	any      interface{}
+	sentinel struct{}
+
+	// REPL manages a FromScanner-Eval-Print Loop
+	REPL struct {
+		buf bytes.Buffer
+		rl  *readline.Instance
+		idx int
+	}
+)
+
 // UserDomain is the name of the namespace that the REPL starts in
 const UserDomain = data.Name("user")
 
@@ -36,22 +48,10 @@ const (
 	bad    = domain + red + "[%d]! " + output
 )
 
-type (
-	any      interface{}
-	sentinel struct{}
-
-	// REPL manages a FromScanner-Eval-Print Loop
-	REPL struct {
-		buf bytes.Buffer
-		rl  *readline.Instance
-		idx int
-	}
-)
-
 var (
-	anyChar = regexp.MustCompile(".")
-
-	nothing = &sentinel{}
+	anyChar   = regexp.MustCompile(".")
+	notPaired = fmt.Sprintf(read.PrefixedNotPaired, "")
+	nothing   = &sentinel{}
 
 	openers = map[rune]rune{')': '(', ']': '[', '}': '{'}
 	closers = map[rune]rune{'(': ')', '[': ']', '{': '}'}
@@ -202,7 +202,8 @@ func isRecoverable(err error) bool {
 	return msg == read.ListNotClosed ||
 		msg == read.VectorNotClosed ||
 		msg == read.MapNotClosed ||
-		msg == read.StringNotTerminated
+		msg == read.StringNotTerminated ||
+		strings.HasPrefix(msg, notPaired)
 }
 
 func use(args ...data.Value) data.Value {
