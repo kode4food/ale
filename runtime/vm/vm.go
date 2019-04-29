@@ -176,95 +176,103 @@ func NewClosure(cfg *Config) data.Call {
 			case isa.Add:
 				SP++
 				SP1 := SP + 1
-				right := stack[SP].(data.Integer)
-				left := stack[SP1].(data.Integer)
-				stack[SP1] = data.Integer(left + right)
+				right := stack[SP].(data.Number)
+				left := stack[SP1].(data.Number)
+				stack[SP1] = left.Add(right)
 				goto nextPC
 
 			case isa.Sub:
 				SP++
 				SP1 := SP + 1
-				right := stack[SP].(data.Integer)
-				left := stack[SP1].(data.Integer)
-				stack[SP1] = data.Integer(left - right)
+				right := stack[SP].(data.Number)
+				left := stack[SP1].(data.Number)
+				stack[SP1] = left.Sub(right)
 				goto nextPC
 
 			case isa.Mul:
 				SP++
 				SP1 := SP + 1
-				right := stack[SP].(data.Integer)
-				left := stack[SP1].(data.Integer)
-				stack[SP1] = data.Integer(left * right)
+				right := stack[SP].(data.Number)
+				left := stack[SP1].(data.Number)
+				stack[SP1] = left.Mul(right)
 				goto nextPC
 
 			case isa.Div:
 				SP++
 				SP1 := SP + 1
-				right := stack[SP].(data.Integer)
-				left := stack[SP1].(data.Integer)
-				stack[SP1] = data.Integer(left / right)
+				right := stack[SP].(data.Number)
+				left := stack[SP1].(data.Number)
+				stack[SP1] = left.Div(right)
 				goto nextPC
 
 			case isa.Mod:
 				SP++
 				SP1 := SP + 1
-				right := stack[SP].(data.Integer)
-				left := stack[SP1].(data.Integer)
-				stack[SP1] = data.Integer(left % right)
+				right := stack[SP].(data.Number)
+				left := stack[SP1].(data.Number)
+				stack[SP1] = left.Mod(right)
 				goto nextPC
 
 			case isa.Eq:
 				SP++
 				SP1 := SP + 1
-				right := stack[SP].(data.Integer)
-				left := stack[SP1].(data.Integer)
-				stack[SP1] = data.Bool(left == right)
+				right := stack[SP].(data.Number)
+				left := stack[SP1].(data.Number)
+				cmp := left.Cmp(right)
+				stack[SP1] = data.Bool(cmp == data.EqualTo)
 				goto nextPC
 
 			case isa.Neq:
 				SP++
 				SP1 := SP + 1
-				right := stack[SP].(data.Integer)
-				left := stack[SP1].(data.Integer)
-				stack[SP1] = data.Bool(left != right)
+				right := stack[SP].(data.Number)
+				left := stack[SP1].(data.Number)
+				cmp := left.Cmp(right)
+				stack[SP1] = data.Bool(cmp != data.EqualTo)
 				goto nextPC
 
 			case isa.Lt:
 				SP++
 				SP1 := SP + 1
-				right := stack[SP].(data.Integer)
-				left := stack[SP1].(data.Integer)
-				stack[SP1] = data.Bool(left < right)
+				right := stack[SP].(data.Number)
+				left := stack[SP1].(data.Number)
+				cmp := left.Cmp(right)
+				stack[SP1] = data.Bool(cmp == data.LessThan)
 				goto nextPC
 
 			case isa.Lte:
 				SP++
 				SP1 := SP + 1
-				right := stack[SP].(data.Integer)
-				left := stack[SP1].(data.Integer)
-				stack[SP1] = data.Bool(left <= right)
+				right := stack[SP].(data.Number)
+				left := stack[SP1].(data.Number)
+				cmp := left.Cmp(right)
+				res := cmp == data.LessThan || cmp == data.EqualTo
+				stack[SP1] = data.Bool(res)
 				goto nextPC
 
 			case isa.Gt:
 				SP++
 				SP1 := SP + 1
-				right := stack[SP].(data.Integer)
-				left := stack[SP1].(data.Integer)
-				stack[SP1] = data.Bool(left > right)
+				right := stack[SP].(data.Number)
+				left := stack[SP1].(data.Number)
+				cmp := left.Cmp(right)
+				stack[SP1] = data.Bool(cmp == data.GreaterThan)
 				goto nextPC
 
 			case isa.Gte:
 				SP++
 				SP1 := SP + 1
-				right := stack[SP].(data.Integer)
-				left := stack[SP1].(data.Integer)
-				stack[SP1] = data.Bool(left >= right)
+				right := stack[SP].(data.Number)
+				left := stack[SP1].(data.Number)
+				cmp := left.Cmp(right)
+				res := cmp == data.GreaterThan || cmp == data.EqualTo
+				stack[SP1] = data.Bool(res)
 				goto nextPC
 
 			case isa.Neg:
 				SP1 := SP + 1
-				val := stack[SP1].(data.Integer)
-				stack[SP1] = data.Integer(-val)
+				val := stack[SP1].(data.Number)
+				stack[SP1] = data.Integer(0).Sub(val)
 				goto nextPC
 
 			case isa.Not:

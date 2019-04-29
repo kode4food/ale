@@ -3,7 +3,6 @@ package read
 import (
 	"fmt"
 	"regexp"
-	"strings"
 
 	"gitlab.com/kode4food/ale/data"
 	"gitlab.com/kode4food/ale/stdlib"
@@ -21,7 +20,6 @@ const (
 	Identifier
 	String
 	Number
-	Ratio
 	ListStart
 	ListEnd
 	VectorStart
@@ -182,10 +180,7 @@ func stringState(sm []string) *Token {
 }
 
 func ratioState(sm []string) *Token {
-	comp := strings.Split(sm[0], "/")
-	num := int64(data.ParseInteger(data.String(comp[0])))
-	den := int64(data.ParseInteger(data.String(comp[1])))
-	res := data.Float(float64(num) / float64(den))
+	res := data.ParseRatio(data.String(sm[0]))
 	return makeToken(Number, res)
 }
 

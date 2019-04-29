@@ -4,28 +4,27 @@ import "gitlab.com/kode4food/ale/data"
 
 // Add returns the sum of the provided numbers
 func Add(args ...data.Value) data.Value {
-	var res data.Number = data.Integer(0)
-	for _, n := range args {
-		res = res.Add(n.(data.Number))
+	if len(args) > 0 {
+		var res = args[0].(data.Number)
+		for _, n := range args[1:] {
+			res = res.Add(n.(data.Number))
+		}
+		return res
 	}
-	return res
+	return data.Integer(0)
 }
 
 // Sub will subtract one number from the previous, in turn
 func Sub(args ...data.Value) data.Value {
-	var res data.Number
-	var rest data.Values
 	if len(args) > 1 {
-		res = args[0].(data.Number)
-		rest = args[1:]
-	} else {
-		res = data.Integer(0)
-		rest = args
+		var res = args[0].(data.Number)
+		var rest = args[1:]
+		for _, n := range rest {
+			res = res.Sub(n.(data.Number))
+		}
+		return res
 	}
-	for _, n := range rest {
-		res = res.Sub(n.(data.Number))
-	}
-	return res
+	return data.Integer(-1).Mul(args[0].(data.Number))
 }
 
 // Mul will generate the product of all the provided numbers
