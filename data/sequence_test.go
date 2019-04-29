@@ -70,6 +70,6 @@ func TestLazyLastOfSequence(t *testing.T) {
 	})
 
 	v, ok := data.Last(l1)
-	as.Integer(6, v)
+	as.Number(6, v)
 	as.True(ok)
 }

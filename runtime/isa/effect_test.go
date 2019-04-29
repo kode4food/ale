@@ -11,7 +11,7 @@ func TestEffects(t *testing.T) {
 	as := assert.New(t)
 
 	e1 := isa.MustGetEffect(isa.CondJump)
-	as.Integer(2, e1.Size)
+	as.Number(2, e1.Size)
 
 	defer func() {
 		rec := recover()

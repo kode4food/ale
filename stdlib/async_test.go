@@ -35,12 +35,12 @@ func TestChannel(t *testing.T) {
 
 	check := func() {
 		f, _, ok := seq.Split()
-		as.Float(1, f)
+		as.Number(1, f)
 		as.True(ok)
 
-		as.Float(1, seq.First())
-		as.Float(2, seq.Rest().First())
-		as.Float(3, seq.Rest().Rest().First())
+		as.Number(1, seq.First())
+		as.Number(2, seq.Rest().First())
+		as.Number(3, seq.Rest().Rest().First())
 		as.False(seq.Rest().Rest().Rest().IsEmpty())
 		as.String("foo", seq.Rest().Rest().Rest().First())
 		as.False(seq.Rest().Rest().Rest().Rest().IsEmpty())

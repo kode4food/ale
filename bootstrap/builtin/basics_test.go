@@ -16,11 +16,11 @@ func TestRead(t *testing.T) {
 
 	v2, ok := r1.ElementAt(0)
 	as.True(ok)
-	as.Integer(1, v2)
+	as.Number(1, v2)
 
 	v3, ok := r1.ElementAt(2)
 	as.True(ok)
-	as.Integer(3, v3)
+	as.Number(3, v3)
 }
 
 func TestEmptyRead(t *testing.T) {

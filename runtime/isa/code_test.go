@@ -21,9 +21,9 @@ func TestCoders(t *testing.T) {
 	for i, c := range in1 {
 		out1[i] = c.Word()
 	}
-	as.Integer(99, data.Integer(out1[0]))
-	as.Integer(5, data.Integer(out1[1]))
-	as.Integer(37, data.Integer(out1[2]))
+	as.Number(99, data.Integer(out1[0]))
+	as.Number(5, data.Integer(out1[1]))
+	as.Number(37, data.Integer(out1[2]))
 }
 
 func TestInstructions(t *testing.T) {

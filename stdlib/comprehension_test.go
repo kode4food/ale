@@ -53,10 +53,10 @@ func TestMapParallel(t *testing.T) {
 
 	w := stdlib.MapParallel(V(s1, s2), addTest)
 
-	as.Float(6, w.First())
-	as.Float(12, w.Rest().First())
-	as.Float(18, w.Rest().Rest().First())
-	as.Float(24, w.Rest().Rest().Rest().First())
+	as.Number(6, w.First())
+	as.Number(12, w.Rest().First())
+	as.Number(18, w.Rest().Rest().First())
+	as.Number(24, w.Rest().Rest().Rest().First())
 
 	s3 := w.Rest().Rest().Rest().Rest()
 	as.True(s3.IsEmpty())
@@ -133,7 +133,7 @@ func TestReduce(t *testing.T) {
 		return args[0].(data.Integer) + args[1].(data.Integer)
 	}
 
-	as.Integer(30, stdlib.Reduce(V(I(10), I(20)), add))
-	as.Integer(60, stdlib.Reduce(V(I(10), I(20), I(30)), add))
-	as.Integer(100, stdlib.Reduce(V(I(10), I(20), I(30), I(40)), add))
+	as.Number(30, stdlib.Reduce(V(I(10), I(20)), add))
+	as.Number(60, stdlib.Reduce(V(I(10), I(20), I(30)), add))
+	as.Number(100, stdlib.Reduce(V(I(10), I(20), I(30), I(40)), add))
 }

@@ -34,70 +34,43 @@ func New(t *testing.T) *Wrapper {
 
 // String tests a Value for string equality
 func (w *Wrapper) String(expect string, expr Any) {
-	if s, ok := expr.(string); ok {
+	switch s := expr.(type) {
+	case string:
 		w.Assertions.Equal(expect, s)
-		return
+	case data.Value:
+		w.Assertions.Equal(expect, s.String())
+	default:
+		panic(fmt.Errorf(InvalidTestExpression, expr))
 	}
-	if v, ok := expr.(data.Value); ok {
-		w.Assertions.Equal(expect, v.String())
-		return
-	}
-	panic(fmt.Errorf(InvalidTestExpression, expr))
 }
 
-// Float tests a Value for float equality
-func (w *Wrapper) Float(expect float64, expr Any) {
-	if n, ok := expr.(data.Float); ok {
+// Number tests a Value for numeric equality
+func (w *Wrapper) Number(expect float64, expr Any) {
+	switch n := expr.(type) {
+	case float64:
 		w.Assertions.Equal(expect, float64(n))
-		return
+	case int:
+		w.Assertions.Equal(int64(expect), int64(n))
+	case data.Number:
+		w.Assertions.Equal(data.EqualTo, data.Float(expect).Cmp(n))
+	default:
+		panic(fmt.Errorf(InvalidTestExpression, expr))
 	}
-	if n, ok := expr.(float64); ok {
-		w.Assertions.Equal(expect, float64(n))
-		return
-	}
-	if i, ok := expr.(data.Integer); ok {
-		w.Assertions.Equal(expect, float64(i))
-		return
-	}
-	panic(fmt.Errorf(InvalidTestExpression, expr))
-}
-
-// Integer tests a Value for integer equality
-func (w *Wrapper) Integer(expect int64, expr Any) {
-	if i, ok := expr.(data.Integer); ok {
-		w.Assertions.Equal(expect, int64(i))
-		return
-	}
-	if i, ok := expr.(int); ok {
-		w.Assertions.Equal(expect, int64(i))
-		return
-	}
-	if n, ok := expr.(data.Float); ok {
-		w.Assertions.Equal(expect, int64(n))
-		return
-	}
-	panic(fmt.Errorf(InvalidTestExpression, expr))
 }
 
 // Equal tests a Value for some kind of equality. Performs checks to do so
 func (w *Wrapper) Equal(expect Any, expr Any) {
-	if s, ok := expect.(data.String); ok {
-		w.String(string(s), expr)
-		return
+	switch typed := expect.(type) {
+	case data.String:
+		w.String(string(typed), expr)
+	case data.Number:
+		num := expr.(data.Number)
+		w.Assertions.Equal(data.EqualTo, typed.Cmp(num))
+	case data.Value:
+		w.String(typed.String(), expr)
+	default:
+		w.Assertions.Equal(expect, expr)
 	}
-	if n1, ok := expect.(data.Integer); ok {
-		w.Integer(int64(n1), expr)
-		return
-	}
-	if n1, ok := expect.(data.Float); ok {
-		w.Float(float64(n1), expr)
-		return
-	}
-	if s, ok := expect.(data.Value); ok {
-		w.String(s.String(), expr)
-		return
-	}
-	w.Assertions.Equal(expect, expr)
 }
 
 // True tests a Value for boolean true

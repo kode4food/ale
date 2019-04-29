@@ -12,7 +12,7 @@ type (
 	Float float64
 
 	// Ratio represents a number having a numerator and denominator
-	Ratio struct{ *big.Rat }
+	Ratio big.Rat
 )
 
 // Error messages
@@ -22,9 +22,8 @@ const (
 )
 
 // ParseFloat attempts to parse a string representing an float
-func ParseFloat(s String) Number {
-	ns := string(s)
-	if res, err := strconv.ParseFloat(ns, 64); err == nil {
+func ParseFloat(s string) Number {
+	if res, err := strconv.ParseFloat(s, 64); err == nil {
 		return Float(res)
 	}
 	panic(fmt.Errorf(ExpectedFloat, s))
@@ -117,20 +116,19 @@ func (l Float) String() string {
 }
 
 // ParseRatio attempts to parse a string representing a ratio
-func ParseRatio(s String) Number {
-	ns := string(s)
-	if res, ok := new(big.Rat).SetString(ns); ok {
-		return &Ratio{
-			Rat: res,
-		}
+func ParseRatio(s string) Number {
+	if res, ok := new(big.Rat).SetString(s); ok {
+		return (*Ratio)(res)
 	}
-	panic(fmt.Sprintf(ExpectedRatio, s))
+	panic(fmt.Errorf(ExpectedRatio, s))
 }
 
 // Cmp compares this *Ratio to another Number
 func (l *Ratio) Cmp(r Number) Comparison {
-	if rf, ok := r.(*Ratio); ok {
-		return Comparison(l.Rat.Cmp(rf.Rat))
+	if rr, ok := r.(*Ratio); ok {
+		lb := (*big.Rat)(l)
+		rb := (*big.Rat)(rr)
+		return Comparison(lb.Cmp(rb))
 	}
 	pl, pr := purify(l, r)
 	return pl.Cmp(pr)
@@ -138,10 +136,11 @@ func (l *Ratio) Cmp(r Number) Comparison {
 
 // Add adds this *Ratio to another Number
 func (l *Ratio) Add(r Number) Number {
-	if rf, ok := r.(*Ratio); ok {
-		return &Ratio{
-			Rat: new(big.Rat).Add(l.Rat, rf.Rat),
-		}
+	if rr, ok := r.(*Ratio); ok {
+		lb := (*big.Rat)(l)
+		rb := (*big.Rat)(rr)
+		res := new(big.Rat).Add(lb, rb)
+		return (*Ratio)(res)
 	}
 	pl, pr := purify(l, r)
 	return pl.Add(pr)
@@ -149,10 +148,11 @@ func (l *Ratio) Add(r Number) Number {
 
 // Sub subtracts another Number from this *Ratio
 func (l *Ratio) Sub(r Number) Number {
-	if rf, ok := r.(*Ratio); ok {
-		return &Ratio{
-			Rat: new(big.Rat).Sub(l.Rat, rf.Rat),
-		}
+	if rr, ok := r.(*Ratio); ok {
+		lb := (*big.Rat)(l)
+		rb := (*big.Rat)(rr)
+		res := new(big.Rat).Sub(lb, rb)
+		return (*Ratio)(res)
 	}
 	pl, pr := purify(l, r)
 	return pl.Sub(pr)
@@ -160,10 +160,11 @@ func (l *Ratio) Sub(r Number) Number {
 
 // Mul multiplies this *Ratio by another Number
 func (l *Ratio) Mul(r Number) Number {
-	if rf, ok := r.(*Ratio); ok {
-		return &Ratio{
-			Rat: new(big.Rat).Mul(l.Rat, rf.Rat),
-		}
+	if rr, ok := r.(*Ratio); ok {
+		lb := (*big.Rat)(l)
+		rb := (*big.Rat)(rr)
+		res := new(big.Rat).Mul(lb, rb)
+		return (*Ratio)(res)
 	}
 	pl, pr := purify(l, r)
 	return pl.Mul(pr)
@@ -171,10 +172,11 @@ func (l *Ratio) Mul(r Number) Number {
 
 // Div divides this *Ratio by another Number
 func (l *Ratio) Div(r Number) Number {
-	if rf, ok := r.(*Ratio); ok {
-		return &Ratio{
-			Rat: new(big.Rat).Quo(l.Rat, rf.Rat),
-		}
+	if rr, ok := r.(*Ratio); ok {
+		lb := (*big.Rat)(l)
+		rb := (*big.Rat)(rr)
+		res := new(big.Rat).Quo(lb, rb)
+		return (*Ratio)(res)
 	}
 	pl, pr := purify(l, r)
 	return pl.Div(pr)
@@ -182,8 +184,12 @@ func (l *Ratio) Div(r Number) Number {
 
 // Mod calculates the remainder of dividing this *Ratio by another Number
 func (l *Ratio) Mod(r Number) Number {
-	if _, ok := r.(*Ratio); ok {
-		panic("unsupported")
+	if rr, ok := r.(*Ratio); ok {
+		lb := (*big.Rat)(l)
+		rb := (*big.Rat)(rr)
+		lf, _ := lb.Float64()
+		rf, _ := rb.Float64()
+		return Float(math.Mod(lf, rf))
 	}
 	pl, pr := purify(l, r)
 	return pl.Mod(pr)
@@ -204,7 +210,12 @@ func (*Ratio) IsNegInf() bool {
 	return false
 }
 
+func (l *Ratio) float() Float {
+	f, _ := (*big.Rat)(l).Float64()
+	return Float(f)
+}
+
 // String converts this *Ratio to a string
 func (l *Ratio) String() string {
-	return l.Rat.String()
+	return (*big.Rat)(l).String()
 }

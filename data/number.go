@@ -2,7 +2,6 @@ package data
 
 import (
 	"fmt"
-	"math/big"
 )
 
 // Number describes a numeric value of some kind
@@ -21,7 +20,7 @@ type Number interface {
 
 // Error messages
 const (
-	CouldNotPromote = "could not purify: %v and %v"
+	CouldNotPurify = "could not purify: %v and %v"
 )
 
 // purify performs automatic contagion of operands
@@ -30,61 +29,43 @@ func purify(l, r Number) (Number, Number) {
 	case Integer:
 		switch r.(type) {
 		case Float:
-			return Float(lt), r
+			return lt.float(), r
 		case *BigInt:
-			return &BigInt{Int: big.NewInt(int64(lt))}, r
+			return lt.bigInt(), r
 		case *Ratio:
-			lr := &Ratio{
-				Rat: new(big.Rat).SetFrac64(int64(lt), 1),
-			}
-			return lr, r
+			return lt.ratio(), r
 		}
 
 	case Float:
 		switch rt := r.(type) {
 		case Integer:
-			return l, Float(rt)
+			return l, rt.float()
 		case *BigInt:
-			bf := new(big.Float).SetInt(rt.Int)
-			f, _ := bf.Float64()
-			return l, Float(f)
+			return l, rt.float()
 		case *Ratio:
-			lf, _ := rt.Float64()
-			return Float(lf), r
+			return l, rt.float()
 		}
 
 	case *BigInt:
 		switch rt := r.(type) {
 		case Integer:
-			return l, &BigInt{Int: big.NewInt(int64(rt))}
+			return l, rt.bigInt()
 		case Float:
-			bf := new(big.Float).SetInt(lt.Int)
-			f, _ := bf.Float64()
-			return Float(f), r
+			return lt.float(), r
 		case *Ratio:
-			lr := &Ratio{
-				Rat: new(big.Rat).SetInt(lt.Int),
-			}
-			return lr, r
+			return lt.ratio(), r
 		}
 
 	case *Ratio:
 		switch rt := r.(type) {
 		case Integer:
-			rr := &Ratio{
-				Rat: new(big.Rat).SetFrac64(int64(rt), 1),
-			}
-			return l, rr
+			return l, rt.ratio()
 		case Float:
-			f, _ := lt.Float64()
-			return Float(f), r
+			return lt.float(), r
 		case *BigInt:
-			ri := &Ratio{
-				Rat: new(big.Rat).SetInt(rt.Int),
-			}
-			return l, ri
+			return l, rt.ratio()
 		}
 	}
 
-	panic(fmt.Errorf(CouldNotPromote, l, r))
+	panic(fmt.Errorf(CouldNotPurify, l, r))
 }

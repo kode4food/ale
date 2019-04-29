@@ -2,6 +2,7 @@ package data
 
 import (
 	"fmt"
+	"math"
 	"math/big"
 )
 
@@ -10,7 +11,7 @@ type (
 	Integer int64
 
 	// BigInt represents a multi-precision integer
-	BigInt struct{ *big.Int }
+	BigInt big.Int
 )
 
 // Error messages
@@ -19,13 +20,12 @@ const (
 )
 
 // ParseInteger attempts to parse a string representing an integer
-func ParseInteger(s String) Number {
-	ns := string(s)
-	if res, ok := new(big.Int).SetString(ns, 0); ok {
+func ParseInteger(s string) Number {
+	if res, ok := new(big.Int).SetString(s, 0); ok {
 		if res.IsInt64() {
 			return Integer(res.Int64())
 		}
-		return &BigInt{Int: res}
+		return (*BigInt)(res)
 	}
 	panic(fmt.Errorf(ExpectedInteger, s))
 }
@@ -48,7 +48,14 @@ func (l Integer) Cmp(r Number) Comparison {
 // Add adds this Integer to another Number
 func (l Integer) Add(r Number) Number {
 	if ri, ok := r.(Integer); ok {
-		return l + ri
+		res := l + ri
+		if (res^l) >= 0 || (res^ri) >= 0 {
+			return res
+		}
+		lb := big.NewInt(int64(l))
+		rb := big.NewInt(int64(ri))
+		lb.Add(lb, rb)
+		return (*BigInt)(lb)
 	}
 	pl, pr := purify(l, r)
 	return pl.Add(pr)
@@ -57,7 +64,14 @@ func (l Integer) Add(r Number) Number {
 // Sub subtracts another Number from this Integer
 func (l Integer) Sub(r Number) Number {
 	if ri, ok := r.(Integer); ok {
-		return l - ri
+		res := l - ri
+		if (res^l) >= 0 || (res^^ri) >= 0 {
+			return res
+		}
+		lb := big.NewInt(int64(l))
+		rb := big.NewInt(int64(ri))
+		lb.Sub(lb, rb)
+		return (*BigInt)(lb)
 	}
 	pl, pr := purify(l, r)
 	return pl.Sub(pr)
@@ -66,7 +80,14 @@ func (l Integer) Sub(r Number) Number {
 // Mul multiples this Integer by another Number
 func (l Integer) Mul(r Number) Number {
 	if ri, ok := r.(Integer); ok {
-		return l * ri
+		res := l * ri
+		if (l != math.MinInt64 || ri >= 0) && (ri == 0 || res/ri == l) {
+			return res
+		}
+		lb := big.NewInt(int64(l))
+		rb := big.NewInt(int64(ri))
+		lb.Mul(lb, rb)
+		return (*BigInt)(lb)
 	}
 	pl, pr := purify(l, r)
 	return pl.Mul(pr)
@@ -105,6 +126,20 @@ func (Integer) IsNegInf() bool {
 	return false
 }
 
+func (l Integer) float() Float {
+	return Float(l)
+}
+
+func (l Integer) bigInt() *BigInt {
+	bi := big.NewInt(int64(l))
+	return (*BigInt)(bi)
+}
+
+func (l Integer) ratio() *Ratio {
+	r := new(big.Rat).SetFrac64(int64(l), 1)
+	return (*Ratio)(r)
+}
+
 // String converts this Integer to a string
 func (l Integer) String() string {
 	return fmt.Sprintf("%d", l)
@@ -113,7 +148,9 @@ func (l Integer) String() string {
 // Cmp compares this BigInt to another Number
 func (l *BigInt) Cmp(r Number) Comparison {
 	if ri, ok := r.(*BigInt); ok {
-		return Comparison(l.Int.Cmp(ri.Int))
+		lb := (*big.Int)(l)
+		rb := (*big.Int)(ri)
+		return Comparison(lb.Cmp(rb))
 	}
 	lp, rp := purify(l, r)
 	return lp.Cmp(rp)
@@ -122,9 +159,10 @@ func (l *BigInt) Cmp(r Number) Comparison {
 // Add adds this BigInt to another Number
 func (l *BigInt) Add(r Number) Number {
 	if ri, ok := r.(*BigInt); ok {
-		return &BigInt{
-			Int: new(big.Int).Add(l.Int, ri.Int),
-		}
+		lb := (*big.Int)(l)
+		rb := (*big.Int)(ri)
+		res := new(big.Int).Add(lb, rb)
+		return (*BigInt)(res)
 	}
 	lp, rp := purify(l, r)
 	return lp.Add(rp)
@@ -133,9 +171,10 @@ func (l *BigInt) Add(r Number) Number {
 // Sub subtracts another Number from this BigInt
 func (l *BigInt) Sub(r Number) Number {
 	if ri, ok := r.(*BigInt); ok {
-		return &BigInt{
-			Int: new(big.Int).Sub(l.Int, ri.Int),
-		}
+		lb := (*big.Int)(l)
+		rb := (*big.Int)(ri)
+		res := new(big.Int).Sub(lb, rb)
+		return (*BigInt)(res)
 	}
 	lp, rp := purify(l, r)
 	return lp.Sub(rp)
@@ -144,9 +183,10 @@ func (l *BigInt) Sub(r Number) Number {
 // Mul multiples this BigInt by another Number
 func (l *BigInt) Mul(r Number) Number {
 	if ri, ok := r.(*BigInt); ok {
-		return &BigInt{
-			Int: new(big.Int).Mul(l.Int, ri.Int),
-		}
+		lb := (*big.Int)(l)
+		rb := (*big.Int)(ri)
+		res := new(big.Int).Mul(lb, rb)
+		return (*BigInt)(res)
 	}
 	lp, rp := purify(l, r)
 	return lp.Mul(rp)
@@ -155,9 +195,10 @@ func (l *BigInt) Mul(r Number) Number {
 // Div divides this BigInt by another Number
 func (l *BigInt) Div(r Number) Number {
 	if ri, ok := r.(*BigInt); ok {
-		return &BigInt{
-			Int: new(big.Int).Quo(l.Int, ri.Int),
-		}
+		lb := (*big.Int)(l)
+		rb := (*big.Int)(ri)
+		res := new(big.Int).Quo(lb, rb)
+		return (*BigInt)(res)
 	}
 	lp, rp := purify(l, r)
 	return lp.Div(rp)
@@ -166,9 +207,10 @@ func (l *BigInt) Div(r Number) Number {
 // Mod calculates the remainder of dividing this BigInt by another Number
 func (l *BigInt) Mod(r Number) Number {
 	if ri, ok := r.(*BigInt); ok {
-		return &BigInt{
-			Int: new(big.Int).Rem(l.Int, ri.Int),
-		}
+		lb := (*big.Int)(l)
+		rb := (*big.Int)(ri)
+		res := new(big.Int).Rem(lb, rb)
+		return (*BigInt)(res)
 	}
 	lp, rp := purify(l, r)
 	return lp.Mod(rp)
@@ -189,7 +231,18 @@ func (*BigInt) IsNegInf() bool {
 	return false
 }
 
+func (l *BigInt) float() Float {
+	bf := new(big.Float).SetInt((*big.Int)(l))
+	f, _ := bf.Float64()
+	return Float(f)
+}
+
+func (l *BigInt) ratio() *Ratio {
+	r := new(big.Rat).SetInt((*big.Int)(l))
+	return (*Ratio)(r)
+}
+
 // String converts this BigInt to a string
 func (l *BigInt) String() string {
-	return l.Int.String()
+	return (*big.Int)(l).String()
 }

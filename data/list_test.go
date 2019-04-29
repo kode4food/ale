@@ -32,12 +32,12 @@ func TestList(t *testing.T) {
 	as.String("(20.5 12)", l2)
 	as.Equal(n2, l2.First())
 	as.Identical(l1, l2.Rest())
-	as.Integer(2, l2.Count())
+	as.Number(2, l2.Count())
 
 	r, ok := l2.ElementAt(1)
 	as.True(ok)
 	as.Equal(I(12), r)
-	as.Integer(2, data.Count(l2))
+	as.Number(2, data.Count(l2))
 
 	r, ok = data.EmptyList.ElementAt(1)
 	as.False(ok)
@@ -49,8 +49,8 @@ func TestListCaller(t *testing.T) {
 
 	l1 := L(I(99), I(37))
 	c1 := l1.Caller()
-	as.Integer(99, c1(I(0)))
-	as.Integer(37, c1(I(1)))
+	as.Number(99, c1(I(0)))
+	as.Number(37, c1(I(1)))
 	as.Nil(c1(I(2)))
 	as.String("defaulted", c1(I(2), S("defaulted")))
 }

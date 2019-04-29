@@ -180,17 +180,17 @@ func stringState(sm []string) *Token {
 }
 
 func ratioState(sm []string) *Token {
-	res := data.ParseRatio(data.String(sm[0]))
+	res := data.ParseRatio(sm[0])
 	return makeToken(Number, res)
 }
 
 func floatState(sm []string) *Token {
-	v := data.ParseFloat(data.String(sm[0]))
+	v := data.ParseFloat(sm[0])
 	return makeToken(Number, v)
 }
 
 func integerState(sm []string) *Token {
-	v := data.ParseInteger(data.String(sm[0]))
+	v := data.ParseInteger(sm[0])
 	return makeToken(Number, v)
 }
 

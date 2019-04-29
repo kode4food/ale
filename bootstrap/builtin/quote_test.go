@@ -35,7 +35,7 @@ func TestQuoteEval(t *testing.T) {
 
 	v1, ok = r1.ElementAt(1)
 	as.True(ok)
-	as.Integer(2, v1)
+	as.Number(2, v1)
 
 	v1, ok = r1.ElementAt(2)
 	v2, _ = r2.ElementAt(2)
@@ -44,7 +44,7 @@ func TestQuoteEval(t *testing.T) {
 
 	v1, ok = r1.ElementAt(2)
 	as.True(ok)
-	as.Integer(3, v1)
+	as.Number(3, v1)
 }
 
 func TestUnquoteEval(t *testing.T) {

@@ -27,7 +27,7 @@ func TestReadList(t *testing.T) {
 
 	f, r, ok := list.Split()
 	as.True(ok)
-	as.Integer(99, f)
+	as.Number(99, f)
 
 	f, r, ok = r.Split()
 	as.True(ok)
@@ -35,7 +35,7 @@ func TestReadList(t *testing.T) {
 
 	f, r, ok = r.Split()
 	as.True(ok)
-	as.Float(55.12, f)
+	as.Number(55.12, f)
 
 	_, _, ok = r.Split()
 	as.False(ok)
@@ -51,7 +51,7 @@ func TestReadVector(t *testing.T) {
 
 	res, ok := vector.ElementAt(0)
 	as.True(ok)
-	as.Integer(99, res)
+	as.Number(99, res)
 
 	res, ok = vector.ElementAt(1)
 	as.True(ok)
@@ -59,7 +59,7 @@ func TestReadVector(t *testing.T) {
 
 	res, ok = vector.ElementAt(2)
 	as.True(ok)
-	as.Float(55.120, res)
+	as.Number(55.120, res)
 }
 
 func TestReadMap(t *testing.T) {
@@ -69,7 +69,7 @@ func TestReadMap(t *testing.T) {
 	v := tr.First()
 	m, ok := v.(data.Associative)
 	as.True(ok)
-	as.Integer(2, m.Count())
+	as.Number(2, m.Count())
 }
 
 func TestReadNestedList(t *testing.T) {
@@ -82,7 +82,7 @@ func TestReadNestedList(t *testing.T) {
 
 	f, r, ok := list.Split()
 	as.True(ok)
-	as.Integer(99, f)
+	as.Number(99, f)
 
 	// get nested list
 	f, r, ok = r.Split()
@@ -93,7 +93,7 @@ func TestReadNestedList(t *testing.T) {
 	// iterate over the rest of top-level list
 	f, r, ok = r.Split()
 	as.True(ok)
-	as.Float(55.12, f)
+	as.Number(55.12, f)
 
 	_, r, ok = r.Split()
 	as.False(ok)

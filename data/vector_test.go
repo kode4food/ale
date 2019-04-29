@@ -12,10 +12,10 @@ func TestVector(t *testing.T) {
 	as := assert.New(t)
 
 	v1 := V(S("hello"), S("how"), S("are"), S("you?"))
-	as.Integer(4, v1.Count())
-	as.Integer(4, data.Count(v1))
+	as.Number(4, v1.Count())
+	as.Number(4, data.Count(v1))
 	as.String("hello", v1.First())
-	as.Integer(3, data.Count(v1.Rest()))
+	as.Number(3, data.Count(v1.Rest()))
 
 	r, ok := v1.ElementAt(2)
 	as.True(ok)
@@ -23,14 +23,14 @@ func TestVector(t *testing.T) {
 	as.String(`["hello" "how" "are" "you?"]`, v1)
 
 	v2 := v1.Prepend(S("oh")).(data.Vector)
-	as.Integer(5, v2.Count())
-	as.Integer(4, v1.Count())
+	as.Number(5, v2.Count())
+	as.Number(4, v1.Count())
 
 	v3 := v2.Append(S("good?")).(data.Vector)
 	r, ok = v3.ElementAt(5)
 	as.True(ok)
 	as.String("good?", r)
-	as.Integer(6, v3.Count())
+	as.Number(6, v3.Count())
 
 	r, ok = v3.ElementAt(0)
 	as.True(ok)
