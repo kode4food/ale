@@ -123,7 +123,7 @@ func ParseRatio(s string) Number {
 	panic(fmt.Errorf(ExpectedRatio, s))
 }
 
-// Cmp compares this *Ratio to another Number
+// Cmp compares this Ratio to another Number
 func (l *Ratio) Cmp(r Number) Comparison {
 	if rr, ok := r.(*Ratio); ok {
 		lb := (*big.Rat)(l)
@@ -134,7 +134,7 @@ func (l *Ratio) Cmp(r Number) Comparison {
 	return pl.Cmp(pr)
 }
 
-// Add adds this *Ratio to another Number
+// Add adds this Ratio to another Number
 func (l *Ratio) Add(r Number) Number {
 	if rr, ok := r.(*Ratio); ok {
 		lb := (*big.Rat)(l)
@@ -146,7 +146,7 @@ func (l *Ratio) Add(r Number) Number {
 	return pl.Add(pr)
 }
 
-// Sub subtracts another Number from this *Ratio
+// Sub subtracts another Number from this Ratio
 func (l *Ratio) Sub(r Number) Number {
 	if rr, ok := r.(*Ratio); ok {
 		lb := (*big.Rat)(l)
@@ -158,7 +158,7 @@ func (l *Ratio) Sub(r Number) Number {
 	return pl.Sub(pr)
 }
 
-// Mul multiplies this *Ratio by another Number
+// Mul multiplies this Ratio by another Number
 func (l *Ratio) Mul(r Number) Number {
 	if rr, ok := r.(*Ratio); ok {
 		lb := (*big.Rat)(l)
@@ -170,7 +170,7 @@ func (l *Ratio) Mul(r Number) Number {
 	return pl.Mul(pr)
 }
 
-// Div divides this *Ratio by another Number
+// Div divides this Ratio by another Number
 func (l *Ratio) Div(r Number) Number {
 	if rr, ok := r.(*Ratio); ok {
 		lb := (*big.Rat)(l)
@@ -182,7 +182,7 @@ func (l *Ratio) Div(r Number) Number {
 	return pl.Div(pr)
 }
 
-// Mod calculates the remainder of dividing this *Ratio by another Number
+// Mod calculates the remainder of dividing this Ratio by another Number
 func (l *Ratio) Mod(r Number) Number {
 	if rr, ok := r.(*Ratio); ok {
 		lb := (*big.Rat)(l)
@@ -195,17 +195,17 @@ func (l *Ratio) Mod(r Number) Number {
 	return pl.Mod(pr)
 }
 
-// IsNaN returns whether or not this *Ratio is not a number
+// IsNaN returns whether or not this Ratio is not a number
 func (*Ratio) IsNaN() bool {
 	return false
 }
 
-// IsPosInf returns whether or not this *Ratio represents positive infinity
+// IsPosInf returns whether or not this Ratio represents positive infinity
 func (*Ratio) IsPosInf() bool {
 	return false
 }
 
-// IsNegInf returns whether or not this *Ratio represents negative infinity
+// IsNegInf returns whether or not this Ratio represents negative infinity
 func (*Ratio) IsNegInf() bool {
 	return false
 }
@@ -215,7 +215,7 @@ func (l *Ratio) float() Float {
 	return Float(f)
 }
 
-// String converts this *Ratio to a string
+// String converts this Ratio to a string
 func (l *Ratio) String() string {
 	return (*big.Rat)(l).String()
 }
