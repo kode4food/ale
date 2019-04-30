@@ -3,11 +3,10 @@ package data_test
 import (
 	"testing"
 
-	"gitlab.com/kode4food/ale/stdlib"
-
 	"gitlab.com/kode4food/ale/data"
 	"gitlab.com/kode4food/ale/internal/assert"
 	. "gitlab.com/kode4food/ale/internal/assert/helpers"
+	"gitlab.com/kode4food/ale/stdlib"
 )
 
 type ncSeq struct{}

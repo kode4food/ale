@@ -266,7 +266,7 @@ func TestPurify(t *testing.T) {
 	as.String("3/2", n4.Add(n3))
 }
 
-func TestIntegerOverflow(t *testing.T) {
+func TestIntegerPromotion(t *testing.T) {
 	as := assert.New(t)
 
 	i1 := data.Integer(math.MaxInt64)
@@ -295,4 +295,27 @@ func TestIntegerOverflow(t *testing.T) {
 	r6, ok := i1.Mul(data.Integer(1)).(data.Integer)
 	as.True(ok)
 	as.String("9223372036854775807", r6)
+}
+
+func TestIntegerDemotion(t *testing.T) {
+	as := assert.New(t)
+
+	i1 := data.Integer(math.MaxInt64)
+	i2 := data.Integer(math.MinInt64)
+
+	r1, ok := i1.Add(data.Integer(1)).(*data.BigInt)
+	as.True(ok)
+	as.String("9223372036854775808", r1)
+
+	r2, ok := r1.Sub(data.Integer(1)).(data.Integer)
+	as.True(ok)
+	as.String("9223372036854775807", r2)
+
+	r3, ok := i2.Sub(data.Integer(1)).(*data.BigInt)
+	as.True(ok)
+	as.String("-9223372036854775809", r3)
+
+	r4, ok := r3.Add(data.Integer(1)).(data.Integer)
+	as.True(ok)
+	as.String("-9223372036854775808", r4)
 }

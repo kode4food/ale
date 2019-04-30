@@ -1,8 +1,6 @@
 package data
 
-import (
-	"fmt"
-)
+import "fmt"
 
 // Number describes a numeric value of some kind
 type Number interface {

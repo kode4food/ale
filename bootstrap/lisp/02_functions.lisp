@@ -12,13 +12,13 @@
 (defn partial
   ([func] func)
   ([func & first-args]
-    (assert-args
-      (is-apply func) "partial requires a function")
+   (assert-args
+    (is-apply func) "partial requires a function")
    (fn [& rest-args]
      (apply func (append first-args rest-args)))))
 
 (defn no-op
-  [])
+  [& _])
 
 (defn identity
   [val]

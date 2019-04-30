@@ -162,7 +162,7 @@ func (l *BigInt) Add(r Number) Number {
 		lb := (*big.Int)(l)
 		rb := (*big.Int)(ri)
 		res := new(big.Int).Add(lb, rb)
-		return (*BigInt)(res)
+		return maybeInteger(res)
 	}
 	lp, rp := purify(l, r)
 	return lp.Add(rp)
@@ -174,7 +174,7 @@ func (l *BigInt) Sub(r Number) Number {
 		lb := (*big.Int)(l)
 		rb := (*big.Int)(ri)
 		res := new(big.Int).Sub(lb, rb)
-		return (*BigInt)(res)
+		return maybeInteger(res)
 	}
 	lp, rp := purify(l, r)
 	return lp.Sub(rp)
@@ -186,7 +186,7 @@ func (l *BigInt) Mul(r Number) Number {
 		lb := (*big.Int)(l)
 		rb := (*big.Int)(ri)
 		res := new(big.Int).Mul(lb, rb)
-		return (*BigInt)(res)
+		return maybeInteger(res)
 	}
 	lp, rp := purify(l, r)
 	return lp.Mul(rp)
@@ -198,7 +198,7 @@ func (l *BigInt) Div(r Number) Number {
 		lb := (*big.Int)(l)
 		rb := (*big.Int)(ri)
 		res := new(big.Int).Quo(lb, rb)
-		return (*BigInt)(res)
+		return maybeInteger(res)
 	}
 	lp, rp := purify(l, r)
 	return lp.Div(rp)
@@ -210,7 +210,7 @@ func (l *BigInt) Mod(r Number) Number {
 		lb := (*big.Int)(l)
 		rb := (*big.Int)(ri)
 		res := new(big.Int).Rem(lb, rb)
-		return (*BigInt)(res)
+		return maybeInteger(res)
 	}
 	lp, rp := purify(l, r)
 	return lp.Mod(rp)
@@ -245,4 +245,11 @@ func (l *BigInt) ratio() *Ratio {
 // String converts this BigInt to a string
 func (l *BigInt) String() string {
 	return (*big.Int)(l).String()
+}
+
+func maybeInteger(bi *big.Int) Number {
+	if bi.IsInt64() {
+		return Integer(bi.Int64())
+	}
+	return (*BigInt)(bi)
 }
