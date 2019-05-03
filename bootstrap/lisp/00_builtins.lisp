@@ -38,6 +38,7 @@
 (def-builtin read)
 (def-builtin recover)
 (def-builtin reduce)
+(def-builtin reverse)
 (def-builtin rest)
 (def-builtin seq)
 (def-builtin str!)

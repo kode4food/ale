@@ -210,12 +210,12 @@ func (*Ratio) IsNegInf() bool {
 	return false
 }
 
-func (l *Ratio) float() Float {
-	f, _ := (*big.Rat)(l).Float64()
-	return Float(f)
-}
-
 // String converts this Ratio to a string
 func (l *Ratio) String() string {
 	return (*big.Rat)(l).String()
+}
+
+func (l *Ratio) float() Float {
+	f, _ := (*big.Rat)(l).Float64()
+	return Float(f)
 }

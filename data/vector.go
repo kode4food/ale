@@ -63,6 +63,15 @@ func (v Vector) Append(args ...Value) Sequence {
 	return append(v, args...)
 }
 
+// Reverse returns a reversed copy of this Vector
+func (v Vector) Reverse() Sequence {
+	res := make(Vector, len(v))
+	for i, j := 0, len(v)-1; j >= 0; i, j = i+1, j-1 {
+		res[i] = v[j]
+	}
+	return res
+}
+
 // Caller turns Vector into a callable type
 func (v Vector) Caller() Call {
 	return makeIndexedCall(v)

@@ -126,6 +126,11 @@ func (Integer) IsNegInf() bool {
 	return false
 }
 
+// String converts this Integer to a string
+func (l Integer) String() string {
+	return fmt.Sprintf("%d", l)
+}
+
 func (l Integer) float() Float {
 	return Float(l)
 }
@@ -138,11 +143,6 @@ func (l Integer) bigInt() *BigInt {
 func (l Integer) ratio() *Ratio {
 	r := new(big.Rat).SetFrac64(int64(l), 1)
 	return (*Ratio)(r)
-}
-
-// String converts this Integer to a string
-func (l Integer) String() string {
-	return fmt.Sprintf("%d", l)
 }
 
 // Cmp compares this BigInt to another Number
@@ -231,6 +231,11 @@ func (*BigInt) IsNegInf() bool {
 	return false
 }
 
+// String converts this BigInt to a string
+func (l *BigInt) String() string {
+	return (*big.Int)(l).String()
+}
+
 func (l *BigInt) float() Float {
 	bf := new(big.Float).SetInt((*big.Int)(l))
 	f, _ := bf.Float64()
@@ -240,11 +245,6 @@ func (l *BigInt) float() Float {
 func (l *BigInt) ratio() *Ratio {
 	r := new(big.Rat).SetInt((*big.Int)(l))
 	return (*Ratio)(r)
-}
-
-// String converts this BigInt to a string
-func (l *BigInt) String() string {
-	return (*big.Int)(l).String()
 }
 
 func maybeInteger(bi *big.Int) Number {

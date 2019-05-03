@@ -52,6 +52,19 @@ func (l *List) Prepend(v Value) Sequence {
 	}
 }
 
+// Reverse returns a reversed copy of this List
+func (l *List) Reverse() Sequence {
+	res := EmptyList
+	for cur, cnt := l, 0; cur.count > 0; cur, cnt = cur.rest, cnt+1 {
+		res = &List{
+			first: cur.first,
+			rest:  res,
+			count: cnt,
+		}
+	}
+	return res
+}
+
 // Count returns the number of elements in the List
 func (l *List) Count() int {
 	return l.count

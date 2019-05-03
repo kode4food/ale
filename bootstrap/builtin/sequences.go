@@ -61,6 +61,19 @@ func Append(args ...data.Value) data.Value {
 	return a.Append(values...)
 }
 
+// Reverse returns a reversed copy of a Sequence
+func Reverse(args ...data.Value) data.Value {
+	s := args[0].(data.Sequence)
+	if r, ok := s.(data.Reverser); ok {
+		return r.Reverse()
+	}
+	var res data.Sequence = data.EmptyList
+	for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {
+		res = res.Prepend(f)
+	}
+	return res
+}
+
 // Len returns the size of the provided sequence
 func Len(args ...data.Value) data.Value {
 	s := args[0].(data.Sequence)

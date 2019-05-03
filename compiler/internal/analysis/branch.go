@@ -6,12 +6,13 @@ type (
 	// Node is returned when a Branch analysis is performed
 	Node interface {
 		Base() isa.Offset
+		Code() isa.Instructions
 	}
 
 	// Instructions represents a series of non-branching instructions
 	Instructions interface {
 		Node
-		Code() isa.Instructions
+		Set(isa.Instructions)
 	}
 
 	// Branches represents a branching junction
@@ -89,6 +90,10 @@ func (i *instructions) Base() isa.Offset {
 	return i.base
 }
 
+func (i *instructions) Set(code isa.Instructions) {
+	i.code = code
+}
+
 func (i *instructions) Code() isa.Instructions {
 	return i.code
 }
@@ -111,4 +116,13 @@ func (b *branches) ElseBranch() Node {
 
 func (b *branches) Epilogue() Node {
 	return b.epilogue
+}
+
+func (b *branches) Code() isa.Instructions {
+	res := isa.Instructions{}
+	res = append(res, b.prologue.Code()...)
+	res = append(res, b.elseBranch.Code()...)
+	res = append(res, b.thenBranch.Code()...)
+	res = append(res, b.epilogue.Code()...)
+	return res
 }

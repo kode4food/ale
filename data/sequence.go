@@ -19,6 +19,12 @@ type (
 		Append(...Value) Sequence
 	}
 
+	// Reverser is a Sequence than can be reversed
+	Reverser interface {
+		Sequence
+		Reverse() Sequence
+	}
+
 	// IndexedSequence is a Sequence that provides an Indexed interface
 	IndexedSequence interface {
 		Sequence
