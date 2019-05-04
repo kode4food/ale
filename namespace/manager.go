@@ -20,7 +20,8 @@ type (
 
 // Error messages
 const (
-	SymbolNotBound = "symbol not bound in namespace: %s"
+	SymbolNotDeclared = "symbol not declared in namespace: %s"
+	SymbolNotBound    = "symbol not bound in namespace: %s"
 )
 
 const (
@@ -107,6 +108,14 @@ func ResolveSymbol(ns Type, s data.Symbol) (Entry, bool) {
 		return qns.Resolve(q.Name())
 	}
 	return ns.Resolve(s.Name())
+}
+
+// MustResolveSymbol attempts to resolve a symbol or explodes violently
+func MustResolveSymbol(ns Type, s data.Symbol) Entry {
+	if entry, ok := ResolveSymbol(ns, s); ok {
+		return entry
+	}
+	panic(fmt.Errorf(SymbolNotDeclared, s.Name()))
 }
 
 // ResolveValue attempts to resolve a symbol to a bound value

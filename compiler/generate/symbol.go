@@ -1,17 +1,10 @@
 package generate
 
 import (
-	"fmt"
-
 	"gitlab.com/kode4food/ale/compiler/encoder"
 	"gitlab.com/kode4food/ale/data"
 	"gitlab.com/kode4food/ale/namespace"
 	"gitlab.com/kode4food/ale/runtime/isa"
-)
-
-// Error messages
-const (
-	SymbolNotDeclared = "symbol not declared in namespace: %s"
 )
 
 // Symbol encodes a symbol retrieval
@@ -51,8 +44,10 @@ func resolveLocal(e encoder.Type, l data.LocalSymbol) {
 
 func resolveGlobal(e encoder.Type, s data.Symbol) {
 	globals := e.Globals()
-	if _, ok := namespace.ResolveSymbol(globals, s); !ok {
-		panic(fmt.Errorf(SymbolNotDeclared, s.Name()))
+	entry := namespace.MustResolveSymbol(globals, s)
+	if entry.IsBound() && entry.Owner() == globals {
+		Literal(e, entry.Value())
+		return
 	}
 	Literal(e, s)
 	e.Emit(isa.Resolve)

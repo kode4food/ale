@@ -5,10 +5,10 @@ import (
 	"testing"
 
 	"gitlab.com/kode4food/ale/bootstrap/builtin"
-	"gitlab.com/kode4food/ale/compiler/generate"
 	"gitlab.com/kode4food/ale/data"
 	"gitlab.com/kode4food/ale/internal/assert"
 	. "gitlab.com/kode4food/ale/internal/assert/helpers"
+	"gitlab.com/kode4food/ale/namespace"
 )
 
 func TestSymbols(t *testing.T) {
@@ -48,7 +48,7 @@ func TestResolveEval(t *testing.T) {
 
 	as.EvalTo(`(let [x 99] x)`, data.Integer(99))
 
-	err := fmt.Errorf(generate.SymbolNotDeclared, "hello")
+	err := fmt.Errorf(namespace.SymbolNotDeclared, "hello")
 	as.PanicWith(`hello`, err)
 	as.PanicWith(`(let [hello 99] hello) hello`, err)
 }
