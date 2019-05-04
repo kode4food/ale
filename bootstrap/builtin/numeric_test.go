@@ -66,7 +66,7 @@ func TestBadNumbersEval(t *testing.T) {
 	testBadNumber(data.ExpectedInteger, "0b01109")
 	testBadNumber(data.ExpectedInteger, "123j-k")
 	testBadNumber(data.ExpectedFloat, "1.2j-k")
-	//testBadNumber(data.ExpectedRatio, "1/2p")
+	testBadNumber(data.ExpectedRatio, "1/2p")
 }
 
 func TestCompareEval(t *testing.T) {

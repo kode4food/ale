@@ -20,7 +20,7 @@ type (
 
 // Error messages
 const (
-	SymbolNotDeclared = "symbol not declared in namespace: %s"
+	SymbolNotBound = "symbol not bound in namespace: %s"
 )
 
 const (
@@ -122,5 +122,5 @@ func MustResolveValue(ns Type, s data.Symbol) data.Value {
 	if v, ok := ResolveValue(ns, s); ok {
 		return v
 	}
-	panic(fmt.Errorf(SymbolNotDeclared, s))
+	panic(fmt.Errorf(SymbolNotBound, s))
 }

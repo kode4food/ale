@@ -50,35 +50,9 @@ func resolveLocal(e encoder.Type, l data.LocalSymbol) {
 }
 
 func resolveGlobal(e encoder.Type, s data.Symbol) {
-	if l, ok := s.(data.LocalSymbol); ok {
-		resolveFromEncoder(e, l)
-		return
-	}
-	q := s.(data.QualifiedSymbol)
-	manager := e.Globals().Manager()
-	ns := manager.GetQualified(q.Domain())
-	resolveFromNamespace(e, ns, q)
-}
-
-func resolveFromEncoder(e encoder.Type, l data.LocalSymbol) {
 	globals := e.Globals()
-	name := l.Name()
-	ge, ok := globals.Resolve(name)
-	if !ok {
-		panic(fmt.Errorf(SymbolNotDeclared, name))
-	}
-	if ge.IsBound() {
-		Literal(e, ge.Value())
-		return
-	}
-	resolveFromNamespace(e, globals, l)
-}
-
-func resolveFromNamespace(e encoder.Type, ns namespace.Type, s data.Symbol) {
-	name := s.Name()
-	if ne, ok := ns.Resolve(name); ok && ne.Owner() == ns && ne.IsBound() {
-		Literal(e, ne.Value())
-		return
+	if _, ok := namespace.ResolveSymbol(globals, s); !ok {
+		panic(fmt.Errorf(SymbolNotDeclared, s.Name()))
 	}
 	Literal(e, s)
 	e.Emit(isa.Resolve)
