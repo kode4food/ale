@@ -35,6 +35,7 @@
 (def-predicate is-assoc "assoc")
 (def-predicate is-atom "atom")
 (def-predicate is-counted "len")
+(def-predicate is-deque "deque")
 (def-predicate is-empty "empty")
 (def-predicate is-even "even")
 (def-predicate is-eq "eq")

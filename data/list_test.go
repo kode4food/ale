@@ -47,7 +47,15 @@ func TestList(t *testing.T) {
 func TestListReverse(t *testing.T) {
 	as := assert.New(t)
 
-	as.String("(4 3 2 1)", data.NewList(I(1), I(2), I(3), I(4)).Reverse())
+	l1 := data.NewList(I(1), I(2), I(3), I(4))
+	l2 := l1.Reverse().(*data.List)
+
+	as.String("(1 2 3 4)", l1)
+	as.Number(4, l1.Count())
+	as.String("(4 3 2 1)", l2)
+	as.Number(4, l2.Count())
+
+	as.String(`(2 1)`, data.NewList(I(1), I(2)).Reverse())
 	as.String("()", data.EmptyList.Reverse())
 }
 

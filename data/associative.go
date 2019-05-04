@@ -17,8 +17,8 @@ const (
 var EmptyAssociative = Associative{}
 
 // NewAssociative instantiates a new Associative
-func NewAssociative(v ...Vector) Associative {
-	return Associative(v)
+func NewAssociative(args ...Vector) Associative {
+	return Associative(args)
 }
 
 // Count returns the number of pairs in the Associative

@@ -8,7 +8,7 @@ type List struct {
 }
 
 // EmptyList represents an empty List
-var EmptyList *List
+var EmptyList = &List{}
 
 // NewList creates a new List instance
 func NewList(v ...Value) *List {
@@ -35,12 +35,12 @@ func (l *List) Rest() Sequence {
 
 // IsEmpty returns whether or not this sequence is empty
 func (l *List) IsEmpty() bool {
-	return l == EmptyList
+	return l.count == 0
 }
 
 // Split breaks the List into its components (first, rest, ok)
 func (l *List) Split() (Value, Sequence, bool) {
-	return l.first, l.rest, l != EmptyList
+	return l.first, l.rest, l.count != 0
 }
 
 // Prepend inserts an element at the beginning of the List
@@ -54,8 +54,11 @@ func (l *List) Prepend(v Value) Sequence {
 
 // Reverse returns a reversed copy of this List
 func (l *List) Reverse() Sequence {
+	if l.count <= 1 {
+		return l
+	}
 	res := EmptyList
-	for cur, cnt := l, 0; cur.count > 0; cur, cnt = cur.rest, cnt+1 {
+	for cur, cnt := l, 1; cur.count > 0; cur, cnt = cur.rest, cnt+1 {
 		res = &List{
 			first: cur.first,
 			rest:  res,
@@ -91,12 +94,4 @@ func (l *List) Caller() Call {
 // String converts this List to a string
 func (l *List) String() string {
 	return MakeSequenceStr(l)
-}
-
-func init() {
-	EmptyList = &List{
-		first: Nil,
-		count: 0,
-	}
-	EmptyList.rest = EmptyList
 }

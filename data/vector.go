@@ -5,7 +5,7 @@ import "bytes"
 // Vector is a fixed-length array of Values
 type Vector []Value
 
-// EmptyVector is an empty Vector
+// EmptyVector represents an empty Vector
 var EmptyVector = Vector{}
 
 // Count returns the number of elements in the Vector
@@ -58,15 +58,19 @@ func (v Vector) Prepend(p Value) Sequence {
 	return append(Vector{p}, v...)
 }
 
-// Append appends an element to the end of the Vector
+// Append appends elements to the end of the Vector
 func (v Vector) Append(args ...Value) Sequence {
 	return append(v, args...)
 }
 
 // Reverse returns a reversed copy of this Vector
 func (v Vector) Reverse() Sequence {
-	res := make(Vector, len(v))
-	for i, j := 0, len(v)-1; j >= 0; i, j = i+1, j-1 {
+	vl := len(v)
+	if vl <= 1 {
+		return v
+	}
+	res := make(Vector, vl)
+	for i, j := 0, vl-1; j >= 0; i, j = i+1, j-1 {
 		res[i] = v[j]
 	}
 	return res
