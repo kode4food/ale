@@ -47,11 +47,11 @@ func TestAssocEval(t *testing.T) {
 		(x :name)
 	`, S("bob"))
 
-	as.PanicWith(`(assoc :too "few" :args)`, fmt.Errorf(data.ExpectedPair))
+	as.PanicWith(`(assoc :too "few" :args)`, fmt.Errorf(data.MapNotPaired))
 
 	as.PanicWith(`
 		(apply assoc (concat '(:name "Ale") '(:age)))
-	`, fmt.Errorf(data.ExpectedPair))
+	`, fmt.Errorf(data.MapNotPaired))
 }
 
 func TestMappedEval(t *testing.T) {

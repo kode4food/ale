@@ -3,6 +3,7 @@ package analysis
 import (
 	"fmt"
 
+	"gitlab.com/kode4food/ale/compiler/internal/visitor"
 	"gitlab.com/kode4food/ale/runtime/isa"
 )
 
@@ -13,7 +14,7 @@ type stackSizes struct {
 
 func verifyStackSize(code isa.Instructions) {
 	s := &stackSizes{}
-	s.calculateNode(Branch(code))
+	s.calculateNode(visitor.Branch(code))
 	if s.endSize != 0 {
 		panic(fmt.Sprintf("invalid stack end-state: %d", s.endSize))
 	}
@@ -24,22 +25,22 @@ func verifyStackSize(code isa.Instructions) {
 // this is usually an indication that bad instructions were encoded
 func CalculateStackSize(code isa.Instructions) (int, int) {
 	s := &stackSizes{}
-	s.calculateNode(Branch(code))
+	s.calculateNode(visitor.Branch(code))
 	return s.maxSize, s.endSize
 }
 
-func (s *stackSizes) calculateNode(n Node) {
+func (s *stackSizes) calculateNode(n visitor.Node) {
 	switch typed := n.(type) {
-	case Branches:
+	case visitor.Branches:
 		s.calculateInstructions(typed.Prologue())
 		s.calculateBranches(typed.ThenBranch(), typed.ElseBranch())
 		s.calculateNode(typed.Epilogue())
-	case Instructions:
+	case visitor.Instructions:
 		s.calculateInstructions(typed)
 	}
 }
 
-func (s *stackSizes) calculateInstructions(inst Instructions) {
+func (s *stackSizes) calculateInstructions(inst visitor.Instructions) {
 	for _, inst := range inst.Code() {
 		oc := inst.Opcode
 		effect := isa.MustGetEffect(oc)
@@ -50,7 +51,7 @@ func (s *stackSizes) calculateInstructions(inst Instructions) {
 	}
 }
 
-func (s *stackSizes) calculateBranches(thenNode, elseNode Node) {
+func (s *stackSizes) calculateBranches(thenNode, elseNode visitor.Node) {
 	thenRes := s.calculateBranch(thenNode)
 	elseRes := s.calculateBranch(elseNode)
 	if elseRes.endSize != thenRes.endSize {
@@ -59,7 +60,7 @@ func (s *stackSizes) calculateBranches(thenNode, elseNode Node) {
 	s.endSize += elseRes.endSize
 }
 
-func (s *stackSizes) calculateBranch(n Node) *stackSizes {
+func (s *stackSizes) calculateBranch(n visitor.Node) *stackSizes {
 	res := &stackSizes{
 		maxSize: s.maxSize,
 		endSize: 0,

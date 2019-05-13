@@ -9,11 +9,12 @@ const (
 
 // Effect captures how an instruction affects the stack and PC
 type Effect struct {
-	Size  int
-	Pop   int
-	Push  int
-	DPop  int
-	DPush int
+	Size   int
+	Pop    int
+	Push   int
+	DPop   int
+	DPush  int
+	Ignore bool
 }
 
 // Effects is a lookup table of instruction effects
@@ -36,7 +37,7 @@ var Effects = map[Opcode]*Effect{
 	Gt:         {Size: 1, Pop: 2, Push: 1},
 	Gte:        {Size: 1, Pop: 2, Push: 1},
 	Jump:       {Size: 2},
-	Label:      {Size: 2},
+	Label:      {Size: 2, Ignore: true},
 	Load:       {Size: 2, Push: 1},
 	Lt:         {Size: 1, Pop: 2, Push: 1},
 	Lte:        {Size: 1, Pop: 2, Push: 1},
@@ -49,7 +50,7 @@ var Effects = map[Opcode]*Effect{
 	NegOne:     {Size: 1, Push: 1},
 	Neq:        {Size: 1, Pop: 2, Push: 1},
 	Nil:        {Size: 1, Push: 1},
-	NoOp:       {Size: 1},
+	NoOp:       {Size: 1, Ignore: true},
 	Not:        {Size: 1, Pop: 1, Push: 1},
 	One:        {Size: 1, Push: 1},
 	Panic:      {Size: 1, Pop: 1},

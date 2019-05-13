@@ -82,7 +82,7 @@ func Filter(s data.Sequence, filter data.Call) data.Sequence {
 // Concat creates a new sequence based on the content of several Sequences
 func Concat(s ...data.Value) data.Sequence {
 	var res LazyResolver
-	var next data.Sequence = data.Vector(s)
+	var next data.Sequence = data.NewVector(s...)
 
 	res = func() (data.Value, data.Sequence, bool) {
 		for f, r, ok := next.Split(); ok; f, r, ok = r.Split() {

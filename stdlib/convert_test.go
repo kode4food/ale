@@ -63,7 +63,7 @@ func TestAssocConvertError(t *testing.T) {
 	as := assert.New(t)
 
 	v1 := V(K("boom"))
-	defer as.ExpectPanic(data.ExpectedPair)
+	defer as.ExpectPanic(data.MapNotPaired)
 	stdlib.SequenceToAssociative(v1)
 }
 
@@ -71,6 +71,6 @@ func TestUncountedAssocConvertError(t *testing.T) {
 	as := assert.New(t)
 
 	v1 := stdlib.Map(V(K("boom")), identity)
-	defer as.ExpectPanic(data.ExpectedPair)
+	defer as.ExpectPanic(data.MapNotPaired)
 	stdlib.SequenceToAssociative(v1)
 }

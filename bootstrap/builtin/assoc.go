@@ -1,13 +1,10 @@
 package builtin
 
-import (
-	"gitlab.com/kode4food/ale/data"
-	"gitlab.com/kode4food/ale/stdlib"
-)
+import "gitlab.com/kode4food/ale/data"
 
 // Assoc creates a new associative array
 func Assoc(args ...data.Value) data.Value {
-	return stdlib.SequenceToAssociative(data.Vector(args))
+	return data.NewAssociative(args...)
 }
 
 // IsAssoc returns whether or not a value is an associative array

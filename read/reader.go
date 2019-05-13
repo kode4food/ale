@@ -22,7 +22,6 @@ const (
 	UnmatchedVectorEnd = "encountered ']' with no open vector"
 	MapNotClosed       = "end of file reached with open map"
 	UnmatchedMapEnd    = "encountered '}' with no open map"
-	MapNotPaired       = "map does not contain an even number of elements"
 )
 
 var (
@@ -37,6 +36,12 @@ var (
 		"true":  data.True,
 		"false": data.False,
 		"nil":   data.Nil,
+	}
+
+	collectionErrors = map[TokenType]string{
+		ListEnd:   ListNotClosed,
+		VectorEnd: VectorNotClosed,
+		MapEnd:    MapNotClosed,
 	}
 )
 
@@ -100,72 +105,34 @@ func (r *reader) prefixed(s data.Symbol) data.Value {
 }
 
 func (r *reader) list() data.Value {
-	var handle func(t *Token) *data.List
-	var rest func() *data.List
-
-	handle = func(t *Token) *data.List {
-		switch t.Type {
-		case ListEnd:
-			return data.EmptyList
-		default:
-			v := r.value(t)
-			l := rest()
-			return l.Prepend(v).(*data.List)
-		}
-	}
-
-	rest = func() *data.List {
-		if t := r.nextToken(); t != nil {
-			return handle(t)
-		}
-		panic(fmt.Errorf(ListNotClosed))
-	}
-
-	return rest()
+	elems := r.readCollection(ListEnd)
+	return data.NewList(elems...)
 }
 
 func (r *reader) vector() data.Value {
-	res := make(data.Vector, 0)
+	elems := r.readCollection(VectorEnd)
+	return data.NewVector(elems...)
+}
 
+func (r *reader) associative() data.Value {
+	elems := r.readCollection(MapEnd)
+	return data.NewAssociative(elems...)
+}
+
+func (r *reader) readCollection(endToken TokenType) data.Values {
+	res := data.Values{}
 	for {
 		if t := r.nextToken(); t != nil {
 			switch t.Type {
-			case VectorEnd:
+			case endToken:
 				return res
 			default:
 				e := r.value(t)
 				res = append(res, e)
 			}
 		} else {
-			panic(fmt.Errorf(VectorNotClosed))
-		}
-	}
-}
-
-func (r *reader) associative() data.Value {
-	res := make([]data.Vector, 0)
-	mp := make(data.Vector, 2)
-
-	for idx := 0; ; idx++ {
-		if t := r.nextToken(); t != nil {
-			switch t.Type {
-			case MapEnd:
-				if idx%2 == 0 {
-					return data.NewAssociative(res...)
-				}
-				panic(fmt.Errorf(MapNotPaired))
-			default:
-				e := r.value(t)
-				if idx%2 == 0 {
-					mp[0] = e
-				} else {
-					mp[1] = e
-					res = append(res, mp)
-					mp = make(data.Vector, 2)
-				}
-			}
-		} else {
-			panic(fmt.Errorf(MapNotClosed))
+			err := collectionErrors[endToken]
+			panic(fmt.Errorf(err))
 		}
 	}
 }

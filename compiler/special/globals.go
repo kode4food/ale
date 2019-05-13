@@ -19,7 +19,8 @@ func Declare(e encoder.Type, args ...data.Value) {
 	if len(args) == 1 {
 		generate.Literal(e, args[0])
 	} else {
-		generate.Literal(e, data.Vector(args))
+		v := data.NewVector(args...)
+		generate.Literal(e, v)
 	}
 }
 

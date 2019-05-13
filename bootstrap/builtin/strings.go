@@ -11,7 +11,8 @@ const emptyString = data.String("")
 
 // Str converts the provided arguments to an undelimited string
 func Str(args ...data.Value) data.Value {
-	return stdlib.SequenceToStr(data.Vector(args))
+	v := data.NewVector(args...)
+	return stdlib.SequenceToStr(v)
 }
 
 // ReaderStr converts the provided arguments to a delimited string

@@ -8,6 +8,11 @@ type Vector []Value
 // EmptyVector represents an empty Vector
 var EmptyVector = Vector{}
 
+// NewVector creates a new Vector instance
+func NewVector(v ...Value) Vector {
+	return Vector(v)
+}
+
 // Count returns the number of elements in the Vector
 func (v Vector) Count() int {
 	return len(v)

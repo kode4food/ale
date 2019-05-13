@@ -2,7 +2,6 @@ package stdlib
 
 import (
 	"bytes"
-	"fmt"
 
 	"gitlab.com/kode4food/ale/data"
 )
@@ -57,7 +56,8 @@ func uncountedToValues(s data.Sequence) data.Values {
 
 // SequenceToVector takes any sequence and converts it to a vector
 func SequenceToVector(s data.Sequence) data.Vector {
-	return data.Vector(SequenceToValues(s))
+	v := SequenceToValues(s)
+	return data.NewVector(v...)
 }
 
 // SequenceToAssociative takes any sequence and converts it to an Associative
@@ -65,37 +65,10 @@ func SequenceToAssociative(s data.Sequence) data.Associative {
 	switch typed := s.(type) {
 	case data.Associative:
 		return typed
-	case data.Counted:
-		l := typed.Count()
-		if l%2 != 0 {
-			panic(fmt.Errorf(data.ExpectedPair))
-		}
-		ml := l / 2
-		r := make([]data.Vector, ml)
-		i := s
-		var k, v data.Value
-		for idx := 0; idx < ml; idx++ {
-			k, i, _ = i.Split()
-			v, i, _ = i.Split()
-			r[idx] = data.Vector{k, v}
-		}
-		return data.Associative(r)
 	default:
-		return uncountedToAssociative(s)
+		elems := SequenceToValues(s)
+		return data.NewAssociative(elems...)
 	}
-}
-
-func uncountedToAssociative(s data.Sequence) data.Associative {
-	res := make([]data.Vector, 0)
-	var v data.Value
-	for k, r, ok := s.Split(); ok; k, r, ok = r.Split() {
-		if v, r, ok = r.Split(); ok {
-			res = append(res, data.Vector{k, v})
-		} else {
-			panic(fmt.Errorf(data.ExpectedPair))
-		}
-	}
-	return data.Associative(res)
 }
 
 // SequenceToStr takes any sequence and attempts to convert it to a String

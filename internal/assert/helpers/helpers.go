@@ -3,7 +3,7 @@ package helpers
 import "gitlab.com/kode4food/ale/data"
 
 // A constructs an Associative
-func A(args ...data.Vector) data.Associative {
+func A(args ...data.Value) data.Associative {
 	return data.NewAssociative(args...)
 }
 
@@ -44,5 +44,5 @@ func S(s string) data.String {
 
 // V constructs a Vector
 func V(args ...data.Value) data.Vector {
-	return data.Vector(args)
+	return data.NewVector(args...)
 }

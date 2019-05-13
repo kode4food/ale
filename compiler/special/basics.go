@@ -33,7 +33,8 @@ func evalFor(ns namespace.Type) data.Call {
 
 // Do encodes a set of expressions, returning only the final evaluation
 func Do(e encoder.Type, args ...data.Value) {
-	generate.Block(e, data.Vector(args))
+	v := data.NewVector(args...)
+	generate.Block(e, v)
 }
 
 // If encodes an (if cond then else) form
@@ -73,7 +74,7 @@ func Let(e encoder.Type, args ...data.Value) {
 		e.Emit(isa.Store, e.AddLocal(n))
 	}
 
-	body := data.Vector(args[1:])
+	body := data.NewVector(args[1:]...)
 	generate.Block(e, body)
 
 	for i := 0; i < lb; i += 2 {

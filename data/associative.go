@@ -10,6 +10,7 @@ type Associative []Vector
 
 // Error messages
 const (
+	MapNotPaired = "map does not contain an even number of elements"
 	ExpectedPair = "expected a key-value pair"
 )
 
@@ -17,8 +18,16 @@ const (
 var EmptyAssociative = Associative{}
 
 // NewAssociative instantiates a new Associative
-func NewAssociative(args ...Vector) Associative {
-	return Associative(args)
+func NewAssociative(v ...Value) Associative {
+	l := len(v)
+	if l%2 != 0 {
+		panic(fmt.Errorf(MapNotPaired))
+	}
+	res := make([]Vector, l/2)
+	for in, out := 0, 0; in < l; in, out = in+2, out+1 {
+		res[out] = Vector{v[in], v[in+1]}
+	}
+	return Associative(res)
 }
 
 // Count returns the number of pairs in the Associative

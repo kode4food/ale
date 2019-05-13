@@ -10,9 +10,9 @@ import (
 
 func getTestMap() data.Associative {
 	return A(
-		V(K("name"), S("Ale")),
-		V(K("age"), I(99)),
-		V(S("string"), S("value")),
+		K("name"), S("Ale"),
+		K("age"), I(99),
+		S("string"), S("value"),
 	)
 }
 

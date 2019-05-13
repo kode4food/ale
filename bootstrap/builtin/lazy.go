@@ -51,7 +51,8 @@ func Map(args ...data.Value) data.Value {
 		s := args[1].(data.Sequence)
 		return stdlib.Map(s, fn.Caller())
 	}
-	return stdlib.MapParallel(data.Vector(args[1:]), fn.Caller())
+	v := data.NewVector(args[1:]...)
+	return stdlib.MapParallel(v, fn.Caller())
 }
 
 // Reduce consumes the provided sequence, aggregating its values in some way

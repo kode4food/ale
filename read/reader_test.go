@@ -129,7 +129,7 @@ func TestReaderErrors(t *testing.T) {
 	testReaderError(t, "99 100)", fmt.Errorf(read.UnmatchedListEnd))
 	testReaderError(t, "99 100]", fmt.Errorf(read.UnmatchedVectorEnd))
 	testReaderError(t, "99}", fmt.Errorf(read.UnmatchedMapEnd))
-	testReaderError(t, "{99}", fmt.Errorf(read.MapNotPaired))
+	testReaderError(t, "{99}", fmt.Errorf(data.MapNotPaired))
 
 	testReaderError(t, "(", fmt.Errorf(read.ListNotClosed))
 	testReaderError(t, "'", fmt.Errorf(read.PrefixedNotPaired, "ale/quote"))

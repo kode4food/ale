@@ -1,4 +1,4 @@
-package analysis
+package visitor
 
 import "gitlab.com/kode4food/ale/runtime/isa"
 
@@ -38,7 +38,7 @@ type (
 	}
 )
 
-// Branch performs conditional branch analysis
+// Branch splits linear instructions into a tree conditional branches
 func Branch(code isa.Instructions) Node {
 	return branchFrom(0, code)
 }
@@ -125,4 +125,14 @@ func (b *branches) Code() isa.Instructions {
 	res = append(res, b.thenBranch.Code()...)
 	res = append(res, b.epilogue.Code()...)
 	return res
+}
+
+func findLabel(code isa.Instructions, lbl isa.Index) int {
+	ic := isa.Word(lbl)
+	for pc, inst := range code {
+		if inst.Opcode == isa.Label && inst.Args[0] == ic {
+			return pc
+		}
+	}
+	return -1
 }

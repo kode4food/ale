@@ -2,6 +2,7 @@ package encoder
 
 import (
 	"gitlab.com/kode4food/ale/compiler/internal/analysis"
+	"gitlab.com/kode4food/ale/compiler/internal/optimize"
 	"gitlab.com/kode4food/ale/data"
 	"gitlab.com/kode4food/ale/namespace"
 	"gitlab.com/kode4food/ale/runtime/isa"
@@ -119,7 +120,8 @@ func (e *encoder) Emit(oc isa.Opcode, args ...isa.Coder) {
 // Word returns the encoder's resulting VM instructions
 func (e *encoder) Code() []isa.Word {
 	analysis.Verify(e.code)
-	return isa.Flatten(e.code)
+	code := optimize.Run(e.code)
+	return isa.Flatten(code)
 }
 
 // StackSize returns the encoder's calculated stack size

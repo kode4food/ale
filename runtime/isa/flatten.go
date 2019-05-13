@@ -50,6 +50,9 @@ func (f *flattener) handleInst(l *Instruction) {
 	case Label:
 		f.handleLabel(l)
 	default:
+		if effect := MustGetEffect(oc); effect.Ignore {
+			return
+		}
 		f.output = append(f.output, Word(oc))
 		f.output = append(f.output, l.Args...)
 	}

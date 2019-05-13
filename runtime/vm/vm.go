@@ -53,9 +53,6 @@ func NewClosure(cfg *Config) data.Call {
 		opSwitch:
 			op := isa.Opcode(code[PC])
 			switch op {
-			case isa.NoOp:
-				goto nextPC
-
 			case isa.Self:
 				stack[SP] = self
 				SP--
@@ -113,7 +110,7 @@ func NewClosure(cfg *Config) data.Call {
 			case isa.RestArg:
 				PC++
 				idx := isa.Index(code[PC])
-				stack[SP] = data.Vector(args[idx:])
+				stack[SP] = data.NewVector(args[idx:]...)
 				SP--
 				goto nextPC
 
