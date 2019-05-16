@@ -8,7 +8,6 @@ import (
 type optimizer func(visitor.Node) visitor.Node
 
 var optimizers = []optimizer{
-	rollUpReturns,
 	tailCalls,
 }
 

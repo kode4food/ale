@@ -54,23 +54,24 @@ func _() {
 	_ = x[Self-42]
 	_ = x[Store-43]
 	_ = x[Sub-44]
-	_ = x[True-45]
-	_ = x[Two-46]
-	_ = x[Zero-47]
+	_ = x[TailCall-45]
+	_ = x[True-46]
+	_ = x[Two-47]
+	_ = x[Zero-48]
 }
 
 const (
-	_Opcode_name_0 = "AddArgArgLenBindCallCall0Call1ClosureCondJumpConstDeclareDivDupEqFalseGtGteJumpLoadLtLteMakeCallMakeTruthyModMulNegNegInfNegOneNeqNilNoOpNotOnePanicPopPosInfResolveRestArgReturnRetFalseRetNilRetTrueSelfStoreSubTrueTwoZero"
+	_Opcode_name_0 = "AddArgArgLenBindCallCall0Call1ClosureCondJumpConstDeclareDivDupEqFalseGtGteJumpLoadLtLteMakeCallMakeTruthyModMulNegNegInfNegOneNeqNilNoOpNotOnePanicPopPosInfResolveRestArgReturnRetFalseRetNilRetTrueSelfStoreSubTailCallTrueTwoZero"
 	_Opcode_name_1 = "Label"
 )
 
 var (
-	_Opcode_index_0 = [...]uint8{0, 3, 6, 12, 16, 20, 25, 30, 37, 45, 50, 57, 60, 63, 65, 70, 72, 75, 79, 83, 85, 88, 96, 106, 109, 112, 115, 121, 127, 130, 133, 137, 140, 143, 148, 151, 157, 164, 171, 177, 185, 191, 198, 202, 207, 210, 214, 217, 221}
+	_Opcode_index_0 = [...]uint8{0, 3, 6, 12, 16, 20, 25, 30, 37, 45, 50, 57, 60, 63, 65, 70, 72, 75, 79, 83, 85, 88, 96, 106, 109, 112, 115, 121, 127, 130, 133, 137, 140, 143, 148, 151, 157, 164, 171, 177, 185, 191, 198, 202, 207, 210, 218, 222, 225, 229}
 )
 
 func (i Opcode) String() string {
 	switch {
-	case 0 <= i && i <= 47:
+	case 0 <= i && i <= 48:
 		return _Opcode_name_0[_Opcode_index_0[i]:_Opcode_index_0[i+1]]
 	case i == 256:
 		return _Opcode_name_1

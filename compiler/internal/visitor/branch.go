@@ -1,11 +1,15 @@
 package visitor
 
-import "gitlab.com/kode4food/ale/runtime/isa"
+import (
+	"bytes"
+	"strings"
+
+	"gitlab.com/kode4food/ale/runtime/isa"
+)
 
 type (
 	// Node is returned when a Branch analysis is performed
 	Node interface {
-		Base() isa.Offset
 		Code() isa.Instructions
 	}
 
@@ -25,69 +29,65 @@ type (
 	}
 
 	instructions struct {
-		base isa.Offset
 		code isa.Instructions
 	}
 
 	branches struct {
-		base       isa.Offset
 		prologue   Instructions
-		thenBranch Node
 		elseBranch Node
+		elseJump   *isa.Instruction
+		thenLabel  *isa.Instruction
+		thenBranch Node
+		joinLabel  *isa.Instruction
 		epilogue   Node
 	}
 )
 
 // Branch splits linear instructions into a tree conditional branches
 func Branch(code isa.Instructions) Node {
-	return branchFrom(0, code)
-}
-
-func branchFrom(base isa.Offset, code isa.Instructions) Node {
 	for pc, inst := range code {
 		oc := inst.Opcode
 		if oc != isa.CondJump {
 			continue
 		}
-		if rs := splitCond(base+isa.Offset(pc), code[pc:]); rs != nil {
-			rs.base = base
-			rs.prologue = &instructions{
-				base: base,
-				code: code[0 : pc+1],
-			}
+		if rs := splitCondJump(code, pc); rs != nil {
 			return rs
 		}
 	}
 	return &instructions{
-		base: base,
 		code: code,
 	}
 }
 
-func splitCond(base isa.Offset, code isa.Instructions) *branches {
-	thenIdx := isa.Index(code[0].Args[0])
-	thenLabel := findLabel(code, thenIdx)
-	if thenLabel <= 0 {
+func splitCondJump(code isa.Instructions, condJumpIdx int) *branches {
+	prologue := &instructions{
+		code: code[0 : condJumpIdx+1],
+	}
+
+	condJump := code[condJumpIdx]
+	rest := code[condJumpIdx+1:]
+	thenIdx, thenLabel := findLabel(rest, isa.Index(condJump.Args[0]))
+	if thenIdx <= 0 {
 		return nil // not part of this block
 	}
 
-	prev := code[thenLabel-1]
-	if prev.Opcode != isa.Jump {
+	elseJumpIdx := thenIdx - 1
+	elseJump := rest[elseJumpIdx]
+	if elseJump.Opcode != isa.Jump {
 		return nil // not created with build.Cond
 	}
 
-	elseRes := code[1:thenLabel]
-	endLabel := findLabel(code, isa.Index(prev.Args[0]))
-	thenRes := code[thenLabel:endLabel]
-	return &branches{
-		thenBranch: branchFrom(base+isa.Offset(thenLabel), thenRes),
-		elseBranch: branchFrom(base+1, elseRes),
-		epilogue:   branchFrom(base+isa.Offset(endLabel), code[endLabel:]),
-	}
-}
+	joinIdx, joinLabel := findLabel(rest, isa.Index(elseJump.Args[0]))
 
-func (i *instructions) Base() isa.Offset {
-	return i.base
+	return &branches{
+		prologue:   prologue,
+		elseBranch: Branch(rest[0:elseJumpIdx]),
+		elseJump:   elseJump,
+		thenLabel:  thenLabel,
+		thenBranch: Branch(rest[thenIdx+1 : joinIdx]),
+		joinLabel:  joinLabel,
+		epilogue:   Branch(rest[joinIdx+1:]),
+	}
 }
 
 func (i *instructions) Set(code isa.Instructions) {
@@ -96,10 +96,6 @@ func (i *instructions) Set(code isa.Instructions) {
 
 func (i *instructions) Code() isa.Instructions {
 	return i.code
-}
-
-func (b *branches) Base() isa.Offset {
-	return b.base
 }
 
 func (b *branches) Prologue() Instructions {
@@ -122,17 +118,48 @@ func (b *branches) Code() isa.Instructions {
 	res := isa.Instructions{}
 	res = append(res, b.prologue.Code()...)
 	res = append(res, b.elseBranch.Code()...)
+	res = append(res, b.elseJump)
+	res = append(res, b.thenLabel)
 	res = append(res, b.thenBranch.Code()...)
+	res = append(res, b.joinLabel)
 	res = append(res, b.epilogue.Code()...)
 	return res
 }
 
-func findLabel(code isa.Instructions, lbl isa.Index) int {
+func (b *branches) String() string {
+	return indentedString(0, b)
+}
+
+func (i *instructions) String() string {
+	return indentedString(0, i)
+}
+
+func findLabel(code isa.Instructions, lbl isa.Index) (int, *isa.Instruction) {
 	ic := isa.Word(lbl)
 	for pc, inst := range code {
 		if inst.Opcode == isa.Label && inst.Args[0] == ic {
-			return pc
+			return pc, inst
 		}
 	}
-	return -1
+	return -1, nil
+}
+
+func indentedString(lvl int, n Node) string {
+	var buf bytes.Buffer
+	switch typed := n.(type) {
+	case Branches:
+		buf.WriteString(indentedString(lvl, typed.Prologue()))
+		buf.WriteString(indentedString(lvl+1, typed.ThenBranch()))
+		buf.WriteString(strings.Repeat("  ", lvl))
+		buf.WriteString("else:\n")
+		buf.WriteString(indentedString(lvl+1, typed.ElseBranch()))
+		buf.WriteString(indentedString(lvl, typed.Epilogue()))
+	case Instructions:
+		for _, i := range typed.Code() {
+			buf.WriteString(strings.Repeat("  ", lvl))
+			buf.WriteString(i.String())
+			buf.WriteString("\n")
+		}
+	}
+	return buf.String()
 }

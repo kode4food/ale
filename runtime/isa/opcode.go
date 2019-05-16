@@ -53,6 +53,7 @@ const (
 	Self                     // Push Current Function
 	Store                    // Store Local
 	Sub                      // Subtraction
+	TailCall                 // Tail Call
 	True                     // Push True
 	Two                      // Push Two
 	Zero                     // Push Zero

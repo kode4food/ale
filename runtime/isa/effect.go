@@ -15,6 +15,7 @@ type Effect struct {
 	DPop   int
 	DPush  int
 	Ignore bool
+	Exit   bool
 }
 
 // Effects is a lookup table of instruction effects
@@ -53,18 +54,19 @@ var Effects = map[Opcode]*Effect{
 	NoOp:       {Size: 1, Ignore: true},
 	Not:        {Size: 1, Pop: 1, Push: 1},
 	One:        {Size: 1, Push: 1},
-	Panic:      {Size: 1, Pop: 1},
+	Panic:      {Size: 1, Pop: 1, Exit: true},
 	Pop:        {Size: 1, Pop: 1},
 	PosInf:     {Size: 1, Push: 1},
 	Resolve:    {Size: 1, Pop: 1, Push: 1},
 	RestArg:    {Size: 2, Push: 1},
-	Return:     {Size: 1, Pop: 1},
-	RetFalse:   {Size: 1},
-	RetNil:     {Size: 1},
-	RetTrue:    {Size: 1},
+	Return:     {Size: 1, Pop: 1, Exit: true},
+	RetFalse:   {Size: 1, Exit: true},
+	RetNil:     {Size: 1, Exit: true},
+	RetTrue:    {Size: 1, Exit: true},
 	Self:       {Size: 1, Push: 1},
 	Store:      {Size: 2, Pop: 1},
 	Sub:        {Size: 1, Pop: 2, Push: 1},
+	TailCall:   {Size: 2, DPop: 1},
 	True:       {Size: 1, Push: 1},
 	Two:        {Size: 1, Push: 1},
 	Zero:       {Size: 1, Push: 1},

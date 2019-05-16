@@ -317,6 +317,20 @@ func NewClosure(cfg *Config) data.Call {
 				SP = RES - 1
 				goto nextPC
 
+			case isa.TailCall:
+				PC++
+				argCount := int(code[PC])
+				if len(args) == argCount {
+					copy(args, stack[SP:])
+				} else {
+					newArgs := make([]data.Value, argCount)
+					copy(newArgs, stack[SP:])
+					args = newArgs
+				}
+				SP = stackInit
+				PC = 0
+				goto opSwitch
+
 			case isa.Jump:
 				off := isa.Offset(code[PC+1])
 				PC = int(off)

@@ -42,13 +42,17 @@ func (s *stackSizes) calculateNode(n visitor.Node) {
 
 func (s *stackSizes) calculateInstructions(inst visitor.Instructions) {
 	for _, inst := range inst.Code() {
-		oc := inst.Opcode
-		effect := isa.MustGetEffect(oc)
-		dPop := getStackChange(inst, effect.DPop)
-		dPush := getStackChange(inst, effect.DPush)
-		s.endSize += (effect.Push - effect.Pop) + (dPush - dPop)
-		s.maxSize = maxInt(s.endSize, s.maxSize)
+		s.calculateInstruction(inst)
 	}
+}
+
+func (s *stackSizes) calculateInstruction(inst *isa.Instruction) {
+	oc := inst.Opcode
+	effect := isa.MustGetEffect(oc)
+	dPop := getStackChange(inst, effect.DPop)
+	dPush := getStackChange(inst, effect.DPush)
+	s.endSize += (effect.Push - effect.Pop) + (dPush - dPop)
+	s.maxSize = maxInt(s.endSize, s.maxSize)
 }
 
 func (s *stackSizes) calculateBranches(thenNode, elseNode visitor.Node) {
