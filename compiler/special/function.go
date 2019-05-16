@@ -118,13 +118,8 @@ func (fe *funcEncoder) makeClosure() data.Call {
 	} else {
 		fe.makeVariants(fe.variants)
 	}
-	return vm.NewClosure(&vm.Config{
-		Globals:    fe.Globals(),
-		Code:       fe.Code(),
-		Constants:  fe.Constants(),
-		StackSize:  fe.StackSize(),
-		LocalCount: fe.LocalCount(),
-	})
+	cfg := vm.ConfigFromEncoder(fe)
+	return vm.NewClosure(cfg)
 }
 
 func (fe *funcEncoder) makeVariants(vars variants) {

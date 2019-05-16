@@ -37,13 +37,7 @@ func Value(ns namespace.Type, v data.Value) data.Value {
 }
 
 func encodeAndRun(e encoder.Type) data.Value {
-	cfg := &vm.Config{
-		Globals:    e.Globals(),
-		Constants:  e.Constants(),
-		Code:       e.Code(),
-		StackSize:  e.StackSize(),
-		LocalCount: e.LocalCount(),
-	}
+	cfg := vm.ConfigFromEncoder(e)
 	call := vm.NewClosure(cfg)().(data.Call)
 	return call()
 }

@@ -9,19 +9,8 @@ import (
 	"gitlab.com/kode4food/ale/runtime/isa"
 )
 
-type (
-	// Config encapsulates the initial environment of a virtual machine
-	Config struct {
-		Globals    namespace.Type
-		Constants  data.Values
-		Code       []isa.Word
-		StackSize  int
-		LocalCount int
-	}
-
-	// Closure passes enclosed state into a Caller
-	Closure func(...data.Value) data.Call
-)
+// Closure passes enclosed state into a Caller
+type Closure func(...data.Value) data.Call
 
 // Error messages
 const (
@@ -318,13 +307,12 @@ func NewClosure(cfg *Config) data.Call {
 				goto nextPC
 
 			case isa.TailCall:
-				PC++
-				argCount := int(code[PC])
+				argCount := int(code[PC+1])
 				if len(args) == argCount {
-					copy(args, stack[SP:])
+					copy(args, stack[SP+1:])
 				} else {
 					newArgs := make([]data.Value, argCount)
-					copy(newArgs, stack[SP:])
+					copy(newArgs, stack[SP+1:])
 					args = newArgs
 				}
 				SP = stackInit

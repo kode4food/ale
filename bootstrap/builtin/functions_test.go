@@ -132,3 +132,11 @@ func TestRestFunctionsEval(t *testing.T) {
 		(fn [x y & & z] "explode")
 	`, fmt.Errorf(special.InvalidRestArgument, "[& z]"))
 }
+
+func TestTailCallEval(t *testing.T) {
+	as := assert.New(t)
+	as.EvalTo(`
+		(defn to-zero [x] (cond (> x 0) (to-zero (- x 1)) :else 0))
+		(to-zero 99)
+	`, data.Integer(0))
+}

@@ -1,7 +1,7 @@
 package optimize
 
 import (
-	"gitlab.com/kode4food/ale/compiler/internal/visitor"
+	"gitlab.com/kode4food/ale/compiler/ir/visitor"
 	"gitlab.com/kode4food/ale/runtime/isa"
 )
 
