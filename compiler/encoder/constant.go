@@ -17,12 +17,25 @@ func (e *encoder) Constants() data.Values {
 
 // AddConstant adds a value to the constant list (if necessary)
 func (e *encoder) AddConstant(val data.Value) isa.Index {
-	for i, c := range e.constants {
-		if reflect.DeepEqual(c, val) {
-			return isa.Index(i)
-		}
+	if idx, ok := e.findConstant(val); ok {
+		return isa.Index(idx)
 	}
 	c := append(e.constants, val)
 	e.constants = c
 	return isa.Index(len(c) - 1)
+}
+
+func (e *encoder) findConstant(val data.Value) (int, bool) {
+	if _, ok := val.(data.Call); ok {
+		return -1, false
+	}
+	for i, c := range e.constants {
+		if _, ok := c.(data.Call); ok {
+			continue
+		}
+		if c == val || reflect.DeepEqual(c, val) {
+			return i, true
+		}
+	}
+	return -1, false
 }

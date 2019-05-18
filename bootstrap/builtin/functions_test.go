@@ -136,7 +136,12 @@ func TestRestFunctionsEval(t *testing.T) {
 func TestTailCallEval(t *testing.T) {
 	as := assert.New(t)
 	as.EvalTo(`
-		(defn to-zero [x] (cond (> x 0) (to-zero (- x 1)) :else 0))
-		(to-zero 99)
+		(defn to-zero [x]
+			(cond
+				(> x 1000) (to-zero (- x 1))
+				(> x 0)    (to-zero (- x 1))
+				:else 0))
+
+		(to-zero 9999)
 	`, data.Integer(0))
 }

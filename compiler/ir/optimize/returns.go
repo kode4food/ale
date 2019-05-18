@@ -22,22 +22,39 @@ func (*returnRoller) ExitBranches(b visitor.Branches) {
 	if i, ok := b.Epilogue().(visitor.Instructions); ok {
 		code := i.Code()
 		if len(code) == 1 && code[0].Opcode == isa.Return {
-			if addReturnToBranches(b) {
-				i.Set(isa.Instructions{})
-			}
+			i.Set(isa.Instructions{})
+			addReturnToNode(b)
 		}
 	}
 }
 
-func addReturnToBranches(b visitor.Branches) bool {
-	if ti, ok := b.ThenBranch().(visitor.Instructions); ok {
-		if ei, ok := b.ElseBranch().(visitor.Instructions); ok {
-			addReturnToInstructions(ti)
-			addReturnToInstructions(ei)
+func addReturnToNode(n visitor.Node) {
+	switch typed := n.(type) {
+	case visitor.Branches:
+		addReturnToBranches(typed)
+	case visitor.Instructions:
+		addReturnToInstructions(typed)
+	}
+}
+
+func addReturnToBranches(b visitor.Branches) {
+	if addReturnToEpilogue(b.Epilogue()) {
+		return
+	}
+	addReturnToNode(b.ThenBranch())
+	addReturnToNode(b.ElseBranch())
+}
+
+func addReturnToEpilogue(n visitor.Node) bool {
+	if i, ok := n.(visitor.Instructions); ok {
+		if len(i.Code()) > 0 {
+			addReturnToInstructions(i)
 			return true
 		}
+		return false
 	}
-	return false
+	addReturnToBranches(n.(visitor.Branches))
+	return true
 }
 
 func addReturnToInstructions(i visitor.Instructions) {
