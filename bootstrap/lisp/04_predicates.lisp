@@ -1,28 +1,22 @@
 ;;;; ale bootstrap: predicates
 
-(defn predicate-lazy-seq
-  [func coll]
-  (lazy-seq
-   (if (seq coll)
-     (let [f (func (first coll))]
-       (if f
-         (cons f (predicate-lazy-seq func (rest coll)))
-         '(false)))
-     '(true))))
+(defn pred-apply
+  [func args]
+  (if (is-empty args) true
+    (unless (func (first args)) false
+      (pred-apply func (rest args)))))
 
 (defmacro def-predicate-pos
   [func name]
   (let [func-name (sym (str name "?"))]
-    `(defn ~func-name [~'first & ~'rest]
-       (last
-        (predicate-lazy-seq ~func (cons ~'first ~'rest))))))
+       `(defn ~func-name [~'first & ~'rest]
+         (pred-apply ~func (cons ~'first ~'rest)))))
 
 (defmacro def-predicate-neg
   [func name]
   (let [func-name (sym (str "!" name "?"))]
-    `(defn ~func-name [~'first & ~'rest]
-       (let [nf# (fn [x] (not (~func x)))]
-         (last (predicate-lazy-seq nf# (cons ~'first ~'rest)))))))
+       `(defn ~func-name [~'first & ~'rest]
+         (not (pred-apply ~func (cons ~'first ~'rest))))))
 
 (defmacro def-predicate
   [func name]

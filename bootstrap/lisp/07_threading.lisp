@@ -2,7 +2,7 @@
 
 (defn thread-to-list
   [target]
-  (unless (is-list target)
+  (unless (list? target)
           (list target)
           target))
 
@@ -29,7 +29,7 @@
          f (first l)
          r (rest l)]
      `(let [val# ~value]
-        (when-not (is-nil val#)
+        (when-not (nil? val#)
           (some-> (~f val# ~@r) ~@(rest forms)))))))
 
 (defmacro some->>
@@ -39,7 +39,7 @@
          f (first l)
          r (rest l)]
      `(let [val# ~value]
-        (when-not (is-nil val#)
+        (when-not (nil? val#)
           (some->> (~f ~@r val#) ~@(rest forms)))))))
 
 (defmacro as->
@@ -60,7 +60,7 @@
   ([value] value)
   ([value & clauses]
    (assert-args
-    (is-even (len clauses)) "clauses must be paired")
+    (even? (len clauses)) "clauses must be paired")
    `(-> ~value
         ~@(map (make-cond-clause ->) (partition 2 clauses)))))
 
@@ -68,6 +68,6 @@
   ([value] value)
   ([value & clauses]
    (assert-args
-    (is-even (len clauses)) "clauses must be paired")
+    (even? (len clauses)) "clauses must be paired")
    `(-> ~value
         ~@(map (make-cond-clause ->>) (partition 2 clauses)))))

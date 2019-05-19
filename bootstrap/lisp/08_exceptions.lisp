@@ -2,27 +2,27 @@
 
 (defn is-call
   [sym clause]
-  (and (is-local sym)
-       (is-list clause)
+  (and (local? sym)
+       (list? clause)
        (eq sym (first clause))))
 
 (defn is-catch-binding
   [form]
-  (and (is-vector form)
+  (and (vector? form)
        (= 2 (len form))
-       (is-local (form 1))))
+       (local? (form 1))))
 
 (defn is-catch
   [clause parsed]
   (and (is-call 'catch clause)
        (is-catch-binding (nth clause 1))
-       (not (is-seq (:block parsed)))))
+       (!seq? (:block parsed))))
 
 (defn is-finally
   [clause parsed]
   (and (is-call 'finally clause)
-       (not (is-seq (:catch parsed)))
-       (not (is-seq (:block parsed)))))
+       (!seq? (:catch parsed))
+       (!seq? (:block parsed))))
 
 (defn is-expr
   [clause parsed]
@@ -39,7 +39,7 @@
 
 (defn try-parse
   [clauses]
-  (unless (is-seq clauses)
+  (unless (seq? clauses)
           {:block () :catch () :finally []}
           (let [f (first clauses)
                 r (rest clauses)
@@ -61,7 +61,7 @@
 
 (defn try-catch-branch
   [clauses err-sym]
-  (assert-args (is-seq clauses) "catch branch not paired")
+  (assert-args (seq? clauses) "catch branch not paired")
   (lazy-seq
    (let [clause (first clauses)
          var    ((clause 1) 0)
@@ -75,7 +75,7 @@
 (defn try-catch-clauses
   [clauses err-sym]
   (lazy-seq
-   (when (is-seq clauses)
+   (when (seq? clauses)
      (let [clause (first clauses)
            pred   ((clause 1) 1)]
        (cons
@@ -99,20 +99,20 @@
   (let [block   (:block parsed)
         recover (:catch parsed)
         cleanup (:finally parsed)]
-    (cond (is-seq cleanup)
+    (cond (seq? cleanup)
           (let [first# (rest (first cleanup))
                 rest#  (conj parsed [:finally (rest cleanup)])]
             `(defer
                (fn [] ~(try-catch-finally rest#))
                (fn [] ~@first#)))
 
-          (is-seq recover)
+          (seq? recover)
           `(let [rec# (recover ~(try-body block) ~(try-catch recover))
                  err# (rec# 0)
                  res# (rec# 1)]
              (if err# (raise res#) res#))
 
-          (is-seq block) `(do ~@block)
+          (seq? block) `(do ~@block)
 
           :else nil)))
 

@@ -27,7 +27,7 @@
   [count coll]
   (assert-args
    (= (mod count 1) 0) "count must be an integer"
-   (is-seq coll)       "coll must be a sequence")
+   (seq? coll)         "coll must be a sequence")
   (take' count coll))
 
 (defn take-while
@@ -49,14 +49,14 @@
   [count coll]
   (assert-args
    (= (mod count 1) 0) "count must be an integer"
-   (is-seq coll)       "coll must be a sequence")
+   (seq? coll)         "coll must be a sequence")
   (lazy-seq (drop' count coll)))
 
 (defmacro for-each
   [seq-exprs & body]
   (assert-args
-   (is-vector seq-exprs) "for-each bindings must be a vector"
-   (is-paired seq-exprs) "for-each bindings must be paired")
+   (vector? seq-exprs) "for-each bindings must be a vector"
+   (paired? seq-exprs) "for-each bindings must be paired")
   (let [name# (seq-exprs 0)
         seq#  (seq-exprs 1)]
     (if (> (len seq-exprs) 2)
@@ -73,7 +73,7 @@
   ([count coll] (partition count count coll))
   ([count step coll]
    (lazy-seq
-    (when (is-seq coll)
+    (when (seq? coll)
       (cons (to-list (take count coll))
             (partition count step (drop step coll)))))))
 
@@ -85,9 +85,9 @@
      (range first last 1)
      (range last first -1)))
   ([first last step]
-   (let [cmp (cond (is-nil last) (constantly true)
-                   (< step 0)    >
-                   :else         <)]
+   (let [cmp (cond (nil? last) (constantly true)
+                   (< step 0)  >
+                   :else       <)]
      (if (cmp first last)
        (cons first (lazy-seq (range (+ first step) last step)))
        []))))

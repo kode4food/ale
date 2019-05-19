@@ -8,7 +8,7 @@
 (defn pr-map-with-nil
   [func seq]
   (map
-   (fn [val] (if (is-nil val) val (func val)))
+   (fn [val] (if (nil? val) val (func val)))
    seq))
 
 (defn pr [& forms]
@@ -35,12 +35,12 @@
 
 (defn paired-vector?
   [val]
-  (and (is-vector val) (is-paired val)))
+  (and (vector? val) (paired? val)))
 
 (defn with-open-close
   [val]
   (let [c (:close val)]
-    (if (is-apply c) c no-op)))
+    (if (apply? c) c no-op)))
 
 (defmacro with-open [bindings & body]
   (assert-args
