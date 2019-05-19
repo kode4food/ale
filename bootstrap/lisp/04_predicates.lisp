@@ -3,20 +3,20 @@
 (defn pred-apply
   [func args]
   (if (is-empty args) true
-    (unless (func (first args)) false
-      (pred-apply func (rest args)))))
+      (unless (func (first args)) false
+              (pred-apply func (rest args)))))
 
 (defmacro def-predicate-pos
   [func name]
   (let [func-name (sym (str name "?"))]
-       `(defn ~func-name [~'first & ~'rest]
-         (pred-apply ~func (cons ~'first ~'rest)))))
+    `(defn ~func-name [~'first & ~'rest]
+       (pred-apply ~func (cons ~'first ~'rest)))))
 
 (defmacro def-predicate-neg
   [func name]
   (let [func-name (sym (str "!" name "?"))]
-       `(defn ~func-name [~'first & ~'rest]
-         (not (pred-apply ~func (cons ~'first ~'rest))))))
+    `(defn ~func-name [~'first & ~'rest]
+       (not (pred-apply ~func (cons ~'first ~'rest))))))
 
 (defmacro def-predicate
   [func name]
@@ -28,11 +28,10 @@
 (def-predicate is-apply "apply")
 (def-predicate is-assoc "assoc")
 (def-predicate is-atom "atom")
-(def-predicate is-counted "len")
 (def-predicate is-deque "deque")
 (def-predicate is-empty "empty")
-(def-predicate is-even "even")
 (def-predicate is-eq "eq")
+(def-predicate is-even "even")
 (def-predicate is-indexed "indexed")
 (def-predicate is-keyword "keyword")
 (def-predicate is-list "list")
@@ -48,6 +47,7 @@
 (def-predicate is-promise "promise")
 (def-predicate is-qualified "qualified")
 (def-predicate is-seq "seq")
+(def-predicate is-sized "sized")
 (def-predicate is-special "special")
 (def-predicate is-str "str")
 (def-predicate is-symbol "symbol")

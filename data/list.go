@@ -4,7 +4,7 @@ package data
 type List struct {
 	first Value
 	rest  *List
-	count int
+	size  int
 }
 
 // EmptyList represents an empty List
@@ -17,7 +17,7 @@ func NewList(v ...Value) *List {
 		r = &List{
 			first: v[i],
 			rest:  r,
-			count: r.count + 1,
+			size:  r.size + 1,
 		}
 	}
 	return r
@@ -35,12 +35,12 @@ func (l *List) Rest() Sequence {
 
 // IsEmpty returns whether or not this sequence is empty
 func (l *List) IsEmpty() bool {
-	return l.count == 0
+	return l.size == 0
 }
 
 // Split breaks the List into its components (first, rest, ok)
 func (l *List) Split() (Value, Sequence, bool) {
-	return l.first, l.rest, l.count != 0
+	return l.first, l.rest, l.size != 0
 }
 
 // Prepend inserts an element at the beginning of the List
@@ -48,34 +48,34 @@ func (l *List) Prepend(v Value) Sequence {
 	return &List{
 		first: v,
 		rest:  l,
-		count: l.count + 1,
+		size:  l.size + 1,
 	}
 }
 
 // Reverse returns a reversed copy of this List
 func (l *List) Reverse() Sequence {
-	if l.count <= 1 {
+	if l.size <= 1 {
 		return l
 	}
 	res := EmptyList
-	for cur, cnt := l, 1; cur.count > 0; cur, cnt = cur.rest, cnt+1 {
+	for cur, cnt := l, 1; cur.size > 0; cur, cnt = cur.rest, cnt+1 {
 		res = &List{
 			first: cur.first,
 			rest:  res,
-			count: cnt,
+			size:  cnt,
 		}
 	}
 	return res
 }
 
-// Count returns the number of elements in the List
-func (l *List) Count() int {
-	return l.count
+// Size returns the number of elements in the List
+func (l *List) Size() int {
+	return l.size
 }
 
 // ElementAt returns a specific element of the List
 func (l *List) ElementAt(index int) (Value, bool) {
-	if index > l.count-1 || index < 0 {
+	if index > l.size-1 || index < 0 {
 		return Nil, false
 	}
 

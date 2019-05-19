@@ -69,7 +69,7 @@ func TestReadMap(t *testing.T) {
 	v := tr.First()
 	m, ok := v.(data.Associative)
 	as.True(ok)
-	as.Number(2, m.Count())
+	as.Number(2, m.Size())
 }
 
 func TestReadNestedList(t *testing.T) {

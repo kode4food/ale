@@ -56,9 +56,9 @@ func (d *Deque) Split() (Value, Sequence, bool) {
 	return Nil, EmptyDeque, false
 }
 
-// Count returns the number of elements in the deque
-func (d *Deque) Count() int {
-	return d.head.Count() + d.tail.Count()
+// Size returns the number of elements in the deque
+func (d *Deque) Size() int {
+	return d.head.Size() + d.tail.Size()
 }
 
 // Reverse returns a reversed version of the sequence

@@ -31,17 +31,17 @@ type (
 		Indexed
 	}
 
-	// CountedSequence is a Sequence that provides a Counted interface
-	CountedSequence interface {
+	// SizedSequence is a Sequence that provides a Sized interface
+	SizedSequence interface {
 		Sequence
-		Counted
+		Sized
 	}
 
-	// RandomAccessSequence provides Indexed and Counted Sequence interfaces
+	// RandomAccessSequence provides Indexed and Sized Sequence interfaces
 	RandomAccessSequence interface {
 		Sequence
 		Indexed
-		Counted
+		Sized
 	}
 
 	// MappedSequence is a Sequence that provides a Mapped interface
@@ -69,9 +69,9 @@ func MakeSequenceStr(s Sequence) string {
 	return b.String()
 }
 
-// Count will return the Count from a Counted Sequence or explode
-func Count(v Value) int {
-	return v.(CountedSequence).Count()
+// Size will return the size from a Sized Sequence or explode
+func Size(v Value) int {
+	return v.(SizedSequence).Size()
 }
 
 // Last returns the final element of a Sequence, possibly by scanning
@@ -81,7 +81,7 @@ func Last(s Sequence) (Value, bool) {
 	}
 
 	if i, ok := s.(RandomAccessSequence); ok {
-		return i.ElementAt(i.Count() - 1)
+		return i.ElementAt(i.Size() - 1)
 	}
 
 	var res Value

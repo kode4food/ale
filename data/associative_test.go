@@ -20,7 +20,7 @@ func TestAssociative(t *testing.T) {
 	as := assert.New(t)
 	m1 := getTestMap()
 
-	as.Number(3, data.Count(m1))
+	as.Number(3, data.Size(m1))
 
 	nameKey := K("name")
 	as.Equal(N("name"), nameKey.Name())
@@ -71,7 +71,7 @@ func TestAssociativeSplit(t *testing.T) {
 	as.False(r.IsEmpty())
 	v, ok := f.(data.Vector)
 	as.True(ok)
-	as.Number(2, v.Count())
+	as.Number(2, v.Size())
 
 	f, ok = v.ElementAt(0)
 	as.True(ok)

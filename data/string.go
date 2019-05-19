@@ -92,8 +92,8 @@ func (s String) vector() Vector {
 	return r
 }
 
-// Count returns the length of the String
-func (s String) Count() int {
+// Size returns the length of the String
+func (s String) Size() int {
 	return utf8.RuneCountInString(string(s))
 }
 

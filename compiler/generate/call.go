@@ -20,7 +20,7 @@ const (
 
 // Call encodes a function call
 func Call(e encoder.Type, l *data.List) {
-	if l.Count() == 0 {
+	if l.Size() == 0 {
 		Literal(e, data.EmptyList)
 		return
 	}

@@ -12,7 +12,7 @@ func TestEmptyDeque(t *testing.T) {
 	as := assert.New(t)
 
 	d1 := data.EmptyDeque
-	as.Equal(0, d1.Count())
+	as.Equal(0, d1.Size())
 	as.True(d1.IsEmpty())
 
 	d1 = data.NewDeque(S("you"))

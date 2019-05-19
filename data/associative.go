@@ -30,8 +30,8 @@ func NewAssociative(v ...Value) Associative {
 	return Associative(res)
 }
 
-// Count returns the number of pairs in the Associative
-func (a Associative) Count() int {
+// Size returns the number of pairs in the Associative
+func (a Associative) Size() int {
 	return len(a)
 }
 
@@ -80,7 +80,7 @@ func (a Associative) Split() (Value, Sequence, bool) {
 
 // Prepend inserts a pair at the beginning of the Associative
 func (a Associative) Prepend(v Value) Sequence {
-	if mp, ok := v.(Vector); ok && mp.Count() == 2 {
+	if mp, ok := v.(Vector); ok && mp.Size() == 2 {
 		return append(Associative{mp}, a...)
 	}
 	panic(fmt.Errorf(ExpectedPair))

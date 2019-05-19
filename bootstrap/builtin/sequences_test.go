@@ -29,7 +29,7 @@ func TestToAssocEval(t *testing.T) {
 func TestToVectorEval(t *testing.T) {
 	as := assert.New(t)
 	as.EvalTo(`(vector? (to-vector (list 1 2 3)))`, data.True)
-	as.EvalTo(`(len? [1 2 3 4])`, data.True)
+	as.EvalTo(`(sized? [1 2 3 4])`, data.True)
 }
 
 func TestToListEval(t *testing.T) {

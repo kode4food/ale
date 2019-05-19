@@ -13,8 +13,8 @@ func NewVector(v ...Value) Vector {
 	return Vector(v)
 }
 
-// Count returns the number of elements in the Vector
-func (v Vector) Count() int {
+// Size returns the number of elements in the Vector
+func (v Vector) Size() int {
 	return len(v)
 }
 

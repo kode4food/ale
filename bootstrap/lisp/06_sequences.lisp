@@ -16,6 +16,13 @@
   [& seqs]
   `(apply vector (concat ~@seqs)))
 
+(defn len
+  ([coll] (len coll 0))
+  ([coll prev]
+   (if (sized? coll)
+     (+ prev (size coll))
+     (len (rest coll) (inc prev)))))
+
 (defn take'
   [count coll]
   (lazy-seq

@@ -1,5 +1,5 @@
 ;;;; ale bootstrap: builtin
-
+ 
 (def-builtin -)
 (def-builtin !=)
 (def-builtin *)
@@ -29,7 +29,6 @@
 (def-builtin go*)
 (def-builtin last)
 (def-builtin lazy-seq*)
-(def-builtin len)
 (def-builtin list)
 (def-builtin map)
 (def-builtin mod)
@@ -39,9 +38,10 @@
 (def-builtin read)
 (def-builtin recover)
 (def-builtin reduce)
-(def-builtin reverse)
 (def-builtin rest)
+(def-builtin reverse)
 (def-builtin seq)
+(def-builtin size)
 (def-builtin str!)
 (def-builtin str)
 (def-builtin sym)
@@ -51,7 +51,7 @@
 (def-builtin is-apply)
 (def-builtin is-assoc)
 (def-builtin is-atom)
-(def-builtin is-counted)
+(def-builtin is-sized)
 (def-builtin is-deque)
 (def-builtin is-empty)
 (def-builtin is-eq)

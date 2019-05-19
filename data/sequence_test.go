@@ -39,9 +39,9 @@ func TestNonCountableSequence(t *testing.T) {
 	as := assert.New(t)
 	nc := &ncSeq{}
 
-	e := cvtErr("*data_test.ncSeq", "data.CountedSequence", "Count")
+	e := cvtErr("*data_test.ncSeq", "data.SizedSequence", "Size")
 	defer as.ExpectPanic(e)
-	data.Count(nc)
+	data.Size(nc)
 }
 
 func TestLastOfSequence(t *testing.T) {

@@ -35,7 +35,7 @@
 
 (defn is-paired
   [value]
-  (is-even (len value)))
+  (is-even (size value)))
 
 (defn inc
   [value]

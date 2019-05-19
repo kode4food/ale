@@ -19,7 +19,7 @@ func TestStr(t *testing.T) {
 	as := assert.New(t)
 
 	s1 := S("hello")
-	as.Number(5, data.Count(s1))
+	as.Number(5, data.Size(s1))
 	as.String("h", s1.First())
 	as.String("ello", s1.Rest())
 
@@ -27,23 +27,23 @@ func TestStr(t *testing.T) {
 	as.True(S("").IsEmpty())
 
 	s2 := s1.Prepend(S("s"))
-	as.Number(6, data.Count(s2))
+	as.Number(6, data.Size(s2))
 	as.String("shello", s2)
 
 	s3 := s1.Append(S("z"), S("y"))
-	as.Number(7, data.Count(s3))
+	as.Number(7, data.Size(s3))
 	as.String("hellozy", s3)
 
 	l1 := s1.Prepend(F(99))
-	as.Number(6, data.Count(l1))
+	as.Number(6, data.Size(l1))
 	as.String(`(99 "h" "e" "l" "l" "o")`, l1)
 
 	v1 := s1.Append(F(99))
-	as.Number(6, data.Count(v1))
+	as.Number(6, data.Size(v1))
 	as.String(`["h" "e" "l" "l" "o" 99]`, v1)
 
 	s4 := S("thér\\再e")
-	as.Number(7, data.Count(s4))
+	as.Number(7, data.Size(s4))
 
 	s5 := data.MaybeQuoteString(s4)
 	r1 := []rune(s5)
@@ -63,7 +63,7 @@ func TestStr(t *testing.T) {
 	as.Nil(c)
 
 	s6 := S("再见!")
-	as.Number(3, data.Count(s6))
+	as.Number(3, data.Size(s6))
 	as.String("再", s6.First())
 	as.String("见!", s6.Rest())
 }

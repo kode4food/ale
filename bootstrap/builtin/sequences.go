@@ -74,10 +74,10 @@ func Reverse(args ...data.Value) data.Value {
 	return res
 }
 
-// Len returns the size of the provided sequence
-func Len(args ...data.Value) data.Value {
+// Size returns the size of the provided sequence
+func Size(args ...data.Value) data.Value {
 	s := args[0].(data.Sequence)
-	l := data.Count(s)
+	l := data.Size(s)
 	return data.Integer(l)
 }
 
@@ -109,9 +109,9 @@ func IsEmpty(args ...data.Value) data.Value {
 	return data.Bool(s.IsEmpty())
 }
 
-// IsCounted returns whether or not the provided value is a countable sequence
-func IsCounted(args ...data.Value) data.Value {
-	_, ok := args[0].(data.CountedSequence)
+// IsSized returns whether or not the provided value is a sized sequence
+func IsSized(args ...data.Value) data.Value {
+	_, ok := args[0].(data.SizedSequence)
 	return data.Bool(ok)
 }
 
