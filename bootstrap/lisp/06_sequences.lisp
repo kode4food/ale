@@ -16,12 +16,19 @@
   [& seqs]
   `(apply vector (concat ~@seqs)))
 
+(defn len'
+  [coll prev]
+  (if (sized? coll)
+    (+ prev (size coll))
+    (if (seq coll)
+      (len' (rest coll) (inc prev))
+      prev)))
+
 (defn len
-  ([coll] (len coll 0))
-  ([coll prev]
-   (if (sized? coll)
-     (+ prev (size coll))
-     (len (rest coll) (inc prev)))))
+  [coll]
+  (assert-args
+   (seq? coll) "coll must be a sequence")
+  (len' coll 0))
 
 (defn take'
   [count coll]

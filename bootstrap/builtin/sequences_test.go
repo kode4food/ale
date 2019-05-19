@@ -58,6 +58,17 @@ func TestMapFilterEval(t *testing.T) {
 	`, F(13))
 }
 
+func TestLenEval(t *testing.T) {
+	as := assert.New(t)
+	as.EvalTo(`
+	  (len [1 2 3 4 5])
+	`, I(5))
+
+	as.EvalTo(`
+		(len (take 10 (range 1 10000)))
+	`, I(10))
+}
+
 func TestReverse(t *testing.T) {
 	as := assert.New(t)
 
