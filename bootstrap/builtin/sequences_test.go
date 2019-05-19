@@ -65,8 +65,8 @@ func TestLenEval(t *testing.T) {
 	`, I(5))
 
 	as.EvalTo(`
-		(len (take 10 (range 1 10000)))
-	`, I(10))
+		(len (take 10000 (range 1 1000000000)))
+	`, I(10000))
 }
 
 func TestReverse(t *testing.T) {
