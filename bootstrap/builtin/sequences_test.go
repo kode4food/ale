@@ -69,6 +69,17 @@ func TestLenEval(t *testing.T) {
 	`, I(10000))
 }
 
+func TestLastEval(t *testing.T) {
+	as := assert.New(t)
+	as.EvalTo(`
+	  (last [1 2 3 4 37])
+	`, I(37))
+
+	as.EvalTo(`
+		(last (take 10000 (range 1 1000000000 2)))
+	`, I(19999))
+}
+
 func TestReverse(t *testing.T) {
 	as := assert.New(t)
 

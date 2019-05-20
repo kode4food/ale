@@ -140,7 +140,6 @@ func (b *bootstrap) availableFunctions() {
 	b.applicative("is-str", builtin.IsStr, 1)
 	b.applicative("is-symbol", builtin.IsSymbol, 1)
 	b.applicative("is-vector", builtin.IsVector, 1)
-	b.applicative("last", builtin.Last, 1)
 	b.applicative("lazy-seq*", builtin.LazySequence, 1)
 	b.applicative("size", builtin.Size, 1)
 	b.applicative("list", builtin.List)

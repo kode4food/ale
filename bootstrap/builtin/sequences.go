@@ -23,16 +23,6 @@ func Rest(args ...data.Value) data.Value {
 	return args[0].(data.Sequence).Rest()
 }
 
-// Last returns the final element of the sequence
-func Last(args ...data.Value) data.Value {
-	var l data.Value
-	s := args[0].(data.Sequence)
-	for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {
-		l = f
-	}
-	return l
-}
-
 // Cons prepends a value to the provided sequence
 func Cons(args ...data.Value) data.Value {
 	h := args[0]

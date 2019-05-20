@@ -27,7 +27,6 @@
 (def-builtin gensym)
 (def-builtin get)
 (def-builtin go*)
-(def-builtin last)
 (def-builtin lazy-seq*)
 (def-builtin list)
 (def-builtin map)
