@@ -6,7 +6,7 @@ names: ["last"]
 usage: "(last seq)"
 tags: ["sequence"]
 ---
-This function will return the last element of the specified sequence, or _nil_ if the sequence is empty. It would be beneficial to check for a valid sequence using `(seq? seq)` before calling `last`.
+This function will return the last element of the specified sequence, or _nil_ if the sequence is empty.
 
 #### An Example
 

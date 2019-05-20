@@ -6,7 +6,7 @@ names: ["rest"]
 usage: "(rest seq)"
 tags: ["sequence"]
 ---
-This function will return a sequence that excludes the first element of the specified sequence. It would be beneficial to check for a valid sequence using `(seq? seq)` before calling `first` or `rest`.
+This function will return a sequence that excludes the first element of the specified sequence.
 
 #### An Example
 

@@ -6,7 +6,7 @@ names: ["first"]
 usage: "(first seq)"
 tags: ["sequence"]
 ---
-This function will return the first element of the specified sequence, or _nil_ if the sequence is empty. It would be beneficial to check for a valid sequence using `(seq? seq)` before calling `first` or `rest`.
+This function will return the first element of the specified sequence, or _nil_ if the sequence is empty.
 
 #### An Example
 
