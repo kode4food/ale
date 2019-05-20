@@ -58,7 +58,7 @@
   ([binding then else]
    (assert-args
     (is-vector binding) "binding vector must be supplied"
-    (= 2 (size binding)) "binding vector must contain 2 elements")
+    (= 2 (len binding)) "binding vector must contain 2 elements")
    (let [sym  (binding 0)
          test (binding 1)]
      `(let [~sym ~test]

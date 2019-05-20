@@ -32,12 +32,12 @@ func TestList(t *testing.T) {
 	as.String("(20.5 12)", l2)
 	as.Equal(n2, l2.First())
 	as.Identical(l1, l2.Rest())
-	as.Number(2, l2.Size())
+	as.Number(2, l2.Count())
 
 	r, ok := l2.ElementAt(1)
 	as.True(ok)
 	as.Equal(I(12), r)
-	as.Number(2, data.Size(l2))
+	as.Number(2, l2.Count())
 
 	r, ok = data.EmptyList.ElementAt(1)
 	as.False(ok)
@@ -51,9 +51,9 @@ func TestListReverse(t *testing.T) {
 	l2 := l1.Reverse().(*data.List)
 
 	as.String("(1 2 3 4)", l1)
-	as.Number(4, l1.Size())
+	as.Number(4, l1.Count())
 	as.String("(4 3 2 1)", l2)
-	as.Number(4, l2.Size())
+	as.Number(4, l2.Count())
 
 	as.String(`(2 1)`, data.NewList(I(1), I(2)).Reverse())
 	as.String("()", data.EmptyList.Reverse())

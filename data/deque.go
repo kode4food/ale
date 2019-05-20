@@ -56,9 +56,9 @@ func (d *Deque) Split() (Value, Sequence, bool) {
 	return Nil, EmptyDeque, false
 }
 
-// Size returns the number of elements in the deque
-func (d *Deque) Size() int {
-	return d.head.Size() + d.tail.Size()
+// Count returns the number of elements in the deque
+func (d *Deque) Count() int {
+	return d.head.Count() + d.tail.Count()
 }
 
 // Reverse returns a reversed version of the sequence
@@ -69,7 +69,7 @@ func (d *Deque) Reverse() Sequence {
 	}
 }
 
-// Prepend inserts an element at the beginning of the deque
+// Prepend inserts elements at the beginning of the deque
 func (d *Deque) Prepend(v Value) Sequence {
 	return &Deque{
 		head: d.head.Prepend(v).(*List),
@@ -78,14 +78,11 @@ func (d *Deque) Prepend(v Value) Sequence {
 }
 
 // Append appends elements to the end of the deque
-func (d *Deque) Append(args ...Value) Sequence {
-	var newTail Sequence = d.tail
-	for _, v := range args {
-		newTail = newTail.Prepend(v)
-	}
+func (d *Deque) Append(v Value) Sequence {
+	var tail = d.tail.Prepend(v)
 	return &Deque{
 		head: d.head,
-		tail: newTail.(*List),
+		tail: tail.(*List),
 	}
 }
 

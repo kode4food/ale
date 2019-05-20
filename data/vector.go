@@ -13,8 +13,8 @@ func NewVector(v ...Value) Vector {
 	return Vector(v)
 }
 
-// Size returns the number of elements in the Vector
-func (v Vector) Size() int {
+// Count returns the number of elements in the Vector
+func (v Vector) Count() int {
 	return len(v)
 }
 
@@ -59,13 +59,13 @@ func (v Vector) Split() (Value, Sequence, bool) {
 }
 
 // Prepend inserts an element at the beginning of the Vector
-func (v Vector) Prepend(p Value) Sequence {
-	return append(Vector{p}, v...)
+func (v Vector) Prepend(e Value) Sequence {
+	return append(Vector{e}, v...)
 }
 
 // Append appends elements to the end of the Vector
-func (v Vector) Append(args ...Value) Sequence {
-	return append(v, args...)
+func (v Vector) Append(e Value) Sequence {
+	return append(v, e)
 }
 
 // Reverse returns a reversed copy of this Vector

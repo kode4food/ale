@@ -66,7 +66,7 @@ func Vector(e encoder.Type, v data.Vector) {
 
 // Associative encodes an associative array
 func Associative(e encoder.Type, a data.Associative) {
-	args := make(data.Values, a.Size()*2)
+	args := make(data.Values, a.Count()*2)
 	var i int
 	for f, r, ok := a.Split(); ok; f, r, ok = r.Split() {
 		v := f.(data.Vector)

@@ -62,16 +62,11 @@ func (s String) Prepend(v Value) Sequence {
 // Append appends values to the end of the String. If the values are
 // single characters, the resulting String will be retained in native
 // form, otherwise a Vector is returned.
-func (s String) Append(args ...Value) Sequence {
-	var res = s
-	for i, arg := range args {
-		if e, ok := arg.(String); ok && len(e) == 1 {
-			res = String(res + e)
-		} else {
-			return res.vector().Append(args[i:]...)
-		}
+func (s String) Append(v Value) Sequence {
+	if e, ok := v.(String); ok && len(e) == 1 {
+		return String(s + e)
 	}
-	return res
+	return s.vector().Append(v)
 }
 
 func (s String) list() *List {
@@ -92,8 +87,8 @@ func (s String) vector() Vector {
 	return r
 }
 
-// Size returns the length of the String
-func (s String) Size() int {
+// Count returns the length of the String
+func (s String) Count() int {
 	return utf8.RuneCountInString(string(s))
 }
 

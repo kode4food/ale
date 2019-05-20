@@ -37,7 +37,7 @@ func identity(args ...data.Value) data.Value {
 	return args[0]
 }
 
-func TestUnsizedConversions(t *testing.T) {
+func TestUncountedConversions(t *testing.T) {
 	as := assert.New(t)
 	l1 := stdlib.Map(L(S("hello"), S("there")), identity)
 	v1 := stdlib.SequenceToVector(l1)
@@ -67,7 +67,7 @@ func TestAssocConvertError(t *testing.T) {
 	stdlib.SequenceToAssociative(v1)
 }
 
-func TestUnsizedAssocConvertError(t *testing.T) {
+func TestUncountedAssocConvertError(t *testing.T) {
 	as := assert.New(t)
 
 	v1 := stdlib.Map(V(K("boom")), identity)

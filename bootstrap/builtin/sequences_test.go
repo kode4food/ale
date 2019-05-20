@@ -29,7 +29,7 @@ func TestToAssocEval(t *testing.T) {
 func TestToVectorEval(t *testing.T) {
 	as := assert.New(t)
 	as.EvalTo(`(vector? (to-vector (list 1 2 3)))`, data.True)
-	as.EvalTo(`(sized? [1 2 3 4])`, data.True)
+	as.EvalTo(`(counted? [1 2 3 4])`, data.True)
 }
 
 func TestToListEval(t *testing.T) {
@@ -65,8 +65,12 @@ func TestLenEval(t *testing.T) {
 	`, I(5))
 
 	as.EvalTo(`
-		(len (take 10000 (range 1 1000000000)))
+		(len! (take 10000 (range 1 1000000000)))
 	`, I(10000))
+
+	as.PanicWith(`
+		(len (take 10000 (range 1 1000000000)))
+	`, interfaceErr("*stdlib.lazySequence", "data.CountedSequence", "Count"))
 }
 
 func TestLastEval(t *testing.T) {
@@ -76,8 +80,12 @@ func TestLastEval(t *testing.T) {
 	`, I(37))
 
 	as.EvalTo(`
-		(last (take 10000 (range 1 1000000000 2)))
+		(last! (take 10000 (range 1 1000000000 2)))
 	`, I(19999))
+
+	as.EvalRaises(`
+		(last (take 10000 (range 1 1000000000)))
+	`, "coll must be counted")
 }
 
 func TestReverse(t *testing.T) {
@@ -87,5 +95,10 @@ func TestReverse(t *testing.T) {
 	as.String(`[4 3 2 1]`, as.Eval(`(reverse [1 2 3 4])`))
 	as.EvalTo(`(reverse ())`, data.EmptyList)
 	as.EvalTo(`(reverse [])`, data.EmptyVector)
-	as.String(`(4 3 2 1)`, as.Eval(`(reverse (take 4 (range 1 1000)))`))
+	as.String(`(4 3 2 1)`, as.Eval(`(reverse! (take 4 (range 1 1000)))`))
+
+	err := interfaceErr("*stdlib.lazySequence", "data.Reverser", "Reverse")
+	as.PanicWith(`
+		(reverse (take 4 (range 1 1000)))
+	`, err)
 }

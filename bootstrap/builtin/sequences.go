@@ -2,7 +2,6 @@ package builtin
 
 import (
 	"gitlab.com/kode4food/ale/data"
-	"gitlab.com/kode4food/ale/stdlib"
 )
 
 // Seq attempts to convert the provided value to a sequence, or returns nil
@@ -23,51 +22,30 @@ func Rest(args ...data.Value) data.Value {
 	return args[0].(data.Sequence).Rest()
 }
 
-// Cons prepends a value to the provided sequence
+// Cons adds a value to the beginning of the provided Sequence
 func Cons(args ...data.Value) data.Value {
 	h := args[0]
-	r := args[1]
-	return r.(data.Sequence).Prepend(h)
+	r := args[1].(data.Sequence)
+	return r.Prepend(h)
 }
 
-// Conj conjoins a value to the provided sequence in some way
-func Conj(args ...data.Value) data.Value {
-	a0 := args[0]
-	if a, ok := a0.(data.Appender); ok {
-		return a.Append(args[1:]...)
-	}
-	s := a0.(data.Sequence)
-	for _, v := range args[1:] {
-		s = s.Prepend(v)
-	}
-	return s
-}
-
-// Append combines two sequences if the first is an Appender
+// Append adds a value to the end of the provided Appender
 func Append(args ...data.Value) data.Value {
 	a := args[0].(data.Appender)
-	s := args[1].(data.Sequence)
-	values := stdlib.SequenceToValues(s)
-	return a.Append(values...)
+	s := args[1]
+	return a.Append(s)
 }
 
 // Reverse returns a reversed copy of a Sequence
 func Reverse(args ...data.Value) data.Value {
-	s := args[0].(data.Sequence)
-	if r, ok := s.(data.Reverser); ok {
-		return r.Reverse()
-	}
-	var res data.Sequence = data.EmptyList
-	for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {
-		res = res.Prepend(f)
-	}
-	return res
+	r := args[0].(data.Reverser)
+	return r.Reverse()
 }
 
-// Size returns the size of the provided sequence
-func Size(args ...data.Value) data.Value {
-	s := args[0].(data.Sequence)
-	l := data.Size(s)
+// Len returns the element count of the provided sequence
+func Len(args ...data.Value) data.Value {
+	s := args[0].(data.CountedSequence)
+	l := s.Count()
 	return data.Integer(l)
 }
 
@@ -99,14 +77,20 @@ func IsEmpty(args ...data.Value) data.Value {
 	return data.Bool(s.IsEmpty())
 }
 
-// IsSized returns whether or not the provided value is a sized sequence
-func IsSized(args ...data.Value) data.Value {
-	_, ok := args[0].(data.SizedSequence)
+// IsCounted returns whether or not the provided value is a counted sequence
+func IsCounted(args ...data.Value) data.Value {
+	_, ok := args[0].(data.CountedSequence)
 	return data.Bool(ok)
 }
 
 // IsIndexed returns whether or not the provided value is an indexed sequence
 func IsIndexed(args ...data.Value) data.Value {
 	_, ok := args[0].(data.IndexedSequence)
+	return data.Bool(ok)
+}
+
+// IsReverser returns whether or not the value is a reversible sequence
+func IsReverser(args ...data.Value) data.Value {
+	_, ok := args[0].(data.Reverser)
 	return data.Bool(ok)
 }

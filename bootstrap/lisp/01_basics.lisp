@@ -9,21 +9,17 @@
   [name & forms]
   `(def ~name (fn ~name ~@forms)))
 
-(defmacro error
+(defn error
   [& clauses]
-  `(raise (assoc ~@clauses)))
+  (raise (apply assoc clauses)))
 
-(defmacro panic
+(defn panic
   [& clauses]
-  `(raise (error ~@clauses)))
-
-(defmacro eq
-  [value & comps]
-  `(is-eq ~value ~@comps))
+  (raise (apply error clauses)))
 
 (defmacro !eq
   [value & comps]
-  `(not (is-eq ~value ~@comps)))
+  `(not (eq ~value ~@comps)))
 
 (defn is-even
   [value]
@@ -35,7 +31,7 @@
 
 (defn is-paired
   [value]
-  (is-even (size value)))
+  (is-even (len value)))
 
 (defn inc
   [value]

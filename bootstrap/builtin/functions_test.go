@@ -14,12 +14,12 @@ import (
 
 func interfaceErr(concrete, intf, method string) error {
 	err := "interface conversion: %s is not %s: missing method %s"
-	return fmt.Errorf(fmt.Sprintf(err, concrete, intf, method))
+	return fmt.Errorf(err, concrete, intf, method)
 }
 
 func typeErr(concrete, expected string) error {
 	err := "interface conversion: data.Value is %s, not %s"
-	return fmt.Errorf(fmt.Sprintf(err, concrete, expected))
+	return fmt.Errorf(err, concrete, expected)
 }
 
 func getCall(v data.Value) data.Call {

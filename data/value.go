@@ -33,9 +33,9 @@ type (
 		Name() Name
 	}
 
-	// Sized interfaces allow a Value to return a count of its items
-	Sized interface {
-		Size() int
+	// Counted interfaces allow a Value to return a count of its items
+	Counted interface {
+		Count() int
 	}
 
 	// Mapped is the interface for values that have retrievable properties

@@ -4,26 +4,49 @@
   [& body]
   `(lazy-seq* (fn [] ~@body)))
 
-(defmacro to-assoc
+(defn to-assoc
   [& seqs]
-  `(apply assoc (concat ~@seqs)))
+  (apply assoc (apply concat seqs)))
 
-(defmacro to-list
+(defn to-list
   [& seqs]
-  `(apply list (concat ~@seqs)))
+  (apply list (apply concat seqs)))
 
-(defmacro to-vector
+(defn to-vector
   [& seqs]
-  `(apply vector (concat ~@seqs)))
+  (apply vector (apply concat seqs)))
 
-(defn len
+(defn append* [coll & values]
+  (assert-args
+   (append? coll) "coll must be capable of appending")
+  ((fn append' [coll values]
+     (if (seq values)
+       (append' (append coll (first values)) (rest values))
+       coll))
+   coll values))
+
+(defn prepend* [coll & values]
+  (assert-args
+   (seq? coll) "coll must be a sequence")
+  ((fn prepend' [coll values]
+     (if (seq values)
+       (prepend' (cons (first values) coll) (rest values))
+       coll))
+   coll values))
+
+(defn conj [coll & values]
+  (if (append? coll)
+    (apply append* (cons coll values))
+    (apply prepend* (cons coll values))))
+
+(defn len!
   [coll]
   (assert-args
    (seq? coll) "coll must be a sequence")
   ((fn len'
      [coll prev]
-     (if (sized? coll)
-       (+ prev (size coll))
+     (if (counted? coll)
+       (+ prev (len coll))
        (if (seq coll)
          (len' (rest coll) (inc prev))
          prev)))
@@ -32,13 +55,22 @@
 (defn last
   [coll]
   (assert-args
+   (counted? coll) "coll must be counted"
+   (indexed? coll) "call must be indexed")
+  (let [s (len coll)]
+    (when (> s 0)
+      (nth coll (dec (len coll))))))
+
+(defn last!
+  [coll]
+  (assert-args
    (seq? coll) "coll must be a sequence")
   ((fn last'
      [coll prev]
-     (if (and (sized? coll) (indexed? coll))
-       (let [s (size coll)]
+     (if (and (counted? coll) (indexed? coll))
+       (let [s (len coll)]
          (if (> s 0)
-           (nth coll (dec (size coll)))
+           (nth coll (dec (len coll)))
            prev))
        (if (seq coll)
          (let [f (first coll)
@@ -46,6 +78,16 @@
            (last' r f))
          prev)))
    coll nil))
+
+(defn reverse!
+  [coll]
+  (if (is-reversible coll)
+    (reverse coll)
+    ((fn reverse' [coll target]
+       (if (seq coll)
+         (reverse' (rest coll) (cons (first coll) target))
+         target))
+     coll ())))
 
 (defn take
   [count coll]

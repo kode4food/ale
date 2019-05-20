@@ -30,8 +30,8 @@ func TestVectorEval(t *testing.T) {
 	as.EvalTo(`(!vector? [])`, data.False)
 	as.EvalTo(`(!vector? 99)`, data.True)
 
-	as.EvalTo(`(sized? [1 2 3])`, data.True)
-	as.EvalTo(`(sized? 99)`, data.False)
+	as.EvalTo(`(counted? [1 2 3])`, data.True)
+	as.EvalTo(`(counted? 99)`, data.False)
 	as.EvalTo(`(indexed? [1 2 3])`, data.True)
 	as.EvalTo(`(indexed? 99)`, data.False)
 
