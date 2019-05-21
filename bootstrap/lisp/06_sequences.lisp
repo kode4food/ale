@@ -106,6 +106,11 @@
         coll))
     count coll)))
 
+(defn for-each' [func coll]
+  (when (seq coll)
+    (do (func (first coll))
+        (for-each' func (rest coll)))))
+
 (defmacro for-each
   [seq-exprs & body]
   (assert-args
@@ -115,9 +120,9 @@
         seq#  (seq-exprs 1)]
     (if (> (len seq-exprs) 2)
       (let [rest# (rest (rest seq-exprs))]
-        `(for-each* ~seq# (fn [~name#] (for-each ~rest# ~@body))))
-      `(for-each* ~seq# (fn [~name#] ~@body)))))
-
+        `(for-each' (fn [~name#] (for-each ~rest# ~@body)) ~seq#))
+      `(for-each' (fn [~name#] ~@body) ~seq#))))
+ 
 (defmacro for
   [seq-exprs & body]
   `(generate

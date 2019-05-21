@@ -23,7 +23,6 @@
 (def-builtin eq)
 (def-builtin filter)
 (def-builtin first)
-(def-builtin for-each*)
 (def-builtin gensym)
 (def-builtin get)
 (def-builtin go*)

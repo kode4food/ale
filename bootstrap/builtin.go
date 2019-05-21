@@ -111,7 +111,6 @@ func (b *bootstrap) availableFunctions() {
 	b.applicative("eq", builtin.IsIdentical, 1, orMore)
 	b.applicative("filter", builtin.Filter, 2)
 	b.applicative("first", builtin.First, 1)
-	b.applicative("for-each*", builtin.ForEach, 2)
 	b.applicative("gensym", builtin.GenSym, 0, 1)
 	b.applicative("get", builtin.Get, 2)
 	b.applicative("go*", builtin.Go, 1)

@@ -65,13 +65,3 @@ func Reduce(args ...data.Value) data.Value {
 	s := args[2].(data.Sequence).Prepend(args[1])
 	return stdlib.Reduce(s, fn.Caller())
 }
-
-// ForEach calls a function for each element of the provided sequence
-func ForEach(args ...data.Value) data.Value {
-	seq := args[0].(data.Sequence)
-	fn := args[1].(data.Caller).Caller()
-	for f, r, ok := seq.Split(); ok; f, r, ok = r.Split() {
-		fn(f)
-	}
-	return data.Nil
-}
