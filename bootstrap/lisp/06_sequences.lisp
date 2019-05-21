@@ -17,8 +17,6 @@
   (apply vector (apply concat seqs)))
 
 (defn append* [coll & values]
-  (assert-args
-   (append? coll) "coll must be capable of appending")
   ((fn append' [coll values]
      (if (seq values)
        (append' (append coll (first values)) (rest values))
@@ -26,8 +24,6 @@
    coll values))
 
 (defn prepend* [coll & values]
-  (assert-args
-   (seq? coll) "coll must be a sequence")
   ((fn prepend' [coll values]
      (if (seq values)
        (prepend' (cons (first values) coll) (rest values))
@@ -41,8 +37,6 @@
 
 (defn len!
   [coll]
-  (assert-args
-   (seq? coll) "coll must be a sequence")
   ((fn len'
      [coll prev]
      (if (counted? coll)
@@ -54,17 +48,12 @@
 
 (defn last
   [coll]
-  (assert-args
-   (counted? coll) "coll must be counted"
-   (indexed? coll) "call must be indexed")
   (let [s (len coll)]
     (when (> s 0)
       (nth coll (dec (len coll))))))
 
 (defn last!
   [coll]
-  (assert-args
-   (seq? coll) "coll must be a sequence")
   ((fn last'
      [coll prev]
      (if (and (counted? coll) (indexed? coll))
@@ -91,15 +80,12 @@
 
 (defn take
   [count coll]
-  (assert-args
-   (= (mod count 1) 0) "count must be an integer"
-   (seq? coll)         "coll must be a sequence")
   ((fn take'
      [count coll]
      (lazy-seq
-      (when-let [s (and (> count 0) (seq coll))]
-        (cons (first s)
-              (take' (dec count) (rest s))))))
+      (if (and (> count 0) (!empty? coll))
+        (cons (first coll) (take' (dec count) (rest coll)))
+        ())))
    count coll))
 
 (defn take-while
@@ -112,16 +98,12 @@
 
 (defn drop
   [count coll]
-  (assert-args
-   (= (mod count 1) 0) "count must be an integer"
-   (seq? coll)         "coll must be a sequence")
   (lazy-seq
    ((fn drop'
       [count coll]
-      (let [s (seq coll)]
-        (if (and s (> count 0))
-          (drop' (dec count) (rest s))
-          s)))
+      (if (> count 0)
+        (drop' (dec count) (rest coll))
+        coll))
     count coll)))
 
 (defmacro for-each

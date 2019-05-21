@@ -83,9 +83,10 @@ func TestLastEval(t *testing.T) {
 		(last! (take 10000 (range 1 1000000000 2)))
 	`, I(19999))
 
-	as.EvalRaises(`
+	err := interfaceErr("*stdlib.lazySequence", "data.CountedSequence", "Count")
+	as.PanicWith(`
 		(last (take 10000 (range 1 1000000000)))
-	`, "coll must be counted")
+	`, err)
 }
 
 func TestReverse(t *testing.T) {
