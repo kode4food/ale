@@ -13,10 +13,6 @@
   [& clauses]
   (raise (apply assoc clauses)))
 
-(defn panic
-  [& clauses]
-  (raise (apply error clauses)))
-
 (defmacro !eq
   [value & comps]
   `(not (eq ~value ~@comps)))

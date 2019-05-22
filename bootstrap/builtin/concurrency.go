@@ -29,8 +29,12 @@ func Go(args ...data.Value) data.Value {
 }
 
 // Chan instantiates a new go channel
-func Chan(_ ...data.Value) data.Value {
-	e, s := stdlib.NewChannel()
+func Chan(args ...data.Value) data.Value {
+	var size int
+	if len(args) != 0 {
+		size = int(args[0].(data.Integer))
+	}
+	e, s := stdlib.NewChannel(size)
 
 	return channelPrototype.Extend(data.Object{
 		EmitKey:     bindWriter(e),
@@ -53,4 +57,10 @@ func Promise(args ...data.Value) data.Value {
 func IsPromise(args ...data.Value) data.Value {
 	_, ok := args[0].(stdlib.Promise)
 	return data.Bool(ok)
+}
+
+// IsDelivered returns whether or not the specified promise has been delivered
+func IsDelivered(args ...data.Value) data.Value {
+	p := args[0].(stdlib.Promise)
+	return data.Bool(p.IsDelivered())
 }

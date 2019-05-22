@@ -3,10 +3,10 @@ title: "chan"
 date: 2019-04-06T12:19:22+02:00
 description: "creates a unidirectional channel"
 names: ["chan"]
-usage: "(chan)"
+usage: "(chan size?)"
 tags: ["concurrency"]
 ---
-A channel is a data structure that is used to generate a lazy sequence of values. The result is a hash-map consisting of an `emit` function, a `close` function, and a sequence. Retrieving an element from the sequence *may block*, waiting for the next value to be emitted or for the channel to be closed. Emitting a value to a channel will also block until the buffer is flushed as a result of iterating over the sequence.
+A channel is a data structure that is used to generate a lazy sequence of values. The result is a hash-map consisting of an `emit` function, a `close` function, and a sequence. Depending on the size of the channel's buffer, retrieving an element from the sequence *may block*, waiting for the next value to be emitted or for the channel to be closed. Emitting a value to a channel will also block until the buffer is flushed as a result of iterating over the sequence.
 
 #### Channel Keys
 
@@ -25,12 +25,4 @@ A channel is a data structure that is used to generate a lazy sequence of values
       (. ch :close))
 
   (to-vector (:seq ch)))
-```
-
-Channels represent the low-level underpinnings of the `generate` function, which is in most cases the preferred way to generate lazy sequences. The example above could be rewritten:
-
-```clojure
-(to-vector (generate
-  (emit "foo")
-  (emit "bar")))
 ```

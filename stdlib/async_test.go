@@ -14,7 +14,7 @@ import (
 func TestChannel(t *testing.T) {
 	as := assert.New(t)
 
-	e, seq := stdlib.NewChannel()
+	e, seq := stdlib.NewChannel(0)
 	seq = seq.Prepend(F(1))
 	as.Contains(":type channel-emitter", e)
 	as.Contains(":type channel-sequence", seq)

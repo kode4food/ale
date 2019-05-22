@@ -21,6 +21,7 @@ type (
 	Promise interface {
 		data.Value
 		Deliver(data.Value) data.Value
+		IsDelivered() bool
 		Resolve() data.Value
 	}
 
@@ -75,8 +76,8 @@ func (ch *channelWrapper) Close() {
 }
 
 // NewChannel produces a Emitter and Sequence pair
-func NewChannel() (Emitter, data.Sequence) {
-	seq := make(chan channelResult, 0)
+func NewChannel(size int) (Emitter, data.Sequence) {
+	seq := make(chan channelResult, size)
 	ch := &channelWrapper{
 		seq:    seq,
 		status: channelReady,
@@ -245,6 +246,10 @@ func (p *promise) Deliver(v data.Value) data.Value {
 	p.delivered = true
 	cond.Broadcast()
 	return v
+}
+
+func (p *promise) IsDelivered() bool {
+	return p.delivered
 }
 
 func (p *promise) Type() data.Name {
