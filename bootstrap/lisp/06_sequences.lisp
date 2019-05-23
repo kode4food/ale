@@ -129,55 +129,57 @@
        (cons first (lazy-seq (range (+ first step) last step)))
        []))))
 
-(defn cp-rotate-row [row orig-row]
-  (if (seq row)
-    (let [res (rest row)]
-      (if (seq res)
-        [false res]
-        [true orig-row]))
-    [true orig-row]))
-
-(defn cp-rotate-rest [rest orig]
-  (let [f (first rest) fo (first orig)
-        r (rest rest)  ro (rest orig)]
-    (if (seq r)
-      (let [res (cp-rotate-rest r ro)]
-        (if (res 0)
-          (let [rr (cp-rotate-row f fo)]
-            [(rr 0) (cons (rr 1) (res 1))])
-          [false (cons f (res 1))]))
-      (let [res (cp-rotate-row f fo)]
-        [(res 0) (list (res 1))]))))
-
-(defn cp-rotate [work orig]
-  (let [res (cp-rotate-rest work orig)]
-    (unless (res 0) (res 1))))
-
 (defn cartesian-product
   [& seqs]
-  ((fn iter [work]
-     (lazy-seq
-      (let [f (to-vector (map first work))
-            r (cp-rotate work seqs)]
-        (if r
-          (cons f (iter r))
-          (list f)))))
-   seqs))
+  (let [rotate-row
+        (fn rotate-row [row orig-row]
+          (if (seq row)
+            (let [res (rest row)]
+              (if (seq res)
+                [false res]
+                [true orig-row]))
+            [true orig-row]))
 
-(defn for-seq-exprs
-  ([name seq]
-   [[name] [seq]])
-  ([name seq & rest]
-   (let [res (apply for-seq-exprs rest)]
-     [(cons name (res 0))
-      (cons seq (res 1))])))
+        rotate-rest
+        (fn rotate-rest [rest orig]
+          (let [f (first rest) fo (first orig)
+                r (rest rest)  ro (rest orig)]
+            (if (seq r)
+              (let [res (rotate-rest r ro)]
+                (if (res 0)
+                  (let [rr (rotate-row f fo)]
+                    [(rr 0) (cons (rr 1) (res 1))])
+                  [false (cons f (res 1))]))
+              (let [res (rotate-row f fo)]
+                [(res 0) (list (res 1))]))))
+
+        rotate
+        (fn rotate [work orig]
+          (let [res (rotate-rest work orig)]
+            (unless (res 0) (res 1))))]
+    ((fn iter [work]
+       (lazy-seq
+        (let [f (to-vector (map first work))
+              r (rotate work seqs)]
+          (if r
+            (cons f (iter r))
+            (list f)))))
+     seqs)))
 
 (defmacro for
   [seq-exprs & body]
   (assert-args
    (vector? seq-exprs) "for-each bindings must be a vector"
    (paired? seq-exprs) "for-each bindings must be paired")
-  (let [split (apply for-seq-exprs seq-exprs)
+  (let [for-seq-exprs
+        (fn for-seq-exprs
+          ([name seq]
+           [[name] [seq]])
+          ([name seq & rest]
+           (let [res (apply for-seq-exprs rest)]
+             [(cons name (res 0))
+              (cons seq (res 1))])))
+        split (apply for-seq-exprs seq-exprs)
         names# (split 0)
         seqs#  (split 1)]
     `(map
