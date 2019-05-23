@@ -171,16 +171,16 @@
   (assert-args
    (vector? seq-exprs) "for-each bindings must be a vector"
    (paired? seq-exprs) "for-each bindings must be paired")
-  (let [for-seq-exprs
-        (fn for-seq-exprs
+  (let [split-bindings
+        (fn split-bindings
           ([name seq]
-           [[name] [seq]])
+           [(list name) (list seq)])
           ([name seq & rest]
-           (let [res (apply for-seq-exprs rest)]
+           (let [res (apply split-bindings rest)]
              [(cons name (res 0))
               (cons seq (res 1))])))
-        split (apply for-seq-exprs seq-exprs)
-        names# (split 0)
+        split (apply split-bindings seq-exprs)
+        names# (to-vector (split 0))
         seqs#  (split 1)]
     `(map
       (fn [args] (apply (fn ~names# ~@body) args))
