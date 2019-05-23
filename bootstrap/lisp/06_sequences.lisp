@@ -105,26 +105,6 @@
         (drop' (dec count) (rest coll))
         coll))
     count coll)))
-(defn for-each' [func coll]
-  (when (seq coll)
-    (do (func (first coll))
-        (for-each' func (rest coll)))))
-(defmacro for-each
-  [seq-exprs & body]
-  (assert-args
-   (vector? seq-exprs) "for-each bindings must be a vector"
-   (paired? seq-exprs) "for-each bindings must be paired")
-  (let [name# (seq-exprs 0)
-        seq#  (seq-exprs 1)]
-    (if (> (len seq-exprs) 2)
-      (let [rest# (rest (rest seq-exprs))]
-        `(for-each' (fn [~name#] (for-each ~rest# ~@body)) ~seq#))
-      `(for-each' (fn [~name#] ~@body) ~seq#))))
-
-(defmacro for
-  [seq-exprs & body]
-  `(generate
-    (for-each ~seq-exprs (emit (do ~@body)))))
 
 (defn partition
   ([count coll] (partition count count coll))
@@ -148,3 +128,62 @@
      (if (cmp first last)
        (cons first (lazy-seq (range (+ first step) last step)))
        []))))
+
+(defn cp-rotate-row [row orig-row]
+  (if (seq row)
+    (let [res (rest row)]
+      (if (seq res)
+        [false res]
+        [true orig-row]))
+    [true orig-row]))
+
+(defn cp-rotate-rest [rest orig]
+  (let [f (first rest) fo (first orig)
+        r (rest rest)  ro (rest orig)]
+    (if (seq r)
+      (let [res (cp-rotate-rest r ro)]
+        (if (res 0)
+          (let [rr (cp-rotate-row f fo)]
+            [(rr 0) (cons (rr 1) (res 1))])
+          [false (cons f (res 1))]))
+      (let [res (cp-rotate-row f fo)]
+        [(res 0) (list (res 1))]))))
+
+(defn cp-rotate [work orig]
+  (let [res (cp-rotate-rest work orig)]
+    (unless (res 0) (res 1))))
+
+(defn cartesian-product
+  [& seqs]
+  ((fn iter [work]
+     (lazy-seq
+      (let [f (to-vector (map first work))
+            r (cp-rotate work seqs)]
+        (if r
+          (cons f (iter r))
+          (list f)))))
+   seqs))
+
+(defn for-seq-exprs
+  ([name seq]
+   [[name] [seq]])
+  ([name seq & rest]
+   (let [res (apply for-seq-exprs rest)]
+     [(cons name (res 0))
+      (cons seq (res 1))])))
+
+(defmacro for
+  [seq-exprs & body]
+  (assert-args
+   (vector? seq-exprs) "for-each bindings must be a vector"
+   (paired? seq-exprs) "for-each bindings must be paired")
+  (let [split (apply for-seq-exprs seq-exprs)
+        names# (split 0)
+        seqs#  (split 1)]
+    `(map
+      (fn [args] (apply (fn ~names# ~@body) args))
+      (cartesian-product ~@seqs#))))
+
+(defmacro for-each
+  [seq-exprs & body]
+  `(last! (for ~seq-exprs ~@body)))
