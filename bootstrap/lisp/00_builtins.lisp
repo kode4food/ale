@@ -29,7 +29,6 @@
 (def-builtin lazy-seq*)
 (def-builtin len)
 (def-builtin list)
-(def-builtin map)
 (def-builtin mod)
 (def-builtin nth)
 (def-builtin promise)

@@ -29,6 +29,14 @@
   [value]
   (is-even (len value)))
 
+(defn is-true
+  [value]
+  (if value true false))
+
+(defn is-false
+  [value]
+  (if value false true))
+
 (defn inc
   [value]
   (+ value 1))

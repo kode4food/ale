@@ -9,59 +9,6 @@ import (
 	"gitlab.com/kode4food/ale/stdlib"
 )
 
-func TestMap(t *testing.T) {
-	as := assert.New(t)
-
-	concatTest := func(args ...data.Value) data.Value {
-		return S("this is the " + string(args[0].(data.String)))
-	}
-
-	l := L(S("first"), S("middle"), S("last"))
-	w := stdlib.Map(l, concatTest)
-
-	v1 := w.First()
-	as.String("this is the first", v1)
-
-	v2 := w.Rest().First()
-	as.String("this is the middle", v2)
-
-	v3 := w.Rest().Rest().First()
-	as.String("this is the last", v3)
-
-	r1 := w.Rest().Rest().Rest()
-	as.True(r1.IsEmpty())
-
-	p1 := w.Prepend(S("not mapped"))
-	p2 := p1.Prepend(S("also not mapped"))
-	v4 := p1.First()
-	r2 := p1.Rest()
-
-	as.String("not mapped", v4)
-	as.Equal(w.First(), r2.First())
-	as.String("also not mapped", p2.First())
-}
-
-func TestMapParallel(t *testing.T) {
-	as := assert.New(t)
-
-	addTest := func(args ...data.Value) data.Value {
-		return args[0].(data.Integer) + args[1].(data.Integer)
-	}
-
-	s1 := L(I(1), I(2), I(3), I(4))
-	s2 := V(I(5), I(10), I(15), I(20), I(30))
-
-	w := stdlib.MapParallel(V(s1, s2), addTest)
-
-	as.Number(6, w.First())
-	as.Number(12, w.Rest().First())
-	as.Number(18, w.Rest().Rest().First())
-	as.Number(24, w.Rest().Rest().Rest().First())
-
-	s3 := w.Rest().Rest().Rest().Rest()
-	as.True(s3.IsEmpty())
-}
-
 func TestFilter(t *testing.T) {
 	as := assert.New(t)
 
@@ -88,7 +35,7 @@ func TestFilter(t *testing.T) {
 	as.Equal(w.First(), r2.First())
 }
 
-func TestFilteredAndMapped(t *testing.T) {
+func TestFiltered(t *testing.T) {
 	as := assert.New(t)
 
 	l := L(S("first"), S("middle"), S("last"))
@@ -96,19 +43,13 @@ func TestFilteredAndMapped(t *testing.T) {
 		return B(string(args[0].(data.String)) != "middle")
 	}
 	w1 := stdlib.Filter(l, fn1)
+	v1 := w1.First()
+	as.String("first", v1)
 
-	fn2 := func(args ...data.Value) data.Value {
-		return S("this is the " + string(args[0].(data.String)))
-	}
-	w2 := stdlib.Map(w1, fn2)
+	v2 := w1.Rest().First()
+	as.String("last", v2)
 
-	v1 := w2.First()
-	as.String("this is the first", v1)
-
-	v2 := w2.Rest().First()
-	as.String("this is the last", v2)
-
-	r1 := w2.Rest().Rest()
+	r1 := w1.Rest().Rest()
 	as.True(r1.IsEmpty())
 }
 

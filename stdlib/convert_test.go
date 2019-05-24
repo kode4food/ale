@@ -33,21 +33,21 @@ func TestSequenceConversions(t *testing.T) {
 	as.Identical(s1, s2)
 }
 
-func identity(args ...data.Value) data.Value {
-	return args[0]
+func alwaysTrue(_ ...data.Value) data.Value {
+	return data.True
 }
 
 func TestUncountedConversions(t *testing.T) {
 	as := assert.New(t)
-	l1 := stdlib.Map(L(S("hello"), S("there")), identity)
+	l1 := stdlib.Filter(L(S("hello"), S("there")), alwaysTrue)
 	v1 := stdlib.SequenceToVector(l1)
 	v2 := stdlib.SequenceToVector(v1)
-	l2 := stdlib.SequenceToList(stdlib.Map(v2, identity))
+	l2 := stdlib.SequenceToList(stdlib.Filter(v2, alwaysTrue))
 	l3 := stdlib.SequenceToList(l2)
-	a1 := stdlib.SequenceToAssociative(stdlib.Map(l3, identity))
+	a1 := stdlib.SequenceToAssociative(stdlib.Filter(l3, alwaysTrue))
 	a2 := stdlib.SequenceToAssociative(a1)
 
-	l4 := stdlib.Map(L(S("hello"), data.Nil, S("there"), v1), identity)
+	l4 := stdlib.Filter(L(S("hello"), data.Nil, S("there"), v1), alwaysTrue)
 	s1 := stdlib.SequenceToStr(l4)
 
 	as.String(`["hello" "there"]`, v1)
@@ -70,7 +70,7 @@ func TestAssocConvertError(t *testing.T) {
 func TestUncountedAssocConvertError(t *testing.T) {
 	as := assert.New(t)
 
-	v1 := stdlib.Map(V(K("boom")), identity)
+	v1 := stdlib.Filter(V(K("boom")), alwaysTrue)
 	defer as.ExpectPanic(data.MapNotPaired)
 	stdlib.SequenceToAssociative(v1)
 }

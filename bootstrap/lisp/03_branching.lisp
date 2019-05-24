@@ -1,8 +1,6 @@
 ;;;; ale bootstrap: branching
 
-(defmacro not
-  [val]
-  `(if ~val false true))
+(def not is-false)
 
 (defmacro unless
   ([test] nil)

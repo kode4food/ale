@@ -44,17 +44,6 @@ func Filter(args ...data.Value) data.Value {
 	return stdlib.Filter(s, fn.Caller())
 }
 
-// Map creates a lazy sequence that maps the provide sequence
-func Map(args ...data.Value) data.Value {
-	fn := args[0].(data.Caller)
-	if len(args) == 2 {
-		s := args[1].(data.Sequence)
-		return stdlib.Map(s, fn.Caller())
-	}
-	v := data.NewVector(args[1:]...)
-	return stdlib.MapParallel(v, fn.Caller())
-}
-
 // Reduce consumes the provided sequence, aggregating its values in some way
 func Reduce(args ...data.Value) data.Value {
 	fn := args[0].(data.Caller)

@@ -5,16 +5,16 @@
   `(lazy-seq* (fn [] ~@body)))
 
 (defn to-assoc
-  [& seqs]
-  (apply assoc (apply concat seqs)))
+  [& colls]
+  (apply assoc (apply concat colls)))
 
 (defn to-list
-  [& seqs]
-  (apply list (apply concat seqs)))
+  [& colls]
+  (apply list (apply concat colls)))
 
 (defn to-vector
-  [& seqs]
-  (apply vector (apply concat seqs)))
+  [& colls]
+  (apply vector (apply concat colls)))
 
 (defn append* [coll & values]
   ((fn append' [coll values]
@@ -107,7 +107,9 @@
     count coll)))
 
 (defn partition
-  ([count coll] (partition count count coll))
+  ([count coll]
+   (partition count count coll))
+  
   ([count step coll]
    (lazy-seq
     (when (seq? coll)
@@ -115,12 +117,17 @@
             (partition count step (drop step coll)))))))
 
 (defn range
-  ([]     (range 0 nil 1))
-  ([last] (range 0 last (if (> last 0) 1 -1)))
+  ([]
+   (range 0 nil 1))
+  
+  ([last]
+   (range 0 last (if (> last 0) 1 -1)))
+  
   ([first last]
    (if (> last first)
      (range first last 1)
      (range last first -1)))
+  
   ([first last step]
    (let [cmp (cond (nil? last) (constantly true)
                    (< step 0)  >
@@ -129,8 +136,26 @@
        (cons first (lazy-seq (range (+ first step) last step)))
        []))))
 
+(defn map
+  ([func coll]
+   ((fn map' [coll]
+      (lazy-seq
+       (when (seq coll)
+         (cons (func (first coll))
+               (map' (rest coll))))))
+    coll))
+  
+  ([func coll & colls]
+   ((fn parallel' [colls]
+      (lazy-seq
+       (when (apply true? (map !empty? colls))
+         (let [f (to-vector (map first colls))
+               r (map rest colls)]
+           (cons (apply func f) (parallel' r))))))
+    (cons coll colls))))
+
 (defn cartesian-product
-  [& seqs]
+  [& colls]
   (let [rotate-row
         (fn rotate-row [row orig-row]
           (if (seq row)
@@ -160,34 +185,34 @@
     ((fn iter [work]
        (lazy-seq
         (let [f (to-vector (map first work))
-              r (rotate work seqs)]
+              r (rotate work colls)]
           (if r
             (cons f (iter r))
             (list f)))))
-     seqs)))
+     colls)))
 
 (defmacro for
   [seq-exprs & body]
   (assert-args
    (vector? seq-exprs) "for-each bindings must be a vector"
    (paired? seq-exprs) "for-each bindings must be paired")
-  (let [args# (gensym "args")
+  (let [args (gensym "args")
 
         split-bindings
         (fn split-bindings
-          ([idx name seq]
-           [(list name (list args# idx))
-            (list seq)])
-          ([idx name seq & rest]
+          ([idx name coll]
+           [(list name (list args idx))
+            (list coll)])
+          ([idx name coll & rest]
            (let [res (apply split-bindings (cons (inc idx) rest))]
-             [(cons* (res 0) (list args# idx) name)
-              (cons seq (res 1))])))
+             [(cons* (res 0) (list args idx) name)
+              (cons coll (res 1))])))
 
         split (apply split-bindings (cons 0 seq-exprs))
         bind# (to-vector (split 0))
         seqs# (split 1)]
     `(map
-      (fn [~args#] (let ~bind# ~@body))
+      (fn [~args] (let ~bind# ~@body))
       (cartesian-product ~@seqs#))))
 
 (defmacro for-each

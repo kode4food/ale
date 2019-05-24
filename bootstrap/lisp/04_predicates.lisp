@@ -53,3 +53,6 @@
 (def-predicate is-str "str")
 (def-predicate is-symbol "symbol")
 (def-predicate is-vector "vector")
+(def-predicate is-true "true")
+(def-predicate is-false "false")
+

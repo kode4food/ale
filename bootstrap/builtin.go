@@ -143,7 +143,6 @@ func (b *bootstrap) availableFunctions() {
 	b.applicative("lazy-seq*", builtin.LazySequence, 1)
 	b.applicative("len", builtin.Len, 1)
 	b.applicative("list", builtin.List)
-	b.applicative("map", builtin.Map, 2, orMore)
 	b.applicative("mod", builtin.Mod, 1, orMore)
 	b.applicative("nth", builtin.Nth, 2)
 	b.applicative("promise", builtin.Promise, 0, 1)

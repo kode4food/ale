@@ -6,7 +6,6 @@ import (
 	"gitlab.com/kode4food/ale/data"
 	"gitlab.com/kode4food/ale/internal/assert"
 	. "gitlab.com/kode4food/ale/internal/assert/helpers"
-	"gitlab.com/kode4food/ale/stdlib"
 )
 
 type ncSeq struct{}
@@ -48,18 +47,5 @@ func TestLastOfSequence(t *testing.T) {
 
 	v, ok = data.Last(V(S("this"), S("is"), S("last")))
 	as.String("last", v)
-	as.True(ok)
-}
-
-func TestLazyLastOfSequence(t *testing.T) {
-	as := assert.New(t)
-
-	v1 := V(I(1), I(2), I(3))
-	l1 := stdlib.Map(v1, func(args ...data.Value) data.Value {
-		return args[0].(data.Integer) * 2
-	})
-
-	v, ok := data.Last(l1)
-	as.Number(6, v)
 	as.True(ok)
 }
