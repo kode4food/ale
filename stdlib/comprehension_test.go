@@ -66,15 +66,3 @@ func TestConcat(t *testing.T) {
 	expect := `("first" "middle" "last" 1 2 3 "blah1" "blah2" "blah3")`
 	as.String(expect, data.MakeSequenceStr(w1))
 }
-
-func TestReduce(t *testing.T) {
-	as := assert.New(t)
-
-	add := func(args ...data.Value) data.Value {
-		return args[0].(data.Integer) + args[1].(data.Integer)
-	}
-
-	as.Number(30, stdlib.Reduce(V(I(10), I(20)), add))
-	as.Number(60, stdlib.Reduce(V(I(10), I(20), I(30)), add))
-	as.Number(100, stdlib.Reduce(V(I(10), I(20), I(30), I(40)), add))
-}

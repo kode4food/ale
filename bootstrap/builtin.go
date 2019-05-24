@@ -148,7 +148,6 @@ func (b *bootstrap) availableFunctions() {
 	b.applicative("raise", builtin.Raise, 1)
 	b.applicative("read", builtin.Read, 1)
 	b.applicative("recover", builtin.Recover, 2)
-	b.applicative("reduce", builtin.Reduce, 2, 3)
 	b.applicative("rest", builtin.Rest, 1)
 	b.applicative("reverse", builtin.Reverse, 1)
 	b.applicative("seq", builtin.Seq, 1)

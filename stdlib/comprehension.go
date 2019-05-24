@@ -37,21 +37,3 @@ func Concat(s ...data.Value) data.Sequence {
 	}
 	return NewLazySequence(res)
 }
-
-// Reduce performs a reduce operation over a Sequence, starting with the
-// first two elements of that sequence.
-func Reduce(s data.Sequence, reduce data.Call) data.Value {
-	arg1, r, ok := s.Split()
-	if !ok {
-		return reduce()
-	}
-	arg2, r, ok := r.Split()
-	if !ok {
-		return reduce(arg1)
-	}
-	res := reduce(arg1, arg2)
-	for f, r, ok := r.Split(); ok; f, r, ok = r.Split() {
-		res = reduce(res, f)
-	}
-	return res
-}

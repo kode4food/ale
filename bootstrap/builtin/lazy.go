@@ -36,14 +36,3 @@ func Concat(args ...data.Value) data.Value {
 		return stdlib.Concat(args...)
 	}
 }
-
-// Reduce consumes the provided sequence, aggregating its values in some way
-func Reduce(args ...data.Value) data.Value {
-	fn := args[0].(data.Caller)
-	if len(args) == 2 {
-		s := args[1].(data.Sequence)
-		return stdlib.Reduce(s, fn.Caller())
-	}
-	s := args[2].(data.Sequence).Prepend(args[1])
-	return stdlib.Reduce(s, fn.Caller())
-}

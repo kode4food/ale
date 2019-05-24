@@ -136,17 +136,6 @@
        (cons first (lazy-seq (range (+ first step) last step)))
        []))))
 
-(defn filter
-  [func coll]
-  (lazy-seq
-   ((fn filter' [coll]
-      (when (seq coll)
-        (let [f (first coll) r (rest coll)]
-          (if (func f)
-            (cons f (filter func r))
-            (filter' r)))))
-    coll)))
-
 (defn map
   ([func coll]
    ((fn map' [coll]
@@ -164,6 +153,30 @@
                r (map rest colls)]
            (cons (apply func f) (parallel' r))))))
     (cons coll colls))))
+
+(defn filter
+  [func coll]
+  (lazy-seq
+   ((fn filter' [coll]
+      (when (seq coll)
+        (let [f (first coll) r (rest coll)]
+          (if (func f)
+            (cons f (filter func r))
+            (filter' r)))))
+    coll)))
+
+(defn reduce
+  ([func init coll]
+   ((fn reduce' [init coll]
+      (if (seq coll)
+        (reduce' (func init (first coll)) (rest coll))
+        init))
+    init coll))
+
+  ([func coll]
+   (if (seq coll)
+     (reduce func (first coll) (rest coll))
+     (func))))
 
 (defn cartesian-product
   [& colls]
