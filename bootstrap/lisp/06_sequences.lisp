@@ -23,17 +23,17 @@
        coll))
    coll values))
 
-(defn prepend* [coll & values]
-  ((fn prepend' [coll values]
+(defn cons* [coll & values]
+  ((fn cons' [coll values]
      (if (seq values)
-       (prepend' (cons (first values) coll) (rest values))
+       (cons' (cons (first values) coll) (rest values))
        coll))
    coll values))
 
 (defn conj [coll & values]
   (if (append? coll)
     (apply append* (cons coll values))
-    (apply prepend* (cons coll values))))
+    (apply cons* (cons coll values))))
 
 (defn len!
   [coll]
@@ -171,19 +171,23 @@
   (assert-args
    (vector? seq-exprs) "for-each bindings must be a vector"
    (paired? seq-exprs) "for-each bindings must be paired")
-  (let [split-bindings
+  (let [args# (gensym "args")
+
+        split-bindings
         (fn split-bindings
-          ([name seq]
-           [(list name) (list seq)])
-          ([name seq & rest]
-           (let [res (apply split-bindings rest)]
-             [(cons name (res 0))
+          ([idx name seq]
+           [(list name (list args# idx))
+            (list seq)])
+          ([idx name seq & rest]
+           (let [res (apply split-bindings (cons (inc idx) rest))]
+             [(cons* (res 0) (list args# idx) name)
               (cons seq (res 1))])))
-        split (apply split-bindings seq-exprs)
-        names# (to-vector (split 0))
-        seqs#  (split 1)]
+
+        split (apply split-bindings (cons 0 seq-exprs))
+        bind# (to-vector (split 0))
+        seqs# (split 1)]
     `(map
-      (fn [args] (apply (fn ~names# ~@body) args))
+      (fn [~args#] (let ~bind# ~@body))
       (cartesian-product ~@seqs#))))
 
 (defmacro for-each
