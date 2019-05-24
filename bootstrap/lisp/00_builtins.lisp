@@ -21,7 +21,6 @@
 (def-builtin defer)
 (def-builtin deque)
 (def-builtin eq)
-(def-builtin filter)
 (def-builtin first)
 (def-builtin gensym)
 (def-builtin get)

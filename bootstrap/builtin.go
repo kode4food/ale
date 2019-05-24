@@ -109,7 +109,6 @@ func (b *bootstrap) availableFunctions() {
 	b.applicative("defer", builtin.Defer, 2)
 	b.applicative("deque", builtin.Deque)
 	b.applicative("eq", builtin.IsIdentical, 1, orMore)
-	b.applicative("filter", builtin.Filter, 2)
 	b.applicative("first", builtin.First, 1)
 	b.applicative("gensym", builtin.GenSym, 0, 1)
 	b.applicative("get", builtin.Get, 2)

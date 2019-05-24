@@ -37,13 +37,6 @@ func Concat(args ...data.Value) data.Value {
 	}
 }
 
-// Filter creates a lazy sequence that filters the provided sequence
-func Filter(args ...data.Value) data.Value {
-	fn := args[0].(data.Caller)
-	s := args[1].(data.Sequence)
-	return stdlib.Filter(s, fn.Caller())
-}
-
 // Reduce consumes the provided sequence, aggregating its values in some way
 func Reduce(args ...data.Value) data.Value {
 	fn := args[0].(data.Caller)

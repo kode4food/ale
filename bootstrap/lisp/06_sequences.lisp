@@ -109,7 +109,7 @@
 (defn partition
   ([count coll]
    (partition count count coll))
-  
+
   ([count step coll]
    (lazy-seq
     (when (seq? coll)
@@ -119,15 +119,15 @@
 (defn range
   ([]
    (range 0 nil 1))
-  
+
   ([last]
    (range 0 last (if (> last 0) 1 -1)))
-  
+
   ([first last]
    (if (> last first)
      (range first last 1)
      (range last first -1)))
-  
+
   ([first last step]
    (let [cmp (cond (nil? last) (constantly true)
                    (< step 0)  >
@@ -135,6 +135,17 @@
      (if (cmp first last)
        (cons first (lazy-seq (range (+ first step) last step)))
        []))))
+
+(defn filter
+  [func coll]
+  (lazy-seq
+   ((fn filter' [coll]
+      (when (seq coll)
+        (let [f (first coll) r (rest coll)]
+          (if (func f)
+            (cons f (filter func r))
+            (filter' r)))))
+    coll)))
 
 (defn map
   ([func coll]
@@ -144,7 +155,7 @@
          (cons (func (first coll))
                (map' (rest coll))))))
     coll))
-  
+
   ([func coll & colls]
    ((fn parallel' [colls]
       (lazy-seq
