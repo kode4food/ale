@@ -24,15 +24,3 @@ func LazySequence(args ...data.Value) data.Value {
 	resolver := makeLazyResolver(fn.Caller())
 	return stdlib.NewLazySequence(resolver)
 }
-
-// Concat creates a lazy sequence that concatenates the provided sequences
-func Concat(args ...data.Value) data.Value {
-	switch len(args) {
-	case 0:
-		return data.EmptyList
-	case 1:
-		return args[0].(data.Sequence)
-	default:
-		return stdlib.Concat(args...)
-	}
-}

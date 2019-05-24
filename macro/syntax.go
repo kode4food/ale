@@ -25,7 +25,7 @@ var (
 	vectorSym = namespace.RootSymbol("vector")
 	assocSym  = namespace.RootSymbol("assoc")
 	applySym  = namespace.RootSymbol("apply")
-	concatSym = namespace.RootSymbol("concat")
+	concatSym = namespace.RootSymbol("concat!")
 
 	unquoteSym  = namespace.RootSymbol("unquote")
 	splicingSym = namespace.RootSymbol("unquote-splicing")

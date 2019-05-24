@@ -5,6 +5,20 @@
 (def *pos-inf* (/ 1.0 0.0))
 (def *neg-inf* (/ -1.0 0.0))
 
+;; syntax-quoting requires it
+(def concat!
+  (fn concat! [& colls]
+    ((fn concat' [colls head]
+       (if (is-empty colls)
+         (apply list head)
+         (let [f (first colls)
+               r (rest colls)]
+           (if (is-empty f)
+             (concat' r head)
+             (concat' (cons (rest f) r)
+                      (append head (first f)))))))
+     colls [])))
+
 (defmacro defn
   [name & forms]
   `(def ~name (fn ~name ~@forms)))

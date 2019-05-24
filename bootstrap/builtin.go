@@ -103,7 +103,6 @@ func (b *bootstrap) availableFunctions() {
 	b.applicative("apply", builtin.Apply, 2, orMore)
 	b.applicative("assoc", builtin.Assoc)
 	b.applicative("chan", builtin.Chan, 0, 1)
-	b.applicative("concat", builtin.Concat)
 	b.applicative("cons", builtin.Cons, 2)
 	b.applicative("current-time", builtin.CurrentTime, 0)
 	b.applicative("defer", builtin.Defer, 2)

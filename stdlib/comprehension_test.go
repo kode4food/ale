@@ -52,17 +52,3 @@ func TestFiltered(t *testing.T) {
 	r1 := w1.Rest().Rest()
 	as.True(r1.IsEmpty())
 }
-
-func TestConcat(t *testing.T) {
-	as := assert.New(t)
-
-	l1 := L(S("first"), S("middle"), S("last"))
-	l2 := data.EmptyList
-	l3 := V(I(1), I(2), I(3))
-	l4 := L(S("blah1"), S("blah2"), S("blah3"))
-	l5 := data.EmptyList
-
-	w1 := stdlib.Concat(l1, l2, l3, l4, l5)
-	expect := `("first" "middle" "last" 1 2 3 "blah1" "blah2" "blah3")`
-	as.String(expect, data.MakeSequenceStr(w1))
-}

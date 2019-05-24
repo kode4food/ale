@@ -6,15 +6,15 @@
 
 (defn to-assoc
   [& colls]
-  (apply assoc (apply concat colls)))
+  (apply assoc (apply concat! colls)))
 
 (defn to-list
   [& colls]
-  (apply list (apply concat colls)))
+  (apply list (apply concat! colls)))
 
 (defn to-vector
   [& colls]
-  (apply vector (apply concat colls)))
+  (apply vector (apply concat! colls)))
 
 (defn append* [coll & values]
   ((fn append' [coll values]
@@ -242,3 +242,15 @@
 (defmacro for-each
   [seq-exprs & body]
   `(last! (for ~seq-exprs ~@body)))
+
+(defn concat [& colls]
+  ((fn concat' [colls]
+     (lazy-seq
+      (when (seq colls)
+        (let [f (first colls)
+              r (rest colls)]
+          (if (seq f)
+            (cons (first f)
+                  (concat' (cons (rest f) r)))
+            (concat' r))))))
+   colls))

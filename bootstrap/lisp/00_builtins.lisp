@@ -15,7 +15,6 @@
 (def-builtin apply)
 (def-builtin assoc)
 (def-builtin chan)
-(def-builtin concat)
 (def-builtin cons)
 (def-builtin current-time)
 (def-builtin defer)
