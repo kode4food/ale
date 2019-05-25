@@ -1,6 +1,7 @@
 package builtin_test
 
 import (
+	"errors"
 	"testing"
 
 	"gitlab.com/kode4food/ale/data"
@@ -30,6 +31,10 @@ func TestToVectorEval(t *testing.T) {
 	as := assert.New(t)
 	as.EvalTo(`(vector? (to-vector (list 1 2 3)))`, data.True)
 	as.EvalTo(`(counted? [1 2 3 4])`, data.True)
+	as.EvalTo(`(nth [1 2 3 4] 2)`, data.Integer(3))
+	as.EvalTo(`(nth [1 2 3 4] 10 "oops")`, data.String("oops"))
+
+	as.PanicWith(`(nth [1 2 3 4] 10)`, errors.New("index out of bounds"))
 }
 
 func TestToListEval(t *testing.T) {

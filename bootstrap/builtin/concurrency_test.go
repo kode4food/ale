@@ -29,7 +29,7 @@ func TestGo(t *testing.T) {
 func TestChan(t *testing.T) {
 	as := assert.New(t)
 
-	ch := builtin.Chan().(data.Mapped)
+	ch := builtin.Chan(data.Integer(0)).(data.Mapped)
 	emit, ok1 := ch.Get(builtin.EmitKey)
 	closeChan, ok2 := ch.Get(builtin.CloseKey)
 	seq, ok3 := ch.Get(builtin.SequenceKey)
@@ -53,10 +53,13 @@ func TestPromise(t *testing.T) {
 
 	p1 := builtin.Promise(S("with initial"))
 	as.True(builtin.IsPromise(p1))
+	as.True(builtin.IsDelivered(p1))
 	res := getCall(p1)()
 	as.String("with initial", res)
 
 	p2 := builtin.Promise()
+	as.True(builtin.IsPromise(p2))
+	as.False(builtin.IsDelivered(p2))
 	go func() {
 		getCall(p2)(S("no initial"))
 	}()
