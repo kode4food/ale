@@ -1,7 +1,14 @@
 package builtin
 
 import (
+	"errors"
+
 	"gitlab.com/kode4food/ale/data"
+)
+
+// Error messages
+const (
+	IndexOutOfBounds = "index out of bounds"
 )
 
 // Seq attempts to convert the provided value to a sequence, or returns nil
@@ -49,11 +56,17 @@ func Len(args ...data.Value) data.Value {
 	return data.Integer(l)
 }
 
-// Nth returns the nth element of the provided sequence
+// Nth returns the nth element of the provided sequence or a default
 func Nth(args ...data.Value) data.Value {
 	s := args[0].(data.Indexed)
-	res, _ := s.ElementAt(int(args[1].(data.Integer)))
-	return res
+	i := int(args[1].(data.Integer))
+	if res, ok := s.ElementAt(i); ok {
+		return res
+	}
+	if len(args) > 2 {
+		return args[2]
+	}
+	panic(errors.New(IndexOutOfBounds))
 }
 
 // Get returns a value by key from the provided mapped sequence

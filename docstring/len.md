@@ -6,9 +6,9 @@ names: ["len", "len!"]
 usage: "(len seq) (len! seq)"
 tags: ["sequence"]
 ---
-The `len` function will return the number of elements in a sequence. If the sequence is lazily computed, asynchronous, or otherwise incapable of returning a count, this function will raise an error.
+The `len` function will return the number of elements in a sequence.
 
-In order to perform a brute-force count of a sequence, use the `len!` function, keeping in mind that `len!` may never return a result.
+If the sequence is lazily computed, asynchronous, or otherwise incapable of returning a count, this function will raise an error. In order to perform a brute-force count of a sequence, use the `len!` function, keeping in mind that it may never return a result.
 
 #### An Example
 

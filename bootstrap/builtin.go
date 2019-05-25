@@ -142,7 +142,7 @@ func (b *bootstrap) availableFunctions() {
 	b.applicative("len", builtin.Len, 1)
 	b.applicative("list", builtin.List)
 	b.applicative("mod", builtin.Mod, 1, orMore)
-	b.applicative("nth", builtin.Nth, 2)
+	b.applicative("nth", builtin.Nth, 2, 3)
 	b.applicative("promise", builtin.Promise, 0, 1)
 	b.applicative("raise", builtin.Raise, 1)
 	b.applicative("read", builtin.Read, 1)

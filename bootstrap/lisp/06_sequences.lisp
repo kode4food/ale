@@ -46,6 +46,24 @@
          prev)))
    coll 0))
 
+(def nth!
+  (let [scan
+        (fn scan [coll pos handle]
+          (if (seq coll)
+            (if (> pos 0)
+              (scan (rest coll) (dec pos) handle)
+              (first coll))
+            (handle)))]
+    (fn nth!
+      ([coll pos]
+       (if (indexed? coll)
+         (nth coll pos)
+         (scan coll pos (fn [] (raise "index out of bounds")))))
+      ([coll pos default]
+       (if (indexed? coll)
+         (nth coll pos default)
+         (scan coll pos (fn [] default)))))))
+
 (defn last
   [coll]
   (let [s (len coll)]

@@ -2,11 +2,13 @@
 title: "nth"
 date: 2019-04-06T12:19:22+02:00
 description: "retrieves a value by index"
-names: ["nth"]
-usage: "(nth form index default?)"
+names: ["nth", "nth!"]
+usage: "(nth seq index default?) (nth! seq index default?)"
 tags: ["sequence"]
 ---
 Returns the value that can be found at the specified index of its sequence. If the index is out of the bounds of the sequence, then either the default value is returned or an error is raised. Keep in mind that indexes are zero-based.
+
+If the sequence is lazily computed, asynchronous, or otherwise incapable of indexed lookup, this function will raise an error. In order to perform a brute-force lookup, use the `nth!` function, keeping in mind that it may never return a result.
 
 #### An Example
 
