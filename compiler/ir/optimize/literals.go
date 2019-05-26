@@ -6,9 +6,10 @@ import (
 )
 
 var literalReturnMap = map[isa.Opcode]isa.Opcode{
-	isa.True:  isa.RetTrue,
-	isa.False: isa.RetFalse,
-	isa.Nil:   isa.RetNil,
+	isa.EmptyList: isa.RetEmptyList,
+	isa.False:     isa.RetFalse,
+	isa.Nil:       isa.RetNil,
+	isa.True:      isa.RetTrue,
 }
 
 var literalReturnPatterns = [][]isa.Opcode{
@@ -30,7 +31,9 @@ func literalReturns(root visitor.Node) visitor.Node {
 }
 
 func literalReturnMapper(i isa.Instructions) isa.Instructions {
+	oc := i[0].Opcode
+	res := literalReturnMap[oc]
 	return isa.Instructions{
-		isa.New(literalReturnMap[i[0].Opcode]),
+		isa.New(res),
 	}
 }

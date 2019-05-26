@@ -16,6 +16,10 @@ func Literal(e encoder.Type, v data.Value) {
 	case data.Bool:
 		Bool(e, typed)
 	default:
+		if typed == data.EmptyList {
+			EmptyList(e)
+			return
+		}
 		index := e.AddConstant(v)
 		e.Emit(isa.Const, index)
 	}
@@ -50,4 +54,9 @@ func Bool(e encoder.Type, n data.Bool) {
 	} else {
 		e.Emit(isa.False)
 	}
+}
+
+// EmptyList encodes an empty list
+func EmptyList(e encoder.Type) {
+	e.Emit(isa.EmptyList)
 }

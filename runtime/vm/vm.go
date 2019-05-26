@@ -52,6 +52,11 @@ func NewClosure(cfg *Config) data.Call {
 				SP--
 				goto nextPC
 
+			case isa.EmptyList:
+				stack[SP] = data.EmptyList
+				SP--
+				goto nextPC
+
 			case isa.Zero:
 				stack[SP] = data.Integer(0)
 				SP--
@@ -343,6 +348,9 @@ func NewClosure(cfg *Config) data.Call {
 
 			case isa.RetNil:
 				return data.Nil
+
+			case isa.RetEmptyList:
+				return data.EmptyList
 
 			case isa.RetTrue:
 				return data.True

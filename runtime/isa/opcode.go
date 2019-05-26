@@ -8,55 +8,57 @@ const Label Opcode = 256
 
 //go:generate stringer -type=Opcode
 const (
-	Add        Opcode = iota // Addition
-	Arg                      // Retrieve Argument Value
-	ArgLen                   // Retrieve Argument Count
-	Bind                     // Bind Global
-	Call                     // Call Function
-	Call0                    // Zero-Arg Call
-	Call1                    // One-Arg Call
-	Closure                  // Retrieve Closure Value
-	CondJump                 // Conditional Jump
-	Const                    // Retrieve Constant
-	Declare                  // Declare Global
-	Div                      // Division
-	Dup                      // Duplicate Value
-	Eq                       // Numeric Equality
-	False                    // Push False
-	Gt                       // Greater Than
-	Gte                      // Greater or Equal To
-	Jump                     // Absolute Jump
-	Load                     // Retrieve Local Value
-	Lt                       // Less Than Comparison
-	Lte                      // Less or Equal To
-	MakeCall                 // Make Value Callable
-	MakeTruthy               // Make Value Boolean
-	Mod                      // Remainder
-	Mul                      // Multiplication
-	Neg                      // Negation
-	NegInf                   // Push Negative Infinity
-	NegOne                   // Push Negative One
-	Neq                      // Numeric Inequality
-	Nil                      // Push Nil
-	NoOp                     // Non-Operator
-	Not                      // Boolean Negation
-	One                      // Push One
-	Panic                    // Abnormally Halt
-	Pop                      // Discard Value
-	PosInf                   // Positive Infinity
-	Resolve                  // Resolve Global Symbol
-	RestArg                  // Retrieve Arguments Tail
-	Return                   // Return Value
-	RetFalse                 // Return False
-	RetNil                   // Return Nil
-	RetTrue                  // Return True
-	Self                     // Push Current Function
-	Store                    // Store Local
-	Sub                      // Subtraction
-	TailCall                 // Tail Call
-	True                     // Push True
-	Two                      // Push Two
-	Zero                     // Push Zero
+	Add          Opcode = iota // Addition
+	Arg                        // Retrieve Argument Value
+	ArgLen                     // Retrieve Argument Count
+	Bind                       // Bind Global
+	Call                       // Call Function
+	Call0                      // Zero-Arg Call
+	Call1                      // One-Arg Call
+	Closure                    // Retrieve Closure Value
+	CondJump                   // Conditional Jump
+	Const                      // Retrieve Constant
+	Declare                    // Declare Global
+	Div                        // Division
+	Dup                        // Duplicate Value
+	EmptyList                  // Empty List
+	Eq                         // Numeric Equality
+	False                      // Push False
+	Gt                         // Greater Than
+	Gte                        // Greater or Equal To
+	Jump                       // Absolute Jump
+	Load                       // Retrieve Local Value
+	Lt                         // Less Than Comparison
+	Lte                        // Less or Equal To
+	MakeCall                   // Make Value Callable
+	MakeTruthy                 // Make Value Boolean
+	Mod                        // Remainder
+	Mul                        // Multiplication
+	Neg                        // Negation
+	NegInf                     // Push Negative Infinity
+	NegOne                     // Push Negative One
+	Neq                        // Numeric Inequality
+	Nil                        // Push Nil
+	NoOp                       // Non-Operator
+	Not                        // Boolean Negation
+	One                        // Push One
+	Panic                      // Abnormally Halt
+	Pop                        // Discard Value
+	PosInf                     // Positive Infinity
+	Resolve                    // Resolve Global Symbol
+	RestArg                    // Retrieve Arguments Tail
+	Return                     // Return Value
+	RetEmptyList               // Return an Empty List
+	RetFalse                   // Return False
+	RetNil                     // Return Nil
+	RetTrue                    // Return True
+	Self                       // Push Current Function
+	Store                      // Store Local
+	Sub                        // Subtraction
+	TailCall                   // Tail Call
+	True                       // Push True
+	Two                        // Push Two
+	Zero                       // Push Zero
 )
 
 // Word makes Opcode a Coder
