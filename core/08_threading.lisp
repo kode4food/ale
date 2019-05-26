@@ -1,4 +1,4 @@
-;;;; ale bootstrap: threading
+;;;; ale core: threading
 
 (defn thread-to-list
   [target]

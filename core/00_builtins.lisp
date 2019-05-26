@@ -1,4 +1,4 @@
-;;;; ale bootstrap: builtin
+;;;; ale core: builtin
  
 (def-builtin -)
 (def-builtin !=)

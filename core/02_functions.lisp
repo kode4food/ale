@@ -1,4 +1,4 @@
-;;;; ale bootstrap: functions
+;;;; ale core: functions
 
 (defmacro assert-args
   ([] nil)

@@ -1,4 +1,4 @@
-;;;; ale bootstrap: calling
+;;;; ale core: calling
 
 (defn partial
   ([func] func)

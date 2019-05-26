@@ -1,4 +1,4 @@
-;;;; ale bootstrap: predicates
+;;;; ale core: predicates
 
 (defn pred-apply
   [func args]

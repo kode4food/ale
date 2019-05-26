@@ -1,4 +1,4 @@
-;;;; ale bootstrap: exceptions
+;;;; ale core: exceptions
 
 (defn is-call
   [sym clause]

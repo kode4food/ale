@@ -1,4 +1,4 @@
-;;;; ale bootstrap: branching
+;;;; ale core: branching
 
 (def not is-false)
 

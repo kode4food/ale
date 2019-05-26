@@ -1,4 +1,4 @@
-;;;; ale bootstrap: lazy sequences
+;;;; ale core: lazy sequences
 
 (defmacro lazy-seq
   [& body]

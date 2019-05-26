@@ -15,7 +15,7 @@ generate:
 
 assets:
 	go-snapshot -pkg assets -out internal/assets/assets.go \
-		docstring/*.md bootstrap/lisp/*.lisp
+		docstring/*.md core/*.lisp
 
 deps:
 	go get -u gitlab.com/kode4food/go-snapshot

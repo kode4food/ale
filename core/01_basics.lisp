@@ -1,4 +1,4 @@
-;;;; ale bootstrap: basics
+;;;; ale core: basics
 
 (declare *env* *args*)
 

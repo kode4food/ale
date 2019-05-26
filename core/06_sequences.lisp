@@ -1,4 +1,4 @@
-;;;; ale bootstrap: standard sequences
+;;;; ale core: standard sequences
 
 (defn to-assoc
   [& colls]

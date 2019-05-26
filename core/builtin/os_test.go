@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"gitlab.com/kode4food/ale/bootstrap/builtin"
+	"gitlab.com/kode4food/ale/core/builtin"
 	"gitlab.com/kode4food/ale/data"
 	"gitlab.com/kode4food/ale/internal/assert"
 )

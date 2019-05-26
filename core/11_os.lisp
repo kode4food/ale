@@ -1,4 +1,4 @@
-;;;; ale bootstrap: os
+;;;; ale core: os
 
 (defmacro time
   [& forms]

@@ -1,4 +1,4 @@
-;;;; ale bootstrap: concurrency
+;;;; ale core: concurrency
 
 (defmacro go
   [& body]

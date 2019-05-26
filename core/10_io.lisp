@@ -1,4 +1,4 @@
-;;;; ale bootstrap: i/o
+;;;; ale core: i/o
 
 (declare *in* *out* *err*)
 
