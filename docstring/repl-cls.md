@@ -1,7 +1,6 @@
 ---
 title: "cls"
 description: "clears the screen"
-names: ["cls"]
 usage: "(cls)"
 draft: true
 ---

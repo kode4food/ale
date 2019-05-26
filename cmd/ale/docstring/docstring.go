@@ -8,6 +8,11 @@ import (
 	"gitlab.com/kode4food/ale/internal/assets"
 )
 
+// Error messages
+const (
+	DocNotFound = "could not find doc: %s"
+)
+
 const (
 	prefix = "docstring/"
 	names  = data.Name("names")
@@ -22,7 +27,7 @@ func Get(n string) string {
 	if ok {
 		return res
 	}
-	panic(fmt.Errorf("could not find doc: %s", n))
+	panic(fmt.Errorf(DocNotFound, n))
 }
 
 // Exists returns whether or not a specific docstring exists

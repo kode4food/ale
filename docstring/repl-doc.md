@@ -1,7 +1,6 @@
 ---
 title: "doc"
 description: "displays documentation"
-names: ["doc"]
 usage: "(doc form)"
 draft: true
 ---
