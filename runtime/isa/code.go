@@ -38,31 +38,19 @@ const (
 	BadInstructionArgs = "instruction argument mismatch: %s"
 )
 
-// Word makes Index a Coder
+// Word makes Index a Word
 func (i Index) Word() Word {
 	return Word(i)
 }
 
-func (i Index) String() string {
-	return fmt.Sprintf("index(%d)", i)
-}
-
-// Word makes Count a Coder
+// Word makes Count a Word
 func (c Count) Word() Word {
 	return Word(c)
 }
 
-func (c Count) String() string {
-	return fmt.Sprintf("count(%d)", c)
-}
-
-// Word makes Offset a Coder
+// Word makes Offset a Word
 func (o Offset) Word() Word {
 	return Word(o)
-}
-
-func (o Offset) String() string {
-	return fmt.Sprintf("offset(%d)", o)
 }
 
 // New creates a new Instruction instance

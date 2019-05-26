@@ -53,7 +53,8 @@ var (
 	}
 )
 
-func formatMarkdown(s string) string {
+// FormatMarkdown forms a markdown asset for REPL display
+func FormatMarkdown(s string) string {
 	doc := strings.TrimSpace(s)
 	meta, lines := docstring.ParseMarkdown(doc)
 
@@ -145,8 +146,11 @@ func firstFormatterMatch(src string) (formatter, []int, bool) {
 	return format, match, idx != -1
 }
 
-func getFormatWidth() (width int) {
-	return getScreenWidth() - 4
+func getFormatWidth() int {
+	if res := getScreenWidth(); res != -1 {
+		return res - 4
+	}
+	return 76
 }
 
 func wrapLines(s []string) []string {

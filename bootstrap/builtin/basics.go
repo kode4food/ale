@@ -1,14 +1,17 @@
 package builtin
 
 import (
+	"errors"
+
 	"gitlab.com/kode4food/ale/data"
 	"gitlab.com/kode4food/ale/read"
 	"gitlab.com/kode4food/ale/stdlib"
 )
 
-// Raise will cause Go to panic
+// Raise will cause a panic
 func Raise(args ...data.Value) data.Value {
-	panic(args[0])
+	err := args[0].(data.String)
+	panic(errors.New(string(err)))
 }
 
 // Recover invokes a function and runs a recovery function if Go panics
@@ -18,7 +21,8 @@ func Recover(args ...data.Value) (res data.Value) {
 
 	defer func() {
 		if rec := recover(); rec != nil {
-			res = rescue(rec.(data.Value))
+			err := rec.(error).Error()
+			res = rescue(data.String(err))
 		}
 	}()
 

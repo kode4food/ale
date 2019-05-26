@@ -242,7 +242,7 @@ func cls(args ...data.Value) data.Value {
 }
 
 func formatForREPL(s string) string {
-	md := formatMarkdown(s)
+	md := FormatMarkdown(s)
 	lines := strings.Split(md, "\n")
 	var out []string
 	out = append(out, "")

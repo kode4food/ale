@@ -5,20 +5,20 @@ import (
 	"gitlab.com/kode4food/ale/runtime/isa"
 )
 
-type returnRoller struct{}
+type returnSplitter struct{}
 
-func rollReturns(root visitor.Node) visitor.Node {
-	r := &returnRoller{}
+func splitReturns(root visitor.Node) visitor.Node {
+	r := &returnSplitter{}
 	visitor.DepthFirst(root, r)
 	return root
 }
 
-func (*returnRoller) EnterRoot(visitor.Node)            {}
-func (*returnRoller) ExitRoot(visitor.Node)             {}
-func (*returnRoller) EnterBranches(visitor.Branches)    {}
-func (*returnRoller) Instructions(visitor.Instructions) {}
+func (*returnSplitter) EnterRoot(visitor.Node)            {}
+func (*returnSplitter) ExitRoot(visitor.Node)             {}
+func (*returnSplitter) EnterBranches(visitor.Branches)    {}
+func (*returnSplitter) Instructions(visitor.Instructions) {}
 
-func (*returnRoller) ExitBranches(b visitor.Branches) {
+func (*returnSplitter) ExitBranches(b visitor.Branches) {
 	if i, ok := b.Epilogue().(visitor.Instructions); ok {
 		code := i.Code()
 		if len(code) == 1 && code[0].Opcode == isa.Return {

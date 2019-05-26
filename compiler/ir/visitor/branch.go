@@ -135,7 +135,7 @@ func (i *instructions) String() string {
 }
 
 func findLabel(code isa.Instructions, lbl isa.Index) (int, *isa.Instruction) {
-	ic := isa.Word(lbl)
+	ic := lbl.Word()
 	for pc, inst := range code {
 		if inst.Opcode == isa.Label && inst.Args[0] == ic {
 			return pc, inst

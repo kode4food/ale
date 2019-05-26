@@ -8,8 +8,9 @@ import (
 type optimizer func(visitor.Node) visitor.Node
 
 var optimizers = []optimizer{
-	rollReturns,
+	splitReturns,
 	tailCalls,
+	literalReturns,
 }
 
 // Instructions performs optimizations on the provided instructions

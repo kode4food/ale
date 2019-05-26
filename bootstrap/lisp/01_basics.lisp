@@ -23,10 +23,6 @@
   [name & forms]
   `(def ~name (fn ~name ~@forms)))
 
-(defn error
-  [& clauses]
-  (raise (apply assoc clauses)))
-
 (defmacro !eq
   [value & comps]
   `(not (eq ~value ~@comps)))

@@ -24,7 +24,7 @@ func (e *encoder) NewLabel() *Label {
 // Word turns Label into a Coder, allowing a references to be
 // placed at the current encoding position.
 func (l *Label) Word() isa.Word {
-	return isa.Word(l.number)
+	return l.number.Word()
 }
 
 // DropAnchor marks the current encoding position as the Label target

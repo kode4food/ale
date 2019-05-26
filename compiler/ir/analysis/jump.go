@@ -16,7 +16,7 @@ func verifyJumps(code isa.Instructions) {
 }
 
 func findLabel(code isa.Instructions, lbl isa.Index) int {
-	ic := isa.Word(lbl)
+	ic := lbl.Word()
 	for pc, inst := range code {
 		if inst.Opcode == isa.Label && inst.Args[0] == ic {
 			return pc

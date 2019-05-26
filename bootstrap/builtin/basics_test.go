@@ -34,10 +34,10 @@ func TestRaise(t *testing.T) {
 
 	defer func() {
 		if rec := recover(); rec != nil {
-			as.String("blowed up!", rec)
+			as.String("blowed up!", rec.(error).Error())
 			return
 		}
-		as.Fail("error not raised")
+		as.Fail("proper error not raised")
 	}()
 
 	builtin.Raise(S("blowed up!"))

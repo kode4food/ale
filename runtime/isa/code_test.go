@@ -43,3 +43,9 @@ func TestInstructions(t *testing.T) {
 
 	isa.New(isa.CondJump, isa.Word(12), isa.Word(32))
 }
+
+func TestInstructionString(t *testing.T) {
+	as := assert.New(t)
+	inst := isa.New(isa.Const, isa.Offset(0).Word())
+	as.String(`Const(0)`, inst.String())
+}
