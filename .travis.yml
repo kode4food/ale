@@ -16,6 +16,6 @@ env:
   - GO111MODULE=on
 
 script:
-  - $GOPATH/bin/go-snapshot -pkg assets -out internal/assets/assets.go docstring/*.md bootstrap/lisp/*.lisp
+  - $GOPATH/bin/go-snapshot -pkg assets -out internal/assets/assets.go docstring/*.md core/*.lisp
   - make test
   - $GOPATH/bin/goveralls -service=travis-ci -ignore=runtime/isa/opcode_string.go,data/function_string.go,internal/assets/assets.go
