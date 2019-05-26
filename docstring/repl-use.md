@@ -1,5 +1,6 @@
 ---
 title: "use"
+names: ["use"]
 description: "changes namespace"
 usage: "(use ns)"
 draft: true

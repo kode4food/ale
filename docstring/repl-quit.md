@@ -1,5 +1,6 @@
 ---
 title: "quit"
+names: ["quit"]
 description: "quits the REPL"
 usage: "(quit)"
 draft: true

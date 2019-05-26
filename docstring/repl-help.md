@@ -1,4 +1,5 @@
 ---
+names: ["help"]
 draft: true
 ---
 **(help)**       Display this help message
