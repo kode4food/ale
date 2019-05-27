@@ -13,10 +13,11 @@
 
 (defn pr [& forms]
   (let [mapped (pr-map-with-nil str! forms)]
-    (if (seq mapped)
+    (when (seq mapped)
       (. *out* :write (first mapped)))
-    (for-each [elem (rest mapped)]
-              (. *out* :write *space* elem))))
+    (when (seq mapped)
+      (for-each [elem (rest mapped)]
+                (. *out* :write *space* elem)))))
 
 (defn prn [& forms]
   (apply pr forms)
@@ -24,10 +25,11 @@
 
 (defn print [& forms]
   (let [mapped (pr-map-with-nil str forms)]
-    (if (seq mapped)
+    (when (seq mapped)
       (. *out* :write (first mapped)))
-    (for-each [elem (rest mapped)]
-              (. *out* :write *space* elem))))
+    (when (seq mapped)
+      (for-each [elem (rest mapped)]
+                (. *out* :write *space* elem)))))
 
 (defn println [& forms]
   (apply print forms)

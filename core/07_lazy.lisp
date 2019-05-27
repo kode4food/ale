@@ -118,15 +118,18 @@
         rotate
         (fn rotate [work orig]
           (let [res (rotate-rest work orig)]
-            (unless (res 0) (res 1))))]
-    ((fn iter [work]
-       (lazy-seq
-        (let [f (to-vector (map first work))
-              r (rotate work colls)]
-          (if r
-            (cons f (iter r))
-            (list f)))))
-     colls)))
+            (unless (res 0) (res 1))))
+
+        iter
+        (fn iter [work]
+          (let [f (to-vector (map first work))
+                r (rotate work colls)]
+            (if r
+              (cons f (lazy-seq (iter r)))
+              (list f))))]
+    (lazy-seq
+     (when (apply false? (map empty? colls))
+       (iter colls)))))
 
 (defmacro for
   [seq-exprs & body]

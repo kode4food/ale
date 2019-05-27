@@ -4,17 +4,17 @@
 
 (defmacro unless
   ([test] nil)
-  ([test then] `(if ~test nil ~then))
+  ([test then]      `(if ~test nil ~then))
   ([test then else] `(if ~test ~else ~then)))
 
 (defmacro when
   ([test] nil)
-  ([test form] `(if ~test ~form nil))
+  ([test form]    `(if ~test ~form nil))
   ([test & forms] `(if ~test (do ~@forms) nil)))
 
 (defmacro when-not
   ([test] nil)
-  ([test form] `(if ~test nil ~form))
+  ([test form]    `(if ~test nil ~form))
   ([test & forms] `(if ~test nil (do ~@forms))))
 
 (defmacro and
@@ -22,7 +22,9 @@
   ([clause] clause)
   ([& clauses]
    `(let [and# ~(clauses 0)]
-      (if and# (and ~@(rest clauses)) and#))))
+      (if and#
+        (and ~@(rest clauses))
+        and#))))
 
 (defmacro !and
   [& clauses]
@@ -33,7 +35,9 @@
   ([clause] clause)
   ([& clauses]
    `(let [or# ~(clauses 0)]
-      (if or# or# (or ~@(rest clauses))))))
+      (if or#
+        or#
+        (or ~@(rest clauses))))))
 
 (defmacro !or
   [& clauses]
