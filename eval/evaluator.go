@@ -37,7 +37,8 @@ func Value(ns namespace.Type, v data.Value) data.Value {
 }
 
 func encodeAndRun(e encoder.Type) data.Value {
-	cfg := vm.ConfigFromEncoder(e)
-	call := vm.NewClosure(cfg)().(data.Call)
+	fn := vm.FunctionFromEncoder(e)
+	closure := fn.Caller()
+	call := closure().(data.Call)
 	return call()
 }

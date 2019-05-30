@@ -22,12 +22,14 @@ func makeCode(coders []isa.Coder) data.Call {
 	for i, c := range coders {
 		code[i] = c.Word()
 	}
-	exec := vm.NewClosure(&vm.Config{
+	fn := &vm.Function{
 		Code:      code,
 		Constants: constants,
 		StackSize: 16,
-	})
-	return exec(S("closure")).(data.Call)
+	}
+	fc := fn.Caller()
+	cl := fc(S("closure"))
+	return cl.(data.Call)
 }
 
 func runCode(coders []isa.Coder) data.Value {

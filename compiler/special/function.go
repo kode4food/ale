@@ -95,15 +95,17 @@ func makeChildEncoder(e encoder.Type, n data.Name) encoder.Type {
 
 func (fe *funcEncoder) encodeCall() {
 	e := fe.Parent()
-	fn := fe.makeClosure()
+	fn := fe.makeFunction()
+	fc := fn.Caller()
 	names := fe.Closure()
 	nl := len(names)
 	if nl == 0 {
-		generate.Literal(e, fn())
+		// no need to instantiate a run-time closure
+		generate.Literal(e, fc())
 		return
 	}
 
-	idx := e.AddConstant(fn)
+	idx := e.AddConstant(fc)
 	for i := nl - 1; i >= 0; i-- {
 		name := names[i]
 		generate.Symbol(e, data.NewLocalSymbol(name))
@@ -112,14 +114,13 @@ func (fe *funcEncoder) encodeCall() {
 	e.Emit(isa.Call, isa.Count(nl))
 }
 
-func (fe *funcEncoder) makeClosure() data.Call {
+func (fe *funcEncoder) makeFunction() *vm.Function {
 	if len(fe.variants) == 0 {
 		fe.Emit(isa.RetNil)
 	} else {
 		fe.makeVariants(fe.variants)
 	}
-	cfg := vm.ConfigFromEncoder(fe)
-	return vm.NewClosure(cfg)
+	return vm.FunctionFromEncoder(fe)
 }
 
 func (fe *funcEncoder) makeVariants(vars variants) {
