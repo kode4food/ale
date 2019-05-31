@@ -2,11 +2,11 @@
 title: "let"
 date: 2019-04-06T12:19:22+02:00
 description: "binds local values"
-names: ["let"]
-usage: "(let [<name form>+] form+)"
+names: ["let", "let*"]
+usage: "(let [<name expr>*] form*) (let* [<name expr>*] form*)"
 tags: ["binding"]
 ---
-Will create a new local scope, binding the specified values to that scope by name. It will then evaluate the specified forms within that scope and return the result of the last evaluation. Ale's version of `let` behaves like `let*` in other Lisps.
+Will create a new local scope, evaluate the provided expressions, and then bind the resulting value to their respective names. It will then evaluate the specified forms within that scope and return the result of the last evaluation. The `let` form performs these bindings in parallel, whereas the `let*` form performs them sequentially.
 
 #### An Example
 

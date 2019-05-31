@@ -15,6 +15,18 @@ import (
 // Error messages
 const (
 	UnpairedBindings = "bindings must be paired"
+	NameAlreadyBound = "name is already bound in local scope: %s"
+)
+
+type (
+	letBinding struct {
+		name  data.Name
+		value data.Value
+	}
+
+	letBindings []*letBinding
+
+	uniqueNames map[data.Name]bool
 )
 
 // Eval encodes an evaluation
@@ -58,26 +70,56 @@ func If(e encoder.Type, args ...data.Value) {
 	)
 }
 
-// Let encodes a (let [bindings] & body) form
+// Let encodes a binding form. Binding values are evaluated first,
+// and are then bound to fresh names, meaning that mutual recursion
+// is not supported. For that, see `LetMutual`
 func Let(e encoder.Type, args ...data.Value) {
+	bindings, body := parseLet(args...)
+
+	e.PushLocals()
+	// Push the evaluated expressions to be bound
+	for _, b := range bindings {
+		generate.Value(e, b.value)
+	}
+
+	// Bind the popped expression results to names
+	for i := len(bindings) - 1; i >= 0; i-- {
+		b := bindings[i]
+		e.Emit(isa.Store, e.AddLocal(b.name))
+	}
+
+	generate.Block(e, body)
+	e.PopLocals()
+}
+
+func parseLet(args ...data.Value) (letBindings, data.Vector) {
 	arity.AssertMinimum(2, len(args))
-	bindings := args[0].(data.Vector)
-	lb := len(bindings)
+	b := args[0].(data.Vector)
+	lb := len(b)
 	if lb%2 != 0 {
 		panic(fmt.Errorf(UnpairedBindings))
 	}
-
+	names := uniqueNames{}
+	bindings := letBindings{}
 	for i := 0; i < lb; i += 2 {
-		n := bindings[i].(data.LocalSymbol).Name()
-		e.PushLocals()
-		generate.Value(e, bindings[i+1])
-		e.Emit(isa.Store, e.AddLocal(n))
+		name := b[i].(data.LocalSymbol).Name()
+		names.see(name)
+		value := b[i+1]
+		bindings = append(bindings, newLetBinding(name, value))
 	}
+	return bindings, args[1:]
+}
 
-	body := data.NewVector(args[1:]...)
-	generate.Block(e, body)
-
-	for i := 0; i < lb; i += 2 {
-		e.PopLocals()
+func newLetBinding(name data.Name, value data.Value) *letBinding {
+	return &letBinding{
+		name:  name,
+		value: value,
 	}
+}
+
+func (u uniqueNames) see(n data.Name) {
+	if _, ok := u[n]; ok {
+		panic(fmt.Errorf(NameAlreadyBound, n))
+	}
+	u[n] = true
 }

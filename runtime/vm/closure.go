@@ -22,22 +22,18 @@ type Closure struct {
 
 // Caller returns a calling interface for this Closure
 func (c *Closure) Caller() data.Call {
-	f := c.Function
-	globals := f.Globals
-	constants := f.Constants
-	code := f.Code
-	stackSize := f.StackSize
-	localCount := f.LocalCount
-	closure := c.Values
+	function := c.Function
+	code := function.Code
+	stackSize := function.StackSize
+	localCount := function.LocalCount
 	stackInit := stackSize - 1
-
 	var self data.Call
 
 	self = func(args ...data.Value) data.Value {
 		stack := make(data.Values, stackSize)
 		locals := make(data.Values, localCount)
-		var PC = 0
 		var SP = stackInit
+		var PC = 0
 		goto opSwitch
 
 	nextPC:
@@ -94,7 +90,7 @@ func (c *Closure) Caller() data.Call {
 		case isa.Const:
 			PC++
 			idx := isa.Index(code[PC])
-			stack[SP] = constants[idx]
+			stack[SP] = function.Constants[idx]
 			SP--
 			goto nextPC
 
@@ -120,7 +116,7 @@ func (c *Closure) Caller() data.Call {
 		case isa.Closure:
 			PC++
 			idx := isa.Index(code[PC])
-			stack[SP] = closure[idx]
+			stack[SP] = c.Values[idx]
 			SP--
 			goto nextPC
 
@@ -141,14 +137,14 @@ func (c *Closure) Caller() data.Call {
 		case isa.Resolve:
 			SP1 := SP + 1
 			sym := stack[SP1].(data.Symbol)
-			val := namespace.MustResolveValue(globals, sym)
+			val := namespace.MustResolveValue(function.Globals, sym)
 			stack[SP1] = val
 			goto nextPC
 
 		case isa.Declare:
 			SP++
 			name := stack[SP].(data.Name)
-			globals.Declare(name)
+			function.Globals.Declare(name)
 			goto nextPC
 
 		case isa.Bind:
@@ -156,7 +152,7 @@ func (c *Closure) Caller() data.Call {
 			name := stack[SP].(data.Name)
 			SP++
 			val := stack[SP].(data.Value)
-			globals.Declare(name).Bind(val)
+			function.Globals.Declare(name).Bind(val)
 			goto nextPC
 
 		case isa.Dup:
@@ -309,7 +305,7 @@ func (c *Closure) Caller() data.Call {
 			fn := stack[SP1].(data.Call)
 			argCount := isa.Count(code[PC])
 			RES := SP1 + int(argCount)
-			args := make([]data.Value, argCount)
+			args := make(data.Values, argCount)
 			copy(args, stack[SP2:])
 			stack[RES] = fn(args...)
 			SP = RES - 1
@@ -320,7 +316,7 @@ func (c *Closure) Caller() data.Call {
 			if len(args) == argCount {
 				copy(args, stack[SP+1:])
 			} else {
-				newArgs := make([]data.Value, argCount)
+				newArgs := make(data.Values, argCount)
 				copy(newArgs, stack[SP+1:])
 				args = newArgs
 			}

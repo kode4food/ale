@@ -121,7 +121,7 @@ func TestLazySeqEval(t *testing.T) {
 func TestForEachLoopEval(t *testing.T) {
 	as := assert.New(t)
 	as.EvalTo(`
-		(let [ch (chan) emit (:emit ch) close (:close ch) seq (:seq ch)]
+		(let* [ch (chan) emit (:emit ch) close (:close ch) seq (:seq ch)]
 			(go
 				(for-each [i (range 1 5 1), j (range 1 10 2)]
 					(emit (* i j)))

@@ -41,20 +41,20 @@
   [clauses]
   (unless (seq? clauses)
           {:block () :catch () :finally []}
-          (let [f (first clauses)
-                r (rest clauses)
-                p (try-parse r)]
+          (let* [f (first clauses)
+                 r (rest clauses)
+                 p (try-parse r)]
             (cond
               (is-catch f p)   (try-prepend p :catch f)
-              (is-finally f p) (try-append  p :finally f)
+              (is-finally f p) (try-append p :finally f)
               (is-expr f p)    (try-prepend p :block f)
               :else            (raise "malformed try-catch-finally")))))
 
 (defn try-catch-predicate
   [pred err-sym]
-  (let [l (thread-to-list pred)
-        f (first l)
-        r (rest l)]
+  (let* [l (thread-to-list pred)
+         f (first l)
+         r (rest l)]
     (cons f (cons err-sym r))))
 
 (declare try-catch-clauses)
@@ -63,24 +63,22 @@
   [clauses err-sym]
   (assert-args (seq? clauses) "catch branch not paired")
   (lazy-seq
-   (let [clause (first clauses)
-         var    ((clause 1) 0)
-         expr   (rest (rest clause))]
-     (cons
-      (list 'ale/let
-            [var err-sym]
-            [false (cons 'ale/do expr)])
-      (try-catch-clauses (rest clauses) err-sym)))))
+    (let* [clause (first clauses)
+           var    ((clause 1) 0)
+           expr   (rest (rest clause))]
+      (cons (list 'ale/let
+                  [var err-sym]
+                  [false (cons 'ale/do expr)])
+            (try-catch-clauses (rest clauses) err-sym)))))
 
 (defn try-catch-clauses
   [clauses err-sym]
   (lazy-seq
-   (when (seq? clauses)
-     (let [clause (first clauses)
-           pred   ((clause 1) 1)]
-       (cons
-        (try-catch-predicate pred err-sym)
-        (try-catch-branch clauses err-sym))))))
+    (when (seq? clauses)
+          (let* [clause (first clauses)
+                 pred   ((clause 1) 1)]
+            (cons (try-catch-predicate pred err-sym)
+                  (try-catch-branch clauses err-sym))))))
 
 (defn try-body
   [clauses]
@@ -114,7 +112,7 @@
 
           (seq? block) `(do ~@block)
 
-          :else nil)))
+          :else        nil)))
 
 (defmacro try
   [& clauses]

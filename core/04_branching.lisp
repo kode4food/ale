@@ -21,10 +21,10 @@
   ([] true)
   ([clause] clause)
   ([& clauses]
-   `(let [and# ~(clauses 0)]
-      (if and#
-        (and ~@(rest clauses))
-        and#))))
+    `(let [and# ~(clauses 0)]
+       (if and#
+           (and ~@(rest clauses))
+           and#))))
 
 (defmacro !and
   [& clauses]
@@ -34,10 +34,10 @@
   ([] nil)
   ([clause] clause)
   ([& clauses]
-   `(let [or# ~(clauses 0)]
-      (if or#
-        or#
-        (or ~@(rest clauses))))))
+    `(let [or# ~(clauses 0)]
+       (if or#
+           or#
+           (or ~@(rest clauses))))))
 
 (defmacro !or
   [& clauses]
@@ -47,25 +47,25 @@
   ([] nil)
   ([clause] clause)
   ([& clauses]
-   (let [test   (clauses 0)
-         branch (clauses 1)]
-     (unless (and (is-atom test) test)
-             `(if ~test
-                ~branch
-                (cond ~@(rest (rest clauses))))
-             branch))))
+    (let [test   (clauses 0)
+          branch (clauses 1)]
+      (unless (and (is-atom test) test)
+              `(if ~test
+                   ~branch
+                   (cond ~@(rest (rest clauses))))
+              branch))))
 
 (defmacro if-let
   ([binding then] `(if-let ~binding ~then nil))
   ([binding then else]
-   (assert-args
-    (is-vector binding) "binding vector must be supplied"
-    (= 2 (len binding)) "binding vector must contain 2 elements")
-   (let [sym  (binding 0)
-         test (binding 1)]
-     `(let [~sym ~test]
-        (if ~sym ~then ~else)))))
+    (assert-args
+      (is-vector binding) "binding vector must be supplied"
+      (= 2 (len binding)) "binding vector must contain 2 elements")
+    (let [sym  (binding 0)
+          test (binding 1)]
+      `(let [~sym ~test]
+            (if ~sym ~then ~else)))))
 
 (defmacro when-let
-  ([binding form] `(if-let ~binding ~form))
+  ([binding form]   `(if-let ~binding ~form))
   ([binding & body] `(if-let ~binding (do ~@body))))

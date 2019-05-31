@@ -10,13 +10,13 @@
   (fn concat! [& colls]
     ((fn concat' [colls head]
        (if (is-empty colls)
-         (apply list head)
-         (let [f (first colls)
-               r (rest colls)]
-           (if (is-empty f)
-             (concat' r head)
-             (concat' (cons (rest f) r)
-                      (append head (first f)))))))
+           (apply list head)
+           (let [f (first colls)
+                 r (rest colls)]
+             (if (is-empty f)
+                 (concat' r head)
+                 (concat' (cons (rest f) r)
+                          (append head (first f)))))))
      colls [])))
 
 (defmacro defn

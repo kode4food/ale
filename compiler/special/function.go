@@ -41,7 +41,7 @@ const (
 // Fn encodes a lambda
 func Fn(e encoder.Type, args ...data.Value) {
 	name, vars := parseFunction(args)
-	fe := makeFunctionEncoder(e, name, vars)
+	fe := makeFuncEncoder(e, name, vars)
 	arityChecker := fe.makeArityChecker()
 	fe.encodeCall()
 	generate.Literal(e, data.Call(func(args ...data.Value) data.Value {
@@ -57,7 +57,7 @@ func Fn(e encoder.Type, args ...data.Value) {
 // DefMacro encodes and registers a macro
 func DefMacro(e encoder.Type, args ...data.Value) {
 	name, vars := parseNamedFunction(args)
-	fe := makeFunctionEncoder(e, name, vars)
+	fe := makeFuncEncoder(e, name, vars)
 	arityChecker := fe.makeArityChecker()
 	fe.encodeCall()
 	generate.Literal(e, data.Call(func(args ...data.Value) data.Value {
@@ -76,7 +76,7 @@ func DefMacro(e encoder.Type, args ...data.Value) {
 	generate.Literal(e, fe.Name())
 }
 
-func makeFunctionEncoder(e encoder.Type, n data.Name, v variants) *funcEncoder {
+func makeFuncEncoder(e encoder.Type, n data.Name, v variants) *funcEncoder {
 	child := makeChildEncoder(e, n)
 	res := &funcEncoder{
 		Type:     child,
@@ -97,20 +97,21 @@ func (fe *funcEncoder) encodeCall() {
 	e := fe.Parent()
 	fn := fe.makeFunction()
 	fc := fn.Caller()
+
 	names := fe.Closure()
 	nl := len(names)
 	if nl == 0 {
-		// no need to instantiate a run-time closure
+		// nothing needed to be captured from local variables,
+		// so just pass the newly instantiated closure through
 		generate.Literal(e, fc())
 		return
 	}
 
-	idx := e.AddConstant(fc)
 	for i := nl - 1; i >= 0; i-- {
 		name := names[i]
 		generate.Symbol(e, data.NewLocalSymbol(name))
 	}
-	e.Emit(isa.Const, idx)
+	e.Emit(isa.Const, e.AddConstant(fc))
 	e.Emit(isa.Call, isa.Count(nl))
 }
 

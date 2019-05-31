@@ -2,7 +2,8 @@
 
 (defn pred-apply
   [func args]
-  (if (is-empty args) true
+  (if (is-empty args)
+      true
       (unless (func (first args)) false
               (pred-apply func (rest args)))))
 
