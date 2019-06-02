@@ -17,23 +17,27 @@ func Symbol(e encoder.Type, s data.Symbol) {
 }
 
 func resolveLocal(e encoder.Type, l data.LocalSymbol) {
-	if scope, ok := e.ResolveScope(l); ok {
-		switch scope {
+	n := l.Name()
+	if s, ok := e.ResolveScoped(n); ok {
+		switch s.Scope {
 		case encoder.LocalScope:
-			idx, _ := e.ResolveLocal(l)
-			e.Emit(isa.Load, idx)
+			c, _ := e.ResolveLocal(n)
+			e.Emit(isa.Load, c.Index)
+			if c.Type == encoder.ReferenceCell {
+				e.Emit(isa.Deref)
+			}
 		case encoder.ArgScope:
-			idx, rest, _ := e.ResolveArg(l)
-			if rest {
-				e.Emit(isa.RestArg, idx)
+			c, _ := e.ResolveArg(n)
+			if c.Type == encoder.RestCell {
+				e.Emit(isa.RestArg, c.Index)
 			} else {
-				e.Emit(isa.Arg, idx)
+				e.Emit(isa.Arg, c.Index)
 			}
 		case encoder.NameScope:
 			e.Emit(isa.Self)
 		case encoder.ClosureScope:
-			idx, _ := e.ResolveClosure(l)
-			e.Emit(isa.Closure, idx)
+			c, _ := e.ResolveClosure(n)
+			e.Emit(isa.Closure, c.Index)
 		default:
 			panic("unknown scope type")
 		}

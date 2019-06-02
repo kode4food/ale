@@ -19,6 +19,7 @@ const (
 	CondJump                   // Conditional Jump
 	Const                      // Retrieve Constant
 	Declare                    // Declare Global
+	Deref                      // Pointer Dereference
 	Div                        // Division
 	Dup                        // Duplicate Value
 	EmptyList                  // Empty List

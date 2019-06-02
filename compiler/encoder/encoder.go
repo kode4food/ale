@@ -27,28 +27,28 @@ type (
 		Constants() data.Values
 		AddConstant(data.Value) isa.Index
 
-		Closure() data.Names
-		ResolveClosure(data.LocalSymbol) (isa.Index, bool)
+		Closure() IndexedCells
+		ResolveClosure(data.Name) (*IndexedCell, bool)
 
 		PushArgs(data.Names, bool)
 		PopArgs()
-		ResolveArg(data.LocalSymbol) (isa.Index, bool, bool)
+		ResolveArg(data.Name) (*IndexedCell, bool)
 
 		LocalCount() int
 		PushLocals()
 		PopLocals()
-		AddLocal(data.Name) isa.Index
-		ResolveLocal(data.LocalSymbol) (isa.Index, bool)
+		AddLocal(data.Name, CellType) *IndexedCell
+		ResolveLocal(data.Name) (*IndexedCell, bool)
 
-		ResolveScope(data.LocalSymbol) (Scope, bool)
-		InScope(data.LocalSymbol) bool
+		ResolveScoped(data.Name) (*ScopedCell, bool)
+		InScope(data.Name) bool
 	}
 
 	encoder struct {
 		parent    Type
 		globals   namespace.Type
 		constants data.Values
-		closure   data.Names
+		closure   IndexedCells
 		name      data.Name
 		args      argsStack
 		locals    []Locals
@@ -63,7 +63,7 @@ func newEncoder(globals namespace.Type) *encoder {
 	return &encoder{
 		globals:   globals,
 		constants: data.Values{},
-		closure:   data.Names{},
+		closure:   IndexedCells{},
 		args:      argsStack{},
 		locals:    []Locals{{}},
 		code:      isa.Instructions{},
@@ -79,7 +79,7 @@ func (e *encoder) child() *encoder {
 	return &encoder{
 		parent:    e,
 		constants: data.Values{},
-		closure:   data.Names{},
+		closure:   IndexedCells{},
 		args:      argsStack{},
 		locals:    []Locals{{}},
 		code:      isa.Instructions{},

@@ -5,20 +5,18 @@ import (
 	"gitlab.com/kode4food/ale/runtime/isa"
 )
 
-type (
-	argsInfo struct {
-		names data.Names
-		rest  bool
-	}
-
-	argsStack []*argsInfo
-)
+type argsStack []IndexedCells
 
 func (e *encoder) PushArgs(names data.Names, rest bool) {
-	e.args = append(e.args, &argsInfo{
-		names: names,
-		rest:  rest,
-	})
+	cells := make(IndexedCells, len(names))
+	for i, n := range names {
+		c := newCell(ValueCell, n)
+		cells[i] = newIndexedCell(isa.Index(i), c)
+	}
+	if rest {
+		cells[len(cells)-1].Type = RestCell
+	}
+	e.args = append(e.args, cells)
 }
 
 func (e *encoder) PopArgs() {
@@ -27,25 +25,22 @@ func (e *encoder) PopArgs() {
 	e.args = args[0 : al-1]
 }
 
-func (e *encoder) ResolveArg(l data.LocalSymbol) (isa.Index, bool, bool) {
-	lookup := l.Name()
+func (e *encoder) ResolveArg(n data.Name) (*IndexedCell, bool) {
 	args := e.args
 	for i := len(args) - 1; i >= 0; i-- {
 		a := args[i]
-		if idx, rest, ok := a.resolveArg(lookup); ok {
-			return idx, rest, ok
+		if c, ok := resolveArg(a, n); ok {
+			return c, ok
 		}
 	}
-	return 0, false, false
+	return nil, false
 }
 
-func (a *argsInfo) resolveArg(lookup data.Name) (isa.Index, bool, bool) {
-	for idx, n := range a.names {
-		if n == lookup {
-			nl := len(a.names)
-			isRest := a.rest && idx == nl-1
-			return isa.Index(idx), isRest, true
+func resolveArg(cells IndexedCells, lookup data.Name) (*IndexedCell, bool) {
+	for _, c := range cells {
+		if c.Name == lookup {
+			return c, true
 		}
 	}
-	return 0, false, false
+	return nil, false
 }

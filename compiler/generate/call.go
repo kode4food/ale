@@ -39,7 +39,7 @@ func Call(e encoder.Type, l *data.List) {
 
 func callSymbol(e encoder.Type, s data.Symbol, args data.Values) {
 	if l, ok := s.(data.LocalSymbol); ok {
-		if _, ok := e.ResolveLocal(l); ok {
+		if _, ok := e.ResolveLocal(l.Name()); ok {
 			callDynamic(e, l, args)
 			return
 		}

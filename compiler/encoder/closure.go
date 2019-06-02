@@ -6,23 +6,30 @@ import (
 )
 
 // Closure calculates the enclosed names for this encoder
-func (e *encoder) Closure() data.Names {
+func (e *encoder) Closure() IndexedCells {
 	return e.closure
 }
 
-func (e *encoder) ResolveClosure(l data.LocalSymbol) (isa.Index, bool) {
-	closure := e.closure
-	lookup := l.Name()
-	for idx, n := range closure {
-		if n == lookup {
-			return isa.Index(idx), true
+func (e *encoder) ResolveClosure(n data.Name) (*IndexedCell, bool) {
+	for _, c := range e.closure {
+		if c.Name == n {
+			return c, true
 		}
 	}
+	return e.resolveClosureParent(n)
+}
+
+func (e *encoder) resolveClosureParent(n data.Name) (*IndexedCell, bool) {
 	parent := e.parent
-	if parent != nil && parent.InScope(l) {
-		res := len(closure)
-		e.closure = append(closure, lookup)
-		return isa.Index(res), true
+	if parent == nil {
+		return nil, false
 	}
-	return 0, false
+	if s, ok := parent.ResolveScoped(n); ok {
+		closure := e.closure
+		idx := isa.Index(len(closure))
+		res := newIndexedCell(idx, s.Cell)
+		e.closure = append(closure, res)
+		return res, true
+	}
+	return nil, false
 }

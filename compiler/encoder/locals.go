@@ -8,7 +8,7 @@ import (
 )
 
 // Locals tracks local variable assignments
-type Locals map[data.Name]isa.Index
+type Locals map[data.Name]*IndexedCell
 
 func (e *encoder) LocalCount() int {
 	return e.maxLocal
@@ -40,24 +40,24 @@ func (e *encoder) allocLocal() isa.Index {
 	return idx
 }
 
-func (e *encoder) AddLocal(n data.Name) isa.Index {
+func (e *encoder) AddLocal(n data.Name, t CellType) *IndexedCell {
 	scope := e.peekLocals()
 	if _, ok := scope[n]; ok {
 		panic(fmt.Sprintf("name duplicated in scope: %s", n))
 	}
-	idx := e.allocLocal()
-	scope[n] = idx
-	return idx
+	c := newCell(t, n)
+	res := newIndexedCell(e.allocLocal(), c)
+	scope[n] = res
+	return res
 }
 
-func (e *encoder) ResolveLocal(l data.LocalSymbol) (isa.Index, bool) {
-	n := l.Name()
+func (e *encoder) ResolveLocal(n data.Name) (*IndexedCell, bool) {
 	scopes := e.locals
 	for i := len(scopes) - 1; i >= 0; i-- {
 		scope := scopes[i]
-		if i, ok := scope[n]; ok {
-			return i, true
+		if l, ok := scope[n]; ok {
+			return l, true
 		}
 	}
-	return 0, false
+	return nil, false
 }

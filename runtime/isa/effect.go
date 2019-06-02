@@ -31,6 +31,7 @@ var Effects = map[Opcode]*Effect{
 	CondJump:     {Size: 2, Pop: 1},
 	Const:        {Size: 2, Push: 1},
 	Declare:      {Size: 1, Pop: 1},
+	Deref:        {Size: 1, Pop: 1, Push: 1},
 	Div:          {Size: 1, Pop: 2, Push: 1},
 	Dup:          {Size: 1, Pop: 1, Push: 2},
 	EmptyList:    {Size: 1, Push: 1},

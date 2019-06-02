@@ -13,25 +13,25 @@ const (
 	ClosureScope
 )
 
-func (e *encoder) ResolveScope(l data.LocalSymbol) (Scope, bool) {
-	if _, ok := e.ResolveLocal(l); ok {
-		return LocalScope, true
+func (e *encoder) ResolveScoped(n data.Name) (*ScopedCell, bool) {
+	if i, ok := e.ResolveLocal(n); ok {
+		return newScopedCell(LocalScope, i.Cell), true
 	}
-	if _, _, ok := e.ResolveArg(l); ok {
-		return ArgScope, true
+	if _, ok := e.ResolveArg(n); ok {
+		return newScopedCell(ArgScope, newCell(ValueCell, n)), true
 	}
-	if e.Name() == l.Name() {
-		return NameScope, true
+	if e.Name() == n {
+		return newScopedCell(NameScope, newCell(ValueCell, n)), true
 	}
 	if e.parent != nil {
-		if _, ok := e.parent.ResolveScope(l); ok {
-			return ClosureScope, true
+		if s, ok := e.parent.ResolveScoped(n); ok {
+			return newScopedCell(ClosureScope, s.Cell), true
 		}
 	}
-	return -1, false
+	return nil, false
 }
 
-func (e *encoder) InScope(l data.LocalSymbol) bool {
-	_, ok := e.ResolveScope(l)
+func (e *encoder) InScope(n data.Name) bool {
+	_, ok := e.ResolveScoped(n)
 	return ok
 }

@@ -98,8 +98,8 @@ func (fe *funcEncoder) encodeCall() {
 	fn := fe.makeFunction()
 	fc := fn.Caller()
 
-	names := fe.Closure()
-	nl := len(names)
+	cells := fe.Closure()
+	nl := len(cells)
 	if nl == 0 {
 		// nothing needed to be captured from local variables,
 		// so just pass the newly instantiated closure through
@@ -108,7 +108,7 @@ func (fe *funcEncoder) encodeCall() {
 	}
 
 	for i := nl - 1; i >= 0; i-- {
-		name := names[i]
+		name := cells[i].Name
 		generate.Symbol(e, data.NewLocalSymbol(name))
 	}
 	e.Emit(isa.Const, e.AddConstant(fc))

@@ -67,6 +67,10 @@ const (
 // Nil is a value that represents the absence of a Value
 var Nil *nilValue
 
+func (v Values) String() string {
+	return DumpString(v)
+}
+
 // Name makes Name Named
 func (n Name) Name() Name {
 	return n
