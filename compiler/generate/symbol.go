@@ -16,16 +16,25 @@ func Symbol(e encoder.Type, s data.Symbol) {
 	resolveGlobal(e, s)
 }
 
-func resolveLocal(e encoder.Type, l data.LocalSymbol) {
+// ReferenceSymbol encodes a potential symbol retrieval and dereference
+func ReferenceSymbol(e encoder.Type, s data.Symbol) {
+	if l, ok := s.(data.LocalSymbol); ok {
+		c := resolveLocal(e, l)
+		if c != nil && c.Type == encoder.ReferenceCell {
+			e.Emit(isa.Deref)
+		}
+		return
+	}
+	resolveGlobal(e, s)
+}
+
+func resolveLocal(e encoder.Type, l data.LocalSymbol) *encoder.ScopedCell {
 	n := l.Name()
 	if s, ok := e.ResolveScoped(n); ok {
 		switch s.Scope {
 		case encoder.LocalScope:
 			c, _ := e.ResolveLocal(n)
 			e.Emit(isa.Load, c.Index)
-			if c.Type == encoder.ReferenceCell {
-				e.Emit(isa.Deref)
-			}
 		case encoder.ArgScope:
 			c, _ := e.ResolveArg(n)
 			if c.Type == encoder.RestCell {
@@ -41,9 +50,10 @@ func resolveLocal(e encoder.Type, l data.LocalSymbol) {
 		default:
 			panic("unknown scope type")
 		}
-		return
+		return s
 	}
 	resolveGlobal(e, l)
+	return nil
 }
 
 func resolveGlobal(e encoder.Type, s data.Symbol) {

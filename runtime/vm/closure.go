@@ -134,6 +134,18 @@ func (c *Closure) Caller() data.Call {
 			locals[idx] = stack[SP]
 			goto nextPC
 
+		case isa.NewRef:
+			stack[SP] = &Ref{}
+			SP--
+			goto nextPC
+
+		case isa.BindRef:
+			SP++
+			ref := stack[SP].(*Ref)
+			SP++
+			ref.Value = stack[SP].(data.Value)
+			goto nextPC
+
 		case isa.Deref:
 			SP1 := SP + 1
 			stack[SP1] = stack[SP1].(*Ref).Value

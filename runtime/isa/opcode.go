@@ -12,6 +12,7 @@ const (
 	Arg                        // Retrieve Argument Value
 	ArgLen                     // Retrieve Argument Count
 	Bind                       // Bind Global
+	BindRef                    // Bind Reference
 	Call                       // Call Function
 	Call0                      // Zero-Arg Call
 	Call1                      // One-Arg Call
@@ -39,6 +40,7 @@ const (
 	NegInf                     // Push Negative Infinity
 	NegOne                     // Push Negative One
 	Neq                        // Numeric Inequality
+	NewRef                     // New Reference
 	Nil                        // Push Nil
 	NoOp                       // Non-Operator
 	Not                        // Boolean Negation

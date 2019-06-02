@@ -36,6 +36,7 @@ func (b *bootstrap) specialForms() {
 	b.special("do", special.Do)
 	b.special("if", special.If)
 	b.special("let", special.Let)
+	b.special("letrec", special.LetMutual)
 	b.special("fn", special.Fn)
 	b.special("eval", special.Eval)
 	b.special("declare", special.Declare)

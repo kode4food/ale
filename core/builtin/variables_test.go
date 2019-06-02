@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"gitlab.com/kode4food/ale/compiler/special"
+	"gitlab.com/kode4food/ale/data"
 	"gitlab.com/kode4food/ale/internal/assert"
 	. "gitlab.com/kode4food/ale/internal/assert/helpers"
 )
@@ -32,4 +33,20 @@ func TestLetBindingsEval(t *testing.T) {
 	as.PanicWith(`
 		(let [a blah b] "hello")
 	`, fmt.Errorf(special.UnpairedBindings))
+}
+
+func TestMutualBindingsEval(t *testing.T) {
+	as := assert.New(t)
+
+	as.EvalTo(`
+		(letrec [
+			is-even?
+			(fn [n] (or (= n 0)
+						(is-odd? (dec n))))
+
+			is-odd?
+			(fn [n] (and (not (= n 0))
+						 (is-even? (dec n))))]
+		(is-even? 13))
+	`, data.False)
 }

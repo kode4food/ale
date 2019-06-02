@@ -54,7 +54,32 @@ func Let(e encoder.Type, args ...data.Value) {
 // and then binding values are evaluated with access to those names via
 // the MutualScope
 func LetMutual(e encoder.Type, args ...data.Value) {
-	panic("not implemented")
+	bindings, body := parseLet(args...)
+
+	e.PushLocals()
+	// Create references
+	cells := make(encoder.IndexedCells, len(bindings))
+	for i, b := range bindings {
+		c := e.AddLocal(b.name, encoder.ReferenceCell)
+		e.Emit(isa.NewRef)
+		e.Emit(isa.Store, c.Index)
+		cells[i] = c
+	}
+
+	// Push the evaluated expressions to be bound
+	for _, b := range bindings {
+		generate.Value(e, b.value)
+	}
+
+	// Bind the references
+	for i := len(cells) - 1; i >= 0; i-- {
+		c := cells[i]
+		e.Emit(isa.Load, c.Index)
+		e.Emit(isa.BindRef)
+	}
+
+	generate.Block(e, body)
+	e.PopLocals()
 }
 
 func parseLet(args ...data.Value) (letBindings, data.Vector) {

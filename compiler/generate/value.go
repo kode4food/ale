@@ -21,7 +21,7 @@ func Value(e encoder.Type, v data.Value) {
 	case data.Sequence:
 		Sequence(e, typed)
 	case data.Symbol:
-		Symbol(e, typed)
+		ReferenceSymbol(e, typed)
 	case data.Keyword, data.Number, data.Bool, data.Caller, data.NilType:
 		Literal(e, typed)
 	default:

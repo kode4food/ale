@@ -78,6 +78,7 @@
 (def-special fn)
 (def-special if)
 (def-special let)
+(def-special letrec)
 (def-special macroexpand-1)
 (def-special macroexpand)
 (def-special quote)
