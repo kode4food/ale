@@ -51,7 +51,8 @@
 (declare try-catch-clauses)
 
 (define (try-catch-branch clauses err-sym)
-  (assert-args (seq? clauses) "catch branch not paired")
+  (assert-args
+    (seq? clauses) "catch branch not paired")
   (lazy-seq
     (let* [clause (first clauses)
            var    ((clause 1) 0)

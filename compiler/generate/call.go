@@ -3,17 +3,19 @@ package generate
 import (
 	"fmt"
 
-	"gitlab.com/kode4food/ale/runtime/vm"
-
 	"gitlab.com/kode4food/ale/compiler"
 	"gitlab.com/kode4food/ale/compiler/encoder"
 	"gitlab.com/kode4food/ale/data"
 	"gitlab.com/kode4food/ale/namespace"
 	"gitlab.com/kode4food/ale/runtime/isa"
+	"gitlab.com/kode4food/ale/runtime/vm"
 	"gitlab.com/kode4food/ale/stdlib"
 )
 
-type argsGen func(encoder.Type, data.Values)
+type (
+	emitFunc func()
+	emitArgs func(encoder.Type, data.Values)
+)
 
 // Error messages
 const (
@@ -33,7 +35,7 @@ func Call(e encoder.Type, l *data.List) {
 		return
 	}
 	if c, ok := f.(data.Caller); ok && !compiler.IsEvaluable(f) {
-		callApplicative(e, c.Caller(), args)
+		callCaller(e, c, args)
 		return
 	}
 	callDynamic(e, f, args)
@@ -64,67 +66,90 @@ func callSymbol(e encoder.Type, s data.Symbol, args data.Values) {
 }
 
 func callFunction(e encoder.Type, f data.Function, args data.Values) {
+	assertArity(f, args)
+	fEmit := functionGenerator(e, f)
+	aEmit := argumentEmitter(f)
+	callWith(e, fEmit, aEmit, args)
+}
+
+func assertArity(f data.Function, args data.Values) {
 	al := len(args)
 	if err := f.CheckArity(al); err != nil {
 		panic(err)
 	}
+}
+
+func functionGenerator(e encoder.Type, f data.Function) emitFunc {
 	if cl, ok := f.(*vm.Closure); ok {
-		callDynamic(e, cl, args)
-		return
+		return dynamicLiteral(e, cl)
 	}
+	return callerLiteral(e, f)
+}
+
+func argumentEmitter(f data.Function) emitArgs {
 	c := f.Convention()
 	switch c {
 	case data.ApplicativeCall:
-		callApplicative(e, f.Caller(), args)
+		return applicativeArgs
 	case data.NormalCall:
-		callNormal(e, f.Caller(), args)
+		return normalArgs
 	default:
 		panic(fmt.Sprintf(UnknownConvention, c))
 	}
 }
 
-func callDynamic(e encoder.Type, v data.Value, args data.Values) {
+func callWith(e encoder.Type, ef emitFunc, ea emitArgs, args data.Values) {
 	al := len(args)
 	switch al {
 	case 0:
-		Value(e, v)
-		e.Emit(isa.MakeCall)
+		ef()
 		e.Emit(isa.Call0)
 	case 1:
-		applicativeArgs(e, args)
-		Value(e, v)
-		e.Emit(isa.MakeCall)
+		ea(e, args)
+		ef()
 		e.Emit(isa.Call1)
 	default:
-		applicativeArgs(e, args)
-		Value(e, v)
-		e.Emit(isa.MakeCall)
+		ea(e, args)
+		ef()
 		e.Emit(isa.Call, isa.Count(al))
 	}
 }
 
 func callApplicative(e encoder.Type, f data.Call, args data.Values) {
-	callWith(applicativeArgs, e, f, args)
+	callWith(e, staticLiteral(e, f), applicativeArgs, args)
 }
 
-func callNormal(e encoder.Type, f data.Call, args data.Values) {
-	callWith(normalArgs, e, f, args)
+func callCaller(e encoder.Type, c data.Caller, args data.Values) {
+	callWith(e, callerLiteral(e, c), applicativeArgs, args)
 }
 
-func callWith(gen argsGen, e encoder.Type, f data.Call, args data.Values) {
-	al := len(args)
-	switch al {
-	case 0:
-		Literal(e, f)
-		e.Emit(isa.Call0)
-	case 1:
-		gen(e, args)
-		Literal(e, f)
-		e.Emit(isa.Call1)
-	default:
-		gen(e, args)
-		Literal(e, f)
-		e.Emit(isa.Call, isa.Count(al))
+func callDynamic(e encoder.Type, v data.Value, args data.Values) {
+	callWith(e, dynamicEval(e, v), applicativeArgs, args)
+}
+
+func staticLiteral(e encoder.Type, fn data.Value) emitFunc {
+	return func() {
+		Literal(e, fn)
+	}
+}
+
+func callerLiteral(e encoder.Type, fn data.Caller) emitFunc {
+	return func() {
+		Literal(e, fn.Caller())
+	}
+}
+
+func dynamicLiteral(e encoder.Type, fn data.Value) emitFunc {
+	return func() {
+		Literal(e, fn)
+		e.Emit(isa.MakeCall)
+	}
+}
+
+func dynamicEval(e encoder.Type, v data.Value) emitFunc {
+	return func() {
+		Value(e, v)
+		e.Emit(isa.MakeCall)
 	}
 }
 
