@@ -46,7 +46,7 @@ func TestBuiltIns(t *testing.T) {
 	ns := manager.GetRoot()
 
 	ns.Declare("hello").Bind(
-		data.ApplicativeFunction(func(_ ...data.Value) data.Value {
+		data.Call(func(_ ...data.Value) data.Value {
 			return S("there")
 		}),
 	)

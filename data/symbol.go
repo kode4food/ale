@@ -47,11 +47,14 @@ func NewGeneratedSymbol(name Name) Symbol {
 }
 
 // ParseSymbol parses a qualified Name and produces a Symbol
-func ParseSymbol(n Name) Symbol {
-	if i := strings.IndexRune(string(n), '/'); i > 0 {
-		return NewQualifiedSymbol(n[i+1:], n[:i])
+func ParseSymbol(s String) Symbol {
+	n := string(s)
+	if i := strings.IndexRune(n, '/'); i > 0 {
+		name := Name(n[i+1:])
+		domain := Name(n[:i])
+		return NewQualifiedSymbol(name, domain)
 	}
-	return localSymbol(n)
+	return localSymbol(Name(s))
 }
 
 // NewLocalSymbol returns a local symbol

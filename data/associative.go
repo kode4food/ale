@@ -91,6 +91,16 @@ func (a Associative) Caller() Call {
 	return makeMappedCall(a)
 }
 
+// Convention returns the function's calling convention
+func (a Associative) Convention() Convention {
+	return ApplicativeCall
+}
+
+// CheckArity performs a compile-time arity check for the function
+func (a Associative) CheckArity(argCount int) error {
+	return checkRangedArity(1, 2, argCount)
+}
+
 // String converts this Associative to a string
 func (a Associative) String() string {
 	var b bytes.Buffer

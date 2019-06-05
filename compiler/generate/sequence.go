@@ -55,13 +55,13 @@ func Sequence(e encoder.Type, s data.Sequence) {
 func List(e encoder.Type, l *data.List) {
 	f := resolveBuiltIn(e, listSym)
 	args := stdlib.SequenceToValues(l)
-	callApplicative(e, f.Call, args)
+	callApplicative(e, f.Caller(), args)
 }
 
 // Vector encodes a vector
 func Vector(e encoder.Type, v data.Vector) {
 	f := resolveBuiltIn(e, vectorSym)
-	callApplicative(e, f.Call, data.Values(v))
+	callApplicative(e, f.Caller(), data.Values(v))
 }
 
 // Associative encodes an associative array
@@ -75,12 +75,12 @@ func Associative(e encoder.Type, a data.Associative) {
 		i += 2
 	}
 	f := resolveBuiltIn(e, assocSym)
-	callApplicative(e, f.Call, args)
+	callApplicative(e, f.Caller(), args)
 }
 
-func resolveBuiltIn(e encoder.Type, sym data.Symbol) *data.Function {
+func resolveBuiltIn(e encoder.Type, sym data.Symbol) data.Caller {
 	manager := e.Globals().Manager()
 	root := manager.GetRoot()
 	res := namespace.MustResolveValue(root, sym)
-	return res.(*data.Function)
+	return res.(data.Caller)
 }

@@ -21,7 +21,7 @@ type (
 
 	macroMap   map[data.Name]macro.Call
 	specialMap map[data.Name]encoder.Call
-	funcMap    map[data.Name]*data.Function
+	funcMap    map[data.Name]data.Function
 )
 
 // Into sets up initial built-ins and assets

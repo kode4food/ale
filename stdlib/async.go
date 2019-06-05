@@ -6,6 +6,8 @@ import (
 	"sync"
 	"sync/atomic"
 
+	"gitlab.com/kode4food/ale/compiler/arity"
+
 	"gitlab.com/kode4food/ale/data"
 )
 
@@ -19,7 +21,7 @@ type (
 
 	// Promise represents a Value that will eventually be resolved
 	Promise interface {
-		data.Value
+		data.Function
 		Deliver(data.Value) data.Value
 		IsDelivered() bool
 		Resolve() data.Value
@@ -66,7 +68,11 @@ const (
 	channelClosed
 )
 
-var emptyResult = channelResult{value: data.Nil, error: nil}
+var (
+	emptyResult = channelResult{value: data.Nil, error: nil}
+
+	promiseArityChecker = arity.MakeRangedChecker(0, 1)
+)
 
 func (ch *channelWrapper) Close() {
 	if atomic.LoadUint32(&ch.status) != channelClosed {
@@ -213,6 +219,14 @@ func (p *promise) Caller() data.Call {
 		}
 		return p.Resolve()
 	}
+}
+
+func (p *promise) Convention() data.Convention {
+	return data.ApplicativeCall
+}
+
+func (p *promise) CheckArity(c int) error {
+	return promiseArityChecker(c)
 }
 
 func (p *promise) Resolve() data.Value {

@@ -13,18 +13,13 @@ import (
 func TestApplicativeFunction(t *testing.T) {
 	as := assert.New(t)
 
-	f1 := data.ApplicativeFunction(func(_ ...data.Value) data.Value {
+	f1 := data.MakeApplicative(func(_ ...data.Value) data.Value {
 		return S("hello!")
-	})
+	}, nil)
 
-	as.True(f1.IsApplicative())
-	as.False(f1.IsNormal())
+	as.True(data.IsApplicative(f1))
+	as.False(data.IsNormal(f1))
 	as.Contains(":type Applicative", f1)
-
-	c1 := f1.Caller()
-	as.Equal(c1, c1.Caller())
-	as.String("function", c1)
-	as.String("hello!", c1())
 
 	as.Nil(f1.CheckArity(99))
 }
@@ -32,13 +27,12 @@ func TestApplicativeFunction(t *testing.T) {
 func TestNormalFunction(t *testing.T) {
 	as := assert.New(t)
 
-	f1 := data.NormalFunction(func(_ ...data.Value) data.Value {
+	f1 := data.MakeNormal(func(_ ...data.Value) data.Value {
 		return S("hello!")
-	})
-	f1.ArityChecker = arity.MakeFixedChecker(0)
+	}, arity.MakeFixedChecker(0))
 
-	as.True(f1.IsNormal())
-	as.False(f1.IsApplicative())
+	as.True(data.IsNormal(f1))
+	as.False(data.IsApplicative(f1))
 	as.Contains(":type Normal", f1)
 
 	as.Nil(f1.CheckArity(0))

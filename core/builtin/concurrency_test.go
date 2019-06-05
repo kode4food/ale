@@ -38,8 +38,8 @@ func TestChan(t *testing.T) {
 	as.True(ok3)
 
 	go func() {
-		emit.(*data.Function).Call(S("hello"))
-		closeChan.(*data.Function).Call()
+		emit.(data.Call)(S("hello"))
+		closeChan.(data.Call)()
 	}()
 
 	f, r, ok := seq.(data.Sequence).Split()

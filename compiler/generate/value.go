@@ -22,7 +22,7 @@ func Value(e encoder.Type, v data.Value) {
 		Sequence(e, typed)
 	case data.Symbol:
 		ReferenceSymbol(e, typed)
-	case data.Keyword, data.Number, data.Bool, data.Caller, data.NilType:
+	case data.Keyword, data.Number, data.Bool, data.Function, data.NilType:
 		Literal(e, typed)
 	default:
 		panic(fmt.Errorf(UnknownValueType, v))

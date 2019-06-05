@@ -13,7 +13,7 @@ const (
 	ArgLen                     // Retrieve Argument Count
 	Bind                       // Bind Global
 	BindRef                    // Bind Reference
-	Call                       // Call Function
+	Call                       // Call Lambda
 	Call0                      // Zero-Arg Call
 	Call1                      // One-Arg Call
 	Closure                    // Retrieve Closure Value
@@ -50,12 +50,12 @@ const (
 	PosInf                     // Positive Infinity
 	Resolve                    // Resolve Global Symbol
 	RestArg                    // Retrieve Arguments Tail
-	Return                     // Return Value
 	RetEmptyList               // Return an Empty List
 	RetFalse                   // Return False
 	RetNil                     // Return Nil
 	RetTrue                    // Return True
-	Self                       // Push Current Function
+	Return                     // Return Value
+	Self                       // Push Current Lambda
 	Store                      // Store Local
 	Sub                        // Subtraction
 	TailCall                   // Tail Call

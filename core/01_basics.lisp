@@ -7,17 +7,32 @@
 
 ;; syntax-quoting requires it
 (def concat!
-  (fn concat! [& colls]
-    ((fn concat' [colls head]
-       (if (is-empty colls)
-           (apply list head)
-           (let [f (first colls)
-                 r (rest colls)]
-             (if (is-empty f)
-                 (concat' r head)
-                 (concat' (cons (rest f) r)
-                          (append head (first f)))))))
-     colls [])))
+  (lambda [& colls]
+    (letrec [concat'
+             (lambda [colls head]
+               (if (is-empty colls)
+                   (apply list head)
+                   (let [f (first colls)
+                         r (rest colls)]
+                     (if (is-empty f)
+                         (concat' r head)
+                         (concat' (cons (rest f) r)
+                                  (append head (first f)))))))]
+      (concat' colls []))))
+
+(def defmacro
+  (letrec [defmacro
+           (macro [name & forms]
+             `(def ~name
+                (letrec [~name (macro ~@forms)]
+                  ~name)))]
+    defmacro))
+
+(defmacro fn
+  [name & forms]
+  (if (is-local name)
+    `(letrec [~name (lambda ~@forms)] ~name)
+    `(lambda ~name ~@forms)))
 
 (defmacro defn
   [name & forms]

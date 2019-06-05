@@ -1,6 +1,8 @@
 package data
 
-import "bytes"
+import (
+	"bytes"
+)
 
 // Vector is a fixed-length array of Values
 type Vector []Value
@@ -84,6 +86,16 @@ func (v Vector) Reverse() Sequence {
 // Caller turns Vector into a callable type
 func (v Vector) Caller() Call {
 	return makeIndexedCall(v)
+}
+
+// Convention returns the function's calling convention
+func (v Vector) Convention() Convention {
+	return ApplicativeCall
+}
+
+// CheckArity performs a compile-time arity check for the function
+func (v Vector) CheckArity(argCount int) error {
+	return checkRangedArity(1, 2, argCount)
 }
 
 // String converts this Vector to a string

@@ -12,10 +12,8 @@ type (
 	Type interface {
 		data.Value
 
-		Name() data.Name
 		Parent() Type
 		Child() Type
-		NamedChild(data.Name) Type
 
 		Emit(isa.Opcode, ...isa.Coder)
 		Code() isa.Instructions
@@ -49,7 +47,6 @@ type (
 		globals   namespace.Type
 		constants data.Values
 		closure   IndexedCells
-		name      data.Name
 		args      argsStack
 		locals    []Locals
 		code      isa.Instructions
@@ -89,17 +86,6 @@ func (e *encoder) child() *encoder {
 // Child creates a child Type
 func (e *encoder) Child() Type {
 	return e.child()
-}
-
-func (e *encoder) NamedChild(name data.Name) Type {
-	res := e.child()
-	res.name = name
-	return res
-}
-
-// Name returns the name of this encoder (example: a function's name)
-func (e *encoder) Name() data.Name {
-	return e.name
 }
 
 // Parent returns the parent of this encoder

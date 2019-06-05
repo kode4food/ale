@@ -91,6 +91,16 @@ func (l *List) Caller() Call {
 	return makeIndexedCall(l)
 }
 
+// Convention returns the function's calling convention
+func (l *List) Convention() Convention {
+	return ApplicativeCall
+}
+
+// CheckArity performs a compile-time arity check for the function
+func (l *List) CheckArity(argCount int) error {
+	return checkRangedArity(1, 2, argCount)
+}
+
 // String converts this List to a string
 func (l *List) String() string {
 	return MakeSequenceStr(l)

@@ -42,8 +42,6 @@ func resolveLocal(e encoder.Type, l data.LocalSymbol) *encoder.ScopedCell {
 			} else {
 				e.Emit(isa.Arg, c.Index)
 			}
-		case encoder.NameScope:
-			e.Emit(isa.Self)
 		case encoder.ClosureScope:
 			c, _ := e.ResolveClosure(n)
 			e.Emit(isa.Closure, c.Index)

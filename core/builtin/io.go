@@ -45,18 +45,18 @@ func MakeWriter(w io.Writer, o stdlib.OutputFunc) data.Object {
 	return writerPrototype.Extend(wrapper)
 }
 
-func bindWriter(w stdlib.Writer) *data.Function {
-	return data.ApplicativeFunction(func(args ...data.Value) data.Value {
+func bindWriter(w stdlib.Writer) data.Call {
+	return func(args ...data.Value) data.Value {
 		for _, f := range args {
 			w.Write(f)
 		}
 		return data.Nil
-	})
+	}
 }
 
-func bindCloser(c stdlib.Closer) *data.Function {
-	return data.ApplicativeFunction(func(args ...data.Value) data.Value {
+func bindCloser(c stdlib.Closer) data.Call {
+	return func(args ...data.Value) data.Value {
 		c.Close()
 		return data.Nil
-	})
+	}
 }

@@ -9,7 +9,6 @@ type Scope int
 const (
 	LocalScope Scope = iota
 	ArgScope
-	NameScope
 	ClosureScope
 )
 
@@ -19,9 +18,6 @@ func (e *encoder) ResolveScoped(n data.Name) (*ScopedCell, bool) {
 	}
 	if _, ok := e.ResolveArg(n); ok {
 		return newScopedCell(ArgScope, newCell(ValueCell, n)), true
-	}
-	if e.Name() == n {
-		return newScopedCell(NameScope, newCell(ValueCell, n)), true
 	}
 	if e.parent != nil {
 		if s, ok := e.parent.ResolveScoped(n); ok {

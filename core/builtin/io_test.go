@@ -16,12 +16,12 @@ import (
 const stdoutName = "*out*"
 
 func bindWrite(w stdlib.Writer) data.Call {
-	return func(args ...data.Value) data.Value {
+	return data.Call(func(args ...data.Value) data.Value {
 		for _, af := range args {
 			w.Write(af)
 		}
 		return nil
-	}
+	})
 }
 
 func testOutput(t *testing.T, src, expected string) {

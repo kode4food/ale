@@ -29,7 +29,7 @@ func getCall(v data.Value) data.Call {
 func TestApply(t *testing.T) {
 	as := assert.New(t)
 
-	vCall := data.Call(builtin.Vector)
+	vCall := data.MakeApplicative(builtin.Vector, nil)
 	as.True(builtin.IsApply(vCall))
 	as.False(builtin.IsApply(S("55")))
 
@@ -60,7 +60,7 @@ func TestFunctionPredicates(t *testing.T) {
 	manager := bootstrap.DevNullManager()
 	bootstrap.Into(manager)
 
-	f1 := data.ApplicativeFunction(builtin.Str)
+	f1 := data.MakeApplicative(builtin.Str, nil)
 	as.False(builtin.IsSpecial(f1))
 	as.True(builtin.IsApply(f1))
 
@@ -96,7 +96,7 @@ func TestBadLambdaEval(t *testing.T) {
 	e := typeErr("data.Integer", "*data.List")
 	as.PanicWith(`(fn 99 "hello")`, e)
 
-	e = interfaceErr("data.qualifiedSymbol", "data.LocalSymbol", "LocalSymbol")
+	e = typeErr("data.qualifiedSymbol", "*data.List")
 	as.PanicWith(`(fn foo/bar [] "hello")`, e)
 }
 

@@ -16,23 +16,26 @@ const (
 
 // Closure encapsulates a function with the locals it captures
 type Closure struct {
-	*Function
+	*Lambda
+	data.Call
 	data.Values
 }
 
-// Caller returns a calling interface for this Closure
-func (c *Closure) Caller() data.Call {
-	function := c.Function
-	code := function.Code
-	stackSize := function.StackSize
-	localCount := function.LocalCount
-	stackInit := stackSize - 1
-	var self data.Call
+func newClosure(lambda *Lambda, values data.Values) *Closure {
+	c := &Closure{
+		Lambda: lambda,
+		Values: values,
+	}
 
-	self = func(args ...data.Value) data.Value {
+	c.Call = func(args ...data.Value) data.Value {
+		closure := c
+		lambda := closure.Lambda
+		code := lambda.Code
+		stackSize := lambda.StackSize
+		localCount := lambda.LocalCount
 		stack := make(data.Values, stackSize)
 		locals := make(data.Values, localCount)
-		var SP = stackInit
+		var SP = stackSize - 1
 		var PC = 0
 		goto opSwitch
 
@@ -42,11 +45,6 @@ func (c *Closure) Caller() data.Call {
 	opSwitch:
 		op := isa.Opcode(code[PC])
 		switch op {
-		case isa.Self:
-			stack[SP] = self
-			SP--
-			goto nextPC
-
 		case isa.Nil:
 			stack[SP] = data.Nil
 			SP--
@@ -90,7 +88,7 @@ func (c *Closure) Caller() data.Call {
 		case isa.Const:
 			PC++
 			idx := isa.Index(code[PC])
-			stack[SP] = function.Constants[idx]
+			stack[SP] = lambda.Constants[idx]
 			SP--
 			goto nextPC
 
@@ -116,7 +114,7 @@ func (c *Closure) Caller() data.Call {
 		case isa.Closure:
 			PC++
 			idx := isa.Index(code[PC])
-			stack[SP] = c.Values[idx]
+			stack[SP] = closure.Values[idx]
 			SP--
 			goto nextPC
 
@@ -154,14 +152,14 @@ func (c *Closure) Caller() data.Call {
 		case isa.Resolve:
 			SP1 := SP + 1
 			sym := stack[SP1].(data.Symbol)
-			val := namespace.MustResolveValue(function.Globals, sym)
+			val := namespace.MustResolveValue(lambda.Globals, sym)
 			stack[SP1] = val
 			goto nextPC
 
 		case isa.Declare:
 			SP++
 			name := stack[SP].(data.Name)
-			function.Globals.Declare(name)
+			lambda.Globals.Declare(name)
 			goto nextPC
 
 		case isa.Bind:
@@ -169,7 +167,7 @@ func (c *Closure) Caller() data.Call {
 			name := stack[SP].(data.Name)
 			SP++
 			val := stack[SP].(data.Value)
-			function.Globals.Declare(name).Bind(val)
+			lambda.Globals.Declare(name).Bind(val)
 			goto nextPC
 
 		case isa.Dup:
@@ -297,8 +295,11 @@ func (c *Closure) Caller() data.Call {
 
 		case isa.MakeCall:
 			SP1 := SP + 1
-			val := stack[SP1].(data.Caller)
-			stack[SP1] = val.Caller()
+			val := stack[SP1]
+			if _, ok := val.(data.Call); ok {
+				goto nextPC
+			}
+			stack[SP1] = val.(data.Caller).Caller()
 			goto nextPC
 
 		case isa.Call0:
@@ -329,17 +330,27 @@ func (c *Closure) Caller() data.Call {
 			goto nextPC
 
 		case isa.TailCall:
+			SP1 := SP + 1
 			argCount := int(code[PC+1])
-			if len(args) == argCount {
-				copy(args, stack[SP+1:])
-			} else {
-				newArgs := make(data.Values, argCount)
-				copy(newArgs, stack[SP+1:])
-				args = newArgs
+			args = make(data.Values, argCount)
+			copy(args, stack[SP1+1:])
+			val := stack[SP1]
+			if vc, ok := val.(*Closure); ok {
+				if vc != closure {
+					closure = vc
+					lambda = closure.Lambda
+					code = lambda.Code
+					stackSize = lambda.StackSize
+					localCount = lambda.LocalCount
+				}
+				stack = make(data.Values, stackSize)
+				locals = make(data.Values, localCount)
+				SP = stackSize - 1
+				PC = 0
+				goto opSwitch
 			}
-			SP = stackInit
-			PC = 0
-			goto opSwitch
+			fn := val.(data.Caller)
+			return fn.Caller()(args...)
 
 		case isa.Jump:
 			off := isa.Offset(code[PC+1])
@@ -380,7 +391,22 @@ func (c *Closure) Caller() data.Call {
 		}
 	}
 
-	return self
+	return c
+}
+
+// Caller returns a calling interface for this Closure
+func (c *Closure) Caller() data.Call {
+	return c.Call
+}
+
+// CheckArity performs a compile-time arity check for the closure
+func (c *Closure) CheckArity(i int) error {
+	return c.ArityChecker(i)
+}
+
+// Convention returns the closure's calling convention
+func (c *Closure) Convention() data.Convention {
+	return data.ApplicativeCall
 }
 
 // Type makes Closure a typed value

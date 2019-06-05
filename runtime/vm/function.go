@@ -8,21 +8,22 @@ import (
 	"gitlab.com/kode4food/ale/runtime/isa"
 )
 
-// Function encapsulates the initial environment of a virtual machine
-type Function struct {
-	Globals    namespace.Type
-	Constants  data.Values
-	Code       []isa.Word
-	StackSize  int
-	LocalCount int
+// Lambda encapsulates the initial environment of a virtual machine
+type Lambda struct {
+	Globals      namespace.Type
+	Constants    data.Values
+	Code         []isa.Word
+	StackSize    int
+	LocalCount   int
+	ArityChecker data.ArityChecker
 }
 
-// FunctionFromEncoder instantiates a VM Function from the provided
+// LambdaFromEncoder instantiates a VM Lambda from the provided
 // Encoder's intermediate representation
-func FunctionFromEncoder(e encoder.Type) *Function {
+func LambdaFromEncoder(e encoder.Type) *Lambda {
 	code := e.Code()
 	optimized := optimize.Instructions(code)
-	return &Function{
+	return &Lambda{
 		Globals:    e.Globals(),
 		Constants:  e.Constants(),
 		StackSize:  e.StackSize(),
@@ -31,19 +32,15 @@ func FunctionFromEncoder(e encoder.Type) *Function {
 	}
 }
 
-// Caller allows a VM Function to be called for the purpose
+// Caller allows a VM Lambda to be called for the purpose
 // of instantiating a Closure. This calling interface is used
 // only by the compiler.
-func (f *Function) Caller() data.Call {
+func (l *Lambda) Caller() data.Call {
 	return func(values ...data.Value) data.Value {
-		closure := &Closure{
-			Function: f,
-			Values:   values,
-		}
-		return closure.Caller()
+		return newClosure(l, values)
 	}
 }
 
-func (f *Function) String() string {
-	return data.DumpString(f)
+func (l *Lambda) String() string {
+	return data.DumpString(l)
 }

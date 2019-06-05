@@ -217,8 +217,7 @@ func use(args ...data.Value) data.Value {
 	return nothing
 }
 
-func shutdown(args ...data.Value) data.Value {
-	arity.AssertFixed(0, len(args))
+func shutdown(_ ...data.Value) data.Value {
 	t := time.Now().UTC().UnixNano()
 	rs := rand.NewSource(t)
 	rg := rand.New(rs)
@@ -228,15 +227,13 @@ func shutdown(args ...data.Value) data.Value {
 	return nothing
 }
 
-func debugInfo(args ...data.Value) data.Value {
-	arity.AssertFixed(0, len(args))
+func debugInfo(_ ...data.Value) data.Value {
 	runtime.GC()
 	fmt.Println("Number of goroutines: ", runtime.NumGoroutine())
 	return nothing
 }
 
-func cls(args ...data.Value) data.Value {
-	arity.AssertFixed(0, len(args))
+func cls(_ ...data.Value) data.Value {
 	fmt.Println(clear)
 	return nothing
 }
@@ -257,15 +254,13 @@ func formatForREPL(s string) string {
 	return strings.Join(out, "\n")
 }
 
-func help(args ...data.Value) data.Value {
-	arity.AssertFixed(0, len(args))
+func help(_ ...data.Value) data.Value {
 	md := string(docstring.Get("help"))
 	fmt.Println(formatForREPL(md))
 	return nothing
 }
 
 func doc(args ...data.Value) data.Value {
-	arity.AssertFixed(1, len(args))
 	sym := args[0].(data.LocalSymbol)
 	name := string(sym.Name())
 	if docstring.Exists(name) {
@@ -292,12 +287,14 @@ func GetNS() namespace.Type {
 }
 
 func registerREPLBuiltIns() {
-	registerBuiltIn("use", data.NormalFunction(use))
-	registerBuiltIn("quit", data.ApplicativeFunction(shutdown))
-	registerBuiltIn("debug", data.ApplicativeFunction(debugInfo))
-	registerBuiltIn("cls", data.ApplicativeFunction(cls))
-	registerBuiltIn("help", data.ApplicativeFunction(help))
-	registerBuiltIn("doc", data.NormalFunction(doc))
+	zeroArgChecker := arity.MakeFixedChecker(0)
+	singleArgChecker := arity.MakeFixedChecker(1)
+	registerBuiltIn("quit", data.MakeApplicative(shutdown, zeroArgChecker))
+	registerBuiltIn("debug", data.MakeApplicative(debugInfo, zeroArgChecker))
+	registerBuiltIn("cls", data.MakeApplicative(cls, zeroArgChecker))
+	registerBuiltIn("help", data.MakeApplicative(help, zeroArgChecker))
+	registerBuiltIn("use", data.MakeNormal(use, singleArgChecker))
+	registerBuiltIn("doc", data.MakeNormal(doc, singleArgChecker))
 }
 
 func getScreenWidth() int {

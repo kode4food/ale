@@ -20,6 +20,16 @@ func (k Keyword) Caller() Call {
 	}
 }
 
+// Convention returns the function's calling convention
+func (k Keyword) Convention() Convention {
+	return ApplicativeCall
+}
+
+// CheckArity performs a compile-time arity check for the function
+func (k Keyword) CheckArity(argCount int) error {
+	return checkRangedArity(1, 2, argCount)
+}
+
 // String converts Keyword into a string
 func (k Keyword) String() string {
 	return ":" + string(k)

@@ -3,6 +3,8 @@ package generate
 import (
 	"fmt"
 
+	"gitlab.com/kode4food/ale/runtime/vm"
+
 	"gitlab.com/kode4food/ale/compiler"
 	"gitlab.com/kode4food/ale/compiler/encoder"
 	"gitlab.com/kode4food/ale/data"
@@ -53,7 +55,7 @@ func callSymbol(e encoder.Type, s data.Symbol, args data.Values) {
 		case data.Call:
 			callApplicative(e, typed, args)
 			return
-		case *data.Function:
+		case data.Function:
 			callFunction(e, typed, args)
 			return
 		}
@@ -61,18 +63,22 @@ func callSymbol(e encoder.Type, s data.Symbol, args data.Values) {
 	callDynamic(e, s, args)
 }
 
-func callFunction(e encoder.Type, f *data.Function, args data.Values) {
+func callFunction(e encoder.Type, f data.Function, args data.Values) {
 	al := len(args)
 	if err := f.CheckArity(al); err != nil {
 		panic(err)
 	}
-	switch f.Convention {
+	if cl, ok := f.(*vm.Closure); ok {
+		callDynamic(e, cl, args)
+		return
+	}
+	c := f.Convention()
+	switch c {
 	case data.ApplicativeCall:
-		callApplicative(e, f.Call, args)
+		callApplicative(e, f.Caller(), args)
 	case data.NormalCall:
-		callNormal(e, f.Call, args)
+		callNormal(e, f.Caller(), args)
 	default:
-		c := f.Convention
 		panic(fmt.Sprintf(UnknownConvention, c))
 	}
 }

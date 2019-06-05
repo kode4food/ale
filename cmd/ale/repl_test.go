@@ -16,8 +16,8 @@ func TestREPL(t *testing.T) {
 }
 
 func asFunction(as *assert.Wrapper, v data.Value) data.Call {
-	if f, ok := v.(*data.Function); ok {
-		return f.Call
+	if f, ok := v.(data.Caller); ok {
+		return f.Caller()
 	}
 	as.Fail("value is not a function")
 	return nil

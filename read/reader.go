@@ -32,7 +32,7 @@ var (
 	unquoteSym  = namespace.RootSymbol("unquote")
 	splicingSym = namespace.RootSymbol("unquote-splicing")
 
-	specialNames = map[data.Name]data.Value{
+	specialNames = map[data.String]data.Value{
 		"true":  data.True,
 		"false": data.False,
 		"nil":   data.Nil,
@@ -138,7 +138,7 @@ func (r *reader) readCollection(endToken TokenType) data.Values {
 }
 
 func readIdentifier(t *Token) data.Value {
-	n := data.Name(t.Value.(data.String))
+	n := t.Value.(data.String)
 	if v, ok := specialNames[n]; ok {
 		return v
 	}

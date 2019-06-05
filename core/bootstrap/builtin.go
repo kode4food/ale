@@ -37,12 +37,12 @@ func (b *bootstrap) specialForms() {
 	b.special("if", special.If)
 	b.special("let", special.Let)
 	b.special("letrec", special.LetMutual)
-	b.special("fn", special.Fn)
+	b.special("lambda", special.Lambda)
 	b.special("eval", special.Eval)
 	b.special("declare", special.Declare)
 	b.special("def", special.Bind)
 	b.special("quote", special.Quote)
-	b.special("defmacro", special.DefMacro)
+	b.special("macro", special.Macro)
 	b.special("macroexpand-1", special.MacroExpand1)
 	b.special("macroexpand", special.MacroExpand)
 }
@@ -50,8 +50,9 @@ func (b *bootstrap) specialForms() {
 func (b *bootstrap) initialFunctions() {
 	manager := b.manager
 
-	defBuiltIn := func(args ...data.Value) data.Value {
-		arity.AssertFixed(1, len(args))
+	singleArgChecker := arity.MakeFixedChecker(1)
+
+	defBuiltIn := data.MakeNormal(func(args ...data.Value) data.Value {
 		ns := manager.GetRoot()
 		n := args[0].(data.LocalSymbol).Name()
 		if nf, ok := b.funcMap[n]; ok {
@@ -59,10 +60,9 @@ func (b *bootstrap) initialFunctions() {
 			return args[0]
 		}
 		panic(fmt.Errorf(BuiltInNotFound, n))
-	}
+	}, singleArgChecker)
 
-	defSpecial := func(args ...data.Value) data.Value {
-		arity.AssertFixed(1, len(args))
+	defSpecial := data.MakeNormal(func(args ...data.Value) data.Value {
 		ns := manager.GetRoot()
 		n := args[0].(data.LocalSymbol).Name()
 		if sf, ok := b.specialMap[n]; ok {
@@ -70,9 +70,9 @@ func (b *bootstrap) initialFunctions() {
 			return args[0]
 		}
 		panic(fmt.Errorf(SpecialNotFound, n))
-	}
+	}, singleArgChecker)
 
-	defMacro := func(args ...data.Value) data.Value {
+	defMacro := data.MakeNormal(func(args ...data.Value) data.Value {
 		ns := manager.GetRoot()
 		n := args[0].(data.LocalSymbol).Name()
 		if sf, ok := b.macroMap[n]; ok {
@@ -80,12 +80,12 @@ func (b *bootstrap) initialFunctions() {
 			return args[0]
 		}
 		panic(fmt.Errorf(MacroNotFound, n))
-	}
+	}, singleArgChecker)
 
 	ns := b.manager.GetRoot()
-	ns.Declare(defBuiltInName).Bind(data.NormalFunction(defBuiltIn))
-	ns.Declare(defSpecialName).Bind(data.NormalFunction(defSpecial))
-	ns.Declare(defMacroName).Bind(data.NormalFunction(defMacro))
+	ns.Declare(defBuiltInName).Bind(defBuiltIn)
+	ns.Declare(defSpecialName).Bind(defSpecial)
+	ns.Declare(defMacroName).Bind(defMacro)
 }
 
 func (b *bootstrap) availableFunctions() {
@@ -160,7 +160,7 @@ func (b *bootstrap) availableFunctions() {
 }
 
 func (b *bootstrap) applicative(name data.Name, call data.Call, arity ...int) {
-	fn := data.ApplicativeFunction(call)
+	fn := data.Call(call)
 	b.builtIn(name, fn, arity...)
 }
 
@@ -172,7 +172,7 @@ func (b *bootstrap) special(name data.Name, call encoder.Call) {
 	b.specialMap[name] = call
 }
 
-func (b *bootstrap) builtIn(name data.Name, fn *data.Function, a ...int) {
-	fn.ArityChecker = arity.MakeChecker(a...)
+func (b *bootstrap) builtIn(name data.Name, call data.Call, a ...int) {
+	fn := data.MakeApplicative(call, arity.MakeChecker(a...))
 	b.funcMap[name] = fn
 }

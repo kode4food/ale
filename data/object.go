@@ -85,6 +85,16 @@ func (o Object) Caller() Call {
 	return makeMappedCall(o)
 }
 
+// Convention returns the function's calling convention
+func (o Object) Convention() Convention {
+	return ApplicativeCall
+}
+
+// CheckArity performs a compile-time arity check for the function
+func (o Object) CheckArity(argCount int) error {
+	return checkRangedArity(1, 2, argCount)
+}
+
 // String converts this Value into a string
 func (o Object) String() string {
 	var buf bytes.Buffer

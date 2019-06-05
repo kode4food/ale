@@ -22,19 +22,18 @@ func makeCode(coders []isa.Coder) data.Call {
 	for i, c := range coders {
 		code[i] = c.Word()
 	}
-	fn := &vm.Function{
+	lambda := (&vm.Lambda{
 		Code:      code,
 		Constants: constants,
 		StackSize: 16,
-	}
-	fc := fn.Caller()
-	cl := fc(S("closure"))
-	return cl.(data.Call)
+	}).Caller()
+	closure := lambda(S("closure"))
+	return closure.(data.Caller).Caller()
 }
 
 func runCode(coders []isa.Coder) data.Value {
-	fn := makeCode(coders)
-	return fn(S("arg"))
+	call := makeCode(coders)
+	return call(S("arg"))
 }
 
 func testResult(t *testing.T, res data.Value, code []isa.Coder) {
