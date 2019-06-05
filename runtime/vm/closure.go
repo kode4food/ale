@@ -342,9 +342,9 @@ func newClosure(lambda *Lambda, values data.Values) *Closure {
 					code = lambda.Code
 					stackSize = lambda.StackSize
 					localCount = lambda.LocalCount
+					stack = make(data.Values, stackSize)
+					locals = make(data.Values, localCount)
 				}
-				stack = make(data.Values, stackSize)
-				locals = make(data.Values, localCount)
 				SP = stackSize - 1
 				PC = 0
 				goto opSwitch
