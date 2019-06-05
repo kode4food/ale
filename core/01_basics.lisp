@@ -28,6 +28,15 @@
                   ~name)))]
     defmacro))
 
+(defmacro assert-args
+  ([] nil)
+  ([clause]
+    (raise "assert-args clauses must be paired"))
+  ([& clauses]
+    `(if ~(clauses 0)
+         (assert-args ~@(rest (rest clauses)))
+         (raise ~(clauses 1)))))
+
 (defmacro fn
   [name & forms]
   (if (is-local name)
@@ -38,34 +47,46 @@
   [name & forms]
   `(def ~name (fn ~name ~@forms)))
 
+(defmacro define
+  [& body]
+  (let [f (first body) r (rest body)]
+    (if (is-list f)
+        (let [name (first f) args (rest f)]
+          `(defn ~name ~(apply vector args) ~@r))
+        `(def ~@body))))
+
 (defmacro !eq
   [value & comps]
   `(not (eq ~value ~@comps)))
 
-(defn is-even
-  [value]
+(define (is-even value)
   (= (mod value 2) 0))
 
-(defn is-odd
-  [value]
+(define (is-odd value)
   (= (mod value 2) 1))
 
-(defn is-paired
-  [value]
+(define (is-paired value)
   (is-even (len value)))
 
-(defn is-true
-  [value]
+(define (is-true value)
   (if value true false))
 
-(defn is-false
-  [value]
+(define (is-false value)
   (if value false true))
 
-(defn inc
-  [value]
+(define (inc value)
   (+ value 1))
 
-(defn dec
-  [value]
+(define (dec value)
   (- value 1))
+
+(define (no-op & _))
+
+(define (identity value) value)
+
+(define (constantly value)
+  (lambda [& _] value))
+
+(defmacro .
+  [target method & args]
+  `((get ~target ~method) ~@args))

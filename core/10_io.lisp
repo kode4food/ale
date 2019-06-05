@@ -5,12 +5,11 @@
 (def *space*   "\s")
 (def *newline* "\n")
 
-(defn pr-map-with-nil
-  [func seq]
+(define (pr-map-with-nil func seq)
   (map (fn [val] (if (nil? val) val (func val)))
        seq))
 
-(defn pr [& forms]
+(define (pr & forms)
   (let [mapped (pr-map-with-nil str! forms)]
     (when (seq mapped)
           (. *out* :write (first mapped)))
@@ -18,11 +17,11 @@
           (for-each [elem (rest mapped)]
                     (. *out* :write *space* elem)))))
 
-(defn prn [& forms]
+(define (prn & forms)
   (apply pr forms)
   (. *out* :write *newline*))
 
-(defn print [& forms]
+(define (print & forms)
   (let [mapped (pr-map-with-nil str forms)]
     (when (seq mapped)
           (. *out* :write (first mapped)))
@@ -30,16 +29,14 @@
           (for-each [elem (rest mapped)]
                     (. *out* :write *space* elem)))))
 
-(defn println [& forms]
+(define (println & forms)
   (apply print forms)
   (. *out* :write *newline*))
 
-(defn paired-vector?
-  [val]
+(define (paired-vector? val)
   (and (vector? val) (paired? val)))
 
-(defn with-open-close
-  [val]
+(define (with-open-close val)
   (let [c (:close val)]
     (if (apply? c) c no-op)))
 

@@ -1,38 +1,34 @@
 ;;;; ale core: standard sequences
 
-(defn to-assoc
-  [& colls]
+(define (to-assoc & colls)
   (apply assoc (apply concat! colls)))
 
-(defn to-list
-  [& colls]
+(define (to-list & colls)
   (apply list (apply concat! colls)))
 
-(defn to-vector
-  [& colls]
+(define (to-vector & colls)
   (apply vector (apply concat! colls)))
 
-(defn append* [coll & values]
+(define (append* coll & values)
   ((fn append' [coll values]
      (if (seq values)
          (append' (append coll (first values)) (rest values))
          coll))
     coll values))
 
-(defn cons* [coll & values]
+(define (cons* coll & values)
   ((fn cons' [coll values]
      (if (seq values)
          (cons' (cons (first values) coll) (rest values))
          coll))
     coll values))
 
-(defn conj [coll & values]
+(define (conj coll & values)
   (if (append? coll)
       (apply append* (cons coll values))
       (apply cons* (cons coll values))))
 
-(defn len!
-  [coll]
+(define (len! coll)
   ((fn len'
      [coll prev]
      (if (counted? coll)
@@ -60,14 +56,12 @@
             (nth coll pos default)
             (scan coll pos (fn [] default)))))))
 
-(defn last
-  [coll]
+(define (last coll)
   (let [s (len coll)]
     (when (> s 0)
           (nth coll (dec (len coll))))))
 
-(defn last!
-  [coll]
+(define (last! coll)
   ((fn last'
      [coll prev]
      (if (and (counted? coll) (indexed? coll))
@@ -82,8 +76,7 @@
              prev)))
     coll nil))
 
-(defn reverse!
-  [coll]
+(define (reverse! coll)
   (if (is-reversible coll)
       (reverse coll)
       ((fn reverse' [coll target]

@@ -1,44 +1,36 @@
 ;;;; ale core: exceptions
 
-(defn is-call
-  [sym clause]
+(define (is-call sym clause)
   (and (local? sym)
        (list? clause)
        (eq sym (first clause))))
 
-(defn is-catch-binding
-  [form]
+(define (is-catch-binding form)
   (and (vector? form)
        (= 2 (len form))
        (local? (form 1))))
 
-(defn is-catch
-  [clause parsed]
+(define (is-catch clause parsed)
   (and (is-call 'catch clause)
        (is-catch-binding (nth clause 1))
        (!seq? (:block parsed))))
 
-(defn is-finally
-  [clause parsed]
+(define (is-finally clause parsed)
   (and (is-call 'finally clause)
        (!seq? (:catch parsed))
        (!seq? (:block parsed))))
 
-(defn is-expr
-  [clause parsed]
+(define (is-expr clause parsed)
   (!or (is-call 'catch clause)
        (is-call 'finally clause)))
 
-(defn try-append
-  [parsed keyword clause]
+(define (try-append parsed keyword clause)
   (conj parsed [keyword (conj (keyword parsed) clause)]))
 
-(defn try-prepend
-  [parsed keyword clause]
+(define (try-prepend parsed keyword clause)
   (conj parsed [keyword (cons clause (keyword parsed))]))
 
-(defn try-parse
-  [clauses]
+(define (try-parse clauses)
   (unless (seq? clauses)
           {:block () :catch () :finally []}
           (let* [f (first clauses)
@@ -50,8 +42,7 @@
               (is-expr f p)    (try-prepend p :block f)
               :else            (raise "malformed try-catch-finally")))))
 
-(defn try-catch-predicate
-  [pred err-sym]
+(define (try-catch-predicate pred err-sym)
   (let* [l (thread-to-list pred)
          f (first l)
          r (rest l)]
@@ -59,8 +50,7 @@
 
 (declare try-catch-clauses)
 
-(defn try-catch-branch
-  [clauses err-sym]
+(define (try-catch-branch clauses err-sym)
   (assert-args (seq? clauses) "catch branch not paired")
   (lazy-seq
     (let* [clause (first clauses)
@@ -71,8 +61,7 @@
                   [false (cons 'ale/do expr)])
             (try-catch-clauses (rest clauses) err-sym)))))
 
-(defn try-catch-clauses
-  [clauses err-sym]
+(define (try-catch-clauses clauses err-sym)
   (lazy-seq
     (when (seq? clauses)
           (let* [clause (first clauses)
@@ -80,20 +69,17 @@
             (cons (try-catch-predicate pred err-sym)
                   (try-catch-branch clauses err-sym))))))
 
-(defn try-body
-  [clauses]
+(define (try-body clauses)
   `(fn [] [false (do ~@clauses)]))
 
-(defn try-catch
-  [clauses]
+(define (try-catch clauses)
   (let [err (gensym "err")]
     `(fn [~err]
        (cond
          ~@(apply list (try-catch-clauses clauses err))
          :else [true ~err]))))
 
-(defn try-catch-finally
-  [parsed]
+(define (try-catch-finally parsed)
   (let [block   (:block parsed)
         recover (:catch parsed)
         cleanup (:finally parsed)]

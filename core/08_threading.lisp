@@ -1,7 +1,6 @@
 ;;;; ale core: threading
 
-(defn thread-to-list
-  [target]
+(define (thread-to-list target)
   (unless (list? target)
           (list target)
           target))
@@ -49,8 +48,7 @@
       `(let [~name ~value]
          (as-> ~l ~name ~@(rest forms))))))
 
-(defn make-cond-clause
-  [sym]
+(define (make-cond-clause sym)
   (fn [clause]
     (let [pred (nth clause 0)
           form (nth clause 1)]

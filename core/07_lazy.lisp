@@ -4,8 +4,7 @@
   [& body]
   `(lazy-seq* (fn [] ~@body)))
 
-(defn take
-  [count coll]
+(define (take count coll)
   ((fn take'
      [count coll]
      (lazy-seq
@@ -14,16 +13,14 @@
            ())))
     count coll))
 
-(defn take-while
-  [pred coll]
+(define (take-while pred coll)
   (lazy-seq
     (when-let [s (seq coll)]
       (let [fs (first s)]
         (when (pred fs)
               (cons fs (take-while pred (rest s))))))))
 
-(defn drop
-  [count coll]
+(define (drop count coll)
   (lazy-seq
     ((fn drop'
        [count coll]
@@ -80,8 +77,7 @@
                  (cons (apply func f) (parallel' r))))))
       (cons coll colls))))
 
-(defn filter
-  [func coll]
+(define (filter func coll)
    (lazy-seq
      ((fn filter' [coll]
         (when (seq coll)
@@ -92,8 +88,7 @@
                     (filter' r)))))
       coll)))
 
-(defn cartesian-product
-  [& colls]
+(define (cartesian-product & colls)
   (let* [rotate-row
          (fn rotate-row [row orig-row]
            (if (seq row)
@@ -162,7 +157,7 @@
   [seq-exprs & body]
   `(last! (for ~seq-exprs ~@body)))
 
-(defn concat [& colls]
+(define (concat & colls)
   ((fn concat' [colls]
      (lazy-seq
        (when (seq colls)
@@ -173,3 +168,4 @@
                          (concat' (cons (rest f) r)))
                    (concat' r))))))
      colls))
+ 

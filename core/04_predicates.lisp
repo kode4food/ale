@@ -1,7 +1,6 @@
 ;;;; ale core: predicates
 
-(defn pred-apply
-  [func args]
+(define (pred-apply func args)
   (if (is-empty args)
       true
       (unless (func (first args)) false
@@ -10,13 +9,13 @@
 (defmacro def-predicate-pos
   [func name]
   (let [func-name (sym (str name "?"))]
-    `(defn ~func-name [~'first & ~'rest]
+    `(define (~func-name ~'first & ~'rest)
        (pred-apply ~func (cons ~'first ~'rest)))))
 
 (defmacro def-predicate-neg
   [func name]
   (let [func-name (sym (str "!" name "?"))]
-    `(defn ~func-name [~'first & ~'rest]
+    `(define (~func-name ~'first & ~'rest)
        (not (pred-apply ~func (cons ~'first ~'rest))))))
 
 (defmacro def-predicate
