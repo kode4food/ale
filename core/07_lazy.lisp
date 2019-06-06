@@ -2,7 +2,7 @@
 
 (defmacro lazy-seq
   [& body]
-  `(lazy-seq* (fn [] ~@body)))
+  `(lazy-seq* (lambda [] ~@body)))
 
 (define (take count coll)
   ((fn take'
@@ -150,7 +150,7 @@
          bind# (to-vector (split 0))
          seqs# (split 1)]
     `(map
-       (fn [~args] (let ~bind# ~@body))
+       (lambda [~args] (let ~bind# ~@body))
        (cartesian-product ~@seqs#))))
 
 (defmacro for-each

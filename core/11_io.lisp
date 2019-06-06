@@ -2,11 +2,11 @@
 
 (declare *in* *out* *err*)
 
-(def *space*   "\s")
-(def *newline* "\n")
+(define *space*   "\s")
+(define *newline* "\n")
 
 (define (pr-map-with-nil func seq)
-  (map (fn [val] (if (nil? val) val (func val)))
+  (map (lambda [val] (if (nil? val) val (func val)))
        seq))
 
 (define (pr & forms)

@@ -49,10 +49,10 @@
          (as-> ~l ~name ~@(rest forms))))))
 
 (define (make-cond-clause sym)
-  (fn [clause]
+  (lambda [clause]
     (let [pred (nth clause 0)
           form (nth clause 1)]
-      `((fn [val] (if ~pred (~sym val ~form) val))))))
+      `((lambda [val] (if ~pred (~sym val ~form) val))))))
 
 (defmacro cond->
   ([value] value)

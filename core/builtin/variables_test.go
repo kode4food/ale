@@ -41,12 +41,12 @@ func TestMutualBindingsEval(t *testing.T) {
 	as.EvalTo(`
 		(letrec [
 			is-even?
-			(fn [n] (or (= n 0)
-						(is-odd? (dec n))))
+			(lambda [n] (or (= n 0)
+			                (is-odd? (dec n))))
 
 			is-odd?
-			(fn [n] (and (not (= n 0))
-						 (is-even? (dec n))))]
+			(lambda [n] (and (not (= n 0))
+			                 (is-even? (dec n))))]
 		(is-even? 13))
 	`, data.False)
 }

@@ -49,7 +49,8 @@
 
 (defmacro define
   [& body]
-  (let [f (first body) r (rest body)]
+  (let [f (first body)
+        r (rest body)]
     (if (is-list f)
         (let [name (first f) args (rest f)]
           `(defn ~name ~(apply vector args) ~@r))
@@ -57,7 +58,7 @@
 
 (defmacro !eq
   [value & comps]
-  `(not (eq ~value ~@comps)))
+  `(not (eq ~value ~@comps))) 
 
 (define (is-even value)
   (= (mod value 2) 0))

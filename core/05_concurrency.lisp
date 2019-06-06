@@ -2,7 +2,7 @@
 
 (defmacro go
   [& body]
-  `(go* (fn [] ~@body)))
+  `(go* (lambda [] ~@body)))
 
 (defmacro generate
   [& body]
@@ -31,6 +31,6 @@
            mailbox (:seq channel)
            sender  (:emit channel)]
       (go
-        (recover (fn [] (func mailbox))
+        (recover (lambda [] (func mailbox))
                  monitor))
                  sender)))

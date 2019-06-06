@@ -1,6 +1,6 @@
 ;;;; ale core: branching
 
-(def not is-false)
+(define not is-false)
 
 (defmacro unless
   ([test] nil)
