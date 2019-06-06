@@ -15,16 +15,16 @@
     (let* [args        (gensym "args")
            inner       (list 'apply func args)
            first-outer (first funcs)
-           rest-outer  (rest funcs)
-
-           outer
-           (fn outer
-             [func args rest-funcs]
-             (if (seq rest-funcs)
-                 (outer (first rest-funcs) (list func args) (rest rest-funcs))
-                 (list func args)))]
-      `(fn [& ~args]
-         ~(outer first-outer inner rest-outer)))))
+           rest-outer  (rest funcs)]
+      (letfn [(fn outer
+                [func args rest-funcs]
+                (if (seq rest-funcs)
+                    (outer (first rest-funcs)
+                           (list func args)
+                           (rest rest-funcs))
+                    (list func args)))]
+        `(fn [& ~args]
+           ~(outer first-outer inner rest-outer))))))
 
 (defmacro juxt
   [& funcs]
