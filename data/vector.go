@@ -1,8 +1,6 @@
 package data
 
-import (
-	"bytes"
-)
+import "bytes"
 
 // Vector is a fixed-length array of Values
 type Vector []Value

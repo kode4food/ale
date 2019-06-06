@@ -7,7 +7,6 @@ import (
 	"sync/atomic"
 
 	"gitlab.com/kode4food/ale/compiler/arity"
-
 	"gitlab.com/kode4food/ale/data"
 )
 
