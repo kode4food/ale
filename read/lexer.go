@@ -57,10 +57,9 @@ type (
 )
 
 const (
-	idStartChar = `[^(){}\[\]\s,'~@";]`
-	idContChar  = `[^(){}\[\]\s";]`
-	id          = idStartChar + idContChar + "*"
-	numTail     = idStartChar + "*"
+	idChar  = `[^(){}\[\]\s,'~@";]`
+	id      = idChar + "*"
+	numTail = id
 )
 
 var (

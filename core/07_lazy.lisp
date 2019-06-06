@@ -5,11 +5,11 @@
   `(lazy-seq* (lambda [] ,@body)))
 
 (define (take count coll)
-  ((fn take'
+  ((fn take-inner
      [count coll]
      (lazy-seq
        (if (and (> count 0) (!empty? coll))
-           (cons (first coll) (take' (dec count) (rest coll)))
+           (cons (first coll) (take-inner (dec count) (rest coll)))
            ())))
     count coll))
 
@@ -22,10 +22,10 @@
 
 (define (drop count coll)
   (lazy-seq
-    ((fn drop'
+    ((fn drop-inner
        [count coll]
        (if (> count 0)
-           (drop' (dec count) (rest coll))
+           (drop-inner (dec count) (rest coll))
            coll))
       count coll)))
 
@@ -61,31 +61,31 @@
 
 (defn map
   ([func coll]
-    ((fn map' [coll]
+    ((fn map-single [coll]
        (lazy-seq
          (when (seq coll)
                (cons (func (first coll))
-                     (map' (rest coll))))))
+                     (map-single (rest coll))))))
       coll))
 
   ([func coll & colls]
-    ((fn parallel' [colls]
+    ((fn map-parallel [colls]
        (lazy-seq
          (when (apply true? (map !empty? colls))
                (let [f (to-vector (map first colls))
                      r (map rest colls)]
-                 (cons (apply func f) (parallel' r))))))
+                 (cons (apply func f) (map-parallel r))))))
       (cons coll colls))))
 
 (define (filter func coll)
    (lazy-seq
-     ((fn filter' [coll]
+     ((fn filter-inner [coll]
         (when (seq coll)
               (let [f (first coll)
                     r (rest coll)]
                 (if (func f)
                     (cons f (filter func r))
-                    (filter' r)))))
+                    (filter-inner r)))))
       coll)))
 
 (define (cartesian-product & colls)
@@ -158,13 +158,13 @@
   `(last! (for ,seq-exprs ,@body)))
 
 (define (concat & colls)
-  ((fn concat' [colls]
+  ((fn concat-inner [colls]
      (lazy-seq
        (when (seq colls)
              (let [f (first colls)
                    r (rest colls)]
                (if (seq f)
                    (cons (first f)
-                         (concat' (cons (rest f) r)))
-                   (concat' r))))))
+                         (concat-inner (cons (rest f) r)))
+                   (concat-inner r))))))
      colls))

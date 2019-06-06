@@ -10,16 +10,16 @@
   (apply vector (apply concat! colls)))
 
 (define (append* coll & values)
-  ((fn append' [coll values]
+  ((fn append-inner [coll values]
      (if (seq values)
-         (append' (append coll (first values)) (rest values))
+         (append-inner (append coll (first values)) (rest values))
          coll))
     coll values))
 
 (define (cons* coll & values)
-  ((fn cons' [coll values]
+  ((fn cons-inner [coll values]
      (if (seq values)
-         (cons' (cons (first values) coll) (rest values))
+         (cons-inner (cons (first values) coll) (rest values))
          coll))
     coll values))
 
@@ -29,12 +29,12 @@
       (apply cons* (cons coll values))))
 
 (define (len! coll)
-  ((fn len'
+  ((fn len-inner
      [coll prev]
      (if (counted? coll)
          (+ prev (len coll))
          (if (seq coll)
-             (len' (rest coll) (inc prev))
+             (len-inner (rest coll) (inc prev))
              prev)))
     coll 0))
 
@@ -62,7 +62,7 @@
           (nth coll (dec (len coll))))))
 
 (define (last! coll)
-  ((fn last'
+  ((fn last-inner
      [coll prev]
      (if (and (counted? coll) (indexed? coll))
          (let [s (len coll)]
@@ -72,24 +72,24 @@
          (if (seq coll)
              (let [f (first coll)
                    r (rest coll)]
-               (last' r f))
+               (last-inner r f))
              prev)))
     coll nil))
 
 (define (reverse! coll)
   (if (is-reversible coll)
       (reverse coll)
-      ((fn reverse' [coll target]
+      ((fn reverse-inner [coll target]
          (if (seq coll)
-             (reverse' (rest coll) (cons (first coll) target))
+             (reverse-inner (rest coll) (cons (first coll) target))
              target))
         coll ())))
 
 (defn reduce
   ([func init coll]
-    ((fn reduce' [init coll]
+    ((fn reduce-inner [init coll]
        (if (seq coll)
-           (reduce' (func init (first coll)) (rest coll))
+           (reduce-inner (func init (first coll)) (rest coll))
            init))
       init coll))
 

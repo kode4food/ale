@@ -8,17 +8,17 @@
 ;; syntax-quoting requires it
 (def concat!
   (lambda [& colls]
-    (letrec [concat'
+    (letrec [concat-inner
              (lambda [colls head]
                (if (is-empty colls)
                    (apply list head)
                    (let [f (first colls)
                          r (rest colls)]
                      (if (is-empty f)
-                         (concat' r head)
-                         (concat' (cons (rest f) r)
-                                  (append head (first f)))))))]
-      (concat' colls []))))
+                         (concat-inner r head)
+                         (concat-inner (cons (rest f) r)
+                                       (append head (first f)))))))]
+      (concat-inner colls []))))
 
 (def defmacro
   (letrec [defmacro
