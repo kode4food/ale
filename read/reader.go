@@ -31,6 +31,7 @@ var (
 	syntaxSym   = namespace.RootSymbol("syntax-quote")
 	unquoteSym  = namespace.RootSymbol("unquote")
 	splicingSym = namespace.RootSymbol("unquote-splicing")
+	patternSym  = namespace.RootSymbol("pattern")
 
 	specialNames = map[data.String]data.Value{
 		"true":  data.True,
@@ -78,6 +79,8 @@ func (r *reader) value(t *Token) data.Value {
 		return r.prefixed(unquoteSym)
 	case SpliceMarker:
 		return r.prefixed(splicingSym)
+	case PatternMarker:
+		return r.prefixed(patternSym)
 	case ListStart:
 		return r.list()
 	case VectorStart:

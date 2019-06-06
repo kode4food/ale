@@ -14,8 +14,4 @@ Evaluates *expr* and threads it through the supplied forms as their first argume
 (-> 0 (+ 10) (* 2) (/ 5))
 ```
 
-Will expand to `(/ (* (+ 0 10) 2) 5)` and return _4_. In order to better visualize what's going on, one might choose to insert a `,` as a placeholder for the threaded value.
-
-```clojure
-(-> 0 (+ , 10) (* , 2) (/ , 5))
-```
+Will expand to `(/ (* (+ 0 10) 2) 5)` and return _4_.

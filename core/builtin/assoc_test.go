@@ -29,8 +29,8 @@ func TestAssoc(t *testing.T) {
 
 func TestAssocEval(t *testing.T) {
 	as := assert.New(t)
-	as.EvalTo(`(len {:name "Ale", :age 45})`, F(2))
-	as.EvalTo(`(len (assoc :name "Ale", :age 45))`, F(2))
+	as.EvalTo(`(len {:name "Ale" :age 45})`, F(2))
+	as.EvalTo(`(len (assoc :name "Ale" :age 45))`, F(2))
 	as.EvalTo(`(assoc? {:name "Ale" :age 45})`, data.True)
 	as.EvalTo(`(assoc? (assoc :name "Ale" :age 45))`, data.True)
 	as.EvalTo(`(assoc? '(:name "Ale" :age 45))`, data.False)

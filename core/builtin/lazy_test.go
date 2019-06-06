@@ -110,7 +110,7 @@ func TestLazySeqEval(t *testing.T) {
 	as.EvalTo(`
 		(reduce
 			(fn [x y] (+ x y))
-			(lazy-seq (cons 1 (lazy-seq [2, 3]))))
+			(lazy-seq (cons 1 (lazy-seq [2 3]))))
 	`, F(6))
 
 	as.EvalTo(`
@@ -123,7 +123,8 @@ func TestForEachLoopEval(t *testing.T) {
 	as.EvalTo(`
 		(let* [ch (chan) emit (:emit ch) close (:close ch) seq (:seq ch)]
 			(go
-				(for-each [i (range 1 5 1), j (range 1 10 2)]
+				(for-each [i (range 1 5 1)
+				           j (range 1 10 2)]
 					(emit (* i j)))
 				(close))
 			(reduce (fn [x y] (+ x y)) seq))

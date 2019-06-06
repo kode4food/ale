@@ -8,6 +8,6 @@
   (let [name  (bindings 0)
         value (bindings 1)]
     (if (> (len bindings) 2)
-        `(let [~name ~value]
-           (let* ~(rest (rest bindings)) ~@body))
-        `(let [~name ~value] ~@body))))
+        `(let [,name ,value]
+           (let* ,(rest (rest bindings)) ,@body))
+        `(let [,name ,value] ,@body))))

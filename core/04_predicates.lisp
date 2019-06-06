@@ -9,20 +9,20 @@
 (defmacro def-predicate-pos
   [func name]
   (let [func-name (sym (str name "?"))]
-    `(define (~func-name ~'first & ~'rest)
-       (pred-apply ~func (cons ~'first ~'rest)))))
+    `(define (,func-name ,'first & ,'rest)
+       (pred-apply ,func (cons ,'first ,'rest)))))
 
 (defmacro def-predicate-neg
   [func name]
   (let [func-name (sym (str "!" name "?"))]
-    `(define (~func-name ~'first & ~'rest)
-       (not (pred-apply ~func (cons ~'first ~'rest))))))
+    `(define (,func-name ,'first & ,'rest)
+       (not (pred-apply ,func (cons ,'first ,'rest))))))
 
 (defmacro def-predicate
   [func name]
   `(do
-     (def-predicate-pos ~func ~name)
-     (def-predicate-neg ~func ~name)))
+     (def-predicate-pos ,func ,name)
+     (def-predicate-neg ,func ,name)))
 
 (def-predicate is-appender "append")
 (def-predicate is-apply "apply")
@@ -55,4 +55,3 @@
 (def-predicate is-vector "vector")
 (def-predicate is-true "true")
 (def-predicate is-false "false")
-

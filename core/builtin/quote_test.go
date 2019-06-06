@@ -55,14 +55,14 @@ func TestUnquoteEval(t *testing.T) {
 	ns := manager.GetAnonymous()
 
 	ns.Declare("foo").Bind(data.Float(456))
-	r1 := eval.String(ns, `'[123 ~foo]`)
+	r1 := eval.String(ns, `'[123 ,foo]`)
 	as.String("[123 (ale/unquote foo)]", r1)
 }
 
 func TestUnquoteMacroEval(t *testing.T) {
 	as := assert.New(t)
 	as.EvalTo(
-		"(defmacro test [x & y] `(~x ~@y {:hello 99}))"+
+		"(defmacro test [x & y] `(,x ,@y {:hello 99}))"+
 			"(test vector 1 2 3)",
 		S("[1 2 3 {:hello 99}]"),
 	)

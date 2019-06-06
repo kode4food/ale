@@ -14,7 +14,7 @@
                 (is-local fnName))
            "bindings must contain named functions")
          (parse-bindings (append (append out fnName) fnList) (rest in)))
-       `(letrec ~out ~@body)))
+       `(letrec ,out ,@body)))
    [] bindings))
 
 (defn partial
@@ -40,11 +40,11 @@
                            (list func args)
                            (rest rest-funcs))
                     (list func args)))]
-        `(lambda [& ~args]
-           ~(outer first-outer inner rest-outer))))))
+        `(lambda [& ,args]
+           ,(outer first-outer inner rest-outer))))))
 
 (defmacro juxt
   [& funcs]
   (let [args (gensym "args")]
-    `(lambda [& ~args]
-       [~@(map (lambda [f] (list 'apply f args)) funcs)])))
+    `(lambda [& ,args]
+       [,@(map (lambda [f] (list 'apply f args)) funcs)])))

@@ -3,7 +3,7 @@
 (defmacro time
   [& forms]
   `(let* [start#  (current-time)
-          result# (do ~@forms)
+          result# (do ,@forms)
           end#    (current-time)
           dur#    (- end# start#)]
      (if (< dur# 1000)

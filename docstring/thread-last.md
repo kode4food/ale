@@ -14,8 +14,4 @@ Evaluates *expr* and threads it through the supplied forms as their last argumen
 (->> 0 (+ 10) (* 2) (/ 5.0))
 ```
 
-Will expand to `(/ 5.0 (* 2 (+ 10 0)))` and return _0.25_. In order to better visualize what's going on, one might choose to insert a `,` as a placeholder for the threaded value.
-
-```clojure
-(->> 0 (+ 10 ,) (* 2 ,) (/ 5.0 ,))
-```
+Will expand to `(/ 5.0 (* 2 (+ 10 0)))` and return _0.25_.

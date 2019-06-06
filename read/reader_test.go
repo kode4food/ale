@@ -133,6 +133,7 @@ func TestReaderErrors(t *testing.T) {
 
 	testReaderError(t, "(", fmt.Errorf(read.ListNotClosed))
 	testReaderError(t, "'", fmt.Errorf(read.PrefixedNotPaired, "ale/quote"))
-	testReaderError(t, "~@", fmt.Errorf(read.PrefixedNotPaired, "ale/unquote-splicing"))
-	testReaderError(t, "~", fmt.Errorf(read.PrefixedNotPaired, "ale/unquote"))
+	testReaderError(t, ",@", fmt.Errorf(read.PrefixedNotPaired, "ale/unquote-splicing"))
+	testReaderError(t, ",", fmt.Errorf(read.PrefixedNotPaired, "ale/unquote"))
+	testReaderError(t, "~", fmt.Errorf(read.PrefixedNotPaired, "ale/pattern"))
 }

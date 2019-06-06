@@ -2,7 +2,7 @@
 
 (defmacro go
   [& body]
-  `(go* (lambda [] ~@body)))
+  `(go* (lambda [] ,@body)))
 
 (defmacro generate
   [& body]
@@ -10,7 +10,7 @@
           close# (:close chan#)
           emit   (:emit chan#)]
      (go
-       (let [result# (do ~@body)]
+       (let [result# (do ,@body)]
          (close#)
          result#))
      (:seq chan#)))
@@ -18,7 +18,7 @@
 (defmacro future
   [& body]
   `(let [promise# (promise)]
-     (go (promise# (do ~@body)))
+     (go (promise# (do ,@body)))
      promise#))
 
 (defn spawn

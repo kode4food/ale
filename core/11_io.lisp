@@ -45,11 +45,11 @@
     (paired-vector? bindings) "with-open bindings must be a key-value vector")
   (cond
     (= (len bindings) 0)
-    `(do ~@body)
+    `(do ,@body)
 
     (>= (len bindings) 2)
-    `(let [~(bindings 0) ~(bindings 1)
-           close#        (with-open-close ~(bindings 0))]
+    `(let [,(bindings 0) ,(bindings 1)
+           close#        (with-open-close ,(bindings 0))]
        (try
-         (with-open [~@(rest (rest bindings))] ~@body)
+         (with-open [,@(rest (rest bindings))] ,@body)
          (finally (close#))))))

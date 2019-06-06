@@ -23,9 +23,9 @@
 (def defmacro
   (letrec [defmacro
            (macro [name & forms]
-             `(def ~name
-                (letrec [~name (macro ~@forms)]
-                  ~name)))]
+             `(def ,name
+                (letrec [,name (macro ,@forms)]
+                  ,name)))]
     defmacro))
 
 (defmacro assert-args
@@ -33,19 +33,19 @@
   ([clause]
     (raise "assert-args clauses must be paired"))
   ([& clauses]
-    `(if ~(clauses 0)
-         (assert-args ~@(rest (rest clauses)))
-         (raise ~(clauses 1)))))
+    `(if ,(clauses 0)
+         (assert-args ,@(rest (rest clauses)))
+         (raise ,(clauses 1)))))
 
 (defmacro fn
   [name & forms]
   (if (is-local name)
-    `(letrec [~name (lambda ~@forms)] ~name)
-    `(lambda ~name ~@forms)))
+    `(letrec [,name (lambda ,@forms)] ,name)
+    `(lambda ,name ,@forms)))
 
 (defmacro defn
   [name & forms]
-  `(def ~name (fn ~name ~@forms)))
+  `(def ,name (fn ,name ,@forms)))
 
 (defmacro define
   [& body]
@@ -53,12 +53,12 @@
         r (rest body)]
     (if (is-list f)
         (let [name (first f) args (rest f)]
-          `(defn ~name ~(apply vector args) ~@r))
-        `(def ~@body))))
+          `(defn ,name ,(apply vector args) ,@r))
+        `(def ,@body))))
 
 (defmacro !eq
   [value & comps]
-  `(not (eq ~value ~@comps))) 
+  `(not (eq ,value ,@comps)))
 
 (define (is-even value)
   (= (mod value 2) 0))
@@ -90,4 +90,4 @@
 
 (defmacro .
   [target method & args]
-  `((get ~target ~method) ~@args))
+  `((get ,target ,method) ,@args))

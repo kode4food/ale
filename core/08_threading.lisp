@@ -11,7 +11,7 @@
     (let* [l (thread-to-list (first forms))
            f (first l)
            r (rest l)]
-      `(-> (~f ~value ~@r) ~@(rest forms)))))
+      `(-> (,f ,value ,@r) ,@(rest forms)))))
 
 (defmacro ->>
   ([value] value)
@@ -19,7 +19,7 @@
     (let* [l (thread-to-list (first forms))
            f (first l)
            r (rest l)]
-      `(->> (~f ~@r ~value) ~@(rest forms)))))
+      `(->> (,f ,@r ,value) ,@(rest forms)))))
 
 (defmacro some->
   ([value] value)
@@ -27,9 +27,9 @@
     (let* [l (thread-to-list (first forms))
            f (first l)
            r (rest l)]
-      `(let [val# ~value]
+      `(let [val# ,value]
          (when-not (nil? val#)
-                   (some-> (~f val# ~@r) ~@(rest forms)))))))
+                   (some-> (,f val# ,@r) ,@(rest forms)))))))
 
 (defmacro some->>
   ([value] value)
@@ -37,35 +37,35 @@
     (let* [l (thread-to-list (first forms))
            f (first l)
            r (rest l)]
-      `(let [val# ~value]
+      `(let [val# ,value]
          (when-not (nil? val#)
-                   (some->> (~f ~@r val#) ~@(rest forms)))))))
+                   (some->> (,f ,@r val#) ,@(rest forms)))))))
 
 (defmacro as->
   ([value name] value)
   ([value name & forms]
     (let [l (thread-to-list (first forms))]
-      `(let [~name ~value]
-         (as-> ~l ~name ~@(rest forms))))))
+      `(let [,name ,value]
+         (as-> ,l ,name ,@(rest forms))))))
 
 (define (make-cond-clause sym)
   (lambda [clause]
     (let [pred (nth clause 0)
           form (nth clause 1)]
-      `((lambda [val] (if ~pred (~sym val ~form) val))))))
+      `((lambda [val] (if ,pred (,sym val ,form) val))))))
 
 (defmacro cond->
   ([value] value)
   ([value & clauses]
     (assert-args
       (even? (len clauses)) "clauses must be paired")
-    `(-> ~value
-         ~@(map (make-cond-clause ->) (partition 2 clauses)))))
+    `(-> ,value
+         ,@(map (make-cond-clause ->) (partition 2 clauses)))))
 
 (defmacro cond->>
   ([value] value)
   ([value & clauses]
     (assert-args
       (even? (len clauses)) "clauses must be paired")
-    `(-> ~value
-         ~@(map (make-cond-clause ->>) (partition 2 clauses)))))
+    `(-> ,value
+         ,@(map (make-cond-clause ->>) (partition 2 clauses)))))

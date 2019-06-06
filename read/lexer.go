@@ -30,6 +30,7 @@ const (
 	SyntaxMarker
 	UnquoteMarker
 	SpliceMarker
+	PatternMarker
 	Whitespace
 	Comment
 	endOfFile
@@ -57,7 +58,7 @@ type (
 
 const (
 	idStartChar = `[^(){}\[\]\s,'~@";]`
-	idContChar  = `[^(){}\[\]\s~@";]`
+	idContChar  = `[^(){}\[\]\s";]`
 	id          = idStartChar + idContChar + "*"
 	numTail     = idStartChar + "*"
 )
@@ -76,7 +77,7 @@ var (
 	matchers = matchEntries{
 		pattern(`$`, endState(endOfFile)),
 		pattern(`;[^\n]*([\n]|$)`, tokenState(Comment)),
-		pattern(`[\s,]+`, tokenState(Whitespace)),
+		pattern(`\s+`, tokenState(Whitespace)),
 		pattern(`\(`, tokenState(ListStart)),
 		pattern(`\[`, tokenState(VectorStart)),
 		pattern(`{`, tokenState(MapStart)),
@@ -85,8 +86,9 @@ var (
 		pattern(`}`, tokenState(MapEnd)),
 		pattern(`'`, tokenState(QuoteMarker)),
 		pattern("`", tokenState(SyntaxMarker)),
-		pattern(`~@`, tokenState(SpliceMarker)),
-		pattern(`~`, tokenState(UnquoteMarker)),
+		pattern(`,@`, tokenState(SpliceMarker)),
+		pattern(`,`, tokenState(UnquoteMarker)),
+		pattern(`~`, tokenState(PatternMarker)),
 
 		pattern(`(")(?P<s>(\\\\|\\"|\\[^\\"]|[^"\\])*)("?)`, stringState),
 

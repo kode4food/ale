@@ -69,15 +69,15 @@
                      (try-catch-branch clauses err-sym))))))
 
         (fn try-body [clauses]
-          `(lambda [] [false (do ~@clauses)]))
+          `(lambda [] [false (do ,@clauses)]))
 
         (fn try-catch [clauses]
           (let [err (gensym "err")]
-            `(lambda [~err]
+            `(lambda [,err]
                (cond
-                 ~@(apply list (try-catch-clauses clauses err))
-                 :else [true ~err]))))
- 
+                 ,@(apply list (try-catch-clauses clauses err))
+                 :else [true ,err]))))
+
         (fn try-catch-finally [parsed]
           (let [block   (:block parsed)
                 recover (:catch parsed)
@@ -87,18 +87,18 @@
               (let [first# (rest (first cleanup))
                     rest#  (conj parsed [:finally (rest cleanup)])]
                 `(defer
-                   (lambda [] ~(try-catch-finally rest#))
-                   (lambda [] ~@first#)))
+                   (lambda [] ,(try-catch-finally rest#))
+                   (lambda [] ,@first#)))
 
               (seq? recover)
-              `(let [rec# (recover ~(try-body block) ~(try-catch recover))
+              `(let [rec# (recover ,(try-body block) ,(try-catch recover))
                      err# (rec# 0)
                      res# (rec# 1)]
                  (if err# (raise res#) res#))
 
-              (seq? block) `(do ~@block)
+              (seq? block) `(do ,@block)
 
               :else        nil)))]
-        
+
   (defmacro try [& clauses]
     (try-catch-finally (try-parse clauses))))
