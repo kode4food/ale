@@ -12,7 +12,6 @@ Will bind a macro to a global name. A macro is expanded by the reader in order t
 
 ```clojure
 (defmacro cond
-  "implements the 'cond' form"
   [& clauses]
   (when (seq? clauses)
     (if (= 1 (len clauses))
