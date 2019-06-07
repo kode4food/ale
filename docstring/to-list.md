@@ -10,10 +10,10 @@ Will concatenate a set of sequences into a list. Unlike the standard `concat` fu
 
 #### An Example
 
-```clojure
+~~~scheme
 (def x [1 2 3 4])
 (def y
   (map (fn [x] (+ x 4))
   '(1 2 3 4)))
 (to-list x y)
-```
+~~~

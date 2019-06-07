@@ -10,8 +10,8 @@ The provided forms will be evaluated in a separate thread of execution. Any resu
 
 #### An Example
 
-```clojure
+~~~scheme
 (def x (promise))
 (go (x "hello"))
 (str (x) " you!")
-```
+~~~

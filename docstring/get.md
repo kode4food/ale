@@ -10,9 +10,9 @@ Returns the value within a sequence that is associated with the specified key. I
 
 #### An Example
 
-```clojure
+~~~scheme
 (def robert {:name "Bob" :age 45})
 (get robert :address "wrong")
-```
+~~~
 
 This example returns _"wrong"_ because the associative doesn't contain an :address property.

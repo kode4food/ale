@@ -10,8 +10,8 @@ Adds elements to a conjoinable sequence. This behavior will differ depending on 
 
 #### An Example
 
-```clojure
+~~~scheme
 (conj [1 2 3 4] 5 6 7 8)
-```
+~~~
 
 Will return the vector _[1 2 3 4 5 6 7 8]_.

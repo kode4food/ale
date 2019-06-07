@@ -10,6 +10,6 @@ Returns the system's current time, measured in nanoseconds since January 1, 1970
 
 #### An Example
 
-```clojure
+~~~scheme
 (current-time)  ;; returns 1554720691499809478
-```
+~~~

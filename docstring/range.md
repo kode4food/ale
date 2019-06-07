@@ -10,8 +10,8 @@ Creates a lazy sequence that presents the numbers from *min* (inclusive) to *max
 
 #### An Example
 
-```clojure
+~~~scheme
 (to-vector (take 5 (range 10 inf 5)))
-```
+~~~
 
 Will return the vector _[10 15 20 25 30]_.

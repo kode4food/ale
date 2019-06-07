@@ -10,8 +10,8 @@ Evaluates *expr* and threads it through the supplied forms as their last argumen
 
 #### An Example
 
-```clojure
+~~~scheme
 (->> 0 (+ 10) (* 2) (/ 5.0))
-```
+~~~
 
 Will expand to `(/ 5.0 (* 2 (+ 10 0)))` and return _0.25_.

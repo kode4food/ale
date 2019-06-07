@@ -10,9 +10,9 @@ Will concatenate a set of sequences into a vector. Unlike the standard `concat` 
 
 #### An Example
 
-```clojure
+~~~scheme
 (def x
   (map (fn [x] (* x 2))
   '(1 2 3 4)))
 (to-vector '(1 2 3 4) x)
-```
+~~~

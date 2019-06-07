@@ -10,8 +10,8 @@ Will create a new list whose elements are the evaluated forms provided, or retur
 
 #### An Example
 
-```clojure
+~~~scheme
 (def x "hello")
 (def y "there")
 (list x y)
-```
+~~~

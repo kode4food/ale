@@ -10,12 +10,12 @@ If a string is provided, that string will be used to qualify the uniquely genera
 
 #### An Example
 
-```clojure
+~~~scheme
 (let [s (gensym "var")]
   (list 'ale/let [s "hello"] s))
 
 ;; is equivalent to
 ``(let [var# "hello"] var#)
-```
+~~~
 
 This example will return _"hello"_.

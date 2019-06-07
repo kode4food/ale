@@ -10,9 +10,9 @@ This function will return the first element of the specified sequence, or _nil_ 
 
 #### An Example
 
-```clojure
+~~~scheme
 (def x '(99 64 32 48))
 (first x)
-```
+~~~
 
  This example will return _99_.

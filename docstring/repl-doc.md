@@ -8,6 +8,6 @@ Displays the documentation for the specified form, if any exists. This is a REPL
 
 #### An Example
 
-```clojure
+~~~scheme
 (doc async)
-```
+~~~

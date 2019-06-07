@@ -10,8 +10,8 @@ Will return _false_ if the provided *form* is truthy, otherwise will return _tru
 
 #### An Example
 
-```clojure
+~~~scheme
 (not "hello")
-```
+~~~
 
 This will return the boolean _false_ because the value _"hello"_ is truthy.

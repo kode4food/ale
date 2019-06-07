@@ -13,18 +13,18 @@ Will evaluate the provided forms, immediately short-circuiting if an error is ra
 
 #### An Example
 
-```clojure
+~~~scheme
 (try
   (raise "hello!")
   (println "won't reach me")
   (catch [n inf?] (println "won't match me"))
   (catch [s str?] (println "was a string ->" s))
   (finally (println "done")))
-```
+~~~
 
 This will print the following to the console.
 
-```
+~~~
 was a string -> hello!
 done
-```
+~~~

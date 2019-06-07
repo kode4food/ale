@@ -10,8 +10,8 @@ Will concatenate a set of sequences into an associative. Unlike the standard `co
 
 #### An Example
 
-```clojure
+~~~scheme
 (def x [:name "ale" :age 0.3])
 (def y '(:weight "light"))
 (to-assoc x y)
-```
+~~~

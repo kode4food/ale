@@ -10,10 +10,10 @@ Will return a lazy sequence that excludes the first *count* elements of the prov
 
 #### An Example
 
-```clojure
+~~~scheme
 (def x '(1 2 3 4))
 (def y [5 6 7 8])
 (drop 3 (concat x y))
-```
+~~~
 
 This example will return the lazy sequence _(4 5 6 7 8)_.

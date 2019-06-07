@@ -10,9 +10,9 @@ This function will return a sequence that excludes the first element of the spec
 
 #### An Example
 
-```clojure
+~~~scheme
 (def x '(99 64 32 48))
 (rest x)
-```
+~~~
 
 This example will return _(64 32 48)_.

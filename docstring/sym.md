@@ -10,9 +10,9 @@ Converts the provided string into a symbol. Both qualified and local symbols are
 
 #### An Example
 
-```clojure
+~~~scheme
 (def hello-sym (sym "hello"))
 (eq hello-sym 'hello)
-```
+~~~
 
 This example will return _true_.

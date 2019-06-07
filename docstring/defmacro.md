@@ -10,7 +10,7 @@ Will bind a macro to a global name. A macro is expanded by the reader in order t
 
 #### An Example
 
-```clojure
+~~~scheme
 (defmacro cond
   [& clauses]
   (when (seq? clauses)
@@ -19,4 +19,4 @@ Will bind a macro to a global name. A macro is expanded by the reader in order t
       (list 'ale/if
         (clauses 0) (clauses 1)
         (cons 'cond (rest (rest clauses)))))))
-```
+~~~

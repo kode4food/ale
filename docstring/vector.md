@@ -10,8 +10,8 @@ Will create a new vector whose elements are the evaluated forms provided. This f
 
 #### An Example
 
-```clojure
+~~~scheme
 (def x "hello")
 (def y "there")
 (vector x y)
-```
+~~~

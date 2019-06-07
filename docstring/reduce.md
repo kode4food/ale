@@ -10,7 +10,7 @@ Iterates over a set of sequence, reducing their elements to a single resulting v
 
 #### An Example
 
-```clojure
+~~~scheme
 (reduce + 5 (range 1 11))
-```
+~~~
 This will return the value _60_.

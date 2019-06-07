@@ -12,10 +12,10 @@ If the sequence is lazily computed, asynchronous, or otherwise incapable of inde
 
 #### An Example
 
-```clojure
+~~~scheme
 (def l '(1 2 3 4))
 (nth l 4 "wrong")
-```
+~~~
 
 This example returns _"wrong"_ because index 4 (the 5th index) is beyond the end of the specified list.
 
@@ -23,9 +23,9 @@ This example returns _"wrong"_ because index 4 (the 5th index) is beyond the end
 
 Instead of using the `nth` function, indexed sequences such as lists and vectors can also have arguments applied directly to them.
 
-```clojure
+~~~scheme
 (def l '(1 2 3 4))
 (l 4 "wrong")
-```
+~~~
 
 This will yield the same result as the previous example.

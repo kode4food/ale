@@ -10,7 +10,7 @@ Returns a future in the form of a function. The provided forms will be evaluated
 
 #### An Example
 
-```clojure
+~~~scheme
 (def fut (future
   (to-vector (generate
     (emit "red")
@@ -18,6 +18,6 @@ Returns a future in the form of a function. The provided forms will be evaluated
     (emit "yellow")))))
 
 (fut)
-```
+~~~
 
 This example produces a future called *fut* that converts the results of an asynchronous block into a vector. The `(fut)` call will block until the future returns a value.

@@ -10,11 +10,11 @@ Will bind a value to a global name. All bindings are immutable and result in an 
 
 #### An Example
 
-```clojure
+~~~scheme
 (def x
   (map
     (fn [y] y * 2)
     seq1 seq2 seq3))
-```
+~~~
 
 This example will create a lazy map where each element of the three provided sequences is doubled upon request. It will then bind that lazy map to the name *x*.

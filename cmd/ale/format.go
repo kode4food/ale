@@ -27,6 +27,8 @@ type (
 const (
 	usageName = data.Name("usage")
 	descName  = data.Name("description")
+
+	blockPrefix = "~~~"
 )
 
 var (
@@ -79,10 +81,10 @@ func formatCode(lines []string) []string {
 	var res []string
 	for i := 0; i < len(lines); i++ {
 		l := lines[i]
-		if strings.HasPrefix(l, "```") {
+		if strings.HasPrefix(l, blockPrefix) {
 			for i = i + 1; i < len(lines); i++ {
 				c := lines[i]
-				if strings.HasPrefix(c, "```") {
+				if strings.HasPrefix(c, blockPrefix) {
 					break
 				}
 				res = append(res, fmt.Sprintf("  %s", c))

@@ -10,9 +10,9 @@ Evaluates the provided sequence and applies the provided function to its values.
 
 #### An Example
 
-```clojure
+~~~scheme
 (def x '(1 2 3))
 (apply + x)
-```
+~~~
 
 This example will return _6_.

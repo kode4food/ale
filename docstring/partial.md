@@ -10,9 +10,9 @@ Returns a new Function whose initial arguments are pre-bound to those provided. 
 
 #### An Example
 
-```clojure
+~~~scheme
 (def plus10 (partial + 4 6))
 (plus10 9)
-```
+~~~
 
 This example will return _19_ as though `(+ 4 6 9)` were called.

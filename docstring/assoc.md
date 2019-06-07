@@ -10,9 +10,9 @@ Will create a new associative based on the provided key-value pairs, or return a
 
 #### An Example
 
-```clojure
+~~~scheme
 (assoc
   :name "ale"
   :age  0.3
   :lang "Go")
-```
+~~~

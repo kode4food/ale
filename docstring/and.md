@@ -10,18 +10,18 @@ Evaluates the forms from left to right. As soon as one evaluates to a falsey val
 
 #### An Example
 
-```clojure
+~~~scheme
 (and (+ 1 2 3)
      false
      "not returned")
-```
+~~~
 
 Will return _false_, never evaluating _"not returned"_, whereas:
 
-```clojure
+~~~scheme
 (and (+ 1 2 3)
      true
      "returned")
-```
+~~~
 
 Will return the string _"returned"_.

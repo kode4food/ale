@@ -12,8 +12,8 @@ If the sequence is lazily computed, asynchronous, or otherwise incapable of retu
 
 #### An Example
 
-```clojure
+~~~scheme
 (len '(1 2 3 4))
-```
+~~~
 
 This example will return _4_.

@@ -10,8 +10,8 @@ Returns a promise in the form of a function. If applied without an argument, thi
 
 #### An Example
 
-```clojure
+~~~scheme
 (def p (promise))
 (p "hello")
 (p)
-```
+~~~

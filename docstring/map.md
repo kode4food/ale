@@ -10,14 +10,14 @@ Creates a lazy sequence whose elements are the result of applying the provided f
 
 #### An Example
 
-```clojure
+~~~scheme
 (map (fn [x] (* x 2)) [1 2 3 4])
-```
+~~~
 
 This will return the lazy sequence _(2 4 6 8)_. The following example performs mapping in parallel.
 
-```clojure
+~~~scheme
 (map + [1 2 3 4] '(4 6 8) '(30 20 10 56))
-```
+~~~
 
 This will return the lazy sequence _(35 28 21)_. Mapping only occurs three times in this example because the second sequence only has three elements.

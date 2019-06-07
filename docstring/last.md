@@ -12,9 +12,9 @@ In order to perform a brute-force scan of the sequence, use the `last!` function
 
 #### An Example
 
-```clojure
+~~~scheme
 (def x '(99 64 32 48))
 (last x)
-```
+~~~
 
 This example will return _48_.

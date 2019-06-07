@@ -9,8 +9,8 @@ Will evaluate each form in turn, returning the final evaluation as its result.
 
 #### An Example
 
-```clojure
+~~~scheme
 (do
   (println "hello")
   "returned")
-```
+~~~

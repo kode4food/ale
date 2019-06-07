@@ -10,10 +10,10 @@ Will create a new local scope, evaluate the provided expressions, and then bind 
 
 #### An Example
 
-```clojure
+~~~scheme
 (let [x '(1 2 3 4)
       y [5 6 7 8]]
   (concat x y))
-```
+~~~
 
 This example will create a list called *x* and a vector called *y* and return the lazy concatenation of those sequences. Note that the two names do not exist outside of the `let` form.

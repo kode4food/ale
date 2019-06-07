@@ -12,10 +12,10 @@ The name *cons* is a vestige of when Lisp implementations **cons**tructed new li
 
 #### An Example
 
-```clojure
+~~~scheme
 (def x '(3 4 5 6))
 (def y (cons 2 x))
 (cons 1 y)
-```
+~~~
 
 This example will return _(1 2 3 4 5 6)_.

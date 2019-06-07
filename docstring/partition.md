@@ -10,8 +10,8 @@ Will partition a sequence into groups of *count* elements, incrementing by the n
 
 #### An Example
 
-```clojure
+~~~scheme
 (to-list (partition 2 3 [1 2 3 4 5 6 7 8 9 10]))
-```
+~~~
 
 This example will return _((1 2) (4 5) (7 8) (10))_.
