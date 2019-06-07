@@ -6,6 +6,7 @@ type (
 
 	// Caller is any value that returns a calling interface
 	Caller interface {
+		Value
 		Caller() Call
 	}
 
@@ -17,7 +18,6 @@ type (
 
 	// Function provides a caller, arity check, and calling convention
 	Function interface {
-		Value
 		Caller
 		CheckArity(int) error
 		Convention() Convention

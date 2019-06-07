@@ -20,7 +20,7 @@ type (
 
 	// Promise represents a Value that will eventually be resolved
 	Promise interface {
-		data.Function
+		data.Caller
 		Deliver(data.Value) data.Value
 		IsDelivered() bool
 		Resolve() data.Value

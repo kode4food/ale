@@ -30,15 +30,15 @@ func Call(e encoder.Type, l *data.List) {
 	}
 	f := l.First()
 	args := stdlib.SequenceToValues(l.Rest())
-	if s, ok := f.(data.Symbol); ok {
+	callValue(e, f, args)
+}
+
+func callValue(e encoder.Type, v data.Value, args data.Values) {
+	if s, ok := v.(data.Symbol); ok {
 		callSymbol(e, s, args)
 		return
 	}
-	if c, ok := f.(data.Caller); ok && !compiler.IsEvaluable(f) {
-		callCaller(e, c, args)
-		return
-	}
-	callDynamic(e, f, args)
+	callNonSymbol(e, v, args)
 }
 
 func callSymbol(e encoder.Type, s data.Symbol, args data.Values) {
@@ -63,6 +63,27 @@ func callSymbol(e encoder.Type, s data.Symbol, args data.Values) {
 		}
 	}
 	callDynamic(e, s, args)
+}
+
+func callNonSymbol(e encoder.Type, v data.Value, args data.Values) {
+	if compiler.IsEvaluable(v) {
+		callDynamic(e, v, args)
+		return
+	}
+	switch typed := v.(type) {
+	case data.Function:
+		callFunction(e, typed, args)
+	case data.Caller:
+		callCaller(e, typed, args)
+	default:
+		callDynamic(e, typed, args)
+	}
+}
+
+func callCaller(e encoder.Type, c data.Caller, args data.Values) {
+	emitFunc := callerLiteral(e, c)
+	emitArgs := applicativeArgs(e, args)
+	callWith(e, emitFunc, emitArgs)
 }
 
 func callFunction(e encoder.Type, f data.Function, args data.Values) {
@@ -113,12 +134,6 @@ func callWith(e encoder.Type, emitFunc funcEmitter, emitArgs argsEmitter) {
 
 func callApplicative(e encoder.Type, f data.Call, args data.Values) {
 	emitFunc := staticLiteral(e, f)
-	emitArgs := applicativeArgs(e, args)
-	callWith(e, emitFunc, emitArgs)
-}
-
-func callCaller(e encoder.Type, c data.Caller, args data.Values) {
-	emitFunc := callerLiteral(e, c)
 	emitArgs := applicativeArgs(e, args)
 	callWith(e, emitFunc, emitArgs)
 }
