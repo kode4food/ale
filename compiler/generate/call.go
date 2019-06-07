@@ -15,6 +15,7 @@ import (
 type (
 	funcEmitter func()
 	argsEmitter func() int
+	valEmitter  func(encoder.Type, data.Value)
 )
 
 // Error messages
@@ -171,20 +172,18 @@ func dynamicEval(e encoder.Type, v data.Value) funcEmitter {
 }
 
 func applicativeArgs(e encoder.Type, args data.Values) argsEmitter {
-	return func() int {
-		al := len(args)
-		for i := al - 1; i >= 0; i-- {
-			Value(e, args[i])
-		}
-		return al
-	}
+	return makeArgs(e, args, Value)
 }
 
 func normalArgs(e encoder.Type, args data.Values) argsEmitter {
+	return makeArgs(e, args, Literal)
+}
+
+func makeArgs(e encoder.Type, args data.Values, emit valEmitter) argsEmitter {
 	return func() int {
 		al := len(args)
 		for i := al - 1; i >= 0; i-- {
-			Literal(e, args[i])
+			emit(e, args[i])
 		}
 		return al
 	}
