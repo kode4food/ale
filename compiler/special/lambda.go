@@ -33,7 +33,7 @@ const (
 
 const (
 	allArgsName = data.Name("*args*")
-	restMarker  = data.Name("&")
+	restMarker  = data.Name(".")
 )
 
 // Lambda encodes a lambda
@@ -143,21 +143,23 @@ func (le *lambdaEncoder) makeThen(v *variant) {
 }
 
 func parseLambda(s data.Vector) variants {
-	if _, ok := s.First().(data.Vector); ok {
+	switch s.First().(type) {
+	case data.Vector, data.LocalSymbol:
 		v := parseLambdaVariant(s)
 		return variants{v}
+	default:
+		var res variants
+		for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {
+			v := parseLambdaVariant(f.(*data.List))
+			res = append(res, v)
+		}
+		return res
 	}
-	var res variants
-	for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {
-		v := parseLambdaVariant(f.(*data.List))
-		res = append(res, v)
-	}
-	return res
 }
 
 func parseLambdaVariant(s data.Sequence) *variant {
 	f, body, _ := s.Split()
-	argNames, restArg := parseArgNames(f.(data.Vector))
+	argNames, restArg := parseArgBindings(f)
 	return &variant{
 		args: argNames,
 		rest: restArg,
@@ -187,6 +189,14 @@ func (v *variant) arityRange() (int, int) {
 	return fl, fl
 }
 
+func parseArgBindings(v data.Value) (data.Names, bool) {
+	if l, ok := v.(data.LocalSymbol); ok {
+		s := data.NewVector(data.NewLocalSymbol(restMarker), l)
+		return parseArgNames(s)
+	}
+	return parseArgNames(v.(data.Vector))
+}
+
 func parseArgNames(s data.Sequence) (data.Names, bool) {
 	var an data.Names
 	for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {
@@ -202,7 +212,7 @@ func parseArgNames(s data.Sequence) (data.Names, bool) {
 
 func parseRestArg(s data.Sequence) data.Name {
 	if f, r, ok := s.Split(); ok {
-		n := f.(data.Symbol).Name()
+		n := f.(data.LocalSymbol).Name()
 		if n != restMarker && r.IsEmpty() {
 			return n
 		}

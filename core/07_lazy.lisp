@@ -1,12 +1,10 @@
 ;;;; ale core: lazy sequences
 
-(defmacro lazy-seq
-  [& body]
+(defmacro lazy-seq body
   `(lazy-seq* (lambda [] ,@body)))
 
 (define (take count coll)
-  ((fn take-inner
-     [count coll]
+  ((fn take-inner [count coll]
      (lazy-seq
        (if (and (> count 0) (!empty? coll))
            (cons (first coll) (take-inner (dec count) (rest coll)))
@@ -22,8 +20,7 @@
 
 (define (drop count coll)
   (lazy-seq
-    ((fn drop-inner
-       [count coll]
+    ((fn drop-inner [count coll]
        (if (> count 0)
            (drop-inner (dec count) (rest coll))
            coll))
@@ -68,7 +65,7 @@
                      (map-single (rest coll))))))
       coll))
 
-  ([func coll & colls]
+  ([func coll . colls]
     ((fn map-parallel [colls]
        (lazy-seq
          (when (apply true? (map !empty? colls))
@@ -88,7 +85,7 @@
                     (filter-inner r)))))
       coll)))
 
-(define (cartesian-product & colls)
+(define (cartesian-product . colls)
   (let* [rotate-row
          (fn rotate-row [row orig-row]
            (if (seq row)
@@ -130,7 +127,7 @@
             (iter colls)))))
 
 (defmacro for
-  [seq-exprs & body]
+  [seq-exprs . body]
   (assert-args
     (vector? seq-exprs) "for-each bindings must be a vector"
     (paired? seq-exprs) "for-each bindings must be paired")
@@ -141,7 +138,7 @@
            ([idx name coll]
             [(list name (list args idx))
              (list coll)])
-           ([idx name coll & rest]
+           ([idx name coll . rest]
             (let [res (apply split-bindings (cons (inc idx) rest))]
               [(cons* (res 0) (list args idx) name)
                (cons coll (res 1))])))
@@ -154,10 +151,10 @@
        (cartesian-product ,@seqs#))))
 
 (defmacro for-each
-  [seq-exprs & body]
+  [seq-exprs . body]
   `(last! (for ,seq-exprs ,@body)))
 
-(define (concat & colls)
+(define (concat . colls)
   ((fn concat-inner [colls]
      (lazy-seq
        (when (seq colls)

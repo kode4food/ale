@@ -1,7 +1,7 @@
 ;;;; ale core: functions
 
 (defmacro letfn
-  [bindings & body]
+  [bindings . body]
   ((fn parse-bindings [out in]
      (if (seq in)
        (let* [fnList (first in)
@@ -19,32 +19,30 @@
 
 (defn partial
   ([func] func)
-  ([func & first-args]
+  ([func . first-args]
     (assert-args
       (is-apply func) "partial requires a function")
-    (lambda [& rest-args]
+    (lambda rest-args
       (apply func (apply append* (cons first-args rest-args))))))
 
 (defmacro comp
   ([] identity)
   ([func] func)
-  ([func & funcs]
+  ([func . funcs]
     (let* [args        (gensym "args")
            inner       (list 'apply func args)
            first-outer (first funcs)
            rest-outer  (rest funcs)]
-      (letfn [(fn outer
-                [func args rest-funcs]
+      (letfn [(fn outer [func args rest-funcs]
                 (if (seq rest-funcs)
                     (outer (first rest-funcs)
                            (list func args)
                            (rest rest-funcs))
                     (list func args)))]
-        `(lambda [& ,args]
+        `(lambda ,args
            ,(outer first-outer inner rest-outer))))))
 
-(defmacro juxt
-  [& funcs]
+(defmacro juxt funcs
   (let [args (gensym "args")]
-    `(lambda [& ,args]
+    `(lambda ,args
        [,@(map (lambda [f] (list 'apply f args)) funcs)])))

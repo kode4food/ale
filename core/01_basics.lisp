@@ -7,7 +7,7 @@
 
 ;; syntax-quoting requires it
 (def concat!
-  (lambda [& colls]
+  (lambda colls
     (letrec [concat-inner
              (lambda [colls head]
                (if (is-empty colls)
@@ -22,7 +22,7 @@
 
 (def defmacro
   (letrec [defmacro
-           (macro [name & forms]
+           (macro [name . forms]
              `(def ,name
                 (letrec [,name (macro ,@forms)]
                   ,name)))]
@@ -32,23 +32,22 @@
   ([] nil)
   ([clause]
     (raise "assert-args clauses must be paired"))
-  ([& clauses]
+  (clauses
     `(if ,(clauses 0)
          (assert-args ,@(rest (rest clauses)))
          (raise ,(clauses 1)))))
 
 (defmacro fn
-  [name & forms]
+  [name . forms]
   (if (is-local name)
     `(letrec [,name (lambda ,@forms)] ,name)
     `(lambda ,name ,@forms)))
 
 (defmacro defn
-  [name & forms]
+  [name . forms]
   `(def ,name (fn ,name ,@forms)))
 
-(defmacro define
-  [& body]
+(defmacro define body
   (let [f (first body)
         r (rest body)]
     (if (is-list f)
@@ -57,7 +56,7 @@
         `(def ,@body))))
 
 (defmacro !eq
-  [value & comps]
+  [value . comps]
   `(not (eq ,value ,@comps)))
 
 (define (is-even value)
@@ -81,13 +80,13 @@
 (define (dec value)
   (- value 1))
 
-(define (no-op & _))
+(define (no-op . _))
 
 (define (identity value) value)
 
 (define (constantly value)
-  (lambda [& _] value))
+  (lambda _ value))
 
 (defmacro .
-  [target method & args]
+  [target method . args]
   `((get ,target ,method) ,@args))

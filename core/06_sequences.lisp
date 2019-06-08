@@ -1,36 +1,35 @@
 ;;;; ale core: standard sequences
 
-(define (to-assoc & colls)
+(define (to-assoc . colls)
   (apply assoc (apply concat! colls)))
 
-(define (to-list & colls)
+(define (to-list . colls)
   (apply list (apply concat! colls)))
 
-(define (to-vector & colls)
+(define (to-vector . colls)
   (apply vector (apply concat! colls)))
 
-(define (append* coll & values)
+(define (append* coll . values)
   ((fn append-inner [coll values]
      (if (seq values)
          (append-inner (append coll (first values)) (rest values))
          coll))
     coll values))
 
-(define (cons* coll & values)
+(define (cons* coll . values)
   ((fn cons-inner [coll values]
      (if (seq values)
          (cons-inner (cons (first values) coll) (rest values))
          coll))
     coll values))
 
-(define (conj coll & values)
+(define (conj coll . values)
   (if (append? coll)
       (apply append* (cons coll values))
       (apply cons* (cons coll values))))
 
 (define (len! coll)
-  ((fn len-inner
-     [coll prev]
+  ((fn len-inner [coll prev]
      (if (counted? coll)
          (+ prev (len coll))
          (if (seq coll)
@@ -62,8 +61,7 @@
           (nth coll (dec (len coll))))))
 
 (define (last! coll)
-  ((fn last-inner
-     [coll prev]
+  ((fn last-inner [coll prev]
      (if (and (counted? coll) (indexed? coll))
          (let [s (len coll)]
            (if (> s 0)

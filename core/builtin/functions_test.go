@@ -116,21 +116,21 @@ func TestApplyEval(t *testing.T) {
 func TestRestFunctionsEval(t *testing.T) {
 	as := assert.New(t)
 	as.EvalTo(`
-		(def test (fn [f & r] (apply vector (cons f r))))
+		(def test (fn [f . r] (apply vector (cons f r))))
 		(test 1 2 3 4 5 6 7)
 	`, data.String("[1 2 3 4 5 6 7]"))
 
 	as.PanicWith(`
-		(fn [x y &] "explode")
+		(fn [x y .] "explode")
 	`, fmt.Errorf(special.InvalidRestArgument, "[]"))
 
 	as.PanicWith(`
-		(fn [x y & z g] "explode")
+		(fn [x y . z g] "explode")
 	`, fmt.Errorf(special.InvalidRestArgument, "[z g]"))
 
 	as.PanicWith(`
-		(fn [x y & & z] "explode")
-	`, fmt.Errorf(special.InvalidRestArgument, "[& z]"))
+		(fn [x y . . z] "explode")
+	`, fmt.Errorf(special.InvalidRestArgument, "[. z]"))
 }
 
 func TestTailCallEval(t *testing.T) {

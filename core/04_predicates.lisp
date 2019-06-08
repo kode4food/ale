@@ -9,13 +9,13 @@
 (defmacro def-predicate-pos
   [func name]
   (let [func-name (sym (str name "?"))]
-    `(define (,func-name ,'first & ,'rest)
+    `(define (,func-name ,'first ,'. ,'rest)
        (pred-apply ,func (cons ,'first ,'rest)))))
 
 (defmacro def-predicate-neg
   [func name]
   (let [func-name (sym (str "!" name "?"))]
-    `(define (,func-name ,'first & ,'rest)
+    `(define (,func-name ,'first ,'. ,'rest)
        (not (pred-apply ,func (cons ,'first ,'rest))))))
 
 (defmacro def-predicate

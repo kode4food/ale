@@ -10,43 +10,41 @@
 (defmacro when
   ([test] nil)
   ([test form]    `(if ,test ,form nil))
-  ([test & forms] `(if ,test (do ,@forms) nil)))
+  ([test . forms] `(if ,test (do ,@forms) nil)))
 
 (defmacro when-not
   ([test] nil)
   ([test form]    `(if ,test nil ,form))
-  ([test & forms] `(if ,test nil (do ,@forms))))
+  ([test . forms] `(if ,test nil (do ,@forms))))
 
 (defmacro and
   ([] true)
   ([clause] clause)
-  ([& clauses]
+  (clauses
     `(let [and# ,(clauses 0)]
        (if and#
            (and ,@(rest clauses))
            and#))))
 
-(defmacro !and
-  [& clauses]
+(defmacro !and clauses
   `(not (and ,@clauses)))
 
 (defmacro or
   ([] nil)
   ([clause] clause)
-  ([& clauses]
+  (clauses
     `(let [or# ,(clauses 0)]
        (if or#
            or#
            (or ,@(rest clauses))))))
 
-(defmacro !or
-  [& clauses]
+(defmacro !or clauses
   `(not (or ,@clauses)))
 
 (defmacro cond
   ([] nil)
   ([clause] clause)
-  ([& clauses]
+  (clauses
     (let [test   (clauses 0)
           branch (clauses 1)]
       (unless (and (is-atom test) test)
@@ -68,4 +66,4 @@
 
 (defmacro when-let
   ([binding form]   `(if-let ,binding ,form))
-  ([binding & body] `(if-let ,binding (do ,@body))))
+  ([binding . body] `(if-let ,binding (do ,@body))))

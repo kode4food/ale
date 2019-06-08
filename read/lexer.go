@@ -140,7 +140,7 @@ func matchToken(src string) (*Token, string) {
 
 // String converts this Value into a string
 func (t *Token) String() string {
-	return data.Vector{data.Integer(t.Type), t.Value}.String()
+	return data.NewVector(data.Integer(t.Type), t.Value).String()
 }
 
 func makeToken(t TokenType, v data.Value) *Token {

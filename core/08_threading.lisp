@@ -7,7 +7,7 @@
 
 (defmacro ->
   ([value] value)
-  ([value & forms]
+  ([value . forms]
     (let* [l (thread-to-list (first forms))
            f (first l)
            r (rest l)]
@@ -15,7 +15,7 @@
 
 (defmacro ->>
   ([value] value)
-  ([value & forms]
+  ([value . forms]
     (let* [l (thread-to-list (first forms))
            f (first l)
            r (rest l)]
@@ -23,7 +23,7 @@
 
 (defmacro some->
   ([value] value)
-  ([value & forms]
+  ([value . forms]
     (let* [l (thread-to-list (first forms))
            f (first l)
            r (rest l)]
@@ -33,7 +33,7 @@
 
 (defmacro some->>
   ([value] value)
-  ([value & forms]
+  ([value . forms]
     (let* [l (thread-to-list (first forms))
            f (first l)
            r (rest l)]
@@ -43,7 +43,7 @@
 
 (defmacro as->
   ([value name] value)
-  ([value name & forms]
+  ([value name . forms]
     (let [l (thread-to-list (first forms))]
       `(let [,name ,value]
          (as-> ,l ,name ,@(rest forms))))))
@@ -56,7 +56,7 @@
 
 (defmacro cond->
   ([value] value)
-  ([value & clauses]
+  ([value . clauses]
     (assert-args
       (even? (len clauses)) "clauses must be paired")
     `(-> ,value
@@ -64,7 +64,7 @@
 
 (defmacro cond->>
   ([value] value)
-  ([value & clauses]
+  ([value . clauses]
     (assert-args
       (even? (len clauses)) "clauses must be paired")
     `(-> ,value

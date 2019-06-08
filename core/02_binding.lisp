@@ -1,7 +1,7 @@
 ;;;; ale core: binding
 
 (defmacro let*
-  [bindings & body]
+  [bindings . body]
   (assert-args
     (is-vector bindings) "let* bindings must be a vector"
     (is-paired bindings) "let* bindings must be paired")

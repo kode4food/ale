@@ -19,8 +19,7 @@ func TestMacroPredicatesEval(t *testing.T) {
 func TestMacroReplaceEval(t *testing.T) {
 	as := assert.New(t)
 	as.EvalTo(`
-		(defmacro foo
-			[& args]
+		(defmacro foo args
 			(to-list (cons 'str (cons "hello" args))))
 
 		(foo 1 2 3)
@@ -30,20 +29,17 @@ func TestMacroReplaceEval(t *testing.T) {
 func TestMacroExpandEval(t *testing.T) {
 	as := assert.New(t)
 	as.EvalTo(`
-		(defmacro foo1
-			[& args]
+		(defmacro foo1 args
 			(to-list (cons 'str (cons "hello" args))))
 
 		(macroexpand-1 '(foo1 1 2 3))
 	`, S(`(str "hello" 1 2 3)`))
 
 	as.EvalTo(`
-		(defmacro foo1
-			[& args]
+		(defmacro foo1 args
 			(to-list (cons 'str (cons "hello" args))))
 
-		(defmacro foo2
-			[& args]
+		(defmacro foo2 args
 			(foo1 (args 0) (args 1) (args 2)))
 
 		(macroexpand '(foo2 1 2 3))

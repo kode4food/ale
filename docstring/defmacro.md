@@ -11,8 +11,7 @@ Will bind a macro to a global name. A macro is expanded by the reader in order t
 #### An Example
 
 ~~~scheme
-(defmacro cond
-  [& clauses]
+(defmacro cond clauses
   (when (seq? clauses)
     (if (= 1 (len clauses))
       (clauses 0)

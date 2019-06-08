@@ -100,5 +100,5 @@
 
               :else        nil)))]
 
-  (defmacro try [& clauses]
+  (defmacro try clauses
     (try-catch-finally (try-parse clauses))))
