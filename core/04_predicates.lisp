@@ -1,28 +1,28 @@
 ;;;; ale core: predicates
 
-(define (pred-apply func args)
-  (if (is-empty args)
-      true
-      (unless (func (first args)) false
-              (pred-apply func (rest args)))))
+(letrec [pred-apply
+         (lambda [func args]
+           (if (is-empty args)
+               true
+               (unless (func (first args)) false
+                       (pred-apply func (rest args)))))
 
-(defmacro def-predicate-pos
-  [func name]
-  (let [func-name (sym (str name "?"))]
-    `(define (,func-name ,@'(first . rest))
-       (pred-apply ,func (cons ,'first ,'rest)))))
+         def-predicate-pos
+         (lambda [func name]
+           (let [func-name (sym (str name "?"))]
+             `(define (,func-name ,@'(first . rest))
+                (,pred-apply ,func (cons ,'first ,'rest)))))
 
-(defmacro def-predicate-neg
-  [func name]
-  (let [func-name (sym (str "!" name "?"))]
-    `(define (,func-name ,@'(first . rest))
-       (not (pred-apply ,func (cons ,'first ,'rest))))))
+         def-predicate-neg
+         (lambda [func name]
+           (let [func-name (sym (str "!" name "?"))]
+             `(define (,func-name ,@'(first . rest))
+                (,pred-apply (lambda [value#] (not (,func value#)))
+                             (cons ,'first ,'rest)))))]
 
-(defmacro def-predicate
-  [func name]
-  `(do
-     (def-predicate-pos ,func ,name)
-     (def-predicate-neg ,func ,name)))
+  (defmacro def-predicate [func name]
+    `(do ,(def-predicate-pos func name)
+         ,(def-predicate-neg func name))))
 
 (def-predicate is-appender "append")
 (def-predicate is-apply "apply")
