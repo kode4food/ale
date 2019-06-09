@@ -13,7 +13,7 @@ If the evaluated predicate is truthy (not _false_, not _nil_), the *then* form i
 ~~~scheme
 (def x '(1 2 3 4 5 6 7 8))
 
-(if (> (len x) 3)
+(if (> (length x) 3)
   "x is big"
   "x is small")
 ~~~

@@ -7,7 +7,7 @@
 
         (fn is-catch-binding [form]
           (and (vector? form)
-               (= 2 (len form))
+               (= 2 (length form))
                (local? (form 1))))
 
         (fn is-catch [clause parsed]

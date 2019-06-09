@@ -57,8 +57,8 @@
   ([binding then] `(if-let ,binding ,then nil))
   ([binding then else]
     (assert-args
-      (is-vector binding) "binding vector must be supplied"
-      (= 2 (len binding)) "binding vector must contain 2 elements")
+      (is-vector binding)    "binding vector must be supplied"
+      (= 2 (length binding)) "binding vector must contain 2 elements")
     (let [sym  (binding 0)
           test (binding 1)]
       `(let [,sym ,test]

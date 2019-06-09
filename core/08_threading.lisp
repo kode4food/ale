@@ -58,7 +58,7 @@
   ([value] value)
   ([value . clauses]
     (assert-args
-      (even? (len clauses)) "clauses must be paired")
+      (even? (length clauses)) "clauses must be paired")
     `(-> ,value
          ,@(map (make-cond-clause ->) (partition 2 clauses)))))
 
@@ -66,6 +66,6 @@
   ([value] value)
   ([value . clauses]
     (assert-args
-      (even? (len clauses)) "clauses must be paired")
+      (even? (length clauses)) "clauses must be paired")
     `(-> ,value
          ,@(map (make-cond-clause ->>) (partition 2 clauses)))))

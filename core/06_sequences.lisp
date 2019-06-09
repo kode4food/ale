@@ -28,12 +28,12 @@
       (apply append* (cons coll values))
       (apply cons* (cons coll values))))
 
-(define (len! coll)
-  ((fn len-inner [coll prev]
+(define (length! coll)
+  ((fn length-inner [coll prev]
      (if (counted? coll)
-         (+ prev (len coll))
+         (+ prev (length coll))
          (if (seq coll)
-             (len-inner (rest coll) (inc prev))
+             (length-inner (rest coll) (inc prev))
              prev)))
     coll 0))
 
@@ -56,16 +56,16 @@
             (scan coll pos (lambda [] default)))))))
 
 (define (last coll)
-  (let [s (len coll)]
+  (let [s (length coll)]
     (when (> s 0)
-          (nth coll (dec (len coll))))))
+          (nth coll (dec (length coll))))))
 
 (define (last! coll)
   ((fn last-inner [coll prev]
      (if (and (counted? coll) (indexed? coll))
-         (let [s (len coll)]
+         (let [s (length coll)]
            (if (> s 0)
-               (nth coll (dec (len coll)))
+               (nth coll (dec (length coll)))
                prev))
          (if (seq coll)
              (let [f (first coll)

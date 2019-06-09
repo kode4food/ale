@@ -25,7 +25,7 @@
 (def-builtin get)
 (def-builtin go*)
 (def-builtin lazy-seq*)
-(def-builtin len)
+(def-builtin length)
 (def-builtin list)
 (def-builtin mod)
 (def-builtin nth)

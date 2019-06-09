@@ -142,7 +142,7 @@ func (b *bootstrap) availableFunctions() {
 	b.applicative("is-symbol", builtin.IsSymbol, 1)
 	b.applicative("is-vector", builtin.IsVector, 1)
 	b.applicative("lazy-seq*", builtin.LazySequence, 1)
-	b.applicative("len", builtin.Len, 1)
+	b.applicative("length", builtin.Length, 1)
 	b.applicative("list", builtin.List)
 	b.applicative("mod", builtin.Mod, 1, orMore)
 	b.applicative("nth", builtin.Nth, 2, 3)

@@ -44,10 +44,10 @@
   (assert-args
     (paired-vector? bindings) "with-open bindings must be a key-value vector")
   (cond
-    (= (len bindings) 0)
+    (= (length bindings) 0)
     `(do ,@body)
 
-    (>= (len bindings) 2)
+    (>= (length bindings) 2)
     `(let [,(bindings 0) ,(bindings 1)
            close#        (with-open-close ,(bindings 0))]
        (try

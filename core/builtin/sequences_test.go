@@ -66,15 +66,15 @@ func TestMapFilterEval(t *testing.T) {
 func TestLenEval(t *testing.T) {
 	as := assert.New(t)
 	as.EvalTo(`
-	  (len [1 2 3 4 5])
+	  (length [1 2 3 4 5])
 	`, I(5))
 
 	as.EvalTo(`
-		(len! (take 10000 (range 1 1000000000)))
+		(length! (take 10000 (range 1 1000000000)))
 	`, I(10000))
 
 	as.PanicWith(`
-		(len (take 10000 (range 1 1000000000)))
+		(length (take 10000 (range 1 1000000000)))
 	`, interfaceErr("*stdlib.lazySequence", "data.CountedSequence", "Count"))
 }
 

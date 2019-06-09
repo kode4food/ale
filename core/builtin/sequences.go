@@ -49,8 +49,8 @@ func Reverse(args ...data.Value) data.Value {
 	return r.Reverse()
 }
 
-// Len returns the element count of the provided sequence
-func Len(args ...data.Value) data.Value {
+// Length returns the element count of the provided sequence
+func Length(args ...data.Value) data.Value {
 	s := args[0].(data.CountedSequence)
 	l := s.Count()
 	return data.Integer(l)

@@ -13,9 +13,9 @@ If the evaluated predicate is truthy (not _false_, not _nil_), the forms are eva
 ~~~scheme
 (def x '(1 2 3 4 5 6 7 8))
 
-(when (> (len x) 3)
+(when (> (length x) 3)
   (println "x is big")
-  (len x))
+  (length x))
 ~~~
 
 If the symbol `when-not` is used instead of `when`, then the predicate is evaluated and the block will be evaluated only if result is not truthy
