@@ -34,7 +34,7 @@
   (. *out* :write *newline*))
 
 (define (paired-vector? val)
-  (and (vector? val) (paired? val)))
+  (and (vector? val) (pair? val)))
 
 (define (with-open-close val)
   (let [c (:close val)]

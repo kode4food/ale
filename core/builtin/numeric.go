@@ -127,6 +127,12 @@ func Lte(args ...data.Value) data.Value {
 	return data.True
 }
 
+// IsNumber returns true if the provided value is a number
+func IsNumber(args ...data.Value) data.Value {
+	_, ok := args[0].(data.Number)
+	return data.Bool(ok)
+}
+
 // IsPosInf returns true if the provided number represents positive infinity
 func IsPosInf(args ...data.Value) data.Value {
 	if num, ok := args[0].(data.Number); ok {

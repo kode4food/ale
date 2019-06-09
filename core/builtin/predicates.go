@@ -24,6 +24,12 @@ func IsAtom(args ...data.Value) data.Value {
 	return data.True
 }
 
+// IsBoolean returns whether or not the provided value is a boolean
+func IsBoolean(args ...data.Value) data.Value {
+	_, ok := args[0].(data.Bool)
+	return data.Bool(ok)
+}
+
 // IsNil returns whether or not the provided value is nil
 func IsNil(args ...data.Value) data.Value {
 	return data.Bool(args[0] == data.Nil)

@@ -15,11 +15,11 @@ func TestStrEval(t *testing.T) {
 	`, S("hello[1 2 3 4]"))
 
 	as.EvalTo(`
-	  (str? "hello" "there")
+	  (string? "hello" "there")
 	`, data.True)
 
 	as.EvalTo(`
-	  (str? "hello" 99)
+	  (string? "hello" 99)
 	`, data.False)
 }
 
