@@ -71,10 +71,8 @@ func Get(args ...data.Value) data.Value {
 
 // IsSeq returns whether or not the provided value is a sequence
 func IsSeq(args ...data.Value) data.Value {
-	if _, ok := args[0].(data.Sequence); ok {
-		return data.True
-	}
-	return data.False
+	_, ok := args[0].(data.Sequence)
+	return data.Bool(ok)
 }
 
 // IsEmpty returns whether or not the provided sequence is empty

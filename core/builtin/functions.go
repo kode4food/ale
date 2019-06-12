@@ -25,16 +25,12 @@ func Apply(args ...data.Value) data.Value {
 
 // IsApply tests whether or not a value is callable
 func IsApply(args ...data.Value) data.Value {
-	if _, ok := args[0].(data.Caller); ok {
-		return data.True
-	}
-	return data.False
+	_, ok := args[0].(data.Caller)
+	return data.Bool(ok)
 }
 
 // IsSpecial tests whether not a function is a special form
 func IsSpecial(args ...data.Value) data.Value {
-	if _, ok := args[0].(encoder.Call); ok {
-		return data.True
-	}
-	return data.False
+	_, ok := args[0].(encoder.Call)
+	return data.Bool(ok)
 }

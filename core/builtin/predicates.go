@@ -18,10 +18,7 @@ func IsIdentical(args ...data.Value) data.Value {
 
 // IsAtom returns whether or not the provided value is atomic
 func IsAtom(args ...data.Value) data.Value {
-	if compiler.IsEvaluable(args[0]) {
-		return data.False
-	}
-	return data.True
+	return data.Bool(!compiler.IsEvaluable(args[0]))
 }
 
 // IsBoolean returns whether or not the provided value is a boolean

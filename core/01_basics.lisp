@@ -65,9 +65,6 @@
 (define (is-odd value)
   (= (mod value 2) 1))
 
-(define (is-paired value)
-  (is-even (length value)))
-
 (define (is-true value)
   (if value true false))
 
