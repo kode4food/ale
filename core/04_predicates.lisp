@@ -45,7 +45,7 @@
 (def-predicate is-nil "nil")
 (def-predicate is-number "number")
 (def-predicate is-odd "odd")
-(def-predicate is-paired "pair")
+(def-predicate is-pair "pair")
 (def-predicate is-pos-inf "inf")
 (def-predicate is-promise "promise")
 (def-predicate is-qualified "qualified")

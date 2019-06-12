@@ -29,13 +29,6 @@ func Rest(args ...data.Value) data.Value {
 	return args[0].(data.Sequence).Rest()
 }
 
-// Cons adds a value to the beginning of the provided Sequence
-func Cons(args ...data.Value) data.Value {
-	h := args[0]
-	r := args[1].(data.Sequence)
-	return r.Prepend(h)
-}
-
 // Append adds a value to the end of the provided Appender
 func Append(args ...data.Value) data.Value {
 	a := args[0].(data.Appender)

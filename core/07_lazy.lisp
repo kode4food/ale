@@ -129,8 +129,8 @@
 (defmacro for
   [seq-exprs . body]
   (assert-args
-    (vector? seq-exprs) "for-each bindings must be a vector"
-    (pair? seq-exprs) "for-each bindings must be paired")
+    (vector? seq-exprs)        "for-each bindings must be a vector"
+    (even? (length seq-exprs)) "for-each bindings must be paired")
   (let* [args (gensym "args")
 
          split-bindings

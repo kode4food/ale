@@ -9,8 +9,13 @@ type (
 		First() Value
 		Rest() Sequence
 		Split() (Value, Sequence, bool)
-		Prepend(Value) Sequence
 		IsEmpty() bool
+	}
+
+	// Prepender is a Sequence that can be prepended to
+	Prepender interface {
+		Sequence
+		Prepend(Value) Sequence
 	}
 
 	// Appender is a Sequence that can be appended to
