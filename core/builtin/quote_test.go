@@ -14,8 +14,8 @@ import (
 func TestQuoteEval(t *testing.T) {
 	as := assert.New(t)
 
-	r1 := as.Eval("(quote (blah 2 3))").(*data.List)
-	r2 := as.Eval("'(blah 2 3)").(*data.List)
+	r1 := as.Eval("(quote (blah 2 3))").(data.List)
+	r2 := as.Eval("'(blah 2 3)").(data.List)
 
 	v1, ok := r1.ElementAt(0)
 	v2, _ := r2.ElementAt(0)

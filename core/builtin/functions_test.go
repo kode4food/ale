@@ -93,10 +93,9 @@ func TestLambdaEval(t *testing.T) {
 func TestBadLambdaEval(t *testing.T) {
 	as := assert.New(t)
 
-	e := typeErr("data.Integer", "*data.List")
+	e := interfaceErr("data.Integer", "data.List", "Count")
 	as.PanicWith(`(fn 99 "hello")`, e)
-
-	e = typeErr("data.qualifiedSymbol", "*data.List")
+	e = interfaceErr("data.qualifiedSymbol", "data.List", "Count")
 	as.PanicWith(`(fn foo/bar [] "hello")`, e)
 }
 

@@ -6,10 +6,9 @@ import (
 )
 
 var literalReturnMap = map[isa.Opcode]isa.Opcode{
-	isa.EmptyList: isa.RetEmptyList,
-	isa.False:     isa.RetFalse,
-	isa.Nil:       isa.RetNil,
-	isa.True:      isa.RetTrue,
+	isa.False: isa.RetFalse,
+	isa.Null:  isa.RetNull,
+	isa.True:  isa.RetTrue,
 }
 
 var literalReturnPatterns = [][]isa.Opcode{

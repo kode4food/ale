@@ -1,6 +1,14 @@
 package data
 
-import "bytes"
+import (
+	"bytes"
+	"fmt"
+)
+
+// Errors messages
+const (
+	ValueNotAPair = "%s is not a pair"
+)
 
 type (
 	// Pair represents the interface for a binary structure, such as a Cons
@@ -53,4 +61,20 @@ func (c *Cons) String() string {
 	}
 	buf.WriteByte(')')
 	return buf.String()
+}
+
+// SequenceCar performs a Car operation against a Sequence
+func SequenceCar(s Sequence) Value {
+	if f, _, ok := s.Split(); ok {
+		return f
+	}
+	panic(fmt.Errorf(ValueNotAPair, s))
+}
+
+// SequenceCdr performs a Cdr operation against a Sequence
+func SequenceCdr(s Sequence) Value {
+	if _, r, ok := s.Split(); ok {
+		return r
+	}
+	panic(fmt.Errorf(ValueNotAPair, s))
 }

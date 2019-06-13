@@ -23,7 +23,7 @@ func (v Vector) ElementAt(index int) (Value, bool) {
 	if index >= 0 && index < len(v) {
 		return v[index], true
 	}
-	return Nil, false
+	return Null, false
 }
 
 // First returns the first element of the Vector
@@ -31,7 +31,7 @@ func (v Vector) First() Value {
 	if len(v) > 0 {
 		return v[0]
 	}
-	return Nil
+	return Null
 }
 
 // Rest returns the elements of the Vector that follow the first
@@ -55,7 +55,17 @@ func (v Vector) Split() (Value, Sequence, bool) {
 	} else if lv == 1 {
 		return v[0], EmptyVector, true
 	}
-	return Nil, EmptyVector, false
+	return Null, EmptyVector, false
+}
+
+// Car returns the first element of a Pair
+func (v Vector) Car() Value {
+	return SequenceCar(v)
+}
+
+// Cdr returns the second element of a Pair
+func (v Vector) Cdr() Value {
+	return SequenceCdr(v)
 }
 
 // Prepend inserts an element at the beginning of the Vector

@@ -24,59 +24,58 @@ func _() {
 	_ = x[Deref-12]
 	_ = x[Div-13]
 	_ = x[Dup-14]
-	_ = x[EmptyList-15]
-	_ = x[Eq-16]
-	_ = x[False-17]
-	_ = x[Gt-18]
-	_ = x[Gte-19]
-	_ = x[Jump-20]
-	_ = x[Load-21]
-	_ = x[Lt-22]
-	_ = x[Lte-23]
-	_ = x[MakeCall-24]
-	_ = x[MakeTruthy-25]
-	_ = x[Mod-26]
-	_ = x[Mul-27]
-	_ = x[Neg-28]
-	_ = x[NegInf-29]
-	_ = x[NegOne-30]
-	_ = x[Neq-31]
-	_ = x[NewRef-32]
-	_ = x[Nil-33]
-	_ = x[NoOp-34]
-	_ = x[Not-35]
-	_ = x[One-36]
-	_ = x[Panic-37]
-	_ = x[Pop-38]
-	_ = x[PosInf-39]
-	_ = x[Resolve-40]
-	_ = x[RestArg-41]
-	_ = x[RetEmptyList-42]
-	_ = x[RetFalse-43]
-	_ = x[RetNil-44]
-	_ = x[RetTrue-45]
-	_ = x[Return-46]
-	_ = x[Self-47]
-	_ = x[Store-48]
-	_ = x[Sub-49]
-	_ = x[TailCall-50]
-	_ = x[True-51]
-	_ = x[Two-52]
-	_ = x[Zero-53]
+	_ = x[Eq-15]
+	_ = x[False-16]
+	_ = x[Gt-17]
+	_ = x[Gte-18]
+	_ = x[Jump-19]
+	_ = x[Load-20]
+	_ = x[Lt-21]
+	_ = x[Lte-22]
+	_ = x[MakeCall-23]
+	_ = x[MakeTruthy-24]
+	_ = x[Mod-25]
+	_ = x[Mul-26]
+	_ = x[Neg-27]
+	_ = x[NegInf-28]
+	_ = x[NegOne-29]
+	_ = x[Neq-30]
+	_ = x[NewRef-31]
+	_ = x[NoOp-32]
+	_ = x[Not-33]
+	_ = x[Null-34]
+	_ = x[One-35]
+	_ = x[Panic-36]
+	_ = x[Pop-37]
+	_ = x[PosInf-38]
+	_ = x[Resolve-39]
+	_ = x[RestArg-40]
+	_ = x[RetEmptyList-41]
+	_ = x[RetFalse-42]
+	_ = x[RetNull-43]
+	_ = x[RetTrue-44]
+	_ = x[Return-45]
+	_ = x[Self-46]
+	_ = x[Store-47]
+	_ = x[Sub-48]
+	_ = x[TailCall-49]
+	_ = x[True-50]
+	_ = x[Two-51]
+	_ = x[Zero-52]
 }
 
 const (
-	_Opcode_name_0 = "AddArgArgLenBindBindRefCallCall0Call1ClosureCondJumpConstDeclareDerefDivDupEmptyListEqFalseGtGteJumpLoadLtLteMakeCallMakeTruthyModMulNegNegInfNegOneNeqNewRefNilNoOpNotOnePanicPopPosInfResolveRestArgRetEmptyListRetFalseRetNilRetTrueReturnSelfStoreSubTailCallTrueTwoZero"
+	_Opcode_name_0 = "AddArgArgLenBindBindRefCallCall0Call1ClosureCondJumpConstDeclareDerefDivDupEqFalseGtGteJumpLoadLtLteMakeCallMakeTruthyModMulNegNegInfNegOneNeqNewRefNoOpNotNullOnePanicPopPosInfResolveRestArgRetEmptyListRetFalseRetNullRetTrueReturnSelfStoreSubTailCallTrueTwoZero"
 	_Opcode_name_1 = "Label"
 )
 
 var (
-	_Opcode_index_0 = [...]uint16{0, 3, 6, 12, 16, 23, 27, 32, 37, 44, 52, 57, 64, 69, 72, 75, 84, 86, 91, 93, 96, 100, 104, 106, 109, 117, 127, 130, 133, 136, 142, 148, 151, 157, 160, 164, 167, 170, 175, 178, 184, 191, 198, 210, 218, 224, 231, 237, 241, 246, 249, 257, 261, 264, 268}
+	_Opcode_index_0 = [...]uint16{0, 3, 6, 12, 16, 23, 27, 32, 37, 44, 52, 57, 64, 69, 72, 75, 77, 82, 84, 87, 91, 95, 97, 100, 108, 118, 121, 124, 127, 133, 139, 142, 148, 152, 155, 159, 162, 167, 170, 176, 183, 190, 202, 210, 217, 224, 230, 234, 239, 242, 250, 254, 257, 261}
 )
 
 func (i Opcode) String() string {
 	switch {
-	case 0 <= i && i <= 53:
+	case 0 <= i && i <= 52:
 		return _Opcode_name_0[_Opcode_index_0[i]:_Opcode_index_0[i+1]]
 	case i == 256:
 		return _Opcode_name_1

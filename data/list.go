@@ -1,51 +1,69 @@
 package data
 
-// List contains a node to a singly-linked List
-type List struct {
+// List represents a singly-linked List
+type List interface {
+	List()
+	Sequence
+	Prepend(Value) Sequence
+	Reverse() Sequence
+	Indexed
+	Counted
+}
+
+type list struct {
 	first Value
-	rest  *List
+	rest  List
 	count int
 }
 
-// EmptyList represents an empty List
-var EmptyList = &List{}
-
 // NewList creates a new List instance
-func NewList(v ...Value) *List {
-	r := EmptyList
-	for i := len(v) - 1; i >= 0; i-- {
-		r = &List{
+func NewList(v ...Value) List {
+	var res List = EmptyList
+	for i, u := len(v)-1, 1; i >= 0; i, u = i-1, u+1 {
+		res = &list{
 			first: v[i],
-			rest:  r,
-			count: r.count + 1,
+			rest:  res,
+			count: u,
 		}
 	}
-	return r
+	return res
 }
 
+func (l *list) List() {}
+
 // First returns the first element of the List
-func (l *List) First() Value {
+func (l *list) First() Value {
 	return l.first
 }
 
 // Rest returns the elements of the List that follow the first
-func (l *List) Rest() Sequence {
+func (l *list) Rest() Sequence {
 	return l.rest
 }
 
 // IsEmpty returns whether or not this sequence is empty
-func (l *List) IsEmpty() bool {
+func (l *list) IsEmpty() bool {
 	return l.count == 0
 }
 
 // Split breaks the List into its components (first, rest, ok)
-func (l *List) Split() (Value, Sequence, bool) {
+func (l *list) Split() (Value, Sequence, bool) {
 	return l.first, l.rest, l.count != 0
 }
 
+// Car returns the first element of a Pair
+func (l *list) Car() Value {
+	return SequenceCar(l)
+}
+
+// Cdr returns the second element of a Pair
+func (l *list) Cdr() Value {
+	return SequenceCdr(l)
+}
+
 // Prepend inserts an element at the beginning of the List
-func (l *List) Prepend(v Value) Sequence {
-	return &List{
+func (l *list) Prepend(v Value) Sequence {
+	return &list{
 		first: v,
 		rest:  l,
 		count: l.count + 1,
@@ -53,55 +71,57 @@ func (l *List) Prepend(v Value) Sequence {
 }
 
 // Reverse returns a reversed copy of this List
-func (l *List) Reverse() Sequence {
+func (l *list) Reverse() Sequence {
 	if l.count <= 1 {
 		return l
 	}
-	res := EmptyList
-	for cur, cnt := l, 1; cur.count > 0; cur, cnt = cur.rest, cnt+1 {
-		res = &List{
-			first: cur.first,
+
+	var res List = EmptyList
+	var e List = l
+	for d, u := e.Count(), 1; d > 0; e, d, u = e.Rest().(List), d-1, u+1 {
+		res = &list{
+			first: e.First(),
 			rest:  res,
-			count: cnt,
+			count: u,
 		}
 	}
 	return res
 }
 
 // Count returns the number of elements in the List
-func (l *List) Count() int {
+func (l *list) Count() int {
 	return l.count
 }
 
 // ElementAt returns a specific element of the List
-func (l *List) ElementAt(index int) (Value, bool) {
+func (l *list) ElementAt(index int) (Value, bool) {
 	if index > l.count-1 || index < 0 {
-		return Nil, false
+		return Null, false
 	}
 
-	e := l
+	var e List = l
 	for i := 0; i < index; i++ {
-		e = e.rest
+		e = e.Rest().(List)
 	}
-	return e.first, true
+	return e.First(), true
 }
 
 // Caller turns List into a callable type
-func (l *List) Caller() Call {
+func (l *list) Caller() Call {
 	return makeIndexedCall(l)
 }
 
 // Convention returns the function's calling convention
-func (l *List) Convention() Convention {
+func (l *list) Convention() Convention {
 	return ApplicativeCall
 }
 
 // CheckArity performs a compile-time arity check for the function
-func (l *List) CheckArity(argCount int) error {
+func (l *list) CheckArity(argCount int) error {
 	return checkRangedArity(1, 2, argCount)
 }
 
 // String converts this List to a string
-func (l *List) String() string {
+func (l *list) String() string {
 	return MakeSequenceStr(l)
 }

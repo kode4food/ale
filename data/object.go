@@ -33,7 +33,7 @@ func (o Object) Get(k Value) (Value, bool) {
 	if proto, ok := o.GetPrototype(); ok {
 		return proto.Get(k)
 	}
-	return Nil, false
+	return Null, false
 }
 
 // MustGet retrieves a Value from an Object or explodes

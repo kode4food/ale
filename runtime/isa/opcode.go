@@ -23,7 +23,6 @@ const (
 	Deref                      // Pointer Dereference
 	Div                        // Division
 	Dup                        // Duplicate Value
-	EmptyList                  // Empty List
 	Eq                         // Numeric Equality
 	False                      // Push False
 	Gt                         // Greater Than
@@ -41,9 +40,9 @@ const (
 	NegOne                     // Push Negative One
 	Neq                        // Numeric Inequality
 	NewRef                     // New Reference
-	Nil                        // Push Nil
 	NoOp                       // Non-Operator
 	Not                        // Boolean Negation
+	Null                       // Push Null
 	One                        // Push One
 	Panic                      // Abnormally Halt
 	Pop                        // Discard Value
@@ -52,7 +51,7 @@ const (
 	RestArg                    // Retrieve Arguments Tail
 	RetEmptyList               // Return an Empty List
 	RetFalse                   // Return False
-	RetNil                     // Return Nil
+	RetNull                    // Return Null
 	RetTrue                    // Return True
 	Return                     // Return Value
 	Self                       // Push Current Lambda

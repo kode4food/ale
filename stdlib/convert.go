@@ -7,9 +7,9 @@ import (
 )
 
 // SequenceToList takes any sequence and converts it to a List
-func SequenceToList(s data.Sequence) *data.List {
+func SequenceToList(s data.Sequence) data.List {
 	switch typed := s.(type) {
-	case *data.List:
+	case data.List:
 		return typed
 	case data.Counted:
 		res := make(data.Vector, typed.Count())
@@ -24,7 +24,7 @@ func SequenceToList(s data.Sequence) *data.List {
 	}
 }
 
-func uncountedToList(s data.Sequence) *data.List {
+func uncountedToList(s data.Sequence) data.List {
 	return data.NewList(uncountedToValues(s)...)
 }
 
@@ -78,7 +78,7 @@ func SequenceToStr(s data.Sequence) data.String {
 	}
 	var buf bytes.Buffer
 	for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {
-		if f == data.Nil {
+		if f == data.Null {
 			continue
 		}
 		buf.WriteString(f.String())

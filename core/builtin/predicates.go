@@ -27,9 +27,9 @@ func IsBoolean(args ...data.Value) data.Value {
 	return data.Bool(ok)
 }
 
-// IsNil returns whether or not the provided value is nil
-func IsNil(args ...data.Value) data.Value {
-	return data.Bool(args[0] == data.Nil)
+// IsNull returns whether or not the provided value is the empty list
+func IsNull(args ...data.Value) data.Value {
+	return data.Bool(args[0] == data.Null)
 }
 
 // IsKeyword returns whether or not the provided value is a keyword

@@ -25,7 +25,7 @@ func (s String) First() Value {
 	if r, w := utf8.DecodeRuneInString(string(s)); w > 0 {
 		return String(r)
 	}
-	return Nil
+	return Null
 }
 
 // Rest returns a String of all characters after the first
@@ -41,7 +41,7 @@ func (s String) Split() (Value, Sequence, bool) {
 	if r, w := utf8.DecodeRuneInString(string(s)); w > 0 {
 		return String(r), String(s[w:]), true
 	}
-	return Nil, emptyStr, false
+	return Null, emptyStr, false
 }
 
 // IsEmpty returns whether or not this sequence is empty
@@ -69,13 +69,13 @@ func (s String) Append(v Value) Sequence {
 	return s.vector().Append(v)
 }
 
-func (s String) list() *List {
+func (s String) list() List {
 	c := []rune(string(s))
-	r := EmptyList
+	var res List = EmptyList
 	for i := len(c) - 1; i >= 0; i-- {
-		r = r.Prepend(String(c[i])).(*List)
+		res = res.Prepend(String(c[i])).(List)
 	}
-	return r
+	return res
 }
 
 func (s String) vector() Vector {
@@ -95,7 +95,7 @@ func (s String) Count() int {
 // ElementAt returns the Character at the indexed position in the String
 func (s String) ElementAt(index int) (Value, bool) {
 	if index < 0 {
-		return Nil, false
+		return Null, false
 	}
 	ns := string(s)
 	p := 0
@@ -103,13 +103,13 @@ func (s String) ElementAt(index int) (Value, bool) {
 		if _, w := utf8.DecodeRuneInString(ns[p:]); w > 0 {
 			p += w
 		} else {
-			return Nil, false
+			return Null, false
 		}
 	}
 	if r, w := utf8.DecodeRuneInString(ns[p:]); w > 0 {
 		return String(r), true
 	}
-	return Nil, false
+	return Null, false
 }
 
 // String converts this Value into a string

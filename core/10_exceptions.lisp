@@ -98,7 +98,7 @@
 
               (seq? block) `(do ,@block)
 
-              :else        nil)))]
+              :else        null)))]
 
   (defmacro try clauses
     (try-catch-finally (try-parse clauses))))

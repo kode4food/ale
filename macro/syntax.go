@@ -87,12 +87,14 @@ func (se *syntaxEnv) quoteSequence(s data.Sequence) data.Value {
 	switch typed := s.(type) {
 	case data.String:
 		return typed
-	case *data.List:
+	case data.List:
 		return data.NewList(applySym, listSym, se.quoteElements(typed))
 	case data.Vector:
 		return data.NewList(applySym, vectorSym, se.quoteElements(typed))
 	case data.Associative:
 		return se.quoteAssociative(typed)
+	case data.NullType:
+		return typed
 	default:
 		panic(fmt.Errorf(UnsupportedSyntaxQuote, s))
 	}
@@ -141,11 +143,11 @@ func isWrapperCall(s data.Symbol, v data.Value) (data.Value, bool) {
 	if l, ok := isBuiltInCall(s, v); ok {
 		return l.Rest().First(), true
 	}
-	return data.Nil, false
+	return data.Null, false
 }
 
-func isBuiltInCall(s data.Symbol, v data.Value) (*data.List, bool) {
-	if l, ok := v.(*data.List); ok && l.Count() > 0 {
+func isBuiltInCall(s data.Symbol, v data.Value) (data.List, bool) {
+	if l, ok := v.(data.List); ok && l.Count() > 0 {
 		if call, ok := l.First().(data.Symbol); ok {
 			return l, call == s
 		}

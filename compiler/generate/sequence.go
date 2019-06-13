@@ -25,7 +25,7 @@ var (
 func Block(e encoder.Type, s data.Sequence) {
 	f, r, ok := s.Split()
 	if !ok {
-		Nil(e)
+		Null(e)
 		return
 	}
 	Value(e, f)
@@ -38,9 +38,11 @@ func Block(e encoder.Type, s data.Sequence) {
 // Sequence encodes a sequence
 func Sequence(e encoder.Type, s data.Sequence) {
 	switch typed := s.(type) {
+	case data.NullType:
+		Literal(e, typed)
 	case data.String:
 		Literal(e, typed)
-	case *data.List:
+	case data.List:
 		Call(e, typed)
 	case data.Vector:
 		Vector(e, typed)
@@ -52,7 +54,7 @@ func Sequence(e encoder.Type, s data.Sequence) {
 }
 
 // List encodes a list
-func List(e encoder.Type, l *data.List) {
+func List(e encoder.Type, l data.List) {
 	f := resolveBuiltIn(e, listSym)
 	args := stdlib.SequenceToValues(l)
 	callApplicative(e, f.Caller(), args)

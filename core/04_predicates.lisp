@@ -42,7 +42,7 @@
 (def-predicate is-mapped "mapped")
 (def-predicate is-nan "nan")
 (def-predicate is-neg-inf "-inf")
-(def-predicate is-nil "nil")
+(def-predicate is-null "null")
 (def-predicate is-number "number")
 (def-predicate is-odd "odd")
 (def-predicate is-pair "pair")

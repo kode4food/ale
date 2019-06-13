@@ -9,6 +9,6 @@ func List(args ...data.Value) data.Value {
 
 // IsList returns whether or not the provided value is a list
 func IsList(args ...data.Value) data.Value {
-	_, ok := args[0].(*data.List)
+	_, ok := args[0].(data.List)
 	return data.Bool(ok)
 }

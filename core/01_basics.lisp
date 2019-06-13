@@ -29,7 +29,7 @@
     defmacro))
 
 (defmacro assert-args
-  ([] nil)
+  ([] null)
   ([clause]
     (raise "assert-args clauses must be paired"))
   (clauses

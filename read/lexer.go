@@ -115,7 +115,7 @@ func Scan(src data.String) data.Sequence {
 			s = rs
 			return t, stdlib.NewLazySequence(resolver), true
 		}
-		return data.Nil, data.EmptyList, false
+		return data.Null, data.EmptyList, false
 	}
 
 	l := stdlib.NewLazySequence(resolver)

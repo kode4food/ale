@@ -50,7 +50,7 @@ func NewReader(r io.Reader, i InputFunc) Reader {
 		if v, ok := i(br); ok {
 			return v, NewLazySequence(resolver), true
 		}
-		return data.Nil, data.EmptyList, false
+		return data.Null, data.EmptyList, false
 	}
 
 	return NewLazySequence(resolver)
@@ -107,7 +107,7 @@ func LineInput(r *bufio.Reader) (data.Value, bool) {
 	if err == io.EOF && len(l) > 0 {
 		return data.String(l), true
 	}
-	return data.Nil, false
+	return data.Null, false
 }
 
 // RuneInput is the standard single rune input function
@@ -115,5 +115,5 @@ func RuneInput(r *bufio.Reader) (data.Value, bool) {
 	if c, _, err := r.ReadRune(); err == nil {
 		return data.String(string(c)), true
 	}
-	return data.Nil, false
+	return data.Null, false
 }

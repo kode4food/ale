@@ -38,7 +38,7 @@
 
 (defn range
   ([]
-    (range 0 nil 1))
+    (range 0 null 1))
 
   ([last]
     (range 0 last (if (> last 0) 1 -1)))
@@ -49,7 +49,7 @@
         (range last first -1)))
 
   ([first last step]
-    (let [cmp (cond (nil? last) (constantly true)
+    (let [cmp (cond (null? last) (constantly true)
                     (< step 0)  >
                     :else       <)]
       (if (cmp first last)

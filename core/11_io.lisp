@@ -5,12 +5,12 @@
 (define *space*   "\s")
 (define *newline* "\n")
 
-(define (pr-map-with-nil func seq)
-  (map (lambda [val] (if (nil? val) val (func val)))
+(define (pr-map-with-null func seq)
+  (map (lambda [val] (if (null? val) val (func val)))
        seq))
 
 (define (pr . forms)
-  (let [mapped (pr-map-with-nil str! forms)]
+  (let [mapped (pr-map-with-null str! forms)]
     (when (seq mapped)
           (. *out* :write (first mapped)))
     (when (seq mapped)
@@ -22,7 +22,7 @@
   (. *out* :write *newline*))
 
 (define (print . forms)
-  (let [mapped (pr-map-with-nil str forms)]
+  (let [mapped (pr-map-with-null str forms)]
     (when (seq mapped)
           (. *out* :write (first mapped)))
     (when (seq mapped)

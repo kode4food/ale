@@ -24,7 +24,7 @@ func TestLazySequence(t *testing.T) {
 			i++
 			return res
 		}
-		return data.Nil
+		return data.Null
 	})
 
 	s := builtin.LazySequence(fn).(data.Sequence)
@@ -114,7 +114,7 @@ func TestLazySeqEval(t *testing.T) {
 	`, F(6))
 
 	as.EvalTo(`
-		(length (to-vector (lazy-seq nil)))
+		(length (to-vector (lazy-seq null)))
 	`, F(0))
 }
 

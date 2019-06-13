@@ -16,7 +16,7 @@ func TestLazySeq(t *testing.T) {
 	i := 0
 	inc = func() (data.Value, data.Sequence, bool) {
 		if i >= 10 {
-			return data.Nil, data.EmptyList, false
+			return data.Null, data.EmptyList, false
 		}
 		i++
 		first := F(float64(i))

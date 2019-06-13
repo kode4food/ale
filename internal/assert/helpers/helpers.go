@@ -28,7 +28,7 @@ func K(s string) data.Keyword {
 }
 
 // L constructs a List
-func L(args ...data.Value) *data.List {
+func L(args ...data.Value) data.List {
 	return data.NewList(args...)
 }
 

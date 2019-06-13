@@ -28,7 +28,7 @@
            f (first l)
            r (rest l)]
       `(let [val# ,value]
-         (when-not (nil? val#)
+         (when-not (null? val#)
                    (some-> (,f val# ,@r) ,@(rest forms)))))))
 
 (defmacro some->>
@@ -38,7 +38,7 @@
            f (first l)
            r (rest l)]
       `(let [val# ,value]
-         (when-not (nil? val#)
+         (when-not (null? val#)
                    (some->> (,f ,@r val#) ,@(rest forms)))))))
 
 (defmacro as->

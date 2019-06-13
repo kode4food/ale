@@ -36,7 +36,7 @@ var (
 	specialNames = map[data.String]data.Value{
 		"true":  data.True,
 		"false": data.False,
-		"nil":   data.Nil,
+		"null":  data.Null,
 	}
 
 	collectionErrors = map[TokenType]string{

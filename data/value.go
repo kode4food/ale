@@ -47,13 +47,6 @@ type (
 	Indexed interface {
 		ElementAt(int) (Value, bool)
 	}
-
-	// NilType is the interface for the Nil value
-	NilType interface {
-		Nil()
-	}
-
-	nilValue struct{}
 )
 
 const (
@@ -63,9 +56,6 @@ const (
 	// False represents the boolean value of false
 	False Bool = false
 )
-
-// Nil is a value that represents the absence of a Value
-var Nil *nilValue
 
 func (v Values) String() string {
 	return DumpString(v)
@@ -81,13 +71,6 @@ func (n Name) String() string {
 	return string(n)
 }
 
-// Nil makes nilValue a Nil type
-func (n *nilValue) Nil() {}
-
-func (n *nilValue) String() string {
-	return "nil"
-}
-
 // String converts this Value into a string
 func (b Bool) String() string {
 	if bool(b) {
@@ -98,7 +81,7 @@ func (b Bool) String() string {
 
 // Truthy evaluates whether or not a Value is truthy
 func Truthy(v Value) bool {
-	if v == False || v == Nil {
+	if v == False || v == Null {
 		return false
 	}
 	return true

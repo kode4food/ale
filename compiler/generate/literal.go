@@ -9,25 +9,21 @@ import (
 // Literal encodes a literal (constant) value
 func Literal(e encoder.Type, v data.Value) {
 	switch typed := v.(type) {
-	case data.NilType:
-		Nil(e)
+	case data.NullType:
+		Null(e)
 	case data.Integer, data.Float:
 		Number(e, typed)
 	case data.Bool:
 		Bool(e, typed)
 	default:
-		if typed == data.EmptyList {
-			EmptyList(e)
-			return
-		}
 		index := e.AddConstant(v)
 		e.Emit(isa.Const, index)
 	}
 }
 
-// Nil encodes a Nil
-func Nil(e encoder.Type) {
-	e.Emit(isa.Nil)
+// Null encodes a Null
+func Null(e encoder.Type) {
+	e.Emit(isa.Null)
 }
 
 // Number encodes an Integer or Float
@@ -54,9 +50,4 @@ func Bool(e encoder.Type, n data.Bool) {
 	} else {
 		e.Emit(isa.False)
 	}
-}
-
-// EmptyList encodes an empty list
-func EmptyList(e encoder.Type) {
-	e.Emit(isa.EmptyList)
 }

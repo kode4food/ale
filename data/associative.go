@@ -46,7 +46,7 @@ func (a Associative) Get(key Value) (Value, bool) {
 			return v, true
 		}
 	}
-	return Nil, false
+	return Null, false
 }
 
 // First returns the first pair of the Associative
@@ -54,7 +54,7 @@ func (a Associative) First() Value {
 	if len(a) > 0 {
 		return a[0]
 	}
-	return Nil
+	return Null
 }
 
 // Rest returns the pairs of the List that follow the first
@@ -75,7 +75,17 @@ func (a Associative) Split() (Value, Sequence, bool) {
 	if len(a) > 0 {
 		return a[0], a[1:], true
 	}
-	return Nil, EmptyAssociative, false
+	return Null, EmptyAssociative, false
+}
+
+// Car returns the first element of a Pair
+func (a Associative) Car() Value {
+	return SequenceCar(a)
+}
+
+// Cdr returns the second element of a Pair
+func (a Associative) Cdr() Value {
+	return SequenceCdr(a)
 }
 
 // Prepend inserts a pair at the beginning of the Associative

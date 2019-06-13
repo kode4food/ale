@@ -47,7 +47,7 @@
 (def-builtin is-apply)
 (def-builtin is-boolean)
 (def-builtin is-list)
-(def-builtin is-nil)
+(def-builtin is-null)
 (def-builtin is-number)
 (def-builtin is-pair)
 (def-builtin is-string)

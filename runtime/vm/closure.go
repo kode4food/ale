@@ -45,13 +45,8 @@ func newClosure(lambda *Lambda, values data.Values) *Closure {
 	opSwitch:
 		op := isa.Opcode(code[PC])
 		switch op {
-		case isa.Nil:
-			stack[SP] = data.Nil
-			SP--
-			goto nextPC
-
-		case isa.EmptyList:
-			stack[SP] = data.EmptyList
+		case isa.Null:
+			stack[SP] = data.Null
 			SP--
 			goto nextPC
 
@@ -374,8 +369,8 @@ func newClosure(lambda *Lambda, values data.Values) *Closure {
 		case isa.Return:
 			return stack[SP+1]
 
-		case isa.RetNil:
-			return data.Nil
+		case isa.RetNull:
+			return data.Null
 
 		case isa.RetEmptyList:
 			return data.EmptyList

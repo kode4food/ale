@@ -72,7 +72,7 @@
                    r (rest coll)]
                (last-inner r f))
              prev)))
-    coll nil))
+    coll null))
 
 (define (reverse! coll)
   (if (is-reversible coll)

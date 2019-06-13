@@ -19,20 +19,20 @@ func TestPredicatesEval(t *testing.T) {
 	as.EvalTo(`(!eq true false)`, data.True)
 	as.EvalTo(`(!eq false false)`, data.False)
 
-	as.EvalTo(`(nil? nil)`, data.True)
-	as.EvalTo(`(nil? nil nil nil)`, data.True)
-	as.EvalTo(`(nil? () nil)`, data.False)
-	as.EvalTo(`(nil? false)`, data.False)
-	as.EvalTo(`(nil? false () nil)`, data.False)
+	as.EvalTo(`(null? null)`, data.True)
+	as.EvalTo(`(null? null null null)`, data.True)
+	as.EvalTo(`(null? () null)`, data.True)
+	as.EvalTo(`(null? false)`, data.False)
+	as.EvalTo(`(null? false () null)`, data.False)
 
-	as.EvalTo(`(nil? "hello")`, data.False)
-	as.EvalTo(`(nil? '(1 2 3))`, data.False)
-	as.EvalTo(`(nil? () nil "hello")`, data.False)
+	as.EvalTo(`(null? "hello")`, data.False)
+	as.EvalTo(`(null? '(1 2 3))`, data.False)
+	as.EvalTo(`(null? () null "hello")`, data.False)
 
 	as.EvalTo(`(keyword? :hello)`, data.True)
 	as.EvalTo(`(!keyword? :hello)`, data.False)
 	as.EvalTo(`(keyword? 99)`, data.False)
 	as.EvalTo(`(!keyword? 99)`, data.True)
 
-	as.PanicWith(`(nil?)`, fmt.Errorf(arity.BadMinimumArity, 0, 1))
+	as.PanicWith(`(null?)`, fmt.Errorf(arity.BadMinimumArity, 0, 1))
 }

@@ -16,7 +16,7 @@ func Seq(args ...data.Value) data.Value {
 	if s, ok := args[0].(data.Sequence); ok && !s.IsEmpty() {
 		return s
 	}
-	return data.Nil
+	return data.Null
 }
 
 // First returns the first value in the sequence

@@ -26,7 +26,7 @@ func TestList(t *testing.T) {
 	as.True(l1.Rest().IsEmpty())
 
 	n2 := F(20.5)
-	l2 := l1.Prepend(n2).(*data.List)
+	l2 := l1.Prepend(n2).(data.List)
 
 	as.String("()", data.EmptyList)
 	as.String("(20.5 12)", l2)
@@ -41,14 +41,14 @@ func TestList(t *testing.T) {
 
 	r, ok = data.EmptyList.ElementAt(1)
 	as.False(ok)
-	as.Equal(data.Nil, r)
+	as.Equal(data.Null, r)
 }
 
 func TestListReverse(t *testing.T) {
 	as := assert.New(t)
 
 	l1 := data.NewList(I(1), I(2), I(3), I(4))
-	l2 := l1.Reverse().(*data.List)
+	l2 := l1.Reverse().(data.List)
 
 	as.String("(1 2 3 4)", l1)
 	as.Number(4, l1.Count())
@@ -63,7 +63,7 @@ func TestListCaller(t *testing.T) {
 	as := assert.New(t)
 
 	l1 := L(I(99), I(37))
-	c1 := l1.Caller()
+	c1 := l1.(data.Caller).Caller()
 	as.Number(99, c1(I(0)))
 	as.Number(37, c1(I(1)))
 	as.Nil(c1(I(2)))

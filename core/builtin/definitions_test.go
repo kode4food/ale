@@ -24,7 +24,7 @@ func TestFunctionEval(t *testing.T) {
 
 func TestBadFunctionEval(t *testing.T) {
 	symErr := interfaceErr("data.Integer", "data.LocalSymbol", "LocalSymbol")
-	listErr := typeErr("data.Integer", "*data.List")
+	listErr := interfaceErr("data.Integer", "data.List", "Count")
 	vecErr := typeErr("data.Integer", "data.Vector")
 
 	as := assert.New(t)

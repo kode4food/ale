@@ -12,12 +12,12 @@ func Cons(args ...data.Value) data.Value {
 	return data.NewCons(car, cdr)
 }
 
-// Car returns the CAR register of the provided Pair
+// Car returns the first element of the provided Pair
 func Car(args ...data.Value) data.Value {
 	return args[0].(data.Pair).Car()
 }
 
-// Cdr returns the CDR register of the provided Pair
+// Cdr returns the first element of the provided Pair
 func Cdr(args ...data.Value) data.Value {
 	return args[0].(data.Pair).Cdr()
 }

@@ -15,9 +15,9 @@ func TestSequencesEval(t *testing.T) {
 	as.EvalTo(`(seq? ())`, data.True)
 	as.EvalTo(`(empty? ())`, data.True)
 	as.EvalTo(`(empty? '(1))`, data.False)
-	as.EvalTo(`(seq ())`, data.Nil)
+	as.EvalTo(`(seq ())`, data.Null)
 	as.EvalTo(`(seq? 99)`, data.False)
-	as.EvalTo(`(seq 99)`, data.Nil)
+	as.EvalTo(`(seq 99)`, data.Null)
 }
 
 func TestToAssocEval(t *testing.T) {

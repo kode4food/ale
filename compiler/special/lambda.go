@@ -76,7 +76,7 @@ func (le *lambdaEncoder) encodeCall() {
 
 func (le *lambdaEncoder) makeLambda() *vm.Lambda {
 	if len(le.variants) == 0 {
-		le.Emit(isa.RetNil)
+		le.Emit(isa.RetNull)
 	} else {
 		le.makeVariants(le.variants)
 	}
@@ -130,7 +130,7 @@ func (le *lambdaEncoder) makeCond(v *variant) {
 func (le *lambdaEncoder) makeThen(v *variant) {
 	body := v.body
 	if body.IsEmpty() {
-		le.Emit(isa.RetNil)
+		le.Emit(isa.RetNull)
 		return
 	}
 
@@ -150,7 +150,7 @@ func parseLambda(s data.Vector) variants {
 	default:
 		var res variants
 		for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {
-			v := parseLambdaVariant(f.(*data.List))
+			v := parseLambdaVariant(f.(data.List))
 			res = append(res, v)
 		}
 		return res

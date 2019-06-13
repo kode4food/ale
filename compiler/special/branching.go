@@ -23,7 +23,7 @@ func If(e encoder.Type, args ...data.Value) {
 			if al == 3 {
 				generate.Value(e, args[2])
 			} else {
-				generate.Nil(e)
+				generate.Null(e)
 			}
 		},
 	)

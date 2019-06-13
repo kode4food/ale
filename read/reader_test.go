@@ -22,7 +22,7 @@ func TestReadList(t *testing.T) {
 	l := read.Scan(`(99 "hello" 55.12)`)
 	tr := read.FromScanner(l)
 	v := tr.First()
-	list, ok := v.(*data.List)
+	list, ok := v.(data.List)
 	as.True(ok)
 
 	f, r, ok := list.Split()
@@ -77,7 +77,7 @@ func TestReadNestedList(t *testing.T) {
 	l := read.Scan(`(99 ("hello" "there") 55.12)`)
 	tr := read.FromScanner(l)
 	v := tr.First()
-	list, ok := v.(*data.List)
+	list, ok := v.(data.List)
 	as.True(ok)
 
 	f, r, ok := list.Split()
@@ -87,7 +87,7 @@ func TestReadNestedList(t *testing.T) {
 	// get nested list
 	f, r, ok = r.Split()
 	as.True(ok)
-	list2, ok := f.(*data.List)
+	list2, ok := f.(data.List)
 	as.True(ok)
 
 	// iterate over the rest of top-level list

@@ -21,7 +21,7 @@ func NewLazySequence(r LazyResolver) data.Sequence {
 	return &lazySequence{
 		once:     Once(),
 		resolver: r,
-		result:   data.Nil,
+		result:   data.Null,
 		rest:     data.EmptyList,
 	}
 }
@@ -49,6 +49,14 @@ func (l *lazySequence) Rest() data.Sequence {
 func (l *lazySequence) Split() (data.Value, data.Sequence, bool) {
 	r := l.resolve()
 	return r.result, r.rest, l.ok
+}
+
+func (l *lazySequence) Car() data.Value {
+	return data.SequenceCar(l)
+}
+
+func (l *lazySequence) Cdr() data.Value {
+	return data.SequenceCdr(l)
 }
 
 func (l *lazySequence) Prepend(v data.Value) data.Sequence {

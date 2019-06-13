@@ -2,8 +2,8 @@ package data
 
 // Deque is a persistent double-ended queue
 type Deque struct {
-	head *List
-	tail *List
+	head List
+	tail List
 }
 
 // EmptyDeque represents an empty deque
@@ -41,19 +41,29 @@ func (d *Deque) IsEmpty() bool {
 func (d *Deque) Split() (Value, Sequence, bool) {
 	if f, r, ok := d.head.Split(); ok {
 		rest := &Deque{
-			head: r.(*List),
+			head: r.(List),
 			tail: d.tail,
 		}
 		return f, rest, true
 	}
 	if f, r, ok := d.tail.Reverse().Split(); ok {
 		rest := &Deque{
-			head: r.(*List),
+			head: r.(List),
 			tail: EmptyList,
 		}
 		return f, rest, true
 	}
-	return Nil, EmptyDeque, false
+	return Null, EmptyDeque, false
+}
+
+// Car returns the first element of a Pair
+func (d *Deque) Car() Value {
+	return SequenceCar(d)
+}
+
+// Cdr returns the second element of a Pair
+func (d *Deque) Cdr() Value {
+	return SequenceCdr(d)
 }
 
 // Count returns the number of elements in the deque
@@ -72,7 +82,7 @@ func (d *Deque) Reverse() Sequence {
 // Prepend inserts elements at the beginning of the deque
 func (d *Deque) Prepend(v Value) Sequence {
 	return &Deque{
-		head: d.head.Prepend(v).(*List),
+		head: d.head.Prepend(v).(List),
 		tail: d.tail,
 	}
 }
@@ -82,7 +92,7 @@ func (d *Deque) Append(v Value) Sequence {
 	var tail = d.tail.Prepend(v)
 	return &Deque{
 		head: d.head,
-		tail: tail.(*List),
+		tail: tail.(List),
 	}
 }
 
