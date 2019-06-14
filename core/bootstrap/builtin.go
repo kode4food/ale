@@ -102,7 +102,7 @@ func (b *bootstrap) availableFunctions() {
 
 	b.applicative("append", builtin.Append, 2)
 	b.applicative("apply", builtin.Apply, 2, orMore)
-	b.applicative("assoc", builtin.Assoc)
+	b.applicative("object", builtin.Object)
 	b.applicative("car", builtin.Car, 1)
 	b.applicative("cdr", builtin.Cdr, 1)
 	b.applicative("chan", builtin.Chan, 0, 1)
@@ -117,7 +117,7 @@ func (b *bootstrap) availableFunctions() {
 	b.applicative("go*", builtin.Go, 1)
 	b.applicative("is-appender", builtin.IsAppender, 1)
 	b.applicative("is-apply", builtin.IsApply, 1)
-	b.applicative("is-assoc", builtin.IsAssoc, 1)
+	b.applicative("is-object", builtin.IsObject, 1)
 	b.applicative("is-atom", builtin.IsAtom, 1)
 	b.applicative("is-boolean", builtin.IsBoolean, 1)
 	b.applicative("is-counted", builtin.IsCounted, 1)

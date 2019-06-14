@@ -23,7 +23,7 @@ var (
 	quoteSym  = namespace.RootSymbol("quote")
 	listSym   = namespace.RootSymbol("list")
 	vectorSym = namespace.RootSymbol("vector")
-	assocSym  = namespace.RootSymbol("assoc")
+	objectSym = namespace.RootSymbol("object")
 	applySym  = namespace.RootSymbol("apply")
 	concatSym = namespace.RootSymbol("concat!")
 
@@ -91,8 +91,8 @@ func (se *syntaxEnv) quoteSequence(s data.Sequence) data.Value {
 		return data.NewList(applySym, listSym, se.quoteElements(typed))
 	case data.Vector:
 		return data.NewList(applySym, vectorSym, se.quoteElements(typed))
-	case data.Associative:
-		return se.quoteAssociative(typed)
+	case data.Object:
+		return se.quoteObject(typed)
 	case data.NullType:
 		return typed
 	default:
@@ -100,16 +100,13 @@ func (se *syntaxEnv) quoteSequence(s data.Sequence) data.Value {
 	}
 }
 
-func (se *syntaxEnv) quoteAssociative(as data.Associative) data.Value {
+func (se *syntaxEnv) quoteObject(as data.Object) data.Value {
 	res := data.EmptyVector
 	for f, r, ok := as.Split(); ok; f, r, ok = r.Split() {
-		p := f.(data.Vector)
-		k, _ := p.ElementAt(0)
-		v, _ := p.ElementAt(1)
-		res = append(res, k)
-		res = append(res, v)
+		p := f.(data.Pair)
+		res = append(res, p.Car(), p.Cdr())
 	}
-	return data.NewList(applySym, assocSym, se.quoteElements(res))
+	return data.NewList(applySym, objectSym, se.quoteElements(res))
 }
 
 func (se *syntaxEnv) quoteElements(s data.Sequence) data.Value {

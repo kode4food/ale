@@ -26,7 +26,7 @@
 
 (def-predicate is-appender "append")
 (def-predicate is-apply "apply")
-(def-predicate is-assoc "assoc")
+(def-predicate is-object "object")
 (def-predicate is-atom "atom")
 (def-predicate is-boolean "boolean")
 (def-predicate is-counted "counted")

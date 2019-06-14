@@ -60,14 +60,14 @@ func SequenceToVector(s data.Sequence) data.Vector {
 	return data.NewVector(v...)
 }
 
-// SequenceToAssociative takes any sequence and converts it to an Associative
-func SequenceToAssociative(s data.Sequence) data.Associative {
+// SequenceToObject takes any sequence and converts it to an Associative
+func SequenceToObject(s data.Sequence) data.Object {
 	switch typed := s.(type) {
-	case data.Associative:
+	case data.Object:
 		return typed
 	default:
 		elems := SequenceToValues(s)
-		return data.NewAssociative(elems...)
+		return data.NewObject(elems...)
 	}
 }
 

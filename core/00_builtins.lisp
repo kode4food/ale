@@ -13,7 +13,6 @@
 
 (def-builtin append)
 (def-builtin apply)
-(def-builtin assoc)
 (def-builtin car)
 (def-builtin cdr)
 (def-builtin chan)
@@ -31,6 +30,7 @@
 (def-builtin list)
 (def-builtin mod)
 (def-builtin nth)
+(def-builtin object)
 (def-builtin promise)
 (def-builtin raise)
 (def-builtin read)
@@ -55,7 +55,6 @@
 (def-builtin is-vector)
 
 (def-builtin is-appender)
-(def-builtin is-assoc)
 (def-builtin is-atom)
 (def-builtin is-counted)
 (def-builtin is-delivered)
@@ -68,6 +67,7 @@
 (def-builtin is-mapped)
 (def-builtin is-nan)
 (def-builtin is-neg-inf)
+(def-builtin is-object)
 (def-builtin is-pos-inf)
 (def-builtin is-promise)
 (def-builtin is-qualified)

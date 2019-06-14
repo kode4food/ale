@@ -17,7 +17,7 @@ func TestObject(t *testing.T) {
 		K("name"):   S("parent"),
 	}
 
-	o2 := o1.Extend(data.Object{
+	o2 := o1.Merge(data.Object{
 		K("child"): S("i am the child"),
 		K("name"):  S("child"),
 	})

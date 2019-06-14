@@ -6,8 +6,8 @@ import (
 )
 
 const (
-	// ChannelKey is the key used to identify a Channel
-	ChannelKey = data.Keyword("channel")
+	// ChannelType is the type name for a channel
+	ChannelType = data.String("channel")
 
 	// EmitKey is the key used to emit to a Channel
 	EmitKey = data.Keyword("emit")
@@ -15,10 +15,6 @@ const (
 	// SequenceKey is the key used to retrieve the Sequence from a Channel
 	SequenceKey = data.Keyword("seq")
 )
-
-var channelPrototype = data.Object{
-	ChannelKey: data.True,
-}
 
 // Go runs the provided function asynchronously
 func Go(args ...data.Value) data.Value {
@@ -36,11 +32,12 @@ func Chan(args ...data.Value) data.Value {
 	}
 	e, s := stdlib.NewChannel(size)
 
-	return channelPrototype.Extend(data.Object{
-		EmitKey:     bindWriter(e),
-		CloseKey:    bindCloser(e),
-		SequenceKey: s,
-	})
+	return data.Object{
+		data.TypeKey: ChannelType,
+		EmitKey:      bindWriter(e),
+		CloseKey:     bindCloser(e),
+		SequenceKey:  s,
+	}
 }
 
 // Promise instantiates a new eventually-fulfilled promise

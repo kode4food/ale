@@ -3,6 +3,8 @@ package data_test
 import (
 	"testing"
 
+	"gitlab.com/kode4food/ale/data"
+
 	"gitlab.com/kode4food/ale/internal/assert"
 	. "gitlab.com/kode4food/ale/internal/assert/helpers"
 )
@@ -18,7 +20,7 @@ func TestKeyword(t *testing.T) {
 func TestKeywordCaller(t *testing.T) {
 	as := assert.New(t)
 
-	m1 := getTestMap()
+	m1 := data.NewObject(K("name"), S("Ale"))
 	c1 := K("name").Caller()
 	as.String("Ale", c1(m1))
 

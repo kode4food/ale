@@ -86,7 +86,7 @@ func (r *reader) value(t *Token) data.Value {
 	case VectorStart:
 		return r.vector()
 	case MapStart:
-		return r.associative()
+		return r.object()
 	case Identifier:
 		return readIdentifier(t)
 	case ListEnd:
@@ -117,9 +117,9 @@ func (r *reader) vector() data.Value {
 	return data.NewVector(elems...)
 }
 
-func (r *reader) associative() data.Value {
+func (r *reader) object() data.Value {
 	elems := r.readCollection(MapEnd)
-	return data.NewAssociative(elems...)
+	return data.NewObject(elems...)
 }
 
 func (r *reader) readCollection(endToken TokenType) data.Values {

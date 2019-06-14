@@ -20,11 +20,11 @@ func TestSequencesEval(t *testing.T) {
 	as.EvalTo(`(seq 99)`, data.Null)
 }
 
-func TestToAssocEval(t *testing.T) {
+func TestToObjectEval(t *testing.T) {
 	as := assert.New(t)
-	as.EvalTo(`(assoc? (to-assoc [:name "Ale" :age 45]))`, data.True)
-	as.EvalTo(`(assoc? (to-assoc '(:name "Ale" :age 45)))`, data.True)
-	as.EvalTo(`(mapped? (to-assoc '(:name "Ale" :age 45)))`, data.True)
+	as.EvalTo(`(object? (to-object [:name "Ale" :age 45]))`, data.True)
+	as.EvalTo(`(object? (to-object '(:name "Ale" :age 45)))`, data.True)
+	as.EvalTo(`(mapped? (to-object '(:name "Ale" :age 45)))`, data.True)
 }
 
 func TestToVectorEval(t *testing.T) {

@@ -8,6 +8,9 @@ import (
 )
 
 const (
+	// WriterType is the type name for a writer
+	WriterType = data.String("writer")
+
 	// WriterKey is the key used to wrap a Writer
 	WriterKey = data.Keyword("writer")
 
@@ -18,12 +21,6 @@ const (
 	CloseKey = data.Keyword("close")
 )
 
-const typeKey = data.Keyword("type")
-
-var writerPrototype = data.Object{
-	typeKey: data.Name("writer"),
-}
-
 // MakeReader wraps the go Reader with an input function
 func MakeReader(r io.Reader, i stdlib.InputFunc) stdlib.Reader {
 	return stdlib.NewReader(r, i)
@@ -33,16 +30,17 @@ func MakeReader(r io.Reader, i stdlib.InputFunc) stdlib.Reader {
 func MakeWriter(w io.Writer, o stdlib.OutputFunc) data.Object {
 	wrapped := stdlib.NewWriter(w, o)
 
-	wrapper := data.Object{
-		WriterKey: wrapped,
-		WriteKey:  bindWriter(wrapped),
+	res := data.Object{
+		data.TypeKey: WriterType,
+		WriterKey:    wrapped,
+		WriteKey:     bindWriter(wrapped),
 	}
 
 	if c, ok := w.(stdlib.Closer); ok {
-		wrapper[CloseKey] = bindCloser(c)
+		res[CloseKey] = bindCloser(c)
 	}
 
-	return writerPrototype.Extend(wrapper)
+	return res
 }
 
 func bindWriter(w stdlib.Writer) data.Call {

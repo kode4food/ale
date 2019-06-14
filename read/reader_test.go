@@ -67,7 +67,7 @@ func TestReadMap(t *testing.T) {
 	l := read.Scan(`{:name "blah" :age 99}`)
 	tr := read.FromScanner(l)
 	v := tr.First()
-	m, ok := v.(data.Associative)
+	m, ok := v.(data.Object)
 	as.True(ok)
 	as.Number(2, m.Count())
 }
@@ -129,7 +129,7 @@ func TestReaderErrors(t *testing.T) {
 	testReaderError(t, "99 100)", fmt.Errorf(read.UnmatchedListEnd))
 	testReaderError(t, "99 100]", fmt.Errorf(read.UnmatchedVectorEnd))
 	testReaderError(t, "99}", fmt.Errorf(read.UnmatchedMapEnd))
-	testReaderError(t, "{99}", fmt.Errorf(data.MapNotPaired))
+	testReaderError(t, "{99}", fmt.Errorf(data.ObjectNotPaired))
 
 	testReaderError(t, "(", fmt.Errorf(read.ListNotClosed))
 	testReaderError(t, "'", fmt.Errorf(read.PrefixedNotPaired, "ale/quote"))

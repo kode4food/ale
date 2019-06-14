@@ -18,7 +18,7 @@ func Env() data.Value {
 			r = append(r, data.Keyword(e[1]), data.String(e[2]))
 		}
 	}
-	return data.NewAssociative(r...)
+	return data.NewObject(r...)
 }
 
 // Args returns a vector containing the args passed to this program

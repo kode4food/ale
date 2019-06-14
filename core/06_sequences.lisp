@@ -1,7 +1,7 @@
 ;;;; ale core: standard sequences
 
-(define (to-assoc . colls)
-  (apply assoc (apply concat! colls)))
+(define (to-object . colls)
+  (apply object (apply concat! colls)))
 
 (define (to-list . colls)
   (apply list (apply concat! colls)))
