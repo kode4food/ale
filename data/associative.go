@@ -75,7 +75,7 @@ func (a Associative) Split() (Value, Sequence, bool) {
 	if len(a) > 0 {
 		return a[0], a[1:], true
 	}
-	return Null, EmptyAssociative, false
+	return Null, Null, false
 }
 
 // Car returns the first element of a Pair

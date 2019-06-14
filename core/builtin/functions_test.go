@@ -121,7 +121,7 @@ func TestRestFunctionsEval(t *testing.T) {
 
 	as.PanicWith(`
 		(fn [x y .] "explode")
-	`, fmt.Errorf(special.InvalidRestArgument, "[]"))
+	`, fmt.Errorf(special.InvalidRestArgument, "()"))
 
 	as.PanicWith(`
 		(fn [x y . z g] "explode")

@@ -8,7 +8,8 @@ import (
 // String is the Sequence-compatible representation of string values
 type String string
 
-const emptyStr = String("")
+// EmptyString represents the... empty string
+const EmptyString = String("")
 
 var unescapeTable = map[string]string{
 	"\\": "\\\\",
@@ -33,7 +34,7 @@ func (s String) Rest() Sequence {
 	if _, w := utf8.DecodeRuneInString(string(s)); w > 0 {
 		return String(s[w:])
 	}
-	return emptyStr
+	return EmptyString
 }
 
 // Split returns the split form (First and Rest) of the Sequence
@@ -41,7 +42,7 @@ func (s String) Split() (Value, Sequence, bool) {
 	if r, w := utf8.DecodeRuneInString(string(s)); w > 0 {
 		return String(r), String(s[w:]), true
 	}
-	return Null, emptyStr, false
+	return Null, Null, false
 }
 
 // IsEmpty returns whether or not this sequence is empty

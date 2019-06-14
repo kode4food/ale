@@ -7,6 +7,7 @@ import (
 	"gitlab.com/kode4food/ale/compiler/encoder"
 	"gitlab.com/kode4food/ale/compiler/generate"
 	"gitlab.com/kode4food/ale/data"
+	"gitlab.com/kode4food/ale/internal/util"
 	"gitlab.com/kode4food/ale/runtime/isa"
 	"gitlab.com/kode4food/ale/runtime/vm"
 )
@@ -105,12 +106,12 @@ func (le *lambdaEncoder) makeArityChecker() data.ArityChecker {
 	lower, upper := v0.arityRange()
 	for _, s := range le.variants[1:] {
 		l, u := s.arityRange()
-		lower = min(l, lower)
+		lower = util.IntMin(l, lower)
 		if u == -1 || upper == -1 {
 			upper = -1
 			continue
 		}
-		upper = max(u, upper)
+		upper = util.IntMax(u, upper)
 	}
 	return arity.MakeChecker(lower, upper)
 }
@@ -218,18 +219,4 @@ func parseRestArg(s data.Sequence) data.Name {
 		}
 	}
 	panic(fmt.Errorf(InvalidRestArgument, s))
-}
-
-func min(left, right int) int {
-	if left < right {
-		return left
-	}
-	return right
-}
-
-func max(left, right int) int {
-	if left > right {
-		return left
-	}
-	return right
 }
