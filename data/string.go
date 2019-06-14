@@ -49,44 +49,6 @@ func (s String) IsEmpty() bool {
 	return len(s) == 0
 }
 
-// Prepend prepends a Value to the beginning of the String. If the Value
-// is a single character, the resulting String will be retained in native
-// form, otherwise a List is returned.
-func (s String) Prepend(v Value) Sequence {
-	if e, ok := v.(String); ok && len(e) == 1 {
-		return String(e + s)
-	}
-	return s.list().Prepend(v)
-}
-
-// Append appends values to the end of the String. If the values are
-// single characters, the resulting String will be retained in native
-// form, otherwise a Vector is returned.
-func (s String) Append(v Value) Sequence {
-	if e, ok := v.(String); ok && len(e) == 1 {
-		return String(s + e)
-	}
-	return s.vector().Append(v)
-}
-
-func (s String) list() List {
-	c := []rune(string(s))
-	var res List = EmptyList
-	for i := len(c) - 1; i >= 0; i-- {
-		res = res.Prepend(String(c[i])).(List)
-	}
-	return res
-}
-
-func (s String) vector() Vector {
-	c := []rune(string(s))
-	r := make(Vector, len(c))
-	for i := 0; i < len(c); i++ {
-		r[i] = String(c[i])
-	}
-	return r
-}
-
 // Count returns the length of the String
 func (s String) Count() int {
 	return utf8.RuneCountInString(string(s))
