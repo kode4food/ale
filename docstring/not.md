@@ -6,7 +6,7 @@ names: ["not"]
 usage: "(not form)"
 tags: ["logic"]
 ---
-Will return _false_ if the provided *form* is truthy, otherwise will return _true_.
+Will return _#f_ (false) if the provided *form* is truthy, otherwise will return _#t_ (true).
 
 #### An Example
 
@@ -14,4 +14,4 @@ Will return _false_ if the provided *form* is truthy, otherwise will return _tru
 (not "hello")
 ~~~
 
-This will return the boolean _false_ because the value _"hello"_ is truthy.
+This will return the boolean _#f_ (false) because the value _"hello"_ is truthy.

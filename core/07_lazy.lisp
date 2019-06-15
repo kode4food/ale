@@ -8,7 +8,7 @@
      (lazy-seq
        (if (and (> count 0) (!empty? coll))
            (cons (first coll) (take-inner (dec count) (rest coll)))
-           ())))
+           '())))
     count coll))
 
 (define (take-while pred coll)
@@ -38,7 +38,7 @@
 
 (defn range
   ([]
-    (range 0 null 1))
+    (range 0 '() 1))
 
   ([last]
     (range 0 last (if (> last 0) 1 -1)))
@@ -49,7 +49,7 @@
         (range last first -1)))
 
   ([first last step]
-    (let [cmp (cond (null? last) (constantly true)
+    (let [cmp (cond (null? last) (constantly #t)
                     (< step 0)  >
                     :else       <)]
       (if (cmp first last)
@@ -91,9 +91,9 @@
            (if (seq row)
                (let [res (rest row)]
                  (if (seq res)
-                     [false res]
-                     [true orig-row]))
-               [true orig-row]))
+                     [#f res]
+                     [#t orig-row]))
+               [#t orig-row]))
 
          rotate-rest
          (fn rotate-rest [rest orig]
@@ -106,7 +106,7 @@
                    (if (res 0)
                        (let [rr (rotate-row f fo)]
                          [(rr 0) (cons (rr 1) (res 1))])
-                       [false (cons f (res 1))]))
+                       [#f (cons f (res 1))]))
                  (let [res (rotate-row f fo)]
                    [(res 0) (list (res 1))]))))
 

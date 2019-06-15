@@ -3,8 +3,8 @@
 (letrec [pred-apply
          (lambda [func args]
            (if (is-empty args)
-               true
-               (unless (func (first args)) false
+               #t
+               (unless (func (first args)) #f
                        (pred-apply func (rest args)))))
 
          def-predicate-pos

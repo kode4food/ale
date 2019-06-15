@@ -11,10 +11,10 @@ A form is considered to be atomic if it cannot be further evaluated and would ot
 #### An Example
 
 ~~~scheme
-(atom? nil :hello "there")
+(atom? '() :hello "there")
 ~~~
 
-This example will return _true_ because each value is atomic.
+This example will return _#t_ (true) because each value is atomic.
 
 Like most predicates, this function can also be negated by prepending the `!` character. This means that all of the provided forms must not be atomic.
 
@@ -22,4 +22,4 @@ Like most predicates, this function can also be negated by prepending the `!` ch
 (!atom? '(+ 1 2 3) [4 5 6])
 ~~~
 
-This example will return _true_ because compound types such as lists and vectors are not considered to be atomic.
+This example will return _#t_ (true) because compound types such as lists and vectors are not considered to be atomic.

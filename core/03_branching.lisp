@@ -3,22 +3,22 @@
 (define not is-false)
 
 (defmacro unless
-  ([test] null)
-  ([test then]      `(if ,test null ,then))
+  ([test] '())
+  ([test then]      `(if ,test '() ,then))
   ([test then else] `(if ,test ,else ,then)))
 
 (defmacro when
-  ([test] null)
-  ([test form]    `(if ,test ,form null))
-  ([test . forms] `(if ,test (do ,@forms) null)))
+  ([test] '())
+  ([test form]    `(if ,test ,form '()))
+  ([test . forms] `(if ,test (do ,@forms) '())))
 
 (defmacro when-not
-  ([test] null)
-  ([test form]    `(if ,test null ,form))
-  ([test . forms] `(if ,test null (do ,@forms))))
+  ([test] '())
+  ([test form]    `(if ,test '() ,form))
+  ([test . forms] `(if ,test '() (do ,@forms))))
 
 (defmacro and
-  ([] true)
+  ([] #t)
   ([clause] clause)
   (clauses
     `(let [and# ,(clauses 0)]
@@ -30,7 +30,7 @@
   `(not (and ,@clauses)))
 
 (defmacro or
-  ([] null)
+  ([] '())
   ([clause] clause)
   (clauses
     `(let [or# ,(clauses 0)]
@@ -42,7 +42,7 @@
   `(not (or ,@clauses)))
 
 (defmacro cond
-  ([] null)
+  ([] '())
   ([clause] clause)
   (clauses
     (let [test   (clauses 0)
@@ -54,7 +54,7 @@
               branch))))
 
 (defmacro if-let
-  ([binding then] `(if-let ,binding ,then null))
+  ([binding then] `(if-let ,binding ,then '()))
   ([binding then else]
     (assert-args
       (is-vector binding)    "binding vector must be supplied"

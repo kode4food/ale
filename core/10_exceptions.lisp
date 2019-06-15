@@ -32,7 +32,7 @@
 
         (fn try-parse [clauses]
           (unless (seq? clauses)
-                  {:block () :catch () :finally []}
+                  {:block '() :catch '() :finally []}
                   (let* [f (first clauses)
                          r (rest clauses)
                          p (try-parse r)]
@@ -57,7 +57,7 @@
                   expr   (rest (rest clause))]
              (cons (list 'ale/let
                          [var err-sym]
-                         [false (cons 'ale/do expr)])
+                         [#f (cons 'ale/do expr)])
                    (try-catch-clauses (rest clauses) err-sym)))))
 
         (fn try-catch-clauses [clauses err-sym]
@@ -69,14 +69,14 @@
                      (try-catch-branch clauses err-sym))))))
 
         (fn try-body [clauses]
-          `(lambda [] [false (do ,@clauses)]))
+          `(lambda [] [#f (do ,@clauses)]))
 
         (fn try-catch [clauses]
           (let [err (gensym "err")]
             `(lambda [,err]
                (cond
                  ,@(apply list (try-catch-clauses clauses err))
-                 :else [true ,err]))))
+                 :else [#t ,err]))))
 
         (fn try-catch-finally [parsed]
           (let [block   (:block parsed)
@@ -98,7 +98,7 @@
 
               (seq? block) `(do ,@block)
 
-              :else        null)))]
+              :else        '())))]
 
   (defmacro try clauses
     (try-catch-finally (try-parse clauses))))

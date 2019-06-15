@@ -6,7 +6,7 @@ names: ["when", "when-not"]
 usage: "(when pred form*)"
 tags: ["conditional"]
 ---
-If the evaluated predicate is truthy (not _false_, not _nil_), the forms are evaluated. Will evaluate each form in turn, returning the final evaluation as its result.
+If the evaluated predicate is truthy (not _#f_ (false) or the empty list), the forms are evaluated. Will evaluate each form in turn, returning the final evaluation as its result.
 
 #### An Example
 

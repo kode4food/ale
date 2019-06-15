@@ -11,7 +11,7 @@ import (
 func TestListEval(t *testing.T) {
 	as := assert.New(t)
 	as.EvalTo(`(list? '(1 2 3))`, data.True)
-	as.EvalTo(`(list? ())`, data.True)
+	as.EvalTo(`(list? '())`, data.True)
 	as.EvalTo(`(list? [1 2 3])`, data.False)
 	as.EvalTo(`(list? 42)`, data.False)
 	as.EvalTo(`(list? (list 1 2 3))`, data.True)

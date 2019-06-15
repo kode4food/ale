@@ -12,10 +12,10 @@ import (
 func TestSequencesEval(t *testing.T) {
 	as := assert.New(t)
 	as.EvalTo(`(seq? [1 2 3])`, data.True)
-	as.EvalTo(`(seq? ())`, data.True)
-	as.EvalTo(`(empty? ())`, data.True)
+	as.EvalTo(`(seq? '())`, data.True)
+	as.EvalTo(`(empty? '())`, data.True)
 	as.EvalTo(`(empty? '(1))`, data.False)
-	as.EvalTo(`(seq ())`, data.Null)
+	as.EvalTo(`(seq '())`, data.Null)
 	as.EvalTo(`(seq? 99)`, data.False)
 	as.EvalTo(`(seq 99)`, data.Null)
 }
@@ -99,7 +99,7 @@ func TestReverse(t *testing.T) {
 
 	as.String(`(4 3 2 1)`, as.Eval(`(reverse '(1 2 3 4))`))
 	as.String(`[4 3 2 1]`, as.Eval(`(reverse [1 2 3 4])`))
-	as.EvalTo(`(reverse ())`, data.EmptyList)
+	as.EvalTo(`(reverse '())`, data.EmptyList)
 	as.EvalTo(`(reverse [])`, data.EmptyVector)
 	as.String(`(4 3 2 1)`, as.Eval(`(reverse! (take 4 (range 1 1000)))`))
 

@@ -11,23 +11,22 @@ import (
 
 func TestPredicatesEval(t *testing.T) {
 	as := assert.New(t)
-	as.EvalTo(`(eq true true true)`, data.True)
-	as.EvalTo(`(eq true false true)`, data.False)
-	as.EvalTo(`(eq false false false)`, data.True)
+	as.EvalTo(`(eq #t #t #t)`, data.True)
+	as.EvalTo(`(eq #t #f #t)`, data.False)
+	as.EvalTo(`(eq #f #f #f)`, data.True)
 
-	as.EvalTo(`(!eq true true true)`, data.False)
-	as.EvalTo(`(!eq true false)`, data.True)
-	as.EvalTo(`(!eq false false)`, data.False)
+	as.EvalTo(`(!eq #t #t #t)`, data.False)
+	as.EvalTo(`(!eq #t #f)`, data.True)
+	as.EvalTo(`(!eq #f #f)`, data.False)
 
-	as.EvalTo(`(null? null)`, data.True)
-	as.EvalTo(`(null? null null null)`, data.True)
-	as.EvalTo(`(null? () null)`, data.True)
-	as.EvalTo(`(null? false)`, data.False)
-	as.EvalTo(`(null? false () null)`, data.False)
+	as.EvalTo(`(null? '())`, data.True)
+	as.EvalTo(`(null? '() '() '())`, data.True)
+	as.EvalTo(`(null? #f)`, data.False)
+	as.EvalTo(`(null? #f '())`, data.False)
 
 	as.EvalTo(`(null? "hello")`, data.False)
 	as.EvalTo(`(null? '(1 2 3))`, data.False)
-	as.EvalTo(`(null? () null "hello")`, data.False)
+	as.EvalTo(`(null? '() "hello")`, data.False)
 
 	as.EvalTo(`(keyword? :hello)`, data.True)
 	as.EvalTo(`(!keyword? :hello)`, data.False)

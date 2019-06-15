@@ -6,7 +6,7 @@ names: ["str?", "!str?", "is-str"]
 usage: "(str? form+) (!str? form+) (is-str form)"
 tags: ["sequence", "predicate"]
 ---
-If all forms evaluate to strings, then this function will return _true_. The first non-string will result in the function returning _false_.
+If all forms evaluate to strings, then this function will return _#t_ (true). The first non-string will result in the function returning _#f_ (false).
 
 #### An Example
 
@@ -14,7 +14,7 @@ If all forms evaluate to strings, then this function will return _true_. The fir
 (str? '(1 2 3 4) "hello")
 ~~~
 
-This example will return _false_ because the first form is a list.
+This example will return _#f_ (false) because the first form is a list.
 
 Like most predicates, this function can also be negated by prepending the `!` character. This means that all of the provided forms must not be strings.
 
@@ -22,4 +22,4 @@ Like most predicates, this function can also be negated by prepending the `!` ch
 (!str? '(1 2 3) [99])
 ~~~
 
-This example will return _true_.
+This example will return _#t_ (true).

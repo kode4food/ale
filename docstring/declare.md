@@ -14,10 +14,10 @@ Forward declares bindings. This means that the names will be known in the curren
 (declare is-odd-number)
 
 (define (is-even-number n)
-  (cond (= n 0) true
+  (cond (= n 0) #t
         :else   (is-odd-number (- n 1))))
 
 (define (is-odd-number n)
-  (cond (= n 0) false
+  (cond (= n 0) #f
         :else   (is-even-number (- n 1))))
 ~~~

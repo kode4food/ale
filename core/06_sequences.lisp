@@ -72,7 +72,7 @@
                    r (rest coll)]
                (last-inner r f))
              prev)))
-    coll null))
+    coll '()))
 
 (define (reverse! coll)
   (if (is-reversible coll)
@@ -81,7 +81,7 @@
          (if (seq coll)
              (reverse-inner (rest coll) (cons (first coll) target))
              target))
-        coll ())))
+        coll '())))
 
 (defn reduce
   ([func init coll]

@@ -12,15 +12,15 @@ Evaluates the forms from left to right. As soon as one evaluates to a falsey val
 
 ~~~scheme
 (and (+ 1 2 3)
-     false
+     #f
      "not returned")
 ~~~
 
-Will return _false_, never evaluating _"not returned"_, whereas:
+Will return _#f_ (false), never evaluating _"not returned"_, whereas:
 
 ~~~scheme
 (and (+ 1 2 3)
-     true
+     #t
      "returned")
 ~~~
 

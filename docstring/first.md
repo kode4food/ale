@@ -6,7 +6,7 @@ names: ["first"]
 usage: "(first seq)"
 tags: ["sequence"]
 ---
-This function will return the first element of the specified sequence, or _nil_ if the sequence is empty.
+This function will return the first element of the specified sequence, or the empty list if the sequence is empty.
 
 #### An Example
 

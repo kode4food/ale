@@ -114,7 +114,7 @@ func TestLazySeqEval(t *testing.T) {
 	`, F(6))
 
 	as.EvalTo(`
-		(length (to-vector (lazy-seq null)))
+		(length (to-vector (lazy-seq '())))
 	`, F(0))
 }
 

@@ -6,7 +6,7 @@ names: ["vector?", "!vector?", "is-vector"]
 usage: "(vector? form+) (!vector? form+) (is-vector form)"
 tags: ["sequence", "predicate"]
 ---
-If all forms evaluate to a vector, then this function will return _true_. The first non-vector will result in the function returning _false_.
+If all forms evaluate to a vector, then this function will return _#t_ (true). The first non-vector will result in the function returning _#f_ (false).
 
 #### An Example
 
@@ -14,7 +14,7 @@ If all forms evaluate to a vector, then this function will return _true_. The fi
 (vector? '(1 2 3 4) [5 6 7 8])
 ~~~
 
-This example will return _false_ because the first form is a list.
+This example will return _#f_ (false) because the first form is a list.
 
 Like most predicates, this function can also be negated by prepending the `!` character. This means that all of the provided forms must not be vectors.
 
@@ -22,4 +22,4 @@ Like most predicates, this function can also be negated by prepending the `!` ch
 (!vector? "hello" [99])
 ~~~
 
-This example will return _false_ because the second form is a vector.
+This example will return _#f_ (false) because the second form is a vector.

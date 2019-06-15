@@ -6,7 +6,7 @@ names: ["filter"]
 usage: "(filter func seq)"
 tags: ["sequence", "comprehension"]
 ---
-Creates a lazy sequence whose content is the result of applying the provided function to the elements of the provided sequence. If the result of the application is truthy (not _false_, not _nil_) then the value will be included in the resulting sequence.
+Creates a lazy sequence whose content is the result of applying the provided function to the elements of the provided sequence. If the result of the application is truthy (not _#f_ (false) or the empty list) then the value will be included in the resulting sequence.
 
 #### An Example
 

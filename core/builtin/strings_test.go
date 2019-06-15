@@ -11,7 +11,7 @@ import (
 func TestStrEval(t *testing.T) {
 	as := assert.New(t)
 	as.EvalTo(`
-	  (str "hello" null [1 2 3 4])
+	  (str "hello" '() [1 2 3 4])
 	`, S("hello[1 2 3 4]"))
 
 	as.EvalTo(`

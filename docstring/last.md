@@ -6,7 +6,7 @@ names: ["last"]
 usage: "(last seq) (last! seq)"
 tags: ["sequence"]
 ---
-This function will return the last element of the specified sequence, or _nil_ if the sequence is empty. If the sequence is lazily computed, asynchronous, or otherwise incapable of returning a count, this function will raise an error.
+This function will return the last element of the specified sequence, or the empty list if the sequence is empty. If the sequence is lazily computed, asynchronous, or otherwise incapable of returning a count, this function will raise an error.
 
 In order to perform a brute-force scan of the sequence, use the `last!` function, keeping in mind that `last!` may never return a result.
 

@@ -6,7 +6,7 @@ names: ["cond"]
 usage: "(cond <pred then>* else?)"
 tags: ["conditional"]
 ---
-For each *pred-then* clause, the predicate will be evaluated, and if it is truthy (not _false_, not _nil_) the *then* form is evaluated and returned, otherwise the next clause is processed.
+For each *pred-then* clause, the predicate will be evaluated, and if it is truthy (not _#f_ (false)or the empty list) the *then* form is evaluated and returned, otherwise the next clause is processed.
 
 #### An Example
 

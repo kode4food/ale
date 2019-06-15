@@ -29,7 +29,7 @@
     defmacro))
 
 (defmacro assert-args
-  ([] null)
+  ([] '())
   ([clause]
     (raise "assert-args clauses must be paired"))
   (clauses
@@ -66,10 +66,10 @@
   (= (mod value 2) 1))
 
 (define (is-true value)
-  (if value true false))
+  (if value #t #f))
 
 (define (is-false value)
-  (if value false true))
+  (if value #f #t))
 
 (define (inc value)
   (+ value 1))

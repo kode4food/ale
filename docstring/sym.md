@@ -15,4 +15,4 @@ Converts the provided string into a symbol. Both qualified and local symbols are
 (eq hello-sym 'hello)
 ~~~
 
-This example will return _true_.
+This example will return _#t_ (true).

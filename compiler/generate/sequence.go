@@ -38,8 +38,6 @@ func Block(e encoder.Type, s data.Sequence) {
 // Sequence encodes a sequence
 func Sequence(e encoder.Type, s data.Sequence) {
 	switch typed := s.(type) {
-	case data.NullType:
-		Literal(e, typed)
 	case data.String:
 		Literal(e, typed)
 	case data.List:

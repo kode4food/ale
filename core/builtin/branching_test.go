@@ -14,29 +14,29 @@ func TestCondEval(t *testing.T) {
 
 	as.EvalTo(`
 		(cond
-			false "goodbye"
-			null  "nope"
-			true  "hello"
-			"hi"  "ignored")
+			#f   "goodbye"
+			'()  "nope"
+			#t   "hello"
+			"hi" "ignored")
 	`, S("hello"))
 
 	as.EvalTo(`
 		(cond
-			false "goodbye"
-			null  "nope"
+			#f    "goodbye"
+			'()   "nope"
 			:else "hello"
 			"hi"  "ignored")
 	`, S("hello"))
 
 	as.EvalTo(`
 		(cond
-			false "goodbye"
-			null  "nope")
+			#f  "goodbye"
+			'() "nope")
 	`, data.Null)
 
 	as.EvalTo(`
 		(cond
-			true "hello"
+			#t "hello"
 			99)
 	`, S("hello"))
 
@@ -44,7 +44,7 @@ func TestCondEval(t *testing.T) {
 
 	as.EvalTo(`
 		(cond
-			false "hello"
+			#f "hello"
 			99)
 	`, F(99))
 }

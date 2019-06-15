@@ -6,7 +6,7 @@ names: ["if", "unless"]
 usage: "(if pred then else?)"
 tags: ["conditional"]
 ---
-If the evaluated predicate is truthy (not _false_, not _nil_), the *then* form is evaluated and returned, otherwise the *else* form, if any, will be evaluated and returned.
+If the evaluated predicate is truthy (not _#f_ (false) or the empty list), the *then* form is evaluated and returned, otherwise the *else* form, if any, will be evaluated and returned.
 
 #### An Example
 
