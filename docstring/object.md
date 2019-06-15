@@ -1,12 +1,12 @@
 ---
 title: "object"
 date: 2019-04-06T12:19:22+02:00
-description: "creates a new object (hash-map) instance"
+description: "creates a new object instance"
 names: ["object"]
 usage: "(object <key value>*)"
 tags: ["data"]
 ---
-Will create a new hash map based on the provided key-value pairs, or return an empty object if no forms are provided. This function is no different than the object literal syntax except that it can be treated in a first-class fashion.
+Will create a new object (hash-map) based on the provided key-value pairs, or return an empty object if no forms are provided. This function is no different than the object literal syntax except that it can be treated in a first-class fashion.
 
 #### An Example
 

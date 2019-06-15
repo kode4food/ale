@@ -16,6 +16,6 @@ env:
   - GO111MODULE=on
 
 script:
-  - $GOPATH/bin/go-snapshot -pkg assets -out internal/assets/assets.go docstring/*.md core/*.lisp
+  - $GOPATH/bin/go-snapshot -pkg assets -out internal/assets/assets.go docstring/*.md core/*.scm
   - make test
   - $GOPATH/bin/goveralls -ignore=runtime/isa/opcode_string.go,data/function_string.go,internal/assets/assets.go

@@ -6,7 +6,7 @@ names: ["object?", "!object?", "is-object"]
 usage: "(object? form+) (!object? form+) (is-object form)"
 tags: ["sequence", "predicate"]
 ---
-If all forms evaluate to an object, then this function will return _#t_ (true). The first non-object will result in the function returning _#f_ (false).
+If all forms evaluate to an object (hash-map), then this function will return _#t_ (true). The first non-object will result in the function returning _#f_ (false).
 
 #### An Example
 
