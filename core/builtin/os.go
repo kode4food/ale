@@ -10,7 +10,7 @@ import (
 
 var envPairRegex = regexp.MustCompile("^(?P<Key>[^=]+)=(?P<Value>.*)$")
 
-// Env returns an associative containing the operating system's environment
+// Env returns an object containing the operating system's environment
 func Env() data.Value {
 	r := data.Values{}
 	for _, v := range os.Environ() {

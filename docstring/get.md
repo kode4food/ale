@@ -15,4 +15,4 @@ Returns the value within a sequence that is associated with the specified key. I
 (get robert :address "wrong")
 ~~~
 
-This example returns _"wrong"_ because the associative doesn't contain an :address property.
+This example returns _"wrong"_ because the object doesn't contain an :address property.
