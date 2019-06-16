@@ -43,10 +43,7 @@
         r (rest body)]
     (if (is-list f)
         (let [name (first f) args (rest f)]
-          `(def ,name
-                (letrec [,name
-                         (macro (lambda ,(apply vector args) ,@r))]
-                  ,name)))
+          `(defmacro ,name ,(apply vector args) ,@r))
         `(def ,f (macro ,@r)))))
 
 (define-macro (fn name . forms)
