@@ -40,7 +40,7 @@
   (let [c (:close val)]
     (if (apply? c) c no-op)))
 
-(defmacro with-open [bindings . body]
+(define-macro (with-open bindings . body)
   (assert-args
     (paired-vector? bindings) "with-open bindings must be a key-value vector")
   (cond

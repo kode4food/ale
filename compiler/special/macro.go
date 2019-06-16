@@ -8,28 +8,7 @@ import (
 	"gitlab.com/kode4food/ale/macro"
 	"gitlab.com/kode4food/ale/namespace"
 	"gitlab.com/kode4food/ale/runtime/isa"
-	"gitlab.com/kode4food/ale/runtime/vm"
 )
-
-// Macro encodes a macro
-func Macro(e encoder.Type, args ...data.Value) {
-	vars := parseLambda(args)
-	fe := makeLambdaEncoder(e, vars)
-	fe.encodeCall()
-	generate.Literal(e, data.Call(func(args ...data.Value) data.Value {
-		closure := args[0].(*vm.Closure)
-		body := closure.Caller()
-		arityChecker := closure.ArityChecker
-		wrapper := func(_ namespace.Type, args ...data.Value) data.Value {
-			if err := arityChecker(len(args)); err != nil {
-				panic(err)
-			}
-			return body(args...)
-		}
-		return macro.Call(wrapper)
-	}))
-	e.Emit(isa.Call1)
-}
 
 // Quote converts its argument into a literal value
 func Quote(e encoder.Type, args ...data.Value) {

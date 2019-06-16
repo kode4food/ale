@@ -42,7 +42,6 @@ func (b *bootstrap) specialForms() {
 	b.special("declare", special.Declare)
 	b.special("def", special.Bind)
 	b.special("quote", special.Quote)
-	b.special("macro", special.Macro)
 	b.special("macroexpand-1", special.MacroExpand1)
 	b.special("macroexpand", special.MacroExpand)
 }
@@ -147,6 +146,7 @@ func (b *bootstrap) availableFunctions() {
 	b.applicative("lazy-seq*", builtin.LazySequence, 1)
 	b.applicative("length", builtin.Length, 1)
 	b.applicative("list", builtin.List)
+	b.applicative("macro", builtin.Macro, 1)
 	b.applicative("mod", builtin.Mod, 1, orMore)
 	b.applicative("nth", builtin.Nth, 2, 3)
 	b.applicative("promise", builtin.Promise, 0, 1)

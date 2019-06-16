@@ -22,10 +22,11 @@
 
 (def defmacro
   (letrec [defmacro
-           (macro [name . forms]
-             `(def ,name
-                (letrec [,name (macro ,@forms)]
-                  ,name)))]
+           (macro
+             (lambda [name . forms]
+               `(def ,name
+                  (letrec [,name (macro (lambda ,@forms))]
+                    ,name))))]
     defmacro))
 
 (defmacro assert-args
@@ -37,17 +38,26 @@
          (assert-args ,@(rest (rest clauses)))
          (raise ,(clauses 1)))))
 
-(defmacro fn
-  [name . forms]
+(defmacro define-macro body
+  (let [f (first body)
+        r (rest body)]
+    (if (is-list f)
+        (let [name (first f) args (rest f)]
+          `(def ,name
+                (letrec [,name
+                         (macro (lambda ,(apply vector args) ,@r))]
+                  ,name)))
+        `(def ,f (macro ,@r)))))
+
+(define-macro (fn name . forms)
   (if (is-local name)
     `(letrec [,name (lambda ,@forms)] ,name)
     `(lambda ,name ,@forms)))
 
-(defmacro defn
-  [name . forms]
+(define-macro (defn name . forms)
   `(def ,name (fn ,name ,@forms)))
 
-(defmacro define body
+(define-macro (define . body)
   (let [f (first body)
         r (rest body)]
     (if (is-list f)
@@ -55,8 +65,7 @@
           `(defn ,name ,(apply vector args) ,@r))
         `(def ,@body))))
 
-(defmacro !eq
-  [value . comps]
+(define-macro (!eq value . comps)
   `(not (eq ,value ,@comps)))
 
 (define (is-even value)
@@ -84,6 +93,5 @@
 (define (constantly value)
   (lambda _ value))
 
-(defmacro .
-  [target method . args]
+(define-macro (. target method . args)
   `((get ,target ,method) ,@args))

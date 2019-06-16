@@ -5,48 +5,53 @@
           (list target)
           target))
 
-(defmacro ->
-  ([value] value)
-  ([value . forms]
-    (let* [l (thread-to-list (first forms))
-           f (first l)
-           r (rest l)]
-      `(-> (,f ,value ,@r) ,@(rest forms)))))
+(define-macro ->
+  (lambda
+    ([value] value)
+    ([value . forms]
+      (let* [l (thread-to-list (first forms))
+            f (first l)
+            r (rest l)]
+        `(-> (,f ,value ,@r) ,@(rest forms))))))
 
-(defmacro ->>
-  ([value] value)
-  ([value . forms]
-    (let* [l (thread-to-list (first forms))
-           f (first l)
-           r (rest l)]
-      `(->> (,f ,@r ,value) ,@(rest forms)))))
+(define-macro ->>
+  (lambda
+    ([value] value)
+    ([value . forms]
+      (let* [l (thread-to-list (first forms))
+            f (first l)
+            r (rest l)]
+        `(->> (,f ,@r ,value) ,@(rest forms))))))
 
-(defmacro some->
-  ([value] value)
-  ([value . forms]
-    (let* [l (thread-to-list (first forms))
-           f (first l)
-           r (rest l)]
-      `(let [val# ,value]
-         (when-not (null? val#)
-                   (some-> (,f val# ,@r) ,@(rest forms)))))))
+(define-macro some->
+  (lambda
+    ([value] value)
+    ([value . forms]
+      (let* [l (thread-to-list (first forms))
+            f (first l)
+            r (rest l)]
+        `(let [val# ,value]
+          (when-not (null? val#)
+                    (some-> (,f val# ,@r) ,@(rest forms))))))))
 
-(defmacro some->>
-  ([value] value)
-  ([value . forms]
-    (let* [l (thread-to-list (first forms))
-           f (first l)
-           r (rest l)]
-      `(let [val# ,value]
-         (when-not (null? val#)
-                   (some->> (,f ,@r val#) ,@(rest forms)))))))
+(define-macro some->>
+  (lambda
+    ([value] value)
+    ([value . forms]
+      (let* [l (thread-to-list (first forms))
+            f (first l)
+            r (rest l)]
+        `(let [val# ,value]
+          (when-not (null? val#)
+                    (some->> (,f ,@r val#) ,@(rest forms))))))))
 
-(defmacro as->
-  ([value name] value)
-  ([value name . forms]
-    (let [l (thread-to-list (first forms))]
-      `(let [,name ,value]
-         (as-> ,l ,name ,@(rest forms))))))
+(define-macro as->
+  (lambda
+    ([value name] value)
+    ([value name . forms]
+      (let [l (thread-to-list (first forms))]
+        `(let [,name ,value]
+          (as-> ,l ,name ,@(rest forms)))))))
 
 (define (make-cond-clause sym)
   (lambda [clause]
@@ -54,18 +59,20 @@
           form (nth clause 1)]
       `((lambda [val] (if ,pred (,sym val ,form) val))))))
 
-(defmacro cond->
-  ([value] value)
-  ([value . clauses]
-    (assert-args
-      (even? (length clauses)) "clauses must be paired")
-    `(-> ,value
-         ,@(map (make-cond-clause ->) (partition 2 clauses)))))
+(define-macro cond->
+  (lambda
+    ([value] value)
+    ([value . clauses]
+      (assert-args
+        (even? (length clauses)) "clauses must be paired")
+      `(-> ,value
+          ,@(map (make-cond-clause ->) (partition 2 clauses))))))
 
-(defmacro cond->>
-  ([value] value)
-  ([value . clauses]
-    (assert-args
-      (even? (length clauses)) "clauses must be paired")
-    `(-> ,value
-         ,@(map (make-cond-clause ->>) (partition 2 clauses)))))
+(define-macro cond->>
+  (lambda
+    ([value] value)
+    ([value . clauses]
+      (assert-args
+        (even? (length clauses)) "clauses must be paired")
+      `(-> ,value
+          ,@(map (make-cond-clause ->>) (partition 2 clauses))))))

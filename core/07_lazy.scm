@@ -1,6 +1,6 @@
 ;;;; ale core: lazy sequences
 
-(defmacro lazy-seq body
+(define-macro (lazy-seq . body)
   `(lazy-seq* (lambda [] ,@body)))
 
 (define (take count coll)
@@ -126,8 +126,7 @@
       (when (apply false? (map empty? colls))
             (iter colls)))))
 
-(defmacro for
-  [seq-exprs . body]
+(define-macro (for seq-exprs . body)
   (assert-args
     (vector? seq-exprs)        "for-each bindings must be a vector"
     (even? (length seq-exprs)) "for-each bindings must be paired")
@@ -150,8 +149,7 @@
        (lambda [,args] (let ,bind# ,@body))
        (cartesian-product ,@seqs#))))
 
-(defmacro for-each
-  [seq-exprs . body]
+(define-macro (for-each seq-exprs . body)
   `(last! (for ,seq-exprs ,@body)))
 
 (define (concat . colls)

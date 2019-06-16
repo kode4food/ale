@@ -1,6 +1,6 @@
 ;;;; ale core: os
 
-(defmacro time forms
+(define-macro (time . forms)
   `(let* [start#  (current-time)
           result# (do ,@forms)
           end#    (current-time)

@@ -20,7 +20,7 @@
                 (,pred-apply (lambda [value#] (not (,func value#)))
                              (cons ,'first ,'rest)))))]
 
-  (defmacro def-predicate [func name]
+  (define-macro (def-predicate func name)
     `(do ,(def-predicate-pos func name)
          ,(def-predicate-neg func name))))
 

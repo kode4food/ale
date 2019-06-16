@@ -1,9 +1,9 @@
 ;;;; ale core: concurrency
 
-(defmacro go body
+(define-macro (go . body)
   `(go* (lambda [] ,@body)))
 
-(defmacro generate body
+(define-macro (generate . body)
   `(let* [chan#  (chan)
           close# (:close chan#)
           emit   (:emit chan#)]
@@ -13,7 +13,7 @@
          result#))
      (:seq chan#)))
 
-(defmacro future body
+(define-macro (future . body)
   `(let [promise# (promise)]
      (go (promise# (do ,@body)))
      promise#))

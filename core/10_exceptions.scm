@@ -100,5 +100,5 @@
 
               :else        '())))]
 
-  (defmacro try clauses
+  (define-macro (try . clauses)
     (try-catch-finally (try-parse clauses))))
