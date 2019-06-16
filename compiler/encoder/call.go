@@ -7,7 +7,7 @@ type Call func(Type, ...data.Value)
 
 // Type makes Call a typed value
 func (Call) Type() data.Name {
-	return "Encoder"
+	return "encoder"
 }
 
 func (c Call) String() string {

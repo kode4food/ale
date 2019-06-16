@@ -405,8 +405,9 @@ func (c *Closure) Convention() data.Convention {
 }
 
 // Type makes Closure a typed value
-func (c *Closure) Type() string {
-	return "closure"
+func (c *Closure) Type() data.Name {
+	res := fmt.Sprintf("%s-closure", c.Convention())
+	return data.Name(res)
 }
 
 func (c *Closure) String() string {

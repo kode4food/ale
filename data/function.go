@@ -32,8 +32,8 @@ type (
 
 //go:generate stringer -output function_string.go -type Convention -linecomment
 const (
-	ApplicativeCall Convention = iota // Applicative
-	NormalCall                        // Normal
+	ApplicativeCall Convention = iota // applicative
+	NormalCall                        // normal
 )
 
 // Caller turns Call into a callable type

@@ -12,7 +12,7 @@ func _() {
 	_ = x[NormalCall-1]
 }
 
-const _Convention_name = "ApplicativeNormal"
+const _Convention_name = "applicativenormal"
 
 var _Convention_index = [...]uint8{0, 11, 17}
 

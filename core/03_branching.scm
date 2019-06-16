@@ -4,19 +4,19 @@
 
 (define-macro unless
   (lambda
-    ([test] '())
+    ([test]           '())
     ([test then]      `(if ,test '() ,then))
     ([test then else] `(if ,test ,else ,then))))
 
 (define-macro when
   (lambda
-    ([test] '())
+    ([test]         '())
     ([test form]    `(if ,test ,form '()))
     ([test . forms] `(if ,test (do ,@forms) '()))))
 
 (define-macro when-not
   (lambda
-    ([test] '())
+    ([test]         '())
     ([test form]    `(if ,test '() ,form))
     ([test . forms] `(if ,test '() (do ,@forms)))))
 

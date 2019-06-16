@@ -10,7 +10,7 @@ type Call func(namespace.Type, ...data.Value) data.Value
 
 // Type makes Call a typed value
 func (Call) Type() data.Name {
-	return "Macro"
+	return "macro"
 }
 
 func (c Call) String() string {
