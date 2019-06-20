@@ -24,6 +24,9 @@
     `(do ,(def-predicate-pos func name)
          ,(def-predicate-neg func name))))
 
+(define (is-null value)
+  (eq value '()))
+
 (def-predicate is-appender "append")
 (def-predicate is-apply "apply")
 (def-predicate is-object "object")

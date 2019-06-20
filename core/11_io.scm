@@ -6,7 +6,7 @@
 (define *newline* "\n")
 
 (define (pr-map-with-null func seq)
-  (map (lambda [val] (if (null? val) val (func val)))
+  (map (lambda [value] (if (null? value) value (func value)))
        seq))
 
 (define (pr . forms)
@@ -33,11 +33,11 @@
   (apply print forms)
   (. *out* :write *newline*))
 
-(define (paired-vector? val)
-  (and (vector? val) (pair? val)))
+(define (paired-vector? value)
+  (and (vector? value) (pair? value)))
 
-(define (with-open-close val)
-  (let [c (:close val)]
+(define (with-open-close value)
+  (let [c (:close value)]
     (if (apply? c) c no-op)))
 
 (define-macro (with-open bindings . body)

@@ -131,7 +131,6 @@ func (b *bootstrap) availableFunctions() {
 	b.applicative("is-mapped", builtin.IsMapped, 1)
 	b.applicative("is-nan", builtin.IsNaN, 1)
 	b.applicative("is-neg-inf", builtin.IsNegInf, 1)
-	b.applicative("is-null", builtin.IsNull, 1)
 	b.applicative("is-number", builtin.IsNumber, 1)
 	b.applicative("is-pair", builtin.IsPair, 1)
 	b.applicative("is-pos-inf", builtin.IsPosInf, 1)

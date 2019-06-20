@@ -59,6 +59,34 @@
                     (cond ,@(rest (rest clauses))))
                 branch)))))
 
+;; case requires it
+(defn map! [func coll]
+  (unless (is-empty coll)
+          (cons (func (first coll)) (map! func (rest coll)))
+          '()))
+
+(define-macro (case expr . cases)
+  (letrec [val (gensym "val")
+
+           pred-list (lambda [l] `(or ,@(map! pred l)))
+           pred      (lambda [x] `(eq ,val ,x))
+
+           case*
+           (lambda
+             ([] '(raise "no cases could be matched"))
+             ([error] (raise "cases must be paired"))
+             (clauses
+               (let [test   (clauses 0)
+                     branch (clauses 1)
+                     next   (rest (rest clauses))]
+                 `(if ,(if (is-list test)
+                           (pred-list test)
+                           (pred test))
+                      ,branch
+                      ,(apply case* next)))))]
+    `(let [,val ,expr]
+        ,(apply case* cases))))
+
 (define-macro if-let
   (lambda
     ([binding then] `(if-let ,binding ,then '()))
