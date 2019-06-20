@@ -60,7 +60,7 @@
                 branch)))))
 
 ;; case requires it
-(defn map! [func coll]
+(define (map! func coll)
   (unless (is-empty coll)
           (cons (func (first coll)) (map! func (rest coll)))
           '()))
