@@ -27,6 +27,9 @@
 (define (is-null value)
   (eq value '()))
 
+(define (is-zero value)
+  (= value 0))
+
 (def-predicate is-appender "append")
 (def-predicate is-apply "apply")
 (def-predicate is-object "object")
@@ -60,3 +63,4 @@
 (def-predicate is-vector "vector")
 (def-predicate is-true "true")
 (def-predicate is-false "false")
+(def-predicate is-zero "zero")

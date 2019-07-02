@@ -55,8 +55,8 @@
             branch (clauses 1)]
         (unless (and (is-atom test) test)
                 `(if ,test
-                    ,branch
-                    (cond ,@(rest (rest clauses))))
+                     ,branch
+                     (cond ,@(rest (rest clauses))))
                 branch)))))
 
 ;; case requires it
@@ -66,8 +66,7 @@
           '()))
 
 (define-macro (case expr . cases)
-  (letrec [val (gensym "val")
-
+  (letrec [val       (gensym "val")
            pred-list (lambda [l] `(or ,@(map! pred l)))
            pred      (lambda [x] `(eq ,val ,x))
 

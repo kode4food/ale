@@ -1,5 +1,11 @@
 ;;;; ale core: standard sequences
 
+(define (seq! value)
+  (let [res (seq value)]
+    (if (null? res)
+        (raise (str "can't treat " value " as a sequence"))
+        res)))
+
 (define (to-object . colls)
   (apply object (apply concat! colls)))
 
@@ -74,15 +80,6 @@
              prev)))
     coll '()))
 
-(define (reverse! coll)
-  (if (is-reversible coll)
-      (reverse coll)
-      ((fn reverse-inner [coll target]
-         (if (seq coll)
-             (reverse-inner (rest coll) (cons (first coll) target))
-             target))
-        coll '())))
-
 (defn reduce
   ([func init coll]
     ((fn reduce-inner [init coll]
@@ -95,3 +92,8 @@
     (if (seq coll)
         (reduce func (first coll) (rest coll))
         (func))))
+
+(define (reverse! coll)
+  (if (is-reversible coll)
+      (reverse coll)
+      (reduce conj '() coll)))

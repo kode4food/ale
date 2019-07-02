@@ -12,7 +12,7 @@ Will bind a macro to a global name. A macro is expanded by the reader in order t
 
 ~~~scheme
 (defmacro cond clauses
-  (when (seq? clauses)
+  (when (seq clauses)
     (if (= 1 (length clauses))
       (clauses 0)
       (list 'ale/if

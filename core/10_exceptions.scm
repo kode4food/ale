@@ -50,23 +50,23 @@
 
         (fn try-catch-branch [clauses err-sym]
           (assert-args
-           (seq? clauses) "catch branch not paired")
+            (seq? clauses) "catch branch not paired")
           (lazy-seq
-           (let* [clause (first clauses)
-                  var    ((clause 1) 0)
-                  expr   (rest (rest clause))]
-             (cons (list 'ale/let
-                         [var err-sym]
-                         [#f (cons 'ale/do expr)])
-                   (try-catch-clauses (rest clauses) err-sym)))))
+            (let* [clause (first clauses)
+                   var    ((clause 1) 0)
+                   expr   (rest (rest clause))]
+              (cons (list 'ale/let
+                          [var err-sym]
+                          [#f (cons 'ale/do expr)])
+                    (try-catch-clauses (rest clauses) err-sym)))))
 
         (fn try-catch-clauses [clauses err-sym]
           (lazy-seq
-           (when (seq? clauses)
-             (let* [clause (first clauses)
-                    pred   ((clause 1) 1)]
-               (cons (try-catch-predicate pred err-sym)
-                     (try-catch-branch clauses err-sym))))))
+            (when (seq clauses)
+              (let* [clause (first clauses)
+                     pred   ((clause 1) 1)]
+                (cons (try-catch-predicate pred err-sym)
+                      (try-catch-branch clauses err-sym))))))
 
         (fn try-body [clauses]
           `(lambda [] [#f (do ,@clauses)]))
