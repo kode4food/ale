@@ -5,7 +5,6 @@ go:
   - 1.11.x
 
 before_install:
-  - GO111MODULE=off go get github.com/mattn/goveralls
 
 install:
   - GO111MODULE=off go get gitlab.com/kode4food/go-snapshot
@@ -18,4 +17,3 @@ env:
 script:
   - $GOPATH/bin/go-snapshot -pkg assets -out internal/assets/assets.go docstring/*.md core/*.scm
   - make test
-  - $GOPATH/bin/goveralls -ignore=runtime/isa/opcode_string.go,data/function_string.go,internal/assets/assets.go
