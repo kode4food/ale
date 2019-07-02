@@ -1,10 +1,14 @@
 ;;;; ale core: standard sequences
 
+(define (seq value)
+  (if (and (is-seq value) (!empty? value))
+      value
+      '()))
+
 (define (seq! value)
-  (let [res (seq value)]
-    (if (null? res)
-        (raise (str "can't treat " value " as a sequence"))
-        res)))
+  (if (is-seq value)
+      (if (!empty? value) value '())
+      (raise (str "can't treat " value " as a sequence"))))
 
 (define (to-object . colls)
   (apply object (apply concat! colls)))

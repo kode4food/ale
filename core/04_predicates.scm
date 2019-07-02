@@ -21,8 +21,8 @@
                              (cons ,'first ,'rest)))))]
 
   (define-macro (def-predicate func name)
-    `(do ,(def-predicate-pos func name)
-         ,(def-predicate-neg func name))))
+    `(begin ,(def-predicate-pos func name)
+            ,(def-predicate-neg func name))))
 
 (define (is-null value)
   (eq value '()))

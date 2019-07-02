@@ -33,17 +33,17 @@ func (b *bootstrap) builtIns() {
 }
 
 func (b *bootstrap) specialForms() {
-	b.special("do", special.Do)
-	b.special("if", special.If)
-	b.special("let", special.Let)
-	b.special("letrec", special.LetMutual)
-	b.special("lambda", special.Lambda)
-	b.special("eval", special.Eval)
+	b.special("begin", special.Begin)
 	b.special("declare", special.Declare)
 	b.special("def", special.Bind)
-	b.special("quote", special.Quote)
+	b.special("eval", special.Eval)
+	b.special("if", special.If)
+	b.special("lambda", special.Lambda)
+	b.special("let", special.Let)
+	b.special("letrec", special.LetMutual)
 	b.special("macroexpand-1", special.MacroExpand1)
 	b.special("macroexpand", special.MacroExpand)
+	b.special("quote", special.Quote)
 }
 
 func (b *bootstrap) initialFunctions() {
@@ -101,7 +101,6 @@ func (b *bootstrap) availableFunctions() {
 
 	b.applicative("append", builtin.Append, 2)
 	b.applicative("apply", builtin.Apply, 2, orMore)
-	b.applicative("object", builtin.Object)
 	b.applicative("car", builtin.Car, 1)
 	b.applicative("cdr", builtin.Cdr, 1)
 	b.applicative("chan", builtin.Chan, 0, 1)
@@ -116,7 +115,6 @@ func (b *bootstrap) availableFunctions() {
 	b.applicative("go*", builtin.Go, 1)
 	b.applicative("is-appender", builtin.IsAppender, 1)
 	b.applicative("is-apply", builtin.IsApply, 1)
-	b.applicative("is-object", builtin.IsObject, 1)
 	b.applicative("is-atom", builtin.IsAtom, 1)
 	b.applicative("is-boolean", builtin.IsBoolean, 1)
 	b.applicative("is-counted", builtin.IsCounted, 1)
@@ -132,6 +130,7 @@ func (b *bootstrap) availableFunctions() {
 	b.applicative("is-nan", builtin.IsNaN, 1)
 	b.applicative("is-neg-inf", builtin.IsNegInf, 1)
 	b.applicative("is-number", builtin.IsNumber, 1)
+	b.applicative("is-object", builtin.IsObject, 1)
 	b.applicative("is-pair", builtin.IsPair, 1)
 	b.applicative("is-pos-inf", builtin.IsPosInf, 1)
 	b.applicative("is-promise", builtin.IsPromise, 1)
@@ -148,13 +147,13 @@ func (b *bootstrap) availableFunctions() {
 	b.applicative("macro", builtin.Macro, 1)
 	b.applicative("mod", builtin.Mod, 1, orMore)
 	b.applicative("nth", builtin.Nth, 2, 3)
+	b.applicative("object", builtin.Object)
 	b.applicative("promise", builtin.Promise, 0, 1)
 	b.applicative("raise", builtin.Raise, 1)
 	b.applicative("read", builtin.Read, 1)
 	b.applicative("recover", builtin.Recover, 2)
 	b.applicative("rest", builtin.Rest, 1)
 	b.applicative("reverse", builtin.Reverse, 1)
-	b.applicative("seq", builtin.Seq, 1)
 	b.applicative("str!", builtin.ReaderStr)
 	b.applicative("str", builtin.Str)
 	b.applicative("sym", builtin.Sym, 1)

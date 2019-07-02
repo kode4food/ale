@@ -82,10 +82,10 @@ func TestDefer(t *testing.T) {
 	)
 }
 
-func TestDoEval(t *testing.T) {
+func TestBeginEval(t *testing.T) {
 	as := assert.New(t)
 	as.EvalTo(`
-		(do
+		(begin
 			55
 			(if #t 99 33))
 	`, F(99))

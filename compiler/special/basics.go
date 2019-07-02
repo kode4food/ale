@@ -24,8 +24,8 @@ func evalFor(ns namespace.Type) data.Call {
 	})
 }
 
-// Do encodes a set of expressions, returning only the final evaluation
-func Do(e encoder.Type, args ...data.Value) {
+// Begin encodes a set of expressions, returning only the final evaluation
+func Begin(e encoder.Type, args ...data.Value) {
 	v := data.NewVector(args...)
 	generate.Block(e, v)
 }

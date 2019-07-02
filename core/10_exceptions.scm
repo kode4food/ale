@@ -69,7 +69,7 @@
                       (try-catch-branch clauses err-sym))))))
 
         (fn try-body [clauses]
-          `(lambda [] [#f (do ,@clauses)]))
+          `(lambda [] [#f (begin ,@clauses)]))
 
         (fn try-catch [clauses]
           (let [err (gensym "err")]
@@ -96,7 +96,7 @@
                      res# (rec# 1)]
                  (if err# (raise res#) res#))
 
-              (seq? block) `(do ,@block)
+              (seq? block) `(begin ,@block)
 
               :else        '())))]
 

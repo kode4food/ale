@@ -45,7 +45,7 @@
     (paired-vector? bindings) "with-open bindings must be a key-value vector")
   (cond
     (= (length bindings) 0)
-    `(do ,@body)
+    `(begin ,@body)
 
     (>= (length bindings) 2)
     `(let [,(bindings 0) ,(bindings 1)

@@ -11,14 +11,6 @@ const (
 	IndexOutOfBounds = "index out of bounds"
 )
 
-// Seq attempts to convert the provided value to a sequence, or returns nil
-func Seq(args ...data.Value) data.Value {
-	if s, ok := args[0].(data.Sequence); ok && !s.IsEmpty() {
-		return s
-	}
-	return data.Null
-}
-
 // First returns the first value in the sequence
 func First(args ...data.Value) data.Value {
 	return args[0].(data.Sequence).First()

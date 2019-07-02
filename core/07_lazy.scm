@@ -101,7 +101,7 @@
      colls))
 
 (defn zip
-  ([coll1 coll2]        (zip coll1 coll2 cons))
+  ([coll1 coll2]        (zip coll1 coll2 list))
   ([coll1 coll2 zipper] (map zipper coll1 coll2)))
 
 (define (mapcat func . colls)
@@ -122,6 +122,6 @@
 (define-macro (cartesian-product . colls)
   (let* [sym-gen   (lambda [x] (gensym (str "coll" x)))
          syms      (to-vector (take (length colls) (map sym-gen (range))))
-         zipped    (zip syms colls vector)
+         zipped    (zip syms colls)
          seq-exprs (to-vector (apply concat zipped))]
     `(for ,seq-exprs ,syms)))

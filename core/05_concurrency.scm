@@ -8,15 +8,21 @@
           close# (:close chan#)
           emit   (:emit chan#)]
      (go
-       (let [result# (do ,@body)]
+       (let [result# (begin ,@body)]
          (close#)
          result#))
      (:seq chan#)))
 
 (define-macro (future . body)
   `(let [promise# (promise)]
-     (go (promise# (do ,@body)))
+     (go (promise# (begin ,@body)))
      promise#))
+
+(define-macro (delay expr)
+  `(lazy-seq [,expr]))
+
+(define-macro (force value)
+  `(first ,value))
 
 (defn spawn
   ([func]

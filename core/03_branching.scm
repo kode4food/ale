@@ -12,13 +12,13 @@
   (lambda
     ([test]         '())
     ([test form]    `(if ,test ,form '()))
-    ([test . forms] `(if ,test (do ,@forms) '()))))
+    ([test . forms] `(if ,test (begin ,@forms) '()))))
 
 (define-macro when-not
   (lambda
     ([test]         '())
     ([test form]    `(if ,test '() ,form))
-    ([test . forms] `(if ,test '() (do ,@forms)))))
+    ([test . forms] `(if ,test '() (begin ,@forms)))))
 
 (define-macro and
   (lambda
@@ -101,4 +101,4 @@
 (define-macro when-let
   (lambda
     ([binding form]   `(if-let ,binding ,form))
-    ([binding . body] `(if-let ,binding (do ,@body)))))
+    ([binding . body] `(if-let ,binding (begin ,@body)))))

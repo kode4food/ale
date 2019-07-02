@@ -2,7 +2,7 @@
 
 (define-macro (time . forms)
   `(let* [start#  (current-time)
-          result# (do ,@forms)
+          result# (begin ,@forms)
           end#    (current-time)
           dur#    (- end# start#)]
      (if (< dur# 1000)

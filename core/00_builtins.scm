@@ -38,7 +38,6 @@
 (def-builtin recover)
 (def-builtin rest)
 (def-builtin reverse)
-(def-builtin seq)
 (def-builtin str!)
 (def-builtin str)
 (def-builtin sym)
@@ -77,9 +76,9 @@
 
 (def-macro syntax-quote)
 
+(def-special begin)
 (def-special declare)
 (def-special def)
-(def-special do)
 (def-special eval)
 (def-special if)
 (def-special lambda)
