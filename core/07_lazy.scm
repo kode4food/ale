@@ -100,9 +100,8 @@
                    (concat-inner r))))))
      colls))
 
-(defn zip
-  ([coll1 coll2]        (zip coll1 coll2 list))
-  ([coll1 coll2 zipper] (map zipper coll1 coll2)))
+(define (zip . colls)
+  (apply map list colls))
 
 (define (mapcat func . colls)
   (apply concat (apply map func colls)))
@@ -120,8 +119,11 @@
         `(mapcat (lambda [,sym] (for ,next ,@body)) (seq! ,expr)))))
 
 (define-macro (cartesian-product . colls)
-  (let* [sym-gen   (lambda [x] (gensym (str "coll" x)))
-         syms      (to-vector (take (length colls) (map sym-gen (range))))
-         zipped    (zip syms colls)
-         seq-exprs (to-vector (apply concat zipped))]
-    `(for ,seq-exprs ,syms)))
+  (let* [sym-gen  (lambda [x] (gensym (str "cp" x)))
+         let-syms (take (length colls) (map sym-gen (range)))
+         for-syms (take (length colls) (map sym-gen (range)))
+         let-vals (zip let-syms colls)
+         for-vals (zip for-syms let-syms)
+         let-bind (to-vector (apply concat let-vals))
+         for-bind (to-vector (apply concat for-vals))]
+    `(let ,let-bind (for ,for-bind (vector ,@for-syms)))))
