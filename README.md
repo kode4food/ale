@@ -27,4 +27,4 @@ to start if you invoke `ale` with no arguments from your shell.
 
 ## Current Status
 Still a work in progress, and the compiler is pretty fragile, but that will
-change rapidly. Fine out more at [Ale's Home](https://www.ale-lang.org)
+change rapidly. The language is slowly moving in the direction of being [R6RS](http://www.r6rs.org/) compatible. Find out more at [Ale's Home](https://www.ale-lang.org)
