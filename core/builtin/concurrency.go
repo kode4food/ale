@@ -42,12 +42,8 @@ func Chan(args ...data.Value) data.Value {
 
 // Promise instantiates a new eventually-fulfilled promise
 func Promise(args ...data.Value) data.Value {
-	if len(args) == 0 {
-		return stdlib.NewPromise()
-	}
-	p := stdlib.NewPromise()
-	p.Deliver(args[0])
-	return p
+	resolver := args[0].(data.Caller).Caller()
+	return stdlib.NewPromise(resolver)
 }
 
 // IsPromise returns whether or not the specified value is a promise
@@ -56,8 +52,8 @@ func IsPromise(args ...data.Value) data.Value {
 	return data.Bool(ok)
 }
 
-// IsDelivered returns whether or not the specified promise has been delivered
-func IsDelivered(args ...data.Value) data.Value {
+// IsResolved returns whether or not the specified promise has been resolved
+func IsResolved(args ...data.Value) data.Value {
 	p := args[0].(stdlib.Promise)
-	return data.Bool(p.IsDelivered())
+	return data.Bool(p.IsResolved())
 }

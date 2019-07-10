@@ -22,7 +22,7 @@ func TestBasicEval(t *testing.T) {
 	v1 := eval.String(ns, "(if #t 1 0)")
 	as.Number(1, v1)
 
-	v2 := eval.String(ns, "((fn [x] (* x 2)) 50)")
+	v2 := eval.String(ns, "((lambda (x) (* x 2)) 50)")
 	as.Number(100, v2)
 
 	v3 := eval.String(ns, "(first (concat [1 2 3] [4 5 6]))")

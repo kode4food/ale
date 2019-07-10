@@ -45,20 +45,20 @@ func TestToListEval(t *testing.T) {
 func TestMapFilterEval(t *testing.T) {
 	as := assert.New(t)
 	as.EvalTo(`
-		(first (apply list (map (fn [x] (* x 2)) [1 2 3 4])))
+		(first (apply list (map (lambda (x) (* x 2)) [1 2 3 4])))
 	`, F(2))
 
 	as.EvalTo(`
 		(def x (concat '(1 2) (list 3 4)))
 		(def y
 			(map
-				(fn [x] (* x 2))
+				(lambda (x) (* x 2))
 				(filter
-					(fn [x] (= x 6))
+					(lambda (x) (= x 6))
 					[5 6])))
 		(apply +
 			(map
-				(fn [z] (first z))
+				(lambda (z) (first z))
 				[x y]))
 	`, F(13))
 }

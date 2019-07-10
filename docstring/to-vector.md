@@ -12,7 +12,7 @@ Will concatenate a set of sequences into a vector. Unlike the standard `concat` 
 
 ~~~scheme
 (def x
-  (map (fn [x] (* x 2))
+  (map (lambda (x) (* x 2))
   '(1 2 3 4)))
 (to-vector '(1 2 3 4) x)
 ~~~

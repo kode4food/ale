@@ -57,38 +57,11 @@ func TestChannel(t *testing.T) {
 	wg.Wait()
 }
 
-func TestPromise(t *testing.T) {
-	as := assert.New(t)
-	p1 := stdlib.NewPromise()
-
-	go func() {
-		time.Sleep(time.Millisecond * 50)
-		p1.Deliver(S("hello"))
-	}()
-
-	as.Contains(":type promise", p1)
-	as.String("hello", p1.Resolve())
-	p1.Deliver(S("hello"))
-	as.String("hello", p1.Resolve())
-
-	defer as.ExpectPanic(stdlib.ExpectedUndelivered)
-	p1.Deliver(S("goodbye"))
-}
-
 func TestPromiseCaller(t *testing.T) {
 	as := assert.New(t)
-	p1 := stdlib.NewPromise()
+	p1 := stdlib.NewPromise(func(_ ...data.Value) data.Value {
+		return S("hello")
+	})
 	c1 := p1.(data.Caller).Caller()
-
-	go func() {
-		time.Sleep(time.Millisecond * 50)
-		c1(S("hello"))
-	}()
-
 	as.String("hello", c1())
-	c1(S("hello"))
-	as.String("hello", c1())
-
-	defer as.ExpectPanic(stdlib.ExpectedUndelivered)
-	c1(S("goodbye"))
 }

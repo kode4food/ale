@@ -48,27 +48,20 @@ func TestChan(t *testing.T) {
 	as.True(ok)
 }
 
+func makeWrapperFunc(v data.Value) data.Call {
+	return data.Call(func(_ ...data.Value) data.Value {
+		return v
+	})
+}
 func TestPromise(t *testing.T) {
 	as := assert.New(t)
 
-	p1 := builtin.Promise(S("with initial"))
+	p1 := builtin.Promise(makeWrapperFunc(S("with initial")))
 	as.True(builtin.IsPromise(p1))
-	as.True(builtin.IsDelivered(p1))
+	as.False(builtin.IsResolved(p1))
 	res := getCall(p1)()
+	as.True(builtin.IsResolved(p1))
 	as.String("with initial", res)
-
-	p2 := builtin.Promise()
-	as.True(builtin.IsPromise(p2))
-	as.False(builtin.IsDelivered(p2))
-	go func() {
-		getCall(p2)(S("no initial"))
-	}()
-	res = getCall(p2)()
-	as.String("no initial", res)
-	as.False(builtin.IsPromise(res))
-
-	defer as.ExpectPanic("can't deliver a promise twice")
-	getCall(p1)(S("new value"))
 }
 
 func TestGenerateEval(t *testing.T) {
@@ -81,15 +74,15 @@ func TestGenerateEval(t *testing.T) {
 	`, F(1199))
 }
 
-func TestPromiseEval(t *testing.T) {
+func TestDelayEval(t *testing.T) {
 	as := assert.New(t)
 	as.EvalTo(`
-		(def p1 (promise))
+		(def p1 (delay "blah"))
 		(promise? p1)
 	`, data.True)
 
 	as.EvalTo(`
-		(def p2 (promise "hello"))
+		(def p2 (delay "hello"))
 		(p2)
 	`, S("hello"))
 }

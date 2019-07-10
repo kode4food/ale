@@ -12,7 +12,7 @@ Will attempt to convert the provided form to a sequence if it isn't already. If 
 
 ~~~scheme
 (when-let [s (seq "hello")]
-  (to-vector (map (fn [x] (str x "-")) s)))
+  (to-vector (map (lambda (x) (str x "-")) s)))
 ~~~
 
 This example will return _["h-" "e-" "l-" "l-" "o-"]_.

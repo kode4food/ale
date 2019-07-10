@@ -1,10 +1,10 @@
 ;;;; ale core: lazy sequences
 
 (define-macro (lazy-seq . body)
-  `(lazy-seq* (lambda [] ,@body)))
+  `(lazy-seq* (lambda () ,@body)))
 
 (define (take count coll)
-  ((fn take-inner [count coll]
+  ((fn take-inner (count coll)
      (lazy-seq
        (if (and (> count 0) (!empty? coll))
            (cons (first coll) (take-inner (dec count) (rest coll)))
@@ -20,63 +20,64 @@
 
 (define (drop count coll)
   (lazy-seq
-    ((fn drop-inner [count coll]
+    ((fn drop-inner (count coll)
        (if (> count 0)
            (drop-inner (dec count) (rest coll))
            coll))
       count coll)))
 
 (defn partition
-  ([count coll]
-    (partition count count coll))
+  [(count coll)
+    (partition count count coll)]
 
-  ([count step coll]
+  [(count step coll)
     (lazy-seq
       (when (seq coll)
             (cons (to-list (take count coll))
-                  (partition count step (drop step coll)))))))
+                  (partition count step (drop step coll)))))])
 
 (defn range
-  ([]
-    (range 0 '() 1))
+  [()
+    (range 0 '() 1)]
 
-  ([last]
-    (range 0 last (if (> last 0) 1 -1)))
+  [(last)
+    (range 0 last (if (> last 0) 1 -1))]
 
-  ([first last]
+  [(first last)
     (if (> last first)
         (range first last 1)
-        (range last first -1)))
+        (range last first -1))]
 
-  ([first last step]
-    (let [cmp (cond (null? last) (constantly #t)
-                    (< step 0)  >
-                    :else       <)]
+  [(first last step)
+    (let [cmp (cond
+                [(null? last) (constantly #t)]
+                [(< step 0)   >]
+                [:else        <])]
       (if (cmp first last)
           (cons first (lazy-seq (range (+ first step) last step)))
-          []))))
+          []))])
 
 (defn map
-  ([func coll]
-    ((fn map-single [coll]
+  [(func coll)
+    ((fn map-single (coll)
        (lazy-seq
          (when (seq coll)
                (cons (func (first coll))
                      (map-single (rest coll))))))
-      coll))
+      coll)]
 
-  ([func coll . colls]
-    ((fn map-parallel [colls]
+  [(func coll . colls)
+    ((fn map-parallel (colls)
        (lazy-seq
          (when (apply true? (map !empty? colls))
                (let [f (to-vector (map first colls))
                      r (map rest colls)]
                  (cons (apply func f) (map-parallel r))))))
-      (cons coll colls))))
+      (cons coll colls))])
 
 (define (filter func coll)
   (lazy-seq
-    ((fn filter-inner [coll]
+    ((fn filter-inner (coll)
        (when (seq coll)
              (let [f (first coll)
                    r (rest coll)]
@@ -89,7 +90,7 @@
   `(last! (for ,seq-exprs ,@body)))
 
 (define (concat . colls)
-  ((fn concat-inner [colls]
+  ((fn concat-inner (colls)
      (lazy-seq
        (when (seq colls)
              (let [f (first colls)
@@ -108,22 +109,22 @@
 
 (define-macro (for seq-exprs . body)
   (assert-args
-    (vector? seq-exprs)        "for-each bindings must be a vector"
-    (even? (length seq-exprs)) "for-each bindings must be paired"
-    (!empty? seq-exprs)        "at least one binding pair is required")
+    (vector? seq-exprs)        "for bindings must be a vector"
+    (even? (length seq-exprs)) "for bindings must be paired"
+    (!empty? seq-exprs)        "at least one for binding is required")
   (let [sym  (seq-exprs 0)
         expr (seq-exprs 1)
         next (rest (rest seq-exprs))]
     (if (= (length seq-exprs) 2)
-        `(map (lambda [,sym] ,@body) (seq! ,expr))
-        `(mapcat (lambda [,sym] (for ,next ,@body)) (seq! ,expr)))))
+        `(map (lambda (,sym) ,@body) (seq! ,expr))
+        `(mapcat (lambda (,sym) (for ,next ,@body)) (seq! ,expr)))))
 
 (define-macro (cartesian-product . colls)
-  (let* [sym-gen  (lambda [x] (gensym (str "cp" x)))
+  (let* [sym-gen  (lambda (x) (gensym (str "cp" x)))
          let-syms (take (length colls) (map sym-gen (range)))
-         for-syms (take (length colls) (map sym-gen (range)))
          let-vals (zip let-syms colls)
-         for-vals (zip for-syms let-syms)
          let-bind (to-vector (apply concat let-vals))
+         for-syms (take (length colls) (map sym-gen (range)))
+         for-vals (zip for-syms let-syms)
          for-bind (to-vector (apply concat for-vals))]
-    `(let ,let-bind (for ,for-bind (vector ,@for-syms)))))
+    `(let ,let-bind (for ,for-bind (list ,@for-syms)))))

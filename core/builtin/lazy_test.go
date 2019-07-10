@@ -35,13 +35,13 @@ func TestRangeEval(t *testing.T) {
 	as := assert.New(t)
 	as.EvalTo(`
 		(reduce
-			(fn [x y] (+ x y))
+			(lambda (x y) (+ x y))
 			(range 1 5 1))
 	`, F(10))
 
 	as.EvalTo(`
 		(reduce
-			(fn [x y] (+ x y))
+			(lambda (x y) (+ x y))
 			(range 5 1 -1))
 	`, F(14))
 }
@@ -50,11 +50,11 @@ func TestMapAndFilterEval(t *testing.T) {
 	as := assert.New(t)
 	as.EvalTo(`
 		(reduce
-			(fn [x y] (+ x y))
+			(lambda (x y) (+ x y))
 			(map
-				(fn [x] (* x 2))
+				(lambda (x) (* x 2))
 				(filter
-					(fn [x] (<= x 5))
+					(lambda (x) (<= x 5))
 					[1 2 3 4 5 6 7 8 9 10])))
 	`, F(30))
 }
@@ -109,7 +109,7 @@ func TestLazySeqEval(t *testing.T) {
 	as := assert.New(t)
 	as.EvalTo(`
 		(reduce
-			(fn [x y] (+ x y))
+			(lambda (x y) (+ x y))
 			(lazy-seq (cons 1 (lazy-seq [2 3]))))
 	`, F(6))
 
@@ -127,6 +127,6 @@ func TestForEachLoopEval(t *testing.T) {
 				           j (range 1 10 2)]
 					(emit (* i j)))
 				(close))
-			(reduce (fn [x y] (+ x y)) seq))
+			(reduce (lambda (x y) (+ x y)) seq))
 	`, F(250))
 }

@@ -74,10 +74,3 @@ func Object(e encoder.Type, a data.Object) {
 	f := resolveBuiltIn(e, objectSym)
 	callApplicative(e, f.Caller(), args)
 }
-
-func resolveBuiltIn(e encoder.Type, sym data.Symbol) data.Caller {
-	manager := e.Globals().Manager()
-	root := manager.GetRoot()
-	res := namespace.MustResolveValue(root, sym)
-	return res.(data.Caller)
-}

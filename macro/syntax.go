@@ -21,6 +21,7 @@ const (
 
 var (
 	quoteSym  = namespace.RootSymbol("quote")
+	consSym   = namespace.RootSymbol("cons")
 	listSym   = namespace.RootSymbol("list")
 	vectorSym = namespace.RootSymbol("vector")
 	objectSym = namespace.RootSymbol("object")
@@ -48,6 +49,8 @@ func (se *syntaxEnv) quote(v data.Value) data.Value {
 
 func (se *syntaxEnv) quoteValue(v data.Value) data.Value {
 	switch typed := v.(type) {
+	case *data.Cons:
+		return se.quoteCons(typed)
 	case data.Sequence:
 		return se.quoteSequence(typed)
 	case data.Symbol:
@@ -81,6 +84,12 @@ func (se *syntaxEnv) generateSymbol(s data.Symbol) (data.Symbol, bool) {
 	r := data.NewGeneratedSymbol(data.Name(n[0 : len(n)-1]))
 	se.genSyms[n] = r
 	return r, true
+}
+
+func (se *syntaxEnv) quoteCons(c *data.Cons) data.Value {
+	car := se.quoteValue(c.Car())
+	cdr := se.quoteValue(c.Cdr())
+	return data.NewList(consSym, car, cdr)
 }
 
 func (se *syntaxEnv) quoteSequence(s data.Sequence) data.Value {

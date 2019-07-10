@@ -20,14 +20,14 @@
   (apply vector (apply concat! colls)))
 
 (define (append* coll . values)
-  ((fn append-inner [coll values]
+  ((fn append-inner (coll values)
      (if (seq values)
          (append-inner (append coll (first values)) (rest values))
          coll))
     coll values))
 
 (define (cons* coll . values)
-  ((fn cons-inner [coll values]
+  ((fn cons-inner (coll values)
      (if (seq values)
          (cons-inner (cons (first values) coll) (rest values))
          coll))
@@ -39,7 +39,7 @@
       (apply cons* (cons coll values))))
 
 (define (length! coll)
-  ((fn length-inner [coll prev]
+  ((fn length-inner (coll prev)
      (if (counted? coll)
          (+ prev (length coll))
          (if (seq coll)
@@ -49,21 +49,21 @@
 
 (define nth!
   (let [scan
-        (fn scan [coll pos handle]
+        (fn scan (coll pos handle)
           (if (seq coll)
               (if (> pos 0)
                   (scan (rest coll) (dec pos) handle)
                   (first coll))
               (handle)))]
     (fn nth!
-      ([coll pos]
+      [(coll pos)
         (if (indexed? coll)
             (nth coll pos)
-            (scan coll pos (lambda [] (raise "index out of bounds")))))
-      ([coll pos default]
+            (scan coll pos (lambda () (raise "index out of bounds"))))]
+      [(coll pos default)
         (if (indexed? coll)
             (nth coll pos default)
-            (scan coll pos (lambda [] default)))))))
+            (scan coll pos (lambda () default)))])))
 
 (define (last coll)
   (let [s (length coll)]
@@ -71,7 +71,7 @@
           (nth coll (dec (length coll))))))
 
 (define (last! coll)
-  ((fn last-inner [coll prev]
+  ((fn last-inner (coll prev)
      (if (and (counted? coll) (indexed? coll))
          (let [s (length coll)]
            (if (> s 0)
@@ -85,17 +85,17 @@
     coll '()))
 
 (defn reduce
-  ([func init coll]
-    ((fn reduce-inner [init coll]
+  [(func init coll)
+    ((fn reduce-inner (init coll)
        (if (seq coll)
            (reduce-inner (func init (first coll)) (rest coll))
            init))
-      init coll))
+      init coll)]
 
-  ([func coll]
+  [(func coll)
     (if (seq coll)
         (reduce func (first coll) (rest coll))
-        (func))))
+        (func))])
 
 (define (reverse! coll)
   (if (is-reversible coll)

@@ -27,3 +27,9 @@ func IsPair(args ...data.Value) data.Value {
 	_, ok := args[0].(data.Pair)
 	return data.Bool(ok)
 }
+
+// IsCons returns whether or not the provide value is a Cons cell
+func IsCons(args ...data.Value) data.Value {
+	_, ok := args[0].(*data.Cons)
+	return data.Bool(ok)
+}

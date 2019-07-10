@@ -1,7 +1,7 @@
 ;;;; ale core: functions
 
 (define-macro (letfn bindings . body)
-  ((fn parse-bindings [out in]
+  ((fn parse-bindings (out in)
      (if (seq in)
        (let* [fnList (first in)
               fnSym  (first fnList)
@@ -17,32 +17,32 @@
    [] bindings))
 
 (defn partial
-  ([func] func)
-  ([func . first-args]
+  [(func) func]
+  [(func . first-args)
     (assert-args
       (is-apply func) "partial requires a function")
     (lambda rest-args
-      (apply func (apply append* (cons first-args rest-args))))))
+      (apply func (apply append* (cons first-args rest-args))))])
 
 (define-macro comp
   (lambda
-    ([] identity)
-    ([func] func)
-    ([func . funcs]
+    [() identity]
+    [(func) func]
+    [(func . funcs)
       (let* [args        (gensym "args")
             inner       (list 'apply func args)
             first-outer (first funcs)
             rest-outer  (rest funcs)]
-        (letfn [(fn outer [func args rest-funcs]
+        (letfn [(fn outer (func args rest-funcs)
                   (if (seq rest-funcs)
                       (outer (first rest-funcs)
                             (list func args)
                             (rest rest-funcs))
                       (list func args)))]
           `(lambda ,args
-            ,(outer first-outer inner rest-outer)))))))
+            ,(outer first-outer inner rest-outer))))]))
 
 (define-macro (juxt . funcs)
   (let [args (gensym "args")]
     `(lambda ,args
-       [,@(map (lambda [f] (list 'apply f args)) funcs)])))
+       [,@(map (lambda (f) (list 'apply f args)) funcs)])))

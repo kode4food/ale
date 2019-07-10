@@ -16,6 +16,7 @@ type reader struct {
 // Error messages
 const (
 	PrefixedNotPaired  = "end of file reached before completing %s"
+	InvalidListSyntax  = "invalid list syntax"
 	ListNotClosed      = "end of file reached with open list"
 	UnmatchedListEnd   = "encountered ')' with no open list"
 	VectorNotClosed    = "end of file reached with open vector"
@@ -108,7 +109,42 @@ func (r *reader) prefixed(s data.Symbol) data.Value {
 
 func (r *reader) list() data.Value {
 	elems := r.readCollection(ListEnd)
+	if isDottedList(elems) {
+		l := len(elems)
+		dotElems := elems[0:]
+		copy(dotElems[l-2:], dotElems[l-1:])
+		return makeDottedList(dotElems[:l-1]...)
+	}
 	return data.NewList(elems...)
+}
+
+func isDottedList(elems data.Values) bool {
+	var sawDot bool
+	for i, e := range elems {
+		if isDotSymbol(e) {
+			if sawDot || i != len(elems)-2 {
+				panic(fmt.Errorf(InvalidListSyntax))
+			}
+			sawDot = true
+		}
+	}
+	return sawDot
+}
+
+func isDotSymbol(v data.Value) bool {
+	if l, ok := v.(data.LocalSymbol); ok && l.Name() == "." {
+		return true
+	}
+	return false
+}
+
+func makeDottedList(v ...data.Value) data.Value {
+	l := len(v)
+	var res = data.NewCons(v[l-2], v[l-1])
+	for i := l - 3; i >= 0; i-- {
+		res = data.NewCons(v[i], res)
+	}
+	return res
 }
 
 func (r *reader) vector() data.Value {

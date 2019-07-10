@@ -15,27 +15,24 @@ import (
 type (
 	lambdaEncoder struct {
 		encoder.Type
-		variants variants
+		cases lambdaCases
 	}
 
-	variant struct {
+	lambdaCase struct {
 		args data.Names
 		rest bool
 		body data.Sequence
 	}
 
-	variants []*variant
+	lambdaCases []*lambdaCase
 )
 
 // Error messages
 const (
-	InvalidRestArgument = "rest-argument not well-formed: %s"
+	UnexpectedLambdaSyntax = "unexpected lambda syntax: %s"
 )
 
-const (
-	allArgsName = data.Name("*args*")
-	restMarker  = data.Name(".")
-)
+const allArgsName = data.Name("*args*")
 
 // Lambda encodes a lambda
 func Lambda(e encoder.Type, args ...data.Value) {
@@ -44,11 +41,11 @@ func Lambda(e encoder.Type, args ...data.Value) {
 	le.encodeCall()
 }
 
-func makeLambdaEncoder(e encoder.Type, v variants) *lambdaEncoder {
+func makeLambdaEncoder(e encoder.Type, v lambdaCases) *lambdaEncoder {
 	child := e.Child()
 	res := &lambdaEncoder{
-		Type:     child,
-		variants: v,
+		Type:  child,
+		cases: v,
 	}
 	res.PushArgs(data.Names{allArgsName}, true)
 	return res
@@ -76,17 +73,17 @@ func (le *lambdaEncoder) encodeCall() {
 }
 
 func (le *lambdaEncoder) makeLambda() *vm.Lambda {
-	if len(le.variants) == 0 {
+	if len(le.cases) == 0 {
 		le.Emit(isa.RetNull)
 	} else {
-		le.makeVariants(le.variants)
+		le.makeVariants(le.cases)
 	}
 	res := vm.LambdaFromEncoder(le)
 	res.ArityChecker = le.makeArityChecker()
 	return res
 }
 
-func (le *lambdaEncoder) makeVariants(vars variants) {
+func (le *lambdaEncoder) makeVariants(vars lambdaCases) {
 	if len(vars) == 0 {
 		generate.Literal(le, data.String("no matching argument pattern"))
 		le.Emit(isa.Panic)
@@ -102,9 +99,9 @@ func (le *lambdaEncoder) makeVariants(vars variants) {
 }
 
 func (le *lambdaEncoder) makeArityChecker() data.ArityChecker {
-	v0 := le.variants[0]
+	v0 := le.cases[0]
 	lower, upper := v0.arityRange()
-	for _, s := range le.variants[1:] {
+	for _, s := range le.cases[1:] {
 		l, u := s.arityRange()
 		lower = util.IntMin(l, lower)
 		if u == -1 || upper == -1 {
@@ -116,7 +113,7 @@ func (le *lambdaEncoder) makeArityChecker() data.ArityChecker {
 	return arity.MakeChecker(lower, upper)
 }
 
-func (le *lambdaEncoder) makeCond(v *variant) {
+func (le *lambdaEncoder) makeCond(v *lambdaCase) {
 	le.Emit(isa.ArgLen)
 	al := len(v.args)
 	if v.rest {
@@ -128,7 +125,7 @@ func (le *lambdaEncoder) makeCond(v *variant) {
 	le.Emit(isa.Eq)
 }
 
-func (le *lambdaEncoder) makeThen(v *variant) {
+func (le *lambdaEncoder) makeThen(v *lambdaCase) {
 	body := v.body
 	if body.IsEmpty() {
 		le.Emit(isa.RetNull)
@@ -143,46 +140,49 @@ func (le *lambdaEncoder) makeThen(v *variant) {
 	le.PopArgs()
 }
 
-func parseLambda(s data.Vector) variants {
-	switch s.First().(type) {
-	case data.Vector, data.LocalSymbol:
-		v := parseLambdaVariant(s)
-		return variants{v}
-	default:
-		var res variants
+func parseLambda(s data.Vector) lambdaCases {
+	f := s.First()
+	switch f.(type) {
+	case data.List, *data.Cons, data.LocalSymbol:
+		v := parseLambdaCase(s)
+		return lambdaCases{v}
+	case data.Vector:
+		var res lambdaCases
 		for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {
-			v := parseLambdaVariant(f.(data.List))
+			v := parseLambdaCase(f.(data.Vector))
 			res = append(res, v)
 		}
 		return res
+	default:
+		panic(fmt.Errorf(UnexpectedLambdaSyntax, f))
 	}
 }
 
-func parseLambdaVariant(s data.Sequence) *variant {
+func parseLambdaCase(s data.Sequence) *lambdaCase {
 	f, body, _ := s.Split()
 	argNames, restArg := parseArgBindings(f)
-	return &variant{
+	return &lambdaCase{
 		args: argNames,
 		rest: restArg,
 		body: body,
 	}
 }
 
-func (v *variant) fixedArgs() data.Names {
+func (v *lambdaCase) fixedArgs() data.Names {
 	if v.rest {
 		return v.args[0 : len(v.args)-1]
 	}
 	return v.args
 }
 
-func (v *variant) restArg() (data.Name, bool) {
+func (v *lambdaCase) restArg() (data.Name, bool) {
 	if v.rest {
 		return v.args[len(v.args)-1], true
 	}
 	return "", false
 }
 
-func (v *variant) arityRange() (int, int) {
+func (v *lambdaCase) arityRange() (int, int) {
 	fl := len(v.fixedArgs())
 	if _, ok := v.restArg(); ok {
 		return fl, -1
@@ -191,32 +191,40 @@ func (v *variant) arityRange() (int, int) {
 }
 
 func parseArgBindings(v data.Value) (data.Names, bool) {
-	if l, ok := v.(data.LocalSymbol); ok {
-		s := data.NewVector(data.NewLocalSymbol(restMarker), l)
-		return parseArgNames(s)
+	switch typed := v.(type) {
+	case data.LocalSymbol:
+		return data.Names{typed.Name()}, true
+	case *data.Cons:
+		return parseConsArgNames(typed), true
+	case data.List:
+		return parseListArgNames(typed), false
+	default:
+		panic("what the shit?")
 	}
-	return parseArgNames(v.(data.Vector))
 }
 
-func parseArgNames(s data.Sequence) (data.Names, bool) {
+func parseListArgNames(l data.List) data.Names {
 	var an data.Names
-	for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {
+	for f, r, ok := l.Split(); ok; f, r, ok = r.Split() {
 		n := f.(data.LocalSymbol).Name()
-		if n == restMarker {
-			rn := parseRestArg(r)
-			return append(an, rn), true
-		}
 		an = append(an, n)
 	}
-	return an, false
+	return an
 }
 
-func parseRestArg(s data.Sequence) data.Name {
-	if f, r, ok := s.Split(); ok {
-		n := f.(data.LocalSymbol).Name()
-		if n != restMarker && r.IsEmpty() {
-			return n
+func parseConsArgNames(c *data.Cons) data.Names {
+	var an data.Names
+	next := c
+	for {
+		an = append(an, next.Car().(data.LocalSymbol).Name())
+
+		cdr := next.Cdr()
+		if nc, ok := cdr.(*data.Cons); ok {
+			next = nc
+			continue
 		}
+
+		an = append(an, cdr.(data.LocalSymbol).Name())
+		return an
 	}
-	panic(fmt.Errorf(InvalidRestArgument, s))
 }

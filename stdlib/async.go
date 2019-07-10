@@ -1,9 +1,7 @@
 package stdlib
 
 import (
-	"fmt"
 	"runtime"
-	"sync"
 	"sync/atomic"
 
 	"gitlab.com/kode4food/ale/compiler/arity"
@@ -21,9 +19,7 @@ type (
 	// Promise represents a Value that will eventually be resolved
 	Promise interface {
 		data.Caller
-		Deliver(data.Value) data.Value
-		IsDelivered() bool
-		Resolve() data.Value
+		IsResolved() bool
 	}
 
 	channelResult struct {
@@ -50,15 +46,11 @@ type (
 	}
 
 	promise struct {
-		cond      *sync.Cond
-		value     data.Value
-		delivered bool
+		once     Do
+		resolver data.Call
+		value    data.Value
+		resolved bool
 	}
-)
-
-// Error messages
-const (
-	ExpectedUndelivered = "can't deliver a promise twice"
 )
 
 const (
@@ -70,7 +62,7 @@ const (
 var (
 	emptyResult = channelResult{value: data.Null, error: nil}
 
-	promiseArityChecker = arity.MakeRangedChecker(0, 1)
+	promiseArityChecker = arity.MakeFixedChecker(0)
 )
 
 func (ch *channelWrapper) Close() {
@@ -205,18 +197,21 @@ func (c *channelSequence) String() string {
 }
 
 // NewPromise instantiates a new Promise
-func NewPromise() Promise {
+func NewPromise(resolver data.Call) Promise {
 	return &promise{
-		cond: sync.NewCond(new(sync.Mutex)),
+		once:     Once(),
+		resolver: resolver,
 	}
 }
 
 func (p *promise) Caller() data.Call {
 	return func(args ...data.Value) data.Value {
-		if len(args) > 0 {
-			return p.Deliver(args[0])
-		}
-		return p.Resolve()
+		p.once(func() {
+			// TODO: re-raise panics
+			p.resolved = true
+			p.value = p.resolver()
+		})
+		return p.value
 	}
 }
 
@@ -228,41 +223,8 @@ func (p *promise) CheckArity(c int) error {
 	return promiseArityChecker(c)
 }
 
-func (p *promise) Resolve() data.Value {
-	cond := p.cond
-	cond.L.Lock()
-	defer cond.L.Unlock()
-
-	if p.delivered {
-		return p.value
-	}
-	cond.Wait()
-	return p.value
-}
-
-func (p *promise) checkNewValue(v data.Value) data.Value {
-	if v == p.value {
-		return p.value
-	}
-	panic(fmt.Errorf(ExpectedUndelivered))
-}
-
-func (p *promise) Deliver(v data.Value) data.Value {
-	cond := p.cond
-	cond.L.Lock()
-	defer cond.L.Unlock()
-
-	if p.delivered {
-		return p.checkNewValue(v)
-	}
-	p.value = v
-	p.delivered = true
-	cond.Broadcast()
-	return v
-}
-
-func (p *promise) IsDelivered() bool {
-	return p.delivered
+func (p *promise) IsResolved() bool {
+	return p.resolved
 }
 
 func (p *promise) Type() data.Name {

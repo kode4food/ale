@@ -55,8 +55,8 @@
 
 (def-builtin is-appender)
 (def-builtin is-atom)
+(def-builtin is-cons)
 (def-builtin is-counted)
-(def-builtin is-delivered)
 (def-builtin is-deque)
 (def-builtin is-empty)
 (def-builtin is-indexed)
@@ -70,6 +70,7 @@
 (def-builtin is-pos-inf)
 (def-builtin is-promise)
 (def-builtin is-qualified)
+(def-builtin is-resolved)
 (def-builtin is-reversible)
 (def-builtin is-seq)
 (def-builtin is-special)

@@ -1,6 +1,7 @@
 package builtin_test
 
 import (
+	"errors"
 	"testing"
 
 	"gitlab.com/kode4food/ale/data"
@@ -14,37 +15,44 @@ func TestCondEval(t *testing.T) {
 
 	as.EvalTo(`
 		(cond
-			#f   "goodbye"
-			'()  "nope"
-			#t   "hello"
-			"hi" "ignored")
+			[#f   "goodbye"]
+			['()  "nope"]
+			[#t   "hello"]
+			["hi" "ignored"])
 	`, S("hello"))
 
 	as.EvalTo(`
 		(cond
-			#f    "goodbye"
-			'()   "nope"
-			:else "hello"
-			"hi"  "ignored")
+			[#f    "goodbye"]
+			['()   "nope"]
+			[:else "hello"]
+			["hi"  "ignored"])
 	`, S("hello"))
 
 	as.EvalTo(`
 		(cond
-			#f  "goodbye"
-			'() "nope")
+			[#f  "goodbye"]
+			['() "nope"])
 	`, data.Null)
+}
 
-	as.EvalTo(`
+func TestBadCond(t *testing.T) {
+	as := assert.New(t)
+
+	pairErr := errors.New("cond clauses must be paired")
+	vecErr := errors.New("cond clauses must be vectors")
+
+	as.PanicWith(`
 		(cond
-			#t "hello"
-			99)
-	`, S("hello"))
+			[#t "hello"]
+			[99])
+	`, pairErr)
 
-	as.EvalTo(`(cond 99)`, F(99))
+	as.PanicWith(`(cond 99)`, vecErr)
 
-	as.EvalTo(`
+	as.PanicWith(`
 		(cond
 			#f "hello"
 			99)
-	`, F(99))
+	`, vecErr)
 }

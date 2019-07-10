@@ -10,6 +10,7 @@ import (
 	"gitlab.com/kode4food/ale/data"
 	"gitlab.com/kode4food/ale/internal/assert"
 	. "gitlab.com/kode4food/ale/internal/assert/helpers"
+	"gitlab.com/kode4food/ale/read"
 )
 
 func interfaceErr(concrete, intf, method string) error {
@@ -83,9 +84,9 @@ func TestFunctionPredicatesEval(t *testing.T) {
 func TestLambdaEval(t *testing.T) {
 	as := assert.New(t)
 	as.EvalTo(`
-		(def call (fn [func] (func)))
+		(def call (lambda (func) (func)))
 		(let [greeting "hello"]
-			(let [foo (fn [] greeting)]
+			(let [foo (lambda () greeting)]
 				(call foo)))
 	`, S("hello"))
 }
@@ -93,10 +94,11 @@ func TestLambdaEval(t *testing.T) {
 func TestBadLambdaEval(t *testing.T) {
 	as := assert.New(t)
 
-	e := interfaceErr("data.Integer", "data.List", "Count")
-	as.PanicWith(`(fn 99 "hello")`, e)
-	e = interfaceErr("data.qualifiedSymbol", "data.List", "Count")
-	as.PanicWith(`(fn foo/bar [] "hello")`, e)
+	eNum := fmt.Errorf(special.UnexpectedLambdaSyntax, "99")
+	as.PanicWith(`(fn 99 "hello")`, eNum)
+
+	eSym := fmt.Errorf(special.UnexpectedLambdaSyntax, "foo/bar")
+	as.PanicWith(`(fn foo/bar () "hello")`, eSym)
 }
 
 func TestApplyEval(t *testing.T) {
@@ -104,7 +106,7 @@ func TestApplyEval(t *testing.T) {
 	as.EvalTo(`(apply + [1 2 3])`, F(6))
 	as.EvalTo(`
 		(apply
-			(fn add [x y z] (+ x y z))
+			(fn add (x y z) (+ x y z))
 			[1 2 3])
 	`, F(6))
 
@@ -115,31 +117,31 @@ func TestApplyEval(t *testing.T) {
 func TestRestFunctionsEval(t *testing.T) {
 	as := assert.New(t)
 	as.EvalTo(`
-		(def test (fn [f . r] (apply vector (cons f r))))
+		(def test (lambda (f . r) (apply vector (cons f r))))
 		(test 1 2 3 4 5 6 7)
 	`, data.String("[1 2 3 4 5 6 7]"))
 
 	as.PanicWith(`
-		(fn [x y .] "explode")
-	`, fmt.Errorf(special.InvalidRestArgument, "()"))
+		(lambda (x y .) "explode")
+	`, fmt.Errorf(read.InvalidListSyntax))
 
 	as.PanicWith(`
-		(fn [x y . z g] "explode")
-	`, fmt.Errorf(special.InvalidRestArgument, "[z g]"))
+		(lambda (x y . z g) "explode")
+	`, fmt.Errorf(read.InvalidListSyntax))
 
 	as.PanicWith(`
-		(fn [x y . . z] "explode")
-	`, fmt.Errorf(special.InvalidRestArgument, "[. z]"))
+		(lambda (x y . . z) "explode")
+	`, fmt.Errorf(read.InvalidListSyntax))
 }
 
 func TestTailCallEval(t *testing.T) {
 	as := assert.New(t)
 	as.EvalTo(`
-		(defn to-zero [x]
+		(defn to-zero (x)
 			(cond
-				(> x 1000) (to-zero (- x 1))
-				(> x 0)    (to-zero (- x 1))
-				:else 0))
+				[(> x 1000) (to-zero (- x 1))]
+				[(> x 0)    (to-zero (- x 1))]
+				[:else 0]))
 
 		(to-zero 9999)
 	`, data.Integer(0))

@@ -9,7 +9,7 @@
 (def concat!
   (lambda colls
     (letrec [concat-inner
-             (lambda [colls head]
+             (lambda (colls head)
                (if (is-empty colls)
                    (apply list head)
                    (let [f (first colls)
@@ -23,33 +23,33 @@
 (def defmacro
   (letrec [defmacro
            (macro
-             (lambda [name . forms]
+             (lambda (name . forms)
                `(def ,name
                   (letrec [,name (macro (lambda ,@forms))]
                     ,name))))]
     defmacro))
 
 (defmacro assert-args
-  ([] '())
-  ([clause]
-    (raise "assert-args clauses must be paired"))
-  (clauses
+  [() '()]
+  [(clause)
+    (raise "assert-args clauses must be paired")]
+  [clauses
     `(if ,(clauses 0)
          (assert-args ,@(rest (rest clauses)))
-         (raise ,(clauses 1)))))
+         (raise ,(clauses 1)))])
 
 (defmacro define-macro body
   (let [f (first body)
         r (rest body)]
-    (if (is-list f)
-        (let [name (first f) args (rest f)]
-          `(defmacro ,name ,(apply vector args) ,@r))
+    (if (is-pair f)
+        (let [name (car f) args (cdr f)]
+          `(defmacro ,name ,args ,@r))
         `(def ,f (macro ,@r)))))
 
 (define-macro (fn name . forms)
   (if (is-local name)
-    `(letrec [,name (lambda ,@forms)] ,name)
-    `(lambda ,name ,@forms)))
+      `(letrec [,name (lambda ,@forms)] ,name)
+      `(lambda ,name ,@forms)))
 
 (define-macro (defn name . forms)
   `(def ,name (fn ,name ,@forms)))
@@ -57,9 +57,9 @@
 (define-macro (define . body)
   (let [f (first body)
         r (rest body)]
-    (if (is-list f)
-        (let [name (first f) args (rest f)]
-          `(defn ,name ,(apply vector args) ,@r))
+    (if (is-pair f)
+        (let [name (car f) args (cdr f)]
+          `(defn ,name ,args ,@r))
         `(def ,@body))))
 
 (define-macro (!eq value . comps)
@@ -90,5 +90,5 @@
 (define (constantly value)
   (lambda _ value))
 
-(define-macro (. target method . args)
+(define-macro (^ target method . args)
   `((get ,target ,method) ,@args))

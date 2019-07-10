@@ -10,7 +10,7 @@ import (
 	"gitlab.com/kode4food/ale/runtime/isa"
 )
 
-// Eval encodes an evaluation
+// Eval encodes an immediate evaluation
 func Eval(e encoder.Type, args ...data.Value) {
 	arity.AssertFixed(1, len(args))
 	generate.Value(e, args[0])

@@ -18,7 +18,7 @@ func TestDefinitionsEval(t *testing.T) {
 	`, S("bar"))
 
 	as.EvalTo(`
-		(def return-local (fn []
+		(def return-local (lambda ()
 			(let [foo "local"] foo)))
 		(return-local)
 	`, S("local"))
@@ -41,11 +41,11 @@ func TestMutualBindingsEval(t *testing.T) {
 	as.EvalTo(`
 		(letrec [
 			is-even?
-			(lambda [n] (or (= n 0)
+			(lambda (n) (or (= n 0)
 			                (is-odd? (dec n))))
 
 			is-odd?
-			(lambda [n] (and (not (= n 0))
+			(lambda (n) (and (not (= n 0))
 			                 (is-even? (dec n))))]
 		(is-even? 13))
 	`, data.False)
