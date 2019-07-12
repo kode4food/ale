@@ -49,8 +49,8 @@ func TestMapFilterEval(t *testing.T) {
 	`, F(2))
 
 	as.EvalTo(`
-		(def x (concat '(1 2) (list 3 4)))
-		(def y
+		(define x (concat '(1 2) (list 3 4)))
+		(define y
 			(map
 				(lambda (x) (* x 2))
 				(filter

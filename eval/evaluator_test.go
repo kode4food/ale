@@ -28,7 +28,7 @@ func TestBasicEval(t *testing.T) {
 	v3 := eval.String(ns, "(first (concat [1 2 3] [4 5 6]))")
 	as.Number(1, v3)
 
-	eval.String(ns, "(def x 99)")
+	eval.String(ns, "(define x 99)")
 	e, ok := ns.Resolve(data.Name("x"))
 	as.True(ok && e.IsBound())
 	as.Number(99, e.Value())

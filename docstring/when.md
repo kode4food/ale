@@ -11,7 +11,7 @@ If the evaluated predicate is truthy (not _#f_ (false) or the empty list), the f
 #### An Example
 
 ~~~scheme
-(def x '(1 2 3 4 5 6 7 8))
+(define x '(1 2 3 4 5 6 7 8))
 
 (when (> (length x) 3)
   (println "x is big")

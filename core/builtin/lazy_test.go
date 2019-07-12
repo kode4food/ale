@@ -73,17 +73,17 @@ func TestMapParallelEval(t *testing.T) {
 func TestReduceEval(t *testing.T) {
 	as := assert.New(t)
 	as.EvalTo(`
-		(def x '(1 2 3 4))
+		(define x '(1 2 3 4))
 		(reduce + x)
 	`, F(10))
 
 	as.EvalTo(`
-		(def y (concat '(1 2 3 4) [5 6 7 8]))
+		(define y (concat '(1 2 3 4) [5 6 7 8]))
 		(reduce + y)
 	`, F(36))
 
 	as.EvalTo(`
-		(def y (concat '(1 2 3 4) [5 6 7 8]))
+		(define y (concat '(1 2 3 4) [5 6 7 8]))
 		(reduce + 10 y)
 	`, F(46))
 }
@@ -91,12 +91,12 @@ func TestReduceEval(t *testing.T) {
 func TestTakeDropEval(t *testing.T) {
 	as := assert.New(t)
 	as.EvalTo(`
-		(def x (concat '(1 2 3 4) [5 6 7 8]))
+		(define x (concat '(1 2 3 4) [5 6 7 8]))
 		(nth (apply vector (take 6 x)) 5)
 	`, F(6))
 
 	as.EvalTo(`
-		(def x (concat '(1 2 3 4) [5 6 7 8]))
+		(define x (concat '(1 2 3 4) [5 6 7 8]))
 		(nth (apply vector (drop 3 x)) 0)
 	`, F(4))
 

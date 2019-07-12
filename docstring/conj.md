@@ -6,7 +6,7 @@ names: ["conj"]
 usage: "(conj seq form+)"
 tags: ["sequence"]
 ---
-Adds elements to a conjoinable sequence. This behavior will differ depending on the concrete type. A list will prepend, a vector will append, while an object makes no guarantees about ordering. This function will not work with lazy sequences such as ones produced by `map` or `filter`.
+Adds elements to a conjoinable sequence. This behavior will differ depending on the concrete type. A list will prepend, a vector will append, while an object makes no guarantees about ordering.
 
 #### An Example
 

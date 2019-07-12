@@ -11,7 +11,7 @@ Converts the provided string into a symbol. Both qualified and local symbols are
 #### An Example
 
 ~~~scheme
-(def hello-sym (sym "hello"))
+(define hello-sym (sym "hello"))
 (eq hello-sym 'hello)
 ~~~
 

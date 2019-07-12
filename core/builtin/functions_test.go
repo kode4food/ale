@@ -84,7 +84,7 @@ func TestFunctionPredicatesEval(t *testing.T) {
 func TestLambdaEval(t *testing.T) {
 	as := assert.New(t)
 	as.EvalTo(`
-		(def call (lambda (func) (func)))
+		(define call (lambda (func) (func)))
 		(let [greeting "hello"]
 			(let [foo (lambda () greeting)]
 				(call foo)))
@@ -117,7 +117,7 @@ func TestApplyEval(t *testing.T) {
 func TestRestFunctionsEval(t *testing.T) {
 	as := assert.New(t)
 	as.EvalTo(`
-		(def test (lambda (f . r) (apply vector (cons f r))))
+		(define test (lambda (f . r) (apply vector (cons f r))))
 		(test 1 2 3 4 5 6 7)
 	`, data.String("[1 2 3 4 5 6 7]"))
 

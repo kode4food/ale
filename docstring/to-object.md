@@ -11,7 +11,7 @@ Will concatenate a set of sequences into an object (hash-map). Unlike the standa
 #### An Example
 
 ~~~scheme
-(def x [:name "ale" :age 0.3])
-(def y '(:weight "light"))
+(define x [:name "ale" :age 0.3])
+(define y '(:weight "light"))
 (to-object x y)
 ~~~

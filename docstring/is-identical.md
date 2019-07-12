@@ -11,7 +11,7 @@ Will return _#f_ (false) as soon as it encounters a form that is not identical t
 #### An Example
 
 ~~~scheme
-(def h "hello")
+(define h "hello")
 (eq "hello" h)
 ~~~
 

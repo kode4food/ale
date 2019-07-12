@@ -11,7 +11,7 @@ Will create an anonymous function that may be passed around in a first-class man
 #### An Example
 
 ~~~scheme
-(def double
+(define double
   (let [mul 2]
     (fn "doubles values" [x] (* x mul))))
 

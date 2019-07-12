@@ -11,8 +11,8 @@ Will concatenate a set of sequences into a list. Unlike the standard `concat` fu
 #### An Example
 
 ~~~scheme
-(def x [1 2 3 4])
-(def y
+(define x [1 2 3 4])
+(define y
   (map (lambda (x) (+ x 4))
   '(1 2 3 4)))
 (to-list x y)

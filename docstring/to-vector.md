@@ -11,7 +11,7 @@ Will concatenate a set of sequences into a vector. Unlike the standard `concat` 
 #### An Example
 
 ~~~scheme
-(def x
+(define x
   (map (lambda (x) (* x 2))
   '(1 2 3 4)))
 (to-vector '(1 2 3 4) x)

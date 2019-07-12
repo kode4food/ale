@@ -11,11 +11,10 @@ Returns a promise in the form of a function. The provided expression will only b
 #### An Example
 
 ~~~scheme
-(def p
-     (delay
-       (begin
-         (println "hello once")
-         "hello")))
+(define p (delay
+            (begin
+              (println "hello once")
+              "hello")))
 (p) ;; prints "hello once"
 (p)
 ~~~

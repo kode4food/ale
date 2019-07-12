@@ -11,7 +11,7 @@ Will create a new vector whose elements are the evaluated forms provided. This f
 #### An Example
 
 ~~~scheme
-(def x "hello")
-(def y "there")
+(define x "hello")
+(define y "there")
 (vector x y)
 ~~~

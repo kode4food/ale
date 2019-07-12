@@ -13,12 +13,12 @@ import (
 func TestDefinitionsEval(t *testing.T) {
 	as := assert.New(t)
 	as.EvalTo(`
-		(def foo "bar")
+		(define foo "bar")
 		foo
 	`, S("bar"))
 
 	as.EvalTo(`
-		(def return-local (lambda ()
+		(define return-local (lambda ()
 			(let [foo "local"] foo)))
 		(return-local)
 	`, S("local"))

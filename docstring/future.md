@@ -11,7 +11,7 @@ Returns a future in the form of a function. The provided forms will be evaluated
 #### An Example
 
 ~~~scheme
-(def fut (future
+(define fut (future
   (to-vector (generate
     (emit "red")
     (emit "orange")

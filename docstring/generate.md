@@ -11,7 +11,7 @@ Evaluates the specified forms in a separate thread of execution. Returns a seque
 #### An Example
 
 ~~~scheme
-(def colors (generate
+(define colors (generate
   (emit "red")
   (emit "orange")
   (emit "yellow")))

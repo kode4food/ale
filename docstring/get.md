@@ -11,7 +11,7 @@ Returns the value within a sequence that is associated with the specified key. I
 #### An Example
 
 ~~~scheme
-(def robert {:name "Bob" :age 45})
+(define robert {:name "Bob" :age 45})
 (get robert :address "wrong")
 ~~~
 

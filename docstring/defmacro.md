@@ -2,8 +2,8 @@
 title: "defmacro"
 date: 2019-04-06T12:19:22+02:00
 description: "binds a reader macro"
-names: ["defmacro"]
-usage: "(defmacro name [name*] form+)"
+names: ["defmacro", "define-macro"]
+usage: "(defmacro name [param*] form+) (define-macro (name param*) form+)"
 tags: ["function", "macro", "binding"]
 ---
 Will bind a macro to a global name. A macro is expanded by the reader in order to alter the source code's data representation before it is evaluated.
@@ -11,7 +11,7 @@ Will bind a macro to a global name. A macro is expanded by the reader in order t
 #### An Example
 
 ~~~scheme
-(defmacro cond clauses
+(define-macro (cond . clauses)
   (when (seq clauses)
     (if (= 1 (length clauses))
       (clauses 0)

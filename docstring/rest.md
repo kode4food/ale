@@ -11,7 +11,7 @@ This function will return a sequence that excludes the first element of the spec
 #### An Example
 
 ~~~scheme
-(def x '(99 64 32 48))
+(define x '(99 64 32 48))
 (rest x)
 ~~~
 

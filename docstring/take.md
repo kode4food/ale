@@ -11,8 +11,8 @@ Will return a lazy sequence of either *count* or fewer elements from the beginni
 #### An Example
 
 ~~~scheme
-(def x '(1 2 3 4))
-(def y [5 6 7 8])
+(define x '(1 2 3 4))
+(define y [5 6 7 8])
 (take 6 (concat x y))
 ~~~
 

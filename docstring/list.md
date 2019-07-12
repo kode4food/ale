@@ -11,7 +11,7 @@ Will create a new list whose elements are the evaluated forms provided, or retur
 #### An Example
 
 ~~~scheme
-(def x "hello")
-(def y "there")
+(define x "hello")
+(define y "there")
 (list x y)
 ~~~

@@ -43,7 +43,7 @@ func TestObjectEval(t *testing.T) {
 	`, S("Ale"))
 
 	as.EvalTo(`
-		(def x {:name "bob" :age 45})
+		(define x {:name "bob" :age 45})
 		(x :name)
 	`, S("bob"))
 

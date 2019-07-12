@@ -18,7 +18,7 @@ func TestListEval(t *testing.T) {
 	as.EvalTo(`(list)`, data.EmptyList)
 
 	as.EvalTo(`
-		(def x '(1 2 3 4))
+		(define x '(1 2 3 4))
 		(x 2)
 	`, F(3))
 }

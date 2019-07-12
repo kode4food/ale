@@ -11,8 +11,8 @@ If all forms evaluate to a promise, then this function will return _#t_ (true). 
 #### An Example
 
 ~~~scheme
-(def p1 (promise))
-(def p2 (promise))
+(define p1 (promise "one"))
+(define p2 (promise "two"))
 (promise? p1 p2 [1 2 3])
 ~~~
 

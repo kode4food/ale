@@ -11,8 +11,8 @@ Will return a lazy sequence that excludes the first *count* elements of the prov
 #### An Example
 
 ~~~scheme
-(def x '(1 2 3 4))
-(def y [5 6 7 8])
+(define x '(1 2 3 4))
+(define y [5 6 7 8])
 (drop 3 (concat x y))
 ~~~
 

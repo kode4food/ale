@@ -36,7 +36,7 @@ func TestVectorEval(t *testing.T) {
 	as.EvalTo(`(indexed? 99)`, data.False)
 
 	as.EvalTo(`
-		(def x [1 2 3 4])
+		(define x [1 2 3 4])
 		(x 2)
 	`, F(3))
 }

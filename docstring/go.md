@@ -11,7 +11,7 @@ The provided forms will be evaluated in a separate thread of execution. Any resu
 #### An Example
 
 ~~~scheme
-(def x (promise))
+(define x (promise))
 (go (x "hello"))
 (str (x) " you!")
 ~~~

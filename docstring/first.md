@@ -11,7 +11,7 @@ This function will return the first element of the specified sequence, or the em
 #### An Example
 
 ~~~scheme
-(def x '(99 64 32 48))
+(define x '(99 64 32 48))
 (first x)
 ~~~
 

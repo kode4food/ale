@@ -11,7 +11,7 @@ Returns a new Function whose initial arguments are pre-bound to those provided. 
 #### An Example
 
 ~~~scheme
-(def plus10 (partial + 4 6))
+(define plus10 (partial + 4 6))
 (plus10 9)
 ~~~
 
