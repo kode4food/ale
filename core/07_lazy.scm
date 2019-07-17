@@ -108,16 +108,16 @@
   (apply concat (apply map func colls)))
 
 (define-macro (for seq-exprs . body)
-  (assert-args
-    (vector? seq-exprs)        "for bindings must be a vector"
-    (even? (length seq-exprs)) "for bindings must be paired"
-    (!empty? seq-exprs)        "at least one for binding is required")
-  (let ([sym  (seq-exprs 0)]
-        [expr (seq-exprs 1)]
-        [next (rest (rest seq-exprs))])
-    (if (= (length seq-exprs) 2)
-        `(map (lambda (,sym) ,@body) (seq! ,expr))
-        `(mapcat (lambda (,sym) (for ,next ,@body)) (seq! ,expr)))))
+  (let [b (make-bindings seq-exprs)]
+    (assert-args
+      (!empty? b) "at least one for binding is required")
+    (let* ([this (first b)]
+           [next (rest b)]
+           [sym  (this 0)]
+           [expr (this 1)])
+      (if (empty? next)
+          `(map (lambda (,sym) ,@body) (seq! ,expr))
+          `(mapcat (lambda (,sym) (for ,next ,@body)) (seq! ,expr))))))
 
 (define-macro (cartesian-product . colls)
   (let* ([sym-gen  (lambda (x) (gensym (str "cp" x)))]
@@ -125,6 +125,6 @@
          [let-vals (map to-vector (zip let-syms colls))]
          [let-bind (to-list let-vals)]
          [for-syms (take (length colls) (map sym-gen (range)))]
-         [for-vals (zip for-syms let-syms)]
-         [for-bind (to-vector (apply concat for-vals))])
+         [for-vals (map to-vector (zip for-syms let-syms))]
+         [for-bind (to-list for-vals)])
     `(let ,let-bind (for ,for-bind (list ,@for-syms)))))

@@ -67,6 +67,32 @@
 (define-macro (!eq value . comps)
   `(not (eq ,value ,@comps)))
 
+(define-macro and
+  (lambda
+    [() #t]
+    [(clause) clause]
+    [clauses
+      `(let [and# ,(clauses 0)]
+        (if and#
+            (and ,@(rest clauses))
+            and#))]))
+
+(define-macro (!and . clauses)
+  `(not (and ,@clauses)))
+
+(define-macro or
+  (lambda
+    [() '()]
+    [(clause) clause]
+    [clauses
+      `(let [or# ,(clauses 0)]
+        (if or#
+            or#
+            (or ,@(rest clauses))))]))
+
+(define-macro (!or . clauses)
+  `(not (or ,@clauses)))
+
 (define (is-even value)
   (= (mod value 2) 0))
 

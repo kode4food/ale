@@ -20,40 +20,14 @@
     [(test form)    `(if ,test '() ,form)]
     [(test . forms) `(if ,test '() (begin ,@forms))]))
 
-(define-macro and
-  (lambda
-    [() #t]
-    [(clause) clause]
-    [clauses
-      `(let [and# ,(clauses 0)]
-        (if and#
-            (and ,@(rest clauses))
-            and#))]))
-
-(define-macro (!and . clauses)
-  `(not (and ,@clauses)))
-
-(define-macro or
-  (lambda
-    [() '()]
-    [(clause) clause]
-    [clauses
-      `(let [or# ,(clauses 0)]
-        (if or#
-            or#
-            (or ,@(rest clauses))))]))
-
-(define-macro (!or . clauses)
-  `(not (or ,@clauses)))
-
 (define-macro cond
   (lambda
     [() '()]
     [clauses
       (let [clause (first clauses)]
         (assert-args
-          (is-vector clause)    "cond clauses must be vectors"
-          (= 2 (length clause)) "cond clauses must be paired")
+          (is-vector clause)    (str "cond clause must be a vector: " clause)
+          (= 2 (length clause)) (str "cond clause must be paired: " clause))
         (let ([test   (clause 0)]
               [branch (clause 1)])
           `(if ,test
@@ -77,8 +51,10 @@
               [clauses
                 (let [clause (first clauses)]
                   (assert-args
-                    (is-vector clause)    "case clauses must be vectors"
-                    (= 2 (length clause)) "case clauses must be paired")
+                    (is-vector clause)
+                      (str "case clause must be a vector: " clause)
+                    (= 2 (length clause))
+                      (str "case clause must be paired: " clause))
                   (let ([test   (clause 0)]
                         [branch (clause 1)]
                         [next   (rest clauses)])
@@ -95,8 +71,10 @@
     [(binding then) `(if-let ,binding ,then '())]
     [(binding then else)
       (assert-args
-        (is-vector binding)    "binding vector must be supplied"
-        (= 2 (length binding)) "binding vector must contain 2 elements")
+        (is-vector binding)
+          (str "binding vector must be supplied: " binding)
+        (= 2 (length binding))
+          (str "binding vector must be paired: " binding))
       (let ([sym  (binding 0)]
             [test (binding 1)])
         `(let [,sym ,test]

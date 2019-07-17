@@ -126,8 +126,8 @@ func TestForEachLoopEval(t *testing.T) {
 			   [close (:close ch)]
 			   [seq (:seq ch)])
 			(go
-				(for-each [i (range 1 5 1)
-				           j (range 1 10 2)]
+				(for-each ([i (range 1 5 1)]
+				           [j (range 1 10 2)])
 					(emit (* i j)))
 				(close))
 			(reduce (lambda (x y) (+ x y)) seq))

@@ -39,20 +39,19 @@ func TestCondEval(t *testing.T) {
 func TestBadCond(t *testing.T) {
 	as := assert.New(t)
 
-	pairErr := errors.New("cond clauses must be paired")
-	vecErr := errors.New("cond clauses must be vectors")
-
 	as.PanicWith(`
 		(cond
 			[#t "hello"]
 			[99])
-	`, pairErr)
+	`, errors.New("cond clause must be paired: [99]"))
 
-	as.PanicWith(`(cond 99)`, vecErr)
+	as.PanicWith(`
+		(cond 99)
+	`, errors.New("cond clause must be a vector: 99"))
 
 	as.PanicWith(`
 		(cond
 			#f "hello"
 			99)
-	`, vecErr)
+	`, errors.New("cond clause must be a vector: #f"))
 }

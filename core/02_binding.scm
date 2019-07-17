@@ -1,13 +1,32 @@
 ;;;; ale core: binding
 
+(define (make-bindings value)
+  (letrec ([is-binding-clause
+            (lambda (clause)
+              (and (is-vector clause)
+                   (= 2 (length clause))
+                   (is-local (clause 0))))]
+
+           [is-bindings
+            (lambda (value)
+              (or (is-binding-clause value)
+                  (and (is-list value)
+                       (or (is-empty value)
+                           (and (is-binding-clause (first value))
+                                (is-bindings (rest value)))))))])
+    (assert-args
+      (is-bindings value) (str "bindings are malformed: " value))
+    (if (is-vector value)
+        (list value)
+        value)))
+
 (define-macro (let* bindings . body)
-  (assert-args
-    (is-list bindings) "let* bindings must be a list")
-  (let ([binding (first bindings)]
-        [next    (rest bindings)])
-    (let ([name  (binding 0)]
-          [value (binding 1)])
-      (if (is-empty next)
-          `(let [,name ,value] ,@body)
-          `(let [,name ,value]
-             (let* ,next ,@body))))))
+  (let [b (make-bindings bindings)]
+    (let ([binding (first b)]
+          [next    (rest b)])
+      (let ([name  (binding 0)]
+            [value (binding 1)])
+        (if (is-empty next)
+            `(let [,name ,value] ,@body)
+            `(let [,name ,value]
+               (let* ,next ,@body)))))))
