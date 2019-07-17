@@ -12,8 +12,9 @@ import (
 
 // Error messages
 const (
-	UnpairedBindings = "bindings must be paired"
-	NameAlreadyBound = "name is already bound in local scope: %s"
+	UnpairedBindings    = "binding must be a paired vector"
+	NameAlreadyBound    = "name is already bound in local scope: %s"
+	UnexpectedLetSyntax = "unexpected binding syntax: %s"
 )
 
 type (
@@ -84,26 +85,37 @@ func LetMutual(e encoder.Type, args ...data.Value) {
 
 func parseLet(args ...data.Value) (letBindings, data.Vector) {
 	arity.AssertMinimum(2, len(args))
-	b := args[0].(data.Vector)
-	lb := len(b)
-	if lb%2 != 0 {
-		panic(fmt.Errorf(UnpairedBindings))
-	}
-	names := uniqueNames{}
-	bindings := letBindings{}
-	for i := 0; i < lb; i += 2 {
-		name := b[i].(data.LocalSymbol).Name()
-		names.see(name)
-		value := b[i+1]
-		bindings = append(bindings, newLetBinding(name, value))
-	}
+	bindings := parseLetBindings(args[0])
 	return bindings, args[1:]
 }
 
-func newLetBinding(name data.Name, value data.Value) *letBinding {
+func parseLetBindings(v data.Value) letBindings {
+	switch typed := v.(type) {
+	case data.List:
+		names := uniqueNames{}
+		res := letBindings{}
+		for f, r, ok := typed.Split(); ok; f, r, ok = r.Split() {
+			b := parseLetBinding(f.(data.Vector))
+			names.see(b.name)
+			res = append(res, b)
+		}
+		return res
+	case data.Vector:
+		return letBindings{
+			parseLetBinding(typed),
+		}
+	default:
+		panic(fmt.Errorf(UnexpectedLetSyntax, v))
+	}
+}
+
+func parseLetBinding(b data.Vector) *letBinding {
+	if len(b) != 2 {
+		panic(fmt.Errorf(UnpairedBindings))
+	}
 	return &letBinding{
-		name:  name,
-		value: value,
+		name:  b[0].(data.LocalSymbol).Name(),
+		value: b[1],
 	}
 }
 

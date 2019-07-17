@@ -33,9 +33,9 @@
         (fn try-parse (clauses)
           (unless (seq? clauses)
                   {:block '() :catch '() :finally []}
-                  (let* [f (first clauses)
-                         r (rest clauses)
-                         p (try-parse r)]
+                  (let* ([f (first clauses)]
+                         [r (rest clauses)]
+                         [p (try-parse r)])
                     (cond
                       [(is-catch f p)   (try-prepend p :catch f)]
                       [(is-finally f p) (try-append p :finally f)]
@@ -43,18 +43,18 @@
                       [:else            (raise "malformed try-catch-finally")]))))
 
         (fn try-catch-predicate (pred err-sym)
-          (let* [l (thread-to-list pred)
-                 f (first l)
-                 r (rest l)]
+          (let* ([l (thread-to-list pred)]
+                 [f (first l)]
+                 [r (rest l)])
             (cons f (cons err-sym r))))
 
         (fn try-catch-branch (clauses err-sym)
           (assert-args
             (seq? clauses) "catch branch not paired")
           (lazy-seq
-            (let* [clause (first clauses)
-                   var    ((clause 1) 0)
-                   expr   (rest (rest clause))]
+            (let* ([clause (first clauses)]
+                   [var    ((clause 1) 0)]
+                   [expr   (rest (rest clause))])
               (cons (list 'ale/let
                           [var err-sym]
                           [#f (cons 'ale/do expr)])
@@ -63,8 +63,8 @@
         (fn try-catch-clauses (clauses err-sym)
           (lazy-seq
             (when (seq clauses)
-              (let* [clause (first clauses)
-                     pred   ((clause 1) 1)]
+              (let* ([clause (first clauses)]
+                     [pred   ((clause 1) 1)])
                 [(try-catch-predicate pred err-sym)
                  (try-catch-branch clauses err-sym)]))))
 
@@ -79,21 +79,21 @@
                  [:else [#t ,err]]))))
 
         (fn try-catch-finally (parsed)
-          (let [block   (:block parsed)
-                recover (:catch parsed)
-                cleanup (:finally parsed)]
+          (let ([block   (:block parsed)]
+                [recover (:catch parsed)]
+                [cleanup (:finally parsed)])
             (cond
               [(seq? cleanup)
-               (let [first# (rest (first cleanup))
-                     rest#  (conj parsed [:finally (rest cleanup)])]
+               (let ([first# (rest (first cleanup))]
+                     [rest#  (conj parsed [:finally (rest cleanup)])])
                  `(defer
                     (lambda () ,(try-catch-finally rest#))
                     (lambda () ,@first#)))]
 
               [(seq? recover)
-               `(let [rec# (recover ,(try-body block) ,(try-catch recover))
-                      err# (rec# 0)
-                      res# (rec# 1)]
+               `(let ([rec# (recover ,(try-body block) ,(try-catch recover))]
+                      [err# (rec# 0)]
+                      [res# (rec# 1)])
                   (if err# (raise res#) res#))]
 
               [(seq? block) `(begin ,@block)]

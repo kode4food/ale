@@ -17,9 +17,9 @@
       (raise "attempt to force a non-promise")))
 
 (define-macro (generate . body)
-  `(let* [chan#  (chan)
-          close# (:close chan#)
-          emit   (:emit chan#)]
+  `(let* ([chan#  (chan)]
+          [close# (:close chan#)]
+          [emit   (:emit chan#)])
      (go
        (let [result# (begin ,@body)]
          (close#)
@@ -32,9 +32,9 @@
   [(func mbox-size)
     (spawn func mbox-size no-op)]
   [(func mbox-size monitor)
-    (let* [channel (chan mbox-size)
-           mailbox (:seq channel)
-           sender  (:emit channel)]
+    (let* ([channel (chan mbox-size)]
+           [mailbox (:seq channel)]
+           [sender  (:emit channel)])
       (go
         (recover (lambda () (func mailbox))
                  monitor))

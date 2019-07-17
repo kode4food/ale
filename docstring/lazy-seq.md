@@ -10,7 +10,7 @@ tags: ["sequence"]
 
 ~~~scheme
 (define (fib-seq)
-  (let [fib (fn fib[a b]
+  (let [fib (fn fib (a b)
               (lazy-seq (cons a (fib b (+ a b)))))]
     (fib 0 1)))
 

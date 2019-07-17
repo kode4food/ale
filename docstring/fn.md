@@ -3,7 +3,7 @@ title: "fn"
 date: 2019-04-06T12:19:22+02:00
 description: "creates an anonymous function"
 names: ["fn"]
-usage: "(fn name? [args] form*)"
+usage: "(fn name? (args) form*)"
 tags: ["function"]
 ---
 Will create an anonymous function that may be passed around in a first-class manner.
@@ -13,7 +13,7 @@ Will create an anonymous function that may be passed around in a first-class man
 ~~~scheme
 (define double
   (let [mul 2]
-    (fn "doubles values" [x] (* x mul))))
+    (fn "doubles values" (x) (* x mul))))
 
 (to-vector
   (map double '(1 2 3 4 5 6)))

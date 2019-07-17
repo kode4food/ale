@@ -78,8 +78,8 @@
                (nth coll (dec (length coll)))
                prev))
          (if (seq coll)
-             (let [f (first coll)
-                   r (rest coll)]
+             (let ([f (first coll)]
+                   [r (rest coll)])
                (last-inner r f))
              prev)))
     coll '()))

@@ -3,17 +3,17 @@
 (define-macro (letfn bindings . body)
   ((fn parse-bindings (out in)
      (if (seq in)
-       (let* [fnList (first in)
-              fnSym  (first fnList)
-              fnName (first (rest fnList))
-              fnRest (rest (rest fnList))]
+       (let* ([fnList (first in)]
+              [fnSym  (first fnList)]
+              [fnName (first (rest fnList))]
+              [fnRest (rest (rest fnList))])
          (assert-args
            (and (is-list fnList)
                 (or (eq fnSym 'fn) (eq fnSym 'ale/fn))
                 (is-local fnName))
            "bindings must contain named functions")
-         (parse-bindings (append (append out fnName) fnList) (rest in)))
-       `(letrec ,out ,@body)))
+         (parse-bindings (append out [fnName fnList]) (rest in)))
+       `(letrec ,(to-list out) ,@body)))
    [] bindings))
 
 (defn partial
@@ -29,15 +29,15 @@
     [() identity]
     [(func) func]
     [(func . funcs)
-      (let* [args        (gensym "args")
-            inner       (list 'apply func args)
-            first-outer (first funcs)
-            rest-outer  (rest funcs)]
+      (let* ([args        (gensym "args")]
+             [inner       (list 'apply func args)]
+             [first-outer (first funcs)]
+             [rest-outer  (rest funcs)])
         (letfn [(fn outer (func args rest-funcs)
                   (if (seq rest-funcs)
                       (outer (first rest-funcs)
-                            (list func args)
-                            (rest rest-funcs))
+                             (list func args)
+                             (rest rest-funcs))
                       (list func args)))]
           `(lambda ,args
             ,(outer first-outer inner rest-outer))))]))

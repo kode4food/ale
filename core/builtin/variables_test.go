@@ -24,29 +24,33 @@ func TestDefinitionsEval(t *testing.T) {
 	`, S("local"))
 }
 
-func TestLetBindingsEval(t *testing.T) {
+func TestLetBindingErrors(t *testing.T) {
 	as := assert.New(t)
 	as.PanicWith(`
 		(let 99 "hello")
-	`, typeErr("data.Integer", "data.Vector"))
+	`, fmt.Errorf(special.UnexpectedLetSyntax, "99"))
 
 	as.PanicWith(`
 		(let [a blah b] "hello")
 	`, fmt.Errorf(special.UnpairedBindings))
+
+	as.PanicWith(`
+		(let ((a blah)) "hello")
+	`, typeErr("*data.list", "data.Vector"))
 }
 
 func TestMutualBindingsEval(t *testing.T) {
 	as := assert.New(t)
 
 	as.EvalTo(`
-		(letrec [
+		(letrec ([
 			is-even?
 			(lambda (n) (or (= n 0)
-			                (is-odd? (dec n))))
+			                (is-odd? (dec n))))]
 
-			is-odd?
+			[is-odd?
 			(lambda (n) (and (not (= n 0))
-			                 (is-even? (dec n))))]
+			                 (is-even? (dec n))))])
 		(is-even? 13))
 	`, data.False)
 }

@@ -54,8 +54,8 @@
         (assert-args
           (is-vector clause)    "cond clauses must be vectors"
           (= 2 (length clause)) "cond clauses must be paired")
-        (let [test   (clause 0)
-              branch (clause 1)]
+        (let ([test   (clause 0)]
+              [branch (clause 1)])
           `(if ,test
                ,branch
                (cond ,@(rest clauses)))))]))
@@ -67,26 +67,26 @@
           '()))
 
 (define-macro (case expr . cases)
-  (letrec [val       (gensym "val")
-           pred-list (lambda (l) `(or ,@(map! pred l)))
-           pred      (lambda (x) `(eq ,val ,x))
+  (letrec ([val       (gensym "val")]
+           [pred-list (lambda (l) `(or ,@(map! pred l)))]
+           [pred      (lambda (x) `(eq ,val ,x))]
 
-           case*
-           (lambda
-             [() '(raise "no cases could be matched")]
-             [clauses
-               (let [clause (first clauses)]
-                 (assert-args
-                   (is-vector clause)    "case clauses must be vectors"
-                   (= 2 (length clause)) "case clauses must be paired")
-                 (let [test   (clause 0)
-                       branch (clause 1)
-                       next   (rest clauses)]
-                   `(if ,(if (is-list test)
-                             (pred-list test)
-                             (pred test))
-                        ,branch
-                        ,(apply case* next))))])]
+           [case*
+            (lambda
+              [() '(raise "no cases could be matched")]
+              [clauses
+                (let [clause (first clauses)]
+                  (assert-args
+                    (is-vector clause)    "case clauses must be vectors"
+                    (= 2 (length clause)) "case clauses must be paired")
+                  (let ([test   (clause 0)]
+                        [branch (clause 1)]
+                        [next   (rest clauses)])
+                    `(if ,(if (is-list test)
+                              (pred-list test)
+                              (pred test))
+                          ,branch
+                          ,(apply case* next))))])])
     `(let [,val ,expr]
         ,(apply case* cases))))
 
@@ -97,8 +97,8 @@
       (assert-args
         (is-vector binding)    "binding vector must be supplied"
         (= 2 (length binding)) "binding vector must contain 2 elements")
-      (let [sym  (binding 0)
-            test (binding 1)]
+      (let ([sym  (binding 0)]
+            [test (binding 1)])
         `(let [,sym ,test]
               (if ,sym ,then ,else)))]))
 

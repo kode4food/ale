@@ -2,11 +2,12 @@
 
 (define-macro (let* bindings . body)
   (assert-args
-    (is-vector bindings)        "let* bindings must be a vector"
-    (is-even (length bindings)) "let* bindings must be paired")
-  (let [name  (bindings 0)
-        value (bindings 1)]
-    (if (> (length bindings) 2)
-        `(let [,name ,value]
-           (let* ,(rest (rest bindings)) ,@body))
-        `(let [,name ,value] ,@body))))
+    (is-list bindings) "let* bindings must be a list")
+  (let ([binding (first bindings)]
+        [next    (rest bindings)])
+    (let ([name  (binding 0)]
+          [value (binding 1)])
+      (if (is-empty next)
+          `(let [,name ,value] ,@body)
+          `(let [,name ,value]
+             (let* ,next ,@body))))))

@@ -12,8 +12,8 @@
              (lambda (colls head)
                (if (is-empty colls)
                    (apply list head)
-                   (let [f (first colls)
-                         r (rest colls)]
+                   (let ([f (first colls)]
+                         [r (rest colls)])
                      (if (is-empty f)
                          (concat-inner r head)
                          (concat-inner (cons (rest f) r)
@@ -39,10 +39,11 @@
          (raise ,(clauses 1)))])
 
 (defmacro define-macro body
-  (let [f (first body)
-        r (rest body)]
+  (let ([f (first body)]
+        [r (rest body)])
     (if (is-pair f)
-        (let [name (car f) args (cdr f)]
+        (let ([name (car f)]
+              [args (cdr f)])
           `(defmacro ,name ,args ,@r))
         `(def ,f (macro ,@r)))))
 
@@ -55,10 +56,11 @@
   `(def ,name (fn ,name ,@forms)))
 
 (define-macro (define . body)
-  (let [f (first body)
-        r (rest body)]
+  (let ([f (first body)]
+        [r (rest body)])
     (if (is-pair f)
-        (let [name (car f) args (cdr f)]
+        (let ([name (car f)]
+              [args (cdr f)])
           `(defn ,name ,args ,@r))
         `(def ,@body))))
 

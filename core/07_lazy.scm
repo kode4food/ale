@@ -70,8 +70,8 @@
     ((fn map-parallel (colls)
        (lazy-seq
          (when (apply true? (map !empty? colls))
-               (let [f (to-vector (map first colls))
-                     r (map rest colls)]
+               (let ([f (to-vector (map first colls))]
+                     [r (map rest colls)])
                  (cons (apply func f) (map-parallel r))))))
       (cons coll colls))])
 
@@ -79,8 +79,8 @@
   (lazy-seq
     ((fn filter-inner (coll)
        (when (seq coll)
-             (let [f (first coll)
-                   r (rest coll)]
+             (let ([f (first coll)]
+                   [r (rest coll)])
                (if (func f)
                    (cons f (filter func r))
                    (filter-inner r)))))
@@ -93,8 +93,8 @@
   ((fn concat-inner (colls)
      (lazy-seq
        (when (seq colls)
-             (let [f (first colls)
-                   r (rest colls)]
+             (let ([f (first colls)]
+                   [r (rest colls)])
                (if (seq f)
                    (cons (first f)
                          (concat-inner (cons (rest f) r)))
@@ -112,19 +112,19 @@
     (vector? seq-exprs)        "for bindings must be a vector"
     (even? (length seq-exprs)) "for bindings must be paired"
     (!empty? seq-exprs)        "at least one for binding is required")
-  (let [sym  (seq-exprs 0)
-        expr (seq-exprs 1)
-        next (rest (rest seq-exprs))]
+  (let ([sym  (seq-exprs 0)]
+        [expr (seq-exprs 1)]
+        [next (rest (rest seq-exprs))])
     (if (= (length seq-exprs) 2)
         `(map (lambda (,sym) ,@body) (seq! ,expr))
         `(mapcat (lambda (,sym) (for ,next ,@body)) (seq! ,expr)))))
 
 (define-macro (cartesian-product . colls)
-  (let* [sym-gen  (lambda (x) (gensym (str "cp" x)))
-         let-syms (take (length colls) (map sym-gen (range)))
-         let-vals (zip let-syms colls)
-         let-bind (to-vector (apply concat let-vals))
-         for-syms (take (length colls) (map sym-gen (range)))
-         for-vals (zip for-syms let-syms)
-         for-bind (to-vector (apply concat for-vals))]
+  (let* ([sym-gen  (lambda (x) (gensym (str "cp" x)))]
+         [let-syms (take (length colls) (map sym-gen (range)))]
+         [let-vals (zip let-syms colls)]
+         [let-bind (to-vector (apply concat let-vals))]
+         [for-syms (take (length colls) (map sym-gen (range)))]
+         [for-vals (zip for-syms let-syms)]
+         [for-bind (to-vector (apply concat for-vals))])
     `(let ,let-bind (for ,for-bind (list ,@for-syms)))))
