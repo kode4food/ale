@@ -122,8 +122,8 @@
 (define-macro (cartesian-product . colls)
   (let* ([sym-gen  (lambda (x) (gensym (str "cp" x)))]
          [let-syms (take (length colls) (map sym-gen (range)))]
-         [let-vals (zip let-syms colls)]
-         [let-bind (to-vector (apply concat let-vals))]
+         [let-vals (map to-vector (zip let-syms colls))]
+         [let-bind (to-list let-vals)]
          [for-syms (take (length colls) (map sym-gen (range)))]
          [for-vals (zip for-syms let-syms)]
          [for-bind (to-vector (apply concat for-vals))])
