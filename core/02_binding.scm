@@ -1,19 +1,18 @@
 ;;;; ale core: binding
 
-(define (make-bindings value)
-  (letrec ([is-binding-clause
-            (lambda (clause)
-              (and (is-vector clause)
-                   (= 2 (length clause))
-                   (is-local (clause 0))))]
+(define (is-binding-clause clause)
+  (and (is-vector clause)
+       (= 2 (length clause))
+       (is-local (clause 0))))
 
-           [is-bindings
-            (lambda (value)
-              (or (is-binding-clause value)
-                  (and (is-list value)
-                       (or (is-empty value)
-                           (and (is-binding-clause (first value))
-                                (is-bindings (rest value)))))))])
+(define (make-bindings value)
+  (letrec [is-bindings
+           (lambda (value)
+             (or (is-binding-clause value)
+                 (and (is-list value)
+                      (or (is-empty value)
+                          (and (is-binding-clause (first value))
+                               (is-bindings (rest value)))))))]
     (assert-args
       (is-bindings value) (str "bindings are malformed: " value))
     (if (is-vector value)

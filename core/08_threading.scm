@@ -45,13 +45,18 @@
            (when-not (null? val#)
                      (some->> (,f ,@r val#) ,@(rest forms)))))]))
 
-(define-macro as->
-  (lambda
-    [(value name) value]
-    [(value name . forms)
-      (let [l (thread-to-list (first forms))]
+(define-macro (as-> binding . forms)
+  (assert-args
+    (is-binding-clause binding) "binding clause must be a paired vector"
+    (!empty? forms)             "at least one threaded form is required")
+  (let ([step  (thread-to-list (first forms))]
+        [next  (rest forms)]
+        [name  (binding 0)]
+        [value (binding 1)])
+    (if (empty? next)
+        `(let [,name ,value] ,step)
         `(let [,name ,value]
-          (as-> ,l ,name ,@(rest forms))))]))
+           (as-> [,name ,step] ,@next)))))
 
 (define (make-cond-clause threader)
   (lambda (clause)
