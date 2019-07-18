@@ -53,26 +53,25 @@
         `(let [,name ,value]
           (as-> ,l ,name ,@(rest forms))))]))
 
-(define (make-cond-clause sym)
+(define (make-cond-clause threader)
   (lambda (clause)
-    (let ([pred (nth clause 0)]
-          [form (nth clause 1)])
-      `((lambda (val) (if ,pred (,sym val ,form) val))))))
+    (assert-args
+      (vector? clause)      "clause must be a vector"
+      (= 2 (length clause)) "clause must be paired")
+    (let ([pred (clause 0)]
+          [form (clause 1)])
+      `((lambda (val) (if ,pred (,threader val ,form) val))))))
 
 (define-macro cond->
   (lambda
     [(value) value]
     [(value . clauses)
-      (assert-args
-        (even? (length clauses)) "clauses must be paired")
       `(-> ,value
-           ,@(map (make-cond-clause ->) (partition 2 clauses)))]))
+           ,@(map (make-cond-clause '->) clauses))]))
 
 (define-macro cond->>
   (lambda
     [(value) value]
     [(value . clauses)
-      (assert-args
-        (even? (length clauses)) "clauses must be paired")
       `(-> ,value
-           ,@(map (make-cond-clause ->>) (partition 2 clauses)))]))
+           ,@(map (make-cond-clause '->>) clauses))]))
