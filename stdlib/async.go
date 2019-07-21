@@ -45,11 +45,13 @@ type (
 		ok     bool
 	}
 
+	promiseStatus int
+
 	promise struct {
 		once     Do
 		resolver data.Call
-		value    data.Value
-		resolved bool
+		result   interface{}
+		status   promiseStatus
 	}
 )
 
@@ -57,6 +59,12 @@ const (
 	channelReady uint32 = iota
 	channelCloseRequested
 	channelClosed
+)
+
+const (
+	promisePending promiseStatus = iota
+	promiseResolved
+	promiseFailed
 )
 
 var (
@@ -201,17 +209,27 @@ func NewPromise(resolver data.Call) Promise {
 	return &promise{
 		once:     Once(),
 		resolver: resolver,
+		status:   promisePending,
 	}
 }
 
 func (p *promise) Caller() data.Call {
 	return func(args ...data.Value) data.Value {
 		p.once(func() {
-			// TODO: re-raise panics
-			p.resolved = true
-			p.value = p.resolver()
+			defer func() {
+				if rec := recover(); rec != nil {
+					p.result = rec
+					p.status = promiseFailed
+				}
+			}()
+			p.result = p.resolver()
+			p.status = promiseResolved
 		})
-		return p.value
+
+		if p.status == promiseFailed {
+			panic(p.result)
+		}
+		return p.result.(data.Value)
 	}
 }
 
@@ -224,7 +242,7 @@ func (p *promise) CheckArity(c int) error {
 }
 
 func (p *promise) IsResolved() bool {
-	return p.resolved
+	return p.status != promisePending
 }
 
 func (p *promise) Type() data.Name {
