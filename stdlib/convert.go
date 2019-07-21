@@ -28,7 +28,7 @@ func uncountedToList(s data.Sequence) data.List {
 	return data.NewList(uncountedToValues(s)...)
 }
 
-// SequenceToValues takes any sequence and converts it to a result array
+// SequenceToValues takes any sequence and converts it to a value array
 func SequenceToValues(s data.Sequence) data.Values {
 	switch typed := s.(type) {
 	case data.Vector:
