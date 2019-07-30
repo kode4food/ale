@@ -4,8 +4,8 @@ import (
 	"regexp"
 	"strings"
 
-	"gitlab.com/kode4food/ale/data"
-	"gitlab.com/kode4food/ale/read"
+	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/read"
 )
 
 var keyValue = regexp.MustCompile(`^([^:]+):\s*(.*)$`)

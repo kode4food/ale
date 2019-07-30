@@ -3,7 +3,7 @@ package analysis
 import (
 	"fmt"
 
-	"gitlab.com/kode4food/ale/runtime/isa"
+	"github.com/kode4food/ale/runtime/isa"
 )
 
 func verifyJumps(code isa.Instructions) {

@@ -3,8 +3,8 @@ package isa_test
 import (
 	"testing"
 
-	"gitlab.com/kode4food/ale/internal/assert"
-	"gitlab.com/kode4food/ale/runtime/isa"
+	"github.com/kode4food/ale/internal/assert"
+	"github.com/kode4food/ale/runtime/isa"
 )
 
 func TestEffects(t *testing.T) {

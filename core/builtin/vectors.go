@@ -1,6 +1,6 @@
 package builtin
 
-import "gitlab.com/kode4food/ale/data"
+import "github.com/kode4food/ale/data"
 
 // Vector creates a new vector
 func Vector(args ...data.Value) data.Value {

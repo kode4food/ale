@@ -3,12 +3,12 @@ package bootstrap
 import (
 	"os"
 
-	"gitlab.com/kode4food/ale/compiler/encoder"
-	"gitlab.com/kode4food/ale/core/builtin"
-	"gitlab.com/kode4food/ale/data"
-	"gitlab.com/kode4food/ale/macro"
-	"gitlab.com/kode4food/ale/namespace"
-	"gitlab.com/kode4food/ale/stdlib"
+	"github.com/kode4food/ale/compiler/encoder"
+	"github.com/kode4food/ale/core/builtin"
+	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/macro"
+	"github.com/kode4food/ale/namespace"
+	"github.com/kode4food/ale/stdlib"
 )
 
 type (

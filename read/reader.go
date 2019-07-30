@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"regexp"
 
-	"gitlab.com/kode4food/ale/data"
-	"gitlab.com/kode4food/ale/namespace"
+	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/namespace"
 )
 
 // reader is a stateful iteration interface for a token stream

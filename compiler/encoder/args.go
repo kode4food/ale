@@ -1,8 +1,8 @@
 package encoder
 
 import (
-	"gitlab.com/kode4food/ale/data"
-	"gitlab.com/kode4food/ale/runtime/isa"
+	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/runtime/isa"
 )
 
 type argsStack []IndexedCells

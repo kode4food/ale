@@ -1,11 +1,11 @@
 package vm
 
 import (
-	"gitlab.com/kode4food/ale/compiler/encoder"
-	"gitlab.com/kode4food/ale/compiler/ir/optimize"
-	"gitlab.com/kode4food/ale/data"
-	"gitlab.com/kode4food/ale/namespace"
-	"gitlab.com/kode4food/ale/runtime/isa"
+	"github.com/kode4food/ale/compiler/encoder"
+	"github.com/kode4food/ale/compiler/ir/optimize"
+	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/namespace"
+	"github.com/kode4food/ale/runtime/isa"
 )
 
 // Lambda encapsulates the initial environment of a virtual machine

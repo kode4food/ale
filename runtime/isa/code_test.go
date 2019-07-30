@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"testing"
 
-	"gitlab.com/kode4food/ale/data"
-	"gitlab.com/kode4food/ale/internal/assert"
-	"gitlab.com/kode4food/ale/runtime/isa"
+	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/internal/assert"
+	"github.com/kode4food/ale/runtime/isa"
 )
 
 func TestCoders(t *testing.T) {

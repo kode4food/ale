@@ -1,10 +1,10 @@
 package encoder
 
 import (
-	"gitlab.com/kode4food/ale/compiler/ir/analysis"
-	"gitlab.com/kode4food/ale/data"
-	"gitlab.com/kode4food/ale/namespace"
-	"gitlab.com/kode4food/ale/runtime/isa"
+	"github.com/kode4food/ale/compiler/ir/analysis"
+	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/namespace"
+	"github.com/kode4food/ale/runtime/isa"
 )
 
 type (

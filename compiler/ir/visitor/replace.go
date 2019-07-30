@@ -1,6 +1,6 @@
 package visitor
 
-import "gitlab.com/kode4food/ale/runtime/isa"
+import "github.com/kode4food/ale/runtime/isa"
 
 type (
 	// Pattern is a replacement pattern for the visitor. The

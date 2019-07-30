@@ -1,6 +1,6 @@
 package stdlib
 
-import "gitlab.com/kode4food/ale/data"
+import "github.com/kode4food/ale/data"
 
 type (
 	// LazyResolver is used to resolve the elements of a lazy Sequence

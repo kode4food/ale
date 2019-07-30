@@ -3,12 +3,12 @@ package builtin_test
 import (
 	"testing"
 
-	"gitlab.com/kode4food/ale/core/bootstrap"
-	"gitlab.com/kode4food/ale/data"
-	"gitlab.com/kode4food/ale/eval"
-	"gitlab.com/kode4food/ale/internal/assert"
-	. "gitlab.com/kode4food/ale/internal/assert/helpers"
-	"gitlab.com/kode4food/ale/namespace"
+	"github.com/kode4food/ale/core/bootstrap"
+	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/eval"
+	"github.com/kode4food/ale/internal/assert"
+	. "github.com/kode4food/ale/internal/assert/helpers"
+	"github.com/kode4food/ale/namespace"
 )
 
 func TestQuoteEval(t *testing.T) {

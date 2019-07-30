@@ -1,8 +1,8 @@
 package generate
 
 import (
-	"gitlab.com/kode4food/ale/compiler/encoder"
-	"gitlab.com/kode4food/ale/runtime/isa"
+	"github.com/kode4food/ale/compiler/encoder"
+	"github.com/kode4food/ale/runtime/isa"
 )
 
 // Builder is a function that a composer (ex: Branch) will invoke

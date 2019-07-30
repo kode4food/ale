@@ -1,9 +1,9 @@
 package builtin
 
 import (
-	"gitlab.com/kode4food/ale/compiler/encoder"
-	"gitlab.com/kode4food/ale/data"
-	"gitlab.com/kode4food/ale/stdlib"
+	"github.com/kode4food/ale/compiler/encoder"
+	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/stdlib"
 )
 
 func getCall(v data.Value) data.Call {

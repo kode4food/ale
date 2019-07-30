@@ -5,7 +5,7 @@ import (
 	"regexp"
 	"time"
 
-	"gitlab.com/kode4food/ale/data"
+	"github.com/kode4food/ale/data"
 )
 
 var envPairRegex = regexp.MustCompile("^(?P<Key>[^=]+)=(?P<Value>.*)$")

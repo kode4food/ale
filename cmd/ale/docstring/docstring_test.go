@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"testing"
 
-	"gitlab.com/kode4food/ale/cmd/ale/docstring"
-	"gitlab.com/kode4food/ale/data"
-	"gitlab.com/kode4food/ale/internal/assert"
+	"github.com/kode4food/ale/cmd/ale/docstring"
+	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/internal/assert"
 )
 
 func TestDocString(t *testing.T) {

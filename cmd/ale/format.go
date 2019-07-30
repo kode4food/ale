@@ -6,8 +6,8 @@ import (
 	"regexp"
 	"strings"
 
-	"gitlab.com/kode4food/ale/cmd/ale/docstring"
-	"gitlab.com/kode4food/ale/data"
+	"github.com/kode4food/ale/cmd/ale/docstring"
+	"github.com/kode4food/ale/data"
 )
 
 // This is *not* a full-featured markdown formatter, or even a compliant

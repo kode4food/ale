@@ -3,7 +3,7 @@ package arity
 import (
 	"fmt"
 
-	"gitlab.com/kode4food/ale/data"
+	"github.com/kode4food/ale/data"
 )
 
 // Error messages

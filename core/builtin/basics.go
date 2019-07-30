@@ -3,9 +3,9 @@ package builtin
 import (
 	"errors"
 
-	"gitlab.com/kode4food/ale/data"
-	"gitlab.com/kode4food/ale/read"
-	"gitlab.com/kode4food/ale/stdlib"
+	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/read"
+	"github.com/kode4food/ale/stdlib"
 )
 
 // Raise will cause a panic

@@ -3,10 +3,10 @@ package main_test
 import (
 	"testing"
 
-	main "gitlab.com/kode4food/ale/cmd/ale"
-	"gitlab.com/kode4food/ale/cmd/ale/docstring"
-	"gitlab.com/kode4food/ale/data"
-	"gitlab.com/kode4food/ale/internal/assert"
+	main "github.com/kode4food/ale/cmd/ale"
+	"github.com/kode4food/ale/cmd/ale/docstring"
+	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/internal/assert"
 )
 
 func TestFormatMarkdown(t *testing.T) {

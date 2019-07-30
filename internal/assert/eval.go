@@ -1,10 +1,10 @@
 package assert
 
 import (
-	"gitlab.com/kode4food/ale/core/bootstrap"
-	"gitlab.com/kode4food/ale/data"
-	"gitlab.com/kode4food/ale/eval"
-	"gitlab.com/kode4food/ale/namespace"
+	"github.com/kode4food/ale/core/bootstrap"
+	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/eval"
+	"github.com/kode4food/ale/namespace"
 )
 
 var (

@@ -1,8 +1,8 @@
 package builtin
 
 import (
-	"gitlab.com/kode4food/ale/compiler"
-	"gitlab.com/kode4food/ale/data"
+	"github.com/kode4food/ale/compiler"
+	"github.com/kode4food/ale/data"
 )
 
 // IsIdentical returns whether or not the two values represent the same object

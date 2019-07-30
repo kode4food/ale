@@ -4,13 +4,13 @@ import (
 	"bytes"
 	"testing"
 
-	"gitlab.com/kode4food/ale/core/bootstrap"
-	"gitlab.com/kode4food/ale/core/builtin"
-	"gitlab.com/kode4food/ale/data"
-	"gitlab.com/kode4food/ale/eval"
-	"gitlab.com/kode4food/ale/internal/assert"
-	"gitlab.com/kode4food/ale/namespace"
-	"gitlab.com/kode4food/ale/stdlib"
+	"github.com/kode4food/ale/core/bootstrap"
+	"github.com/kode4food/ale/core/builtin"
+	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/eval"
+	"github.com/kode4food/ale/internal/assert"
+	"github.com/kode4food/ale/namespace"
+	"github.com/kode4food/ale/stdlib"
 )
 
 const stdoutName = "*out*"

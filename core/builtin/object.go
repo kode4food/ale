@@ -1,6 +1,6 @@
 package builtin
 
-import "gitlab.com/kode4food/ale/data"
+import "github.com/kode4food/ale/data"
 
 // Object creates a new object instance
 func Object(args ...data.Value) data.Value {

@@ -3,10 +3,10 @@ package generate
 import (
 	"fmt"
 
-	"gitlab.com/kode4food/ale/compiler/encoder"
-	"gitlab.com/kode4food/ale/data"
-	"gitlab.com/kode4food/ale/macro"
-	"gitlab.com/kode4food/ale/namespace"
+	"github.com/kode4food/ale/compiler/encoder"
+	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/macro"
+	"github.com/kode4food/ale/namespace"
 )
 
 // Error messages

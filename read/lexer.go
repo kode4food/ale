@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"regexp"
 
-	"gitlab.com/kode4food/ale/data"
-	"gitlab.com/kode4food/ale/stdlib"
+	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/stdlib"
 )
 
 // Error messages

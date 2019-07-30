@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"testing"
 
-	"gitlab.com/kode4food/ale/internal/assert"
-	. "gitlab.com/kode4food/ale/internal/assert/helpers"
+	"github.com/kode4food/ale/internal/assert"
+	. "github.com/kode4food/ale/internal/assert/helpers"
 )
 
 func TestTheStringTests(t *testing.T) {

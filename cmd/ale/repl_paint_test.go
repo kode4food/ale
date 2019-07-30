@@ -5,8 +5,8 @@ package main_test
 import (
 	"testing"
 
-	main "gitlab.com/kode4food/ale/cmd/ale"
-	"gitlab.com/kode4food/ale/internal/assert"
+	main "github.com/kode4food/ale/cmd/ale"
+	"github.com/kode4food/ale/internal/assert"
 )
 
 func TestREPLPaint(t *testing.T) {

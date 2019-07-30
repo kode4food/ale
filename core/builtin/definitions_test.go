@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"testing"
 
-	"gitlab.com/kode4food/ale/compiler/special"
-	"gitlab.com/kode4food/ale/internal/assert"
-	. "gitlab.com/kode4food/ale/internal/assert/helpers"
+	"github.com/kode4food/ale/compiler/special"
+	"github.com/kode4food/ale/internal/assert"
+	. "github.com/kode4food/ale/internal/assert/helpers"
 )
 
 func TestFunctionEval(t *testing.T) {

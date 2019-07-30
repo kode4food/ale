@@ -1,6 +1,6 @@
 package builtin
 
-import "gitlab.com/kode4food/ale/data"
+import "github.com/kode4food/ale/data"
 
 // Add returns the sum of the provided numbers
 func Add(args ...data.Value) data.Value {

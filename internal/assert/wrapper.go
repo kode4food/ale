@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"gitlab.com/kode4food/ale/data"
+	"github.com/kode4food/ale/data"
 )
 
 type (

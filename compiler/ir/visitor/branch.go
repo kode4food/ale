@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"strings"
 
-	"gitlab.com/kode4food/ale/runtime/isa"
+	"github.com/kode4food/ale/runtime/isa"
 )
 
 type (

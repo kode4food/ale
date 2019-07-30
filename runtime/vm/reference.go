@@ -3,7 +3,7 @@ package vm
 import (
 	"fmt"
 
-	"gitlab.com/kode4food/ale/data"
+	"github.com/kode4food/ale/data"
 )
 
 // Ref encapsulates a reference to a Value

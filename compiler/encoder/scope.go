@@ -1,6 +1,6 @@
 package encoder
 
-import "gitlab.com/kode4food/ale/data"
+import "github.com/kode4food/ale/data"
 
 // Scope describes the scope of a name
 type Scope int

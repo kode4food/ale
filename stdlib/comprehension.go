@@ -1,6 +1,6 @@
 package stdlib
 
-import "gitlab.com/kode4food/ale/data"
+import "github.com/kode4food/ale/data"
 
 // Filter creates a new filtered Sequence
 func Filter(s data.Sequence, filter data.Call) data.Sequence {

@@ -13,14 +13,14 @@ import (
 	"time"
 
 	"github.com/chzyer/readline"
-	"gitlab.com/kode4food/ale"
-	"gitlab.com/kode4food/ale/cmd/ale/docstring"
-	"gitlab.com/kode4food/ale/compiler/arity"
-	"gitlab.com/kode4food/ale/core/bootstrap"
-	"gitlab.com/kode4food/ale/data"
-	"gitlab.com/kode4food/ale/eval"
-	"gitlab.com/kode4food/ale/namespace"
-	"gitlab.com/kode4food/ale/read"
+	"github.com/kode4food/ale"
+	"github.com/kode4food/ale/cmd/ale/docstring"
+	"github.com/kode4food/ale/compiler/arity"
+	"github.com/kode4food/ale/core/bootstrap"
+	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/eval"
+	"github.com/kode4food/ale/namespace"
+	"github.com/kode4food/ale/read"
 )
 
 type (

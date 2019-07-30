@@ -3,7 +3,7 @@ package stdlib
 import (
 	"bytes"
 
-	"gitlab.com/kode4food/ale/data"
+	"github.com/kode4food/ale/data"
 )
 
 // SequenceToList takes any sequence and converts it to a List

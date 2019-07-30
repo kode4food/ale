@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"strings"
 
-	"gitlab.com/kode4food/ale/compiler/arity"
-	"gitlab.com/kode4food/ale/data"
-	"gitlab.com/kode4food/ale/namespace"
+	"github.com/kode4food/ale/compiler/arity"
+	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/namespace"
 )
 
 type syntaxEnv struct {

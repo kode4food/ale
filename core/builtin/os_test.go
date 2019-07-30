@@ -4,9 +4,9 @@ import (
 	"testing"
 	"time"
 
-	"gitlab.com/kode4food/ale/core/builtin"
-	"gitlab.com/kode4food/ale/data"
-	"gitlab.com/kode4food/ale/internal/assert"
+	"github.com/kode4food/ale/core/builtin"
+	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/internal/assert"
 )
 
 func TestCurrentTime(t *testing.T) {

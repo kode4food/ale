@@ -3,8 +3,8 @@ package data_test
 import (
 	"testing"
 
-	"gitlab.com/kode4food/ale/data"
-	"gitlab.com/kode4food/ale/internal/assert"
+	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/internal/assert"
 )
 
 func TestLocalSymbolEquality(t *testing.T) {

@@ -3,13 +3,13 @@ package generate
 import (
 	"fmt"
 
-	"gitlab.com/kode4food/ale/compiler"
-	"gitlab.com/kode4food/ale/compiler/encoder"
-	"gitlab.com/kode4food/ale/data"
-	"gitlab.com/kode4food/ale/namespace"
-	"gitlab.com/kode4food/ale/runtime/isa"
-	"gitlab.com/kode4food/ale/runtime/vm"
-	"gitlab.com/kode4food/ale/stdlib"
+	"github.com/kode4food/ale/compiler"
+	"github.com/kode4food/ale/compiler/encoder"
+	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/namespace"
+	"github.com/kode4food/ale/runtime/isa"
+	"github.com/kode4food/ale/runtime/vm"
+	"github.com/kode4food/ale/stdlib"
 )
 
 type (

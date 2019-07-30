@@ -1,11 +1,11 @@
 package special
 
 import (
-	"gitlab.com/kode4food/ale/compiler/arity"
-	"gitlab.com/kode4food/ale/compiler/encoder"
-	"gitlab.com/kode4food/ale/compiler/generate"
-	"gitlab.com/kode4food/ale/data"
-	"gitlab.com/kode4food/ale/runtime/isa"
+	"github.com/kode4food/ale/compiler/arity"
+	"github.com/kode4food/ale/compiler/encoder"
+	"github.com/kode4food/ale/compiler/generate"
+	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/runtime/isa"
 )
 
 // Declare encodes global forward-declarations

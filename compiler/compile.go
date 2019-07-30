@@ -1,6 +1,6 @@
 package compiler
 
-import "gitlab.com/kode4food/ale/data"
+import "github.com/kode4food/ale/data"
 
 // IsEvaluable returns whether or not the provided value is subject
 // to further evaluation

@@ -1,6 +1,6 @@
 package encoder
 
-import "gitlab.com/kode4food/ale/runtime/isa"
+import "github.com/kode4food/ale/runtime/isa"
 
 type (
 	// Label manages anchoring and referencing of labels

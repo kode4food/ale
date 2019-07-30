@@ -3,10 +3,10 @@ package stdlib_test
 import (
 	"testing"
 
-	"gitlab.com/kode4food/ale/data"
-	"gitlab.com/kode4food/ale/internal/assert"
-	. "gitlab.com/kode4food/ale/internal/assert/helpers"
-	"gitlab.com/kode4food/ale/stdlib"
+	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/internal/assert"
+	. "github.com/kode4food/ale/internal/assert/helpers"
+	"github.com/kode4food/ale/stdlib"
 )
 
 func TestLazySeq(t *testing.T) {

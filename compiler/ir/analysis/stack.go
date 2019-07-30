@@ -3,9 +3,9 @@ package analysis
 import (
 	"fmt"
 
-	"gitlab.com/kode4food/ale/compiler/ir/visitor"
-	"gitlab.com/kode4food/ale/internal/util"
-	"gitlab.com/kode4food/ale/runtime/isa"
+	"github.com/kode4food/ale/compiler/ir/visitor"
+	"github.com/kode4food/ale/internal/util"
+	"github.com/kode4food/ale/runtime/isa"
 )
 
 type stackSizes struct {

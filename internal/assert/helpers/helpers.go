@@ -1,6 +1,6 @@
 package helpers
 
-import "gitlab.com/kode4food/ale/data"
+import "github.com/kode4food/ale/data"
 
 // B constructs a Bool
 func B(value bool) data.Bool {

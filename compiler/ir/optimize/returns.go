@@ -1,8 +1,8 @@
 package optimize
 
 import (
-	"gitlab.com/kode4food/ale/compiler/ir/visitor"
-	"gitlab.com/kode4food/ale/runtime/isa"
+	"github.com/kode4food/ale/compiler/ir/visitor"
+	"github.com/kode4food/ale/runtime/isa"
 )
 
 type returnSplitter struct{}

@@ -1,7 +1,7 @@
 all: install
 
 install: build test
-	go install gitlab.com/kode4food/ale/cmd/ale
+	go install github.com/kode4food/ale/cmd/ale
 
 test: build
 	golint ./...
@@ -18,6 +18,6 @@ assets:
 		docstring/*.md core/*.scm
 
 deps:
-	go get -u gitlab.com/kode4food/go-snapshot
+	go get -u github.com/kode4food/go-snapshot
 	go get -u golang.org/x/tools/cmd/stringer
 	go get -u golang.org/x/lint/golint

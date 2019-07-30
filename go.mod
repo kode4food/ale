@@ -1,4 +1,4 @@
-module gitlab.com/kode4food/ale
+module github.com/kode4food/ale
 
 require (
 	github.com/chzyer/logex v1.1.10 // indirect

@@ -5,10 +5,10 @@ import (
 	"io/ioutil"
 	"os"
 
-	"gitlab.com/kode4food/ale/data"
-	"gitlab.com/kode4food/ale/eval"
-	"gitlab.com/kode4food/ale/namespace"
-	"gitlab.com/kode4food/ale/read"
+	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/eval"
+	"github.com/kode4food/ale/namespace"
+	"github.com/kode4food/ale/read"
 )
 
 const fileNotFound = "file not found: %s"

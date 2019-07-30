@@ -1,6 +1,6 @@
 package builtin
 
-import "gitlab.com/kode4food/ale/data"
+import "github.com/kode4food/ale/data"
 
 // Cons adds a value to the beginning of the provided Sequence
 func Cons(args ...data.Value) data.Value {

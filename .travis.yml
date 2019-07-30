@@ -7,7 +7,7 @@ go:
 before_install:
 
 install:
-  - GO111MODULE=off go get gitlab.com/kode4food/go-snapshot
+  - GO111MODULE=off go get github.com/kode4food/go-snapshot
   - GO111MODULE=off go get -u golang.org/x/tools/cmd/stringer
   - GO111MODULE=off go get -u golang.org/x/lint/golint
 

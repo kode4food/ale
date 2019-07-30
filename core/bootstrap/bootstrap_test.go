@@ -3,11 +3,11 @@ package bootstrap_test
 import (
 	"testing"
 
-	"gitlab.com/kode4food/ale/compiler/encoder"
-	"gitlab.com/kode4food/ale/core/bootstrap"
-	"gitlab.com/kode4food/ale/data"
-	"gitlab.com/kode4food/ale/internal/assert"
-	"gitlab.com/kode4food/ale/stdlib"
+	"github.com/kode4food/ale/compiler/encoder"
+	"github.com/kode4food/ale/core/bootstrap"
+	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/internal/assert"
+	"github.com/kode4food/ale/stdlib"
 )
 
 func TestDevNullManager(t *testing.T) {

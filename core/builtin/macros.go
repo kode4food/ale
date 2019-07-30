@@ -3,10 +3,10 @@ package builtin
 import (
 	"fmt"
 
-	"gitlab.com/kode4food/ale/data"
-	"gitlab.com/kode4food/ale/macro"
-	"gitlab.com/kode4food/ale/namespace"
-	"gitlab.com/kode4food/ale/runtime/vm"
+	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/macro"
+	"github.com/kode4food/ale/namespace"
+	"github.com/kode4food/ale/runtime/vm"
 )
 
 // Error messages

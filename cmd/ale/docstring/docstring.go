@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 
-	"gitlab.com/kode4food/ale/data"
-	"gitlab.com/kode4food/ale/internal/assets"
+	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/internal/assets"
 )
 
 // Error messages

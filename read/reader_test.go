@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"testing"
 
-	"gitlab.com/kode4food/ale/data"
-	"gitlab.com/kode4food/ale/internal/assert"
-	. "gitlab.com/kode4food/ale/internal/assert/helpers"
-	"gitlab.com/kode4food/ale/read"
+	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/internal/assert"
+	. "github.com/kode4food/ale/internal/assert/helpers"
+	"github.com/kode4food/ale/read"
 )
 
 func TestCreateReader(t *testing.T) {

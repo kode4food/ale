@@ -3,9 +3,9 @@ package bootstrap
 import (
 	"strings"
 
-	"gitlab.com/kode4food/ale/data"
-	"gitlab.com/kode4food/ale/eval"
-	"gitlab.com/kode4food/ale/internal/assets"
+	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/eval"
+	"github.com/kode4food/ale/internal/assets"
 )
 
 const prefix = "core/"

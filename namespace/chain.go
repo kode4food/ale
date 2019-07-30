@@ -1,6 +1,6 @@
 package namespace
 
-import "gitlab.com/kode4food/ale/data"
+import "github.com/kode4food/ale/data"
 
 type chainedNamespace struct {
 	child  Type

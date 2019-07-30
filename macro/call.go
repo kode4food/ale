@@ -1,8 +1,8 @@
 package macro
 
 import (
-	"gitlab.com/kode4food/ale/data"
-	"gitlab.com/kode4food/ale/namespace"
+	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/namespace"
 )
 
 // Call represents a macro's calling signature

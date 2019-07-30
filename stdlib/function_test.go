@@ -3,8 +3,8 @@ package stdlib_test
 import (
 	"testing"
 
-	"gitlab.com/kode4food/ale/internal/assert"
-	"gitlab.com/kode4food/ale/stdlib"
+	"github.com/kode4food/ale/internal/assert"
+	"github.com/kode4food/ale/stdlib"
 )
 
 func TestConditionals(t *testing.T) {

@@ -1,9 +1,9 @@
 package generate
 
 import (
-	"gitlab.com/kode4food/ale/compiler/encoder"
-	"gitlab.com/kode4food/ale/data"
-	"gitlab.com/kode4food/ale/runtime/isa"
+	"github.com/kode4food/ale/compiler/encoder"
+	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/runtime/isa"
 )
 
 // Literal encodes a literal (constant) value

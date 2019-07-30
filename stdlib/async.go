@@ -4,8 +4,8 @@ import (
 	"runtime"
 	"sync/atomic"
 
-	"gitlab.com/kode4food/ale/compiler/arity"
-	"gitlab.com/kode4food/ale/data"
+	"github.com/kode4food/ale/compiler/arity"
+	"github.com/kode4food/ale/data"
 )
 
 type (

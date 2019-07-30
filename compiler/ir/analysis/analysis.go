@@ -1,6 +1,6 @@
 package analysis
 
-import "gitlab.com/kode4food/ale/runtime/isa"
+import "github.com/kode4food/ale/runtime/isa"
 
 // Verify checks an ISA code stream for validity. Specifically it will
 // check that jumps do not target offsets outside of the instructions
