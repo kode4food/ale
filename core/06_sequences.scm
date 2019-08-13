@@ -20,14 +20,14 @@
   (apply vector (apply concat! colls)))
 
 (define (append* coll . values)
-  ((fn append-inner (coll values)
+  ((lambda-rec append-inner (coll values)
      (if (seq values)
          (append-inner (append coll (first values)) (rest values))
          coll))
     coll values))
 
 (define (cons* coll . values)
-  ((fn cons-inner (coll values)
+  ((lambda-rec cons-inner (coll values)
      (if (seq values)
          (cons-inner (cons (first values) coll) (rest values))
          coll))
@@ -39,7 +39,7 @@
       (apply cons* (cons coll values))))
 
 (define (length! coll)
-  ((fn length-inner (coll prev)
+  ((lambda-rec length-inner (coll prev)
      (if (counted? coll)
          (+ prev (length coll))
          (if (seq coll)
@@ -49,13 +49,13 @@
 
 (define nth!
   (let [scan
-        (fn scan (coll pos handle)
+        (lambda-rec scan (coll pos handle)
           (if (seq coll)
               (if (> pos 0)
                   (scan (rest coll) (dec pos) handle)
                   (first coll))
               (handle)))]
-    (fn nth!
+    (lambda-rec nth!
       [(coll pos)
         (if (indexed? coll)
             (nth coll pos)
@@ -71,7 +71,7 @@
           (nth coll (dec (length coll))))))
 
 (define (last! coll)
-  ((fn last-inner (coll prev)
+  ((lambda-rec last-inner (coll prev)
      (if (and (counted? coll) (indexed? coll))
          (let [s (length coll)]
            (if (> s 0)
@@ -84,9 +84,9 @@
              prev)))
     coll '()))
 
-(defn reduce
+(define-lambda reduce
   [(func init coll)
-    ((fn reduce-inner (init coll)
+    ((lambda-rec reduce-inner (init coll)
        (if (seq coll)
            (reduce-inner (func init (first coll)) (rest coll))
            init))

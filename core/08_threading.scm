@@ -6,44 +6,40 @@
           target))
 
 (define-macro ->
-  (lambda
-    [(value) value]
-    [(value . forms)
-      (let* ([l (thread-to-list (first forms))]
-             [f (first l)]
-             [r (rest l)])
-        `(-> (,f ,value ,@r) ,@(rest forms)))]))
+  [(value) value]
+  [(value . forms)
+    (let* ([l (thread-to-list (first forms))]
+            [f (first l)]
+            [r (rest l)])
+      `(-> (,f ,value ,@r) ,@(rest forms)))])
 
 (define-macro ->>
-  (lambda
-    [(value) value]
-    [(value . forms)
-      (let* ([l (thread-to-list (first forms))]
-             [f (first l)]
-             [r (rest l)])
-        `(->> (,f ,@r ,value) ,@(rest forms)))]))
+  [(value) value]
+  [(value . forms)
+    (let* ([l (thread-to-list (first forms))]
+            [f (first l)]
+            [r (rest l)])
+      `(->> (,f ,@r ,value) ,@(rest forms)))])
 
 (define-macro some->
-  (lambda
-    [(value) value]
-    [(value . forms)
-      (let* ([l (thread-to-list (first forms))]
-             [f (first l)]
-             [r (rest l)])
-        `(let [val# ,value]
-           (when-not (null? val#)
-                     (some-> (,f val# ,@r) ,@(rest forms)))))]))
+  [(value) value]
+  [(value . forms)
+    (let* ([l (thread-to-list (first forms))]
+            [f (first l)]
+            [r (rest l)])
+      `(let [val# ,value]
+          (when-not (null? val#)
+                    (some-> (,f val# ,@r) ,@(rest forms)))))])
 
 (define-macro some->>
-  (lambda
-    [(value) value]
-    [(value . forms)
-      (let* ([l (thread-to-list (first forms))]
-             [f (first l)]
-             [r (rest l)])
-        `(let [val# ,value]
-           (when-not (null? val#)
-                     (some->> (,f ,@r val#) ,@(rest forms)))))]))
+  [(value) value]
+  [(value . forms)
+    (let* ([l (thread-to-list (first forms))]
+            [f (first l)]
+            [r (rest l)])
+      `(let [val# ,value]
+          (when-not (null? val#)
+                    (some->> (,f ,@r val#) ,@(rest forms)))))])
 
 (define-macro (let-> binding . forms)
   (assert-args
@@ -68,15 +64,13 @@
       `((lambda (val) (if ,pred (,threader val ,form) val))))))
 
 (define-macro cond->
-  (lambda
-    [(value) value]
-    [(value . clauses)
-      `(-> ,value
-           ,@(map (make-cond-clause '->) clauses))]))
+  [(value) value]
+  [(value . clauses)
+    `(-> ,value
+          ,@(map (make-cond-clause '->) clauses))])
 
 (define-macro cond->>
-  (lambda
-    [(value) value]
-    [(value . clauses)
-      `(-> ,value
-           ,@(map (make-cond-clause '->>) clauses))]))
+  [(value) value]
+  [(value . clauses)
+    `(-> ,value
+          ,@(map (make-cond-clause '->>) clauses))])

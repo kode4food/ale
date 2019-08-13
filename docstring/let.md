@@ -12,7 +12,7 @@ Will create a new local scope, evaluate the provided expressions, and then bind 
 
 ~~~scheme
 (let ([x '(1 2 3 4)]
-      [y [5 6 7 8]])
+      [y [5 6 7 8] ])
   (concat x y))
 ~~~
 

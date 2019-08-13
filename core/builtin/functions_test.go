@@ -95,10 +95,10 @@ func TestBadLambdaEval(t *testing.T) {
 	as := assert.New(t)
 
 	eNum := fmt.Errorf(special.UnexpectedLambdaSyntax, "99")
-	as.PanicWith(`(fn 99 "hello")`, eNum)
+	as.PanicWith(`(lambda-rec 99 "hello")`, eNum)
 
 	eSym := fmt.Errorf(special.UnexpectedLambdaSyntax, "foo/bar")
-	as.PanicWith(`(fn foo/bar () "hello")`, eSym)
+	as.PanicWith(`(lambda-rec foo/bar () "hello")`, eSym)
 }
 
 func TestApplyEval(t *testing.T) {
@@ -106,7 +106,7 @@ func TestApplyEval(t *testing.T) {
 	as.EvalTo(`(apply + [1 2 3])`, F(6))
 	as.EvalTo(`
 		(apply
-			(fn add (x y z) (+ x y z))
+			(lambda-rec add (x y z) (+ x y z))
 			[1 2 3])
 	`, F(6))
 
@@ -137,7 +137,7 @@ func TestRestFunctionsEval(t *testing.T) {
 func TestTailCallEval(t *testing.T) {
 	as := assert.New(t)
 	as.EvalTo(`
-		(defn to-zero (x)
+		(define-lambda to-zero (x)
 			(cond
 				[(> x 1000) (to-zero (- x 1))]
 				[(> x 0)    (to-zero (- x 1))]

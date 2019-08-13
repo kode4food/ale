@@ -4,7 +4,7 @@
   `(lazy-seq* (lambda () ,@body)))
 
 (define (take count coll)
-  ((fn take-inner (count coll)
+  ((lambda-rec take-inner (count coll)
      (lazy-seq
        (if (and (> count 0) (!empty? coll))
            (cons (first coll) (take-inner (dec count) (rest coll)))
@@ -20,13 +20,13 @@
 
 (define (drop count coll)
   (lazy-seq
-    ((fn drop-inner (count coll)
+    ((lambda-rec drop-inner (count coll)
        (if (> count 0)
            (drop-inner (dec count) (rest coll))
            coll))
       count coll)))
 
-(defn partition
+(define-lambda partition
   [(count coll)
     (partition count count coll)]
 
@@ -36,7 +36,7 @@
             (cons (to-list (take count coll))
                   (partition count step (drop step coll)))))])
 
-(defn range
+(define-lambda range
   [()
     (range 0 '() 1)]
 
@@ -57,9 +57,9 @@
           (cons first (lazy-seq (range (+ first step) last step)))
           []))])
 
-(defn map
+(define-lambda map
   [(func coll)
-    ((fn map-single (coll)
+    ((lambda-rec map-single (coll)
        (lazy-seq
          (when (seq coll)
                (cons (func (first coll))
@@ -67,7 +67,7 @@
       coll)]
 
   [(func coll . colls)
-    ((fn map-parallel (colls)
+    ((lambda-rec map-parallel (colls)
        (lazy-seq
          (when (apply true? (map !empty? colls))
                (let ([f (to-vector (map first colls))]
@@ -77,7 +77,7 @@
 
 (define (filter func coll)
   (lazy-seq
-    ((fn filter-inner (coll)
+    ((lambda-rec filter-inner (coll)
        (when (seq coll)
              (let ([f (first coll)]
                    [r (rest coll)])
@@ -90,7 +90,7 @@
   `(last! (for ,seq-exprs ,@body)))
 
 (define (concat . colls)
-  ((fn concat-inner (colls)
+  ((lambda-rec concat-inner (colls)
      (lazy-seq
        (when (seq colls)
              (let ([f (first colls)]

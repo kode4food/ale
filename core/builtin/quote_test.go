@@ -62,7 +62,7 @@ func TestUnquoteEval(t *testing.T) {
 func TestUnquoteMacroEval(t *testing.T) {
 	as := assert.New(t)
 	as.EvalTo(
-		"(defmacro test (x . y) `(,x ,@y {:hello 99}))"+
+		"(define-macro test (x . y) `(,x ,@y {:hello 99}))"+
 			"(test vector 1 2 3)",
 		S("[1 2 3 {:hello 99}]"),
 	)

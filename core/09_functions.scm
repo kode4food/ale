@@ -1,7 +1,7 @@
 ;;;; ale core: functions
 
 (define-macro (letfn bindings . body)
-  ((fn parse-bindings (out in)
+  ((lambda-rec parse-bindings (out in)
      (if (seq in)
        (let* ([fnList (first in)]
               [fnSym  (first fnList)]
@@ -9,14 +9,14 @@
               [fnRest (rest (rest fnList))])
          (assert-args
            (and (is-list fnList)
-                (or (eq fnSym 'fn) (eq fnSym 'ale/fn))
+                (or (eq fnSym 'lambda-rec) (eq fnSym 'ale/lambda-rec))
                 (is-local fnName))
            "bindings must contain named functions")
          (parse-bindings (append out [fnName fnList]) (rest in)))
-       `(letrec ,(to-list out) ,@body)))
+       `(let-rec ,(to-list out) ,@body)))
    [] bindings))
 
-(defn partial
+(define-lambda partial
   [(func) func]
   [(func . first-args)
     (assert-args
@@ -25,22 +25,21 @@
       (apply func (apply append* (cons first-args rest-args))))])
 
 (define-macro comp
-  (lambda
-    [() identity]
-    [(func) func]
-    [(func . funcs)
-      (let* ([args        (gensym "args")]
-             [inner       (list 'apply func args)]
-             [first-outer (first funcs)]
-             [rest-outer  (rest funcs)])
-        (letfn [(fn outer (func args rest-funcs)
-                  (if (seq rest-funcs)
-                      (outer (first rest-funcs)
-                             (list func args)
-                             (rest rest-funcs))
-                      (list func args)))]
-          `(lambda ,args
-            ,(outer first-outer inner rest-outer))))]))
+  [() identity]
+  [(func) func]
+  [(func . funcs)
+    (let* ([args        (gensym "args")]
+            [inner       (list 'apply func args)]
+            [first-outer (first funcs)]
+            [rest-outer  (rest funcs)])
+      (letfn [(lambda-rec outer (func args rest-funcs)
+                (if (seq rest-funcs)
+                    (outer (first rest-funcs)
+                            (list func args)
+                            (rest rest-funcs))
+                    (list func args)))]
+        `(lambda ,args
+          ,(outer first-outer inner rest-outer))))])
 
 (define-macro (juxt . funcs)
   (let [args (gensym "args")]

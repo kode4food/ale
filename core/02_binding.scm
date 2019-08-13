@@ -6,13 +6,13 @@
        (is-local (clause 0))))
 
 (define (make-bindings value)
-  (letrec [is-bindings
-           (lambda (value)
-             (or (is-binding-clause value)
-                 (and (is-list value)
-                      (or (is-empty value)
-                          (and (is-binding-clause (first value))
-                               (is-bindings (rest value)))))))]
+  (let-rec [is-bindings
+            (lambda (value)
+              (or (is-binding-clause value)
+                  (and (is-list value)
+                       (or (is-empty value)
+                           (and (is-binding-clause (first value))
+                                (is-bindings (rest value)))))))]
     (assert-args
       (is-bindings value) (str "bindings are malformed: " value))
     (if (is-vector value)

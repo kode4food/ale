@@ -1,36 +1,36 @@
 ;;;; ale core: exceptions
 
-(letfn [(fn is-call (sym clause)
+(letfn [(lambda-rec is-call (sym clause)
           (and (local? sym)
                (list? clause)
                (eq sym (first clause))))
 
-        (fn is-catch-binding (form)
+        (lambda-rec is-catch-binding (form)
           (and (vector? form)
                (= 2 (length form))
                (local? (form 1))))
 
-        (fn is-catch (clause parsed)
+        (lambda-rec is-catch (clause parsed)
           (and (is-call 'catch clause)
                (is-catch-binding (nth clause 1))
                (!seq? (:block parsed))))
 
-        (fn is-finally (clause parsed)
+        (lambda-rec is-finally (clause parsed)
           (and (is-call 'finally clause)
                (!seq? (:catch parsed))
                (!seq? (:block parsed))))
 
-        (fn is-expr (clause parsed)
+        (lambda-rec is-expr (clause parsed)
           (!or (is-call 'catch clause)
                (is-call 'finally clause)))
 
-        (fn try-append (parsed keyword clause)
+        (lambda-rec try-append (parsed keyword clause)
           (conj parsed [keyword (conj (keyword parsed) clause)]))
 
-        (fn try-prepend (parsed keyword clause)
+        (lambda-rec try-prepend (parsed keyword clause)
           (conj parsed [keyword (cons clause (keyword parsed))]))
 
-        (fn try-parse (clauses)
+        (lambda-rec try-parse (clauses)
           (unless (seq? clauses)
                   {:block '() :catch '() :finally []}
                   (let* ([f (first clauses)]
@@ -42,13 +42,13 @@
                       [(is-expr f p)    (try-prepend p :block f)]
                       [:else            (raise "malformed try-catch-finally")]))))
 
-        (fn try-catch-predicate (pred err-sym)
+        (lambda-rec try-catch-predicate (pred err-sym)
           (let* ([l (thread-to-list pred)]
                  [f (first l)]
                  [r (rest l)])
             (cons f (cons err-sym r))))
 
-        (fn try-catch-branch (clauses err-sym)
+        (lambda-rec try-catch-branch (clauses err-sym)
           (assert-args
             (seq? clauses) "catch branch not paired")
           (lazy-seq
@@ -60,7 +60,7 @@
                           [#f (cons 'ale/do expr)])
                     (try-catch-clauses (rest clauses) err-sym)))))
 
-        (fn try-catch-clauses (clauses err-sym)
+        (lambda-rec try-catch-clauses (clauses err-sym)
           (lazy-seq
             (when (seq clauses)
               (let* ([clause (first clauses)]
@@ -68,17 +68,17 @@
                 [(try-catch-predicate pred err-sym)
                  (try-catch-branch clauses err-sym)]))))
 
-        (fn try-body (clauses)
+        (lambda-rec try-body (clauses)
           `(lambda () [#f (begin ,@clauses)]))
 
-        (fn try-catch (clauses)
+        (lambda-rec try-catch (clauses)
           (let [err (gensym "err")]
             `(lambda (,err)
                (cond
                  ,@(apply list (try-catch-clauses clauses err))
                  [:else [#t ,err]]))))
 
-        (fn try-catch-finally (parsed)
+        (lambda-rec try-catch-finally (parsed)
           (let ([block   (:block parsed)]
                 [recover (:catch parsed)]
                 [cleanup (:finally parsed)])

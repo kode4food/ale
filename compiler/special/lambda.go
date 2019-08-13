@@ -199,7 +199,7 @@ func parseArgBindings(v data.Value) (data.Names, bool) {
 	case data.List:
 		return parseListArgNames(typed), false
 	default:
-		panic("what the shit?")
+		panic(fmt.Errorf(UnexpectedLambdaSyntax, v))
 	}
 }
 

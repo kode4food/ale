@@ -84,7 +84,7 @@
 (def-special if)
 (def-special lambda)
 (def-special let)
-(def-special letrec)
+(def-special let-rec)
 (def-special macroexpand-1)
 (def-special macroexpand)
 (def-special quote)

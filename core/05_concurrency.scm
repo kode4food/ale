@@ -26,7 +26,7 @@
          result#))
      (:seq chan#)))
 
-(defn spawn
+(define-lambda spawn
   [(func)
     (spawn func 16)]
   [(func mbox-size)

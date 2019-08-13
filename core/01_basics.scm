@@ -8,28 +8,52 @@
 ;; syntax-quoting requires it
 (def concat!
   (lambda colls
-    (letrec [concat-inner
-             (lambda (colls head)
-               (if (is-empty colls)
-                   (apply list head)
-                   (let ([f (first colls)]
-                         [r (rest colls)])
-                     (if (is-empty f)
-                         (concat-inner r head)
-                         (concat-inner (cons (rest f) r)
-                                       (append head (first f)))))))]
+    (let-rec [concat-inner
+              (lambda (colls head)
+                (if (is-empty colls)
+                    (apply list head)
+                    (let ([f (first colls)]
+                          [r (rest colls)])
+                      (if (is-empty f)
+                          (concat-inner r head)
+                          (concat-inner (cons (rest f) r)
+                                        (append head (first f)))))))]
       (concat-inner colls []))))
 
-(def defmacro
-  (letrec [defmacro
-           (macro
-             (lambda (name . forms)
-               `(def ,name
-                  (letrec [,name (macro (lambda ,@forms))]
-                    ,name))))]
-    defmacro))
+(def label
+  (macro
+    (lambda (name form)
+      `(let-rec [,name ,form] ,name))))
 
-(defmacro assert-args
+(let [parse-define
+      (lambda (forms)
+        (let ([f (car forms)]
+              [r (cdr forms)])
+          (if (is-pair f)
+              [(car f) (cons (cdr f) r)]
+              [f r])))]
+
+  (def define-lambda
+    (label define-lambda
+      (macro
+        (lambda forms
+          (let [parsed (parse-define forms)]
+            (let ([name (parsed 0)]
+                  [body (parsed 1)])
+              `(def ,name
+                 (label ,name (lambda ,@body)))))))))
+
+  (def define-macro
+    (label define-macro
+      (macro
+        (lambda forms
+          (let [parsed (parse-define forms)]
+            (let ([name (parsed 0)]
+                  [body (parsed 1)])
+              `(def ,name
+                 (label ,name (macro (lambda ,@body)))))))))))
+
+(define-macro assert-args
   [() '()]
   [(clause)
     (raise "assert-args clauses must be paired")]
@@ -38,57 +62,39 @@
          (assert-args ,@(rest (rest clauses)))
          (raise ,(clauses 1)))])
 
-(defmacro define-macro body
-  (let ([f (first body)]
-        [r (rest body)])
-    (if (is-pair f)
-        (let ([name (car f)]
-              [args (cdr f)])
-          `(defmacro ,name ,args ,@r))
-        `(def ,f (macro ,@r)))))
-
-(define-macro (fn name . forms)
+(define-macro (lambda-rec name . forms)
   (if (is-local name)
-      `(letrec [,name (lambda ,@forms)] ,name)
+      `(label ,name (lambda ,@forms))
       `(lambda ,name ,@forms)))
 
-(define-macro (defn name . forms)
-  `(def ,name (fn ,name ,@forms)))
-
 (define-macro (define . body)
-  (let ([f (first body)]
-        [r (rest body)])
-    (if (is-pair f)
-        (let ([name (car f)]
-              [args (cdr f)])
-          `(defn ,name ,args ,@r))
-        `(def ,@body))))
+  (if (is-local (car body))
+      `(def ,@body)
+      `(define-lambda ,@body)))
 
 (define-macro (!eq value . comps)
   `(not (eq ,value ,@comps)))
 
 (define-macro and
-  (lambda
-    [() #t]
-    [(clause) clause]
-    [clauses
-      `(let [and# ,(clauses 0)]
-        (if and#
-            (and ,@(rest clauses))
-            and#))]))
+  [() #t]
+  [(clause) clause]
+  [clauses
+    `(let [and# ,(clauses 0)]
+      (if and#
+          (and ,@(rest clauses))
+          and#))])
 
 (define-macro (!and . clauses)
   `(not (and ,@clauses)))
 
 (define-macro or
-  (lambda
-    [() '()]
-    [(clause) clause]
-    [clauses
-      `(let [or# ,(clauses 0)]
-        (if or#
-            or#
-            (or ,@(rest clauses))))]))
+  [() '()]
+  [(clause) clause]
+  [clauses
+    `(let [or# ,(clauses 0)]
+      (if or#
+          or#
+          (or ,@(rest clauses))))])
 
 (define-macro (!or . clauses)
   `(not (or ,@clauses)))

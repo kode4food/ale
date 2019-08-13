@@ -40,7 +40,7 @@ func (b *bootstrap) specialForms() {
 	b.special("if", special.If)
 	b.special("lambda", special.Lambda)
 	b.special("let", special.Let)
-	b.special("letrec", special.LetMutual)
+	b.special("let-rec", special.LetMutual)
 	b.special("macroexpand-1", special.MacroExpand1)
 	b.special("macroexpand", special.MacroExpand)
 	b.special("quote", special.Quote)

@@ -43,7 +43,7 @@ func TestMutualBindingsEval(t *testing.T) {
 	as := assert.New(t)
 
 	as.EvalTo(`
-		(letrec ([
+		(let-rec ([
 			is-even?
 			(lambda (n) (or (= n 0)
 			                (is-odd? (dec n))))]

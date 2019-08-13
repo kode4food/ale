@@ -12,13 +12,13 @@ import (
 func TestFunctionEval(t *testing.T) {
 	as := assert.New(t)
 	as.EvalTo(`
-		(defn say-hello ()
+		(define-lambda say-hello ()
 		  "Hello, World!")
 		(say-hello)
 	`, S("Hello, World!"))
 
 	as.EvalTo(`
-		(defn identity (value) value)
+		(define-lambda identity (value) value)
 		(identity "foo")
 	`, S("foo"))
 }
@@ -30,9 +30,9 @@ func TestBadFunctionEval(t *testing.T) {
 	listErr := interfaceErr("data.Integer", "data.LocalSymbol", "LocalSymbol")
 
 	as := assert.New(t)
-	as.PanicWith(`(defn blah (name 99 bad) (name))`, symErr)
-	as.PanicWith(`(defn blah 99 (name))`, numErr)
-	as.PanicWith(`(defn 99 (x y) (+ x y))`, symErr)
-	as.PanicWith(`(defn blah (99 "hello"))`, listErr)
-	as.PanicWith(`(defn blah [(x) "hello"] 99)`, vecErr)
+	as.PanicWith(`(define-lambda blah (name 99 bad) (name))`, symErr)
+	as.PanicWith(`(define-lambda blah 99 (name))`, numErr)
+	as.PanicWith(`(define-lambda 99 (x y) (+ x y))`, symErr)
+	as.PanicWith(`(define-lambda blah (99 "hello"))`, listErr)
+	as.PanicWith(`(define-lambda blah [(x) "hello"] 99)`, vecErr)
 }
