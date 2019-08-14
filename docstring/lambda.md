@@ -3,7 +3,7 @@ title: "lambda"
 date: 2019-04-06T12:19:22+02:00
 description: "creates a lambda"
 names: ["lambda", "lambda-rec"]
-usage: "(lambda (args) form*) (lambda-rec name (args) form*)"
+usage: "(lambda (param*) form*) (lambda-rec name (param*) form*)"
 tags: ["function"]
 ---
 Will create a lambda function that may be passed around in a first-class manner.

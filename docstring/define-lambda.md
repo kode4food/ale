@@ -1,9 +1,9 @@
 ---
-title: "defn"
+title: "define-lambda"
 date: 2019-04-06T12:19:22+02:00
 description: "binds a namespace function"
-names: ["defn", "define ()"]
-usage: "(define-lambda name (param*) form*) (define (name param*) form*)"
+names: ["define-lambda"]
+usage: "(define-lambda name (param*) form*) (define-lambda (name param*) form*)"
 tags: ["function", "binding"]
 ---
 Will bind a function by name to the current namespace.
@@ -11,7 +11,7 @@ Will bind a function by name to the current namespace.
 #### An Example
 
 ~~~scheme
-(define (fib i)
+(define-lambda (fib i)
   (cond
     [(= i 0) 0]
     [(= i 1) 1]

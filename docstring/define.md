@@ -3,7 +3,7 @@ title: "define"
 date: 2019-04-06T12:19:22+02:00
 description: "binds a namespace entry"
 names: ["def", "define"]
-usage: "(def name form) (define name form)"
+usage: "(define name form) (define (name param*) form*)"
 tags: ["binding"]
 ---
 Will bind a value to a global name. All bindings are immutable and result in an error being raised if an attempt is made to re-bind them. This behavior is different than most Lisps, as they will generally fail silently in such cases.
