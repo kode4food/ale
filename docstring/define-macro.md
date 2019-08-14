@@ -1,5 +1,5 @@
 ---
-title: "defmacro"
+title: "define-macro"
 date: 2019-04-06T12:19:22+02:00
 description: "binds a reader macro"
 names: ["define-macro"]
