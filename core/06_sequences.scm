@@ -57,13 +57,13 @@
               (handle)))]
     (lambda-rec nth!
       [(coll pos)
-        (if (indexed? coll)
-            (nth coll pos)
-            (scan coll pos (lambda () (raise "index out of bounds"))))]
+         (if (indexed? coll)
+             (nth coll pos)
+             (scan coll pos (lambda () (raise "index out of bounds"))))]
       [(coll pos default)
-        (if (indexed? coll)
-            (nth coll pos default)
-            (scan coll pos (lambda () default)))])))
+         (if (indexed? coll)
+             (nth coll pos default)
+             (scan coll pos (lambda () default)))])))
 
 (define (last coll)
   (let [s (length coll)]
@@ -79,23 +79,23 @@
                prev))
          (if (seq coll)
              (let ([f (first coll)]
-                   [r (rest coll)])
+                   [r (rest coll) ])
                (last-inner r f))
              prev)))
     coll '()))
 
 (define-lambda reduce
   [(func init coll)
-    ((lambda-rec reduce-inner (init coll)
-       (if (seq coll)
-           (reduce-inner (func init (first coll)) (rest coll))
-           init))
-      init coll)]
+     ((lambda-rec reduce-inner (init coll)
+         (if (seq coll)
+             (reduce-inner (func init (first coll)) (rest coll))
+             init))
+       init coll)]
 
   [(func coll)
-    (if (seq coll)
-        (reduce func (first coll) (rest coll))
-        (func))])
+     (if (seq coll)
+         (reduce func (first coll) (rest coll))
+         (func))])
 
 (define (reverse! coll)
   (if (is-reversible coll)

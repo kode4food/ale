@@ -22,7 +22,7 @@
 (define-macro (let* bindings . body)
   (let [b (make-bindings bindings)]
     (let ([binding (first b)]
-          [next    (rest b)])
+          [next    (rest b) ])
       (let ([name  (binding 0)]
             [value (binding 1)])
         (if (is-empty next)

@@ -28,59 +28,59 @@
 
 (define-lambda partition
   [(count coll)
-    (partition count count coll)]
+     (partition count count coll)]
 
   [(count step coll)
-    (lazy-seq
-      (when (seq coll)
-            (cons (to-list (take count coll))
-                  (partition count step (drop step coll)))))])
+     (lazy-seq
+       (when (seq coll)
+             (cons (to-list (take count coll))
+                   (partition count step (drop step coll)))))])
 
 (define-lambda range
   [()
-    (range 0 '() 1)]
+     (range 0 '() 1)]
 
   [(last)
-    (range 0 last (if (> last 0) 1 -1))]
+     (range 0 last (if (> last 0) 1 -1))]
 
   [(first last)
-    (if (> last first)
-        (range first last 1)
-        (range last first -1))]
+     (if (> last first)
+         (range first last 1)
+         (range last first -1))]
 
   [(first last step)
-    (let [cmp (cond
-                [(null? last) (constantly #t)]
-                [(< step 0)   >]
-                [:else        <])]
-      (if (cmp first last)
-          (cons first (lazy-seq (range (+ first step) last step)))
-          []))])
+     (let [cmp
+           (cond [(null? last) (constantly #t)]
+                 [(< step 0)   >              ]
+                 [:else        <              ])]
+       (if (cmp first last)
+           (cons first (lazy-seq (range (+ first step) last step)))
+           []))])
 
 (define-lambda map
   [(func coll)
-    ((lambda-rec map-single (coll)
-       (lazy-seq
-         (when (seq coll)
-               (cons (func (first coll))
-                     (map-single (rest coll))))))
-      coll)]
+     ((lambda-rec map-single (coll)
+         (lazy-seq
+           (when (seq coll)
+                 (cons (func (first coll))
+                       (map-single (rest coll))))))
+       coll)]
 
   [(func coll . colls)
-    ((lambda-rec map-parallel (colls)
-       (lazy-seq
-         (when (apply true? (map !empty? colls))
-               (let ([f (to-vector (map first colls))]
-                     [r (map rest colls)])
-                 (cons (apply func f) (map-parallel r))))))
-      (cons coll colls))])
+     ((lambda-rec map-parallel (colls)
+         (lazy-seq
+           (when (apply true? (map !empty? colls))
+                 (let ([f (to-vector (map first colls))]
+                       [r (map rest colls)             ])
+                   (cons (apply func f) (map-parallel r))))))
+       (cons coll colls))])
 
 (define (filter func coll)
   (lazy-seq
     ((lambda-rec filter-inner (coll)
        (when (seq coll)
              (let ([f (first coll)]
-                   [r (rest coll)])
+                   [r (rest coll) ])
                (if (func f)
                    (cons f (filter func r))
                    (filter-inner r)))))
@@ -94,7 +94,7 @@
      (lazy-seq
        (when (seq colls)
              (let ([f (first colls)]
-                   [r (rest colls)])
+                   [r (rest colls) ])
                (if (seq f)
                    (cons (first f)
                          (concat-inner (cons (rest f) r)))
@@ -112,19 +112,19 @@
     (assert-args
       (!empty? b) "at least one for binding is required")
     (let* ([this (first b)]
-           [next (rest b)]
-           [sym  (this 0)]
-           [expr (this 1)])
+           [next (rest b) ]
+           [sym  (this 0) ]
+           [expr (this 1) ])
       (if (empty? next)
           `(map (lambda (,sym) ,@body) (seq! ,expr))
           `(mapcat (lambda (,sym) (for ,next ,@body)) (seq! ,expr))))))
 
 (define-macro (cartesian-product . colls)
-  (let* ([sym-gen  (lambda (x) (gensym (str "cp" x)))]
+  (let* ([sym-gen  (lambda (x) (gensym (str "cp" x)))         ]
          [let-syms (take (length colls) (map sym-gen (range)))]
-         [let-vals (map to-vector (zip let-syms colls))]
-         [let-bind (to-list let-vals)]
+         [let-vals (map to-vector (zip let-syms colls))       ]
+         [let-bind (to-list let-vals)                         ]
          [for-syms (take (length colls) (map sym-gen (range)))]
-         [for-vals (map to-vector (zip for-syms let-syms))]
-         [for-bind (to-list for-vals)])
+         [for-vals (map to-vector (zip for-syms let-syms))    ]
+         [for-bind (to-list for-vals)                         ])
     `(let ,let-bind (for ,for-bind (list ,@for-syms)))))

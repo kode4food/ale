@@ -24,8 +24,8 @@ func Declare(e encoder.Type, args ...data.Value) {
 	}
 }
 
-// Bind encodes a global definition
-func Bind(e encoder.Type, args ...data.Value) {
+// Define encodes a global definition
+func Define(e encoder.Type, args ...data.Value) {
 	arity.AssertFixed(2, len(args))
 	name := args[0].(data.LocalSymbol).Name()
 	generate.Value(e, args[1])

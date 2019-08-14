@@ -75,8 +75,8 @@ func TestFunctionPredicatesEval(t *testing.T) {
 	as := assert.New(t)
 	as.EvalTo(`(apply? if)`, data.False)
 	as.EvalTo(`(!apply? if)`, data.True)
-	as.EvalTo(`(special? def)`, data.True)
-	as.EvalTo(`(!special? def)`, data.False)
+	as.EvalTo(`(special? define*)`, data.True)
+	as.EvalTo(`(!special? define*)`, data.False)
 	as.EvalTo(`(apply? 99)`, data.False)
 	as.EvalTo(`(!apply? 99)`, data.True)
 }

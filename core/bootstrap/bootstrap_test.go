@@ -46,7 +46,7 @@ func TestBootstrapInto(t *testing.T) {
 	bootstrap.Into(manager)
 	ns := manager.GetRoot()
 
-	e, ok := ns.Resolve("def")
+	e, ok := ns.Resolve("define*")
 	as.True(ok && e.IsBound())
 
 	_, ok = e.Value().(encoder.Call)

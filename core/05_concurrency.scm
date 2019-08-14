@@ -28,14 +28,14 @@
 
 (define-lambda spawn
   [(func)
-    (spawn func 16)]
+     (spawn func 16)]
   [(func mbox-size)
-    (spawn func mbox-size no-op)]
+     (spawn func mbox-size no-op)]
   [(func mbox-size monitor)
-    (let* ([channel (chan mbox-size)]
-           [mailbox (:seq channel)]
-           [sender  (:emit channel)])
-      (go
-        (recover (lambda () (func mailbox))
-                 monitor))
-                 sender)])
+     (let* ([channel (chan mbox-size)]
+            [mailbox (:seq channel)  ]
+            [sender  (:emit channel) ])
+       (go
+         (recover (lambda () (func mailbox))
+                   monitor))
+                   sender)])

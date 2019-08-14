@@ -14,9 +14,9 @@ For each *pred-then* clause, the predicate will be evaluated, and if it is truth
 (define x 99)
 
 (cond
-  [(< x 50)  "was less than 50"]
+  [(< x 50)  "was less than 50"    ]
   [(> x 100) "was greater than 100"]
-  [:else     "was in between"])
+  [:else     "was in between"      ])
 ~~~
 
 In this case, _"was in between"_ will be returned. The reason that this works is because the `:else` keyword, like all keywords, evaluates to truthy.

@@ -35,7 +35,7 @@ func (b *bootstrap) builtIns() {
 func (b *bootstrap) specialForms() {
 	b.special("begin", special.Begin)
 	b.special("declare", special.Declare)
-	b.special("def", special.Bind)
+	b.special("define*", special.Define)
 	b.special("eval", special.Eval)
 	b.special("if", special.If)
 	b.special("lambda", special.Lambda)

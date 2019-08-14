@@ -79,7 +79,7 @@
 
 (def-special begin)
 (def-special declare)
-(def-special def)
+(def-special define*)
 (def-special eval)
 (def-special if)
 (def-special lambda)

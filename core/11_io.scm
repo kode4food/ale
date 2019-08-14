@@ -48,7 +48,7 @@
      `(begin ,@body)]
 
     [(>= (length bindings) 2)
-     `(let ([,(bindings 0) ,(bindings 1)]
+     `(let ([,(bindings 0) ,(bindings 1)                  ]
             [close#        (with-open-close ,(bindings 0))])
         (try
           (with-open [,@(rest (rest bindings))] ,@body)
