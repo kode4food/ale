@@ -35,8 +35,8 @@
   [(value) value]
   [(value . forms)
      (let* ([l (thread-to-list (first forms))]
-            [f (first l)]
-            [r (rest l)])
+            [f (first l)                     ]
+            [r (rest l)                      ])
        `(let [val# ,value]
           (when-not (null? val#)
                     (some->> (,f ,@r val#) ,@(rest forms)))))])

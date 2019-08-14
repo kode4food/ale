@@ -17,9 +17,9 @@
       (raise "attempt to force a non-promise")))
 
 (define-macro (generate . body)
-  `(let* ([chan#  (chan)]
+  `(let* ([chan#  (chan)        ]
           [close# (:close chan#)]
-          [emit   (:emit chan#)])
+          [emit   (:emit chan#) ])
      (go
        (let [result# (begin ,@body)]
          (close#)
