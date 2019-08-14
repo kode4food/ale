@@ -8,20 +8,13 @@ import (
 	"github.com/kode4food/ale/runtime/isa"
 )
 
-// Declare encodes global forward-declarations
+// Declare encodes a global forward-declaration
 func Declare(e encoder.Type, args ...data.Value) {
-	arity.AssertMinimum(1, len(args))
-	for _, v := range args {
-		name := v.(data.LocalSymbol).Name()
-		generate.Literal(e, name)
-		e.Emit(isa.Declare)
-	}
-	if len(args) == 1 {
-		generate.Literal(e, args[0])
-	} else {
-		v := data.NewVector(args...)
-		generate.Literal(e, v)
-	}
+	arity.AssertFixed(1, len(args))
+	name := args[0].(data.LocalSymbol).Name()
+	generate.Literal(e, name)
+	e.Emit(isa.Declare)
+	generate.Literal(e, args[0])
 }
 
 // Define encodes a global definition

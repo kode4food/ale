@@ -57,7 +57,7 @@
                    [expr   (rest (rest clause))])
               (cons (list 'ale/let
                           [var err-sym           ]
-                          [#f (cons 'ale/do expr)])
+                          [#f (cons 'ale/begin expr)])
                     (try-catch-clauses (rest clauses) err-sym)))))
 
         (lambda-rec try-catch-clauses (clauses err-sym)

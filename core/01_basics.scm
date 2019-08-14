@@ -1,7 +1,5 @@
 ;;;; ale core: basics
 
-(declare *env* *args*)
-
 (define* *pos-inf* (/ 1.0 0.0))
 (define* *neg-inf* (/ -1.0 0.0))
 
@@ -50,11 +48,11 @@
 (define-macro assert-args
   [() '()]
   [(clause)
-   (raise "assert-args clauses must be paired")]
+     (raise "assert-args clauses must be paired")]
   [clauses
-   `(if ,(clauses 0)
-        (assert-args ,@(rest (rest clauses)))
-        (raise ,(clauses 1)))])
+     `(if ,(clauses 0)
+          (assert-args ,@(rest (rest clauses)))
+          (raise ,(clauses 1)))])
 
 (define-macro (lambda-rec name . forms)
   (if (is-local name)
@@ -65,6 +63,15 @@
   (if (is-local (car body))
       `(define* ,@body)
       `(define-lambda ,@body)))
+
+(define-macro (declare . names)
+  (let-rec [declare
+            (lambda (names)
+              (if (is-empty names)
+                  '()
+                  (cons (list 'ale/declare* (first names))
+                        (declare (rest names)))))]
+    `(begin ,@(declare names))))
 
 (define-macro (!eq value . comps)
   `(not (eq ,value ,@comps)))

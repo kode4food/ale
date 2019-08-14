@@ -78,7 +78,7 @@
 (def-macro syntax-quote)
 
 (def-special begin)
-(def-special declare)
+(def-special declare*)
 (def-special define*)
 (def-special eval)
 (def-special if)

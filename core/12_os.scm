@@ -1,5 +1,7 @@
 ;;;; ale core: os
 
+(declare *env* *args*)
+
 (define-macro (time . forms)
   `(let* ([start#  (current-time) ]
           [result# (begin ,@forms)]
