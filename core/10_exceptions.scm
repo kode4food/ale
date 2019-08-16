@@ -56,8 +56,8 @@
                    [var    ((clause 1) 0)      ]
                    [expr   (rest (rest clause))])
               (cons (list 'ale/let
-                          [var err-sym           ]
-                          [#f (cons 'ale/begin expr)])
+                          [var err-sym]
+                          [false (cons 'ale/begin expr)])
                     (try-catch-clauses (rest clauses) err-sym)))))
 
         (lambda-rec try-catch-clauses (clauses err-sym)
@@ -69,14 +69,14 @@
                  (try-catch-branch clauses err-sym)]))))
 
         (lambda-rec try-body (clauses)
-          `(lambda () [#f (begin ,@clauses)]))
+          `(lambda () [false (begin ,@clauses)]))
 
         (lambda-rec try-catch (clauses)
           (let [err (gensym "err")]
             `(lambda (,err)
                (cond
                  ,@(apply list (try-catch-clauses clauses err))
-                 [:else [#t ,err]]))))
+                 [:else [true ,err]]))))
 
         (lambda-rec try-catch-finally (parsed)
           (let ([block   (:block parsed)  ]

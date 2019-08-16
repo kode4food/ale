@@ -50,9 +50,9 @@
 
   [(first last step)
      (let [cmp
-           (cond [(null? last) (constantly #t)]
-                 [(< step 0)   >              ]
-                 [:else        <              ])]
+           (cond [(null? last) (constantly true)]
+                 [(< step 0)   >                ]
+                 [:else        <                ])]
        (if (cmp first last)
            (cons first (lazy-seq (range (+ first step) last step)))
            []))])

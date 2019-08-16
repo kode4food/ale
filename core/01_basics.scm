@@ -3,6 +3,9 @@
 (define* *pos-inf* (/ 1.0 0.0))
 (define* *neg-inf* (/ -1.0 0.0))
 
+(define* #t true)
+(define* #f false)
+
 ;; syntax-quoting requires it
 (define* concat!
   (lambda colls
@@ -25,7 +28,8 @@
 
 (define* is-cons-or-list
   (lambda (value)
-    (if (is-cons value) #t
+    (if (is-cons value)
+        true
         (is-list value))))
 
 (let [make-macro
@@ -82,7 +86,7 @@
   `(not (eq ,value ,@comps)))
 
 (define-macro and
-  [() #t]
+  [() true]
   [(clause) clause]
   [clauses
      `(let [and# ,(clauses 0)]
@@ -112,10 +116,10 @@
   (= (mod value 2) 1))
 
 (define (is-true value)
-  (if value #t #f))
+  (if value true false))
 
 (define (is-false value)
-  (if value #f #t))
+  (if value false true))
 
 (define (inc value)
   (+ value 1))

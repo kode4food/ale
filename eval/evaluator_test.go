@@ -19,7 +19,7 @@ func TestBasicEval(t *testing.T) {
 	bootstrap.Into(manager)
 	ns := manager.GetAnonymous()
 
-	v1 := eval.String(ns, "(if #t 1 0)")
+	v1 := eval.String(ns, "(if true 1 0)")
 	as.Number(1, v1)
 
 	v2 := eval.String(ns, "((lambda (x) (* x 2)) 50)")
@@ -33,7 +33,7 @@ func TestBasicEval(t *testing.T) {
 	as.True(ok && e.IsBound())
 	as.Number(99, e.Value())
 
-	v4 := eval.String(ns, "(and #t #t)")
+	v4 := eval.String(ns, "(and true true)")
 	as.True(v4)
 }
 
