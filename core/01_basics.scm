@@ -23,13 +23,18 @@
     (lambda (name form)
       `(let-rec [,name ,form] ,name))))
 
+(define* is-cons-or-list
+  (lambda (value)
+    (if (is-cons value) #t
+        (is-list value))))
+
 (let [make-macro
       (lambda (quoter)
         (macro
           (lambda forms
             (let ([f (car forms)]
                   [r (cdr forms)])
-              (if (is-pair f)
+              (if (is-cons-or-list f)
                   (quoter (car f) (cons (cdr f) r))
                   (quoter f r))))))]
 
