@@ -3,8 +3,8 @@
 (let-rec ([pred-apply
            (lambda (func args)
              (if (is-empty args)
-                 #t
-                 (unless (func (first args)) #f
+                 true
+                 (unless (func (first args)) false
                          (pred-apply func (rest args)))))]
 
           [def-predicate-pos

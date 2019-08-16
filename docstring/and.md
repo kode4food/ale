@@ -12,7 +12,7 @@ Evaluates the forms from left to right. As soon as one evaluates to a falsey val
 
 ~~~scheme
 (and (+ 1 2 3)
-     #f
+     false
      "not returned")
 ~~~
 
@@ -20,7 +20,7 @@ Will return _#f_ (false), never evaluating _"not returned"_, whereas:
 
 ~~~scheme
 (and (+ 1 2 3)
-     #t
+     true
      "returned")
 ~~~
 

@@ -74,9 +74,9 @@ func (n Name) String() string {
 // String converts this Value into a string
 func (b Bool) String() string {
 	if bool(b) {
-		return "#t"
+		return "true"
 	}
-	return "#f"
+	return "false"
 }
 
 // Truthy evaluates whether or not a Value is truthy

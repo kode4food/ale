@@ -15,15 +15,15 @@ func TestCondEval(t *testing.T) {
 
 	as.EvalTo(`
 		(cond
-			[#f   "goodbye"]
-			['()  "nope"]
-			[#t   "hello"]
-			["hi" "ignored"])
+			[false "goodbye"]
+			['()   "nope"]
+			[true  "hello"]
+			["hi"  "ignored"])
 	`, S("hello"))
 
 	as.EvalTo(`
 		(cond
-			[#f    "goodbye"]
+			[false "goodbye"]
 			['()   "nope"]
 			[:else "hello"]
 			["hi"  "ignored"])
@@ -31,8 +31,8 @@ func TestCondEval(t *testing.T) {
 
 	as.EvalTo(`
 		(cond
-			[#f  "goodbye"]
-			['() "nope"])
+			[false "goodbye"]
+			['()   "nope"])
 	`, data.Null)
 }
 
@@ -41,7 +41,7 @@ func TestBadCond(t *testing.T) {
 
 	as.PanicWith(`
 		(cond
-			[#t "hello"]
+			[true "hello"]
 			[99])
 	`, errors.New("cond clause must be paired: [99]"))
 
@@ -51,7 +51,7 @@ func TestBadCond(t *testing.T) {
 
 	as.PanicWith(`
 		(cond
-			#f "hello"
+			false "hello"
 			99)
-	`, errors.New("cond clause must be a vector: #f"))
+	`, errors.New("cond clause must be a vector: false"))
 }

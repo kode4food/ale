@@ -87,14 +87,14 @@ func TestBeginEval(t *testing.T) {
 	as.EvalTo(`
 		(begin
 			55
-			(if #t 99 33))
+			(if true 99 33))
 	`, F(99))
 }
 
 func TestTrueFalseEval(t *testing.T) {
 	as := assert.New(t)
-	as.EvalTo(`#t`, data.True)
-	as.EvalTo(`#f`, data.False)
+	as.EvalTo(`true`, data.True)
+	as.EvalTo(`false`, data.False)
 	as.EvalTo(`'()`, data.Null)
 }
 
