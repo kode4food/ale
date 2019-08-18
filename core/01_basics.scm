@@ -5,6 +5,7 @@
 
 (define* #t true)
 (define* #f false)
+(define* nil '())
 
 ;; syntax-quoting requires it
 (define* concat!
@@ -68,20 +69,6 @@
       `(label ,name (lambda ,@forms))
       `(lambda ,name ,@forms)))
 
-(define-macro (define . body)
-  (if (is-local (car body))
-      `(define* ,@body)
-      `(define-lambda ,@body)))
-
-(define-macro (declare . names)
-  (let-rec [declare
-            (lambda (names)
-              (if (is-empty names)
-                  '()
-                  (cons (list 'ale/declare* (first names))
-                        (declare (rest names)))))]
-    `(begin ,@(declare names))))
-
 (define-macro (!eq value . comps)
   `(not (eq ,value ,@comps)))
 
@@ -108,6 +95,24 @@
 
 (define-macro (!or . clauses)
   `(not (or ,@clauses)))
+
+(define-macro (declare . names)
+  (let-rec [declare
+            (lambda (names)
+              (if (is-empty names)
+                  '()
+                  (cons (list 'ale/declare* (first names))
+                        (declare (rest names)))))]
+    `(begin ,@(declare names))))
+
+(define-macro (define . body)
+  (let [value (car body)]
+    (assert-args
+      (or (is-local value) (is-cons-or-list value))
+      (str "invalid define: " body))
+    (if (is-local value)
+        `(define* ,@body)
+        `(define-lambda ,@body))))
 
 (define (is-even value)
   (= (mod value 2) 0))

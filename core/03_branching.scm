@@ -22,8 +22,8 @@
   [clauses
    (let [clause (first clauses)]
      (assert-args
-       (is-vector clause)    (str "cond clause must be a vector: " clause)
-       (= 2 (length clause)) (str "cond clause must be paired: " clause))
+       (and (is-vector clause) (= 2 (length clause)))
+       (str "invalid cond clause: " clause))
      (let ([test   (clause 0)]
            [branch (clause 1)])
        `(if ,test
@@ -47,10 +47,8 @@
                [clauses
                   (let [clause (first clauses)]
                     (assert-args
-                      (is-vector clause)
-                        (str "case clause must be a vector: " clause)
-                      (= 2 (length clause))
-                        (str "case clause must be paired: " clause))
+                      (and (is-vector clause) (= 2 (length clause)))
+                      (str "invalid case clause: " clause))
                     (let ([test   (clause 0)    ]
                           [branch (clause 1)    ]
                           [next   (rest clauses)])
@@ -67,10 +65,8 @@
      `(if-let ,binding ,then '())]
   [(binding then else)
      (assert-args
-       (is-vector binding)
-         (str "binding vector must be supplied: " binding)
-       (= 2 (length binding))
-         (str "binding vector must be paired: " binding))
+       (and (is-vector binding) (= 2 (length binding)))
+       (str "invalid if-let binding: " binding))
      (let ([sym  (binding 0)]
            [test (binding 1)])
        `(let [,sym ,test]

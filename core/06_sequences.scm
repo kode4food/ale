@@ -8,7 +8,7 @@
 (define (seq! value)
   (if (is-seq value)
       (if (!empty? value) value '())
-      (raise (str "can't treat " value " as a sequence"))))
+      (raise (str "value can't act as a sequence: " value))))
 
 (define (to-object . colls)
   (apply object (apply concat! colls)))

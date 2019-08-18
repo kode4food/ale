@@ -14,7 +14,7 @@
                            (and (is-binding-clause (first value))
                                 (is-bindings (rest value)))))))]
     (assert-args
-      (is-bindings value) (str "bindings are malformed: " value))
+      (is-bindings value) (str "invalid binding: " value))
     (if (is-vector value)
         (list value)
         value)))

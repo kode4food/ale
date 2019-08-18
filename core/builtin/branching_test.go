@@ -43,15 +43,15 @@ func TestBadCond(t *testing.T) {
 		(cond
 			[true "hello"]
 			[99])
-	`, errors.New("cond clause must be paired: [99]"))
+	`, errors.New("invalid cond clause: [99]"))
 
 	as.PanicWith(`
 		(cond 99)
-	`, errors.New("cond clause must be a vector: 99"))
+	`, errors.New("invalid cond clause: 99"))
 
 	as.PanicWith(`
 		(cond
 			false "hello"
 			99)
-	`, errors.New("cond clause must be a vector: false"))
+	`, errors.New("invalid cond clause: false"))
 }
