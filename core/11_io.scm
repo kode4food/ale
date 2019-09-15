@@ -34,7 +34,8 @@
   (^ *out* :write *newline*))
 
 (define (paired-vector? value)
-  (and (vector? value) (pair? value)))
+  (and (vector? value)
+       (pair? value)))
 
 (define (with-open-close value)
   (let [c (:close value)]

@@ -22,7 +22,8 @@
   [clauses
    (let [clause (first clauses)]
      (assert-args
-       (and (is-vector clause) (= 2 (length clause)))
+       (and (is-vector clause)
+            (= 2 (length clause)))
        (str "invalid cond clause: " clause))
      (let ([test   (clause 0)]
            [branch (clause 1)])
@@ -47,7 +48,8 @@
                [clauses
                   (let [clause (first clauses)]
                     (assert-args
-                      (and (is-vector clause) (= 2 (length clause)))
+                      (and (is-vector clause)
+                           (= 2 (length clause)))
                       (str "invalid case clause: " clause))
                     (let ([test   (clause 0)    ]
                           [branch (clause 1)    ]
@@ -65,7 +67,8 @@
      `(if-let ,binding ,then '())]
   [(binding then else)
      (assert-args
-       (and (is-vector binding) (= 2 (length binding)))
+       (and (is-vector binding)
+            (= 2 (length binding)))
        (str "invalid if-let binding: " binding))
      (let ([sym  (binding 0)]
            [test (binding 1)])

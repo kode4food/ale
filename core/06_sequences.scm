@@ -1,7 +1,8 @@
 ;;;; ale core: standard sequences
 
 (define (seq value)
-  (if (and (is-seq value) (!empty? value))
+  (if (and (is-seq value)
+           (!empty? value))
       value
       '()))
 
@@ -72,7 +73,8 @@
 
 (define (last! coll)
   ((lambda-rec last-inner (coll prev)
-     (if (and (counted? coll) (indexed? coll))
+     (if (and (counted? coll)
+              (indexed? coll))
          (let [s (length coll)]
            (if (> s 0)
                (nth coll (dec (length coll)))

@@ -6,7 +6,8 @@
 (define (take count coll)
   ((lambda-rec take-inner (count coll)
      (lazy-seq
-       (if (and (> count 0) (!empty? coll))
+       (if (and (> count 0)
+                (!empty? coll))
            (cons (first coll) (take-inner (dec count) (rest coll)))
            '())))
     count coll))
