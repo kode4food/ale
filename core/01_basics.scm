@@ -108,7 +108,8 @@
 (define-macro (define . body)
   (let [value (car body)]
     (assert-args
-      (or (is-local value) (is-cons-or-list value))
+      (or (is-local value)
+          (is-cons-or-list value))
       (str "invalid define: " body))
     (if (is-local value)
         `(define* ,@body)

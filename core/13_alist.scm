@@ -3,7 +3,8 @@
 (define (assoc key coll)
   (when (seq coll)
     (let [elem (first coll)]
-      (unless (and (seq elem) (eq key (first elem)))
+      (unless (and (seq elem)
+                   (eq key (first elem)))
               (assoc key (rest coll))
               elem))))
 

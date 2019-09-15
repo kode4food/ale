@@ -9,7 +9,8 @@
               [fnRest (rest (rest fnList)) ])
          (assert-args
            (and (is-list fnList)
-                (or (eq fnSym 'lambda-rec) (eq fnSym 'ale/lambda-rec))
+                (or (eq fnSym 'lambda-rec)
+                    (eq fnSym 'ale/lambda-rec))
                 (is-local fnName))
            "bindings must contain named functions")
          (parse-bindings (append out [fnName fnList]) (rest in)))

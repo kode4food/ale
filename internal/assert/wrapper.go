@@ -5,8 +5,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
 	"github.com/kode4food/ale/data"
+	"github.com/stretchr/testify/assert"
 )
 
 type (
@@ -133,7 +133,7 @@ func (w *Wrapper) ExpectPanic(errStr string) {
 	if rec := recover(); rec != nil {
 		if re, ok := rec.(error); ok {
 			recStr := re.Error()
-			w.String(errStr, recStr)
+			w.True(strings.HasPrefix(recStr, errStr))
 			return
 		}
 	}
