@@ -36,7 +36,6 @@
 (define-predicate is-boolean "boolean")
 (define-predicate is-cons "cons")
 (define-predicate is-counted "counted")
-(define-predicate is-deque "deque")
 (define-predicate is-empty "empty")
 (define-predicate is-even "even")
 (define-predicate is-false "false")
