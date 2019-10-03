@@ -63,7 +63,7 @@ func TestListCaller(t *testing.T) {
 	as := assert.New(t)
 
 	l1 := L(I(99), I(37))
-	c1 := l1.(data.Caller).Caller()
+	c1 := l1.(data.Caller).Call()
 	as.Number(99, c1(I(0)))
 	as.Number(37, c1(I(1)))
 	as.Nil(c1(I(2)))

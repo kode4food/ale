@@ -91,8 +91,8 @@ func (v Vector) Reverse() Sequence {
 	return res
 }
 
-// Caller turns Vector into a callable type
-func (v Vector) Caller() Call {
+// Call turns Vector into a callable type
+func (v Vector) Call() Call {
 	return makeIndexedCall(v)
 }
 

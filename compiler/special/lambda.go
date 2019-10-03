@@ -53,7 +53,7 @@ func makeLambdaEncoder(e encoder.Type, v lambdaCases) *lambdaEncoder {
 
 func (le *lambdaEncoder) encodeCall() {
 	e := le.Parent()
-	fn := le.makeLambda().Caller()
+	fn := le.makeLambda().Call()
 
 	cells := le.Closure()
 	nl := len(cells)

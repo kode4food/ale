@@ -59,7 +59,7 @@ func TestPromise(t *testing.T) {
 	p1 := builtin.Promise(makeWrapperFunc(S("with initial")))
 	as.True(builtin.IsPromise(p1))
 	as.False(builtin.IsResolved(p1))
-	res := getCall(p1)()
+	res := makeCall(p1)()
 	as.True(builtin.IsResolved(p1))
 	as.String("with initial", res)
 }

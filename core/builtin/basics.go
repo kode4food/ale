@@ -16,8 +16,8 @@ func Raise(args ...data.Value) data.Value {
 
 // Recover invokes a function and runs a recovery function if Go panics
 func Recover(args ...data.Value) (res data.Value) {
-	body := args[0].(data.Caller).Caller()
-	rescue := args[1].(data.Caller).Caller()
+	body := args[0].(data.Caller).Call()
+	rescue := args[1].(data.Caller).Call()
 
 	defer func() {
 		if rec := recover(); rec != nil {
@@ -31,8 +31,8 @@ func Recover(args ...data.Value) (res data.Value) {
 
 // Defer invokes a cleanup function, no matter what has happened
 func Defer(args ...data.Value) (res data.Value) {
-	body := args[0].(data.Caller).Caller()
-	cleanup := args[1].(data.Caller).Caller()
+	body := args[0].(data.Caller).Call()
+	cleanup := args[1].(data.Caller).Call()
 
 	defer cleanup()
 	return body()

@@ -67,8 +67,8 @@ func (o Object) Copy() Object {
 	return newProps
 }
 
-// Caller turns Object into a callable type
-func (o Object) Caller() Call {
+// Call turns Object into a callable type
+func (o Object) Call() Call {
 	return makeMappedCall(o)
 }
 

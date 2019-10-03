@@ -63,7 +63,7 @@ func TestPromiseCaller(t *testing.T) {
 	p1 := stdlib.NewPromise(func(_ ...data.Value) data.Value {
 		return S("hello")
 	})
-	c1 := p1.(data.Caller).Caller()
+	c1 := p1.(data.Caller).Call()
 	as.String("hello", c1())
 }
 
@@ -72,7 +72,7 @@ func TestPromiseFailure(t *testing.T) {
 	p1 := stdlib.NewPromise(func(_ ...data.Value) data.Value {
 		panic(fmt.Errorf("'splosion!"))
 	})
-	c1 := p1.(data.Caller).Caller()
+	c1 := p1.(data.Caller).Call()
 	defer as.ExpectPanic("'splosion!")
 	c1()
 }

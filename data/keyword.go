@@ -8,8 +8,8 @@ func (k Keyword) Name() Name {
 	return Name(k)
 }
 
-// Caller turns Keyword into a callable type
-func (k Keyword) Caller() Call {
+// Call turns Keyword into a callable type
+func (k Keyword) Call() Call {
 	return func(args ...Value) Value {
 		m := args[0].(Mapped)
 		res, ok := m.Get(k)

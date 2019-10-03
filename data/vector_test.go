@@ -60,7 +60,7 @@ func TestVectorCaller(t *testing.T) {
 	as := assert.New(t)
 
 	v1 := V(S("hello"), S("how"), S("are"), S("you?"))
-	c1 := v1.Caller()
+	c1 := v1.Call()
 	as.String("hello", c1(I(0)))
 	as.String("how", c1(I(1)))
 	as.Nil(c1(I(4)))

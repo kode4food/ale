@@ -21,9 +21,9 @@ func TestKeywordCaller(t *testing.T) {
 	as := assert.New(t)
 
 	m1 := data.NewObject(K("name"), S("Ale"))
-	c1 := K("name").Caller()
+	c1 := K("name").Call()
 	as.String("Ale", c1(m1))
 
-	c2 := K("missing").Caller()
+	c2 := K("missing").Call()
 	as.String("defaulted", c2(m1, S("defaulted")))
 }

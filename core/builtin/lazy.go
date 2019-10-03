@@ -21,6 +21,6 @@ func makeLazyResolver(f data.Call) stdlib.LazyResolver {
 // LazySequence treats a function as a lazy sequence
 func LazySequence(args ...data.Value) data.Value {
 	fn := args[0].(data.Caller)
-	resolver := makeLazyResolver(fn.Caller())
+	resolver := makeLazyResolver(fn.Call())
 	return stdlib.NewLazySequence(resolver)
 }

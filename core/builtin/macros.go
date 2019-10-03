@@ -18,7 +18,7 @@ const (
 func Macro(args ...data.Value) data.Value {
 	switch typed := args[0].(type) {
 	case *vm.Closure:
-		body := typed.Caller()
+		body := typed.Call()
 		arityChecker := typed.ArityChecker
 		wrapper := func(_ namespace.Type, args ...data.Value) data.Value {
 			if err := arityChecker(len(args)); err != nil {
@@ -28,7 +28,7 @@ func Macro(args ...data.Value) data.Value {
 		}
 		return macro.Call(wrapper)
 	case data.Caller:
-		body := typed.Caller()
+		body := typed.Call()
 		wrapper := func(_ namespace.Type, args ...data.Value) data.Value {
 			return body(args...)
 		}

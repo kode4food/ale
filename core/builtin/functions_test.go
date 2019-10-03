@@ -23,8 +23,8 @@ func typeErr(concrete, expected string) error {
 	return fmt.Errorf(err, concrete, expected)
 }
 
-func getCall(v data.Value) data.Call {
-	return v.(data.Caller).Caller()
+func makeCall(v data.Value) data.Call {
+	return v.(data.Caller).Call()
 }
 
 func TestApply(t *testing.T) {
@@ -110,7 +110,7 @@ func TestApplyEval(t *testing.T) {
 			[1 2 3])
 	`, F(6))
 
-	e := interfaceErr("data.Integer", "data.Caller", "Caller")
+	e := interfaceErr("data.Integer", "data.Caller", "Call")
 	as.PanicWith(`(apply 32 [1 2 3])`, e)
 }
 

@@ -17,17 +17,17 @@ const (
 // Closure encapsulates a function with the locals it captures
 type Closure struct {
 	*Lambda
-	data.Call
-	data.Values
+	call   data.Call
+	values data.Values
 }
 
 func newClosure(lambda *Lambda, values data.Values) *Closure {
 	c := &Closure{
 		Lambda: lambda,
-		Values: values,
+		values: values,
 	}
 
-	c.Call = func(args ...data.Value) data.Value {
+	c.call = func(args ...data.Value) data.Value {
 		closure := c
 		lambda := closure.Lambda
 		code := lambda.Code
@@ -109,7 +109,7 @@ func newClosure(lambda *Lambda, values data.Values) *Closure {
 		case isa.Closure:
 			PC++
 			idx := isa.Index(code[PC])
-			stack[SP] = closure.Values[idx]
+			stack[SP] = closure.values[idx]
 			SP--
 			goto nextPC
 
@@ -279,7 +279,7 @@ func newClosure(lambda *Lambda, values data.Values) *Closure {
 		case isa.Not:
 			SP1 := SP + 1
 			val := stack[SP1].(data.Bool)
-			stack[SP1] = data.Bool(!val)
+			stack[SP1] = !val
 			goto nextPC
 
 		case isa.MakeTruthy:
@@ -291,10 +291,9 @@ func newClosure(lambda *Lambda, values data.Values) *Closure {
 		case isa.MakeCall:
 			SP1 := SP + 1
 			val := stack[SP1]
-			if _, ok := val.(data.Call); ok {
-				goto nextPC
+			if _, ok := val.(data.Call); !ok {
+				stack[SP1] = val.(data.Caller).Call()
 			}
-			stack[SP1] = val.(data.Caller).Caller()
 			goto nextPC
 
 		case isa.Call0:
@@ -345,7 +344,7 @@ func newClosure(lambda *Lambda, values data.Values) *Closure {
 				goto opSwitch
 			}
 			fn := val.(data.Caller)
-			return fn.Caller()(args...)
+			return fn.Call()(args...)
 
 		case isa.Jump:
 			off := isa.Offset(code[PC+1])
@@ -389,9 +388,9 @@ func newClosure(lambda *Lambda, values data.Values) *Closure {
 	return c
 }
 
-// Caller returns a calling interface for this Closure
-func (c *Closure) Caller() data.Call {
-	return c.Call
+// Call returns a calling interface for this Closure
+func (c *Closure) Call() data.Call {
+	return c.call
 }
 
 // CheckArity performs a compile-time arity check for the closure

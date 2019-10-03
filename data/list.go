@@ -106,8 +106,8 @@ func (l *list) ElementAt(index int) (Value, bool) {
 	return e.First(), true
 }
 
-// Caller turns List into a callable type
-func (l *list) Caller() Call {
+// Call turns List into a callable type
+func (l *list) Call() Call {
 	return makeIndexedCall(l)
 }
 
