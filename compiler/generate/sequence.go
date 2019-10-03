@@ -55,13 +55,13 @@ func Sequence(e encoder.Type, s data.Sequence) {
 func List(e encoder.Type, l data.List) {
 	f := resolveBuiltIn(e, listSym)
 	args := stdlib.SequenceToValues(l)
-	callApplicative(e, f.Caller(), args)
+	callApplicative(e, f.Call(), args)
 }
 
 // Vector encodes a vector
 func Vector(e encoder.Type, v data.Vector) {
 	f := resolveBuiltIn(e, vectorSym)
-	callApplicative(e, f.Caller(), data.Values(v))
+	callApplicative(e, f.Call(), data.Values(v))
 }
 
 // Object encodes an object
@@ -72,5 +72,5 @@ func Object(e encoder.Type, a data.Object) {
 		args = append(args, v.Car(), v.Cdr())
 	}
 	f := resolveBuiltIn(e, objectSym)
-	callApplicative(e, f.Caller(), args)
+	callApplicative(e, f.Call(), args)
 }

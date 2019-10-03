@@ -153,7 +153,7 @@ func staticLiteral(e encoder.Type, fn data.Value) funcEmitter {
 
 func callerLiteral(e encoder.Type, fn data.Caller) funcEmitter {
 	return func() {
-		Literal(e, fn.Caller())
+		Literal(e, fn.Call())
 	}
 }
 

@@ -213,7 +213,7 @@ func NewPromise(resolver data.Call) Promise {
 	}
 }
 
-func (p *promise) Caller() data.Call {
+func (p *promise) Call() data.Call {
 	return func(args ...data.Value) data.Value {
 		p.once(func() {
 			defer func() {

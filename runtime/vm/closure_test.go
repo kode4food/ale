@@ -26,9 +26,9 @@ func makeCode(coders []isa.Coder) data.Call {
 		Code:      code,
 		Constants: constants,
 		StackSize: 16,
-	}).Caller()
+	}).Call()
 	closure := lambda(S("closure"))
-	return closure.(data.Caller).Caller()
+	return closure.(data.Caller).Call()
 }
 
 func runCode(coders []isa.Coder) data.Value {

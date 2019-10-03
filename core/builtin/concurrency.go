@@ -20,7 +20,7 @@ const (
 func Go(args ...data.Value) data.Value {
 	fn := args[0].(data.Caller)
 	restArgs := args[1:]
-	go fn.Caller()(restArgs...)
+	go fn.Call()(restArgs...)
 	return data.Null
 }
 
@@ -42,7 +42,7 @@ func Chan(args ...data.Value) data.Value {
 
 // Promise instantiates a new eventually-fulfilled promise
 func Promise(args ...data.Value) data.Value {
-	resolver := args[0].(data.Caller).Caller()
+	resolver := args[0].(data.Caller).Call()
 	return stdlib.NewPromise(resolver)
 }
 

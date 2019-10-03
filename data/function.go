@@ -4,10 +4,10 @@ type (
 	// Call is the basic function type
 	Call func(...Value) Value
 
-	// Caller is any value that returns a calling interface
+	// Call is any value that returns a calling interface
 	Caller interface {
 		Value
-		Caller() Call
+		Call() Call
 	}
 
 	// ArityChecker is the interface for arity checks
@@ -36,8 +36,8 @@ const (
 	NormalCall                        // normal
 )
 
-// Caller turns Call into a callable type
-func (c Call) Caller() Call {
+// Call makes Call a Caller
+func (c Call) Call() Call {
 	return c
 }
 
@@ -73,8 +73,8 @@ func IsNormal(f Function) bool {
 	return f.Convention() == NormalCall
 }
 
-// Caller returns the calling interface for a function
-func (f *function) Caller() Call {
+// Call returns the calling interface for a function
+func (f *function) Call() Call {
 	return f.call
 }
 

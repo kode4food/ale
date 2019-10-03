@@ -6,13 +6,9 @@ import (
 	"github.com/kode4food/ale/stdlib"
 )
 
-func getCall(v data.Value) data.Call {
-	return v.(data.Caller).Caller()
-}
-
 // Apply performs a parameterized function call
 func Apply(args ...data.Value) data.Value {
-	fn := getCall(args[0])
+	fn := args[0].(data.Caller).Call()
 	al := len(args)
 	if al == 2 {
 		return fn(stdlib.SequenceToValues(args[1].(data.Sequence))...)

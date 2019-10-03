@@ -32,10 +32,10 @@ func LambdaFromEncoder(e encoder.Type) *Lambda {
 	}
 }
 
-// Caller allows a VM Lambda to be called for the purpose
+// Call allows a VM Lambda to be called for the purpose
 // of instantiating a Closure. This calling interface is used
 // only by the compiler.
-func (l *Lambda) Caller() data.Call {
+func (l *Lambda) Call() data.Call {
 	return func(values ...data.Value) data.Value {
 		return newClosure(l, values)
 	}

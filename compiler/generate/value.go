@@ -38,7 +38,7 @@ func Value(e encoder.Type, v data.Value) {
 func Pair(e encoder.Type, c *data.Cons) {
 	f := resolveBuiltIn(e, consSym)
 	args := data.Values{c.Car(), c.Cdr()}
-	callApplicative(e, f.Caller(), args)
+	callApplicative(e, f.Call(), args)
 }
 
 func resolveBuiltIn(e encoder.Type, sym data.Symbol) data.Caller {
