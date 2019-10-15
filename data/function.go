@@ -4,7 +4,7 @@ type (
 	// Call is the basic function type
 	Call func(...Value) Value
 
-	// Call is any value that returns a calling interface
+	// Caller is any value that returns a calling interface
 	Caller interface {
 		Value
 		Call() Call
