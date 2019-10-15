@@ -2,18 +2,17 @@ language: go
 sudo: false
 
 go:
-  - 1.11.x
+  - 1.13.x
 
 before_install:
+  - go get github.com/mattn/goveralls
 
 install:
-  - GO111MODULE=off go get github.com/kode4food/go-snapshot
-  - GO111MODULE=off go get -u golang.org/x/tools/cmd/stringer
-  - GO111MODULE=off go get -u golang.org/x/lint/golint
-
-env:
-  - GO111MODULE=on
+  - go get github.com/kode4food/go-snapshot
+  - go get -u golang.org/x/tools/cmd/stringer
+  - go get -u golang.org/x/lint/golint
 
 script:
   - $GOPATH/bin/go-snapshot -pkg assets -out internal/assets/assets.go docstring/*.md core/*.scm
   - make test
+  - $GOPATH/bin/goveralls -service=travis-pro -ignore=runtime/isa/opcode_string.go,data/function_string.go,internal/assets/assets.go
