@@ -8,6 +8,8 @@ github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/kode4food/go-snapshot v0.0.0-20190730190931-b914588127b6 h1:icTSeBqjZ4Krja9V9jZncOO+JDpm7/GK5PURLUNnWVs=
 github.com/kode4food/go-snapshot v0.0.0-20190730190931-b914588127b6/go.mod h1:foZtN0Edh2VtUspJfkiVZV79lQ4f5F0VHjEtTAWv9x4=
+github.com/mattn/goveralls v0.0.3 h1:GnFhBAK0wJmxZBum88FqDzcDPLjAk9sL0HzhmW+9bo8=
+github.com/mattn/goveralls v0.0.3/go.mod h1:8d1ZMHsd7fW6IRPKQh46F2WRpyib5/X4FOpevwGNQEw=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/stretchr/testify v1.2.2 h1:bSDNvY7ZPG5RlJ8otE/7V6gMiyenm9RtJ7IUVIAoJ1w=
