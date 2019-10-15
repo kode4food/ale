@@ -1,6 +1,6 @@
 ;;;; ale core: threading
 
-(define (thread-to-list target)
+(define (thread-seq->list target)
   (unless (list? target)
           (list target)
           target))
@@ -8,7 +8,7 @@
 (define-macro ->
   [(value) value]
   [(value . forms)
-     (let* ([l (thread-to-list (first forms))]
+     (let* ([l (thread-seq->list (first forms))]
             [f (first l)                     ]
             [r (rest l)                      ])
        `(-> (,f ,value ,@r) ,@(rest forms)))])
@@ -16,7 +16,7 @@
 (define-macro ->>
   [(value) value]
   [(value . forms)
-     (let* ([l (thread-to-list (first forms))]
+     (let* ([l (thread-seq->list (first forms))]
             [f (first l)                     ]
             [r (rest l)                      ])
        `(->> (,f ,@r ,value) ,@(rest forms)))])
@@ -24,7 +24,7 @@
 (define-macro some->
   [(value) value]
   [(value . forms)
-     (let* ([l (thread-to-list (first forms))]
+     (let* ([l (thread-seq->list (first forms))]
             [f (first l)                     ]
             [r (rest l)                      ])
        `(let [val# ,value]
@@ -34,7 +34,7 @@
 (define-macro some->>
   [(value) value]
   [(value . forms)
-     (let* ([l (thread-to-list (first forms))]
+     (let* ([l (thread-seq->list (first forms))]
             [f (first l)                     ]
             [r (rest l)                      ])
        `(let [val# ,value]
@@ -45,7 +45,7 @@
   (assert-args
     (is-binding-clause binding) "binding clause must be a paired vector"
     (!empty? forms)             "at least one threaded form is required")
-  (let ([step  (thread-to-list (first forms))]
+  (let ([step  (thread-seq->list (first forms))]
         [next  (rest forms)                  ]
         [name  (binding 0)                   ]
         [value (binding 1)                   ])

@@ -62,7 +62,7 @@ func TestMapAndFilterEval(t *testing.T) {
 func TestMapParallelEval(t *testing.T) {
 	as := assert.New(t)
 	as.EvalTo(`
-		(to-vector
+		(seq->vector
 			(map +
 				[1 2 3 4]
 				'(2 4 6 8)
@@ -114,7 +114,7 @@ func TestLazySeqEval(t *testing.T) {
 	`, F(6))
 
 	as.EvalTo(`
-		(length (to-vector (lazy-seq '())))
+		(length (seq->vector (lazy-seq '())))
 	`, F(0))
 }
 
