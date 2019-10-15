@@ -11,7 +11,7 @@ Creates a lazy sequence whose content is the result of concatenating the element
 #### An Example
 
 ~~~scheme
-(to-list (concat [1 2 3] '(4 5 6)))
+(seq->list (concat [1 2 3] '(4 5 6)))
 ~~~
 
 This will return the list _(1 2 3 4 5 6)_

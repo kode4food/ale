@@ -34,7 +34,7 @@
   [(count step coll)
      (lazy-seq
        (when (seq coll)
-             (cons (to-list (take count coll))
+             (cons (seq->list (take count coll))
                    (partition count step (drop step coll)))))])
 
 (define-lambda range
@@ -71,7 +71,7 @@
      ((lambda-rec map-parallel (colls)
          (lazy-seq
            (when (apply true? (map !empty? colls))
-                 (let ([f (to-vector (map first colls))]
+                 (let ([f (seq->vector (map first colls))]
                        [r (map rest colls)             ])
                    (cons (apply func f) (map-parallel r))))))
        (cons coll colls))])
@@ -123,9 +123,9 @@
 (define-macro (cartesian-product . colls)
   (let* ([sym-gen  (lambda (x) (gensym (str "cp" x)))         ]
          [let-syms (take (length colls) (map sym-gen (range)))]
-         [let-vals (map to-vector (zip let-syms colls))       ]
-         [let-bind (to-list let-vals)                         ]
+         [let-vals (map seq->vector (zip let-syms colls))       ]
+         [let-bind (seq->list let-vals)                         ]
          [for-syms (take (length colls) (map sym-gen (range)))]
-         [for-vals (map to-vector (zip for-syms let-syms))    ]
-         [for-bind (to-list for-vals)                         ])
+         [for-vals (map seq->vector (zip for-syms let-syms))    ]
+         [for-bind (seq->list for-vals)                         ])
     `(let ,let-bind (for ,for-bind (list ,@for-syms)))))

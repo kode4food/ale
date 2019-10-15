@@ -15,7 +15,7 @@ Will create a lambda function that may be passed around in a first-class manner.
   (let [mul 2]
     (lambda (x) (* x mul))))
 
-(to-vector
+(seq->vector
   (map double '(1 2 3 4 5 6)))
 ~~~
 

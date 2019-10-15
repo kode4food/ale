@@ -43,7 +43,7 @@
                       [:else            (raise "malformed try-catch-finally")]))))
 
         (lambda-rec try-catch-predicate (pred err-sym)
-          (let* ([l (thread-to-list pred)]
+          (let* ([l (thread-seq->list pred)]
                  [f (first l)            ]
                  [r (rest l)             ])
             (cons f (cons err-sym r))))

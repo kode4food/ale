@@ -12,7 +12,7 @@ Returns a future in the form of a function. The provided forms will be evaluated
 
 ~~~scheme
 (define fut (future
-  (to-vector (generate
+  (seq->vector (generate
     (emit "red")
     (emit "orange")
     (emit "yellow")))))

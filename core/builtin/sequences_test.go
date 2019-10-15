@@ -22,14 +22,14 @@ func TestSequencesEval(t *testing.T) {
 
 func TestToObjectEval(t *testing.T) {
 	as := assert.New(t)
-	as.EvalTo(`(object? (to-object [:name "Ale" :age 45]))`, data.True)
-	as.EvalTo(`(object? (to-object '(:name "Ale" :age 45)))`, data.True)
-	as.EvalTo(`(mapped? (to-object '(:name "Ale" :age 45)))`, data.True)
+	as.EvalTo(`(object? (seq->object [:name "Ale" :age 45]))`, data.True)
+	as.EvalTo(`(object? (seq->object '(:name "Ale" :age 45)))`, data.True)
+	as.EvalTo(`(mapped? (seq->object '(:name "Ale" :age 45)))`, data.True)
 }
 
 func TestToVectorEval(t *testing.T) {
 	as := assert.New(t)
-	as.EvalTo(`(vector? (to-vector (list 1 2 3)))`, data.True)
+	as.EvalTo(`(vector? (seq->vector (list 1 2 3)))`, data.True)
 	as.EvalTo(`(counted? [1 2 3 4])`, data.True)
 	as.EvalTo(`(nth [1 2 3 4] 2)`, data.Integer(3))
 	as.EvalTo(`(nth [1 2 3 4] 10 "oops")`, data.String("oops"))
@@ -39,7 +39,7 @@ func TestToVectorEval(t *testing.T) {
 
 func TestToListEval(t *testing.T) {
 	as := assert.New(t)
-	as.EvalTo(`(list? (to-list (vector 1 2 3)))`, data.True)
+	as.EvalTo(`(list? (seq->list (vector 1 2 3)))`, data.True)
 }
 
 func TestMapFilterEval(t *testing.T) {

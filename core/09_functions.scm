@@ -14,7 +14,7 @@
                 (is-local fnName))
            "bindings must contain named functions")
          (parse-bindings (append out [fnName fnList]) (rest in)))
-       `(let-rec ,(to-list out) ,@body)))
+       `(let-rec ,(seq->list out) ,@body)))
    [] bindings))
 
 (define-lambda partial

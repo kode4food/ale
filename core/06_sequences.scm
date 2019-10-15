@@ -11,13 +11,13 @@
       (if (!empty? value) value '())
       (raise (str "value can't act as a sequence: " value))))
 
-(define (to-object . colls)
+(define (seq->object . colls)
   (apply object (apply concat! colls)))
 
-(define (to-list . colls)
+(define (seq->list . colls)
   (apply list (apply concat! colls)))
 
-(define (to-vector . colls)
+(define (seq->vector . colls)
   (apply vector (apply concat! colls)))
 
 (define (append* coll . values)
