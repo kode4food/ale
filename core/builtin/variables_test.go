@@ -1,6 +1,7 @@
 package builtin_test
 
 import (
+	"errors"
 	"fmt"
 	"testing"
 
@@ -32,7 +33,7 @@ func TestLetBindingErrors(t *testing.T) {
 
 	as.PanicWith(`
 		(let [a blah b] "hello")
-	`, fmt.Errorf(special.UnpairedBindings))
+	`, errors.New(special.UnpairedBindings))
 
 	as.PanicWith(`
 		(let ((a blah)) "hello")

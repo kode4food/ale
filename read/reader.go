@@ -1,6 +1,7 @@
 package read
 
 import (
+	"errors"
 	"fmt"
 	"regexp"
 
@@ -90,11 +91,11 @@ func (r *reader) value(t *Token) data.Value {
 	case Identifier:
 		return readIdentifier(t)
 	case ListEnd:
-		panic(fmt.Errorf(UnmatchedListEnd))
+		panic(errors.New(UnmatchedListEnd))
 	case VectorEnd:
-		panic(fmt.Errorf(UnmatchedVectorEnd))
+		panic(errors.New(UnmatchedVectorEnd))
 	case MapEnd:
-		panic(fmt.Errorf(UnmatchedMapEnd))
+		panic(errors.New(UnmatchedMapEnd))
 	default:
 		return t.Value
 	}
@@ -123,7 +124,7 @@ func isDottedList(elems data.Values) bool {
 	for i, e := range elems {
 		if isDotSymbol(e) {
 			if sawDot || i != len(elems)-2 {
-				panic(fmt.Errorf(InvalidListSyntax))
+				panic(errors.New(InvalidListSyntax))
 			}
 			sawDot = true
 		}
@@ -170,7 +171,7 @@ func (r *reader) readCollection(endToken TokenType) data.Values {
 			}
 		} else {
 			err := collectionErrors[endToken]
-			panic(fmt.Errorf(err))
+			panic(errors.New(err))
 		}
 	}
 }

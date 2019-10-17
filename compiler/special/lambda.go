@@ -104,8 +104,8 @@ func (le *lambdaEncoder) makeArityChecker() data.ArityChecker {
 	for _, s := range le.cases[1:] {
 		l, u := s.arityRange()
 		lower = util.IntMin(l, lower)
-		if u == -1 || upper == -1 {
-			upper = -1
+		if u == arity.OrMore || upper == arity.OrMore {
+			upper = arity.OrMore
 			continue
 		}
 		upper = util.IntMax(u, upper)
@@ -185,7 +185,7 @@ func (c *lambdaCase) restArg() (data.Name, bool) {
 func (c *lambdaCase) arityRange() (int, int) {
 	fl := len(c.fixedArgs())
 	if _, ok := c.restArg(); ok {
-		return fl, -1
+		return fl, arity.OrMore
 	}
 	return fl, fl
 }

@@ -1,7 +1,7 @@
 package read
 
 import (
-	"fmt"
+	"errors"
 	"regexp"
 
 	"github.com/kode4food/ale/data"
@@ -135,7 +135,7 @@ func matchToken(src string) (*Token, string) {
 	}
 	// Shouldn't happen because of the patterns that are defined,
 	// but is here as a safety net
-	panic(fmt.Errorf(UnmatchedState))
+	panic(errors.New(UnmatchedState))
 }
 
 // String converts this Value into a string
@@ -174,7 +174,7 @@ func unescape(s string) string {
 
 func stringState(sm []string) *Token {
 	if len(sm[4]) == 0 {
-		panic(fmt.Errorf(StringNotTerminated))
+		panic(errors.New(StringNotTerminated))
 	}
 	s := unescape(sm[2])
 	return makeToken(String, data.String(s))

@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"math/rand"
 	"os"
@@ -191,7 +192,7 @@ func toError(i interface{}) error {
 	case error:
 		return typed
 	case data.Value:
-		return fmt.Errorf(typed.String())
+		return errors.New(typed.String())
 	default:
 		panic(fmt.Errorf("non-standard error: %s", i))
 	}

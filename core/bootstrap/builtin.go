@@ -22,8 +22,6 @@ const (
 	defBuiltInName = "def-builtin"
 	defSpecialName = "def-special"
 	defMacroName   = "def-macro"
-
-	orMore = -1
 )
 
 func (b *bootstrap) builtIns() {
@@ -88,19 +86,19 @@ func (b *bootstrap) initialFunctions() {
 }
 
 func (b *bootstrap) availableFunctions() {
-	b.applicative("-", builtin.Sub, 1, orMore)
-	b.applicative("!=", builtin.Neq, 1, orMore)
+	b.applicative("-", builtin.Sub, 1, arity.OrMore)
+	b.applicative("!=", builtin.Neq, 1, arity.OrMore)
 	b.applicative("*", builtin.Mul)
-	b.applicative("/", builtin.Div, 1, orMore)
+	b.applicative("/", builtin.Div, 1, arity.OrMore)
 	b.applicative("+", builtin.Add)
-	b.applicative("<", builtin.Lt, 1, orMore)
-	b.applicative("<=", builtin.Lte, 1, orMore)
-	b.applicative("=", builtin.Eq, 1, orMore)
-	b.applicative(">", builtin.Gt, 1, orMore)
-	b.applicative(">=", builtin.Gte, 1, orMore)
+	b.applicative("<", builtin.Lt, 1, arity.OrMore)
+	b.applicative("<=", builtin.Lte, 1, arity.OrMore)
+	b.applicative("=", builtin.Eq, 1, arity.OrMore)
+	b.applicative(">", builtin.Gt, 1, arity.OrMore)
+	b.applicative(">=", builtin.Gte, 1, arity.OrMore)
 
 	b.applicative("append", builtin.Append, 2)
-	b.applicative("apply", builtin.Apply, 2, orMore)
+	b.applicative("apply", builtin.Apply, 2, arity.OrMore)
 	b.applicative("car", builtin.Car, 1)
 	b.applicative("cdr", builtin.Cdr, 1)
 	b.applicative("chan", builtin.Chan, 0, 1)
@@ -108,7 +106,7 @@ func (b *bootstrap) availableFunctions() {
 	b.applicative("current-time", builtin.CurrentTime, 0)
 	b.applicative("defer", builtin.Defer, 2)
 	b.applicative("promise", builtin.Promise, 1)
-	b.applicative("eq", builtin.IsIdentical, 1, orMore)
+	b.applicative("eq", builtin.IsIdentical, 1, arity.OrMore)
 	b.applicative("first", builtin.First, 1)
 	b.applicative("gensym", builtin.GenSym, 0, 1)
 	b.applicative("get", builtin.Get, 2)
@@ -117,7 +115,7 @@ func (b *bootstrap) availableFunctions() {
 	b.applicative("length", builtin.Length, 1)
 	b.applicative("list", builtin.List)
 	b.applicative("macro", builtin.Macro, 1)
-	b.applicative("mod", builtin.Mod, 1, orMore)
+	b.applicative("mod", builtin.Mod, 1, arity.OrMore)
 	b.applicative("nth", builtin.Nth, 2, 3)
 	b.applicative("object", builtin.Object)
 	b.applicative("raise", builtin.Raise, 1)
