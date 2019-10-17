@@ -1,6 +1,7 @@
 package special
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/kode4food/ale/compiler/arity"
@@ -111,7 +112,7 @@ func parseLetBindings(v data.Value) letBindings {
 
 func parseLetBinding(b data.Vector) *letBinding {
 	if len(b) != 2 {
-		panic(fmt.Errorf(UnpairedBindings))
+		panic(errors.New(UnpairedBindings))
 	}
 	return &letBinding{
 		name:  b[0].(data.LocalSymbol).Name(),

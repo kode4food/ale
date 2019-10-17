@@ -1,7 +1,7 @@
 package builtin_test
 
 import (
-	"fmt"
+	"errors"
 	"testing"
 
 	"github.com/kode4food/ale/core/builtin"
@@ -47,11 +47,11 @@ func TestObjectEval(t *testing.T) {
 		(x :name)
 	`, S("bob"))
 
-	as.PanicWith(`(object :too "few" :args)`, fmt.Errorf(data.ObjectNotPaired))
+	as.PanicWith(`(object :too "few" :args)`, errors.New(data.ObjectNotPaired))
 
 	as.PanicWith(`
 		(apply object (concat '(:name "Ale") '(:age)))
-	`, fmt.Errorf(data.ObjectNotPaired))
+	`, errors.New(data.ObjectNotPaired))
 }
 
 func TestMappedEval(t *testing.T) {

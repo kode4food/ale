@@ -1,6 +1,7 @@
 package builtin_test
 
 import (
+	"errors"
 	"fmt"
 	"testing"
 
@@ -123,15 +124,15 @@ func TestRestFunctionsEval(t *testing.T) {
 
 	as.PanicWith(`
 		(lambda (x y .) "explode")
-	`, fmt.Errorf(read.InvalidListSyntax))
+	`, errors.New(read.InvalidListSyntax))
 
 	as.PanicWith(`
 		(lambda (x y . z g) "explode")
-	`, fmt.Errorf(read.InvalidListSyntax))
+	`, errors.New(read.InvalidListSyntax))
 
 	as.PanicWith(`
 		(lambda (x y . . z) "explode")
-	`, fmt.Errorf(read.InvalidListSyntax))
+	`, errors.New(read.InvalidListSyntax))
 }
 
 func TestTailCallEval(t *testing.T) {

@@ -33,5 +33,5 @@ func TestPredicatesEval(t *testing.T) {
 	as.EvalTo(`(keyword? 99)`, data.False)
 	as.EvalTo(`(!keyword? 99)`, data.True)
 
-	as.PanicWith(`(null?)`, fmt.Errorf(arity.BadMinimumArity, 0, 1))
+	as.PanicWith(`(null?)`, fmt.Errorf(arity.BadMinimumArity, 1, 0))
 }

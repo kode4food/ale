@@ -2,6 +2,7 @@ package data
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 )
 
@@ -24,7 +25,7 @@ const (
 func NewObject(args ...Value) Object {
 	l := len(args)
 	if l%2 != 0 {
-		panic(fmt.Errorf(ObjectNotPaired))
+		panic(errors.New(ObjectNotPaired))
 	}
 	res := Object{}
 	for i := len(args) - 2; i >= 0; i -= 2 {

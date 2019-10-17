@@ -1,7 +1,7 @@
 package stdlib_test
 
 import (
-	"fmt"
+	"errors"
 	"sync"
 	"testing"
 	"time"
@@ -70,7 +70,7 @@ func TestPromiseCaller(t *testing.T) {
 func TestPromiseFailure(t *testing.T) {
 	as := assert.New(t)
 	p1 := stdlib.NewPromise(func(_ ...data.Value) data.Value {
-		panic(fmt.Errorf("'splosion!"))
+		panic(errors.New("'splosion!"))
 	})
 	c1 := p1.(data.Caller).Call()
 	defer as.ExpectPanic("'splosion!")

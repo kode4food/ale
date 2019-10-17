@@ -1,6 +1,7 @@
 package read_test
 
 import (
+	"errors"
 	"fmt"
 	"testing"
 
@@ -122,16 +123,16 @@ func testReaderError(t *testing.T, src string, err error) {
 }
 
 func TestReaderErrors(t *testing.T) {
-	testReaderError(t, "(99 100 ", fmt.Errorf(read.ListNotClosed))
-	testReaderError(t, "[99 100 ", fmt.Errorf(read.VectorNotClosed))
-	testReaderError(t, "{:key 99", fmt.Errorf(read.MapNotClosed))
+	testReaderError(t, "(99 100 ", errors.New(read.ListNotClosed))
+	testReaderError(t, "[99 100 ", errors.New(read.VectorNotClosed))
+	testReaderError(t, "{:key 99", errors.New(read.MapNotClosed))
 
-	testReaderError(t, "99 100)", fmt.Errorf(read.UnmatchedListEnd))
-	testReaderError(t, "99 100]", fmt.Errorf(read.UnmatchedVectorEnd))
-	testReaderError(t, "99}", fmt.Errorf(read.UnmatchedMapEnd))
-	testReaderError(t, "{99}", fmt.Errorf(data.ObjectNotPaired))
+	testReaderError(t, "99 100)", errors.New(read.UnmatchedListEnd))
+	testReaderError(t, "99 100]", errors.New(read.UnmatchedVectorEnd))
+	testReaderError(t, "99}", errors.New(read.UnmatchedMapEnd))
+	testReaderError(t, "{99}", errors.New(data.ObjectNotPaired))
 
-	testReaderError(t, "(", fmt.Errorf(read.ListNotClosed))
+	testReaderError(t, "(", errors.New(read.ListNotClosed))
 	testReaderError(t, "'", fmt.Errorf(read.PrefixedNotPaired, "ale/quote"))
 	testReaderError(t, ",@", fmt.Errorf(read.PrefixedNotPaired, "ale/unquote-splicing"))
 	testReaderError(t, ",", fmt.Errorf(read.PrefixedNotPaired, "ale/unquote"))

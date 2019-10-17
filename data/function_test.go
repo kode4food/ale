@@ -37,5 +37,5 @@ func TestNormalFunction(t *testing.T) {
 
 	as.Nil(f1.CheckArity(0))
 	err := f1.CheckArity(2)
-	as.EqualError(err, fmt.Sprintf(arity.BadFixedArity, 2, 0))
+	as.EqualError(err, fmt.Sprintf(arity.BadFixedArity, 0, 2))
 }
