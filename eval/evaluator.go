@@ -38,6 +38,6 @@ func Value(ns namespace.Type, v data.Value) data.Value {
 
 func encodeAndRun(e encoder.Type) data.Value {
 	fn := vm.LambdaFromEncoder(e).Call()
-	closure := fn().(*vm.Closure).Call()
+	closure := fn().(data.Caller).Call()
 	return closure()
 }

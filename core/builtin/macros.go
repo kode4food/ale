@@ -6,7 +6,6 @@ import (
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/macro"
 	"github.com/kode4food/ale/namespace"
-	"github.com/kode4food/ale/runtime/vm"
 )
 
 // Error messages
@@ -17,11 +16,10 @@ const (
 // Macro converts a function into a macro
 func Macro(args ...data.Value) data.Value {
 	switch typed := args[0].(type) {
-	case *vm.Closure:
+	case data.Function:
 		body := typed.Call()
-		arityChecker := typed.ArityChecker
 		wrapper := func(_ namespace.Type, args ...data.Value) data.Value {
-			if err := arityChecker(len(args)); err != nil {
+			if err := typed.CheckArity(len(args)); err != nil {
 				panic(err)
 			}
 			return body(args...)
