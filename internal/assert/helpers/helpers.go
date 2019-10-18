@@ -32,11 +32,6 @@ func N(s string) data.Name {
 	return data.Name(s)
 }
 
-// O constructs an Object
-func O(args ...data.Value) data.Object {
-	return data.NewObject(args...)
-}
-
 // S constructs a String
 func S(s string) data.String {
 	return data.String(s)
