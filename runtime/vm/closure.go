@@ -14,22 +14,21 @@ const (
 	ErrUnknownOpcode = "unknown opcode: %s"
 )
 
-// Closure encapsulates a function with the locals it captures
-type Closure struct {
+type closure struct {
 	lambda *Lambda
 	call   data.Call
 	values data.Values
 }
 
-func newClosure(lambda *Lambda, values data.Values) *Closure {
-	c := &Closure{
+func newClosure(lambda *Lambda, values data.Values) *closure {
+	self := &closure{
 		lambda: lambda,
 		values: values,
 	}
 
-	c.call = func(args ...data.Value) data.Value {
-		closure := c
-		lambda := closure.lambda
+	self.call = func(args ...data.Value) data.Value {
+		current := self
+		lambda := current.lambda
 		code := lambda.Code
 		stackSize := lambda.StackSize
 		localCount := lambda.LocalCount
@@ -109,7 +108,7 @@ func newClosure(lambda *Lambda, values data.Values) *Closure {
 		case isa.Closure:
 			PC++
 			idx := isa.Index(code[PC])
-			stack[SP] = closure.values[idx]
+			stack[SP] = current.values[idx]
 			SP--
 			goto nextPC
 
@@ -329,10 +328,10 @@ func newClosure(lambda *Lambda, values data.Values) *Closure {
 			args = make(data.Values, argCount)
 			copy(args, stack[SP1+1:])
 			val := stack[SP1]
-			if vc, ok := val.(*Closure); ok {
-				if vc != closure {
-					closure = vc
-					lambda = closure.lambda
+			if vc, ok := val.(*closure); ok {
+				if vc != current {
+					current = vc
+					lambda = current.lambda
 					code = lambda.Code
 					stackSize = lambda.StackSize
 					localCount = lambda.LocalCount
@@ -385,33 +384,33 @@ func newClosure(lambda *Lambda, values data.Values) *Closure {
 		}
 	}
 
-	return c
+	return self
 }
 
-// TailCaller marks Closure as tail callable
-func (c *Closure) TailCaller() {}
+// TailCaller marks closure as tail callable
+func (c *closure) TailCaller() {}
 
-// Call returns a calling interface for this Closure
-func (c *Closure) Call() data.Call {
+// Call returns a calling interface for this closure
+func (c *closure) Call() data.Call {
 	return c.call
 }
 
 // CheckArity performs a compile-time arity check for the closure
-func (c *Closure) CheckArity(i int) error {
+func (c *closure) CheckArity(i int) error {
 	return c.lambda.ArityChecker(i)
 }
 
 // Convention returns the closure's calling convention
-func (c *Closure) Convention() data.Convention {
+func (c *closure) Convention() data.Convention {
 	return data.ApplicativeCall
 }
 
-// Type makes Closure a typed value
-func (c *Closure) Type() data.Name {
+// Type makes closure a typed value
+func (c *closure) Type() data.Name {
 	res := fmt.Sprintf("%s-closure", c.Convention())
 	return data.Name(res)
 }
 
-func (c *Closure) String() string {
+func (c *closure) String() string {
 	return data.DumpString(c)
 }
