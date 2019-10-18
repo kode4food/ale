@@ -7,7 +7,6 @@ import (
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/namespace"
 	"github.com/kode4food/ale/runtime/isa"
-	"github.com/kode4food/ale/stdlib"
 )
 
 // Error messages
@@ -16,7 +15,6 @@ const (
 )
 
 var (
-	listSym   = namespace.RootSymbol("list")
 	vectorSym = namespace.RootSymbol("vector")
 	objectSym = namespace.RootSymbol("object")
 )
@@ -49,13 +47,6 @@ func Sequence(e encoder.Type, s data.Sequence) {
 	default:
 		panic(fmt.Errorf(CannotCompile, s))
 	}
-}
-
-// List encodes a list
-func List(e encoder.Type, l data.List) {
-	f := resolveBuiltIn(e, listSym)
-	args := stdlib.SequenceToValues(l)
-	callApplicative(e, f.Call(), args)
 }
 
 // Vector encodes a vector

@@ -70,9 +70,9 @@ func TestPromiseCaller(t *testing.T) {
 func TestPromiseFailure(t *testing.T) {
 	as := assert.New(t)
 	p1 := stdlib.NewPromise(func(_ ...data.Value) data.Value {
-		panic(errors.New("'splosion!"))
+		panic(errors.New("explosion"))
 	})
 	c1 := p1.(data.Caller).Call()
-	defer as.ExpectPanic("'splosion!")
+	defer as.ExpectPanic("explosion")
 	c1()
 }
