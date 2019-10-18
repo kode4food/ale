@@ -8,7 +8,6 @@ import (
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/namespace"
 	"github.com/kode4food/ale/runtime/isa"
-	"github.com/kode4food/ale/runtime/vm"
 	"github.com/kode4food/ale/stdlib"
 )
 
@@ -81,12 +80,6 @@ func callNonSymbol(e encoder.Type, v data.Value, args data.Values) {
 	}
 }
 
-func callCaller(e encoder.Type, c data.Caller, args data.Values) {
-	emitFunc := callerLiteral(e, c)
-	emitArgs := applicativeArgs(e, args)
-	callWith(e, emitFunc, emitArgs)
-}
-
 func callFunction(e encoder.Type, f data.Function, args data.Values) {
 	assertArity(f, args)
 	emitFunc := funcRef(e, f)
@@ -94,18 +87,24 @@ func callFunction(e encoder.Type, f data.Function, args data.Values) {
 	callWith(e, emitFunc, emitArgs)
 }
 
+func callCaller(e encoder.Type, c data.Caller, args data.Values) {
+	emitFunc := callerLiteral(e, c)
+	emitArgs := applicativeArgs(e, args)
+	callWith(e, emitFunc, emitArgs)
+}
+
+func funcRef(e encoder.Type, f data.Function) funcEmitter {
+	if tc, ok := f.(TailCaller); ok {
+		return tailCallerLiteral(e, tc)
+	}
+	return callerLiteral(e, f)
+}
+
 func assertArity(f data.Function, args data.Values) {
 	al := len(args)
 	if err := f.CheckArity(al); err != nil {
 		panic(err)
 	}
-}
-
-func funcRef(e encoder.Type, f data.Function) funcEmitter {
-	if cl, ok := f.(*vm.Closure); ok {
-		return dynamicLiteral(e, cl)
-	}
-	return callerLiteral(e, f)
 }
 
 func funcArgs(e encoder.Type, f data.Function, args data.Values) argsEmitter {
@@ -157,7 +156,7 @@ func callerLiteral(e encoder.Type, fn data.Caller) funcEmitter {
 	}
 }
 
-func dynamicLiteral(e encoder.Type, fn data.Value) funcEmitter {
+func tailCallerLiteral(e encoder.Type, fn data.Value) funcEmitter {
 	return func() {
 		Literal(e, fn)
 		e.Emit(isa.MakeCall)

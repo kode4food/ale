@@ -16,20 +16,20 @@ const (
 
 // Closure encapsulates a function with the locals it captures
 type Closure struct {
-	*Lambda
+	lambda *Lambda
 	call   data.Call
 	values data.Values
 }
 
 func newClosure(lambda *Lambda, values data.Values) *Closure {
 	c := &Closure{
-		Lambda: lambda,
+		lambda: lambda,
 		values: values,
 	}
 
 	c.call = func(args ...data.Value) data.Value {
 		closure := c
-		lambda := closure.Lambda
+		lambda := closure.lambda
 		code := lambda.Code
 		stackSize := lambda.StackSize
 		localCount := lambda.LocalCount
@@ -332,7 +332,7 @@ func newClosure(lambda *Lambda, values data.Values) *Closure {
 			if vc, ok := val.(*Closure); ok {
 				if vc != closure {
 					closure = vc
-					lambda = closure.Lambda
+					lambda = closure.lambda
 					code = lambda.Code
 					stackSize = lambda.StackSize
 					localCount = lambda.LocalCount
@@ -388,6 +388,9 @@ func newClosure(lambda *Lambda, values data.Values) *Closure {
 	return c
 }
 
+// TailCaller marks Closure as tail callable
+func (c *Closure) TailCaller() {}
+
 // Call returns a calling interface for this Closure
 func (c *Closure) Call() data.Call {
 	return c.call
@@ -395,7 +398,7 @@ func (c *Closure) Call() data.Call {
 
 // CheckArity performs a compile-time arity check for the closure
 func (c *Closure) CheckArity(i int) error {
-	return c.ArityChecker(i)
+	return c.lambda.ArityChecker(i)
 }
 
 // Convention returns the closure's calling convention
