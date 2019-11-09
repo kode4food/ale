@@ -18,7 +18,7 @@
              (let [func-name (sym (str "!" name "?"))]
                `(define ,func-name (lambda (f# . r#)
                    (,pred-apply (lambda (value) (not (,func value)))
-                               (cons f# r#))))))])
+                                (cons f# r#))))))])
 
   (define-macro (define-predicate func name)
     `(begin ,(define-pos func name)

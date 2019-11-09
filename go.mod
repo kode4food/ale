@@ -9,9 +9,9 @@ require (
 	github.com/mattn/goveralls v0.0.3 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/stretchr/testify v1.2.2
-	golang.org/x/lint v0.0.0-20190909230951-414d861bb4ac // indirect
+	golang.org/x/lint v0.0.0-20190930215403-16217165b5de // indirect
 	golang.org/x/sys v0.0.0-20190403152447-81d4e9dc473e // indirect
-	golang.org/x/tools v0.0.0-20190914235951-31e00f45c22e // indirect
+	golang.org/x/tools v0.0.0-20191025023517-2077df36852e // indirect
 )
 
 go 1.13

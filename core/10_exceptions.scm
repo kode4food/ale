@@ -44,8 +44,8 @@
 
         (lambda-rec try-catch-predicate (pred err-sym)
           (let* ([l (thread-seq->list pred)]
-                 [f (first l)            ]
-                 [r (rest l)             ])
+                 [f (first l)              ]
+                 [r (rest l)               ])
             (cons f (cons err-sym r))))
 
         (lambda-rec try-catch-branch (clauses err-sym)
