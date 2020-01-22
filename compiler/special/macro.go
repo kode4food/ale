@@ -25,9 +25,9 @@ func MacroExpand(e encoder.Type, args ...data.Value) {
 }
 
 func expandFor(ns namespace.Type) data.Call {
-	return data.Call(func(args ...data.Value) data.Value {
+	return func(args ...data.Value) data.Value {
 		return macro.Expand(ns, args[0])
-	})
+	}
 }
 
 // MacroExpand1 performs a single-step macro expansion of a form
@@ -39,7 +39,7 @@ func MacroExpand1(e encoder.Type, args ...data.Value) {
 }
 
 func expand1For(ns namespace.Type) data.Call {
-	return data.Call(func(args ...data.Value) data.Value {
+	return func(args ...data.Value) data.Value {
 		return macro.Expand1(ns, args[0])
-	})
+	}
 }

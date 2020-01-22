@@ -36,8 +36,8 @@ var (
 	patternSym  = namespace.RootSymbol("pattern")
 
 	specialNames = map[data.String]data.Value{
-		"true":  data.True,
-		"false": data.False,
+		data.TrueLiteral:  data.True,
+		data.FalseLiteral: data.False,
 	}
 
 	collectionErrors = map[TokenType]string{

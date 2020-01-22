@@ -30,7 +30,7 @@ func ReaderStr(args ...data.Value) data.Value {
 	return data.String(b.String())
 }
 
-// IsString returns whether or not the provided value is a string
+// IsString returns whether the provided value is a string
 func IsString(args ...data.Value) data.Value {
 	_, ok := args[0].(data.String)
 	return data.Bool(ok)

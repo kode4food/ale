@@ -256,7 +256,7 @@ func formatForREPL(s string) string {
 }
 
 func help(_ ...data.Value) data.Value {
-	md := string(docstring.Get("help"))
+	md := docstring.Get("help")
 	fmt.Println(formatForREPL(md))
 	return nothing
 }
@@ -266,7 +266,7 @@ func doc(args ...data.Value) data.Value {
 	name := string(sym.Name())
 	if docstring.Exists(name) {
 		docStr := docstring.Get(name)
-		f := formatForREPL(string(docStr))
+		f := formatForREPL(docStr)
 		fmt.Println(f)
 		return nothing
 	}
@@ -303,11 +303,10 @@ func getScreenWidth() int {
 }
 
 func getHistoryFile() string {
-	usr, err := user.Current()
-	if err != nil {
-		return ""
+	if usr, err := user.Current(); err == nil {
+		return path.Join(usr.HomeDir, ".ale-history")
 	}
-	return path.Join(usr.HomeDir, ".ale-history")
+	return ""
 }
 
 func init() {

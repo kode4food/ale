@@ -161,8 +161,7 @@ func (b *bootstrap) availableFunctions() {
 }
 
 func (b *bootstrap) applicative(name data.Name, call data.Call, arity ...int) {
-	fn := data.Call(call)
-	b.builtIn(name, fn, arity...)
+	b.builtIn(name, call, arity...)
 }
 
 func (b *bootstrap) macro(name data.Name, call macro.Call) {

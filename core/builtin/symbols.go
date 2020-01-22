@@ -22,19 +22,19 @@ func GenSym(args ...data.Value) data.Value {
 	return data.NewGeneratedSymbol(data.Name(s))
 }
 
-// IsSymbol returns whether or not the provided value is a symbol
+// IsSymbol returns whether the provided value is a symbol
 func IsSymbol(args ...data.Value) data.Value {
 	_, ok := args[0].(data.Symbol)
 	return data.Bool(ok)
 }
 
-// IsLocal returns whether or not the provided value is an unqualified symbol
+// IsLocal returns whether the provided value is an unqualified symbol
 func IsLocal(args ...data.Value) data.Value {
 	_, ok := args[0].(data.LocalSymbol)
 	return data.Bool(ok)
 }
 
-// IsQualified returns whether or not the provided value is a qualified symbol
+// IsQualified returns whether the provided value is a qualified symbol
 func IsQualified(args ...data.Value) data.Value {
 	_, ok := args[0].(data.QualifiedSymbol)
 	return data.Bool(ok)

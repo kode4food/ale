@@ -49,9 +49,9 @@ func TestChan(t *testing.T) {
 }
 
 func makeWrapperFunc(v data.Value) data.Call {
-	return data.Call(func(_ ...data.Value) data.Value {
+	return func(_ ...data.Value) data.Value {
 		return v
-	})
+	}
 }
 func TestPromise(t *testing.T) {
 	as := assert.New(t)

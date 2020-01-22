@@ -54,7 +54,7 @@ func Mod(args ...data.Value) data.Value {
 	return res
 }
 
-// Eq returns whether or not the provided numbers are equal
+// Eq returns whether the provided numbers are equal
 func Eq(args ...data.Value) data.Value {
 	var res = args[0].(data.Number)
 	for _, n := range args[1:] {

@@ -57,8 +57,8 @@
                       `(if ,(if (is-list test)
                                 (pred-list test)
                                 (pred test))
-                            ,branch
-                            ,(apply case* next))))])])
+                           ,branch
+                           ,(apply case* next))))])])
     `(let [,val ,expr]
        ,(apply case* cases))))
 

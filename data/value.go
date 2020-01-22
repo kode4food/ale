@@ -14,7 +14,7 @@ type (
 		fmt.Stringer
 	}
 
-	// Values represents a set of Values
+	// Values represent a set of Values
 	Values []Value
 
 	// Name is a Variable name
@@ -53,8 +53,14 @@ const (
 	// True represents the boolean value of True
 	True Bool = true
 
+	// TrueLiteral represents the literal value of True
+	TrueLiteral = "#t"
+
 	// False represents the boolean value of false
 	False Bool = false
+
+	// FalseLiteral represents the literal value of False
+	FalseLiteral = "#f"
 )
 
 func (v Values) String() string {
@@ -73,13 +79,13 @@ func (n Name) String() string {
 
 // String converts this Value into a string
 func (b Bool) String() string {
-	if bool(b) {
-		return "true"
+	if b {
+		return TrueLiteral
 	}
-	return "false"
+	return FalseLiteral
 }
 
-// Truthy evaluates whether or not a Value is truthy
+// Truthy evaluates whether a Value is truthy
 func Truthy(v Value) bool {
 	if v == False || v == Null {
 		return false

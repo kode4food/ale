@@ -41,7 +41,7 @@ func (l *list) Rest() Sequence {
 	return l.rest
 }
 
-// IsEmpty returns whether or not this sequence is empty
+// IsEmpty returns whether this sequence is empty
 func (l *list) IsEmpty() bool {
 	return l.count == 0
 }

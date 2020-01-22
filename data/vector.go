@@ -10,7 +10,7 @@ var EmptyVector = Vector{}
 
 // NewVector creates a new Vector instance
 func NewVector(v ...Value) Vector {
-	return Vector(v)
+	return v
 }
 
 // Count returns the number of elements in the Vector
@@ -42,7 +42,7 @@ func (v Vector) Rest() Sequence {
 	return EmptyVector
 }
 
-// IsEmpty returns whether or not this sequence is empty
+// IsEmpty returns whether this sequence is empty
 func (v Vector) IsEmpty() bool {
 	return len(v) == 0
 }

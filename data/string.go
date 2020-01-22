@@ -32,7 +32,7 @@ func (s String) First() Value {
 // Rest returns a String of all characters after the first
 func (s String) Rest() Sequence {
 	if _, w := utf8.DecodeRuneInString(string(s)); w > 0 {
-		return String(s[w:])
+		return s[w:]
 	}
 	return EmptyString
 }
@@ -40,12 +40,12 @@ func (s String) Rest() Sequence {
 // Split returns the split form (First and Rest) of the Sequence
 func (s String) Split() (Value, Sequence, bool) {
 	if r, w := utf8.DecodeRuneInString(string(s)); w > 0 {
-		return String(r), String(s[w:]), true
+		return String(r), s[w:], true
 	}
 	return Null, Null, false
 }
 
-// IsEmpty returns whether or not this sequence is empty
+// IsEmpty returns whether this sequence is empty
 func (s String) IsEmpty() bool {
 	return len(s) == 0
 }
