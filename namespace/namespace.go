@@ -44,7 +44,7 @@ type (
 		mutex sync.RWMutex
 	}
 
-	entries map[data.Name]*entry
+	entries map[data.Name]Entry
 )
 
 // Error messages

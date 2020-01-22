@@ -30,7 +30,7 @@ func Get(n string) string {
 	panic(fmt.Errorf(DocNotFound, n))
 }
 
-// Exists returns whether or not a specific docstring exists
+// Exists returns whether a specific docstring exists
 func Exists(n string) bool {
 	ensureCache()
 	_, ok := cache[n]

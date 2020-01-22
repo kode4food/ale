@@ -98,7 +98,7 @@ func (o Object) Split() (Value, Sequence, bool) {
 	return o.toSeq().Split()
 }
 
-// IsEmpty returns whether or not this Object has no pairs
+// IsEmpty returns whether this Object has no pairs
 func (o Object) IsEmpty() bool {
 	return len(o) == 0
 }

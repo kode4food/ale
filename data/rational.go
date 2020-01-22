@@ -21,12 +21,13 @@ const (
 	ExpectedRatio = "value is not a ratio: %s"
 )
 
-// ParseFloat attempts to parse a string representing an float
+// ParseFloat attempts to parse a string representing a float
 func ParseFloat(s string) Number {
-	if res, err := strconv.ParseFloat(s, 64); err == nil {
+	if res, err := strconv.ParseFloat(s, 64); err != nil {
+		panic(fmt.Errorf(ExpectedFloat, s))
+	} else {
 		return Float(res)
 	}
-	panic(fmt.Errorf(ExpectedFloat, s))
 }
 
 // Cmp compares this Float to another Number
@@ -95,17 +96,17 @@ func (l Float) Mod(r Number) Number {
 	return pl.Mod(pr)
 }
 
-// IsNaN returns whether or not this Float is not a number
+// IsNaN returns whether this Float is not a number
 func (l Float) IsNaN() bool {
 	return math.IsNaN(float64(l))
 }
 
-// IsPosInf returns whether or not this Float represents positive infinity
+// IsPosInf returns whether this Float represents positive infinity
 func (l Float) IsPosInf() bool {
 	return math.IsInf(float64(l), 1)
 }
 
-// IsNegInf returns whether or not this Float represents negative infinity
+// IsNegInf returns whether this Float represents negative infinity
 func (l Float) IsNegInf() bool {
 	return math.IsInf(float64(l), -1)
 }
@@ -195,17 +196,17 @@ func (l *Ratio) Mod(r Number) Number {
 	return pl.Mod(pr)
 }
 
-// IsNaN returns whether or not this Ratio is not a number
+// IsNaN returns whether this Ratio is not a number
 func (*Ratio) IsNaN() bool {
 	return false
 }
 
-// IsPosInf returns whether or not this Ratio represents positive infinity
+// IsPosInf returns whether this Ratio represents positive infinity
 func (*Ratio) IsPosInf() bool {
 	return false
 }
 
-// IsNegInf returns whether or not this Ratio represents negative infinity
+// IsNegInf returns whether this Ratio represents negative infinity
 func (*Ratio) IsNegInf() bool {
 	return false
 }

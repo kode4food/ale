@@ -48,7 +48,7 @@ func (w *Wrapper) String(expect string, expr Any) {
 func (w *Wrapper) Number(expect float64, expr Any) {
 	switch n := expr.(type) {
 	case float64:
-		w.Assertions.Equal(expect, float64(n))
+		w.Assertions.Equal(expect, n)
 	case int:
 		w.Assertions.Equal(int64(expect), int64(n))
 	case data.Number:

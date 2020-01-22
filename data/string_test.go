@@ -11,8 +11,8 @@ import (
 func TestConstStrings(t *testing.T) {
 	as := assert.New(t)
 
-	as.String("true", data.True)
-	as.String("false", data.False)
+	as.String(data.TrueLiteral, data.True)
+	as.String(data.FalseLiteral, data.False)
 }
 
 func TestStr(t *testing.T) {

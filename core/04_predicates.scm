@@ -11,14 +11,14 @@
            (lambda (func name)
              (let [func-name (sym (str name "?"))]
                `(define ,func-name (lambda (f# . r#)
-                   (,pred-apply ,func (cons f# r#))))))]
+                  (,pred-apply ,func (cons f# r#))))))]
 
           [define-neg
            (lambda (func name)
              (let [func-name (sym (str "!" name "?"))]
                `(define ,func-name (lambda (f# . r#)
-                   (,pred-apply (lambda (value) (not (,func value)))
-                                (cons f# r#))))))])
+                  (,pred-apply (lambda (value) (not (,func value)))
+                               (cons f# r#))))))])
 
   (define-macro (define-predicate func name)
     `(begin ,(define-pos func name)

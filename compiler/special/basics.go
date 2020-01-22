@@ -19,9 +19,9 @@ func Eval(e encoder.Type, args ...data.Value) {
 }
 
 func evalFor(ns namespace.Type) data.Call {
-	return data.Call(func(args ...data.Value) data.Value {
+	return func(args ...data.Value) data.Value {
 		return eval.Value(ns, args[0])
-	})
+	}
 }
 
 // Begin encodes a set of expressions, returning only the final evaluation

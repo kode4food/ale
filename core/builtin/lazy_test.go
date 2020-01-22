@@ -15,7 +15,7 @@ func TestLazySequence(t *testing.T) {
 	var i int
 	var fn data.Call
 
-	fn = data.Call(func(_ ...data.Value) data.Value {
+	fn = func(_ ...data.Value) data.Value {
 		if i < 10 {
 			res := builtin.Cons(
 				data.Integer(i),
@@ -25,7 +25,7 @@ func TestLazySequence(t *testing.T) {
 			return res
 		}
 		return data.Null
-	})
+	}
 
 	s := builtin.LazySequence(fn).(data.Sequence)
 	as.String(`(0 1 2 3 4 5 6 7 8 9)`, data.MakeSequenceStr(s))

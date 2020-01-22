@@ -13,20 +13,20 @@ func TestChaining(t *testing.T) {
 
 	manager := namespace.NewManager()
 	root := manager.GetRoot()
-	root.Declare(data.Name("in-parent")).Bind(data.True)
+	root.Declare("in-parent").Bind(data.True)
 
 	ns := manager.GetAnonymous()
-	ns.Declare(data.Name("in-child")).Bind(data.True)
+	ns.Declare("in-child").Bind(data.True)
 
-	e1, ok := ns.Resolve(data.Name("in-parent"))
+	e1, ok := ns.Resolve("in-parent")
 	as.True(ok && e1.IsBound())
 	as.True(e1.Value())
 
-	e2, ok := ns.Resolve(data.Name("in-child"))
+	e2, ok := ns.Resolve("in-child")
 	as.True(ok && e2.IsBound())
 	as.True(e2.Value())
 
-	e3, ok := root.Resolve(data.Name("in-child"))
+	e3, ok := root.Resolve("in-child")
 	as.False(ok)
 	as.Nil(e3)
 

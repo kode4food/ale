@@ -3,8 +3,8 @@
 (define* *pos-inf* (/ 1.0 0.0))
 (define* *neg-inf* (/ -1.0 0.0))
 
-(define* #t true)
-(define* #f false)
+(define* true #t)
+(define* false #f)
 (define* nil '())
 
 ;; syntax-quoting requires it

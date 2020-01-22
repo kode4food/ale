@@ -26,11 +26,11 @@ func EvaluateFile() {
 	defer exitWithError()
 
 	filename := os.Args[1]
-	if buffer, err := ioutil.ReadFile(filename); err == nil {
-		evalBuffer(ns, buffer)
-	} else {
+	if buffer, err := ioutil.ReadFile(filename); err != nil {
 		fmt.Println(fmt.Sprintf(fileNotFound, filename))
 		os.Exit(-1)
+	} else {
+		evalBuffer(ns, buffer)
 	}
 }
 

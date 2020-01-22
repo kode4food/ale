@@ -29,7 +29,7 @@ func TestBasicEval(t *testing.T) {
 	as.Number(1, v3)
 
 	eval.String(ns, "(define x 99)")
-	e, ok := ns.Resolve(data.Name("x"))
+	e, ok := ns.Resolve("x")
 	as.True(ok && e.IsBound())
 	as.Number(99, e.Value())
 

@@ -63,12 +63,12 @@ func MakeNormal(call Call, arity ArityChecker) Function {
 	return makeFunction(NormalCall, call, arity)
 }
 
-// IsApplicative returns whether or not the function is applicative
+// IsApplicative returns whether the function is applicative
 func IsApplicative(f Function) bool {
 	return f.Convention() == ApplicativeCall
 }
 
-// IsNormal returns whether or not the function is normal
+// IsNormal returns whether the function is normal
 func IsNormal(f Function) bool {
 	return f.Convention() == NormalCall
 }

@@ -46,13 +46,13 @@ func Promise(args ...data.Value) data.Value {
 	return stdlib.NewPromise(resolver)
 }
 
-// IsPromise returns whether or not the specified value is a promise
+// IsPromise returns whether the specified value is a promise
 func IsPromise(args ...data.Value) data.Value {
 	_, ok := args[0].(stdlib.Promise)
 	return data.Bool(ok)
 }
 
-// IsResolved returns whether or not the specified promise has been resolved
+// IsResolved returns whether the specified promise has been resolved
 func IsResolved(args ...data.Value) data.Value {
 	p := args[0].(stdlib.Promise)
 	return data.Bool(p.IsResolved())

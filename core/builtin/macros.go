@@ -36,7 +36,7 @@ func Macro(args ...data.Value) data.Value {
 	}
 }
 
-// IsMacro returns whether or not the argument is a macro
+// IsMacro returns whether the argument is a macro
 func IsMacro(args ...data.Value) data.Value {
 	_, ok := args[0].(macro.Call)
 	return data.Bool(ok)

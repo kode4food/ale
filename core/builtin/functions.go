@@ -19,7 +19,7 @@ func Apply(args ...data.Value) data.Value {
 	return fn(prependedArgs...)
 }
 
-// IsApply tests whether or not a value is callable
+// IsApply tests whether a value is callable
 func IsApply(args ...data.Value) data.Value {
 	_, ok := args[0].(data.Caller)
 	return data.Bool(ok)

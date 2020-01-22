@@ -1,10 +1,15 @@
 package data
 
 import (
+	"bytes"
 	"fmt"
 	"strings"
-	"sync/atomic"
+	"sync"
 )
+
+// DomainSeparator is the character used to separate a domain from
+// the local component of a qualified symbol
+const DomainSeparator = '/'
 
 type (
 	// Symbol is an identifier that can be resolved
@@ -27,6 +32,13 @@ type (
 		Qualified() Name
 	}
 
+	// SymbolGenerator produces instance-unique local symbols
+	SymbolGenerator struct {
+		sync.Mutex
+		data   [128]uint8
+		maxPos int
+	}
+
 	localSymbol Name
 
 	qualifiedSymbol struct {
@@ -35,26 +47,76 @@ type (
 	}
 )
 
-const genSymTemplate = "x-%s-gensym-%x"
+const (
+	decimal        = "0123456789"
+	lower          = "abcdefghijklmnopqrstuvwxyz"
+	upper          = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+	base64Digits   = decimal + lower + upper + "%#"
+	genSymTemplate = "x-%s-gensym-%s"
+	genSymOverflow = uint8(len(base64Digits))
+)
 
-var genSymIncrement uint64
+var gen = NewSymbolGenerator()
 
 // NewGeneratedSymbol creates a generated Symbol
 func NewGeneratedSymbol(name Name) Symbol {
-	idx := atomic.AddUint64(&genSymIncrement, 1)
-	q := fmt.Sprintf(genSymTemplate, name, idx)
-	return localSymbol(q)
+	return gen.Local(name)
 }
 
 // ParseSymbol parses a qualified Name and produces a Symbol
 func ParseSymbol(s String) Symbol {
 	n := string(s)
-	if i := strings.IndexRune(n, '/'); i > 0 {
+	if i := strings.IndexRune(n, DomainSeparator); i > 0 {
 		name := Name(n[i+1:])
 		domain := Name(n[:i])
 		return NewQualifiedSymbol(name, domain)
 	}
 	return localSymbol(Name(s))
+}
+
+// NewSymbolGenerator creates a new symbol generator. In general, it is safe
+// to use the global generator because it only maintains an incrementer
+func NewSymbolGenerator() *SymbolGenerator {
+	return &SymbolGenerator{
+		data: [128]uint8{},
+	}
+}
+
+// Local returns a newly generated local symbol
+func (g *SymbolGenerator) Local(name Name) LocalSymbol {
+	g.Lock()
+	defer g.Unlock()
+	g.inc(0)
+	idx := g.str()
+	q := fmt.Sprintf(genSymTemplate, name, idx)
+	return localSymbol(q)
+}
+
+func (g *SymbolGenerator) inc(pos int) {
+	if val := g.data[pos] + 1; val == genSymOverflow {
+		g.overflow(pos)
+	} else {
+		g.data[pos] = val
+	}
+}
+
+func (g *SymbolGenerator) overflow(pos int) {
+	g.data[pos] = 0
+	next := pos + 1
+	if next > g.maxPos {
+		g.maxPos = next
+	}
+	g.inc(next)
+}
+
+func (g *SymbolGenerator) str() string {
+	var buf bytes.Buffer
+	data := g.data
+	for i := g.maxPos; i >= 0; i-- {
+		d := base64Digits[data[i]]
+		buf.WriteByte(d)
+	}
+	return buf.String()
 }
 
 // NewLocalSymbol returns a local symbol
@@ -92,7 +154,11 @@ func (s qualifiedSymbol) Domain() Name {
 }
 
 func (s qualifiedSymbol) Qualified() Name {
-	return Name(s.domain + "/" + s.name)
+	var buf bytes.Buffer
+	buf.WriteString(string(s.domain))
+	buf.WriteRune(DomainSeparator)
+	buf.WriteString(string(s.name))
+	return Name(buf.String())
 }
 
 func (s qualifiedSymbol) String() string {

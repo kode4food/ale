@@ -22,13 +22,13 @@ func Cdr(args ...data.Value) data.Value {
 	return args[0].(data.Pair).Cdr()
 }
 
-// IsPair returns whether or not the provided value is a Pair
+// IsPair returns whether the provided value is a Pair
 func IsPair(args ...data.Value) data.Value {
 	_, ok := args[0].(data.Pair)
 	return data.Bool(ok)
 }
 
-// IsCons returns whether or not the provide value is a Cons cell
+// IsCons returns whether the provide value is a Cons cell
 func IsCons(args ...data.Value) data.Value {
 	_, ok := args[0].(*data.Cons)
 	return data.Bool(ok)

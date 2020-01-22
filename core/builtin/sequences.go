@@ -61,31 +61,31 @@ func Get(args ...data.Value) data.Value {
 	return res
 }
 
-// IsSeq returns whether or not the provided value is a sequence
+// IsSeq returns whether the provided value is a sequence
 func IsSeq(args ...data.Value) data.Value {
 	_, ok := args[0].(data.Sequence)
 	return data.Bool(ok)
 }
 
-// IsEmpty returns whether or not the provided sequence is empty
+// IsEmpty returns whether the provided sequence is empty
 func IsEmpty(args ...data.Value) data.Value {
 	s := args[0].(data.Sequence)
 	return data.Bool(s.IsEmpty())
 }
 
-// IsCounted returns whether or not the provided value is a counted sequence
+// IsCounted returns whether the provided value is a counted sequence
 func IsCounted(args ...data.Value) data.Value {
 	_, ok := args[0].(data.CountedSequence)
 	return data.Bool(ok)
 }
 
-// IsIndexed returns whether or not the provided value is an indexed sequence
+// IsIndexed returns whether the provided value is an indexed sequence
 func IsIndexed(args ...data.Value) data.Value {
 	_, ok := args[0].(data.IndexedSequence)
 	return data.Bool(ok)
 }
 
-// IsReverser returns whether or not the value is a reversible sequence
+// IsReverser returns whether the value is a reversible sequence
 func IsReverser(args ...data.Value) data.Value {
 	_, ok := args[0].(data.Reverser)
 	return data.Bool(ok)
