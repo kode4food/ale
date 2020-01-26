@@ -17,6 +17,7 @@ type reader struct {
 // Error messages
 const (
 	PrefixedNotPaired  = "end of file reached before completing %s"
+	UnexpectedDot      = "encountered '.' with no open list"
 	InvalidListSyntax  = "invalid list syntax"
 	ListNotClosed      = "end of file reached with open list"
 	UnmatchedListEnd   = "encountered ')' with no open list"
@@ -41,7 +42,6 @@ var (
 	}
 
 	collectionErrors = map[TokenType]string{
-		ListEnd:   ListNotClosed,
 		VectorEnd: VectorNotClosed,
 		MapEnd:    MapNotClosed,
 	}
@@ -96,6 +96,8 @@ func (r *reader) value(t *Token) data.Value {
 		panic(errors.New(UnmatchedVectorEnd))
 	case MapEnd:
 		panic(errors.New(UnmatchedMapEnd))
+	case Dot:
+		panic(errors.New(UnexpectedDot))
 	default:
 		return t.Value
 	}
@@ -109,34 +111,30 @@ func (r *reader) prefixed(s data.Symbol) data.Value {
 }
 
 func (r *reader) list() data.Value {
-	elems := r.readCollection(ListEnd)
-	if isDottedList(elems) {
-		l := len(elems)
-		dotElems := elems[0:]
-		copy(dotElems[l-2:], dotElems[l-1:])
-		return makeDottedList(dotElems[:l-1]...)
-	}
-	return data.NewList(elems...)
-}
-
-func isDottedList(elems data.Values) bool {
-	var sawDot bool
-	for i, e := range elems {
-		if isDotSymbol(e) {
-			if sawDot || i != len(elems)-2 {
-				panic(errors.New(InvalidListSyntax))
+	res := data.Values{}
+	var sawDotAt = -1
+	for i := 0; ; i++ {
+		if t := r.nextToken(); t != nil {
+			switch t.Type {
+			case Dot:
+				if i == 0 || sawDotAt != -1 {
+					panic(errors.New(InvalidListSyntax))
+				}
+				sawDotAt = i
+			case ListEnd:
+				if sawDotAt == -1 {
+					return data.NewList(res...)
+				} else if sawDotAt != len(res)-1 {
+					panic(errors.New(InvalidListSyntax))
+				}
+				return makeDottedList(res...)
+			default:
+				res = append(res, r.value(t))
 			}
-			sawDot = true
+		} else {
+			panic(errors.New(ListNotClosed))
 		}
 	}
-	return sawDot
-}
-
-func isDotSymbol(v data.Value) bool {
-	if l, ok := v.(data.LocalSymbol); ok && l.Name() == "." {
-		return true
-	}
-	return false
 }
 
 func makeDottedList(v ...data.Value) data.Value {
@@ -149,16 +147,16 @@ func makeDottedList(v ...data.Value) data.Value {
 }
 
 func (r *reader) vector() data.Value {
-	elems := r.readCollection(VectorEnd)
-	return data.NewVector(elems...)
+	v := r.readNonDotted(VectorEnd)
+	return data.NewVector(v...)
 }
 
 func (r *reader) object() data.Value {
-	elems := r.readCollection(MapEnd)
-	return data.NewObject(elems...)
+	v := r.readNonDotted(MapEnd)
+	return data.NewObject(v...)
 }
 
-func (r *reader) readCollection(endToken TokenType) data.Values {
+func (r *reader) readNonDotted(endToken TokenType) data.Values {
 	res := data.Values{}
 	for {
 		if t := r.nextToken(); t != nil {
@@ -166,8 +164,7 @@ func (r *reader) readCollection(endToken TokenType) data.Values {
 			case endToken:
 				return res
 			default:
-				e := r.value(t)
-				res = append(res, e)
+				res = append(res, r.value(t))
 			}
 		} else {
 			err := collectionErrors[endToken]
