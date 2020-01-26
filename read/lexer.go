@@ -18,6 +18,7 @@ const (
 const (
 	Error TokenType = iota
 	Identifier
+	Dot
 	String
 	Number
 	ListStart
@@ -99,7 +100,7 @@ var (
 		pattern(`[+-]?0\d*`+numTail, integerState),
 		pattern(`[+-]?[1-9]\d*`+numTail, integerState),
 
-		pattern(id, tokenState(Identifier)),
+		pattern(id, identifierState),
 
 		pattern(`.`, endState(Error)),
 	}
@@ -193,6 +194,14 @@ func floatState(sm []string) *Token {
 func integerState(sm []string) *Token {
 	v := data.ParseInteger(sm[0])
 	return makeToken(Number, v)
+}
+
+func identifierState(sm []string) *Token {
+	s := data.String(sm[0])
+	if s == "." {
+		return makeToken(Dot, s)
+	}
+	return makeToken(Identifier, s)
 }
 
 func pattern(p string, s tokenizer) matchEntry {
