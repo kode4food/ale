@@ -48,7 +48,7 @@ func TestResolveEval(t *testing.T) {
 
 	as.EvalTo(`(let [x 99] x)`, data.Integer(99))
 
-	err := fmt.Errorf(namespace.SymbolNotDeclared, "hello")
+	err := fmt.Errorf(namespace.ErrSymbolNotDeclared, "hello")
 	as.PanicWith(`hello`, err)
 	as.PanicWith(`(let [hello 99] hello) hello`, err)
 }

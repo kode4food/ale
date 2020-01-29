@@ -10,8 +10,9 @@ import (
 
 // Error messages
 const (
-	UnmatchedState      = "unmatched lexing state"
-	StringNotTerminated = "string has no closing quote"
+	ErrStringNotTerminated = "string has no closing quote"
+
+	errUnmatchedState = "unmatched lexing state"
 )
 
 // Token Types
@@ -136,7 +137,7 @@ func matchToken(src string) (*Token, string) {
 	}
 	// Shouldn't happen because of the patterns that are defined,
 	// but is here as a safety net
-	panic(errors.New(UnmatchedState))
+	panic(errors.New(errUnmatchedState))
 }
 
 // String converts this Value into a string
@@ -175,7 +176,7 @@ func unescape(s string) string {
 
 func stringState(sm []string) *Token {
 	if len(sm[4]) == 0 {
-		panic(errors.New(StringNotTerminated))
+		panic(errors.New(ErrStringNotTerminated))
 	}
 	s := unescape(sm[2])
 	return makeToken(String, data.String(s))

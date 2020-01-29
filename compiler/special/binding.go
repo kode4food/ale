@@ -13,9 +13,10 @@ import (
 
 // Error messages
 const (
-	UnpairedBindings    = "binding must be a paired vector"
-	NameAlreadyBound    = "name is already bound in local scope: %s"
-	UnexpectedLetSyntax = "unexpected binding syntax: %s"
+	ErrUnpairedBindings    = "binding must be a paired vector"
+	ErrUnexpectedLetSyntax = "unexpected binding syntax: %s"
+
+	errNameAlreadyBound = "name is already bound in local scope: %s"
 )
 
 type (
@@ -106,13 +107,13 @@ func parseLetBindings(v data.Value) letBindings {
 			parseLetBinding(typed),
 		}
 	default:
-		panic(fmt.Errorf(UnexpectedLetSyntax, v))
+		panic(fmt.Errorf(ErrUnexpectedLetSyntax, v))
 	}
 }
 
 func parseLetBinding(b data.Vector) *letBinding {
 	if len(b) != 2 {
-		panic(errors.New(UnpairedBindings))
+		panic(errors.New(ErrUnpairedBindings))
 	}
 	return &letBinding{
 		name:  b[0].(data.LocalSymbol).Name(),
@@ -122,7 +123,7 @@ func parseLetBinding(b data.Vector) *letBinding {
 
 func (u uniqueNames) see(n data.Name) {
 	if _, ok := u[n]; ok {
-		panic(fmt.Errorf(NameAlreadyBound, n))
+		panic(fmt.Errorf(errNameAlreadyBound, n))
 	}
 	u[n] = true
 }

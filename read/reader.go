@@ -16,15 +16,15 @@ type reader struct {
 
 // Error messages
 const (
-	PrefixedNotPaired  = "end of file reached before completing %s"
-	UnexpectedDot      = "encountered '.' with no open list"
-	InvalidListSyntax  = "invalid list syntax"
-	ListNotClosed      = "end of file reached with open list"
-	UnmatchedListEnd   = "encountered ')' with no open list"
-	VectorNotClosed    = "end of file reached with open vector"
-	UnmatchedVectorEnd = "encountered ']' with no open vector"
-	MapNotClosed       = "end of file reached with open map"
-	UnmatchedMapEnd    = "encountered '}' with no open map"
+	ErrPrefixedNotPaired  = "end of file reached before completing %s"
+	ErrUnexpectedDot      = "encountered '.' with no open list"
+	ErrInvalidListSyntax  = "invalid list syntax"
+	ErrListNotClosed      = "end of file reached with open list"
+	ErrUnmatchedListEnd   = "encountered ')' with no open list"
+	ErrVectorNotClosed    = "end of file reached with open vector"
+	ErrUnmatchedVectorEnd = "encountered ']' with no open vector"
+	ErrMapNotClosed       = "end of file reached with open map"
+	ErrUnmatchedMapEnd    = "encountered '}' with no open map"
 )
 
 var (
@@ -42,8 +42,8 @@ var (
 	}
 
 	collectionErrors = map[TokenType]string{
-		VectorEnd: VectorNotClosed,
-		MapEnd:    MapNotClosed,
+		VectorEnd: ErrVectorNotClosed,
+		MapEnd:    ErrMapNotClosed,
 	}
 )
 
@@ -91,13 +91,13 @@ func (r *reader) value(t *Token) data.Value {
 	case Identifier:
 		return readIdentifier(t)
 	case ListEnd:
-		panic(errors.New(UnmatchedListEnd))
+		panic(errors.New(ErrUnmatchedListEnd))
 	case VectorEnd:
-		panic(errors.New(UnmatchedVectorEnd))
+		panic(errors.New(ErrUnmatchedVectorEnd))
 	case MapEnd:
-		panic(errors.New(UnmatchedMapEnd))
+		panic(errors.New(ErrUnmatchedMapEnd))
 	case Dot:
-		panic(errors.New(UnexpectedDot))
+		panic(errors.New(ErrUnexpectedDot))
 	default:
 		return t.Value
 	}
@@ -107,7 +107,7 @@ func (r *reader) prefixed(s data.Symbol) data.Value {
 	if v, ok := r.nextValue(); ok {
 		return data.NewList(s, v)
 	}
-	panic(fmt.Errorf(PrefixedNotPaired, s))
+	panic(fmt.Errorf(ErrPrefixedNotPaired, s))
 }
 
 func (r *reader) list() data.Value {
@@ -118,21 +118,21 @@ func (r *reader) list() data.Value {
 			switch t.Type {
 			case Dot:
 				if i == 0 || sawDotAt != -1 {
-					panic(errors.New(InvalidListSyntax))
+					panic(errors.New(ErrInvalidListSyntax))
 				}
 				sawDotAt = i
 			case ListEnd:
 				if sawDotAt == -1 {
 					return data.NewList(res...)
 				} else if sawDotAt != len(res)-1 {
-					panic(errors.New(InvalidListSyntax))
+					panic(errors.New(ErrInvalidListSyntax))
 				}
 				return makeDottedList(res...)
 			default:
 				res = append(res, r.value(t))
 			}
 		} else {
-			panic(errors.New(ListNotClosed))
+			panic(errors.New(ErrListNotClosed))
 		}
 	}
 }
@@ -153,7 +153,7 @@ func (r *reader) vector() data.Value {
 
 func (r *reader) object() data.Value {
 	v := r.readNonDotted(MapEnd)
-	return data.NewObject(v...)
+	return data.ValuesToObject(v...)
 }
 
 func (r *reader) readNonDotted(endToken TokenType) data.Values {

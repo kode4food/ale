@@ -19,7 +19,7 @@ type (
 
 // Error messages
 const (
-	UnknownConvention = "unknown calling convention: %s"
+	errUnknownConvention = "unknown calling convention: %s"
 )
 
 // Call encodes a function call
@@ -115,7 +115,7 @@ func funcArgs(e encoder.Type, f data.Function, args data.Values) argsEmitter {
 	case data.NormalCall:
 		return normalArgs(e, args)
 	default:
-		panic(fmt.Sprintf(UnknownConvention, c))
+		panic(fmt.Sprintf(errUnknownConvention, c))
 	}
 }
 

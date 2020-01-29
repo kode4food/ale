@@ -66,8 +66,8 @@ func SequenceToObject(s data.Sequence) data.Object {
 	case data.Object:
 		return typed
 	default:
-		elems := SequenceToValues(s)
-		return data.NewObject(elems...)
+		v := SequenceToValues(s)
+		return data.ValuesToObject(v...)
 	}
 }
 

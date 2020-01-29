@@ -11,8 +11,8 @@ type Object map[Value]Value
 
 // Error messages
 const (
-	ObjectNotPaired = "object does not contain an even number of elements"
-	ValueNotFound   = "value not found in object: %s"
+	ErrMapNotPaired  = "map does not contain an even number of elements"
+	ErrValueNotFound = "value not found in object: %s"
 )
 
 // Standard Keys
@@ -22,16 +22,24 @@ const (
 )
 
 // NewObject instantiates a new Object instance
-func NewObject(args ...Value) Object {
-	l := len(args)
-	if l%2 != 0 {
-		panic(errors.New(ObjectNotPaired))
-	}
+func NewObject(pairs ...Pair) Object {
 	res := Object{}
-	for i := len(args) - 2; i >= 0; i -= 2 {
-		res[args[i]] = args[i+1]
+	for _, p := range pairs {
+		res[p.Car()] = p.Cdr()
 	}
 	return res
+}
+
+// ValuesToObject interprets a set of Values as an Object
+func ValuesToObject(v ...Value) Object {
+	if len(v)%2 != 0 {
+		panic(errors.New(ErrMapNotPaired))
+	}
+	var p Pairs
+	for i := len(v) - 2; i >= 0; i -= 2 {
+		p = append(p, NewCons(v[i], v[i+1]))
+	}
+	return NewObject(p...)
 }
 
 // Get attempts to retrieve a Value from an Object
@@ -56,7 +64,7 @@ func (o Object) MustGet(k Value) Value {
 	if v, ok := o.Get(k); ok {
 		return v
 	}
-	panic(fmt.Errorf(ValueNotFound, k))
+	panic(fmt.Errorf(ErrValueNotFound, k))
 }
 
 // Copy creates an exact copy of the current Object

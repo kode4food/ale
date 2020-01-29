@@ -15,7 +15,7 @@ func TestTheStringTests(t *testing.T) {
 	as.String("hello", S("hello"))
 	as.String(":hello", K("hello"))
 
-	defer as.ExpectPanic(fmt.Sprintf(assert.InvalidTestExpression, "10"))
+	defer as.ExpectPanic(fmt.Sprintf(assert.ErrInvalidTestExpression, "10"))
 	as.String("10", 10)
 }
 
@@ -25,7 +25,7 @@ func TestTheFloatTests(t *testing.T) {
 	as.Number(10.5, F(10.5))
 	as.Number(10, F(10))
 
-	defer as.ExpectPanic(fmt.Sprintf(assert.InvalidTestExpression, "10"))
+	defer as.ExpectPanic(fmt.Sprintf(assert.ErrInvalidTestExpression, "10"))
 	as.Number(10, "10")
 }
 

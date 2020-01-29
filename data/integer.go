@@ -16,7 +16,7 @@ type (
 
 // Error messages
 const (
-	ExpectedInteger = "value is not an integer: %s"
+	ErrExpectedInteger = "value is not an integer: %s"
 )
 
 // ParseInteger attempts to parse a string representing an integer
@@ -27,7 +27,7 @@ func ParseInteger(s string) Number {
 		}
 		return (*BigInt)(res)
 	}
-	panic(fmt.Errorf(ExpectedInteger, s))
+	panic(fmt.Errorf(ErrExpectedInteger, s))
 }
 
 // Cmp compares this Integer to another Number

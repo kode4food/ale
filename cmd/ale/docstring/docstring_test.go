@@ -18,7 +18,7 @@ func TestDocString(t *testing.T) {
 	ifStr := docstring.Get("if")
 	as.Contains("---", data.String(ifStr))
 
-	errStr := fmt.Sprintf(docstring.DocNotFound, "no-way-this-exists")
+	errStr := fmt.Sprintf(docstring.ErrDocNotFound, "no-way-this-exists")
 	defer as.ExpectPanic(errStr)
 	docstring.Get("no-way-this-exists")
 }

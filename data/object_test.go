@@ -30,7 +30,7 @@ func TestObject(t *testing.T) {
 	as.Contains(`:child "i am the child"`, o2)
 	as.Contains(`:parent "i am the parent"`, o2)
 
-	defer as.ExpectPanic(fmt.Sprintf(data.ValueNotFound, ":missing"))
+	defer as.ExpectPanic(fmt.Sprintf(data.ErrValueNotFound, ":missing"))
 	o2.MustGet(K("missing"))
 }
 

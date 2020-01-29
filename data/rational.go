@@ -17,14 +17,14 @@ type (
 
 // Error messages
 const (
-	ExpectedFloat = "value is not a float: %s"
-	ExpectedRatio = "value is not a ratio: %s"
+	ErrExpectedFloat = "value is not a float: %s"
+	ErrExpectedRatio = "value is not a ratio: %s"
 )
 
 // ParseFloat attempts to parse a string representing a float
 func ParseFloat(s string) Number {
 	if res, err := strconv.ParseFloat(s, 64); err != nil {
-		panic(fmt.Errorf(ExpectedFloat, s))
+		panic(fmt.Errorf(ErrExpectedFloat, s))
 	} else {
 		return Float(res)
 	}
@@ -121,7 +121,7 @@ func ParseRatio(s string) Number {
 	if res, ok := new(big.Rat).SetString(s); ok {
 		return (*Ratio)(res)
 	}
-	panic(fmt.Errorf(ExpectedRatio, s))
+	panic(fmt.Errorf(ErrExpectedRatio, s))
 }
 
 // Cmp compares this Ratio to another Number

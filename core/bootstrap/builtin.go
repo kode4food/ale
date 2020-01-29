@@ -13,9 +13,9 @@ import (
 
 // Error messages
 const (
-	BuiltInNotFound = "built-in not found: %s"
-	SpecialNotFound = "special form not found: %s"
-	MacroNotFound   = "macro not found: %s"
+	errBuiltInNotFound = "built-in not found: %s"
+	errSpecialNotFound = "special form not found: %s"
+	errMacroNotFound   = "macro not found: %s"
 )
 
 const (
@@ -56,7 +56,7 @@ func (b *bootstrap) initialFunctions() {
 			ns.Declare(n).Bind(nf)
 			return args[0]
 		}
-		panic(fmt.Errorf(BuiltInNotFound, n))
+		panic(fmt.Errorf(errBuiltInNotFound, n))
 	}, singleArgChecker)
 
 	defSpecial := data.MakeNormal(func(args ...data.Value) data.Value {
@@ -66,7 +66,7 @@ func (b *bootstrap) initialFunctions() {
 			ns.Declare(n).Bind(sf)
 			return args[0]
 		}
-		panic(fmt.Errorf(SpecialNotFound, n))
+		panic(fmt.Errorf(errSpecialNotFound, n))
 	}, singleArgChecker)
 
 	defMacro := data.MakeNormal(func(args ...data.Value) data.Value {
@@ -76,7 +76,7 @@ func (b *bootstrap) initialFunctions() {
 			ns.Declare(n).Bind(sf)
 			return args[0]
 		}
-		panic(fmt.Errorf(MacroNotFound, n))
+		panic(fmt.Errorf(errMacroNotFound, n))
 	}, singleArgChecker)
 
 	ns := b.manager.GetRoot()

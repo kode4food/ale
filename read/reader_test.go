@@ -123,18 +123,22 @@ func testReaderError(t *testing.T, src string, err error) {
 }
 
 func TestReaderErrors(t *testing.T) {
-	testReaderError(t, "(99 100 ", errors.New(read.ListNotClosed))
-	testReaderError(t, "[99 100 ", errors.New(read.VectorNotClosed))
-	testReaderError(t, "{:key 99", errors.New(read.MapNotClosed))
+	testReaderError(t, "(99 100 ", errors.New(read.ErrListNotClosed))
+	testReaderError(t, "[99 100 ", errors.New(read.ErrVectorNotClosed))
+	testReaderError(t, "{:key 99", errors.New(read.ErrMapNotClosed))
 
-	testReaderError(t, "99 100)", errors.New(read.UnmatchedListEnd))
-	testReaderError(t, "99 100]", errors.New(read.UnmatchedVectorEnd))
-	testReaderError(t, "99}", errors.New(read.UnmatchedMapEnd))
-	testReaderError(t, "{99}", errors.New(data.ObjectNotPaired))
+	testReaderError(t, "99 100)", errors.New(read.ErrUnmatchedListEnd))
+	testReaderError(t, "99 100]", errors.New(read.ErrUnmatchedVectorEnd))
+	testReaderError(t, "99}", errors.New(read.ErrUnmatchedMapEnd))
+	testReaderError(t, "{99}", errors.New(data.ErrMapNotPaired))
 
-	testReaderError(t, "(", errors.New(read.ListNotClosed))
-	testReaderError(t, "'", fmt.Errorf(read.PrefixedNotPaired, "ale/quote"))
-	testReaderError(t, ",@", fmt.Errorf(read.PrefixedNotPaired, "ale/unquote-splicing"))
-	testReaderError(t, ",", fmt.Errorf(read.PrefixedNotPaired, "ale/unquote"))
-	testReaderError(t, "~", fmt.Errorf(read.PrefixedNotPaired, "ale/pattern"))
+	testReaderError(t, "(1 2 . 3 4)", errors.New(read.ErrInvalidListSyntax))
+	testReaderError(t, "(.)", errors.New(read.ErrInvalidListSyntax))
+	testReaderError(t, ".", errors.New(read.ErrUnexpectedDot))
+
+	testReaderError(t, "(", errors.New(read.ErrListNotClosed))
+	testReaderError(t, "'", fmt.Errorf(read.ErrPrefixedNotPaired, "ale/quote"))
+	testReaderError(t, ",@", fmt.Errorf(read.ErrPrefixedNotPaired, "ale/unquote-splicing"))
+	testReaderError(t, ",", fmt.Errorf(read.ErrPrefixedNotPaired, "ale/unquote"))
+	testReaderError(t, "~", fmt.Errorf(read.ErrPrefixedNotPaired, "ale/pattern"))
 }

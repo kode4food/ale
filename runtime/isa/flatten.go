@@ -18,6 +18,11 @@ type (
 	labels map[Index]*label
 )
 
+// Error messages
+const (
+	errLabelAlreadyAnchored = "label has already been anchored"
+)
+
 const placeholderOffset = Offset(math.MaxUint32)
 
 // Flatten takes a set of instructions and flattens them into
@@ -91,7 +96,7 @@ func (f *flattener) handleJump(inst *Instruction) {
 func (f *flattener) handleLabel(inst *Instruction) {
 	l := f.getLabel(Index(inst.Args[0]))
 	if l.anchored {
-		panic("label has already been anchored")
+		panic(errLabelAlreadyAnchored)
 	}
 	l.offset = f.nextOutputOffset()
 	l.anchored = true

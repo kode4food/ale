@@ -47,11 +47,11 @@ func TestObjectEval(t *testing.T) {
 		(x :name)
 	`, S("bob"))
 
-	as.PanicWith(`(object :too "few" :args)`, errors.New(data.ObjectNotPaired))
+	as.PanicWith(`(object :too "few" :args)`, errors.New(data.ErrMapNotPaired))
 
 	as.PanicWith(`
 		(apply object (concat '(:name "Ale") '(:age)))
-	`, errors.New(data.ObjectNotPaired))
+	`, errors.New(data.ErrMapNotPaired))
 }
 
 func TestMappedEval(t *testing.T) {

@@ -29,11 +29,11 @@ func TestLetBindingErrors(t *testing.T) {
 	as := assert.New(t)
 	as.PanicWith(`
 		(let 99 "hello")
-	`, fmt.Errorf(special.UnexpectedLetSyntax, "99"))
+	`, fmt.Errorf(special.ErrUnexpectedLetSyntax, "99"))
 
 	as.PanicWith(`
 		(let [a blah b] "hello")
-	`, errors.New(special.UnpairedBindings))
+	`, errors.New(special.ErrUnpairedBindings))
 
 	as.PanicWith(`
 		(let ((a blah)) "hello")

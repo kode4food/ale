@@ -95,10 +95,10 @@ func TestLambdaEval(t *testing.T) {
 func TestBadLambdaEval(t *testing.T) {
 	as := assert.New(t)
 
-	eNum := fmt.Errorf(special.UnexpectedLambdaSyntax, "99")
+	eNum := fmt.Errorf(special.ErrUnexpectedLambdaSyntax, "99")
 	as.PanicWith(`(lambda-rec 99 "hello")`, eNum)
 
-	eSym := fmt.Errorf(special.UnexpectedLambdaSyntax, "foo/bar")
+	eSym := fmt.Errorf(special.ErrUnexpectedLambdaSyntax, "foo/bar")
 	as.PanicWith(`(lambda-rec foo/bar () "hello")`, eSym)
 }
 
@@ -124,15 +124,15 @@ func TestRestFunctionsEval(t *testing.T) {
 
 	as.PanicWith(`
 		(lambda (x y .) "explode")
-	`, errors.New(read.InvalidListSyntax))
+	`, errors.New(read.ErrInvalidListSyntax))
 
 	as.PanicWith(`
 		(lambda (x y . z g) "explode")
-	`, errors.New(read.InvalidListSyntax))
+	`, errors.New(read.ErrInvalidListSyntax))
 
 	as.PanicWith(`
 		(lambda (x y . . z) "explode")
-	`, errors.New(read.InvalidListSyntax))
+	`, errors.New(read.ErrInvalidListSyntax))
 }
 
 func TestTailCallEval(t *testing.T) {

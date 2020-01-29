@@ -34,7 +34,7 @@ func TestInstructions(t *testing.T) {
 
 	defer func() {
 		if rec := recover(); rec != nil {
-			err := fmt.Sprintf(isa.BadInstructionArgs, "CondJump")
+			err := fmt.Sprintf(isa.ErrBadInstructionArgs, "CondJump")
 			as.String(err, rec)
 		} else {
 			as.Fail("proper error not raised")

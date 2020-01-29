@@ -13,11 +13,17 @@ type stackSizes struct {
 	endSize int
 }
 
+// Error messages
+const (
+	errBadStackTermination  = "invalid stack end-state: %d"
+	errBadBranchTermination = "branches should end in the same state"
+)
+
 func verifyStackSize(code isa.Instructions) {
 	s := &stackSizes{}
 	s.calculateNode(visitor.Branch(code))
 	if s.endSize != 0 {
-		panic(fmt.Sprintf("invalid stack end-state: %d", s.endSize))
+		panic(fmt.Sprintf(errBadStackTermination, s.endSize))
 	}
 }
 
@@ -60,7 +66,7 @@ func (s *stackSizes) calculateBranches(thenNode, elseNode visitor.Node) {
 	thenRes := s.calculateBranch(thenNode)
 	elseRes := s.calculateBranch(elseNode)
 	if elseRes.endSize != thenRes.endSize {
-		panic("branches should end in the same state")
+		panic(errBadBranchTermination)
 	}
 	s.endSize += elseRes.endSize
 }

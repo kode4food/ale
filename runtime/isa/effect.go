@@ -4,7 +4,7 @@ import "fmt"
 
 // Error messages
 const (
-	EffectNotDeclared = "effect not declared for opcode: %s"
+	errEffectNotDeclared = "effect not declared for opcode: %s"
 )
 
 // Effect captures how an instruction affects the stack and PC
@@ -81,5 +81,5 @@ func MustGetEffect(oc Opcode) *Effect {
 	if effect, ok := Effects[oc]; ok {
 		return effect
 	}
-	panic(fmt.Sprintf(EffectNotDeclared, oc.String()))
+	panic(fmt.Sprintf(errEffectNotDeclared, oc.String()))
 }
