@@ -22,7 +22,9 @@ type (
 
 // Error messages
 const (
-	InvalidTestExpression = "invalid test expression: %v"
+	ErrInvalidTestExpression = "invalid test expression: %v"
+
+	errProperErrorNotRaised = "proper error not raised"
 )
 
 // New instantiates a new Wrapper instance from the specified test
@@ -40,7 +42,7 @@ func (w *Wrapper) String(expect string, expr Any) {
 	case data.Value:
 		w.Assertions.Equal(expect, s.String())
 	default:
-		panic(fmt.Errorf(InvalidTestExpression, expr))
+		panic(fmt.Errorf(ErrInvalidTestExpression, expr))
 	}
 }
 
@@ -54,7 +56,7 @@ func (w *Wrapper) Number(expect float64, expr Any) {
 	case data.Number:
 		w.Assertions.Equal(data.EqualTo, data.Float(expect).Cmp(n))
 	default:
-		panic(fmt.Errorf(InvalidTestExpression, expr))
+		panic(fmt.Errorf(ErrInvalidTestExpression, expr))
 	}
 }
 
@@ -137,10 +139,10 @@ func (w *Wrapper) ExpectPanic(errStr string) {
 			return
 		}
 	}
-	panic("proper error not raised")
+	panic(errProperErrorNotRaised)
 }
 
-// ExpectNoPanic is sued with a defer to make sure no error was triggered
+// ExpectNoPanic is used with a defer to make sure no error was triggered
 func (w *Wrapper) ExpectNoPanic() {
 	rec := recover()
 	w.Nil(rec)

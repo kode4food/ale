@@ -49,9 +49,14 @@ const (
 	bad    = domain + red + "[%d]! " + output
 )
 
+const (
+	errNonStandardError    = "non-standard error: %s"
+	errSymbolNotDocumented = "symbol not documented: %s"
+)
+
 var (
 	anyChar   = regexp.MustCompile(".")
-	notPaired = fmt.Sprintf(read.PrefixedNotPaired, "")
+	notPaired = fmt.Sprintf(read.ErrPrefixedNotPaired, "")
 	nothing   = &sentinel{}
 
 	openers = map[rune]rune{')': '(', ']': '[', '}': '{'}
@@ -194,16 +199,16 @@ func toError(i interface{}) error {
 	case data.Value:
 		return errors.New(typed.String())
 	default:
-		panic(fmt.Errorf("non-standard error: %s", i))
+		panic(fmt.Errorf(errNonStandardError, i))
 	}
 }
 
 func isRecoverable(err error) bool {
 	msg := err.Error()
-	return msg == read.ListNotClosed ||
-		msg == read.VectorNotClosed ||
-		msg == read.MapNotClosed ||
-		msg == read.StringNotTerminated ||
+	return msg == read.ErrListNotClosed ||
+		msg == read.ErrVectorNotClosed ||
+		msg == read.ErrMapNotClosed ||
+		msg == read.ErrStringNotTerminated ||
 		strings.HasPrefix(msg, notPaired)
 }
 
@@ -270,7 +275,7 @@ func doc(args ...data.Value) data.Value {
 		fmt.Println(f)
 		return nothing
 	}
-	panic(fmt.Errorf("symbol is not documented: %s", sym))
+	panic(fmt.Errorf(errSymbolNotDocumented, sym))
 }
 
 func getBuiltInsNamespace() namespace.Type {

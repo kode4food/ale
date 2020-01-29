@@ -17,7 +17,7 @@ func TestParseFloat(t *testing.T) {
 	n2 := F(12.8)
 	as.Equal(n1, n2)
 
-	defer as.ExpectPanic(fmt.Sprintf(data.ExpectedFloat, S(`'splosion!`)))
+	defer as.ExpectPanic(fmt.Sprintf(data.ErrExpectedFloat, S(`'splosion!`)))
 	data.ParseFloat("'splosion!")
 }
 
@@ -28,7 +28,7 @@ func TestParseInteger(t *testing.T) {
 	n2 := I(37)
 	as.Equal(n1, n2)
 
-	defer as.ExpectPanic(fmt.Sprintf(data.ExpectedInteger, S(`'splosion!`)))
+	defer as.ExpectPanic(fmt.Sprintf(data.ErrExpectedInteger, S(`'splosion!`)))
 	data.ParseInteger("'splosion!")
 }
 
@@ -39,7 +39,7 @@ func TestParseRatio(t *testing.T) {
 	n2 := data.ParseFloat("0.5")
 	as.True(n1.Cmp(n2) == data.EqualTo)
 
-	defer as.ExpectPanic(fmt.Sprintf(data.ExpectedRatio, S(`'splosion!`)))
+	defer as.ExpectPanic(fmt.Sprintf(data.ErrExpectedRatio, S(`'splosion!`)))
 	data.ParseRatio("'splosion!")
 }
 

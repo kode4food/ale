@@ -16,7 +16,7 @@ type syntaxEnv struct {
 
 // Error messages
 const (
-	UnsupportedSyntaxQuote = "unsupported type in syntax quote: %s"
+	errUnsupportedSyntaxQuote = "unsupported type in syntax quote: %s"
 )
 
 var (
@@ -49,10 +49,10 @@ func (se *syntaxEnv) quote(v data.Value) data.Value {
 
 func (se *syntaxEnv) quoteValue(v data.Value) data.Value {
 	switch typed := v.(type) {
-	case *data.Cons:
-		return se.quoteCons(typed)
 	case data.Sequence:
 		return se.quoteSequence(typed)
+	case data.Pair:
+		return se.quotePair(typed)
 	case data.Symbol:
 		return se.quoteSymbol(typed)
 	default:
@@ -86,12 +86,6 @@ func (se *syntaxEnv) generateSymbol(s data.Symbol) (data.Symbol, bool) {
 	return r, true
 }
 
-func (se *syntaxEnv) quoteCons(c *data.Cons) data.Value {
-	car := se.quoteValue(c.Car())
-	cdr := se.quoteValue(c.Cdr())
-	return data.NewList(consSym, car, cdr)
-}
-
 func (se *syntaxEnv) quoteSequence(s data.Sequence) data.Value {
 	switch typed := s.(type) {
 	case data.String:
@@ -105,8 +99,14 @@ func (se *syntaxEnv) quoteSequence(s data.Sequence) data.Value {
 	case data.NullType:
 		return typed
 	default:
-		panic(fmt.Errorf(UnsupportedSyntaxQuote, s))
+		panic(fmt.Errorf(errUnsupportedSyntaxQuote, s))
 	}
+}
+
+func (se *syntaxEnv) quotePair(c data.Pair) data.Value {
+	car := se.quoteValue(c.Car())
+	cdr := se.quoteValue(c.Cdr())
+	return data.NewList(consSym, car, cdr)
 }
 
 func (se *syntaxEnv) quoteObject(as data.Object) data.Value {

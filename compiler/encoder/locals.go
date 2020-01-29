@@ -7,7 +7,12 @@ import (
 	"github.com/kode4food/ale/runtime/isa"
 )
 
-// Locals tracks local variable assignments
+// Error messages
+const (
+	errDuplicateName = "name duplicated in scope: %s"
+)
+
+// Locals track local variable assignments
 type Locals map[data.Name]*IndexedCell
 
 func (e *encoder) LocalCount() int {
@@ -43,7 +48,7 @@ func (e *encoder) allocLocal() isa.Index {
 func (e *encoder) AddLocal(n data.Name, t CellType) *IndexedCell {
 	scope := e.peekLocals()
 	if _, ok := scope[n]; ok {
-		panic(fmt.Sprintf("name duplicated in scope: %s", n))
+		panic(fmt.Sprintf(errDuplicateName, n))
 	}
 	c := newCell(t, n)
 	res := newIndexedCell(e.allocLocal(), c)

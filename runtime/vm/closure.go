@@ -11,7 +11,7 @@ import (
 
 // Error messages
 const (
-	ErrUnknownOpcode = "unknown opcode: %s"
+	errUnknownOpcode = "unknown opcode: %s"
 )
 
 type closure struct {
@@ -380,7 +380,7 @@ func newClosure(lambda *Lambda, values data.Values) *closure {
 			return data.False
 
 		default:
-			panic(fmt.Errorf(ErrUnknownOpcode, op))
+			panic(fmt.Errorf(errUnknownOpcode, op))
 		}
 	}
 

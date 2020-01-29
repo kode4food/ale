@@ -7,6 +7,11 @@ func B(value bool) data.Bool {
 	return data.Bool(value)
 }
 
+// C constructs a Cons
+func C(k, v data.Value) data.Cons {
+	return data.NewCons(k, v)
+}
+
 // F constructs a Float
 func F(f float64) data.Float {
 	return data.Float(f)

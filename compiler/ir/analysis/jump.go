@@ -6,6 +6,11 @@ import (
 	"github.com/kode4food/ale/runtime/isa"
 )
 
+// Error messages
+const (
+	errLabelNotAnchored = "label not anchored: %d"
+)
+
 func verifyJumps(code isa.Instructions) {
 	for _, l := range code {
 		oc := l.Opcode
@@ -29,5 +34,5 @@ func mustFindLabel(code isa.Instructions, lbl isa.Index) int {
 	if res := findLabel(code, lbl); res >= 0 {
 		return res
 	}
-	panic(fmt.Sprintf("label not anchored: %d", lbl))
+	panic(fmt.Sprintf(errLabelNotAnchored, lbl))
 }

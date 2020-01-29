@@ -62,11 +62,11 @@ func TestBadNumbersEval(t *testing.T) {
 		as.PanicWith(ns, fmt.Errorf(err, data.String(ns)))
 	}
 
-	testBadNumber(data.ExpectedInteger, "0xfkk")
-	testBadNumber(data.ExpectedInteger, "0b01109")
-	testBadNumber(data.ExpectedInteger, "123j-k")
-	testBadNumber(data.ExpectedFloat, "1.2j-k")
-	testBadNumber(data.ExpectedRatio, "1/2p")
+	testBadNumber(data.ErrExpectedInteger, "0xfkk")
+	testBadNumber(data.ErrExpectedInteger, "0b01109")
+	testBadNumber(data.ErrExpectedInteger, "123j-k")
+	testBadNumber(data.ErrExpectedFloat, "1.2j-k")
+	testBadNumber(data.ErrExpectedRatio, "1/2p")
 }
 
 func TestCompareEval(t *testing.T) {

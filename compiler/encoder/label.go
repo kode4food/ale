@@ -11,6 +11,11 @@ type (
 	}
 )
 
+// Error messages
+const (
+	errLabelAlreadyAnchored = "label has already been anchored"
+)
+
 // NewLabel allocates a Label (
 func (e *encoder) NewLabel() *Label {
 	res := &Label{
@@ -30,7 +35,7 @@ func (l *Label) Word() isa.Word {
 // DropAnchor marks the current encoding position as the Label target
 func (l *Label) DropAnchor() {
 	if l.anchored {
-		panic("label has already been anchored")
+		panic(errLabelAlreadyAnchored)
 	}
 	e := l.encoder
 	e.Emit(isa.Label, l.number)

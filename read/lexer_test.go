@@ -66,7 +66,7 @@ func TestNumbers(t *testing.T) {
 	assertTokenSequence(as, l, []*read.Token{
 		makeToken(read.Number, F(10)),
 		makeToken(read.Number, F(12.8)),
-		makeToken(read.Number, F(8E+10)),
+		makeToken(read.Number, F(8e+10)),
 		makeToken(read.Number, F(99.598e+10)),
 		makeToken(read.Number, F(54e+12)),
 		makeToken(read.Number, F(-255)),
@@ -74,7 +74,7 @@ func TestNumbers(t *testing.T) {
 		makeToken(read.Number, F(4058634439)),
 	})
 
-	defer as.ExpectPanic(fmt.Sprintf(data.ExpectedInteger, data.String("0xffj-k")))
+	defer as.ExpectPanic(fmt.Sprintf(data.ErrExpectedInteger, data.String("0xffj-k")))
 	read.Scan("0xffj-k").First()
 }
 

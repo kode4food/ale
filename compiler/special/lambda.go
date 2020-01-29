@@ -29,7 +29,7 @@ type (
 
 // Error messages
 const (
-	UnexpectedLambdaSyntax = "unexpected lambda syntax: %s"
+	ErrUnexpectedLambdaSyntax = "unexpected lambda syntax: %s"
 )
 
 const allArgsName = data.Name("*args*")
@@ -143,7 +143,7 @@ func (le *lambdaEncoder) makeConsequent(c *lambdaCase) {
 func parseLambda(s data.Vector) lambdaCases {
 	f := s.First()
 	switch f.(type) {
-	case data.List, *data.Cons, data.LocalSymbol:
+	case data.List, data.Cons, data.LocalSymbol:
 		c := parseLambdaCase(s)
 		return lambdaCases{c}
 	case data.Vector:
@@ -154,7 +154,7 @@ func parseLambda(s data.Vector) lambdaCases {
 		}
 		return res
 	default:
-		panic(fmt.Errorf(UnexpectedLambdaSyntax, f))
+		panic(fmt.Errorf(ErrUnexpectedLambdaSyntax, f))
 	}
 }
 
@@ -194,12 +194,12 @@ func parseArgBindings(v data.Value) (data.Names, bool) {
 	switch typed := v.(type) {
 	case data.LocalSymbol:
 		return data.Names{typed.Name()}, true
-	case *data.Cons:
-		return parseConsArgNames(typed), true
 	case data.List:
 		return parseListArgNames(typed), false
+	case data.Cons:
+		return parseConsArgNames(typed), true
 	default:
-		panic(fmt.Errorf(UnexpectedLambdaSyntax, v))
+		panic(fmt.Errorf(ErrUnexpectedLambdaSyntax, v))
 	}
 }
 
@@ -212,14 +212,14 @@ func parseListArgNames(l data.List) data.Names {
 	return an
 }
 
-func parseConsArgNames(c *data.Cons) data.Names {
+func parseConsArgNames(c data.Cons) data.Names {
 	var an data.Names
 	next := c
 	for {
 		an = append(an, next.Car().(data.LocalSymbol).Name())
 
 		cdr := next.Cdr()
-		if nc, ok := cdr.(*data.Cons); ok {
+		if nc, ok := cdr.(data.Cons); ok {
 			next = nc
 			continue
 		}

@@ -20,7 +20,7 @@ func TestKeyword(t *testing.T) {
 func TestKeywordCaller(t *testing.T) {
 	as := assert.New(t)
 
-	m1 := data.NewObject(K("name"), S("Ale"))
+	m1 := data.NewObject(C(K("name"), S("Ale")))
 	c1 := K("name").Call()
 	as.String("Ale", c1(m1))
 

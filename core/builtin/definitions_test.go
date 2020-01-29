@@ -25,7 +25,7 @@ func TestFunctionEval(t *testing.T) {
 
 func TestBadFunctionEval(t *testing.T) {
 	symErr := interfaceErr("data.Integer", "data.LocalSymbol", "LocalSymbol")
-	numErr := fmt.Errorf(special.UnexpectedLambdaSyntax, "99")
+	numErr := fmt.Errorf(special.ErrUnexpectedLambdaSyntax, "99")
 	vecErr := typeErr("data.Integer", "data.Vector")
 	listErr := interfaceErr("data.Integer", "data.LocalSymbol", "LocalSymbol")
 

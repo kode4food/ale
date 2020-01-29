@@ -10,7 +10,7 @@ import (
 
 // Error messages
 const (
-	CallableRequired = "argument must be callable: %s"
+	errCallableRequired = "argument must be callable: %s"
 )
 
 // Macro converts a function into a macro
@@ -32,7 +32,7 @@ func Macro(args ...data.Value) data.Value {
 		}
 		return macro.Call(wrapper)
 	default:
-		panic(fmt.Errorf(CallableRequired, args[0]))
+		panic(fmt.Errorf(errCallableRequired, args[0]))
 	}
 }
 

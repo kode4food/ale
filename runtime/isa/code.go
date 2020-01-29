@@ -29,13 +29,13 @@ type (
 		Args []Word
 	}
 
-	// Instructions represents a set of Instructions
+	// Instructions represent a set of Instructions
 	Instructions []*Instruction
 )
 
 // Error messages
 const (
-	BadInstructionArgs = "instruction argument mismatch: %s"
+	ErrBadInstructionArgs = "instruction argument mismatch: %s"
 )
 
 // Word makes Index a Word
@@ -57,7 +57,7 @@ func (o Offset) Word() Word {
 func New(oc Opcode, args ...Word) *Instruction {
 	effect := MustGetEffect(oc)
 	if len(args) != effect.Size-1 {
-		panic(fmt.Sprintf(BadInstructionArgs, oc.String()))
+		panic(fmt.Sprintf(ErrBadInstructionArgs, oc.String()))
 	}
 	return &Instruction{
 		Opcode: oc,

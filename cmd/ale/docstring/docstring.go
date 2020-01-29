@@ -10,7 +10,7 @@ import (
 
 // Error messages
 const (
-	DocNotFound = "could not find doc: %s"
+	ErrDocNotFound = "could not find doc: %s"
 )
 
 const (
@@ -27,7 +27,7 @@ func Get(n string) string {
 	if ok {
 		return res
 	}
-	panic(fmt.Errorf(DocNotFound, n))
+	panic(fmt.Errorf(ErrDocNotFound, n))
 }
 
 // Exists returns whether a specific docstring exists
