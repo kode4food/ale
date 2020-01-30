@@ -12,26 +12,26 @@
 (define (pr . forms)
   (let [mapped (pr-map-with-null str! forms)]
     (when (seq mapped)
-          (^ *out* :write (first mapped)))
+          (: *out* :write (first mapped)))
     (when (seq mapped)
           (for-each [elem (rest mapped)]
-                    (^ *out* :write *space* elem)))))
+                    (: *out* :write *space* elem)))))
 
 (define (prn . forms)
   (apply pr forms)
-  (^ *out* :write *newline*))
+  (: *out* :write *newline*))
 
 (define (print . forms)
   (let [mapped (pr-map-with-null str forms)]
     (when (seq mapped)
-          (^ *out* :write (first mapped)))
+          (: *out* :write (first mapped)))
     (when (seq mapped)
           (for-each [elem (rest mapped)]
-                    (^ *out* :write *space* elem)))))
+                    (: *out* :write *space* elem)))))
 
 (define (println . forms)
   (apply print forms)
-  (^ *out* :write *newline*))
+  (: *out* :write *newline*))
 
 (define (paired-vector? value)
   (and (vector? value)

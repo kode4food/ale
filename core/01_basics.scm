@@ -140,5 +140,5 @@
 (define (constantly value)
   (lambda _ value))
 
-(define-macro (^ target method . args)
+(define-macro (: target method . args)
   `((get ,target ,method) ,@args))

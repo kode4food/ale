@@ -12,7 +12,7 @@ var envPairRegex = regexp.MustCompile("^(?P<Key>[^=]+)=(?P<Value>.*)$")
 
 // Env returns an object containing the operating system's environment
 func Env() data.Value {
-	var p []data.Pair
+	var p data.Pairs
 	for _, v := range os.Environ() {
 		if e := envPairRegex.FindStringSubmatch(v); len(e) == 3 {
 			p = append(p, data.NewCons(data.Keyword(e[1]), data.String(e[2])))

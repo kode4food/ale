@@ -1,6 +1,10 @@
 package helpers
 
-import "github.com/kode4food/ale/data"
+import (
+	"fmt"
+
+	"github.com/kode4food/ale/data"
+)
 
 // B constructs a Bool
 func B(value bool) data.Bool {
@@ -35,6 +39,11 @@ func L(args ...data.Value) data.List {
 // N constructs a Name
 func N(s string) data.Name {
 	return data.Name(s)
+}
+
+// R constructs a Ratio
+func R(num, den int64) data.Number {
+	return data.ParseRatio(fmt.Sprintf("%d/%d", num, den))
 }
 
 // S constructs a String
