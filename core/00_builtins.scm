@@ -86,3 +86,4 @@
 (def-special macroexpand-1)
 (def-special macroexpand)
 (def-special quote)
+(def-special pattern)

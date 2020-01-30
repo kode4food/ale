@@ -2,6 +2,7 @@ package read
 
 import (
 	"errors"
+	"fmt"
 	"regexp"
 
 	"github.com/kode4food/ale/data"
@@ -12,7 +13,8 @@ import (
 const (
 	ErrStringNotTerminated = "string has no closing quote"
 
-	errUnmatchedState = "unmatched lexing state"
+	errUnexpectedCharacter = "unexpected character: %s"
+	errUnmatchedState      = "unmatched lexing state"
 )
 
 // Token Types
@@ -59,9 +61,11 @@ type (
 )
 
 const (
-	idChar  = `[^(){}\[\]\s,'~@";]`
-	id      = idChar + "*"
-	numTail = id
+	structure  = `(){}\[\]\s`
+	idStart    = `[^` + structure + `,'~";]`
+	idContinue = `[^` + structure + `]*`
+	id         = idStart + idContinue
+	numTail    = idStart + "*"
 )
 
 var (
@@ -103,9 +107,16 @@ var (
 
 		pattern(id, identifierState),
 
-		pattern(`.`, endState(Error)),
+		pattern(`.`, errorState),
 	}
 )
+
+func pattern(p string, s tokenizer) matchEntry {
+	return matchEntry{
+		pattern:  regexp.MustCompile("^" + p),
+		function: s,
+	}
+}
 
 // Scan creates a new lexer Sequence
 func Scan(src data.String) data.Sequence {
@@ -135,8 +146,6 @@ func matchToken(src string) (*Token, string) {
 			return s.function(sm), src[len(sm[0]):]
 		}
 	}
-	// Shouldn't happen because of the patterns that are defined,
-	// but is here as a safety net
 	panic(errors.New(errUnmatchedState))
 }
 
@@ -205,9 +214,6 @@ func identifierState(sm []string) *Token {
 	return makeToken(Identifier, s)
 }
 
-func pattern(p string, s tokenizer) matchEntry {
-	return matchEntry{
-		pattern:  regexp.MustCompile("^" + p),
-		function: s,
-	}
+func errorState(sm []string) *Token {
+	panic(fmt.Errorf(errUnexpectedCharacter, sm[0]))
 }

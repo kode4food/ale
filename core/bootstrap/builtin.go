@@ -42,6 +42,7 @@ func (b *bootstrap) specialForms() {
 	b.special("macroexpand-1", special.MacroExpand1)
 	b.special("macroexpand", special.MacroExpand)
 	b.special("quote", special.Quote)
+	b.special("pattern", special.Pattern)
 }
 
 func (b *bootstrap) initialFunctions() {
