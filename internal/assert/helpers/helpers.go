@@ -43,7 +43,7 @@ func N(s string) data.Name {
 
 // R constructs a Ratio
 func R(num, den int64) data.Number {
-	return data.ParseRatio(fmt.Sprintf("%d/%d", num, den))
+	return data.MustParseRatio(fmt.Sprintf("%d/%d", num, den))
 }
 
 // S constructs a String

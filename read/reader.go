@@ -58,9 +58,12 @@ func (r *reader) nextToken() *Token {
 	if s.IsEmpty() {
 		return nil
 	}
-	f := s.First()
-	r.seq = s.Rest()
-	return f.(*Token)
+	if f := s.First().(*Token); f.Type == Error {
+		panic(errors.New(f.Value.String()))
+	} else {
+		r.seq = s.Rest()
+		return f
+	}
 }
 
 func (r *reader) nextValue() (data.Value, bool) {

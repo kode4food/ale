@@ -59,7 +59,7 @@ func TestBadNumbersEval(t *testing.T) {
 	as := assert.New(t)
 
 	testBadNumber := func(err string, ns string) {
-		as.PanicWith(ns, fmt.Errorf(err, data.String(ns)))
+		as.PanicWith(ns, fmt.Errorf(err, S(ns)))
 	}
 
 	testBadNumber(data.ErrExpectedInteger, "0xfkk")

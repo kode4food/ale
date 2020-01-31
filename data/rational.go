@@ -22,11 +22,20 @@ const (
 )
 
 // ParseFloat attempts to parse a string representing a float
-func ParseFloat(s string) Number {
+func ParseFloat(s string) (Number, error) {
 	if res, err := strconv.ParseFloat(s, 64); err != nil {
-		panic(fmt.Errorf(ErrExpectedFloat, s))
+		return nil, fmt.Errorf(ErrExpectedFloat, s)
 	} else {
-		return Float(res)
+		return Float(res), nil
+	}
+}
+
+// MustParseFloat forcefully parses a string representing a float
+func MustParseFloat(s string) Number {
+	if res, err := ParseFloat(s); err != nil {
+		panic(err)
+	} else {
+		return res
 	}
 }
 
@@ -117,11 +126,20 @@ func (l Float) String() string {
 }
 
 // ParseRatio attempts to parse a string representing a ratio
-func ParseRatio(s string) Number {
+func ParseRatio(s string) (Number, error) {
 	if res, ok := new(big.Rat).SetString(s); ok {
-		return (*Ratio)(res)
+		return (*Ratio)(res), nil
 	}
-	panic(fmt.Errorf(ErrExpectedRatio, s))
+	return nil, fmt.Errorf(ErrExpectedRatio, s)
+}
+
+// MustParseRatio forcefully parses a string representing a ratio
+func MustParseRatio(s string) Number {
+	if res, err := ParseRatio(s); err != nil {
+		panic(err)
+	} else {
+		return res
+	}
 }
 
 // Cmp compares this Ratio to another Number

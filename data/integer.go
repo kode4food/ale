@@ -20,14 +20,23 @@ const (
 )
 
 // ParseInteger attempts to parse a string representing an integer
-func ParseInteger(s string) Number {
+func ParseInteger(s string) (Number, error) {
 	if res, ok := new(big.Int).SetString(s, 0); ok {
 		if res.IsInt64() {
-			return Integer(res.Int64())
+			return Integer(res.Int64()), nil
 		}
-		return (*BigInt)(res)
+		return (*BigInt)(res), nil
 	}
-	panic(fmt.Errorf(ErrExpectedInteger, s))
+	return nil, fmt.Errorf(ErrExpectedInteger, s)
+}
+
+// MustParseInteger forcefully parse a string representing an integer
+func MustParseInteger(s string) Number {
+	if res, err := ParseInteger(s); err != nil {
+		panic(err)
+	} else {
+		return res
+	}
 }
 
 // Cmp compares this Integer to another Number
