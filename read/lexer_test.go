@@ -75,10 +75,14 @@ func TestNumbers(t *testing.T) {
 		makeToken(read.Number, F(4058634439)),
 		makeToken(read.Number, R(2, 3)),
 	})
+}
 
-	as := assert.New(t)
-	defer as.ExpectPanic(fmt.Sprintf(data.ErrExpectedInteger, data.String("0xffj-k")))
-	read.Scan("0xffj-k").First()
+func TestBadNumbers(t *testing.T) {
+	err := fmt.Sprintf(data.ErrExpectedInteger, S("0xffj-k"))
+	l := read.Scan("0xffj-k")
+	assertTokenSequence(t, l, []*read.Token{
+		makeToken(read.Error, S(err)),
+	})
 }
 
 func TestStrings(t *testing.T) {
@@ -108,10 +112,22 @@ func TestComments(t *testing.T) {
 	})
 }
 
-func TestSymbols(t *testing.T) {
+func TestIdentifiers(t *testing.T) {
 	l := read.Scan(`hello th,@re`)
 	assertTokenSequence(t, l, []*read.Token{
 		makeToken(read.Identifier, S("hello")),
-		makeToken(read.Identifier, S("th,@re")),
+		makeToken(read.Identifier, S("th")),
+		makeToken(read.SpliceMarker, S(",@")),
+		makeToken(read.Identifier, S("re")),
+	})
+}
+
+func TestUnexpectedChars(t *testing.T) {
+	err := fmt.Sprintf(read.ErrUnexpectedCharacter, "@")
+	l := read.Scan("th@re")
+	assertTokenSequence(t, l, []*read.Token{
+		makeToken(read.Identifier, S("th")),
+		makeToken(read.Error, S(err)),
+		makeToken(read.Identifier, S("re")),
 	})
 }

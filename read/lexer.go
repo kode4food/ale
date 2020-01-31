@@ -12,9 +12,9 @@ import (
 // Error messages
 const (
 	ErrStringNotTerminated = "string has no closing quote"
+	ErrUnexpectedCharacter = "unexpected character: %s"
 
-	errUnexpectedCharacter = "unexpected character: %s"
-	errUnmatchedState      = "unmatched lexing state"
+	errUnmatchedState = "unmatched lexing state"
 )
 
 // Token Types
@@ -61,11 +61,11 @@ type (
 )
 
 const (
-	structure  = `(){}\[\]\s`
-	idStart    = `[^` + structure + `,'~";]`
-	idContinue = `[^` + structure + `]*`
-	id         = idStart + idContinue
-	numTail    = idStart + "*"
+	structure  = `(){}\[\]\s\"`
+	prefixChar = "`,~@"
+	idChar     = `[^` + structure + prefixChar + `]`
+	id         = idChar + "+"
+	numTail    = idChar + "*"
 )
 
 var (
@@ -185,25 +185,29 @@ func unescape(s string) string {
 
 func stringState(sm []string) *Token {
 	if len(sm[4]) == 0 {
-		panic(errors.New(ErrStringNotTerminated))
+		return makeToken(Error, data.String(ErrStringNotTerminated))
 	}
 	s := unescape(sm[2])
 	return makeToken(String, data.String(s))
 }
 
 func ratioState(sm []string) *Token {
-	res := data.ParseRatio(sm[0])
-	return makeToken(Number, res)
+	return tokenizeNumber(data.ParseRatio(sm[0]))
 }
 
 func floatState(sm []string) *Token {
-	v := data.ParseFloat(sm[0])
-	return makeToken(Number, v)
+	return tokenizeNumber(data.ParseFloat(sm[0]))
 }
 
 func integerState(sm []string) *Token {
-	v := data.ParseInteger(sm[0])
-	return makeToken(Number, v)
+	return tokenizeNumber(data.ParseInteger(sm[0]))
+}
+
+func tokenizeNumber(res data.Number, err error) *Token {
+	if err != nil {
+		return makeToken(Error, data.String(err.Error()))
+	}
+	return makeToken(Number, res)
 }
 
 func identifierState(sm []string) *Token {
@@ -215,5 +219,6 @@ func identifierState(sm []string) *Token {
 }
 
 func errorState(sm []string) *Token {
-	panic(fmt.Errorf(errUnexpectedCharacter, sm[0]))
+	msg := fmt.Sprintf(ErrUnexpectedCharacter, sm[0])
+	return makeToken(Error, data.String(msg))
 }

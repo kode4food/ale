@@ -1,6 +1,11 @@
 package types
 
-import "github.com/kode4food/ale/data"
+import (
+	"errors"
+	"fmt"
+
+	"github.com/kode4food/ale/data"
+)
 
 type (
 	// Type is the basic interface for type checking
@@ -10,28 +15,16 @@ type (
 	}
 
 	// Boolean represents the boolean native type
-	Boolean interface {
-		Type
-		Boolean()
-	}
+	Boolean struct{}
 
 	// Numeric represents the numeric native type
-	Numeric interface {
-		Type
-		Numeric()
-	}
+	Numeric struct{}
 
 	// String represents the string native type
-	String interface {
-		Type
-		String()
-	}
+	String struct{}
 
 	// Nil represents the empty list or nil value as a distinct type
-	Nil interface {
-		Type
-		Nil()
-	}
+	Nil struct{}
 
 	// Composite represents a composite type (list, tuple, record, sum)
 	Composite interface {
@@ -40,33 +33,76 @@ type (
 	}
 
 	// List represents a list type, where each element is the same type
-	List interface {
-		Composite
-		List()
-		Type() Type
+	List struct {
+		element Type
 	}
 
 	// Tuple represents a fixed set of independently typed values
-	Tuple interface {
-		Composite
-		Tuple()
-		Types() []Type
+	Tuple struct {
+		elements []Type
+	}
+
+	// RecordEntry represents a record's named fields
+	RecordEntry struct {
+		Name data.Name
+		Type Type
 	}
 
 	// Record represents a data structure with named fields
-	Record interface {
-		Composite
-		Record()
-		Entries() []struct {
-			Name data.Name
-			Type Type
-		}
-	}
+	Record []RecordEntry
 
 	// Sum represents a union of types
-	Sum interface {
-		Composite
-		Sum()
-		Types() []Type
+	Sum struct {
+		types []Type
 	}
 )
+
+func (b *Boolean) Name() data.Name {
+	return "bool"
+}
+
+func (b *Boolean) Satisfies(t Type) error {
+	if _, ok := t.(*Boolean); ok {
+		return nil
+	}
+	return errors.New("type does not satisfy bool")
+}
+
+func (n *Numeric) Name() data.Name {
+	return "number"
+}
+
+func (n *Numeric) Satisfies(t Type) error {
+	if _, ok := t.(*Numeric); ok {
+		return nil
+	}
+	return errors.New("type does not satisfy number")
+}
+
+func (s *String) Name() data.Name {
+	return "string"
+}
+
+func (s *String) Satisfies(t Type) error {
+	if _, ok := t.(*String); ok {
+		return nil
+	}
+	return errors.New("type does not satisfy string")
+}
+
+func (n *Nil) Name() data.Name {
+	return "nil"
+}
+
+func (n *Nil) Satisfies(t Type) error {
+	if _, ok := t.(*Nil); ok {
+		return nil
+	}
+	return errors.New("type does not satisfy nil")
+}
+
+func (l *List) Name() data.Name {
+	sName := string(l.element.Name())
+	var res = data.Name(fmt.Sprintf("list<%s>", sName))
+	return res
+}

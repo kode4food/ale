@@ -120,7 +120,7 @@ func TestRestFunctionsEval(t *testing.T) {
 	as.EvalTo(`
 		(define test (lambda (f . r) (apply vector (cons f r))))
 		(test 1 2 3 4 5 6 7)
-	`, data.String("[1 2 3 4 5 6 7]"))
+	`, S("[1 2 3 4 5 6 7]"))
 
 	as.PanicWith(`
 		(lambda (x y .) "explode")
@@ -136,6 +136,10 @@ func TestRestFunctionsEval(t *testing.T) {
 }
 
 func TestTailCallEval(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping tail call tests")
+		return
+	}
 	as := assert.New(t)
 	as.EvalTo(`
 		(define-lambda to-zero (x)
@@ -145,5 +149,5 @@ func TestTailCallEval(t *testing.T) {
 				[:else 0]))
 
 		(to-zero 9999999)
-	`, data.Integer(0))
+	`, I(0))
 }
