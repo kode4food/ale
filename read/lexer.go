@@ -63,9 +63,10 @@ type (
 const (
 	structure  = `(){}\[\]\s\"`
 	prefixChar = "`,~@"
-	idChar     = `[^` + structure + prefixChar + `]`
-	id         = idChar + "+"
-	numTail    = idChar + "*"
+	idStart    = "[^" + structure + prefixChar + "]"
+	idCont     = "[^" + structure + "]"
+	id         = idStart + idCont + "*"
+	numTail    = idStart + "*"
 )
 
 var (
