@@ -157,7 +157,7 @@ func (w *Wrapper) ExpectPanic(errStr string) {
 	panic(errProperErrorNotRaised)
 }
 
-// ExpectNoPanic is used with a defer to make sure no error was triggered
+// ExpectNoPanic is used with defer to make sure no error occurs
 func (w *Wrapper) ExpectNoPanic() {
 	w.T.Helper()
 	rec := recover()

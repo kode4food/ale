@@ -116,18 +116,16 @@ func TestIdentifiers(t *testing.T) {
 	l := read.Scan(`hello th,@re`)
 	assertTokenSequence(t, l, []*read.Token{
 		makeToken(read.Identifier, S("hello")),
-		makeToken(read.Identifier, S("th")),
-		makeToken(read.SpliceMarker, S(",@")),
-		makeToken(read.Identifier, S("re")),
+		makeToken(read.Identifier, S("th,@re")),
 	})
 }
 
 func TestUnexpectedChars(t *testing.T) {
 	err := fmt.Sprintf(read.ErrUnexpectedCharacter, "@")
-	l := read.Scan("th@re")
+	l := read.Scan("hello @there")
 	assertTokenSequence(t, l, []*read.Token{
-		makeToken(read.Identifier, S("th")),
+		makeToken(read.Identifier, S("hello")),
 		makeToken(read.Error, S(err)),
-		makeToken(read.Identifier, S("re")),
+		makeToken(read.Identifier, S("there")),
 	})
 }
