@@ -43,7 +43,7 @@ func _() {
 	_ = x[NewRef-31]
 	_ = x[NoOp-32]
 	_ = x[Not-33]
-	_ = x[Null-34]
+	_ = x[Nil-34]
 	_ = x[One-35]
 	_ = x[Panic-36]
 	_ = x[Pop-37]
@@ -52,7 +52,7 @@ func _() {
 	_ = x[RestArg-40]
 	_ = x[RetEmptyList-41]
 	_ = x[RetFalse-42]
-	_ = x[RetNull-43]
+	_ = x[RetNil-43]
 	_ = x[RetTrue-44]
 	_ = x[Return-45]
 	_ = x[Self-46]
@@ -65,12 +65,12 @@ func _() {
 }
 
 const (
-	_Opcode_name_0 = "AddArgArgLenBindBindRefCallCall0Call1ClosureCondJumpConstDeclareDerefDivDupEqFalseGtGteJumpLoadLtLteMakeCallMakeTruthyModMulNegNegInfNegOneNeqNewRefNoOpNotNullOnePanicPopPosInfResolveRestArgRetEmptyListRetFalseRetNullRetTrueReturnSelfStoreSubTailCallTrueTwoZero"
+	_Opcode_name_0 = "AddArgArgLenBindBindRefCallCall0Call1ClosureCondJumpConstDeclareDerefDivDupEqFalseGtGteJumpLoadLtLteMakeCallMakeTruthyModMulNegNegInfNegOneNeqNewRefNoOpNotNilOnePanicPopPosInfResolveRestArgRetEmptyListRetFalseRetNilRetTrueReturnSelfStoreSubTailCallTrueTwoZero"
 	_Opcode_name_1 = "Label"
 )
 
 var (
-	_Opcode_index_0 = [...]uint16{0, 3, 6, 12, 16, 23, 27, 32, 37, 44, 52, 57, 64, 69, 72, 75, 77, 82, 84, 87, 91, 95, 97, 100, 108, 118, 121, 124, 127, 133, 139, 142, 148, 152, 155, 159, 162, 167, 170, 176, 183, 190, 202, 210, 217, 224, 230, 234, 239, 242, 250, 254, 257, 261}
+	_Opcode_index_0 = [...]uint16{0, 3, 6, 12, 16, 23, 27, 32, 37, 44, 52, 57, 64, 69, 72, 75, 77, 82, 84, 87, 91, 95, 97, 100, 108, 118, 121, 124, 127, 133, 139, 142, 148, 152, 155, 158, 161, 166, 169, 175, 182, 189, 201, 209, 215, 222, 228, 232, 237, 240, 248, 252, 255, 259}
 )
 
 func (i Opcode) String() string {

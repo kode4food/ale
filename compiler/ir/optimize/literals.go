@@ -7,7 +7,7 @@ import (
 
 var literalReturnMap = map[isa.Opcode]isa.Opcode{
 	isa.False: isa.RetFalse,
-	isa.Null:  isa.RetNull,
+	isa.Nil:   isa.RetNil,
 	isa.True:  isa.RetTrue,
 }
 

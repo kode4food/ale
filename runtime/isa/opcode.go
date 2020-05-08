@@ -42,7 +42,7 @@ const (
 	NewRef                     // New Reference
 	NoOp                       // Non-Operator
 	Not                        // Boolean Negation
-	Null                       // Push Null
+	Nil                        // Push Nil
 	One                        // Push One
 	Panic                      // Abnormally Halt
 	Pop                        // Discard Value
@@ -51,7 +51,7 @@ const (
 	RestArg                    // Retrieve Arguments Tail
 	RetEmptyList               // Return an Empty List
 	RetFalse                   // Return False
-	RetNull                    // Return Null
+	RetNil                     // Return Nil
 	RetTrue                    // Return True
 	Return                     // Return Value
 	Self                       // Push Current Lambda
