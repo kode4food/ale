@@ -87,7 +87,7 @@ func (b Bool) String() string {
 
 // Truthy evaluates whether a Value is truthy
 func Truthy(v Value) bool {
-	if v == False || v == Null {
+	if v == False || v == Nil {
 		return false
 	}
 	return true

@@ -26,7 +26,7 @@ func (s String) First() Value {
 	if r, w := utf8.DecodeRuneInString(string(s)); w > 0 {
 		return String(r)
 	}
-	return Null
+	return Nil
 }
 
 // Rest returns a String of all characters after the first
@@ -42,7 +42,7 @@ func (s String) Split() (Value, Sequence, bool) {
 	if r, w := utf8.DecodeRuneInString(string(s)); w > 0 {
 		return String(r), s[w:], true
 	}
-	return Null, Null, false
+	return Nil, Nil, false
 }
 
 // IsEmpty returns whether this sequence is empty
@@ -58,7 +58,7 @@ func (s String) Count() int {
 // ElementAt returns the Character at the indexed position in the String
 func (s String) ElementAt(index int) (Value, bool) {
 	if index < 0 {
-		return Null, false
+		return Nil, false
 	}
 	ns := string(s)
 	p := 0
@@ -66,13 +66,13 @@ func (s String) ElementAt(index int) (Value, bool) {
 		if _, w := utf8.DecodeRuneInString(ns[p:]); w > 0 {
 			p += w
 		} else {
-			return Null, false
+			return Nil, false
 		}
 	}
 	if r, w := utf8.DecodeRuneInString(ns[p:]); w > 0 {
 		return String(r), true
 	}
-	return Null, false
+	return Nil, false
 }
 
 // String converts this Value into a string

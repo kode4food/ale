@@ -21,7 +21,7 @@ func NewLazySequence(r LazyResolver) data.Sequence {
 	return &lazySequence{
 		once:     Once(),
 		resolver: r,
-		result:   data.Null,
+		result:   data.Nil,
 		rest:     data.EmptyList,
 	}
 }

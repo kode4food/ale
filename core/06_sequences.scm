@@ -49,13 +49,13 @@
     coll 0))
 
 (define nth!
-  (let [scan
-        (lambda-rec scan (coll pos handle)
-          (if (seq coll)
-              (if (> pos 0)
-                  (scan (rest coll) (dec pos) handle)
-                  (first coll))
-              (handle)))]
+  (let-rec [scan
+            (lambda (coll pos missing)
+              (if (seq coll)
+                  (if (> pos 0)
+                      (scan (rest coll) (dec pos) missing)
+                      (first coll))
+                  (missing)))]
     (lambda-rec nth!
       [(coll pos)
          (if (indexed? coll)

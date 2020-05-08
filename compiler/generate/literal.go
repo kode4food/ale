@@ -10,7 +10,7 @@ import (
 func Literal(e encoder.Type, v data.Value) {
 	switch typed := v.(type) {
 	case data.NullType:
-		Null(e)
+		Nil(e)
 	case data.Integer, data.Float:
 		Number(e, typed)
 	case data.Bool:
@@ -21,8 +21,8 @@ func Literal(e encoder.Type, v data.Value) {
 	}
 }
 
-// Null encodes a Null
-func Null(e encoder.Type) {
+// Nil encodes a Nil
+func Nil(e encoder.Type) {
 	e.Emit(isa.Null)
 }
 

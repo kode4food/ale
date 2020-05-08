@@ -19,7 +19,7 @@ func TestSequenceConversions(t *testing.T) {
 	a1 := stdlib.SequenceToObject(l3)
 	a2 := stdlib.SequenceToObject(a1)
 
-	l4 := L(S("hello"), data.Null, S("there"), v1)
+	l4 := L(S("hello"), data.Nil, S("there"), v1)
 	s1 := stdlib.SequenceToStr(l4)
 	s2 := stdlib.SequenceToStr(s1)
 
@@ -47,7 +47,7 @@ func TestUncountedConversions(t *testing.T) {
 	a1 := stdlib.SequenceToObject(stdlib.Filter(l3, alwaysTrue))
 	a2 := stdlib.SequenceToObject(a1)
 
-	l4 := stdlib.Filter(L(S("hello"), data.Null, S("there"), v1), alwaysTrue)
+	l4 := stdlib.Filter(L(S("hello"), data.Nil, S("there"), v1), alwaysTrue)
 	s1 := stdlib.SequenceToStr(l4)
 
 	as.String(`["hello" "there"]`, v1)

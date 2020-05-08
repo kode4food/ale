@@ -78,7 +78,7 @@ func SequenceToStr(s data.Sequence) data.String {
 	}
 	var buf bytes.Buffer
 	for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {
-		if f == data.Null {
+		if f == data.Nil {
 			continue
 		}
 		buf.WriteString(f.String())

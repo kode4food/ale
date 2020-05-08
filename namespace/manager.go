@@ -124,7 +124,7 @@ func ResolveValue(ns Type, s data.Symbol) (data.Value, bool) {
 	if e, ok := ResolveSymbol(ns, s); ok && e.IsBound() {
 		return e.Value(), true
 	}
-	return data.Null, false
+	return data.Nil, false
 }
 
 // MustResolveValue attempts to resolve a value or explodes violently

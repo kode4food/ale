@@ -23,7 +23,7 @@ var (
 func Block(e encoder.Type, s data.Sequence) {
 	f, r, ok := s.Split()
 	if !ok {
-		Null(e)
+		Nil(e)
 		return
 	}
 	Value(e, f)

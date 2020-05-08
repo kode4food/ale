@@ -23,7 +23,7 @@ func (v Vector) ElementAt(index int) (Value, bool) {
 	if index >= 0 && index < len(v) {
 		return v[index], true
 	}
-	return Null, false
+	return Nil, false
 }
 
 // First returns the first element of the Vector
@@ -31,7 +31,7 @@ func (v Vector) First() Value {
 	if len(v) > 0 {
 		return v[0]
 	}
-	return Null
+	return Nil
 }
 
 // Rest returns the elements of the Vector that follow the first
@@ -53,9 +53,9 @@ func (v Vector) Split() (Value, Sequence, bool) {
 	if lv > 1 {
 		return v[0], v[1:], true
 	} else if lv == 1 {
-		return v[0], Null, true
+		return v[0], Nil, true
 	}
-	return Null, Null, false
+	return Nil, Nil, false
 }
 
 // Car returns the first element of a Pair

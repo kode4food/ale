@@ -47,7 +47,7 @@ func (o Object) Get(k Value) (Value, bool) {
 	if v, ok := o[k]; ok {
 		return v, ok
 	}
-	return Null, false
+	return Nil, false
 }
 
 // Merge creates a new Object that is the result of merging this and another

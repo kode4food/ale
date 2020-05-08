@@ -1,56 +1,56 @@
 package data
 
 type (
-	// NullType represents the null value, which is also the empty list
+	// NullType represents a null value, which is also the empty list
 	NullType interface {
 		List
-		Nil()
+		Null()
 	}
 
-	nullValue struct{}
+	nilValue struct{}
 )
 
 // EmptyList represents an empty List
 var (
-	EmptyList *nullValue
-	Null      = EmptyList
+	EmptyList *nilValue
+	Nil       = EmptyList
 )
 
-func (*nullValue) Nil()  {}
-func (*nullValue) List() {}
+func (*nilValue) Null() {}
+func (*nilValue) List() {}
 
-func (*nullValue) First() Value {
-	return Null
+func (*nilValue) First() Value {
+	return Nil
 }
 
-func (*nullValue) Rest() Sequence {
-	return Null
+func (*nilValue) Rest() Sequence {
+	return Nil
 }
 
-func (*nullValue) Split() (Value, Sequence, bool) {
-	return Null, Null, false
+func (*nilValue) Split() (Value, Sequence, bool) {
+	return Nil, Nil, false
 }
 
-func (*nullValue) IsEmpty() bool {
+func (*nilValue) IsEmpty() bool {
 	return true
 }
 
-func (*nullValue) Reverse() Sequence {
-	return Null
+func (*nilValue) Reverse() Sequence {
+	return Nil
 }
 
-func (*nullValue) Prepend(value Value) Sequence {
+func (*nilValue) Prepend(value Value) Sequence {
 	return NewList(value)
 }
 
-func (*nullValue) ElementAt(int) (Value, bool) {
-	return Null, false
+func (*nilValue) ElementAt(int) (Value, bool) {
+	return Nil, false
 }
 
-func (*nullValue) Count() int {
+func (*nilValue) Count() int {
 	return 0
 }
 
-func (*nullValue) String() string {
+func (*nilValue) String() string {
 	return "()"
 }

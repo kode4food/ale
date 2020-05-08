@@ -45,5 +45,5 @@ func Read(args ...data.Value) data.Value {
 	if v, ok := data.Last(read.FromString(stdlib.SequenceToStr(s))); ok {
 		return v
 	}
-	return data.Null
+	return data.Nil
 }

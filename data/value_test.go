@@ -22,6 +22,6 @@ func TestTruthy(t *testing.T) {
 	as.Truthy(L(S("Hello")))
 	as.Truthy(S("hello"))
 
-	as.Falsey(data.Null)
+	as.Falsey(data.Nil)
 	as.Falsey(data.False)
 }

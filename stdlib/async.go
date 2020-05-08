@@ -68,7 +68,7 @@ const (
 )
 
 var (
-	emptyResult = channelResult{value: data.Null, error: nil}
+	emptyResult = channelResult{value: data.Nil, error: nil}
 
 	promiseArityChecker = arity.MakeFixedChecker(0)
 )
@@ -117,7 +117,7 @@ func (e *channelEmitter) Write(v data.Value) {
 // Error will send an Error to the Go chan
 func (e *channelEmitter) Error(err interface{}) {
 	if atomic.LoadUint32(&e.ch.status) == channelReady {
-		e.ch.seq <- channelResult{data.Null, err}
+		e.ch.seq <- channelResult{data.Nil, err}
 	}
 	e.Close()
 }

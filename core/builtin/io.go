@@ -48,13 +48,13 @@ func bindWriter(w stdlib.Writer) data.Call {
 		for _, f := range args {
 			w.Write(f)
 		}
-		return data.Null
+		return data.Nil
 	}
 }
 
 func bindCloser(c stdlib.Closer) data.Call {
 	return func(args ...data.Value) data.Value {
 		c.Close()
-		return data.Null
+		return data.Nil
 	}
 }
