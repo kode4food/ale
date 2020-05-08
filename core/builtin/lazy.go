@@ -8,13 +8,13 @@ import (
 func makeLazyResolver(f data.Call) stdlib.LazyResolver {
 	return func() (data.Value, data.Sequence, bool) {
 		r := f()
-		if r != data.Null {
+		if r != data.Nil {
 			s := r.(data.Sequence)
 			if sf, sr, ok := s.Split(); ok {
 				return sf, sr, true
 			}
 		}
-		return data.Null, data.EmptyList, false
+		return data.Nil, data.EmptyList, false
 	}
 }
 

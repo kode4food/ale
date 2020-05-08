@@ -5,7 +5,7 @@ import (
 	"github.com/kode4food/ale/runtime/isa"
 )
 
-var tailCallPattern = [][]isa.Opcode{
+var tailCallPattern = visitor.Pattern{
 	{isa.MakeCall},
 	{isa.Call, isa.Call0, isa.Call1},
 	{isa.Return},

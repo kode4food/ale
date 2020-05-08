@@ -96,7 +96,7 @@ func (l *list) Count() int {
 // ElementAt returns a specific element of the List
 func (l *list) ElementAt(index int) (Value, bool) {
 	if index > l.count-1 || index < 0 {
-		return Null, false
+		return Nil, false
 	}
 
 	var e List = l

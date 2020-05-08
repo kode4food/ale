@@ -149,7 +149,7 @@ func isWrapperCall(s data.Symbol, v data.Value) (data.Value, bool) {
 	if l, ok := isBuiltInCall(s, v); ok {
 		return l.Rest().First(), true
 	}
-	return data.Null, false
+	return data.Nil, false
 }
 
 func isBuiltInCall(s data.Symbol, v data.Value) (data.List, bool) {

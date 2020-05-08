@@ -77,7 +77,7 @@ func MakeSequenceStr(s Sequence) string {
 // Last returns the final element of a Sequence, possibly by scanning
 func Last(s Sequence) (Value, bool) {
 	if s.IsEmpty() {
-		return Null, false
+		return Nil, false
 	}
 
 	if i, ok := s.(RandomAccessSequence); ok {

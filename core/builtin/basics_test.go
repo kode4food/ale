@@ -55,7 +55,7 @@ func TestRecover(t *testing.T) {
 		data.Call(func(args ...data.Value) data.Value {
 			as.String("blowed up!", args[0])
 			triggered = true
-			return data.Null
+			return data.Nil
 		}),
 	)
 	as.True(triggered)
@@ -77,7 +77,7 @@ func TestDefer(t *testing.T) {
 		}),
 		data.Call(func(_ ...data.Value) data.Value {
 			triggered = true
-			return data.Null
+			return data.Nil
 		}),
 	)
 }
@@ -95,7 +95,7 @@ func TestTrueFalseEval(t *testing.T) {
 	as := assert.New(t)
 	as.EvalTo(`true`, data.True)
 	as.EvalTo(`false`, data.False)
-	as.EvalTo(`'()`, data.Null)
+	as.EvalTo(`'()`, data.Nil)
 }
 
 func TestReadEval(t *testing.T) {

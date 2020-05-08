@@ -20,7 +20,7 @@ func FromScanner(lexer data.Sequence) data.Sequence {
 		if f, ok := r.nextValue(); ok {
 			return f, stdlib.NewLazySequence(res), true
 		}
-		return data.Null, data.EmptyList, false
+		return data.Nil, data.EmptyList, false
 	}
 
 	return stdlib.NewLazySequence(res)

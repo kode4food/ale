@@ -70,7 +70,7 @@ func (ns *namespace) Declare(n data.Name) Entry {
 	e := &entry{
 		owner: ns,
 		name:  n,
-		value: data.Null,
+		value: data.Nil,
 		bound: false,
 	}
 	ns.entries[n] = e

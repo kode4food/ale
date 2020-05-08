@@ -23,8 +23,8 @@ type (
 	// String represents the string native type
 	String struct{}
 
-	// Nil represents the empty list or nil value as a distinct type
-	Nil struct{}
+	// Null represents the empty list or nil value as a distinct type
+	Null struct{}
 
 	// Composite represents a composite type (list, tuple, record, sum)
 	Composite interface {
@@ -54,6 +54,18 @@ type (
 	// Sum represents a union of types
 	Sum struct {
 		types []Type
+	}
+
+	// LambdaCase represents a lambda case signature
+	LambdaCase struct {
+		args   []Type
+		rest   bool
+		result Type
+	}
+
+	// Lambda represents a function or closure
+	Lambda struct {
+		cases []LambdaCase
 	}
 )
 
@@ -90,15 +102,15 @@ func (s *String) Satisfies(t Type) error {
 	return errors.New("type does not satisfy string")
 }
 
-func (n *Nil) Name() data.Name {
-	return "nil"
+func (n *Null) Name() data.Name {
+	return "null"
 }
 
-func (n *Nil) Satisfies(t Type) error {
-	if _, ok := t.(*Nil); ok {
+func (n *Null) Satisfies(t Type) error {
+	if _, ok := t.(*Null); ok {
 		return nil
 	}
-	return errors.New("type does not satisfy nil")
+	return errors.New("type does not satisfy null")
 }
 
 func (l *List) Name() data.Name {

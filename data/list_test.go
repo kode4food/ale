@@ -41,7 +41,7 @@ func TestList(t *testing.T) {
 
 	r, ok = data.EmptyList.ElementAt(1)
 	as.False(ok)
-	as.Equal(data.Null, r)
+	as.Equal(data.Nil, r)
 }
 
 func TestListReverse(t *testing.T) {

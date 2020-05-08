@@ -21,7 +21,7 @@ func Go(args ...data.Value) data.Value {
 	fn := args[0].(data.Caller)
 	restArgs := args[1:]
 	go fn.Call()(restArgs...)
-	return data.Null
+	return data.Nil
 }
 
 // Chan instantiates a new go channel

@@ -11,7 +11,7 @@ var literalReturnMap = map[isa.Opcode]isa.Opcode{
 	isa.True:  isa.RetTrue,
 }
 
-var literalReturnPatterns = [][]isa.Opcode{
+var literalReturnPatterns = visitor.Pattern{
 	literalKeys(),
 	{isa.Return},
 }
