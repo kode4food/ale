@@ -74,7 +74,7 @@ func (le *lambdaEncoder) encodeCall() {
 
 func (le *lambdaEncoder) makeLambda() *vm.Lambda {
 	if len(le.cases) == 0 {
-		le.Emit(isa.RetNull)
+		le.Emit(isa.RetNil)
 	} else {
 		le.makeLambdaCases(le.cases)
 	}
@@ -128,7 +128,7 @@ func (le *lambdaEncoder) makePredicate(c *lambdaCase) {
 func (le *lambdaEncoder) makeConsequent(c *lambdaCase) {
 	body := c.body
 	if body.IsEmpty() {
-		le.Emit(isa.RetNull)
+		le.Emit(isa.RetNil)
 		return
 	}
 

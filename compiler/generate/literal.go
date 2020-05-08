@@ -23,7 +23,7 @@ func Literal(e encoder.Type, v data.Value) {
 
 // Nil encodes a Nil
 func Nil(e encoder.Type) {
-	e.Emit(isa.Null)
+	e.Emit(isa.Nil)
 }
 
 // Number encodes an Integer or Float
