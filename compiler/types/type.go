@@ -28,8 +28,8 @@ type (
 
 	// Composite represents a composite type (list, tuple, record, sum)
 	Composite interface {
+		composite()
 		Type
-		Composite()
 	}
 
 	// List represents a list type, where each element is the same type

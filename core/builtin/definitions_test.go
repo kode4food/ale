@@ -24,10 +24,10 @@ func TestFunctionEval(t *testing.T) {
 }
 
 func TestBadFunctionEval(t *testing.T) {
-	symErr := interfaceErr("data.Integer", "data.LocalSymbol", "LocalSymbol")
+	symErr := interfaceErr("data.Integer", "data.LocalSymbol")
 	numErr := fmt.Errorf(special.ErrUnexpectedLambdaSyntax, "99")
 	vecErr := typeErr("data.Integer", "data.Vector")
-	listErr := interfaceErr("data.Integer", "data.LocalSymbol", "LocalSymbol")
+	listErr := interfaceErr("data.Integer", "data.LocalSymbol")
 
 	as := assert.New(t)
 	as.PanicWith(`(define-lambda blah (name 99 bad) (name))`, symErr)

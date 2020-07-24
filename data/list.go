@@ -2,12 +2,12 @@ package data
 
 // List represents a singly-linked List
 type List interface {
-	List()
+	list() // marker
 	Sequence
-	Prepend(Value) Sequence
-	Reverse() Sequence
 	Indexed
 	Counted
+	Prepend(Value) Sequence
+	Reverse() Sequence
 }
 
 type list struct {
@@ -29,7 +29,7 @@ func NewList(v ...Value) List {
 	return res
 }
 
-func (l *list) List() {}
+func (l *list) list() {}
 
 // First returns the first element of the List
 func (l *list) First() Value {

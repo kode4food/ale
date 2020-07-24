@@ -6,6 +6,6 @@ import "github.com/kode4food/ale/data"
 // optimized. Most specifically it is implemented by the
 // Closure struct to inform the code generator
 type TailCaller interface {
+	tailCaller()
 	data.Function
-	TailCaller()
 }
