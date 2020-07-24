@@ -3,8 +3,8 @@ package data
 type (
 	// NullType represents a null value, which is also the empty list
 	NullType interface {
+		null() // marker
 		List
-		Null()
 	}
 
 	nilValue struct{}
@@ -16,8 +16,8 @@ var (
 	Nil       = EmptyList
 )
 
-func (*nilValue) Null() {}
-func (*nilValue) List() {}
+func (*nilValue) null() {}
+func (*nilValue) list() {}
 
 func (*nilValue) First() Value {
 	return Nil

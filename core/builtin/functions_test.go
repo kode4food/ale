@@ -14,9 +14,9 @@ import (
 	"github.com/kode4food/ale/read"
 )
 
-func interfaceErr(concrete, intf, method string) error {
-	err := "interface conversion: %s is not %s: missing method %s"
-	return fmt.Errorf(err, concrete, intf, method)
+func interfaceErr(concrete, expected string) error {
+	err := "interface conversion: %s is not %s: missing method"
+	return fmt.Errorf(err, concrete, expected)
 }
 
 func typeErr(concrete, expected string) error {
@@ -111,7 +111,7 @@ func TestApplyEval(t *testing.T) {
 			[1 2 3])
 	`, F(6))
 
-	e := interfaceErr("data.Integer", "data.Caller", "Call")
+	e := interfaceErr("data.Integer", "data.Caller")
 	as.PanicWith(`(apply 32 [1 2 3])`, e)
 }
 

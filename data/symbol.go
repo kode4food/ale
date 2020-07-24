@@ -14,15 +14,15 @@ const DomainSeparator = '/'
 type (
 	// Symbol is an identifier that can be resolved
 	Symbol interface {
+		symbol() // marker
 		Value
 		Named
-		Symbol()
 	}
 
 	// LocalSymbol represents an unqualified symbol that requires resolution
 	LocalSymbol interface {
+		localSymbol() // marker
 		Symbol
-		LocalSymbol()
 	}
 
 	// QualifiedSymbol represents a domain-qualified symbol
@@ -124,8 +124,8 @@ func NewLocalSymbol(name Name) Symbol {
 	return localSymbol(name)
 }
 
-func (localSymbol) Symbol()      {}
-func (localSymbol) LocalSymbol() {}
+func (localSymbol) symbol()      {}
+func (localSymbol) localSymbol() {}
 
 func (l localSymbol) Name() Name {
 	return Name(l)
@@ -143,7 +143,7 @@ func NewQualifiedSymbol(name Name, domain Name) Symbol {
 	}
 }
 
-func (qualifiedSymbol) Symbol() {}
+func (qualifiedSymbol) symbol() {}
 
 func (s qualifiedSymbol) Name() Name {
 	return s.name

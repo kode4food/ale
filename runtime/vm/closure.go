@@ -387,8 +387,8 @@ func newClosure(lambda *Lambda, values data.Values) *closure {
 	return self
 }
 
-// TailCaller marks closure as tail callable
-func (c *closure) TailCaller() {}
+// tailCaller marks closure as tail callable
+func (c *closure) tailCaller() {}
 
 // Call returns a calling interface for this closure
 func (c *closure) Call() data.Call {
