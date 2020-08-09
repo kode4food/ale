@@ -1,13 +1,16 @@
-package stdlib
+package sequence
 
-import "github.com/kode4food/ale/data"
+import (
+	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/internal/do"
+)
 
 type (
 	// LazyResolver is used to resolve the elements of a lazy Sequence
 	LazyResolver func() (data.Value, data.Sequence, bool)
 
 	lazySequence struct {
-		once     Do
+		once     do.Do
 		resolver LazyResolver
 
 		ok     bool
@@ -16,10 +19,10 @@ type (
 	}
 )
 
-// NewLazySequence creates a new lazy Sequence based on the provided resolver
-func NewLazySequence(r LazyResolver) data.Sequence {
+// NewLazy creates a new lazy Sequence based on the provided resolver
+func NewLazy(r LazyResolver) data.Sequence {
 	return &lazySequence{
-		once:     Once(),
+		once:     do.Once(),
 		resolver: r,
 		result:   data.Nil,
 		rest:     data.EmptyList,
@@ -61,7 +64,7 @@ func (l *lazySequence) Cdr() data.Value {
 
 func (l *lazySequence) Prepend(v data.Value) data.Sequence {
 	return &lazySequence{
-		once:   Never(),
+		once:   do.Never(),
 		ok:     true,
 		result: v,
 		rest:   l,

@@ -1,4 +1,4 @@
-package stdlib
+package sequence
 
 import (
 	"bytes"
@@ -6,8 +6,8 @@ import (
 	"github.com/kode4food/ale/data"
 )
 
-// SequenceToList takes any sequence and converts it to a List
-func SequenceToList(s data.Sequence) data.List {
+// ToList takes any sequence and converts it to a List
+func ToList(s data.Sequence) data.List {
 	switch typed := s.(type) {
 	case data.List:
 		return typed
@@ -28,8 +28,8 @@ func uncountedToList(s data.Sequence) data.List {
 	return data.NewList(uncountedToValues(s)...)
 }
 
-// SequenceToValues takes any sequence and converts it to a value array
-func SequenceToValues(s data.Sequence) data.Values {
+// ToValues takes any sequence and converts it to a value array
+func ToValues(s data.Sequence) data.Values {
 	switch typed := s.(type) {
 	case data.Vector:
 		return data.Values(typed)
@@ -54,25 +54,25 @@ func uncountedToValues(s data.Sequence) data.Values {
 	return res
 }
 
-// SequenceToVector takes any sequence and converts it to a vector
-func SequenceToVector(s data.Sequence) data.Vector {
-	v := SequenceToValues(s)
+// ToVector takes any sequence and converts it to a vector
+func ToVector(s data.Sequence) data.Vector {
+	v := ToValues(s)
 	return data.NewVector(v...)
 }
 
-// SequenceToObject takes any sequence and converts it to an Associative
-func SequenceToObject(s data.Sequence) data.Object {
+// ToObject takes any sequence and converts it to an Associative
+func ToObject(s data.Sequence) data.Object {
 	switch typed := s.(type) {
 	case data.Object:
 		return typed
 	default:
-		v := SequenceToValues(s)
+		v := ToValues(s)
 		return data.ValuesToObject(v...)
 	}
 }
 
-// SequenceToStr takes any sequence and attempts to convert it to a String
-func SequenceToStr(s data.Sequence) data.String {
+// ToStr takes any sequence and attempts to convert it to a String
+func ToStr(s data.Sequence) data.String {
 	if st, ok := s.(data.String); ok {
 		return st
 	}

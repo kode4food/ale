@@ -2,8 +2,8 @@ package macro
 
 import (
 	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/internal/sequence"
 	"github.com/kode4food/ale/namespace"
-	"github.com/kode4food/ale/stdlib"
 )
 
 // Expand performs a complete macro expansion
@@ -23,7 +23,7 @@ func Expand1(ns namespace.Type, v data.Value) data.Value {
 func expand1(ns namespace.Type, v data.Value) (data.Value, bool) {
 	if l, ok := v.(data.List); ok {
 		if s, ok := l.First().(data.Symbol); ok {
-			args := stdlib.SequenceToValues(l.Rest())
+			args := sequence.ToValues(l.Rest())
 			if v, ok := namespace.ResolveValue(ns, s); ok {
 				if m, ok := v.(Call); ok {
 					return m(ns, args...), true

@@ -6,9 +6,9 @@ import (
 	"github.com/kode4food/ale/compiler"
 	"github.com/kode4food/ale/compiler/encoder"
 	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/internal/sequence"
 	"github.com/kode4food/ale/namespace"
 	"github.com/kode4food/ale/runtime/isa"
-	"github.com/kode4food/ale/stdlib"
 )
 
 type (
@@ -29,7 +29,7 @@ func Call(e encoder.Type, l data.List) {
 		return
 	}
 	f := l.First()
-	args := stdlib.SequenceToValues(l.Rest())
+	args := sequence.ToValues(l.Rest())
 	callValue(e, f, args)
 }
 

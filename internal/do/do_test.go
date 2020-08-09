@@ -1,10 +1,10 @@
-package stdlib_test
+package do_test
 
 import (
 	"testing"
 
 	"github.com/kode4food/ale/internal/assert"
-	"github.com/kode4food/ale/stdlib"
+	"github.com/kode4food/ale/internal/do"
 )
 
 func TestConditionals(t *testing.T) {
@@ -15,9 +15,9 @@ func TestConditionals(t *testing.T) {
 		i++
 	}
 
-	once := stdlib.Once()
-	never := stdlib.Never()
-	always := stdlib.Always()
+	once := do.Once()
+	never := do.Never()
+	always := do.Always()
 
 	as.Number(0, i)
 	once(inc)

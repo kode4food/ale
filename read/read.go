@@ -2,7 +2,7 @@ package read
 
 import (
 	"github.com/kode4food/ale/data"
-	"github.com/kode4food/ale/stdlib"
+	"github.com/kode4food/ale/internal/sequence"
 )
 
 // FromString converts the raw source into unexpanded data structures
@@ -13,15 +13,15 @@ func FromString(src data.String) data.Sequence {
 
 // FromScanner returns a Lazy Sequence of scanned data structures
 func FromScanner(lexer data.Sequence) data.Sequence {
-	var res stdlib.LazyResolver
+	var res sequence.LazyResolver
 	r := newReader(lexer)
 
 	res = func() (data.Value, data.Sequence, bool) {
 		if f, ok := r.nextValue(); ok {
-			return f, stdlib.NewLazySequence(res), true
+			return f, sequence.NewLazy(res), true
 		}
 		return data.Nil, data.EmptyList, false
 	}
 
-	return stdlib.NewLazySequence(res)
+	return sequence.NewLazy(res)
 }

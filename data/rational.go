@@ -23,11 +23,11 @@ const (
 
 // ParseFloat attempts to parse a string representing a float
 func ParseFloat(s string) (Number, error) {
-	if res, err := strconv.ParseFloat(s, 64); err != nil {
+	res, err := strconv.ParseFloat(s, 64)
+	if err != nil {
 		return nil, fmt.Errorf(ErrExpectedFloat, s)
-	} else {
-		return Float(res), nil
 	}
+	return Float(res), nil
 }
 
 // MustParseFloat forcefully parses a string representing a float

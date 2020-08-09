@@ -7,7 +7,7 @@ import (
 	"github.com/kode4food/ale/core/bootstrap"
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/assert"
-	"github.com/kode4food/ale/stdlib"
+	"github.com/kode4food/ale/internal/stream"
 )
 
 func TestDevNullManager(t *testing.T) {
@@ -21,7 +21,7 @@ func TestDevNullManager(t *testing.T) {
 
 	e, ok := ns.Resolve("*in*")
 	as.True(ok && e.IsBound())
-	r, ok := e.Value().(stdlib.Reader)
+	r, ok := e.Value().(stream.Reader)
 	as.True(ok)
 	as.True(r.IsEmpty())
 }

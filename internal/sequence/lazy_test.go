@@ -1,4 +1,4 @@
-package stdlib_test
+package sequence_test
 
 import (
 	"testing"
@@ -6,11 +6,11 @@ import (
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
-	"github.com/kode4food/ale/stdlib"
+	"github.com/kode4food/ale/internal/sequence"
 )
 
 func TestLazySeq(t *testing.T) {
-	var inc stdlib.LazyResolver
+	var inc sequence.LazyResolver
 	as := assert.New(t)
 
 	i := 0
@@ -20,10 +20,10 @@ func TestLazySeq(t *testing.T) {
 		}
 		i++
 		first := F(float64(i))
-		return first, stdlib.NewLazySequence(inc), true
+		return first, sequence.NewLazy(inc), true
 	}
 
-	l := stdlib.NewLazySequence(inc).(data.Prepender).Prepend(F(0))
+	l := sequence.NewLazy(inc).(data.Prepender).Prepend(F(0))
 	as.False(l.IsEmpty())
 	as.Number(0, l.First())
 	as.Number(1, l.Rest().First())
