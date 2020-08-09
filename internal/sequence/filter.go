@@ -1,4 +1,4 @@
-package stdlib
+package sequence
 
 import "github.com/kode4food/ale/data"
 
@@ -11,10 +11,10 @@ func Filter(s data.Sequence, filter data.Call) data.Sequence {
 		for f, r, ok := next.Split(); ok; f, r, ok = r.Split() {
 			next = r
 			if data.Truthy(filter(f)) {
-				return f, NewLazySequence(res), true
+				return f, NewLazy(res), true
 			}
 		}
 		return data.Nil, data.EmptyList, false
 	}
-	return NewLazySequence(res)
+	return NewLazy(res)
 }

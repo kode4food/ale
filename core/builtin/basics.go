@@ -4,8 +4,8 @@ import (
 	"errors"
 
 	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/internal/sequence"
 	"github.com/kode4food/ale/read"
-	"github.com/kode4food/ale/stdlib"
 )
 
 // Raise will cause a panic
@@ -42,7 +42,7 @@ func Defer(args ...data.Value) (res data.Value) {
 func Read(args ...data.Value) data.Value {
 	v := args[0]
 	s := v.(data.Sequence)
-	if v, ok := data.Last(read.FromString(stdlib.SequenceToStr(s))); ok {
+	if v, ok := data.Last(read.FromString(sequence.ToStr(s))); ok {
 		return v
 	}
 	return data.Nil

@@ -2,10 +2,10 @@ package builtin
 
 import (
 	"github.com/kode4food/ale/data"
-	"github.com/kode4food/ale/stdlib"
+	"github.com/kode4food/ale/internal/sequence"
 )
 
-func makeLazyResolver(f data.Call) stdlib.LazyResolver {
+func makeLazyResolver(f data.Call) sequence.LazyResolver {
 	return func() (data.Value, data.Sequence, bool) {
 		r := f()
 		if r != data.Nil {
@@ -22,5 +22,5 @@ func makeLazyResolver(f data.Call) stdlib.LazyResolver {
 func LazySequence(args ...data.Value) data.Value {
 	fn := args[0].(data.Caller)
 	resolver := makeLazyResolver(fn.Call())
-	return stdlib.NewLazySequence(resolver)
+	return sequence.NewLazy(resolver)
 }

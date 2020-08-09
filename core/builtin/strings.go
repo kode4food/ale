@@ -4,7 +4,7 @@ import (
 	"bytes"
 
 	"github.com/kode4food/ale/data"
-	"github.com/kode4food/ale/stdlib"
+	"github.com/kode4food/ale/internal/sequence"
 )
 
 const emptyString = data.String("")
@@ -12,7 +12,7 @@ const emptyString = data.String("")
 // Str converts the provided arguments to an undelimited string
 func Str(args ...data.Value) data.Value {
 	v := data.NewVector(args...)
-	return stdlib.SequenceToStr(v)
+	return sequence.ToStr(v)
 }
 
 // ReaderStr converts the provided arguments to a delimited string

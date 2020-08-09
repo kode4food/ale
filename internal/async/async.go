@@ -1,4 +1,4 @@
-package stdlib
+package async
 
 import (
 	"runtime"
@@ -6,16 +6,11 @@ import (
 
 	"github.com/kode4food/ale/compiler/arity"
 	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/internal/do"
+	"github.com/kode4food/ale/internal/stream"
 )
 
 type (
-	// Emitter is an interface that is used to emit values to a Channel
-	Emitter interface {
-		Writer
-		Closer
-		Error(interface{})
-	}
-
 	// Promise represents a Value that will eventually be resolved
 	Promise interface {
 		data.Caller
@@ -37,7 +32,7 @@ type (
 	}
 
 	channelSequence struct {
-		once Do
+		once do.Do
 		ch   *channelWrapper
 
 		result channelResult
@@ -48,7 +43,7 @@ type (
 	promiseStatus int
 
 	promise struct {
-		once     Do
+		once     do.Do
 		resolver data.Call
 		result   interface{}
 		status   promiseStatus
@@ -81,7 +76,7 @@ func (ch *channelWrapper) Close() {
 }
 
 // NewChannel produces a Emitter and Sequence pair
-func NewChannel(size int) (Emitter, data.Sequence) {
+func NewChannel(size int) (stream.Emitter, data.Sequence) {
 	seq := make(chan channelResult, size)
 	ch := &channelWrapper{
 		seq:    seq,
@@ -91,7 +86,7 @@ func NewChannel(size int) (Emitter, data.Sequence) {
 }
 
 // NewChannelEmitter produces an Emitter for sending values to a Go chan
-func NewChannelEmitter(ch *channelWrapper) Emitter {
+func NewChannelEmitter(ch *channelWrapper) stream.Emitter {
 	r := &channelEmitter{
 		ch: ch,
 	}
@@ -139,7 +134,7 @@ func (e *channelEmitter) String() string {
 // NewChannelSequence produces a new Sequence whose values come from a Go chan
 func NewChannelSequence(ch *channelWrapper) data.Sequence {
 	r := &channelSequence{
-		once:   Once(),
+		once:   do.Once(),
 		ch:     ch,
 		result: emptyResult,
 		rest:   data.EmptyList,
@@ -189,7 +184,7 @@ func (c *channelSequence) Split() (data.Value, data.Sequence, bool) {
 
 func (c *channelSequence) Prepend(v data.Value) data.Sequence {
 	return &channelSequence{
-		once:   Never(),
+		once:   do.Never(),
 		ok:     true,
 		result: channelResult{value: v, error: nil},
 		rest:   c,
@@ -207,7 +202,7 @@ func (c *channelSequence) String() string {
 // NewPromise instantiates a new Promise
 func NewPromise(resolver data.Call) Promise {
 	return &promise{
-		once:     Once(),
+		once:     do.Once(),
 		resolver: resolver,
 		status:   promisePending,
 	}

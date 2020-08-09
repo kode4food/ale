@@ -1,4 +1,4 @@
-package stdlib_test
+package async_test
 
 import (
 	"errors"
@@ -9,13 +9,13 @@ import (
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
-	"github.com/kode4food/ale/stdlib"
+	"github.com/kode4food/ale/internal/async"
 )
 
 func TestChannel(t *testing.T) {
 	as := assert.New(t)
 
-	e, seq := stdlib.NewChannel(0)
+	e, seq := async.NewChannel(0)
 	seq = seq.(data.Prepender).Prepend(F(1))
 	as.Contains(":type channel-emitter", e)
 	as.Contains(":type channel-sequence", seq)
@@ -60,7 +60,7 @@ func TestChannel(t *testing.T) {
 
 func TestPromiseCaller(t *testing.T) {
 	as := assert.New(t)
-	p1 := stdlib.NewPromise(func(_ ...data.Value) data.Value {
+	p1 := async.NewPromise(func(_ ...data.Value) data.Value {
 		return S("hello")
 	})
 	c1 := p1.(data.Caller).Call()
@@ -69,7 +69,7 @@ func TestPromiseCaller(t *testing.T) {
 
 func TestPromiseFailure(t *testing.T) {
 	as := assert.New(t)
-	p1 := stdlib.NewPromise(func(_ ...data.Value) data.Value {
+	p1 := async.NewPromise(func(_ ...data.Value) data.Value {
 		panic(errors.New("explosion"))
 	})
 	c1 := p1.(data.Caller).Call()

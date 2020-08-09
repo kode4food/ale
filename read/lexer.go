@@ -6,7 +6,7 @@ import (
 	"regexp"
 
 	"github.com/kode4food/ale/data"
-	"github.com/kode4food/ale/stdlib"
+	"github.com/kode4food/ale/internal/sequence"
 )
 
 // Error messages
@@ -121,19 +121,19 @@ func pattern(p string, s tokenizer) matchEntry {
 
 // Scan creates a new lexer Sequence
 func Scan(src data.String) data.Sequence {
-	var resolver stdlib.LazyResolver
+	var resolver sequence.LazyResolver
 	s := string(src)
 
 	resolver = func() (data.Value, data.Sequence, bool) {
 		if t, rs := matchToken(s); t.Type != endOfFile {
 			s = rs
-			return t, stdlib.NewLazySequence(resolver), true
+			return t, sequence.NewLazy(resolver), true
 		}
 		return data.Nil, data.EmptyList, false
 	}
 
-	l := stdlib.NewLazySequence(resolver)
-	return stdlib.Filter(l, notWhitespace)
+	l := sequence.NewLazy(resolver)
+	return sequence.Filter(l, notWhitespace)
 }
 
 func notWhitespace(args ...data.Value) data.Value {

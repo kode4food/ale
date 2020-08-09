@@ -1,10 +1,11 @@
-package stdlib
+package stream
 
 import (
 	"bufio"
 	"io"
 
 	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/internal/sequence"
 )
 
 type (
@@ -22,6 +23,13 @@ type (
 	// Closer is used to close a File
 	Closer interface {
 		Close()
+	}
+
+	// Emitter is an interface that is used to emit values to a Channel
+	Emitter interface {
+		Writer
+		Closer
+		Error(interface{})
 	}
 
 	// OutputFunc is a callback used to marshal values to a Writer
@@ -43,17 +51,17 @@ type (
 
 // NewReader wraps a Go Reader, coupling it with an input function
 func NewReader(r io.Reader, i InputFunc) Reader {
-	var resolver LazyResolver
+	var resolver sequence.LazyResolver
 	br := bufio.NewReader(r)
 
 	resolver = func() (data.Value, data.Sequence, bool) {
 		if v, ok := i(br); ok {
-			return v, NewLazySequence(resolver), true
+			return v, sequence.NewLazy(resolver), true
 		}
 		return data.Nil, data.EmptyList, false
 	}
 
-	return NewLazySequence(resolver)
+	return sequence.NewLazy(resolver)
 }
 
 // NewWriter wraps a Go Writer, coupling it with an output function

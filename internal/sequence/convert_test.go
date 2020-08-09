@@ -1,4 +1,4 @@
-package stdlib_test
+package sequence_test
 
 import (
 	"testing"
@@ -6,22 +6,22 @@ import (
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
-	"github.com/kode4food/ale/stdlib"
+	"github.com/kode4food/ale/internal/sequence"
 )
 
 func TestSequenceConversions(t *testing.T) {
 	as := assert.New(t)
 	l1 := L(S("hello"), S("there"))
-	v1 := stdlib.SequenceToVector(l1)
-	v2 := stdlib.SequenceToVector(v1)
-	l2 := stdlib.SequenceToList(v2)
-	l3 := stdlib.SequenceToList(l2)
-	a1 := stdlib.SequenceToObject(l3)
-	a2 := stdlib.SequenceToObject(a1)
+	v1 := sequence.ToVector(l1)
+	v2 := sequence.ToVector(v1)
+	l2 := sequence.ToList(v2)
+	l3 := sequence.ToList(l2)
+	a1 := sequence.ToObject(l3)
+	a2 := sequence.ToObject(a1)
 
 	l4 := L(S("hello"), data.Nil, S("there"), v1)
-	s1 := stdlib.SequenceToStr(l4)
-	s2 := stdlib.SequenceToStr(s1)
+	s1 := sequence.ToStr(l4)
+	s2 := sequence.ToStr(s1)
 
 	as.String(`["hello" "there"]`, v1)
 	as.Identical(v1, v2)
@@ -39,16 +39,16 @@ func alwaysTrue(_ ...data.Value) data.Value {
 
 func TestUncountedConversions(t *testing.T) {
 	as := assert.New(t)
-	l1 := stdlib.Filter(L(S("hello"), S("there")), alwaysTrue)
-	v1 := stdlib.SequenceToVector(l1)
-	v2 := stdlib.SequenceToVector(v1)
-	l2 := stdlib.SequenceToList(stdlib.Filter(v2, alwaysTrue))
-	l3 := stdlib.SequenceToList(l2)
-	a1 := stdlib.SequenceToObject(stdlib.Filter(l3, alwaysTrue))
-	a2 := stdlib.SequenceToObject(a1)
+	l1 := sequence.Filter(L(S("hello"), S("there")), alwaysTrue)
+	v1 := sequence.ToVector(l1)
+	v2 := sequence.ToVector(v1)
+	l2 := sequence.ToList(sequence.Filter(v2, alwaysTrue))
+	l3 := sequence.ToList(l2)
+	a1 := sequence.ToObject(sequence.Filter(l3, alwaysTrue))
+	a2 := sequence.ToObject(a1)
 
-	l4 := stdlib.Filter(L(S("hello"), data.Nil, S("there"), v1), alwaysTrue)
-	s1 := stdlib.SequenceToStr(l4)
+	l4 := sequence.Filter(L(S("hello"), data.Nil, S("there"), v1), alwaysTrue)
+	s1 := sequence.ToStr(l4)
 
 	as.String(`["hello" "there"]`, v1)
 	as.Identical(v1, v2)
@@ -59,18 +59,18 @@ func TestUncountedConversions(t *testing.T) {
 	as.String(`hellothere["hello" "there"]`, s1)
 }
 
-func TestAssocConvertError(t *testing.T) {
+func TestAssocsequenceError(t *testing.T) {
 	as := assert.New(t)
 
 	v1 := V(K("boom"))
 	defer as.ExpectPanic(data.ErrMapNotPaired)
-	stdlib.SequenceToObject(v1)
+	sequence.ToObject(v1)
 }
 
-func TestUncountedAssocConvertError(t *testing.T) {
+func TestUncountedAssocsequenceError(t *testing.T) {
 	as := assert.New(t)
 
-	v1 := stdlib.Filter(V(K("boom")), alwaysTrue)
+	v1 := sequence.Filter(V(K("boom")), alwaysTrue)
 	defer as.ExpectPanic(data.ErrMapNotPaired)
-	stdlib.SequenceToObject(v1)
+	sequence.ToObject(v1)
 }

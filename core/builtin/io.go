@@ -4,7 +4,7 @@ import (
 	"io"
 
 	"github.com/kode4food/ale/data"
-	"github.com/kode4food/ale/stdlib"
+	"github.com/kode4food/ale/internal/stream"
 )
 
 const (
@@ -22,13 +22,13 @@ const (
 )
 
 // MakeReader wraps the go Reader with an input function
-func MakeReader(r io.Reader, i stdlib.InputFunc) stdlib.Reader {
-	return stdlib.NewReader(r, i)
+func MakeReader(r io.Reader, i stream.InputFunc) stream.Reader {
+	return stream.NewReader(r, i)
 }
 
 // MakeWriter wraps the go Writer with an output function
-func MakeWriter(w io.Writer, o stdlib.OutputFunc) data.Object {
-	wrapped := stdlib.NewWriter(w, o)
+func MakeWriter(w io.Writer, o stream.OutputFunc) data.Object {
+	wrapped := stream.NewWriter(w, o)
 
 	res := data.Object{
 		data.TypeKey: WriterType,
@@ -36,14 +36,14 @@ func MakeWriter(w io.Writer, o stdlib.OutputFunc) data.Object {
 		WriteKey:     bindWriter(wrapped),
 	}
 
-	if c, ok := w.(stdlib.Closer); ok {
+	if c, ok := w.(stream.Closer); ok {
 		res[CloseKey] = bindCloser(c)
 	}
 
 	return res
 }
 
-func bindWriter(w stdlib.Writer) data.Call {
+func bindWriter(w stream.Writer) data.Call {
 	return func(args ...data.Value) data.Value {
 		for _, f := range args {
 			w.Write(f)
@@ -52,7 +52,7 @@ func bindWriter(w stdlib.Writer) data.Call {
 	}
 }
 
-func bindCloser(c stdlib.Closer) data.Call {
+func bindCloser(c stream.Closer) data.Call {
 	return func(args ...data.Value) data.Value {
 		c.Close()
 		return data.Nil

@@ -9,13 +9,13 @@ import (
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/eval"
 	"github.com/kode4food/ale/internal/assert"
+	"github.com/kode4food/ale/internal/stream"
 	"github.com/kode4food/ale/namespace"
-	"github.com/kode4food/ale/stdlib"
 )
 
 const stdoutName = "*out*"
 
-func bindWrite(w stdlib.Writer) data.Call {
+func bindWrite(w stream.Writer) data.Call {
 	return func(args ...data.Value) data.Value {
 		for _, af := range args {
 			w.Write(af)
@@ -28,7 +28,7 @@ func testOutput(t *testing.T, src, expected string) {
 	as := assert.New(t)
 
 	buf := bytes.NewBufferString("")
-	w := stdlib.NewWriter(buf, stdlib.StrOutput)
+	w := stream.NewWriter(buf, stream.StrOutput)
 
 	manager := namespace.NewManager()
 	ns := manager.GetRoot()

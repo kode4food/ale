@@ -2,7 +2,7 @@ package builtin
 
 import (
 	"github.com/kode4food/ale/data"
-	"github.com/kode4food/ale/stdlib"
+	"github.com/kode4food/ale/internal/async"
 )
 
 const (
@@ -30,7 +30,7 @@ func Chan(args ...data.Value) data.Value {
 	if len(args) != 0 {
 		size = int(args[0].(data.Integer))
 	}
-	e, s := stdlib.NewChannel(size)
+	e, s := async.NewChannel(size)
 
 	return data.Object{
 		data.TypeKey: ChannelType,
@@ -43,17 +43,17 @@ func Chan(args ...data.Value) data.Value {
 // Promise instantiates a new eventually-fulfilled promise
 func Promise(args ...data.Value) data.Value {
 	resolver := args[0].(data.Caller).Call()
-	return stdlib.NewPromise(resolver)
+	return async.NewPromise(resolver)
 }
 
 // IsPromise returns whether the specified value is a promise
 func IsPromise(args ...data.Value) data.Value {
-	_, ok := args[0].(stdlib.Promise)
+	_, ok := args[0].(async.Promise)
 	return data.Bool(ok)
 }
 
 // IsResolved returns whether the specified promise has been resolved
 func IsResolved(args ...data.Value) data.Value {
-	p := args[0].(stdlib.Promise)
+	p := args[0].(async.Promise)
 	return data.Bool(p.IsResolved())
 }

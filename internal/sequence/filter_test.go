@@ -1,4 +1,4 @@
-package stdlib_test
+package sequence_test
 
 import (
 	"testing"
@@ -6,7 +6,7 @@ import (
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
-	"github.com/kode4food/ale/stdlib"
+	"github.com/kode4food/ale/internal/sequence"
 )
 
 func TestFilter(t *testing.T) {
@@ -17,7 +17,7 @@ func TestFilter(t *testing.T) {
 	}
 
 	l := L(S("first"), S("filtered out"), S("last"))
-	w := stdlib.Filter(l, filterTest)
+	w := sequence.Filter(l, filterTest)
 
 	v1 := w.First()
 	as.String("first", v1)
@@ -42,7 +42,7 @@ func TestFiltered(t *testing.T) {
 	fn1 := func(args ...data.Value) data.Value {
 		return B(string(args[0].(data.String)) != "middle")
 	}
-	w1 := stdlib.Filter(l, fn1)
+	w1 := sequence.Filter(l, fn1)
 	v1 := w1.First()
 	as.String("first", v1)
 
