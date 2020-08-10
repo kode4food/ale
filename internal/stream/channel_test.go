@@ -1,7 +1,6 @@
-package async_test
+package stream_test
 
 import (
-	"errors"
 	"sync"
 	"testing"
 	"time"
@@ -9,13 +8,13 @@ import (
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
-	"github.com/kode4food/ale/internal/async"
+	"github.com/kode4food/ale/internal/stream"
 )
 
 func TestChannel(t *testing.T) {
 	as := assert.New(t)
 
-	e, seq := async.NewChannel(0)
+	e, seq := stream.NewChannel(0)
 	seq = seq.(data.Prepender).Prepend(F(1))
 	as.Contains(":type channel-emitter", e)
 	as.Contains(":type channel-sequence", seq)
@@ -56,23 +55,4 @@ func TestChannel(t *testing.T) {
 	go gen()
 	go check()
 	wg.Wait()
-}
-
-func TestPromiseCaller(t *testing.T) {
-	as := assert.New(t)
-	p1 := async.NewPromise(func(_ ...data.Value) data.Value {
-		return S("hello")
-	})
-	c1 := p1.(data.Caller).Call()
-	as.String("hello", c1())
-}
-
-func TestPromiseFailure(t *testing.T) {
-	as := assert.New(t)
-	p1 := async.NewPromise(func(_ ...data.Value) data.Value {
-		panic(errors.New("explosion"))
-	})
-	c1 := p1.(data.Caller).Call()
-	defer as.ExpectPanic("explosion")
-	c1()
 }

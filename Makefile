@@ -14,8 +14,10 @@ generate:
 	go generate ./...
 
 assets:
-	go-snapshot -pkg assets -out internal/assets/assets.go \
-		docstring/*.md core/*.scm
+	go-snapshot -pkg assets -out core/bootstrap/internal/assets/assets.go \
+		core/*.scm
+	go-snapshot -pkg assets -out cmd/ale/docstring/internal/assets/assets.go \
+		docstring/*.md
 
 deps:
 	go get -u github.com/kode4food/go-snapshot

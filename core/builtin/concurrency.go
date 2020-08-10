@@ -3,6 +3,7 @@ package builtin
 import (
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/async"
+	"github.com/kode4food/ale/internal/stream"
 )
 
 const (
@@ -30,7 +31,7 @@ func Chan(args ...data.Value) data.Value {
 	if len(args) != 0 {
 		size = int(args[0].(data.Integer))
 	}
-	e, s := async.NewChannel(size)
+	e, s := stream.NewChannel(size)
 
 	return data.Object{
 		data.TypeKey: ChannelType,
