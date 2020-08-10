@@ -14,7 +14,7 @@ generate:
 	go generate ./...
 
 assets:
-	go-snapshot -pkg assets -out core/bootstrap/internal/assets/assets.go \
+	go-snapshot -pkg assets -out core/internal/assets/assets.go \
 		core/*.scm
 	go-snapshot -pkg assets -out cmd/ale/docstring/internal/assets/assets.go \
 		docstring/*.md

@@ -5,7 +5,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/kode4food/ale/core/bootstrap/internal/assets"
+	"github.com/kode4food/ale/core/internal/assets"
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/eval"
 )
