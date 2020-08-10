@@ -6,8 +6,8 @@ import (
 	"os"
 
 	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/env"
 	"github.com/kode4food/ale/eval"
-	"github.com/kode4food/ale/namespace"
 	"github.com/kode4food/ale/read"
 )
 
@@ -34,7 +34,7 @@ func EvaluateFile() {
 	}
 }
 
-func evalBuffer(ns namespace.Type, src []byte) data.Value {
+func evalBuffer(ns env.Namespace, src []byte) data.Value {
 	r := read.FromString(data.String(src))
 	return eval.Block(ns, r)
 }

@@ -33,7 +33,7 @@ type (
 // Let encodes a binding form. Binding values are evaluated first, and
 // are then bound to fresh names, meaning that mutual recursion is not
 // supported
-func Let(e encoder.Type, args ...data.Value) {
+func Let(e encoder.Encoder, args ...data.Value) {
 	bindings, body := parseLet(args...)
 
 	e.PushLocals()
@@ -56,7 +56,7 @@ func Let(e encoder.Type, args ...data.Value) {
 // LetMutual encodes a binding form. First fresh names are introduced,
 // and then binding values are evaluated with access to those names via
 // the MutualScope
-func LetMutual(e encoder.Type, args ...data.Value) {
+func LetMutual(e encoder.Encoder, args ...data.Value) {
 	bindings, body := parseLet(args...)
 
 	e.PushLocals()

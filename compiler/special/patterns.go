@@ -13,6 +13,6 @@ const (
 )
 
 // Pattern instantiates a matchable pattern
-func Pattern(e encoder.Type, args ...data.Value) {
+func Pattern(e encoder.Encoder, args ...data.Value) {
 	panic(errors.New(errPatternsNotSupported))
 }

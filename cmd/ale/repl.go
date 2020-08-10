@@ -19,8 +19,8 @@ import (
 	"github.com/kode4food/ale/compiler/arity"
 	"github.com/kode4food/ale/core/bootstrap"
 	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/env"
 	"github.com/kode4food/ale/eval"
-	"github.com/kode4food/ale/namespace"
 	"github.com/kode4food/ale/read"
 )
 
@@ -62,7 +62,7 @@ var (
 	openers = map[rune]rune{')': '(', ']': '[', '}': '{'}
 	closers = map[rune]rune{'(': ')', '[': ']', '{': '}'}
 
-	ns = bootstrap.TopLevelManager().GetQualified(UserDomain)
+	ns = bootstrap.TopLevelEnvironment().GetQualified(UserDomain)
 )
 
 // NewREPL instantiates a new REPL instance
@@ -216,7 +216,7 @@ func use(args ...data.Value) data.Value {
 	arity.AssertFixed(1, len(args))
 	n := args[0].(data.LocalSymbol).Name()
 	old := ns
-	ns = ns.Manager().GetQualified(n)
+	ns = ns.Environment().GetQualified(n)
 	if old != ns {
 		fmt.Println()
 	}
@@ -278,8 +278,8 @@ func doc(args ...data.Value) data.Value {
 	panic(fmt.Errorf(errSymbolNotDocumented, sym))
 }
 
-func getBuiltInsNamespace() namespace.Type {
-	return ns.Manager().GetRoot()
+func getBuiltInsNamespace() env.Namespace {
+	return ns.Environment().GetRoot()
 }
 
 func registerBuiltIn(n data.Name, v data.Value) {
@@ -288,7 +288,7 @@ func registerBuiltIn(n data.Name, v data.Value) {
 }
 
 // GetNS allows the tests to get at the namespace
-func GetNS() namespace.Type {
+func GetNS() env.Namespace {
 	return ns
 }
 
@@ -315,6 +315,6 @@ func getHistoryFile() string {
 }
 
 func init() {
-	bootstrap.Into(ns.Manager())
+	bootstrap.Into(ns.Environment())
 	registerREPLBuiltIns()
 }

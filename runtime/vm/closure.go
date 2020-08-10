@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/kode4food/ale/data"
-	"github.com/kode4food/ale/namespace"
+	"github.com/kode4food/ale/env"
 	"github.com/kode4food/ale/runtime/isa"
 )
 
@@ -146,7 +146,7 @@ func newClosure(lambda *Lambda, values data.Values) *closure {
 		case isa.Resolve:
 			SP1 := SP + 1
 			sym := stack[SP1].(data.Symbol)
-			val := namespace.MustResolveValue(lambda.Globals, sym)
+			val := env.MustResolveValue(lambda.Globals, sym)
 			stack[SP1] = val
 			goto nextPC
 

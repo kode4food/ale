@@ -1,4 +1,4 @@
-package namespace
+package env
 
 import (
 	"fmt"
@@ -8,9 +8,9 @@ import (
 )
 
 type (
-	// Type represents a namespace
-	Type interface {
-		Manager() *Manager
+	// Namespace represents a namespace
+	Namespace interface {
+		Environment() *Environment
 		Domain() data.Name
 		Declare(data.Name) Entry
 		Resolve(data.Name) (Entry, bool)
@@ -18,7 +18,7 @@ type (
 
 	// Entry represents a namespace entry
 	Entry interface {
-		Owner() Type
+		Owner() Namespace
 		Name() data.Name
 		Value() data.Value
 		IsBound() bool
@@ -26,18 +26,18 @@ type (
 	}
 
 	namespace struct {
-		manager *Manager
-		domain  data.Name
-		entries entries
-		mutex   sync.RWMutex
+		environment *Environment
+		domain      data.Name
+		entries     entries
+		mutex       sync.RWMutex
 	}
 
 	anonymous struct {
-		Type
+		Namespace
 	}
 
 	entry struct {
-		owner Type
+		owner Namespace
 		name  data.Name
 		value data.Value
 		bound bool
@@ -53,8 +53,8 @@ const (
 	errNameNotBound     = "name is not bound in namespace: %s"
 )
 
-func (ns *namespace) Manager() *Manager {
-	return ns.manager
+func (ns *namespace) Environment() *Environment {
+	return ns.environment
 }
 
 func (ns *namespace) Domain() data.Name {
@@ -86,7 +86,7 @@ func (ns *namespace) Resolve(n data.Name) (Entry, bool) {
 	return nil, false
 }
 
-func (e *entry) Owner() Type {
+func (e *entry) Owner() Namespace {
 	return e.owner
 }
 

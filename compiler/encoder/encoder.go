@@ -3,17 +3,17 @@ package encoder
 import (
 	"github.com/kode4food/ale/compiler/ir/analysis"
 	"github.com/kode4food/ale/data"
-	"github.com/kode4food/ale/namespace"
+	"github.com/kode4food/ale/env"
 	"github.com/kode4food/ale/runtime/isa"
 )
 
 type (
-	// Type exposes an interface for stateful compiler encoding
-	Type interface {
+	// Encoder exposes an interface for stateful compiler encoding
+	Encoder interface {
 		data.Value
 
-		Parent() Type
-		Child() Type
+		Parent() Encoder
+		Child() Encoder
 
 		Emit(isa.Opcode, ...isa.Coder)
 		Code() isa.Instructions
@@ -21,7 +21,7 @@ type (
 
 		NewLabel() *Label
 
-		Globals() namespace.Type
+		Globals() env.Namespace
 		Constants() data.Values
 		AddConstant(data.Value) isa.Index
 
@@ -43,8 +43,8 @@ type (
 	}
 
 	encoder struct {
-		parent    Type
-		globals   namespace.Type
+		parent    Encoder
+		globals   env.Namespace
 		constants data.Values
 		closure   IndexedCells
 		args      argsStack
@@ -56,7 +56,7 @@ type (
 	}
 )
 
-func newEncoder(globals namespace.Type) *encoder {
+func newEncoder(globals env.Namespace) *encoder {
 	return &encoder{
 		globals:   globals,
 		constants: data.Values{},
@@ -68,7 +68,7 @@ func newEncoder(globals namespace.Type) *encoder {
 }
 
 // NewEncoder instantiates a new Encoder
-func NewEncoder(globals namespace.Type) Type {
+func NewEncoder(globals env.Namespace) Encoder {
 	return newEncoder(globals)
 }
 
@@ -84,12 +84,12 @@ func (e *encoder) child() *encoder {
 }
 
 // Child creates a child Type
-func (e *encoder) Child() Type {
+func (e *encoder) Child() Encoder {
 	return e.child()
 }
 
 // Parent returns the parent of this encoder
-func (e *encoder) Parent() Type {
+func (e *encoder) Parent() Encoder {
 	return e.parent
 }
 
@@ -118,7 +118,7 @@ func (e *encoder) StackSize() int {
 }
 
 // Globals returns the global name/value map
-func (e *encoder) Globals() namespace.Type {
+func (e *encoder) Globals() env.Namespace {
 	if e.globals != nil {
 		return e.globals
 	}

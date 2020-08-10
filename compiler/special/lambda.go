@@ -14,7 +14,7 @@ import (
 
 type (
 	lambdaEncoder struct {
-		encoder.Type
+		encoder.Encoder
 		cases lambdaCases
 	}
 
@@ -35,17 +35,17 @@ const (
 const allArgsName = data.Name("*args*")
 
 // Lambda encodes a lambda
-func Lambda(e encoder.Type, args ...data.Value) {
+func Lambda(e encoder.Encoder, args ...data.Value) {
 	vars := parseLambda(args)
 	le := makeLambdaEncoder(e, vars)
 	le.encodeCall()
 }
 
-func makeLambdaEncoder(e encoder.Type, v lambdaCases) *lambdaEncoder {
+func makeLambdaEncoder(e encoder.Encoder, v lambdaCases) *lambdaEncoder {
 	child := e.Child()
 	res := &lambdaEncoder{
-		Type:  child,
-		cases: v,
+		Encoder: child,
+		cases:   v,
 	}
 	res.PushArgs(data.Names{allArgsName}, true)
 	return res

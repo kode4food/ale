@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/env"
 	"github.com/kode4food/ale/macro"
-	"github.com/kode4food/ale/namespace"
 )
 
 // Error messages
@@ -18,7 +18,7 @@ func Macro(args ...data.Value) data.Value {
 	switch typed := args[0].(type) {
 	case data.Function:
 		body := typed.Call()
-		wrapper := func(_ namespace.Type, args ...data.Value) data.Value {
+		wrapper := func(_ env.Namespace, args ...data.Value) data.Value {
 			if err := typed.CheckArity(len(args)); err != nil {
 				panic(err)
 			}
@@ -27,7 +27,7 @@ func Macro(args ...data.Value) data.Value {
 		return macro.Call(wrapper)
 	case data.Caller:
 		body := typed.Call()
-		wrapper := func(_ namespace.Type, args ...data.Value) data.Value {
+		wrapper := func(_ env.Namespace, args ...data.Value) data.Value {
 			return body(args...)
 		}
 		return macro.Call(wrapper)

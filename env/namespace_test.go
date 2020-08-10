@@ -1,21 +1,21 @@
-package namespace_test
+package env_test
 
 import (
 	"testing"
 
 	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/env"
 	"github.com/kode4food/ale/internal/assert"
-	"github.com/kode4food/ale/namespace"
 )
 
 func TestChaining(t *testing.T) {
 	as := assert.New(t)
 
-	manager := namespace.NewManager()
-	root := manager.GetRoot()
+	e := env.NewEnvironment()
+	root := e.GetRoot()
 	root.Declare("in-parent").Bind(data.True)
 
-	ns := manager.GetAnonymous()
+	ns := e.GetAnonymous()
 	ns.Declare("in-child").Bind(data.True)
 
 	e1, ok := ns.Resolve("in-parent")
@@ -31,25 +31,25 @@ func TestChaining(t *testing.T) {
 	as.Nil(e3)
 
 	s1 := data.NewLocalSymbol("in-parent")
-	v4, ok := namespace.ResolveValue(ns, s1)
+	v4, ok := env.ResolveValue(ns, s1)
 	as.True(ok)
 	as.True(v4)
 
-	v5, ok := namespace.ResolveValue(root, s1)
+	v5, ok := env.ResolveValue(root, s1)
 	as.True(ok)
 	as.True(v5)
 
 	s2 := data.NewLocalSymbol("in-child")
-	v6, ok := namespace.ResolveValue(ns, s2)
+	v6, ok := env.ResolveValue(ns, s2)
 	as.True(ok)
 	as.True(v6)
 
-	v7, ok := namespace.ResolveValue(root, s2)
+	v7, ok := env.ResolveValue(root, s2)
 	as.False(ok)
 	as.Nil(v7)
 
-	s3 := namespace.RootSymbol("in-parent")
-	v8, ok := namespace.ResolveValue(ns, s3)
+	s3 := env.RootSymbol("in-parent")
+	v8, ok := env.ResolveValue(ns, s3)
 	as.True(ok)
 	as.True(v8)
 }

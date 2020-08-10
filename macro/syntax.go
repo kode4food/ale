@@ -6,11 +6,11 @@ import (
 
 	"github.com/kode4food/ale/compiler/arity"
 	"github.com/kode4food/ale/data"
-	"github.com/kode4food/ale/namespace"
+	"github.com/kode4food/ale/env"
 )
 
 type syntaxEnv struct {
-	namespace namespace.Type
+	namespace env.Namespace
 	genSyms   map[string]data.Symbol
 }
 
@@ -20,20 +20,20 @@ const (
 )
 
 var (
-	quoteSym  = namespace.RootSymbol("quote")
-	consSym   = namespace.RootSymbol("cons")
-	listSym   = namespace.RootSymbol("list")
-	vectorSym = namespace.RootSymbol("vector")
-	objectSym = namespace.RootSymbol("object")
-	applySym  = namespace.RootSymbol("apply")
-	concatSym = namespace.RootSymbol("concat!")
+	quoteSym  = env.RootSymbol("quote")
+	consSym   = env.RootSymbol("cons")
+	listSym   = env.RootSymbol("list")
+	vectorSym = env.RootSymbol("vector")
+	objectSym = env.RootSymbol("object")
+	applySym  = env.RootSymbol("apply")
+	concatSym = env.RootSymbol("concat!")
 
-	unquoteSym  = namespace.RootSymbol("unquote")
-	splicingSym = namespace.RootSymbol("unquote-splicing")
+	unquoteSym  = env.RootSymbol("unquote")
+	splicingSym = env.RootSymbol("unquote-splicing")
 )
 
 // SyntaxQuote performs syntax quoting on the provided value
-func SyntaxQuote(ns namespace.Type, args ...data.Value) data.Value {
+func SyntaxQuote(ns env.Namespace, args ...data.Value) data.Value {
 	arity.AssertFixed(1, len(args))
 	value := args[0]
 	sc := &syntaxEnv{
@@ -96,7 +96,7 @@ func (se *syntaxEnv) quoteSequence(s data.Sequence) data.Value {
 		return data.NewList(applySym, vectorSym, se.quoteElements(typed))
 	case data.Object:
 		return se.quoteObject(typed)
-	case data.NullType:
+	case data.Null:
 		return typed
 	default:
 		panic(fmt.Errorf(errUnsupportedSyntaxQuote, s))

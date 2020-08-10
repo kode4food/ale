@@ -5,10 +5,10 @@ import (
 
 	"github.com/kode4food/ale/core/bootstrap"
 	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/env"
 	"github.com/kode4food/ale/eval"
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
-	"github.com/kode4food/ale/namespace"
 )
 
 func TestQuoteEval(t *testing.T) {
@@ -50,9 +50,9 @@ func TestQuoteEval(t *testing.T) {
 func TestUnquoteEval(t *testing.T) {
 	as := assert.New(t)
 
-	manager := namespace.NewManager()
-	bootstrap.Into(manager)
-	ns := manager.GetAnonymous()
+	e := env.NewEnvironment()
+	bootstrap.Into(e)
+	ns := e.GetAnonymous()
 
 	ns.Declare("foo").Bind(data.Float(456))
 	r1 := eval.String(ns, `'[123 ,foo]`)

@@ -9,7 +9,7 @@ import (
 )
 
 // If encodes an (if predicate consequent alternative) form
-func If(e encoder.Type, args ...data.Value) {
+func If(e encoder.Encoder, args ...data.Value) {
 	al := arity.AssertRanged(2, 3, len(args))
 	generate.Branch(e,
 		func() {

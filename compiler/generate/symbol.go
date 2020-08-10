@@ -3,7 +3,7 @@ package generate
 import (
 	"github.com/kode4food/ale/compiler/encoder"
 	"github.com/kode4food/ale/data"
-	"github.com/kode4food/ale/namespace"
+	"github.com/kode4food/ale/env"
 	"github.com/kode4food/ale/runtime/isa"
 )
 
@@ -13,7 +13,7 @@ const (
 )
 
 // Symbol encodes a symbol retrieval
-func Symbol(e encoder.Type, s data.Symbol) {
+func Symbol(e encoder.Encoder, s data.Symbol) {
 	if l, ok := s.(data.LocalSymbol); ok {
 		resolveLocal(e, l)
 		return
@@ -22,7 +22,7 @@ func Symbol(e encoder.Type, s data.Symbol) {
 }
 
 // ReferenceSymbol encodes a potential symbol retrieval and dereference
-func ReferenceSymbol(e encoder.Type, s data.Symbol) {
+func ReferenceSymbol(e encoder.Encoder, s data.Symbol) {
 	if l, ok := s.(data.LocalSymbol); ok {
 		c := resolveLocal(e, l)
 		if c != nil && c.Type == encoder.ReferenceCell {
@@ -33,7 +33,7 @@ func ReferenceSymbol(e encoder.Type, s data.Symbol) {
 	resolveGlobal(e, s)
 }
 
-func resolveLocal(e encoder.Type, l data.LocalSymbol) *encoder.ScopedCell {
+func resolveLocal(e encoder.Encoder, l data.LocalSymbol) *encoder.ScopedCell {
 	n := l.Name()
 	if s, ok := e.ResolveScoped(n); ok {
 		switch s.Scope {
@@ -59,9 +59,9 @@ func resolveLocal(e encoder.Type, l data.LocalSymbol) *encoder.ScopedCell {
 	return nil
 }
 
-func resolveGlobal(e encoder.Type, s data.Symbol) {
+func resolveGlobal(e encoder.Encoder, s data.Symbol) {
 	globals := e.Globals()
-	entry := namespace.MustResolveSymbol(globals, s)
+	entry := env.MustResolveSymbol(globals, s)
 	if entry.IsBound() && entry.Owner() == globals {
 		Literal(e, entry.Value())
 		return

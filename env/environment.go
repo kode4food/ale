@@ -1,4 +1,4 @@
-package namespace
+package env
 
 import (
 	"fmt"
@@ -8,14 +8,14 @@ import (
 )
 
 type (
-	// Manager maintains a mapping of domain names to namespaces
-	Manager struct {
+	// Environment maintains a mapping of domain names to namespaces
+	Environment struct {
 		sync.RWMutex
-		data map[data.Name]Type
+		data map[data.Name]Namespace
 	}
 
 	// Resolver resolves a namespace instance
-	Resolver func() Type
+	Resolver func() Namespace
 )
 
 // Error messages
@@ -38,63 +38,63 @@ func RootSymbol(name data.Name) data.Symbol {
 	return data.NewQualifiedSymbol(name, RootDomain)
 }
 
-// NewManager creates a new synchronous namespace map
-func NewManager() *Manager {
-	return &Manager{
-		data: map[data.Name]Type{},
+// NewEnvironment creates a new synchronous namespace map
+func NewEnvironment() *Environment {
+	return &Environment{
+		data: map[data.Name]Namespace{},
 	}
 }
 
 // New constructs a new namespace
-func (m *Manager) New(n data.Name) Type {
+func (e *Environment) New(n data.Name) Namespace {
 	return &namespace{
-		manager: m,
-		entries: entries{},
-		domain:  n,
+		environment: e,
+		entries:     entries{},
+		domain:      n,
 	}
 }
 
 // Get returns a mapped namespace or instantiates a new one to be cached
-func (m *Manager) Get(domain data.Name, res Resolver) Type {
-	m.RLock()
-	r, ok := m.data[domain]
-	m.RUnlock()
+func (e *Environment) Get(domain data.Name, res Resolver) Namespace {
+	e.RLock()
+	r, ok := e.data[domain]
+	e.RUnlock()
 	if ok {
 		return r
 	}
 
 	r = res()
-	m.Lock()
-	defer m.Unlock()
-	if orig, ok := m.data[domain]; ok {
+	e.Lock()
+	defer e.Unlock()
+	if orig, ok := e.data[domain]; ok {
 		return orig
 	}
-	m.data[domain] = r
+	e.data[domain] = r
 	return r
 }
 
 // GetRoot returns the root namespace, where built-ins go
-func (m *Manager) GetRoot() Type {
-	return m.Get(RootDomain, func() Type {
-		return m.New(RootDomain)
+func (e *Environment) GetRoot() Namespace {
+	return e.Get(RootDomain, func() Namespace {
+		return e.New(RootDomain)
 	})
 }
 
 // GetAnonymous returns an anonymous (non-resolvable) namespace
-func (m *Manager) GetAnonymous() Type {
-	root := m.GetRoot()
+func (e *Environment) GetAnonymous() Namespace {
+	root := e.GetRoot()
 	return chain(root, &anonymous{
-		Type: m.New(AnonymousDomain),
+		Namespace: e.New(AnonymousDomain),
 	})
 }
 
 // GetQualified returns the namespace for the specified domain.
-func (m *Manager) GetQualified(n data.Name) Type {
-	root := m.GetRoot()
+func (e *Environment) GetQualified(n data.Name) Namespace {
+	root := e.GetRoot()
 	if n == RootDomain {
 		return root
 	}
-	return m.Get(n, func() Type {
+	return e.Get(n, func() Namespace {
 		return newChild(root, n)
 	})
 }
@@ -102,17 +102,17 @@ func (m *Manager) GetQualified(n data.Name) Type {
 // ResolveSymbol attempts to resolve a symbol. If it's a qualified symbol,
 // it will be retrieved directly from the identified namespace. Otherwise
 // it will be searched in the current namespace
-func ResolveSymbol(ns Type, s data.Symbol) (Entry, bool) {
+func ResolveSymbol(ns Namespace, s data.Symbol) (Entry, bool) {
 	if q, ok := s.(data.QualifiedSymbol); ok {
-		manager := ns.Manager()
-		qns := manager.GetQualified(q.Domain())
+		e := ns.Environment()
+		qns := e.GetQualified(q.Domain())
 		return qns.Resolve(q.Name())
 	}
 	return ns.Resolve(s.Name())
 }
 
 // MustResolveSymbol attempts to resolve a symbol or explodes violently
-func MustResolveSymbol(ns Type, s data.Symbol) Entry {
+func MustResolveSymbol(ns Namespace, s data.Symbol) Entry {
 	if entry, ok := ResolveSymbol(ns, s); ok {
 		return entry
 	}
@@ -120,7 +120,7 @@ func MustResolveSymbol(ns Type, s data.Symbol) Entry {
 }
 
 // ResolveValue attempts to resolve a symbol to a bound value
-func ResolveValue(ns Type, s data.Symbol) (data.Value, bool) {
+func ResolveValue(ns Namespace, s data.Symbol) (data.Value, bool) {
 	if e, ok := ResolveSymbol(ns, s); ok && e.IsBound() {
 		return e.Value(), true
 	}
@@ -128,7 +128,7 @@ func ResolveValue(ns Type, s data.Symbol) (data.Value, bool) {
 }
 
 // MustResolveValue attempts to resolve a value or explodes violently
-func MustResolveValue(ns Type, s data.Symbol) data.Value {
+func MustResolveValue(ns Namespace, s data.Symbol) data.Value {
 	if v, ok := ResolveValue(ns, s); ok {
 		return v
 	}

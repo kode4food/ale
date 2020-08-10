@@ -10,45 +10,45 @@ import (
 	"github.com/kode4food/ale/internal/stream"
 )
 
-func TestDevNullManager(t *testing.T) {
+func TestDevNullEnvironment(t *testing.T) {
 	as := assert.New(t)
 
-	manager := bootstrap.DevNullManager()
-	ns := manager.GetRoot()
+	e := bootstrap.DevNullEnvironment()
+	ns := e.GetRoot()
 
 	_, ok := ns.Resolve("*args*")
 	as.False(ok)
 
-	e, ok := ns.Resolve("*in*")
-	as.True(ok && e.IsBound())
-	r, ok := e.Value().(stream.Reader)
+	i, ok := ns.Resolve("*in*")
+	as.True(ok && i.IsBound())
+	r, ok := i.Value().(stream.Reader)
 	as.True(ok)
 	as.True(r.IsEmpty())
 }
 
-func TestTopLevelManager(t *testing.T) {
+func TestTopLevelEnvironment(t *testing.T) {
 	as := assert.New(t)
 
-	manager := bootstrap.TopLevelManager()
-	ns := manager.GetRoot()
+	e := bootstrap.TopLevelEnvironment()
+	ns := e.GetRoot()
 
-	e, ok := ns.Resolve("*args*")
-	as.True(ok && e.IsBound())
+	a, ok := ns.Resolve("*args*")
+	as.True(ok && a.IsBound())
 
-	_, ok = e.Value().(data.Vector)
+	_, ok = a.Value().(data.Vector)
 	as.True(ok)
 }
 
 func TestBootstrapInto(t *testing.T) {
 	as := assert.New(t)
 
-	manager := bootstrap.TopLevelManager()
-	bootstrap.Into(manager)
-	ns := manager.GetRoot()
+	e := bootstrap.TopLevelEnvironment()
+	bootstrap.Into(e)
+	ns := e.GetRoot()
 
-	e, ok := ns.Resolve("define*")
-	as.True(ok && e.IsBound())
+	d, ok := ns.Resolve("define*")
+	as.True(ok && d.IsBound())
 
-	_, ok = e.Value().(encoder.Call)
+	_, ok = d.Value().(encoder.Call)
 	as.True(ok)
 }

@@ -59,17 +59,17 @@ func TestPartialEval(t *testing.T) {
 func TestFunctionPredicates(t *testing.T) {
 	as := assert.New(t)
 
-	manager := bootstrap.DevNullManager()
-	bootstrap.Into(manager)
+	e := bootstrap.DevNullEnvironment()
+	bootstrap.Into(e)
 
 	f1 := data.MakeApplicative(builtin.Str, nil)
 	as.False(builtin.IsSpecial(f1))
 	as.True(builtin.IsApply(f1))
 
-	e, ok := manager.GetRoot().Resolve("if")
-	as.True(ok && e.IsBound())
-	as.True(builtin.IsSpecial(e.Value()))
-	as.False(builtin.IsApply(e.Value()))
+	i, ok := e.GetRoot().Resolve("if")
+	as.True(ok && i.IsBound())
+	as.True(builtin.IsSpecial(i.Value()))
+	as.False(builtin.IsApply(i.Value()))
 }
 
 func TestFunctionPredicatesEval(t *testing.T) {

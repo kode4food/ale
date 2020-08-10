@@ -1,7 +1,7 @@
 package visitor
 
-// Type is an interface that is called back upon visiting
-type Type interface {
+// Visitor is an interface that is called back upon visiting
+type Visitor interface {
 	EnterRoot(Node)
 	ExitRoot(Node)
 	EnterBranches(Branches)
@@ -15,13 +15,13 @@ const (
 )
 
 // DepthFirst performs a depth-first visitation
-func DepthFirst(root Node, visitor Type) {
+func DepthFirst(root Node, visitor Visitor) {
 	visitor.EnterRoot(root)
 	depthFirst(root, visitor)
 	visitor.ExitRoot(root)
 }
 
-func depthFirst(node Node, visitor Type) {
+func depthFirst(node Node, visitor Visitor) {
 	switch typed := node.(type) {
 	case Instructions:
 		visitor.Instructions(typed)

@@ -7,10 +7,10 @@ import (
 	"github.com/kode4food/ale/core/bootstrap"
 	"github.com/kode4food/ale/core/internal/builtin"
 	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/env"
 	"github.com/kode4food/ale/eval"
 	"github.com/kode4food/ale/internal/assert"
 	"github.com/kode4food/ale/internal/stream"
-	"github.com/kode4food/ale/namespace"
 )
 
 const stdoutName = "*out*"
@@ -30,15 +30,15 @@ func testOutput(t *testing.T, src, expected string) {
 	buf := bytes.NewBufferString("")
 	w := stream.NewWriter(buf, stream.StrOutput)
 
-	manager := namespace.NewManager()
-	ns := manager.GetRoot()
+	e := env.NewEnvironment()
+	ns := e.GetRoot()
 	ns.Declare(stdoutName).Bind(data.Object{
 		builtin.WriterKey: w,
 		builtin.WriteKey:  bindWrite(w),
 	})
-	bootstrap.Into(manager)
+	bootstrap.Into(e)
 
-	anon := manager.GetAnonymous()
+	anon := e.GetAnonymous()
 	eval.String(anon, data.String(src))
 
 	as.String(expected, buf.String())

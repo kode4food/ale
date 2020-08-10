@@ -9,7 +9,7 @@ import (
 )
 
 // Declare encodes a global forward-declaration
-func Declare(e encoder.Type, args ...data.Value) {
+func Declare(e encoder.Encoder, args ...data.Value) {
 	arity.AssertFixed(1, len(args))
 	name := args[0].(data.LocalSymbol).Name()
 	generate.Literal(e, name)
@@ -18,7 +18,7 @@ func Declare(e encoder.Type, args ...data.Value) {
 }
 
 // Define encodes a global definition
-func Define(e encoder.Type, args ...data.Value) {
+func Define(e encoder.Encoder, args ...data.Value) {
 	arity.AssertFixed(2, len(args))
 	name := args[0].(data.LocalSymbol).Name()
 	generate.Value(e, args[1])

@@ -9,7 +9,7 @@ import (
 type Builder func()
 
 // Branch constructs conditional branching
-func Branch(e encoder.Type, predicate, consequent, alternative Builder) {
+func Branch(e encoder.Encoder, predicate, consequent, alternative Builder) {
 	thenLabel := e.NewLabel()
 	endLabel := e.NewLabel()
 

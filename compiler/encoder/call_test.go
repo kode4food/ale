@@ -10,7 +10,7 @@ import (
 
 func TestCall(t *testing.T) {
 	as := assert.New(t)
-	f1 := func(_ encoder.Type, _ ...data.Value) {}
+	f1 := func(_ encoder.Encoder, _ ...data.Value) {}
 	c1 := encoder.Call(f1)
 	as.String("encoder", c1.Type())
 	as.Contains(`:type encoder`, c1)

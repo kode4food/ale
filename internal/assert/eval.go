@@ -3,12 +3,12 @@ package assert
 import (
 	"github.com/kode4food/ale/core/bootstrap"
 	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/env"
 	"github.com/kode4food/ale/eval"
-	"github.com/kode4food/ale/namespace"
 )
 
 var (
-	manager = namespace.NewManager()
+	testEnv = env.NewEnvironment()
 	ready   bool
 )
 
@@ -16,10 +16,10 @@ var (
 func (w *Wrapper) Eval(src string) data.Value {
 	w.T.Helper()
 	if !ready {
-		bootstrap.Into(manager)
+		bootstrap.Into(testEnv)
 		ready = true
 	}
-	ns := manager.GetAnonymous()
+	ns := testEnv.GetAnonymous()
 	return eval.String(ns, data.String(src))
 }
 
