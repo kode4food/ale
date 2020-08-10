@@ -1,20 +1,19 @@
-package async
+package stream
 
 import (
 	"runtime"
 	"sync/atomic"
 
-	"github.com/kode4food/ale/compiler/arity"
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/do"
-	"github.com/kode4food/ale/internal/stream"
 )
 
 type (
-	// Promise represents a Value that will eventually be resolved
-	Promise interface {
-		data.Caller
-		IsResolved() bool
+	// Emitter is an interface that is used to emit values to a Channel
+	Emitter interface {
+		Writer
+		Closer
+		Error(interface{})
 	}
 
 	channelResult struct {
@@ -39,15 +38,6 @@ type (
 		rest   data.Sequence
 		ok     bool
 	}
-
-	promiseStatus int
-
-	promise struct {
-		once     do.Do
-		resolver data.Call
-		result   interface{}
-		status   promiseStatus
-	}
 )
 
 const (
@@ -56,17 +46,7 @@ const (
 	channelClosed
 )
 
-const (
-	promisePending promiseStatus = iota
-	promiseResolved
-	promiseFailed
-)
-
-var (
-	emptyResult = channelResult{value: data.Nil, error: nil}
-
-	promiseArityChecker = arity.MakeFixedChecker(0)
-)
+var emptyResult = channelResult{value: data.Nil, error: nil}
 
 func (ch *channelWrapper) Close() {
 	if atomic.LoadUint32(&ch.status) != channelClosed {
@@ -76,7 +56,7 @@ func (ch *channelWrapper) Close() {
 }
 
 // NewChannel produces a Emitter and Sequence pair
-func NewChannel(size int) (stream.Emitter, data.Sequence) {
+func NewChannel(size int) (Emitter, data.Sequence) {
 	seq := make(chan channelResult, size)
 	ch := &channelWrapper{
 		seq:    seq,
@@ -86,7 +66,7 @@ func NewChannel(size int) (stream.Emitter, data.Sequence) {
 }
 
 // NewChannelEmitter produces an Emitter for sending values to a Go chan
-func NewChannelEmitter(ch *channelWrapper) stream.Emitter {
+func NewChannelEmitter(ch *channelWrapper) Emitter {
 	r := &channelEmitter{
 		ch: ch,
 	}
@@ -197,53 +177,4 @@ func (c *channelSequence) Type() data.Name {
 
 func (c *channelSequence) String() string {
 	return data.DumpString(c)
-}
-
-// NewPromise instantiates a new Promise
-func NewPromise(resolver data.Call) Promise {
-	return &promise{
-		once:     do.Once(),
-		resolver: resolver,
-		status:   promisePending,
-	}
-}
-
-func (p *promise) Call() data.Call {
-	return func(args ...data.Value) data.Value {
-		p.once(func() {
-			defer func() {
-				if rec := recover(); rec != nil {
-					p.result = rec
-					p.status = promiseFailed
-				}
-			}()
-			p.result = p.resolver()
-			p.status = promiseResolved
-		})
-
-		if p.status == promiseFailed {
-			panic(p.result)
-		}
-		return p.result.(data.Value)
-	}
-}
-
-func (p *promise) Convention() data.Convention {
-	return data.ApplicativeCall
-}
-
-func (p *promise) CheckArity(c int) error {
-	return promiseArityChecker(c)
-}
-
-func (p *promise) IsResolved() bool {
-	return p.status != promisePending
-}
-
-func (p *promise) Type() data.Name {
-	return "promise"
-}
-
-func (p *promise) String() string {
-	return data.DumpString(p)
 }
