@@ -4,13 +4,13 @@ import (
 	"github.com/kode4food/ale/compiler/encoder"
 	"github.com/kode4food/ale/compiler/ir/optimize"
 	"github.com/kode4food/ale/data"
-	"github.com/kode4food/ale/namespace"
+	"github.com/kode4food/ale/env"
 	"github.com/kode4food/ale/runtime/isa"
 )
 
 // Lambda encapsulates the initial environment of a virtual machine
 type Lambda struct {
-	Globals      namespace.Type
+	Globals      env.Namespace
 	Constants    data.Values
 	Code         []isa.Word
 	StackSize    int
@@ -20,7 +20,7 @@ type Lambda struct {
 
 // LambdaFromEncoder instantiates a VM Lambda from the provided
 // Encoder's intermediate representation
-func LambdaFromEncoder(e encoder.Type) *Lambda {
+func LambdaFromEncoder(e encoder.Encoder) *Lambda {
 	code := e.Code()
 	optimized := optimize.Instructions(code)
 	return &Lambda{

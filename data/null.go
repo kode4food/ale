@@ -1,8 +1,8 @@
 package data
 
 type (
-	// NullType represents a null value, which is also the empty list
-	NullType interface {
+	// Null represents a null value, which is also the empty list
+	Null interface {
 		null() // marker
 		List
 	}

@@ -6,15 +6,15 @@ import (
 	"github.com/kode4food/ale/compiler"
 	"github.com/kode4food/ale/compiler/encoder"
 	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/env"
 	"github.com/kode4food/ale/internal/sequence"
-	"github.com/kode4food/ale/namespace"
 	"github.com/kode4food/ale/runtime/isa"
 )
 
 type (
 	funcEmitter func()
 	argsEmitter func() int
-	valEmitter  func(encoder.Type, data.Value)
+	valEmitter  func(encoder.Encoder, data.Value)
 )
 
 // Error messages
@@ -23,7 +23,7 @@ const (
 )
 
 // Call encodes a function call
-func Call(e encoder.Type, l data.List) {
+func Call(e encoder.Encoder, l data.List) {
 	if l.Count() == 0 {
 		Literal(e, data.EmptyList)
 		return
@@ -33,7 +33,7 @@ func Call(e encoder.Type, l data.List) {
 	callValue(e, f, args)
 }
 
-func callValue(e encoder.Type, v data.Value, args data.Values) {
+func callValue(e encoder.Encoder, v data.Value, args data.Values) {
 	if s, ok := v.(data.Symbol); ok {
 		callSymbol(e, s, args)
 		return
@@ -41,7 +41,7 @@ func callValue(e encoder.Type, v data.Value, args data.Values) {
 	callNonSymbol(e, v, args)
 }
 
-func callSymbol(e encoder.Type, s data.Symbol, args data.Values) {
+func callSymbol(e encoder.Encoder, s data.Symbol, args data.Values) {
 	if l, ok := s.(data.LocalSymbol); ok {
 		if _, ok := e.ResolveLocal(l.Name()); ok {
 			callDynamic(e, l, args)
@@ -49,7 +49,7 @@ func callSymbol(e encoder.Type, s data.Symbol, args data.Values) {
 		}
 	}
 	globals := e.Globals()
-	if v, ok := namespace.ResolveValue(globals, s); ok {
+	if v, ok := env.ResolveValue(globals, s); ok {
 		switch typed := v.(type) {
 		case encoder.Call:
 			typed(e, args...)
@@ -65,7 +65,7 @@ func callSymbol(e encoder.Type, s data.Symbol, args data.Values) {
 	callDynamic(e, s, args)
 }
 
-func callNonSymbol(e encoder.Type, v data.Value, args data.Values) {
+func callNonSymbol(e encoder.Encoder, v data.Value, args data.Values) {
 	if compiler.IsEvaluable(v) {
 		callDynamic(e, v, args)
 		return
@@ -80,20 +80,20 @@ func callNonSymbol(e encoder.Type, v data.Value, args data.Values) {
 	}
 }
 
-func callFunction(e encoder.Type, f data.Function, args data.Values) {
+func callFunction(e encoder.Encoder, f data.Function, args data.Values) {
 	assertArity(f, args)
 	emitFunc := funcRef(e, f)
 	emitArgs := funcArgs(e, f, args)
 	callWith(e, emitFunc, emitArgs)
 }
 
-func callCaller(e encoder.Type, c data.Caller, args data.Values) {
+func callCaller(e encoder.Encoder, c data.Caller, args data.Values) {
 	emitFunc := callerLiteral(e, c)
 	emitArgs := applicativeArgs(e, args)
 	callWith(e, emitFunc, emitArgs)
 }
 
-func funcRef(e encoder.Type, f data.Function) funcEmitter {
+func funcRef(e encoder.Encoder, f data.Function) funcEmitter {
 	if tc, ok := f.(TailCaller); ok {
 		return tailCallerLiteral(e, tc)
 	}
@@ -107,7 +107,7 @@ func assertArity(f data.Function, args data.Values) {
 	}
 }
 
-func funcArgs(e encoder.Type, f data.Function, args data.Values) argsEmitter {
+func funcArgs(e encoder.Encoder, f data.Function, args data.Values) argsEmitter {
 	c := f.Convention()
 	switch c {
 	case data.ApplicativeCall:
@@ -119,7 +119,7 @@ func funcArgs(e encoder.Type, f data.Function, args data.Values) argsEmitter {
 	}
 }
 
-func callWith(e encoder.Type, emitFunc funcEmitter, emitArgs argsEmitter) {
+func callWith(e encoder.Encoder, emitFunc funcEmitter, emitArgs argsEmitter) {
 	al := emitArgs()
 	emitFunc()
 	switch al {
@@ -132,53 +132,53 @@ func callWith(e encoder.Type, emitFunc funcEmitter, emitArgs argsEmitter) {
 	}
 }
 
-func callApplicative(e encoder.Type, f data.Call, args data.Values) {
+func callApplicative(e encoder.Encoder, f data.Call, args data.Values) {
 	emitFunc := staticLiteral(e, f)
 	emitArgs := applicativeArgs(e, args)
 	callWith(e, emitFunc, emitArgs)
 }
 
-func callDynamic(e encoder.Type, v data.Value, args data.Values) {
+func callDynamic(e encoder.Encoder, v data.Value, args data.Values) {
 	emitFunc := dynamicEval(e, v)
 	emitArgs := applicativeArgs(e, args)
 	callWith(e, emitFunc, emitArgs)
 }
 
-func staticLiteral(e encoder.Type, fn data.Value) funcEmitter {
+func staticLiteral(e encoder.Encoder, fn data.Value) funcEmitter {
 	return func() {
 		Literal(e, fn)
 	}
 }
 
-func callerLiteral(e encoder.Type, fn data.Caller) funcEmitter {
+func callerLiteral(e encoder.Encoder, fn data.Caller) funcEmitter {
 	return func() {
 		Literal(e, fn.Call())
 	}
 }
 
-func tailCallerLiteral(e encoder.Type, fn data.Value) funcEmitter {
+func tailCallerLiteral(e encoder.Encoder, fn data.Value) funcEmitter {
 	return func() {
 		Literal(e, fn)
 		e.Emit(isa.MakeCall)
 	}
 }
 
-func dynamicEval(e encoder.Type, v data.Value) funcEmitter {
+func dynamicEval(e encoder.Encoder, v data.Value) funcEmitter {
 	return func() {
 		Value(e, v)
 		e.Emit(isa.MakeCall)
 	}
 }
 
-func applicativeArgs(e encoder.Type, args data.Values) argsEmitter {
+func applicativeArgs(e encoder.Encoder, args data.Values) argsEmitter {
 	return makeArgs(e, args, Value)
 }
 
-func normalArgs(e encoder.Type, args data.Values) argsEmitter {
+func normalArgs(e encoder.Encoder, args data.Values) argsEmitter {
 	return makeArgs(e, args, Literal)
 }
 
-func makeArgs(e encoder.Type, args data.Values, emit valEmitter) argsEmitter {
+func makeArgs(e encoder.Encoder, args data.Values, emit valEmitter) argsEmitter {
 	return func() int {
 		al := len(args)
 		for i := al - 1; i >= 0; i-- {

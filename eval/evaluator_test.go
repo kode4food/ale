@@ -5,19 +5,19 @@ import (
 
 	"github.com/kode4food/ale/core/bootstrap"
 	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/env"
 	"github.com/kode4food/ale/eval"
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
-	"github.com/kode4food/ale/namespace"
 	"github.com/kode4food/ale/read"
 )
 
 func TestBasicEval(t *testing.T) {
 	as := assert.New(t)
 
-	manager := namespace.NewManager()
-	bootstrap.Into(manager)
-	ns := manager.GetAnonymous()
+	e := env.NewEnvironment()
+	bootstrap.Into(e)
+	ns := e.GetAnonymous()
 
 	v1 := eval.String(ns, "(if true 1 0)")
 	as.Number(1, v1)
@@ -29,9 +29,9 @@ func TestBasicEval(t *testing.T) {
 	as.Number(1, v3)
 
 	eval.String(ns, "(define x 99)")
-	e, ok := ns.Resolve("x")
-	as.True(ok && e.IsBound())
-	as.Number(99, e.Value())
+	x, ok := ns.Resolve("x")
+	as.True(ok && x.IsBound())
+	as.Number(99, x.Value())
 
 	v4 := eval.String(ns, "(and true true)")
 	as.True(v4)
@@ -40,10 +40,10 @@ func TestBasicEval(t *testing.T) {
 func TestBuiltIns(t *testing.T) {
 	as := assert.New(t)
 
-	manager := namespace.NewManager()
-	bootstrap.Into(manager)
-	b := manager.GetAnonymous()
-	ns := manager.GetRoot()
+	e := env.NewEnvironment()
+	bootstrap.Into(e)
+	b := e.GetAnonymous()
+	ns := e.GetRoot()
 
 	ns.Declare("hello").Bind(
 		data.Call(func(_ ...data.Value) data.Value {

@@ -6,9 +6,9 @@ import (
 
 	"github.com/kode4food/ale/core/internal/builtin"
 	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/env"
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
-	"github.com/kode4food/ale/namespace"
 )
 
 func TestSymbols(t *testing.T) {
@@ -48,7 +48,7 @@ func TestResolveEval(t *testing.T) {
 
 	as.EvalTo(`(let [x 99] x)`, data.Integer(99))
 
-	err := fmt.Errorf(namespace.ErrSymbolNotDeclared, "hello")
+	err := fmt.Errorf(env.ErrSymbolNotDeclared, "hello")
 	as.PanicWith(`hello`, err)
 	as.PanicWith(`(let [hello 99] hello) hello`, err)
 }

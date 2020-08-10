@@ -46,12 +46,12 @@ func (b *bootstrap) specialForms() {
 }
 
 func (b *bootstrap) initialFunctions() {
-	manager := b.manager
+	e := b.environment
 
 	singleArgChecker := arity.MakeFixedChecker(1)
 
 	defBuiltIn := data.MakeNormal(func(args ...data.Value) data.Value {
-		ns := manager.GetRoot()
+		ns := e.GetRoot()
 		n := args[0].(data.LocalSymbol).Name()
 		if nf, ok := b.funcMap[n]; ok {
 			ns.Declare(n).Bind(nf)
@@ -61,7 +61,7 @@ func (b *bootstrap) initialFunctions() {
 	}, singleArgChecker)
 
 	defSpecial := data.MakeNormal(func(args ...data.Value) data.Value {
-		ns := manager.GetRoot()
+		ns := e.GetRoot()
 		n := args[0].(data.LocalSymbol).Name()
 		if sf, ok := b.specialMap[n]; ok {
 			ns.Declare(n).Bind(sf)
@@ -71,7 +71,7 @@ func (b *bootstrap) initialFunctions() {
 	}, singleArgChecker)
 
 	defMacro := data.MakeNormal(func(args ...data.Value) data.Value {
-		ns := manager.GetRoot()
+		ns := e.GetRoot()
 		n := args[0].(data.LocalSymbol).Name()
 		if sf, ok := b.macroMap[n]; ok {
 			ns.Declare(n).Bind(sf)
@@ -80,7 +80,7 @@ func (b *bootstrap) initialFunctions() {
 		panic(fmt.Errorf(errMacroNotFound, n))
 	}, singleArgChecker)
 
-	ns := b.manager.GetRoot()
+	ns := b.environment.GetRoot()
 	ns.Declare(defBuiltInName).Bind(defBuiltIn)
 	ns.Declare(defSpecialName).Bind(defSpecial)
 	ns.Declare(defMacroName).Bind(defMacro)

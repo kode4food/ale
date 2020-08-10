@@ -14,8 +14,9 @@ const (
 )
 
 const (
-	prefix = "docstring/"
-	names  = data.Name("names")
+	prefix    = "docstring/"
+	extension = ".md"
+	names     = data.Name("names")
 )
 
 var cache = map[string]string{}
@@ -50,7 +51,7 @@ func ensureCache() {
 					cache[name.String()] = doc
 				}
 			} else {
-				n := filename[len(prefix) : len(filename)-3]
+				n := filename[len(prefix) : len(filename)-len(extension)]
 				cache[n] = doc
 			}
 		}

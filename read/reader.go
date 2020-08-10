@@ -6,7 +6,7 @@ import (
 	"regexp"
 
 	"github.com/kode4food/ale/data"
-	"github.com/kode4food/ale/namespace"
+	"github.com/kode4food/ale/env"
 )
 
 // reader is a stateful iteration interface for a token stream
@@ -30,11 +30,11 @@ const (
 var (
 	keywordIdentifier = regexp.MustCompile(`^:[^(){}\[\]\s,]+`)
 
-	quoteSym    = namespace.RootSymbol("quote")
-	syntaxSym   = namespace.RootSymbol("syntax-quote")
-	unquoteSym  = namespace.RootSymbol("unquote")
-	splicingSym = namespace.RootSymbol("unquote-splicing")
-	patternSym  = namespace.RootSymbol("pattern")
+	quoteSym    = env.RootSymbol("quote")
+	syntaxSym   = env.RootSymbol("syntax-quote")
+	unquoteSym  = env.RootSymbol("unquote")
+	splicingSym = env.RootSymbol("unquote-splicing")
+	patternSym  = env.RootSymbol("pattern")
 
 	specialNames = map[data.String]data.Value{
 		data.TrueLiteral:  data.True,

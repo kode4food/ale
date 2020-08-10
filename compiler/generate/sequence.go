@@ -5,7 +5,7 @@ import (
 
 	"github.com/kode4food/ale/compiler/encoder"
 	"github.com/kode4food/ale/data"
-	"github.com/kode4food/ale/namespace"
+	"github.com/kode4food/ale/env"
 	"github.com/kode4food/ale/runtime/isa"
 )
 
@@ -15,12 +15,12 @@ const (
 )
 
 var (
-	vectorSym = namespace.RootSymbol("vector")
-	objectSym = namespace.RootSymbol("object")
+	vectorSym = env.RootSymbol("vector")
+	objectSym = env.RootSymbol("object")
 )
 
 // Block encodes a set of expressions, returning only the final evaluation
-func Block(e encoder.Type, s data.Sequence) {
+func Block(e encoder.Encoder, s data.Sequence) {
 	f, r, ok := s.Split()
 	if !ok {
 		Nil(e)
@@ -34,7 +34,7 @@ func Block(e encoder.Type, s data.Sequence) {
 }
 
 // Sequence encodes a sequence
-func Sequence(e encoder.Type, s data.Sequence) {
+func Sequence(e encoder.Encoder, s data.Sequence) {
 	switch typed := s.(type) {
 	case data.String:
 		Literal(e, typed)
@@ -50,13 +50,13 @@ func Sequence(e encoder.Type, s data.Sequence) {
 }
 
 // Vector encodes a vector
-func Vector(e encoder.Type, v data.Vector) {
+func Vector(e encoder.Encoder, v data.Vector) {
 	f := resolveBuiltIn(e, vectorSym)
 	callApplicative(e, f.Call(), data.Values(v))
 }
 
 // Object encodes an object
-func Object(e encoder.Type, a data.Object) {
+func Object(e encoder.Encoder, a data.Object) {
 	args := data.Values{}
 	for f, r, ok := a.Split(); ok; f, r, ok = r.Split() {
 		v := f.(data.Pair)
