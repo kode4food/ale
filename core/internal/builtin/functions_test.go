@@ -7,7 +7,7 @@ import (
 
 	"github.com/kode4food/ale/compiler/special"
 	"github.com/kode4food/ale/core/bootstrap"
-	"github.com/kode4food/ale/core/builtin"
+	"github.com/kode4food/ale/core/internal/builtin"
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"

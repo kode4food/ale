@@ -4,7 +4,7 @@ import (
 	"os"
 
 	"github.com/kode4food/ale/compiler/encoder"
-	"github.com/kode4food/ale/core/builtin"
+	"github.com/kode4food/ale/core/internal/builtin"
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/stream"
 	"github.com/kode4food/ale/macro"
