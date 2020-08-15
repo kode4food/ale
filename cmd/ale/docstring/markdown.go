@@ -30,6 +30,10 @@ func ParseMarkdown(doc string) (data.Object, []string) {
 			obj[k] = v
 		}
 	}
+	for ; rest < len(lines) && strings.TrimSpace(lines[rest]) == ""; rest++ {
+		// No-Op
+	}
+
 	return obj, lines[rest:]
 }
 

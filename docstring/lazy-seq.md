@@ -6,9 +6,10 @@ names: ["lazy-seq"]
 usage: "(lazy-seq form*)"
 tags: ["sequence"]
 ---
+
 #### An Example:
 
-~~~scheme
+```scheme
 (define (fib-seq)
   (let [fib (lambda-rec fib (a b)
               (lazy-seq (cons a (fib b (+ a b)))))]
@@ -16,6 +17,6 @@ tags: ["sequence"]
 
 (for-each [x (take 300 (fib-seq))]
   (println x))
-~~~
+```
 
 This example prints the first 300 fibonacci numbers.
