@@ -13,8 +13,8 @@ Returns a promise that, when forced, evaluates the exprs, returning the final ev
 
 ```scheme
 (define p (delay
-              (println "hello once")
-              "hello"))
+            (println "hello once")
+            "hello"))
 (force p) ;; prints "hello once"
 (force p)
 ```

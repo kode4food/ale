@@ -14,6 +14,19 @@ var keyValue = regexp.MustCompile(`^([^:]+):\s*(.*)$`)
 // by a static site generator. It will parse any prologue parameters into the
 // resulting object and return the remaining content as individual lines
 func ParseMarkdown(doc string) (data.Object, []string) {
+	obj, rest := parseKeyValues(doc)
+	return obj, skipEmptyLines(rest)
+}
+
+func skipEmptyLines(lines []string) []string {
+	var first = 0
+	for first < len(lines) && strings.TrimSpace(lines[first]) == "" {
+		first++
+	}
+	return lines[first:]
+}
+
+func parseKeyValues(doc string) (data.Object, []string) {
 	obj := data.Object{}
 	lines := strings.Split(doc, "\n")
 	if strings.TrimSpace(lines[0]) != "---" {
@@ -30,10 +43,6 @@ func ParseMarkdown(doc string) (data.Object, []string) {
 			obj[k] = v
 		}
 	}
-	for ; rest < len(lines) && strings.TrimSpace(lines[rest]) == ""; rest++ {
-		// No-Op
-	}
-
 	return obj, lines[rest:]
 }
 
