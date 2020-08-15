@@ -13,10 +13,10 @@ Like `delay`, but if the initial forced result is a promise, it will continue to
 
 ```scheme
 (define p (lazy
-              (println "hello once")
-              (delay
-                (println "hello twice")
-                "hello")))
+            (println "hello once")
+            (delay
+              (println "hello twice")
+              "hello")))
 (force p) ;; prints "hello once / hello twice"
 (force p)
 ```
