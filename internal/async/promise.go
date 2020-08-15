@@ -16,7 +16,7 @@ type (
 	promiseStatus int
 
 	promise struct {
-		once     do.Do
+		once     do.Action
 		resolver data.Call
 		result   interface{}
 		status   promiseStatus

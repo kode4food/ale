@@ -31,7 +31,7 @@ type (
 	}
 
 	channelSequence struct {
-		once do.Do
+		once do.Action
 		ch   *channelWrapper
 
 		result channelResult
