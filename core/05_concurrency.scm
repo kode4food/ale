@@ -8,13 +8,22 @@
      (go (promise#))
      promise#))
 
-(define-macro (delay value)
-  `(promise (lambda () ,value)))
+(define-macro (delay . body)
+  `(promise (lambda () ,@body)))
 
 (define (force value)
-  (if (is-promise value)
+  (if (promise? value)
       (value)
-      (raise "attempt to force a non-promise")))
+      value))
+
+(define-macro (lazy . body)
+  `(delay
+    (let [body-result# (begin ,@body)]
+      ((lambda-rec resolve (result)
+         (if (promise? result)
+             (resolve (result))
+             result))
+       body-result#))))
 
 (define-macro (generate . body)
   `(let* ([chan#  (chan)        ]
