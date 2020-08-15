@@ -6,16 +6,17 @@ names: ["gensym"]
 usage: "(gensym str?)"
 tags: ["symbol", "macro"]
 ---
+
 If a string is provided, that string will be used to qualify the uniquely generated symbol. This function provides the underlying behavior for hash-tailed symbols in syntax-highlighting macros.
 
 #### An Example
 
-~~~scheme
+```scheme
 (let [s (gensym "var")]
   (list 'ale/let [s "hello"] s))
 
 ;; is equivalent to
 ``(let [var# "hello"] var#)
-~~~
+```
 
 This example will return _"hello"_.

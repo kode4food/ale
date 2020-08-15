@@ -6,11 +6,12 @@ names: ["declare"]
 usage: "(declare <name>+)"
 tags: ["binding"]
 ---
+
 Forward declares bindings. This means that the names will be known in the current namespace, but not yet assigned. This can be useful when two functions refer to one another.
 
 #### An Example
 
-~~~scheme
+```scheme
 (declare is-odd-number)
 
 (define (is-even-number n)
@@ -20,4 +21,4 @@ Forward declares bindings. This means that the names will be known in the curren
 (define (is-odd-number n)
   (cond [(= n 0) false]
         [:else   (is-even-number (- n 1))]))
-~~~
+```

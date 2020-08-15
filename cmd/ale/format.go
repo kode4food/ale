@@ -28,7 +28,7 @@ const (
 	usageName = data.Name("usage")
 	descName  = data.Name("description")
 
-	blockPrefix = "~~~"
+	blockPrefix = "```"
 )
 
 var (
