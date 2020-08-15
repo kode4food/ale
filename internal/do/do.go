@@ -2,8 +2,8 @@ package do
 
 import "sync"
 
-// Do is a callback interface for eventually triggering some action
-type Do func(func())
+// Action is a callback interface for eventually triggering some action
+type Action func(func())
 
 const (
 	doneNever uint32 = iota
@@ -11,7 +11,7 @@ const (
 )
 
 // Once creates a Do instance for performing an action only once
-func Once() Do {
+func Once() Action {
 	var state = doneNever
 	var mutex sync.Mutex
 
@@ -29,14 +29,14 @@ func Once() Do {
 }
 
 // Always returns a Do instance for always performing an action
-func Always() Do {
+func Always() Action {
 	return func(f func()) {
 		f()
 	}
 }
 
 // Never returns a Do instance for never performing an action
-func Never() Do {
+func Never() Action {
 	return func(_ func()) {
 		// no-op
 	}

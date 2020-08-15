@@ -10,7 +10,7 @@ type (
 	LazyResolver func() (data.Value, data.Sequence, bool)
 
 	lazySequence struct {
-		once     do.Do
+		once     do.Action
 		resolver LazyResolver
 
 		ok     bool
