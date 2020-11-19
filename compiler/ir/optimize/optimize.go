@@ -9,7 +9,7 @@ type optimizer func(visitor.Node) visitor.Node
 
 var optimizers = []optimizer{
 	splitReturns,   // roll standalone returns into preceding branches
-	tailCalls,      // replace self-calls in tail position with a tail-call
+	tailCalls,      // replace calls in tail position with a tail-call
 	literalReturns, // convert some literal returns into single instructions
 }
 
