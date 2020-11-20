@@ -10,7 +10,7 @@ import (
 	"github.com/kode4food/ale/read"
 )
 
-func makeToken(t read.TokenType, v data.Value) *read.Token {
+func T(t read.TokenType, v data.Value) *read.Token {
 	return &read.Token{
 		Type:  t,
 		Value: v,
@@ -55,8 +55,8 @@ func TestWhitespace(t *testing.T) {
 func TestEmptyList(t *testing.T) {
 	l := read.Scan(" ( \t ) ")
 	assertTokenSequence(t, l, []*read.Token{
-		makeToken(read.ListStart, S("(")),
-		makeToken(read.ListEnd, S(")")),
+		T(read.ListStart, S("(")),
+		T(read.ListEnd, S(")")),
 	})
 }
 
@@ -65,15 +65,15 @@ func TestNumbers(t *testing.T) {
 				99.598e+10 54e+12 -0xFF
 				071 0xf1e9d8c7 2/3`)
 	assertTokenSequence(t, l, []*read.Token{
-		makeToken(read.Number, F(10)),
-		makeToken(read.Number, F(12.8)),
-		makeToken(read.Number, F(8e+10)),
-		makeToken(read.Number, F(99.598e+10)),
-		makeToken(read.Number, F(54e+12)),
-		makeToken(read.Number, F(-255)),
-		makeToken(read.Number, F(57)),
-		makeToken(read.Number, F(4058634439)),
-		makeToken(read.Number, R(2, 3)),
+		T(read.Number, F(10)),
+		T(read.Number, F(12.8)),
+		T(read.Number, F(8e+10)),
+		T(read.Number, F(99.598e+10)),
+		T(read.Number, F(54e+12)),
+		T(read.Number, F(-255)),
+		T(read.Number, F(57)),
+		T(read.Number, F(4058634439)),
+		T(read.Number, R(2, 3)),
 	})
 }
 
@@ -81,15 +81,15 @@ func TestBadNumbers(t *testing.T) {
 	err := fmt.Sprintf(data.ErrExpectedInteger, S("0xffj-k"))
 	l := read.Scan("0xffj-k")
 	assertTokenSequence(t, l, []*read.Token{
-		makeToken(read.Error, S(err)),
+		T(read.Error, S(err)),
 	})
 }
 
 func TestStrings(t *testing.T) {
 	l := read.Scan(` "hello there" "how's \"life\"?"  `)
 	assertTokenSequence(t, l, []*read.Token{
-		makeToken(read.String, S(`hello there`)),
-		makeToken(read.String, S(`how's "life"?`)),
+		T(read.String, S(`hello there`)),
+		T(read.String, S(`how's "life"?`)),
 	})
 }
 
@@ -99,24 +99,24 @@ func TestMultiLine(t *testing.T) {
 				99`)
 
 	assertTokenSequence(t, l, []*read.Token{
-		makeToken(read.String, S(`hello there`)),
-		makeToken(read.String, S(`how's life?`)),
-		makeToken(read.Number, F(99)),
+		T(read.String, S(`hello there`)),
+		T(read.String, S(`how's life?`)),
+		T(read.Number, F(99)),
 	})
 }
 
 func TestComments(t *testing.T) {
 	l := read.Scan(`"hello" ; (this is commented)`)
 	assertTokenSequence(t, l, []*read.Token{
-		makeToken(read.String, S(`hello`)),
+		T(read.String, S(`hello`)),
 	})
 }
 
 func TestIdentifiers(t *testing.T) {
 	l := read.Scan(`hello th,@re`)
 	assertTokenSequence(t, l, []*read.Token{
-		makeToken(read.Identifier, S("hello")),
-		makeToken(read.Identifier, S("th,@re")),
+		T(read.Identifier, S("hello")),
+		T(read.Identifier, S("th,@re")),
 	})
 }
 
@@ -124,8 +124,8 @@ func TestUnexpectedChars(t *testing.T) {
 	err := fmt.Sprintf(read.ErrUnexpectedCharacter, "@")
 	l := read.Scan("hello @there")
 	assertTokenSequence(t, l, []*read.Token{
-		makeToken(read.Identifier, S("hello")),
-		makeToken(read.Error, S(err)),
-		makeToken(read.Identifier, S("there")),
+		T(read.Identifier, S("hello")),
+		T(read.Error, S(err)),
+		T(read.Identifier, S("there")),
 	})
 }

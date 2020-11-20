@@ -50,15 +50,15 @@ func callSymbol(e encoder.Encoder, s data.Symbol, args data.Values) {
 	}
 	globals := e.Globals()
 	if v, ok := env.ResolveValue(globals, s); ok {
-		switch typed := v.(type) {
+		switch v := v.(type) {
 		case encoder.Call:
-			typed(e, args...)
+			v(e, args...)
 			return
 		case data.Call:
-			callApplicative(e, typed, args)
+			callApplicative(e, v, args)
 			return
 		case data.Function:
-			callFunction(e, typed, args)
+			callFunction(e, v, args)
 			return
 		}
 	}
