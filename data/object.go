@@ -9,16 +9,16 @@ import (
 // Object maps values to values and supports the universal design pattern
 type Object map[Value]Value
 
-// Error messages
-const (
-	ErrMapNotPaired  = "map does not contain an even number of elements"
-	ErrValueNotFound = "value not found in object: %s"
-)
-
 // Standard Keys
 const (
 	TypeKey     = Keyword("type")
 	InstanceKey = Keyword("instance")
+)
+
+// Error messages
+const (
+	ErrMapNotPaired  = "map does not contain an even number of elements"
+	ErrValueNotFound = "value not found in object: %s"
 )
 
 // NewObject instantiates a new Object instance

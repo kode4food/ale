@@ -9,12 +9,24 @@ import (
 	"github.com/kode4food/ale/internal/sequence"
 )
 
-// Error messages
-const (
-	ErrStringNotTerminated = "string has no closing quote"
-	ErrUnexpectedCharacter = "unexpected character: %s"
+type (
+	// TokenType is an opaque type for lexer tokens
+	TokenType int
 
-	errUnmatchedState = "unmatched lexing state"
+	// Token is a lexer value
+	Token struct {
+		Type  TokenType
+		Value data.Value
+	}
+
+	tokenizer func([]string) *Token
+
+	matchEntry struct {
+		pattern  *regexp.Regexp
+		function tokenizer
+	}
+
+	matchEntries []matchEntry
 )
 
 // Token Types
@@ -40,26 +52,6 @@ const (
 	endOfFile
 )
 
-type (
-	// TokenType is an opaque type for lexer tokens
-	TokenType int
-
-	// Token is a lexer value
-	Token struct {
-		Type  TokenType
-		Value data.Value
-	}
-
-	tokenizer func([]string) *Token
-
-	matchEntry struct {
-		pattern  *regexp.Regexp
-		function tokenizer
-	}
-
-	matchEntries []matchEntry
-)
-
 const (
 	structure  = `(){}\[\]\s\"`
 	prefixChar = "`,~@"
@@ -67,6 +59,14 @@ const (
 	idCont     = "[^" + structure + "]"
 	id         = idStart + idCont + "*"
 	numTail    = idStart + "*"
+)
+
+// Error messages
+const (
+	ErrStringNotTerminated = "string has no closing quote"
+	ErrUnexpectedCharacter = "unexpected character: %s"
+
+	errUnmatchedState = "unmatched lexing state"
 )
 
 var (

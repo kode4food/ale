@@ -7,6 +7,10 @@ import (
 	"github.com/kode4food/ale/data"
 )
 
+// OrMore is the constant used when you want to tell MakeChecker
+// to generate a minimum arity checker
+const OrMore = -1
+
 // Error messages
 const (
 	ErrFixedArity   = "expected %d arguments, got %d"
@@ -15,10 +19,6 @@ const (
 
 	errTooManyArguments = "too many arity check arguments"
 )
-
-// OrMore is the constant used when you want to tell MakeChecker
-// to generate a minimum arity checker
-const OrMore = -1
 
 // MakeChecker produces an arity checker based on its parameters
 func MakeChecker(arity ...int) data.ArityChecker {

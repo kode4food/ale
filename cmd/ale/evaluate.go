@@ -11,7 +11,10 @@ import (
 	"github.com/kode4food/ale/read"
 )
 
-const fileNotFound = "file not found: %s"
+// Error messages
+const (
+	fileNotFound = "file not found: %s"
+)
 
 // EvaluateStdIn reads from StdIn and evaluates it
 func EvaluateStdIn() {

@@ -18,12 +18,12 @@ type (
 	labels map[Index]*label
 )
 
-// Error messages
 const (
+	placeholderOffset = Offset(math.MaxUint32)
+
+	// Error messages
 	errLabelAlreadyAnchored = "label has already been anchored"
 )
-
-const placeholderOffset = Offset(math.MaxUint32)
 
 // Flatten takes a set of instructions and flattens them into
 // something that the virtual machine can execute

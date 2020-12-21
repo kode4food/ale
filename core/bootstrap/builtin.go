@@ -11,17 +11,15 @@ import (
 	"github.com/kode4food/ale/macro"
 )
 
-// Error messages
-const (
-	errBuiltInNotFound = "built-in not found: %s"
-	errSpecialNotFound = "special form not found: %s"
-	errMacroNotFound   = "macro not found: %s"
-)
-
 const (
 	defBuiltInName = "def-builtin"
 	defSpecialName = "def-special"
 	defMacroName   = "def-macro"
+
+	// Error messages
+	errBuiltInNotFound = "built-in not found: %s"
+	errSpecialNotFound = "special form not found: %s"
+	errMacroNotFound   = "macro not found: %s"
 )
 
 func (b *bootstrap) builtIns() {

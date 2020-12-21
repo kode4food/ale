@@ -5,15 +5,15 @@ import (
 	"fmt"
 )
 
-// Errors messages
-const (
-	errValueNotAPair = "%s is not a pair"
-)
-
 // Cons fields
 const (
 	Car = 0
 	Cdr = 1
+)
+
+// Error messages
+const (
+	errValueNotAPair = "%s is not a pair"
 )
 
 type (
