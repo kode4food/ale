@@ -7,10 +7,6 @@ import (
 	"sync"
 )
 
-// DomainSeparator is the character used to separate a domain from
-// the local component of a qualified symbol
-const DomainSeparator = '/'
-
 type (
 	// Symbol is an identifier that can be resolved
 	Symbol interface {
@@ -48,6 +44,10 @@ type (
 )
 
 const (
+	// DomainSeparator is the character used to separate a domain from
+	// the local component of a qualified symbol
+	DomainSeparator = '/'
+
 	decimal        = "0123456789"
 	lower          = "abcdefghijklmnopqrstuvwxyz"
 	upper          = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"

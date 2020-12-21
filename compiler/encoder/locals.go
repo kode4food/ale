@@ -7,13 +7,13 @@ import (
 	"github.com/kode4food/ale/runtime/isa"
 )
 
+// Locals track local variable assignments
+type Locals map[data.Name]*IndexedCell
+
 // Error messages
 const (
 	errDuplicateName = "name duplicated in scope: %s"
 )
-
-// Locals track local variable assignments
-type Locals map[data.Name]*IndexedCell
 
 func (e *encoder) LocalCount() int {
 	return e.maxLocal

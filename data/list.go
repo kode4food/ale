@@ -1,20 +1,22 @@
 package data
 
-// List represents a singly-linked List
-type List interface {
-	list() // marker
-	Sequence
-	Indexed
-	Counted
-	Prepend(Value) Sequence
-	Reverse() Sequence
-}
+type (
+	// List represents a singly-linked List
+	List interface {
+		list() // marker
+		Sequence
+		Indexed
+		Counted
+		Prepend(Value) Sequence
+		Reverse() Sequence
+	}
 
-type list struct {
-	first Value
-	rest  List
-	count int
-}
+	list struct {
+		first Value
+		rest  List
+		count int
+	}
+)
 
 // NewList creates a new List instance
 func NewList(v ...Value) List {

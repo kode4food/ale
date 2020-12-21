@@ -36,10 +36,10 @@ type (
 	}
 )
 
-// UserDomain is the name of the namespace that the REPL starts in
-const UserDomain = data.Name("user")
-
 const (
+	// UserDomain is the name of the namespace that the REPL starts in
+	UserDomain = data.Name("user")
+
 	domain = cyan + "%s" + reset + " "
 	prompt = domain + "[%d]> " + code
 	cont   = domain + "[%d]" + dgray + nlMarker + "   " + code
@@ -47,9 +47,8 @@ const (
 	output = bold + "%s" + reset
 	good   = domain + result + "[%d]= " + output
 	bad    = domain + red + "[%d]! " + output
-)
 
-const (
+	// Error messages
 	errNonStandardError    = "non-standard error: %s"
 	errSymbolNotDocumented = "symbol not documented: %s"
 )

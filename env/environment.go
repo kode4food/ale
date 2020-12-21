@@ -18,19 +18,19 @@ type (
 	Resolver func() Namespace
 )
 
-// Error messages
-const (
-	ErrSymbolNotDeclared = "symbol not declared in namespace: %s"
-
-	errSymbolNotBound = "symbol not bound in namespace: %s"
-)
-
 const (
 	// RootDomain stores built-ins
 	RootDomain = data.Name("ale")
 
 	// AnonymousDomain identifies an anonymous namespace
 	AnonymousDomain = data.Name("*anon*")
+)
+
+// Error messages
+const (
+	ErrSymbolNotDeclared = "symbol not declared in namespace: %s"
+
+	errSymbolNotBound = "symbol not bound in namespace: %s"
 )
 
 // RootSymbol returns a symbol qualified by the root domain

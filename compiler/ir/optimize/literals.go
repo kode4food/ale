@@ -5,18 +5,22 @@ import (
 	"github.com/kode4food/ale/runtime/isa"
 )
 
-var literalReturnMap = map[isa.Opcode]isa.Opcode{
-	isa.False: isa.RetFalse,
-	isa.Nil:   isa.RetNil,
-	isa.True:  isa.RetTrue,
-}
+var (
+	literalReturnMap = map[isa.Opcode]isa.Opcode{
+		isa.False: isa.RetFalse,
+		isa.Nil:   isa.RetNil,
+		isa.True:  isa.RetTrue,
+	}
 
-var literalReturnPatterns = visitor.Pattern{
-	literalKeys(),
-	{isa.Return},
-}
+	literalKeys = _makeLiteralKeys()
 
-func literalKeys() []isa.Opcode {
+	literalReturnPatterns = visitor.Pattern{
+		literalKeys,
+		{isa.Return},
+	}
+)
+
+func _makeLiteralKeys() []isa.Opcode {
 	var res []isa.Opcode
 	for k := range literalReturnMap {
 		res = append(res, k)
