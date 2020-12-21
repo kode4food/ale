@@ -13,7 +13,7 @@ import (
 
 // Error messages
 const (
-	fileNotFound = "file not found: %s"
+	errFileNotFound = "file not found: %s"
 )
 
 // EvaluateStdIn reads from StdIn and evaluates it
@@ -30,7 +30,7 @@ func EvaluateFile() {
 
 	filename := os.Args[1]
 	if buffer, err := ioutil.ReadFile(filename); err != nil {
-		fmt.Println(fmt.Sprintf(fileNotFound, filename))
+		fmt.Println(fmt.Sprintf(errFileNotFound, filename))
 		os.Exit(-1)
 	} else {
 		evalBuffer(ns, buffer)
