@@ -15,8 +15,10 @@ type (
 
 	// Token is a lexer value
 	Token struct {
-		Type  TokenType
-		Value data.Value
+		Type   TokenType
+		Value  data.Value
+		Line   int
+		Column int
 	}
 
 	tokenizer func([]string) *Token
@@ -50,6 +52,7 @@ const (
 	Whitespace
 	Comment
 	endOfFile
+	newLine
 )
 
 const (
@@ -82,6 +85,7 @@ var (
 
 	matchers = matchEntries{
 		pattern(`$`, endState(endOfFile)),
+		pattern(`\n`, endState(newLine)),
 		pattern(`;[^\n]*([\n]|$)`, tokenState(Comment)),
 		pattern(`\s+`, tokenState(Whitespace)),
 		pattern(`\(`, tokenState(ListStart)),
@@ -124,9 +128,24 @@ func Scan(src data.String) data.Sequence {
 	var resolver sequence.LazyResolver
 	s := string(src)
 
+	row := 1
+	col := 1
+
 	resolver = func() (data.Value, data.Sequence, bool) {
 		if t, rs := matchToken(s); t.Type != endOfFile {
+			tLen := len(s) - len(rs)
 			s = rs
+
+			t.Line = row
+			t.Column = col
+
+			if t.Type == newLine || t.Type == Comment {
+				row++
+				col = 1
+			} else {
+				col += tLen
+			}
+
 			return t, sequence.NewLazy(resolver), true
 		}
 		return data.Nil, data.EmptyList, false
@@ -138,7 +157,7 @@ func Scan(src data.String) data.Sequence {
 
 var notWhitespace = data.Applicative(func(args ...data.Value) data.Value {
 	t := args[0].(*Token)
-	return data.Bool(t.Type != Whitespace && t.Type != Comment)
+	return data.Bool(t.Type != Whitespace && t.Type != Comment && t.Type != newLine)
 }, 1)
 
 func matchToken(src string) (*Token, string) {

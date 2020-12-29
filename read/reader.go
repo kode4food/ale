@@ -1,7 +1,6 @@
 package read
 
 import (
-	"errors"
 	"fmt"
 	"regexp"
 
@@ -59,7 +58,7 @@ func (r *reader) nextToken() *Token {
 		return nil
 	}
 	if f := s.First().(*Token); f.Type == Error {
-		panic(errors.New(f.Value.String()))
+		panic(fmt.Errorf("%s at line %d:%d", f.Value.String(), f.Line, f.Column))
 	} else {
 		r.seq = s.Rest()
 		return f
@@ -86,21 +85,21 @@ func (r *reader) value(t *Token) data.Value {
 	case PatternMarker:
 		return r.prefixed(patternSym)
 	case ListStart:
-		return r.list()
+		return r.list(t)
 	case VectorStart:
-		return r.vector()
+		return r.vector(t)
 	case MapStart:
-		return r.object()
+		return r.object(t)
 	case Identifier:
 		return readIdentifier(t)
 	case ListEnd:
-		panic(errors.New(ErrUnmatchedListEnd))
+		panic(fmt.Errorf("%s at line %d:%d", ErrUnmatchedListEnd, t.Line, t.Column))
 	case VectorEnd:
-		panic(errors.New(ErrUnmatchedVectorEnd))
+		panic(fmt.Errorf("%s at line %d:%d", ErrUnmatchedVectorEnd, t.Line, t.Column))
 	case MapEnd:
-		panic(errors.New(ErrUnmatchedMapEnd))
+		panic(fmt.Errorf("%s at line %d:%d", ErrUnmatchedMapEnd, t.Line, t.Column))
 	case Dot:
-		panic(errors.New(ErrUnexpectedDot))
+		panic(fmt.Errorf("%s at line %d:%d", ErrUnexpectedDot, t.Line, t.Column))
 	default:
 		return t.Value
 	}
@@ -113,7 +112,7 @@ func (r *reader) prefixed(s data.Symbol) data.Value {
 	panic(fmt.Errorf(ErrPrefixedNotPaired, s))
 }
 
-func (r *reader) list() data.Value {
+func (r *reader) list(firstToken *Token) data.Value {
 	res := data.Values{}
 	var sawDotAt = -1
 	for i := 0; ; i++ {
@@ -121,21 +120,21 @@ func (r *reader) list() data.Value {
 			switch t.Type {
 			case Dot:
 				if i == 0 || sawDotAt != -1 {
-					panic(errors.New(ErrInvalidListSyntax))
+					panic(fmt.Errorf("%s at line %d:%d", ErrInvalidListSyntax, t.Line, t.Column))
 				}
 				sawDotAt = i
 			case ListEnd:
 				if sawDotAt == -1 {
 					return data.NewList(res...)
 				} else if sawDotAt != len(res)-1 {
-					panic(errors.New(ErrInvalidListSyntax))
+					panic(fmt.Errorf("%s at line %d:%d", ErrInvalidListSyntax, t.Line, t.Column))
 				}
 				return makeDottedList(res...)
 			default:
 				res = append(res, r.value(t))
 			}
 		} else {
-			panic(errors.New(ErrListNotClosed))
+			panic(fmt.Errorf("%s starting at line %d:%d", ErrListNotClosed, firstToken.Line, firstToken.Column))
 		}
 	}
 }
@@ -149,17 +148,17 @@ func makeDottedList(v ...data.Value) data.Value {
 	return res
 }
 
-func (r *reader) vector() data.Value {
-	v := r.readNonDotted(VectorEnd)
+func (r *reader) vector(firstToken *Token) data.Value {
+	v := r.readNonDotted(firstToken, VectorEnd)
 	return data.NewVector(v...)
 }
 
-func (r *reader) object() data.Value {
-	v := r.readNonDotted(MapEnd)
+func (r *reader) object(firstToken *Token) data.Value {
+	v := r.readNonDotted(firstToken, MapEnd)
 	return data.ValuesToObject(v...)
 }
 
-func (r *reader) readNonDotted(endToken TokenType) data.Values {
+func (r *reader) readNonDotted(firstToken *Token, endToken TokenType) data.Values {
 	res := data.Values{}
 	for {
 		if t := r.nextToken(); t != nil {
@@ -171,7 +170,7 @@ func (r *reader) readNonDotted(endToken TokenType) data.Values {
 			}
 		} else {
 			err := collectionErrors[endToken]
-			panic(errors.New(err))
+			panic(fmt.Errorf("%s at line %d:%d", err, firstToken.Line, firstToken.Column))
 		}
 	}
 }

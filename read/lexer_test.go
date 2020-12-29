@@ -12,8 +12,19 @@ import (
 
 func T(t read.TokenType, v data.Value) *read.Token {
 	return &read.Token{
-		Type:  t,
-		Value: v,
+		Type:   t,
+		Value:  v,
+		Line:   -1,
+		Column: -1,
+	}
+}
+
+func TL(t read.TokenType, v data.Value, line int, col int) *read.Token {
+	return &read.Token{
+		Type:   t,
+		Value:  v,
+		Line:   line,
+		Column: col,
 	}
 }
 
@@ -21,6 +32,14 @@ func assertToken(t *testing.T, like *read.Token, value *read.Token) {
 	t.Helper()
 	as := assert.New(t)
 	as.Equal(like.Type, value.Type)
+
+	if like.Line >= 0 {
+		as.Equal(like.Line, value.Line)
+	}
+
+	if like.Column >= 0 {
+		as.Equal(like.Column, value.Column)
+	}
 }
 
 func assertTokenSequence(t *testing.T, s data.Sequence, tokens []*read.Token) {
@@ -127,5 +146,24 @@ func TestUnexpectedChars(t *testing.T) {
 		T(read.Identifier, S("hello")),
 		T(read.Error, S(err)),
 		T(read.Identifier, S("there")),
+	})
+}
+
+func TestNewLine(t *testing.T) {
+	l := read.Scan("1\n2\n 3")
+
+	assertTokenSequence(t, l, []*read.Token{
+		TL(read.Number, S("1"), 1, 1),
+		TL(read.Number, S("2"), 2, 1),
+		TL(read.Number, S("3"), 3, 2),
+	})
+}
+
+func TestComment(t *testing.T) {
+	l := read.Scan("; 1\n2\n 3")
+
+	assertTokenSequence(t, l, []*read.Token{
+		TL(read.Number, S("2"), 2, 1),
+		TL(read.Number, S("3"), 3, 2),
 	})
 }
