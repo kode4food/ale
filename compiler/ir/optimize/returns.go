@@ -29,11 +29,11 @@ func (*returnSplitter) ExitBranches(b visitor.Branches) {
 }
 
 func addReturnToNode(n visitor.Node) {
-	switch typed := n.(type) {
+	switch n := n.(type) {
 	case visitor.Branches:
-		addReturnToBranches(typed)
+		addReturnToBranches(n)
 	case visitor.Instructions:
-		addReturnToInstructions(typed)
+		addReturnToInstructions(n)
 	}
 }
 

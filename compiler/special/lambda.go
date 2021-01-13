@@ -191,13 +191,13 @@ func (c *lambdaCase) arityRange() (int, int) {
 }
 
 func parseArgBindings(v data.Value) (data.Names, bool) {
-	switch typed := v.(type) {
+	switch v := v.(type) {
 	case data.LocalSymbol:
-		return data.Names{typed.Name()}, true
+		return data.Names{v.Name()}, true
 	case data.List:
-		return parseListArgNames(typed), false
+		return parseListArgNames(v), false
 	case data.Cons:
-		return parseConsArgNames(typed), true
+		return parseConsArgNames(v), true
 	default:
 		panic(fmt.Errorf(ErrUnexpectedLambdaSyntax, v))
 	}
