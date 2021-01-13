@@ -8,11 +8,11 @@ import (
 
 // ToList takes any sequence and converts it to a List
 func ToList(s data.Sequence) data.List {
-	switch typed := s.(type) {
+	switch s := s.(type) {
 	case data.List:
-		return typed
-	case data.Counted:
-		res := make(data.Vector, typed.Count())
+		return s
+	case data.CountedSequence:
+		res := make(data.Vector, s.Count())
 		idx := 0
 		for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {
 			res[idx] = f
@@ -20,7 +20,7 @@ func ToList(s data.Sequence) data.List {
 		}
 		return data.NewList(res...)
 	default:
-		return uncountedToList(typed)
+		return uncountedToList(s)
 	}
 }
 
@@ -30,11 +30,11 @@ func uncountedToList(s data.Sequence) data.List {
 
 // ToValues takes any sequence and converts it to a value array
 func ToValues(s data.Sequence) data.Values {
-	switch typed := s.(type) {
+	switch s := s.(type) {
 	case data.Vector:
-		return data.Values(typed)
-	case data.Counted:
-		res := make(data.Values, typed.Count())
+		return data.Values(s)
+	case data.CountedSequence:
+		res := make(data.Values, s.Count())
 		idx := 0
 		for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {
 			res[idx] = f
@@ -62,9 +62,9 @@ func ToVector(s data.Sequence) data.Vector {
 
 // ToObject takes any sequence and converts it to an Associative
 func ToObject(s data.Sequence) data.Object {
-	switch typed := s.(type) {
+	switch s := s.(type) {
 	case data.Object:
-		return typed
+		return s
 	default:
 		v := ToValues(s)
 		return data.ValuesToObject(v...)

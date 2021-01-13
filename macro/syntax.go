@@ -48,13 +48,13 @@ func (se *syntaxEnv) quote(v data.Value) data.Value {
 }
 
 func (se *syntaxEnv) quoteValue(v data.Value) data.Value {
-	switch typed := v.(type) {
+	switch v := v.(type) {
 	case data.Sequence:
-		return se.quoteSequence(typed)
+		return se.quoteSequence(v)
 	case data.Pair:
-		return se.quotePair(typed)
+		return se.quotePair(v)
 	case data.Symbol:
-		return se.quoteSymbol(typed)
+		return se.quoteSymbol(v)
 	default:
 		return v
 	}
@@ -87,17 +87,17 @@ func (se *syntaxEnv) generateSymbol(s data.Symbol) (data.Symbol, bool) {
 }
 
 func (se *syntaxEnv) quoteSequence(s data.Sequence) data.Value {
-	switch typed := s.(type) {
+	switch s := s.(type) {
 	case data.String:
-		return typed
+		return s
 	case data.List:
-		return data.NewList(applySym, listSym, se.quoteElements(typed))
+		return data.NewList(applySym, listSym, se.quoteElements(s))
 	case data.Vector:
-		return data.NewList(applySym, vectorSym, se.quoteElements(typed))
+		return data.NewList(applySym, vectorSym, se.quoteElements(s))
 	case data.Object:
-		return se.quoteObject(typed)
+		return se.quoteObject(s)
 	case data.Null:
-		return typed
+		return s
 	default:
 		panic(fmt.Errorf(errUnsupportedSyntaxQuote, s))
 	}

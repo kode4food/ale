@@ -23,45 +23,45 @@ const (
 
 // purify performs automatic contagion of operands
 func purify(l, r Number) (Number, Number) {
-	switch lt := l.(type) {
+	switch l := l.(type) {
 	case Integer:
 		switch r.(type) {
 		case Float:
-			return lt.float(), r
+			return l.float(), r
 		case *BigInt:
-			return lt.bigInt(), r
+			return l.bigInt(), r
 		case *Ratio:
-			return lt.ratio(), r
+			return l.ratio(), r
 		}
 
 	case Float:
-		switch rt := r.(type) {
+		switch r := r.(type) {
 		case Integer:
-			return l, rt.float()
+			return l, r.float()
 		case *BigInt:
-			return l, rt.float()
+			return l, r.float()
 		case *Ratio:
-			return l, rt.float()
+			return l, r.float()
 		}
 
 	case *BigInt:
-		switch rt := r.(type) {
+		switch r := r.(type) {
 		case Integer:
-			return l, rt.bigInt()
+			return l, r.bigInt()
 		case Float:
-			return lt.float(), r
+			return l.float(), r
 		case *Ratio:
-			return lt.ratio(), r
+			return l.ratio(), r
 		}
 
 	case *Ratio:
-		switch rt := r.(type) {
+		switch r := r.(type) {
 		case Integer:
-			return l, rt.ratio()
+			return l, r.ratio()
 		case Float:
-			return lt.float(), r
+			return l.float(), r
 		case *BigInt:
-			return l, rt.ratio()
+			return l, r.ratio()
 		}
 	}
 

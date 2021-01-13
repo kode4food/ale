@@ -37,13 +37,13 @@ func CalculateStackSize(code isa.Instructions) (int, int) {
 }
 
 func (s *stackSizes) calculateNode(n visitor.Node) {
-	switch typed := n.(type) {
+	switch n := n.(type) {
 	case visitor.Branches:
-		s.calculateInstructions(typed.Prologue())
-		s.calculateBranches(typed.ThenBranch(), typed.ElseBranch())
-		s.calculateNode(typed.Epilogue())
+		s.calculateInstructions(n.Prologue())
+		s.calculateBranches(n.ThenBranch(), n.ElseBranch())
+		s.calculateNode(n.Epilogue())
 	case visitor.Instructions:
-		s.calculateInstructions(typed)
+		s.calculateInstructions(n)
 	}
 }
 
