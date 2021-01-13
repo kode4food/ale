@@ -35,15 +35,15 @@ func Block(e encoder.Encoder, s data.Sequence) {
 
 // Sequence encodes a sequence
 func Sequence(e encoder.Encoder, s data.Sequence) {
-	switch typed := s.(type) {
+	switch s := s.(type) {
 	case data.String:
-		Literal(e, typed)
+		Literal(e, s)
 	case data.List:
-		Call(e, typed)
+		Call(e, s)
 	case data.Vector:
-		Vector(e, typed)
+		Vector(e, s)
 	case data.Object:
-		Object(e, typed)
+		Object(e, s)
 	default:
 		panic(fmt.Errorf(errCannotCompile, s))
 	}

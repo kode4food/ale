@@ -19,16 +19,15 @@ var consSym = env.RootSymbol("cons")
 // Value encodes an expression
 func Value(e encoder.Encoder, v data.Value) {
 	ns := e.Globals()
-	expanded := macro.Expand(ns, v)
-	switch typed := expanded.(type) {
+	switch expanded := macro.Expand(ns, v).(type) {
 	case data.Sequence:
-		Sequence(e, typed)
+		Sequence(e, expanded)
 	case data.Pair:
-		Pair(e, typed)
+		Pair(e, expanded)
 	case data.Symbol:
-		ReferenceSymbol(e, typed)
+		ReferenceSymbol(e, expanded)
 	case data.Keyword, data.Number, data.Bool, data.Function:
-		Literal(e, typed)
+		Literal(e, expanded)
 	default:
 		panic(fmt.Errorf(errUnknownValueType, v))
 	}
