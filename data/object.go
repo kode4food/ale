@@ -11,7 +11,9 @@ type Object map[Value]Value
 
 // Standard Keys
 const (
+	NameKey     = Keyword("name")
 	TypeKey     = Keyword("type")
+	CountKey    = Keyword("count")
 	InstanceKey = Keyword("instance")
 )
 
