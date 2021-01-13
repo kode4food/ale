@@ -67,14 +67,14 @@ func (w *Wrapper) Number(expect float64, expr Any) {
 // Equal tests a Value for some kind of equality. Performs checks to do so
 func (w *Wrapper) Equal(expect Any, expr Any) {
 	w.T.Helper()
-	switch typed := expect.(type) {
+	switch expect := expect.(type) {
 	case data.String:
-		w.String(string(typed), expr)
+		w.String(string(expect), expr)
 	case data.Number:
 		num := expr.(data.Number)
-		w.Assertions.Equal(data.EqualTo, typed.Cmp(num))
+		w.Assertions.Equal(data.EqualTo, expect.Cmp(num))
 	case data.Value:
-		w.String(typed.String(), expr)
+		w.String(expect.String(), expr)
 	default:
 		w.Assertions.Equal(expect, expr)
 	}

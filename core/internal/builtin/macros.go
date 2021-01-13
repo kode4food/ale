@@ -15,18 +15,18 @@ const (
 
 // Macro converts a function into a macro
 func Macro(args ...data.Value) data.Value {
-	switch typed := args[0].(type) {
+	switch arg0 := args[0].(type) {
 	case data.Function:
-		body := typed.Call()
+		body := arg0.Call()
 		wrapper := func(_ env.Namespace, args ...data.Value) data.Value {
-			if err := typed.CheckArity(len(args)); err != nil {
+			if err := arg0.CheckArity(len(args)); err != nil {
 				panic(err)
 			}
 			return body(args...)
 		}
 		return macro.Call(wrapper)
 	case data.Caller:
-		body := typed.Call()
+		body := arg0.Call()
 		wrapper := func(_ env.Namespace, args ...data.Value) data.Value {
 			return body(args...)
 		}
