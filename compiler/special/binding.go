@@ -92,11 +92,11 @@ func parseLet(args ...data.Value) (letBindings, data.Vector) {
 }
 
 func parseLetBindings(v data.Value) letBindings {
-	switch typed := v.(type) {
+	switch v := v.(type) {
 	case data.List:
 		names := uniqueNames{}
 		res := letBindings{}
-		for f, r, ok := typed.Split(); ok; f, r, ok = r.Split() {
+		for f, r, ok := v.Split(); ok; f, r, ok = r.Split() {
 			b := parseLetBinding(f.(data.Vector))
 			names.see(b.name)
 			res = append(res, b)
@@ -104,7 +104,7 @@ func parseLetBindings(v data.Value) letBindings {
 		return res
 	case data.Vector:
 		return letBindings{
-			parseLetBinding(typed),
+			parseLetBinding(v),
 		}
 	default:
 		panic(fmt.Errorf(ErrUnexpectedLetSyntax, v))

@@ -70,13 +70,13 @@ func callNonSymbol(e encoder.Encoder, v data.Value, args data.Values) {
 		callDynamic(e, v, args)
 		return
 	}
-	switch typed := v.(type) {
+	switch v := v.(type) {
 	case data.Function:
-		callFunction(e, typed, args)
+		callFunction(e, v, args)
 	case data.Caller:
-		callCaller(e, typed, args)
+		callCaller(e, v, args)
 	default:
-		callDynamic(e, typed, args)
+		callDynamic(e, v, args)
 	}
 }
 
