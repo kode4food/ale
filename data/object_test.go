@@ -47,3 +47,27 @@ func TestObjectCaller(t *testing.T) {
 	as.Nil(c1(K("missing")))
 	as.String("defaulted", c1(K("missing"), S("defaulted")))
 }
+
+func TestObjectIterate(t *testing.T) {
+	as := assert.New(t)
+
+	o1 := data.Object{
+		K("second"): S("second value"),
+		K("first"):  S("first value"),
+	}
+	as.Equal(2, len(o1))
+
+	f1, r1, ok := o1.Split()
+	as.True(ok)
+	as.Equal(K("first"), f1.(data.Cons).Car())
+	as.Equal(S("first value"), f1.(data.Cons).Cdr())
+	as.Equal(1, len(r1.(data.Object)))
+
+	f2, r2, ok := r1.Split()
+	as.True(ok)
+	as.Equal(K("second"), f2.(data.Cons).Car())
+	as.Equal(S("second value"), f2.(data.Cons).Cdr())
+
+	_, _, ok = r2.Split()
+	as.False(ok)
+}
