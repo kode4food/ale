@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"sort"
 )
 
 // Object maps values to values and supports the universal design pattern
@@ -20,6 +21,9 @@ const (
 	ErrMapNotPaired  = "map does not contain an even number of elements"
 	ErrValueNotFound = "value not found in object: %s"
 )
+
+// EmptyObject represents an empty Object
+var EmptyObject = Object{}
 
 // NewObject instantiates a new Object instance
 func NewObject(pairs ...Pair) Object {
@@ -93,17 +97,53 @@ func (o Object) CheckArity(argCount int) error {
 
 // First returns the first pair of this Object
 func (o Object) First() Value {
-	return o.toSeq().First()
+	return o.firstFrom(o.sortedKeys())
+}
+
+func (o Object) firstFrom(keys []Value) Value {
+	if len(keys) > 0 {
+		k0 := keys[0]
+		return NewCons(k0, o[k0])
+	}
+	return Nil
 }
 
 // Rest returns the rest of the pairs of this Object
 func (o Object) Rest() Sequence {
-	return o.toSeq().Rest()
+	return o.restFrom(o.sortedKeys())
+}
+
+func (o Object) restFrom(keys []Value) Object {
+	if len(keys) > 1 {
+		rest := make(Object, len(keys)-1)
+		for _, k := range keys[1:] {
+			rest[k] = o[k]
+		}
+		return rest
+	}
+	return EmptyObject
 }
 
 // Split performs a sequencing split of the pairs of this Object
 func (o Object) Split() (Value, Sequence, bool) {
-	return o.toSeq().Split()
+	if len(o) > 0 {
+		keys := o.sortedKeys()
+		first := o.firstFrom(keys)
+		rest := o.restFrom(keys)
+		return first, rest, true
+	}
+	return Nil, EmptyObject, false
+}
+
+func (o Object) sortedKeys() []Value {
+	keys := make([]Value, 0, len(o))
+	for k := range o {
+		keys = append(keys, k)
+	}
+	sort.Slice(keys, func(l, r int) bool {
+		return fmt.Sprintf("%p", keys[l]) < fmt.Sprintf("%p", keys[r])
+	})
+	return keys
 }
 
 // IsEmpty returns whether this Object has no pairs
@@ -116,27 +156,17 @@ func (o Object) Count() int {
 	return len(o)
 }
 
-func (o Object) toSeq() List {
-	var res List = EmptyList
-	for k, v := range o {
-		res = res.Prepend(NewCons(k, v)).(List)
-	}
-	return res
-}
-
 // String converts this Value into a string
 func (o Object) String() string {
 	var buf bytes.Buffer
 	buf.WriteString("{")
-	idx := 0
-	for k, v := range o {
-		if idx > 0 {
+	for i, k := range o.sortedKeys() {
+		if i > 0 {
 			buf.WriteString(" ")
 		}
 		buf.WriteString(MaybeQuoteString(k))
 		buf.WriteString(" ")
-		buf.WriteString(MaybeQuoteString(v))
-		idx++
+		buf.WriteString(MaybeQuoteString(o[k]))
 	}
 	buf.WriteString("}")
 	return buf.String()
