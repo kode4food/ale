@@ -71,3 +71,21 @@ func TestObjectIterate(t *testing.T) {
 	_, _, ok = r2.Split()
 	as.False(ok)
 }
+
+func TestObjectSplitDeterminism(t *testing.T) {
+	as := assert.New(t)
+	o := data.Object{
+		K("z"): I(1024),
+		K("x"): I(5),
+		K("y"): I(99),
+	}
+	f1, r1, ok := o.Split()
+	r1Str := r1.String()
+	as.True(ok)
+	for i := 0; i < 50; i++ {
+		f2, r2, ok := o.Split()
+		as.True(ok)
+		as.Equal(f1, f2)
+		as.Equal(r1Str, r2.String())
+	}
+}
