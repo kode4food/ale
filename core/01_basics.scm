@@ -56,7 +56,7 @@
            (label ,name (macro (lambda ,@body))))))))
 
 (define-macro assert-args
-  [() '()]
+  [() nil]
   [(clause)
      (raise "assert-args clauses must be paired")]
   [clauses
@@ -85,7 +85,7 @@
   `(not (and ,@clauses)))
 
 (define-macro or
-  [() '()]
+  [() nil]
   [(clause) clause]
   [clauses
      `(let [or# ,(clauses 0)]

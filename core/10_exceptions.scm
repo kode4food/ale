@@ -98,7 +98,7 @@
 
                [(seq? block) `(begin ,@block)]
 
-               [:else        '()])))]
+               [:else        nil])))]
 
   (define-macro (try . clauses)
     (try-catch-finally (try-parse clauses))))

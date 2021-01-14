@@ -3,22 +3,22 @@
 (define not is-false)
 
 (define-macro unless
-  [(test)           '()]
-  [(test then)      `(if ,test '() ,then)]
+  [(test)           nil]
+  [(test then)      `(if ,test nil ,then)]
   [(test then else) `(if ,test ,else ,then)])
 
 (define-macro when
-  [(test)         '()]
-  [(test form)    `(if ,test ,form '())]
-  [(test . forms) `(if ,test (begin ,@forms) '())])
+  [(test)         nil]
+  [(test form)    `(if ,test ,form nil)]
+  [(test . forms) `(if ,test (begin ,@forms) nil)])
 
 (define-macro when-not
-  [(test)         '()]
-  [(test form)    `(if ,test '() ,form)]
-  [(test . forms) `(if ,test '() (begin ,@forms))])
+  [(test)         nil]
+  [(test form)    `(if ,test nil ,form)]
+  [(test . forms) `(if ,test nil (begin ,@forms))])
 
 (define-macro cond
-  [() '()]
+  [() nil]
   [clauses
    (let [clause (first clauses)]
      (assert-args
@@ -64,7 +64,7 @@
 
 (define-macro if-let
   [(binding then)
-     `(if-let ,binding ,then '())]
+     `(if-let ,binding ,then nil)]
   [(binding then else)
      (assert-args
        (and (is-vector binding)
