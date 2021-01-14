@@ -24,11 +24,11 @@ func (*nilValue) First() Value {
 }
 
 func (*nilValue) Rest() Sequence {
-	return Nil
+	return EmptyList
 }
 
 func (*nilValue) Split() (Value, Sequence, bool) {
-	return Nil, Nil, false
+	return Nil, EmptyList, false
 }
 
 func (*nilValue) IsEmpty() bool {
@@ -36,7 +36,7 @@ func (*nilValue) IsEmpty() bool {
 }
 
 func (*nilValue) Reverse() Sequence {
-	return Nil
+	return EmptyList
 }
 
 func (*nilValue) Prepend(value Value) Sequence {

@@ -25,7 +25,7 @@
             ,(define-neg func name))))
 
 (define (is-null value)
-  (eq value '()))
+  (eq value nil))
 
 (define (is-zero value)
   (= value 0))

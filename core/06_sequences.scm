@@ -4,11 +4,11 @@
   (if (and (seq? value)
            (!empty? value))
       value
-      '()))
+      nil))
 
 (define (seq! value)
   (if (seq? value)
-      (if (!empty? value) value '())
+      (if (!empty? value) value nil)
       (raise (str "value can't act as a sequence: " value))))
 
 (define (seq->object . colls)

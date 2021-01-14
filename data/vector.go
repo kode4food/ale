@@ -53,9 +53,9 @@ func (v Vector) Split() (Value, Sequence, bool) {
 	if lv > 1 {
 		return v[0], v[1:], true
 	} else if lv == 1 {
-		return v[0], Nil, true
+		return v[0], EmptyVector, true
 	}
-	return Nil, Nil, false
+	return Nil, EmptyVector, false
 }
 
 // Car returns the first element of a Pair
