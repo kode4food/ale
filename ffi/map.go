@@ -22,7 +22,7 @@ func makeWrappedMap(t reflect.Type) Wrapper {
 }
 
 func (m *mapWrapper) Wrap(v reflect.Value) data.Value {
-	out := data.Object{}
+	out := make(data.Object, v.Len())
 	pairs := v.MapRange()
 	for pairs.Next() {
 		k := pairs.Key()
