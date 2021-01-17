@@ -35,9 +35,10 @@ func (s *structWrapper) Wrap(v reflect.Value) data.Value {
 
 func (s *structWrapper) Unwrap(v data.Value) reflect.Value {
 	in := sequence.ToObject(v.(data.Sequence))
-	out := reflect.New(s.typ)
+	out := reflect.New(s.typ).Elem()
 	for k, w := range s.fields {
-		out.FieldByName(k).Set(w.Unwrap(in[data.Name(k)]))
+		v := w.Unwrap(in[data.Name(k)])
+		out.FieldByName(k).Set(v)
 	}
 	return out
 }
