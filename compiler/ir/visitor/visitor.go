@@ -22,16 +22,16 @@ func DepthFirst(root Node, visitor Visitor) {
 }
 
 func depthFirst(node Node, visitor Visitor) {
-	switch typed := node.(type) {
+	switch node := node.(type) {
 	case Instructions:
-		visitor.Instructions(typed)
+		visitor.Instructions(node)
 	case Branches:
-		visitor.EnterBranches(typed)
-		depthFirst(typed.Epilogue(), visitor)
-		depthFirst(typed.ThenBranch(), visitor)
-		depthFirst(typed.ElseBranch(), visitor)
-		depthFirst(typed.Prologue(), visitor)
-		visitor.ExitBranches(typed)
+		visitor.EnterBranches(node)
+		depthFirst(node.Epilogue(), visitor)
+		depthFirst(node.ThenBranch(), visitor)
+		depthFirst(node.ElseBranch(), visitor)
+		depthFirst(node.Prologue(), visitor)
+		visitor.ExitBranches(node)
 	default:
 		panic(errUnexpectedNodeType)
 	}
