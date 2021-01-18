@@ -28,7 +28,7 @@ func makeWrappedStruct(t reflect.Type) Wrapper {
 func (s *structWrapper) Wrap(v reflect.Value) data.Value {
 	out := make(data.Object, len(s.fields))
 	for k, w := range s.fields {
-		out[data.Name(k)] = w.Wrap(v.FieldByName(k))
+		out[data.Keyword(k)] = w.Wrap(v.FieldByName(k))
 	}
 	return out
 }
@@ -37,7 +37,7 @@ func (s *structWrapper) Unwrap(v data.Value) reflect.Value {
 	in := sequence.ToObject(v.(data.Sequence))
 	out := reflect.New(s.typ).Elem()
 	for k, w := range s.fields {
-		v := w.Unwrap(in[data.Name(k)])
+		v := w.Unwrap(in[data.Keyword(k)])
 		out.FieldByName(k).Set(v)
 	}
 	return out
