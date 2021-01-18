@@ -20,8 +20,8 @@ func TestStructWrap(t *testing.T) {
 		Name:       "California",
 		Population: 40,
 	}).(data.Object)
-	as.Equal(S("California"), m[N("Name")])
-	as.Equal(I(40), m[N("Population")])
+	as.Equal(S("California"), m[K("Name")])
+	as.Equal(I(40), m[K("Population")])
 }
 
 func TestStructUnwrap(t *testing.T) {
