@@ -146,16 +146,16 @@ func findLabel(code isa.Instructions, lbl isa.Index) (int, *isa.Instruction) {
 
 func indentedString(lvl int, n Node) string {
 	var buf bytes.Buffer
-	switch typed := n.(type) {
+	switch n := n.(type) {
 	case Branches:
-		buf.WriteString(indentedString(lvl, typed.Prologue()))
-		buf.WriteString(indentedString(lvl+1, typed.ThenBranch()))
+		buf.WriteString(indentedString(lvl, n.Prologue()))
+		buf.WriteString(indentedString(lvl+1, n.ThenBranch()))
 		buf.WriteString(strings.Repeat("  ", lvl))
 		buf.WriteString("else:\n")
-		buf.WriteString(indentedString(lvl+1, typed.ElseBranch()))
-		buf.WriteString(indentedString(lvl, typed.Epilogue()))
+		buf.WriteString(indentedString(lvl+1, n.ElseBranch()))
+		buf.WriteString(indentedString(lvl, n.Epilogue()))
 	case Instructions:
-		for _, i := range typed.Code() {
+		for _, i := range n.Code() {
 			buf.WriteString(strings.Repeat("  ", lvl))
 			buf.WriteString(i.String())
 			buf.WriteString("\n")

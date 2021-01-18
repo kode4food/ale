@@ -192,11 +192,11 @@ func toError(i interface{}) error {
 	if i == nil {
 		return nil
 	}
-	switch typed := i.(type) {
+	switch i := i.(type) {
 	case error:
-		return typed
+		return i
 	case data.Value:
-		return errors.New(typed.String())
+		return errors.New(i.String())
 	default:
 		panic(fmt.Errorf(errNonStandardError, i))
 	}

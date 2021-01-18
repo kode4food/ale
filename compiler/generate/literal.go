@@ -8,13 +8,13 @@ import (
 
 // Literal encodes a literal (constant) value
 func Literal(e encoder.Encoder, v data.Value) {
-	switch typed := v.(type) {
+	switch v := v.(type) {
 	case data.Null:
 		Nil(e)
 	case data.Integer, data.Float:
-		Number(e, typed)
+		Number(e, v)
 	case data.Bool:
-		Bool(e, typed)
+		Bool(e, v)
 	default:
 		index := e.AddConstant(v)
 		e.Emit(isa.Const, index)
