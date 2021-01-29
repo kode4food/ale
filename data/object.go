@@ -82,17 +82,17 @@ func (o Object) Copy() Object {
 	return newProps
 }
 
-// Applicative turns Object into a Caller
+// Call turns Object into a Function
 func (o Object) Call(args ...Value) Value {
 	return mappedCall(o, args)
 }
 
-// Convention returns the function's calling convention
+// Convention returns the Function's calling convention
 func (o Object) Convention() Convention {
 	return ApplicativeCall
 }
 
-// CheckArity performs a compile-time arity check for the function
+// CheckArity performs a compile-time arity check for the Function
 func (o Object) CheckArity(argCount int) error {
 	return checkRangedArity(1, 2, argCount)
 }
@@ -156,6 +156,23 @@ func (o Object) IsEmpty() bool {
 // Count returns the number of pairs in this Object
 func (o Object) Count() int {
 	return len(o)
+}
+
+// Equal compares this Object to another for equality
+func (o Object) Equal(v Value) bool {
+	if ro, ok := v.(Object); ok {
+		if len(o) != len(ro) {
+			return false
+		}
+		for leftKey, leftVal := range o {
+			rightVal, ok := ro[leftKey]
+			if !ok || !leftVal.Equal(rightVal) {
+				return false
+			}
+		}
+		return true
+	}
+	return false
 }
 
 // String converts this Value into a string

@@ -123,6 +123,19 @@ func (l *list) CheckArity(argCount int) error {
 	return checkRangedArity(1, 2, argCount)
 }
 
+func (l *list) Equal(v Value) bool {
+	if v, ok := v.(*list); ok {
+		if l == v {
+			return true
+		}
+		if l.count != v.count || !l.first.Equal(v.first) {
+			return false
+		}
+		return l.rest.Equal(v.rest)
+	}
+	return false
+}
+
 // String converts this List to a string
 func (l *list) String() string {
 	return MakeSequenceStr(l)

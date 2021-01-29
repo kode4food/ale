@@ -53,6 +53,13 @@ func (w *wrappedClosingWriter) Close() {
 	w.closer.Close()
 }
 
+func (w *wrappedWriter) Equal(v data.Value) bool {
+	if v, ok := v.(*wrappedWriter); ok {
+		return w == v
+	}
+	return false
+}
+
 func (w *wrappedWriter) String() string {
 	return data.DumpString(w)
 }

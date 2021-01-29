@@ -150,6 +150,14 @@ func matchToken(src string) (*Token, string) {
 	panic(errors.New(errUnmatchedState))
 }
 
+// Equal compares this Token to another for equality
+func (t *Token) Equal(v data.Value) bool {
+	if v, ok := v.(*Token); ok {
+		return t.Type == v.Type && t.Value.Equal(v.Value)
+	}
+	return false
+}
+
 // String converts this Value into a string
 func (t *Token) String() string {
 	return data.NewVector(data.Integer(t.Type), t.Value).String()

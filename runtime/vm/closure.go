@@ -14,6 +14,8 @@ const (
 	errUnknownOpcode = "unknown opcode: %s"
 )
 
+const closureType = "%s-closure"
+
 type closure struct {
 	lambda *Lambda
 	values data.Values
@@ -26,7 +28,7 @@ func newClosure(lambda *Lambda, values data.Values) *closure {
 	}
 }
 
-// Call turns closure into a Caller
+// Call turns closure into a Function
 func (c *closure) Call(args ...data.Value) data.Value {
 	current := c
 	lambda := current.lambda
@@ -389,8 +391,15 @@ func (c *closure) Convention() data.Convention {
 
 // Type makes closure a typed value
 func (c *closure) Type() data.Name {
-	res := fmt.Sprintf("%s-closure", c.Convention())
+	res := fmt.Sprintf(closureType, c.Convention())
 	return data.Name(res)
+}
+
+func (c *closure) Equal(v data.Value) bool {
+	if v, ok := v.(*closure); ok {
+		return c == v
+	}
+	return false
 }
 
 func (c *closure) String() string {

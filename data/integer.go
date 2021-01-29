@@ -135,6 +135,14 @@ func (Integer) IsNegInf() bool {
 	return false
 }
 
+// Equal compares this Integer to another for equality
+func (l Integer) Equal(r Value) bool {
+	if r, ok := r.(Integer); ok {
+		return l == r
+	}
+	return false
+}
+
 // String converts this Integer to a string
 func (l Integer) String() string {
 	return fmt.Sprintf("%d", l)
@@ -237,6 +245,16 @@ func (*BigInt) IsPosInf() bool {
 
 // IsNegInf tells you that this BigInt is not negative infinity
 func (*BigInt) IsNegInf() bool {
+	return false
+}
+
+// Equal compares this BigInt to another for equality
+func (l *BigInt) Equal(r Value) bool {
+	if r, ok := r.(*BigInt); ok {
+		lb := (*big.Int)(l)
+		rb := (*big.Int)(r)
+		return lb.Cmp(rb) == 0
+	}
 	return false
 }
 

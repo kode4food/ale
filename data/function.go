@@ -90,6 +90,13 @@ func (f *function) Type() Name {
 	return Name(f.conv.String())
 }
 
+func (f *function) Equal(v Value) bool {
+	if v, ok := v.(*function); ok {
+		return f == v
+	}
+	return false
+}
+
 func (f *function) String() string {
 	return DumpString(f)
 }

@@ -51,6 +51,16 @@ func (*nilValue) Count() int {
 	return 0
 }
 
+func (*nilValue) Equal(v Value) bool {
+	if v == nil {
+		return true
+	}
+	if _, ok := v.(*nilValue); ok {
+		return true
+	}
+	return false
+}
+
 func (*nilValue) String() string {
 	return "()"
 }

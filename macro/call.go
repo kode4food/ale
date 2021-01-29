@@ -13,6 +13,11 @@ func (Call) Type() data.Name {
 	return "macro"
 }
 
+// Equal compares this Call to another for equality
+func (Call) Equal(_ data.Value) bool {
+	return false
+}
+
 func (c Call) String() string {
 	return data.DumpString(c)
 }

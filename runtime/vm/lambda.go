@@ -8,6 +8,8 @@ import (
 	"github.com/kode4food/ale/runtime/isa"
 )
 
+const lambdaType = "lambda"
+
 // Lambda encapsulates the initial environment of a virtual machine
 type Lambda struct {
 	Globals      env.Namespace
@@ -39,12 +41,27 @@ func (l *Lambda) Call(values ...data.Value) data.Value {
 	return newClosure(l, values)
 }
 
+// CheckArity performs a compile-time arity check for the Function
 func (l *Lambda) CheckArity(_ int) error {
 	return nil
 }
 
+// Convention returns the Function's calling convention
 func (l *Lambda) Convention() data.Convention {
 	return data.NormalCall
+}
+
+// Type makes Lambda a typed value
+func (l *Lambda) Type() data.Name {
+	return lambdaType
+}
+
+// Equal compares this Lambda to another for equality
+func (l *Lambda) Equal(v data.Value) bool {
+	if v, ok := v.(*Lambda); ok {
+		return l == v
+	}
+	return false
 }
 
 func (l *Lambda) String() string {

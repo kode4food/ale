@@ -73,6 +73,13 @@ func (p *promise) Type() data.Name {
 	return "promise"
 }
 
+func (p *promise) Equal(v data.Value) bool {
+	if v, ok := v.(*promise); ok {
+		return p == v
+	}
+	return false
+}
+
 func (p *promise) String() string {
 	return data.DumpString(p)
 }

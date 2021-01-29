@@ -12,6 +12,7 @@ type (
 	// Value is the generic interface for all values
 	Value interface {
 		fmt.Stringer
+		Equal(Value) bool
 	}
 
 	// Values represent a set of Values
@@ -63,18 +64,30 @@ const (
 	FalseLiteral = "#f"
 )
 
-func (v Values) String() string {
-	return DumpString(v)
-}
-
 // Name makes Name Named
 func (n Name) Name() Name {
 	return n
 }
 
+// Equal compares this Name to another for equality
+func (n Name) Equal(v Value) bool {
+	if v, ok := v.(Name); ok {
+		return n == v
+	}
+	return false
+}
+
 // String converts this Value into a string
 func (n Name) String() string {
 	return string(n)
+}
+
+// Equal compares this Bool to another for equality
+func (b Bool) Equal(v Value) bool {
+	if v, ok := v.(Bool); ok {
+		return b == v
+	}
+	return false
 }
 
 // String converts this Value into a string

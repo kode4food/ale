@@ -107,6 +107,13 @@ func (e *channelEmitter) Type() data.Name {
 	return "channel-emitter"
 }
 
+func (e *channelEmitter) Equal(v data.Value) bool {
+	if v, ok := v.(*channelEmitter); ok {
+		return e == v
+	}
+	return false
+}
+
 func (e *channelEmitter) String() string {
 	return data.DumpString(e)
 }
@@ -173,6 +180,13 @@ func (c *channelSequence) Prepend(v data.Value) data.Sequence {
 
 func (c *channelSequence) Type() data.Name {
 	return "channel-sequence"
+}
+
+func (c *channelSequence) Equal(v data.Value) bool {
+	if v, ok := v.(*channelSequence); ok {
+		return c == v
+	}
+	return false
 }
 
 func (c *channelSequence) String() string {

@@ -179,7 +179,11 @@ func (r *REPL) outputError(err error) {
 	fmt.Println(res)
 }
 
-func (s *sentinel) String() string {
+func (*sentinel) Equal(_ data.Value) bool {
+	return false
+}
+
+func (*sentinel) String() string {
 	return ""
 }
 
