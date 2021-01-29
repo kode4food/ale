@@ -81,9 +81,9 @@ func (s *stackSizes) calculateBranch(n visitor.Node) *stackSizes {
 	return res
 }
 
-func getStackChange(inst *isa.Instruction, count int) int {
-	if count > 0 {
-		return int(inst.Args[count-1])
+func getStackChange(inst *isa.Instruction, countIndex int) int {
+	if countIndex > 0 {
+		return int(inst.Args[countIndex-1])
 	}
 	return 0
 }

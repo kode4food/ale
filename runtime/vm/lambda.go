@@ -35,10 +35,16 @@ func LambdaFromEncoder(e encoder.Encoder) *Lambda {
 // Call allows a VM Lambda to be called for the purpose
 // of instantiating a closure. This calling interface is used
 // only by the compiler.
-func (l *Lambda) Call() data.Call {
-	return func(values ...data.Value) data.Value {
-		return newClosure(l, values)
-	}
+func (l *Lambda) Call(values ...data.Value) data.Value {
+	return newClosure(l, values)
+}
+
+func (l *Lambda) CheckArity(_ int) error {
+	return nil
+}
+
+func (l *Lambda) Convention() data.Convention {
+	return data.NormalCall
 }
 
 func (l *Lambda) String() string {

@@ -16,7 +16,6 @@ import (
 	"github.com/chzyer/readline"
 	"github.com/kode4food/ale"
 	"github.com/kode4food/ale/cmd/ale/docstring"
-	"github.com/kode4food/ale/compiler/arity"
 	"github.com/kode4food/ale/core/bootstrap"
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/env"
@@ -212,7 +211,7 @@ func isRecoverable(err error) bool {
 }
 
 func use(args ...data.Value) data.Value {
-	arity.AssertFixed(1, len(args))
+	data.AssertFixed(1, len(args))
 	n := args[0].(data.LocalSymbol).Name()
 	old := ns
 	ns = ns.Environment().GetQualified(n)
@@ -292,14 +291,12 @@ func GetNS() env.Namespace {
 }
 
 func registerREPLBuiltIns() {
-	zeroArgChecker := arity.MakeFixedChecker(0)
-	singleArgChecker := arity.MakeFixedChecker(1)
-	registerBuiltIn("quit", data.MakeApplicative(shutdown, zeroArgChecker))
-	registerBuiltIn("debug", data.MakeApplicative(debugInfo, zeroArgChecker))
-	registerBuiltIn("cls", data.MakeApplicative(cls, zeroArgChecker))
-	registerBuiltIn("help", data.MakeApplicative(help, zeroArgChecker))
-	registerBuiltIn("use", data.MakeNormal(use, singleArgChecker))
-	registerBuiltIn("doc", data.MakeNormal(doc, singleArgChecker))
+	registerBuiltIn("quit", data.Applicative(shutdown, 0))
+	registerBuiltIn("debug", data.Applicative(debugInfo, 0))
+	registerBuiltIn("cls", data.Applicative(cls, 0))
+	registerBuiltIn("help", data.Applicative(help, 0))
+	registerBuiltIn("use", data.Normal(use, 1))
+	registerBuiltIn("doc", data.Normal(doc, 1))
 }
 
 func getScreenWidth() int {

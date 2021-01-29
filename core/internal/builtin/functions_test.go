@@ -24,20 +24,15 @@ func typeErr(concrete, expected string) error {
 	return fmt.Errorf(err, concrete, expected)
 }
 
-func makeCall(v data.Value) data.Call {
-	return v.(data.Caller).Call()
-}
-
 func TestApply(t *testing.T) {
 	as := assert.New(t)
 
-	vCall := data.MakeApplicative(builtin.Vector, nil)
-	as.True(builtin.IsApply(vCall))
-	as.False(builtin.IsApply(S("55")))
+	as.True(builtin.IsApply.Call(builtin.Vector))
+	as.False(builtin.IsApply.Call(S("55")))
 
-	v1 := builtin.Vector(S("4"), S("5"), S("6"))
-	v2 := builtin.Apply(vCall, S("1"), S("2"), S("3"), v1)
-	v3 := builtin.Apply(vCall, v1)
+	v1 := builtin.Vector.Call(S("4"), S("5"), S("6"))
+	v2 := builtin.Apply.Call(builtin.Vector, S("1"), S("2"), S("3"), v1)
+	v3 := builtin.Apply.Call(builtin.Vector, v1)
 
 	as.String(`["4" "5" "6"]`, v1)
 	as.String(`["1" "2" "3" "4" "5" "6"]`, v2)
@@ -62,14 +57,13 @@ func TestFunctionPredicates(t *testing.T) {
 	e := bootstrap.DevNullEnvironment()
 	bootstrap.Into(e)
 
-	f1 := data.MakeApplicative(builtin.Str, nil)
-	as.False(builtin.IsSpecial(f1))
-	as.True(builtin.IsApply(f1))
+	as.False(builtin.IsSpecial.Call(builtin.Str))
+	as.True(builtin.IsApply.Call(builtin.Str))
 
 	i, ok := e.GetRoot().Resolve("if")
 	as.True(ok && i.IsBound())
-	as.True(builtin.IsSpecial(i.Value()))
-	as.False(builtin.IsApply(i.Value()))
+	as.True(builtin.IsSpecial.Call(i.Value()))
+	as.False(builtin.IsApply.Call(i.Value()))
 }
 
 func TestFunctionPredicatesEval(t *testing.T) {
@@ -111,7 +105,7 @@ func TestApplyEval(t *testing.T) {
 			[1 2 3])
 	`, F(6))
 
-	e := interfaceErr("data.Integer", "data.Caller")
+	e := interfaceErr("data.Integer", "data.Function")
 	as.PanicWith(`(apply 32 [1 2 3])`, e)
 }
 

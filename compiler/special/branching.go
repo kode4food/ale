@@ -1,7 +1,6 @@
 package special
 
 import (
-	"github.com/kode4food/ale/compiler/arity"
 	"github.com/kode4food/ale/compiler/encoder"
 	"github.com/kode4food/ale/compiler/generate"
 	"github.com/kode4food/ale/data"
@@ -10,7 +9,7 @@ import (
 
 // If encodes an (if predicate consequent alternative) form
 func If(e encoder.Encoder, args ...data.Value) {
-	al := arity.AssertRanged(2, 3, len(args))
+	al := data.AssertRanged(2, 3, len(args))
 	generate.Branch(e,
 		func() {
 			generate.Value(e, args[0])

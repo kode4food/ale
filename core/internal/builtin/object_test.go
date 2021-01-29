@@ -13,17 +13,17 @@ import (
 func TestAssoc(t *testing.T) {
 	as := assert.New(t)
 
-	a1 := builtin.Object(K("hello"), S("foo"))
+	a1 := builtin.Object.Call(K("hello"), S("foo"))
 	m1 := a1.(data.Mapped)
 	v1, ok := m1.Get(K("hello"))
 	as.True(ok)
 	as.String("foo", v1)
 
-	as.True(builtin.IsObject(a1))
-	as.False(builtin.IsObject(I(99)))
+	as.True(builtin.IsObject.Call(a1))
+	as.False(builtin.IsObject.Call(I(99)))
 
-	as.True(builtin.IsMapped(a1))
-	as.False(builtin.IsMapped(I(99)))
+	as.True(builtin.IsMapped.Call(a1))
+	as.False(builtin.IsMapped.Call(I(99)))
 }
 
 func TestObjectEval(t *testing.T) {

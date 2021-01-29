@@ -21,22 +21,30 @@ func makeWrappedMap(t reflect.Type) Wrapper {
 	}
 }
 
-func (m *mapWrapper) Wrap(v reflect.Value) data.Value {
+func (m *mapWrapper) Wrap(c *WrapContext, v reflect.Value) data.Value {
+	if r, ok := c.Get(v); ok {
+		return r
+	}
 	out := make(data.Object, v.Len())
+	c.Put(v, out)
 	pairs := v.MapRange()
 	for pairs.Next() {
 		k := pairs.Key()
 		v := pairs.Value()
-		out[m.key.Wrap(k)] = m.value.Wrap(v)
+		out[m.key.Wrap(c, k)] = m.value.Wrap(c, v)
 	}
 	return out
 }
 
-func (m *mapWrapper) Unwrap(v data.Value) reflect.Value {
+func (m *mapWrapper) Unwrap(c *UnwrapContext, v data.Value) reflect.Value {
+	if r, ok := c.Get(v); ok {
+		return r
+	}
 	in := sequence.ToObject(v.(data.Sequence))
 	out := reflect.MakeMapWithSize(m.typ, len(in))
+	c.Put(v, out)
 	for k, v := range in {
-		out.SetMapIndex(m.key.Unwrap(k), m.value.Unwrap(v))
+		out.SetMapIndex(m.key.Unwrap(c, k), m.value.Unwrap(c, v))
 	}
 	return out
 }

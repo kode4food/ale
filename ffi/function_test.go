@@ -1,6 +1,7 @@
 package ffi_test
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/kode4food/ale/data"
@@ -9,40 +10,36 @@ import (
 	. "github.com/kode4food/ale/internal/assert/helpers"
 )
 
-func makeCall(v data.Value) data.Call {
-	return v.(data.Caller).Call()
-}
-
 func TestVoidResult(t *testing.T) {
 	var b bool
 	as := assert.New(t)
-	f := makeCall(ffi.Wrap(func(i int) {
+	f := ffi.Wrap(func(i int) {
 		b = i == 37
-	}))
+	}).(data.Function)
 	as.NotNil(f)
 	as.False(b)
-	r := f(I(37))
+	r := f.Call(I(37))
 	as.Nil(r)
 	as.True(b)
 }
 
 func TestSingleResult(t *testing.T) {
 	as := assert.New(t)
-	f := makeCall(ffi.Wrap(func(i int) int {
+	f := ffi.Wrap(func(i int) int {
 		return i * 2
-	}))
+	}).(data.Function)
 	as.NotNil(f)
-	r := f(I(5))
+	r := f.Call(I(5))
 	as.Equal(I(10), r)
 }
 
 func TestVectorResult(t *testing.T) {
 	as := assert.New(t)
-	f := makeCall(ffi.Wrap(func(i int, s string) (int, string) {
+	f := ffi.Wrap(func(i int, s string) (int, string) {
 		return i * 2, s + "-modified"
-	}))
+	}).(data.Function)
 	as.NotNil(f)
-	r := f(I(4), S("hello")).(data.Vector)
+	r := f.Call(I(4), S("hello")).(data.Vector)
 	as.Equal(I(8), r[0])
 	as.Equal(S("hello-modified"), r[1])
 }
@@ -53,13 +50,14 @@ func TestFuncUnwrap(t *testing.T) {
 	mark := func() {
 		set = true
 	}
-	f := makeCall(ffi.Wrap(func(f func()) func() {
+	f := ffi.Wrap(func(f func()) func() {
 		f()
 		as.True(set)
 		return f
-	}))
+	}).(data.Function)
 	inFunc := ffi.Wrap(mark)
-	res := f(inFunc)
+	res := f.Call(inFunc)
 	as.NotNil(res)
-	as.Contains(":type wrapped-func", res)
+	fmt.Println(res)
+	as.Contains(":type applicative", res)
 }

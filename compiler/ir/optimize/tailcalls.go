@@ -6,7 +6,6 @@ import (
 )
 
 var tailCallPattern = visitor.Pattern{
-	{isa.MakeCall},
 	{isa.Call, isa.Call0, isa.Call1},
 	{isa.Return},
 }
@@ -18,11 +17,11 @@ func tailCalls(root visitor.Node) visitor.Node {
 
 func tailCallMapper(i isa.Instructions) isa.Instructions {
 	var argCount isa.Word
-	switch i[1].Opcode {
+	switch i[0].Opcode {
 	case isa.Call1:
 		argCount = 1
 	case isa.Call:
-		argCount = i[1].Args[0]
+		argCount = i[0].Args[0]
 	}
 	return isa.Instructions{
 		isa.New(isa.TailCall, argCount),

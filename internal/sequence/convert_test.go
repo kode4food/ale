@@ -33,9 +33,9 @@ func TestSequenceConversions(t *testing.T) {
 	as.Identical(s1, s2)
 }
 
-func alwaysTrue(_ ...data.Value) data.Value {
+var alwaysTrue = data.Applicative(func(_ ...data.Value) data.Value {
 	return data.True
-}
+}, 1)
 
 func TestUncountedConversions(t *testing.T) {
 	as := assert.New(t)
@@ -59,7 +59,7 @@ func TestUncountedConversions(t *testing.T) {
 	as.String(`hellothere["hello" "there"]`, s1)
 }
 
-func TestAssocsequenceError(t *testing.T) {
+func TestAssocSequenceError(t *testing.T) {
 	as := assert.New(t)
 
 	v1 := V(K("boom"))
@@ -67,7 +67,7 @@ func TestAssocsequenceError(t *testing.T) {
 	sequence.ToObject(v1)
 }
 
-func TestUncountedAssocsequenceError(t *testing.T) {
+func TestUncountedAssocSequenceError(t *testing.T) {
 	as := assert.New(t)
 
 	v1 := sequence.Filter(V(K("boom")), alwaysTrue)

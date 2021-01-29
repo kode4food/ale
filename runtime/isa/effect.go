@@ -9,13 +9,13 @@ const (
 
 // Effect captures how an instruction affects the stack and PC
 type Effect struct {
-	Size   int
-	Pop    int
-	Push   int
-	DPop   int
-	DPush  int
-	Ignore bool
-	Exit   bool
+	Size   int  // Fixed size of the encoded Instruction
+	Pop    int  // Fixed number of items to be popped from the stack
+	Push   int  // Fixed number of items to be pushed onto the stack
+	DPop   int  // Dynamic number of items to be popped (arg number)
+	DPush  int  // Dynamic number of items to be pushed (arg number)
+	Ignore bool // Skip this instruction (ex: Labels and NoOps)
+	Exit   bool // Results in a termination of the VM
 }
 
 // Effects is a lookup table of instruction effects
@@ -44,7 +44,6 @@ var Effects = map[Opcode]*Effect{
 	Load:         {Size: 2, Push: 1},
 	Lt:           {Size: 1, Pop: 2, Push: 1},
 	Lte:          {Size: 1, Pop: 2, Push: 1},
-	MakeCall:     {Size: 1, Pop: 1, Push: 1},
 	MakeTruthy:   {Size: 1, Pop: 1, Push: 1},
 	Mod:          {Size: 1, Pop: 2, Push: 1},
 	Mul:          {Size: 1, Pop: 2, Push: 1},

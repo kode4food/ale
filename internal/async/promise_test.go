@@ -12,19 +12,19 @@ import (
 
 func TestPromiseCaller(t *testing.T) {
 	as := assert.New(t)
-	p1 := async.NewPromise(func(_ ...data.Value) data.Value {
+	p1 := async.NewPromise(data.Applicative(func(_ ...data.Value) data.Value {
 		return S("hello")
-	})
-	c1 := p1.(data.Caller).Call()
-	as.String("hello", c1())
+	}, 0))
+	c1 := p1.(data.Function)
+	as.String("hello", c1.Call())
 }
 
 func TestPromiseFailure(t *testing.T) {
 	as := assert.New(t)
-	p1 := async.NewPromise(func(_ ...data.Value) data.Value {
+	p1 := async.NewPromise(data.Applicative(func(_ ...data.Value) data.Value {
 		panic(errors.New("explosion"))
-	})
-	c1 := p1.(data.Caller).Call()
+	}, 0))
+	c1 := p1.(data.Function)
 	defer as.ExpectPanic("explosion")
-	c1()
+	c1.Call()
 }

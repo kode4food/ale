@@ -82,9 +82,9 @@ func (o Object) Copy() Object {
 	return newProps
 }
 
-// Call turns Object into a callable type
-func (o Object) Call() Call {
-	return makeMappedCall(o)
+// Applicative turns Object into a Caller
+func (o Object) Call(args ...Value) Value {
+	return mappedCall(o, args)
 }
 
 // Convention returns the function's calling convention

@@ -7,26 +7,26 @@ import (
 )
 
 // Apply performs a parameterized function call
-func Apply(args ...data.Value) data.Value {
-	fn := args[0].(data.Caller).Call()
+var Apply = data.Applicative(func(args ...data.Value) data.Value {
+	fn := args[0].(data.Function)
 	al := len(args)
 	if al == 2 {
-		return fn(sequence.ToValues(args[1].(data.Sequence))...)
+		return fn.Call(sequence.ToValues(args[1].(data.Sequence))...)
 	}
 	last := al - 1
 	ls := sequence.ToValues(args[last].(data.Sequence))
 	prependedArgs := append(args[1:last], ls...)
-	return fn(prependedArgs...)
-}
+	return fn.Call(prependedArgs...)
+}, 2, data.OrMore)
 
 // IsApply tests whether a value is callable
-func IsApply(args ...data.Value) data.Value {
-	_, ok := args[0].(data.Caller)
+var IsApply = data.Applicative(func(args ...data.Value) data.Value {
+	_, ok := args[0].(data.Function)
 	return data.Bool(ok)
-}
+}, 1)
 
 // IsSpecial tests whether not a function is a special form
-func IsSpecial(args ...data.Value) data.Value {
+var IsSpecial = data.Applicative(func(args ...data.Value) data.Value {
 	_, ok := args[0].(encoder.Call)
 	return data.Bool(ok)
-}
+}, 1)

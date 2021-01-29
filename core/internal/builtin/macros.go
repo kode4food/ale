@@ -10,34 +10,27 @@ import (
 
 // Error messages
 const (
-	errCallableRequired = "argument must be callable: %s"
+	errFunctionRequired = "argument must be a function: %s"
 )
 
 // Macro converts a function into a macro
-func Macro(args ...data.Value) data.Value {
-	switch arg0 := args[0].(type) {
+var Macro = data.Applicative(func(args ...data.Value) data.Value {
+	switch body := args[0].(type) {
 	case data.Function:
-		body := arg0.Call()
 		wrapper := func(_ env.Namespace, args ...data.Value) data.Value {
-			if err := arg0.CheckArity(len(args)); err != nil {
+			if err := body.CheckArity(len(args)); err != nil {
 				panic(err)
 			}
-			return body(args...)
-		}
-		return macro.Call(wrapper)
-	case data.Caller:
-		body := arg0.Call()
-		wrapper := func(_ env.Namespace, args ...data.Value) data.Value {
-			return body(args...)
+			return body.Call(args...)
 		}
 		return macro.Call(wrapper)
 	default:
-		panic(fmt.Errorf(errCallableRequired, args[0]))
+		panic(fmt.Errorf(errFunctionRequired, args[0]))
 	}
-}
+}, 1)
 
 // IsMacro returns whether the argument is a macro
-func IsMacro(args ...data.Value) data.Value {
+var IsMacro = data.Applicative(func(args ...data.Value) data.Value {
 	_, ok := args[0].(macro.Call)
 	return data.Bool(ok)
-}
+}, 1)

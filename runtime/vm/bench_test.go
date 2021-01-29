@@ -91,7 +91,7 @@ var bCode = makeCode([]isa.Coder{
 func BenchmarkVMCalls(b *testing.B) {
 	var res data.Value
 	for n := 0; n < b.N; n++ {
-		res = bCode()
+		res = bCode.Call()
 	}
 	bValue = res
 }

@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/kode4food/ale/compiler/arity"
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/env"
 )
@@ -34,7 +33,7 @@ var (
 
 // SyntaxQuote performs syntax quoting on the provided value
 func SyntaxQuote(ns env.Namespace, args ...data.Value) data.Value {
-	arity.AssertFixed(1, len(args))
+	data.AssertFixed(1, len(args))
 	value := args[0]
 	sc := &syntaxEnv{
 		namespace: ns,

@@ -37,12 +37,12 @@ func Value(e encoder.Encoder, v data.Value) {
 func Pair(e encoder.Encoder, c data.Pair) {
 	f := resolveBuiltIn(e, consSym)
 	args := data.Values{c.Car(), c.Cdr()}
-	callApplicative(e, f.Call(), args)
+	callApplicative(e, f, args)
 }
 
-func resolveBuiltIn(e encoder.Encoder, sym data.Symbol) data.Caller {
+func resolveBuiltIn(e encoder.Encoder, sym data.Symbol) data.Function {
 	ge := e.Globals().Environment()
 	root := ge.GetRoot()
 	res := env.MustResolveValue(root, sym)
-	return res.(data.Caller)
+	return res.(data.Function)
 }

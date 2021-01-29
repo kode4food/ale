@@ -26,13 +26,7 @@ func (e *encoder) AddConstant(val data.Value) isa.Index {
 }
 
 func (e *encoder) findConstant(val data.Value) (int, bool) {
-	if _, ok := val.(data.Call); ok {
-		return -1, false
-	}
 	for i, c := range e.constants {
-		if _, ok := c.(data.Call); ok {
-			continue
-		}
 		if c == val || reflect.DeepEqual(c, val) {
 			return i, true
 		}

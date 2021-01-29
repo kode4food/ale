@@ -91,9 +91,9 @@ func (v Vector) Reverse() Sequence {
 	return res
 }
 
-// Call turns Vector into a callable type
-func (v Vector) Call() Call {
-	return makeIndexedCall(v)
+// Applicative turns Vector into a Caller
+func (v Vector) Call(args ...Value) Value {
+	return indexedCall(v, args)
 }
 
 // Convention returns the function's calling convention

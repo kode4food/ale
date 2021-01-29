@@ -12,37 +12,37 @@ const (
 )
 
 // First returns the first value in the sequence
-func First(args ...data.Value) data.Value {
+var First = data.Applicative(func(args ...data.Value) data.Value {
 	return args[0].(data.Sequence).First()
-}
+}, 1)
 
 // Rest returns the sequence elements after the first value
-func Rest(args ...data.Value) data.Value {
+var Rest = data.Applicative(func(args ...data.Value) data.Value {
 	return args[0].(data.Sequence).Rest()
-}
+}, 1)
 
 // Append adds a value to the end of the provided Appender
-func Append(args ...data.Value) data.Value {
+var Append = data.Applicative(func(args ...data.Value) data.Value {
 	a := args[0].(data.Appender)
 	s := args[1]
 	return a.Append(s)
-}
+}, 2)
 
 // Reverse returns a reversed copy of a Sequence
-func Reverse(args ...data.Value) data.Value {
+var Reverse = data.Applicative(func(args ...data.Value) data.Value {
 	r := args[0].(data.Reverser)
 	return r.Reverse()
-}
+}, 1)
 
 // Length returns the element count of the provided sequence
-func Length(args ...data.Value) data.Value {
+var Length = data.Applicative(func(args ...data.Value) data.Value {
 	s := args[0].(data.CountedSequence)
 	l := s.Count()
 	return data.Integer(l)
-}
+}, 1)
 
 // Nth returns the nth element of the provided sequence or a default
-func Nth(args ...data.Value) data.Value {
+var Nth = data.Applicative(func(args ...data.Value) data.Value {
 	s := args[0].(data.Indexed)
 	i := int(args[1].(data.Integer))
 	if res, ok := s.ElementAt(i); ok {
@@ -52,41 +52,41 @@ func Nth(args ...data.Value) data.Value {
 		return args[2]
 	}
 	panic(errors.New(errIndexOutOfBounds))
-}
+}, 2, 3)
 
 // Get returns a value by key from the provided mapped sequence
-func Get(args ...data.Value) data.Value {
+var Get = data.Applicative(func(args ...data.Value) data.Value {
 	s := args[0].(data.Mapped)
 	res, _ := s.Get(args[1])
 	return res
-}
+}, 2)
 
 // IsSeq returns whether the provided value is a sequence
-func IsSeq(args ...data.Value) data.Value {
+var IsSeq = data.Applicative(func(args ...data.Value) data.Value {
 	_, ok := args[0].(data.Sequence)
 	return data.Bool(ok)
-}
+}, 1)
 
 // IsEmpty returns whether the provided sequence is empty
-func IsEmpty(args ...data.Value) data.Value {
+var IsEmpty = data.Applicative(func(args ...data.Value) data.Value {
 	s := args[0].(data.Sequence)
 	return data.Bool(s.IsEmpty())
-}
+}, 1)
 
 // IsCounted returns whether the provided value is a counted sequence
-func IsCounted(args ...data.Value) data.Value {
+var IsCounted = data.Applicative(func(args ...data.Value) data.Value {
 	_, ok := args[0].(data.CountedSequence)
 	return data.Bool(ok)
-}
+}, 1)
 
 // IsIndexed returns whether the provided value is an indexed sequence
-func IsIndexed(args ...data.Value) data.Value {
+var IsIndexed = data.Applicative(func(args ...data.Value) data.Value {
 	_, ok := args[0].(data.IndexedSequence)
 	return data.Bool(ok)
-}
+}, 1)
 
 // IsReverser returns whether the value is a reversible sequence
-func IsReverser(args ...data.Value) data.Value {
+var IsReverser = data.Applicative(func(args ...data.Value) data.Value {
 	_, ok := args[0].(data.Reverser)
 	return data.Bool(ok)
-}
+}, 1)

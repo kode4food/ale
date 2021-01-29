@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/kode4food/ale/compiler/arity"
 	"github.com/kode4food/ale/compiler/encoder"
 	"github.com/kode4food/ale/compiler/generate"
 	"github.com/kode4food/ale/data"
@@ -86,7 +85,7 @@ func LetMutual(e encoder.Encoder, args ...data.Value) {
 }
 
 func parseLet(args ...data.Value) (letBindings, data.Vector) {
-	arity.AssertMinimum(2, len(args))
+	data.AssertMinimum(2, len(args))
 	bindings := parseLetBindings(args[0])
 	return bindings, args[1:]
 }

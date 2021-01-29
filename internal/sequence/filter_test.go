@@ -12,9 +12,9 @@ import (
 func TestFilter(t *testing.T) {
 	as := assert.New(t)
 
-	filterTest := func(args ...data.Value) data.Value {
+	filterTest := data.Applicative(func(args ...data.Value) data.Value {
 		return B(string(args[0].(data.String)) != "filtered out")
-	}
+	}, 1)
 
 	l := L(S("first"), S("filtered out"), S("last"))
 	w := sequence.Filter(l, filterTest)
@@ -39,9 +39,9 @@ func TestFiltered(t *testing.T) {
 	as := assert.New(t)
 
 	l := L(S("first"), S("middle"), S("last"))
-	fn1 := func(args ...data.Value) data.Value {
+	fn1 := data.Applicative(func(args ...data.Value) data.Value {
 		return B(string(args[0].(data.String)) != "middle")
-	}
+	}, 1)
 	w1 := sequence.Filter(l, fn1)
 	v1 := w1.First()
 	as.String("first", v1)

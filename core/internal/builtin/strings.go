@@ -10,13 +10,13 @@ import (
 const emptyString = data.String("")
 
 // Str converts the provided arguments to an undelimited string
-func Str(args ...data.Value) data.Value {
+var Str = data.Applicative(func(args ...data.Value) data.Value {
 	v := data.NewVector(args...)
 	return sequence.ToStr(v)
-}
+})
 
 // ReaderStr converts the provided arguments to a delimited string
-func ReaderStr(args ...data.Value) data.Value {
+var ReaderStr = data.Applicative(func(args ...data.Value) data.Value {
 	if len(args) == 0 {
 		return emptyString
 	}
@@ -28,10 +28,10 @@ func ReaderStr(args ...data.Value) data.Value {
 		b.WriteString(data.MaybeQuoteString(f))
 	}
 	return data.String(b.String())
-}
+})
 
 // IsString returns whether the provided value is a string
-func IsString(args ...data.Value) data.Value {
+var IsString = data.Applicative(func(args ...data.Value) data.Value {
 	_, ok := args[0].(data.String)
 	return data.Bool(ok)
-}
+}, 1)

@@ -1,7 +1,6 @@
 package async
 
 import (
-	"github.com/kode4food/ale/compiler/arity"
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/do"
 )
@@ -9,7 +8,7 @@ import (
 type (
 	// Promise represents a Value that will eventually be resolved
 	Promise interface {
-		data.Caller
+		data.Function
 		IsResolved() bool
 	}
 
@@ -17,7 +16,7 @@ type (
 
 	promise struct {
 		once     do.Action
-		resolver data.Call
+		resolver data.Function
 		result   interface{}
 		status   promiseStatus
 	}
@@ -29,10 +28,10 @@ const (
 	promiseFailed
 )
 
-var promiseArityChecker = arity.MakeFixedChecker(0)
+var promiseArityChecker = data.MakeFixedChecker(0)
 
 // NewPromise instantiates a new Promise
-func NewPromise(resolver data.Call) Promise {
+func NewPromise(resolver data.Function) Promise {
 	return &promise{
 		once:     do.Once(),
 		resolver: resolver,
@@ -40,24 +39,22 @@ func NewPromise(resolver data.Call) Promise {
 	}
 }
 
-func (p *promise) Call() data.Call {
-	return func(args ...data.Value) data.Value {
-		p.once(func() {
-			defer func() {
-				if rec := recover(); rec != nil {
-					p.result = rec
-					p.status = promiseFailed
-				}
-			}()
-			p.result = p.resolver()
-			p.status = promiseResolved
-		})
+func (p *promise) Call(_ ...data.Value) data.Value {
+	p.once(func() {
+		defer func() {
+			if rec := recover(); rec != nil {
+				p.result = rec
+				p.status = promiseFailed
+			}
+		}()
+		p.result = p.resolver.Call()
+		p.status = promiseResolved
+	})
 
-		if p.status == promiseFailed {
-			panic(p.result)
-		}
-		return p.result.(data.Value)
+	if p.status == promiseFailed {
+		panic(p.result)
 	}
+	return p.result.(data.Value)
 }
 
 func (p *promise) Convention() data.Convention {

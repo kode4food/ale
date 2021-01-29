@@ -43,18 +43,18 @@ func MakeWriter(w io.Writer, o stream.OutputFunc) data.Object {
 	return res
 }
 
-func bindWriter(w stream.Writer) data.Call {
-	return func(args ...data.Value) data.Value {
+func bindWriter(w stream.Writer) data.Function {
+	return data.Applicative(func(args ...data.Value) data.Value {
 		for _, f := range args {
 			w.Write(f)
 		}
 		return data.Nil
-	}
+	})
 }
 
-func bindCloser(c stream.Closer) data.Call {
-	return func(args ...data.Value) data.Value {
+func bindCloser(c stream.Closer) data.Function {
+	return data.Applicative(func(_ ...data.Value) data.Value {
 		c.Close()
 		return data.Nil
-	}
+	}, 0)
 }

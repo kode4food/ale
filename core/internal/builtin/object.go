@@ -3,18 +3,18 @@ package builtin
 import "github.com/kode4food/ale/data"
 
 // Object creates a new object instance
-func Object(args ...data.Value) data.Value {
+var Object = data.Applicative(func(args ...data.Value) data.Value {
 	return data.ValuesToObject(args...)
-}
+})
 
 // IsObject returns whether a value is an object
-func IsObject(args ...data.Value) data.Value {
+var IsObject = data.Applicative(func(args ...data.Value) data.Value {
 	_, ok := args[0].(data.Object)
 	return data.Bool(ok)
-}
+}, 1)
 
 // IsMapped returns whether a value is a mapped sequence
-func IsMapped(args ...data.Value) data.Value {
+var IsMapped = data.Applicative(func(args ...data.Value) data.Value {
 	_, ok := args[0].(data.MappedSequence)
 	return data.Bool(ok)
-}
+}, 1)

@@ -11,19 +11,19 @@ import (
 
 func TestBoolWrapper(t *testing.T) {
 	as := assert.New(t)
-	f := makeCall(ffi.Wrap(func(b bool) bool {
+	f := ffi.Wrap(func(b bool) bool {
 		return !b
-	}))
-	b := f(data.False)
+	}).(data.Function)
+	b := f.Call(data.False)
 	as.True(b)
 }
 
 func TestFloatWrapper(t *testing.T) {
 	as := assert.New(t)
-	f := makeCall(ffi.Wrap(func(f1 float32, f2 float64) (float32, float64) {
+	f := ffi.Wrap(func(f1 float32, f2 float64) (float32, float64) {
 		return f1 * 2, f2 * 3
-	}))
-	r := f(F(9), F(15)).(data.Vector)
+	}).(data.Function)
+	r := f.Call(F(9), F(15)).(data.Vector)
 	as.Equal(F(18), r[0])
 	as.Equal(F(45), r[1])
 }
