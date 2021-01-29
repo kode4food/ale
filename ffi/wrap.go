@@ -10,8 +10,8 @@ import (
 type (
 	// Wrapper can marshal a native Go value to and from a data.Value
 	Wrapper interface {
-		Wrap(reflect.Value) data.Value
-		Unwrap(data.Value) reflect.Value
+		Wrap(*WrapContext, reflect.Value) data.Value
+		Unwrap(*UnwrapContext, data.Value) reflect.Value
 	}
 
 	typeCache struct {
@@ -33,7 +33,8 @@ func Wrap(i interface{}) data.Value {
 	}
 	v := reflect.ValueOf(i)
 	w := wrapType(v.Type())
-	return w.Wrap(v)
+	c := &WrapContext{}
+	return w.Wrap(c, v)
 }
 
 func wrapType(t reflect.Type) Wrapper {
@@ -55,11 +56,11 @@ func wrapType(t reflect.Type) Wrapper {
 
 /*
 	Unsupported Kinds:
-	Uintptr
-	Chan
-	Complex64
-	Complex128
-	UnsafePointer
+	  * Uintptr
+	  * Chan
+	  * Complex64
+	  * Complex128
+	  * UnsafePointer
 */
 func makeWrappedType(t reflect.Type) Wrapper {
 	switch t.Kind() {
@@ -88,7 +89,7 @@ func makeWrappedType(t reflect.Type) Wrapper {
 	case reflect.Struct:
 		return makeWrappedStruct(t)
 	default:
-		return makeWrappedValue(t)
+		panic("unsupported type")
 	}
 }
 

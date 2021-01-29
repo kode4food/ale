@@ -18,15 +18,15 @@ const (
 )
 
 // Go runs the provided function asynchronously
-func Go(args ...data.Value) data.Value {
-	fn := args[0].(data.Caller)
+var Go = data.Applicative(func(args ...data.Value) data.Value {
+	fn := args[0].(data.Function)
 	restArgs := args[1:]
-	go fn.Call()(restArgs...)
+	go fn.Call(restArgs...)
 	return data.Nil
-}
+}, 1)
 
 // Chan instantiates a new go channel
-func Chan(args ...data.Value) data.Value {
+var Chan = data.Applicative(func(args ...data.Value) data.Value {
 	var size int
 	if len(args) != 0 {
 		size = int(args[0].(data.Integer))
@@ -39,22 +39,22 @@ func Chan(args ...data.Value) data.Value {
 		CloseKey:     bindCloser(e),
 		SequenceKey:  s,
 	}
-}
+}, 0, 1)
 
 // Promise instantiates a new eventually-fulfilled promise
-func Promise(args ...data.Value) data.Value {
-	resolver := args[0].(data.Caller).Call()
+var Promise = data.Applicative(func(args ...data.Value) data.Value {
+	resolver := args[0].(data.Function)
 	return async.NewPromise(resolver)
-}
+}, 1)
 
 // IsPromise returns whether the specified value is a promise
-func IsPromise(args ...data.Value) data.Value {
+var IsPromise = data.Applicative(func(args ...data.Value) data.Value {
 	_, ok := args[0].(async.Promise)
 	return data.Bool(ok)
-}
+}, 1)
 
 // IsResolved returns whether the specified promise has been resolved
-func IsResolved(args ...data.Value) data.Value {
+var IsResolved = data.Applicative(func(args ...data.Value) data.Value {
 	p := args[0].(async.Promise)
 	return data.Bool(p.IsResolved())
-}
+}, 1)

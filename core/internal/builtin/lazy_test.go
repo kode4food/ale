@@ -13,21 +13,21 @@ func TestLazySequence(t *testing.T) {
 	as := assert.New(t)
 
 	var i int
-	var fn data.Call
+	var fn data.Function
 
-	fn = func(_ ...data.Value) data.Value {
+	fn = data.Applicative(func(_ ...data.Value) data.Value {
 		if i < 10 {
-			res := builtin.Cons(
+			res := builtin.Cons.Call(
 				data.Integer(i),
-				builtin.LazySequence(fn),
+				builtin.LazySequence.Call(fn),
 			)
 			i++
 			return res
 		}
 		return data.Nil
-	}
+	}, 0)
 
-	s := builtin.LazySequence(fn).(data.Sequence)
+	s := builtin.LazySequence.Call(fn).(data.Sequence)
 	as.String(`(0 1 2 3 4 5 6 7 8 9)`, data.MakeSequenceStr(s))
 }
 

@@ -5,37 +5,37 @@ import "github.com/kode4food/ale/data"
 const anonName = data.Name("anon")
 
 // Sym instantiates a new symbol
-func Sym(args ...data.Value) data.Value {
+var Sym = data.Applicative(func(args ...data.Value) data.Value {
 	if s, ok := args[0].(data.Symbol); ok {
 		return s
 	}
 	s := args[0].(data.String)
 	return data.ParseSymbol(s)
-}
+}, 1)
 
 // GenSym generates a unique symbol
-func GenSym(args ...data.Value) data.Value {
+var GenSym = data.Applicative(func(args ...data.Value) data.Value {
 	if len(args) == 0 {
 		return data.NewGeneratedSymbol(anonName)
 	}
 	s := args[0].(data.String)
 	return data.NewGeneratedSymbol(data.Name(s))
-}
+}, 0, 1)
 
 // IsSymbol returns whether the provided value is a symbol
-func IsSymbol(args ...data.Value) data.Value {
+var IsSymbol = data.Applicative(func(args ...data.Value) data.Value {
 	_, ok := args[0].(data.Symbol)
 	return data.Bool(ok)
-}
+}, 1)
 
 // IsLocal returns whether the provided value is an unqualified symbol
-func IsLocal(args ...data.Value) data.Value {
+var IsLocal = data.Applicative(func(args ...data.Value) data.Value {
 	_, ok := args[0].(data.LocalSymbol)
 	return data.Bool(ok)
-}
+}, 1)
 
 // IsQualified returns whether the provided value is a qualified symbol
-func IsQualified(args ...data.Value) data.Value {
+var IsQualified = data.Applicative(func(args ...data.Value) data.Value {
 	_, ok := args[0].(data.QualifiedSymbol)
 	return data.Bool(ok)
-}
+}, 1)

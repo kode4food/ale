@@ -136,10 +136,10 @@ func Scan(src data.String) data.Sequence {
 	return sequence.Filter(l, notWhitespace)
 }
 
-func notWhitespace(args ...data.Value) data.Value {
+var notWhitespace = data.Applicative(func(args ...data.Value) data.Value {
 	t := args[0].(*Token)
 	return data.Bool(t.Type != Whitespace && t.Type != Comment)
-}
+}, 1)
 
 func matchToken(src string) (*Token, string) {
 	for _, s := range matchers {

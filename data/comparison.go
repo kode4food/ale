@@ -1,7 +1,7 @@
 package data
 
 type (
-	// Comparison represents the result of a equality comparison
+	// Comparison represents the result of an equality comparison
 	Comparison int
 
 	// Comparer is an interface for a Value capable of comparing

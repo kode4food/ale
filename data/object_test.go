@@ -42,10 +42,9 @@ func TestObjectCaller(t *testing.T) {
 		K("name"):   S("parent"),
 	}
 
-	c1 := o1.Call()
-	as.String("i am the parent", c1(K("parent")))
-	as.Nil(c1(K("missing")))
-	as.String("defaulted", c1(K("missing"), S("defaulted")))
+	as.String("i am the parent", o1.Call(K("parent")))
+	as.Nil(o1.Call(K("missing")))
+	as.String("defaulted", o1.Call(K("missing"), S("defaulted")))
 }
 
 func TestObjectIterate(t *testing.T) {

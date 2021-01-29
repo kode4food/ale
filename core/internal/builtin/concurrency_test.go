@@ -14,14 +14,14 @@ func TestGo(t *testing.T) {
 	done := make(chan bool, 0)
 
 	var called bool
-	fn := data.Call(func(args ...data.Value) data.Value {
-		res := builtin.Str(args...)
+	fn := data.Applicative(func(args ...data.Value) data.Value {
+		res := builtin.Str.Call(args...)
 		as.String("helloworld", res)
 		called = true
 		done <- true
 		return data.Nil
 	})
-	builtin.Go(fn, S("hello"), S("world"))
+	builtin.Go.Call(fn, S("hello"), S("world"))
 	<-done
 	as.True(called)
 }
@@ -29,7 +29,7 @@ func TestGo(t *testing.T) {
 func TestChan(t *testing.T) {
 	as := assert.New(t)
 
-	ch := builtin.Chan(data.Integer(0)).(data.Mapped)
+	ch := builtin.Chan.Call(data.Integer(0)).(data.Mapped)
 	emit, ok1 := ch.Get(builtin.EmitKey)
 	closeChan, ok2 := ch.Get(builtin.CloseKey)
 	seq, ok3 := ch.Get(builtin.SequenceKey)
@@ -38,8 +38,8 @@ func TestChan(t *testing.T) {
 	as.True(ok3)
 
 	go func() {
-		emit.(data.Call)(S("hello"))
-		closeChan.(data.Call)()
+		emit.(data.Function).Call(S("hello"))
+		closeChan.(data.Function).Call()
 	}()
 
 	f, r, ok := seq.(data.Sequence).Split()
@@ -48,19 +48,19 @@ func TestChan(t *testing.T) {
 	as.True(ok)
 }
 
-func makeWrapperFunc(v data.Value) data.Call {
-	return func(_ ...data.Value) data.Value {
+func makeWrapperFunc(v data.Value) data.Function {
+	return data.Applicative(func(_ ...data.Value) data.Value {
 		return v
-	}
+	})
 }
 func TestPromise(t *testing.T) {
 	as := assert.New(t)
 
-	p1 := builtin.Promise(makeWrapperFunc(S("with initial")))
-	as.True(builtin.IsPromise(p1))
-	as.False(builtin.IsResolved(p1))
-	res := makeCall(p1)()
-	as.True(builtin.IsResolved(p1))
+	p1 := builtin.Promise.Call(makeWrapperFunc(S("with initial")))
+	as.True(builtin.IsPromise.Call(p1))
+	as.False(builtin.IsResolved.Call(p1))
+	res := p1.(data.Function).Call()
+	as.True(builtin.IsResolved.Call(p1))
 	as.String("with initial", res)
 }
 

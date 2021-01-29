@@ -15,31 +15,31 @@ func TestSymbols(t *testing.T) {
 	as := assert.New(t)
 
 	s1 := data.NewQualifiedSymbol("hello", "ale")
-	as.True(builtin.IsSymbol(s1))
-	as.False(builtin.IsLocal(s1))
-	as.True(builtin.IsQualified(s1))
+	as.True(builtin.IsSymbol.Call(s1))
+	as.False(builtin.IsLocal.Call(s1))
+	as.True(builtin.IsQualified.Call(s1))
 
-	s2 := builtin.Sym(s1)
+	s2 := builtin.Sym.Call(s1)
 	as.Identical(s1, s2)
 
-	s3 := builtin.Sym(S("ale/hello"))
+	s3 := builtin.Sym.Call(S("ale/hello"))
 	as.Equal(s1, s3)
 
-	s4 := builtin.Sym(S("howdy"))
-	as.True(builtin.IsLocal(s4))
-	as.False(builtin.IsQualified(s4))
+	s4 := builtin.Sym.Call(S("howdy"))
+	as.True(builtin.IsLocal.Call(s4))
+	as.False(builtin.IsQualified.Call(s4))
 }
 
 func TestGenerated(t *testing.T) {
 	as := assert.New(t)
 
-	s1 := builtin.GenSym()
-	as.True(builtin.IsSymbol(s1))
-	as.True(builtin.IsLocal(s1))
-	as.False(builtin.IsQualified(s1))
+	s1 := builtin.GenSym.Call()
+	as.True(builtin.IsSymbol.Call(s1))
+	as.True(builtin.IsLocal.Call(s1))
+	as.False(builtin.IsQualified.Call(s1))
 	as.Contains("x-anon-gensym-", s1)
 
-	s2 := builtin.GenSym(S("blah"))
+	s2 := builtin.GenSym.Call(S("blah"))
 	as.Contains("x-blah-gensym-", s2)
 }
 

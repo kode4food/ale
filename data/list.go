@@ -108,9 +108,9 @@ func (l *list) ElementAt(index int) (Value, bool) {
 	return e.First(), true
 }
 
-// Call turns List into a callable type
-func (l *list) Call() Call {
-	return makeIndexedCall(l)
+// Applicative turns List into a Caller
+func (l *list) Call(args ...Value) Value {
+	return indexedCall(l, args)
 }
 
 // Convention returns the function's calling convention

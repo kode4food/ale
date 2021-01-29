@@ -13,7 +13,7 @@ func TestCurrentTime(t *testing.T) {
 	as := assert.New(t)
 
 	t1 := time.Now().UnixNano()
-	t2 := int64(builtin.CurrentTime().(data.Integer))
+	t2 := int64(builtin.CurrentTime.Call().(data.Integer))
 
 	as.Equal(t1-(t1%1000000), t2-(t2%1000000))
 }

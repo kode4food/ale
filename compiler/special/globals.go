@@ -1,7 +1,6 @@
 package special
 
 import (
-	"github.com/kode4food/ale/compiler/arity"
 	"github.com/kode4food/ale/compiler/encoder"
 	"github.com/kode4food/ale/compiler/generate"
 	"github.com/kode4food/ale/data"
@@ -10,7 +9,7 @@ import (
 
 // Declare encodes a global forward-declaration
 func Declare(e encoder.Encoder, args ...data.Value) {
-	arity.AssertFixed(1, len(args))
+	data.AssertFixed(1, len(args))
 	name := args[0].(data.LocalSymbol).Name()
 	generate.Literal(e, name)
 	e.Emit(isa.Declare)
@@ -19,7 +18,7 @@ func Declare(e encoder.Encoder, args ...data.Value) {
 
 // Define encodes a global definition
 func Define(e encoder.Encoder, args ...data.Value) {
-	arity.AssertFixed(2, len(args))
+	data.AssertFixed(2, len(args))
 	name := args[0].(data.LocalSymbol).Name()
 	generate.Value(e, args[1])
 	generate.Literal(e, name)

@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/kode4food/ale/compiler/arity"
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/assert"
 )
@@ -33,5 +32,5 @@ func TestPredicatesEval(t *testing.T) {
 	as.EvalTo(`(keyword? 99)`, data.False)
 	as.EvalTo(`(!keyword? 99)`, data.True)
 
-	as.PanicWith(`(null?)`, fmt.Errorf(arity.ErrMinimumArity, 1, 0))
+	as.PanicWith(`(null?)`, fmt.Errorf(data.ErrMinimumArity, 1, 0))
 }

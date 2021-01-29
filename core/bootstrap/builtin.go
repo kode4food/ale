@@ -3,7 +3,6 @@ package bootstrap
 import (
 	"fmt"
 
-	"github.com/kode4food/ale/compiler/arity"
 	"github.com/kode4food/ale/compiler/encoder"
 	"github.com/kode4food/ale/compiler/special"
 	"github.com/kode4food/ale/core/internal/builtin"
@@ -23,32 +22,15 @@ const (
 )
 
 func (b *bootstrap) builtIns() {
-	b.specialForms()
 	b.initialFunctions()
+	b.specialForms()
 	b.availableFunctions()
-}
-
-func (b *bootstrap) specialForms() {
-	b.special("begin", special.Begin)
-	b.special("declare*", special.Declare)
-	b.special("define*", special.Define)
-	b.special("eval", special.Eval)
-	b.special("if", special.If)
-	b.special("lambda", special.Lambda)
-	b.special("let", special.Let)
-	b.special("let-rec", special.LetMutual)
-	b.special("macroexpand-1", special.MacroExpand1)
-	b.special("macroexpand", special.MacroExpand)
-	b.special("quote", special.Quote)
-	b.special("pattern", special.Pattern)
 }
 
 func (b *bootstrap) initialFunctions() {
 	e := b.environment
 
-	singleArgChecker := arity.MakeFixedChecker(1)
-
-	defBuiltIn := data.MakeNormal(func(args ...data.Value) data.Value {
+	defBuiltIn := data.Normal(func(args ...data.Value) data.Value {
 		ns := e.GetRoot()
 		n := args[0].(data.LocalSymbol).Name()
 		if nf, ok := b.funcMap[n]; ok {
@@ -56,9 +38,9 @@ func (b *bootstrap) initialFunctions() {
 			return args[0]
 		}
 		panic(fmt.Errorf(errBuiltInNotFound, n))
-	}, singleArgChecker)
+	}, 1)
 
-	defSpecial := data.MakeNormal(func(args ...data.Value) data.Value {
+	defSpecial := data.Normal(func(args ...data.Value) data.Value {
 		ns := e.GetRoot()
 		n := args[0].(data.LocalSymbol).Name()
 		if sf, ok := b.specialMap[n]; ok {
@@ -66,9 +48,9 @@ func (b *bootstrap) initialFunctions() {
 			return args[0]
 		}
 		panic(fmt.Errorf(errSpecialNotFound, n))
-	}, singleArgChecker)
+	}, 1)
 
-	defMacro := data.MakeNormal(func(args ...data.Value) data.Value {
+	defMacro := data.Normal(func(args ...data.Value) data.Value {
 		ns := e.GetRoot()
 		n := args[0].(data.LocalSymbol).Name()
 		if sf, ok := b.macroMap[n]; ok {
@@ -76,7 +58,7 @@ func (b *bootstrap) initialFunctions() {
 			return args[0]
 		}
 		panic(fmt.Errorf(errMacroNotFound, n))
-	}, singleArgChecker)
+	}, 1)
 
 	ns := b.environment.GetRoot()
 	ns.Declare(defBuiltInName).Bind(defBuiltIn)
@@ -84,94 +66,127 @@ func (b *bootstrap) initialFunctions() {
 	ns.Declare(defMacroName).Bind(defMacro)
 }
 
+func (b *bootstrap) specialForms() {
+	b.specials(map[data.Name]encoder.Call{
+		"begin":         special.Begin,
+		"declare*":      special.Declare,
+		"define*":       special.Define,
+		"eval":          special.Eval,
+		"if":            special.If,
+		"lambda":        special.Lambda,
+		"let":           special.Let,
+		"let-rec":       special.LetMutual,
+		"macroexpand-1": special.MacroExpand1,
+		"macroexpand":   special.MacroExpand,
+		"quote":         special.Quote,
+		"pattern":       special.Pattern,
+	})
+}
+
 func (b *bootstrap) availableFunctions() {
-	b.applicative("-", builtin.Sub, 1, arity.OrMore)
-	b.applicative("!=", builtin.Neq, 1, arity.OrMore)
-	b.applicative("*", builtin.Mul)
-	b.applicative("/", builtin.Div, 1, arity.OrMore)
-	b.applicative("+", builtin.Add)
-	b.applicative("<", builtin.Lt, 1, arity.OrMore)
-	b.applicative("<=", builtin.Lte, 1, arity.OrMore)
-	b.applicative("=", builtin.Eq, 1, arity.OrMore)
-	b.applicative(">", builtin.Gt, 1, arity.OrMore)
-	b.applicative(">=", builtin.Gte, 1, arity.OrMore)
+	b.functions(map[data.Name]data.Function{
+		"-":  builtin.Sub,
+		"!=": builtin.Neq,
+		"*":  builtin.Mul,
+		"/":  builtin.Div,
+		"+":  builtin.Add,
+		"<":  builtin.Lt,
+		"<=": builtin.Lte,
+		"=":  builtin.Eq,
+		">":  builtin.Gt,
+		">=": builtin.Gte,
 
-	b.applicative("append", builtin.Append, 2)
-	b.applicative("apply", builtin.Apply, 2, arity.OrMore)
-	b.applicative("car", builtin.Car, 1)
-	b.applicative("cdr", builtin.Cdr, 1)
-	b.applicative("chan", builtin.Chan, 0, 1)
-	b.applicative("cons", builtin.Cons, 2)
-	b.applicative("current-time", builtin.CurrentTime, 0)
-	b.applicative("defer", builtin.Defer, 2)
-	b.applicative("promise", builtin.Promise, 1)
-	b.applicative("eq", builtin.IsIdentical, 1, arity.OrMore)
-	b.applicative("first", builtin.First, 1)
-	b.applicative("gensym", builtin.GenSym, 0, 1)
-	b.applicative("get", builtin.Get, 2)
-	b.applicative("go*", builtin.Go, 1)
-	b.applicative("lazy-seq*", builtin.LazySequence, 1)
-	b.applicative("length", builtin.Length, 1)
-	b.applicative("list", builtin.List)
-	b.applicative("macro", builtin.Macro, 1)
-	b.applicative("mod", builtin.Mod, 1, arity.OrMore)
-	b.applicative("nth", builtin.Nth, 2, 3)
-	b.applicative("object", builtin.Object)
-	b.applicative("raise", builtin.Raise, 1)
-	b.applicative("read", builtin.Read, 1)
-	b.applicative("recover", builtin.Recover, 2)
-	b.applicative("rest", builtin.Rest, 1)
-	b.applicative("reverse", builtin.Reverse, 1)
-	b.applicative("str!", builtin.ReaderStr)
-	b.applicative("str", builtin.Str)
-	b.applicative("sym", builtin.Sym, 1)
-	b.applicative("vector", builtin.Vector)
+		"append":       builtin.Append,
+		"apply":        builtin.Apply,
+		"car":          builtin.Car,
+		"cdr":          builtin.Cdr,
+		"chan":         builtin.Chan,
+		"cons":         builtin.Cons,
+		"current-time": builtin.CurrentTime,
+		"defer":        builtin.Defer,
+		"promise":      builtin.Promise,
+		"eq":           builtin.IsIdentical,
+		"first":        builtin.First,
+		"gensym":       builtin.GenSym,
+		"get":          builtin.Get,
+		"go*":          builtin.Go,
+		"lazy-seq*":    builtin.LazySequence,
+		"length":       builtin.Length,
+		"list":         builtin.List,
+		"macro":        builtin.Macro,
+		"mod":          builtin.Mod,
+		"nth":          builtin.Nth,
+		"object":       builtin.Object,
+		"raise":        builtin.Raise,
+		"read":         builtin.Read,
+		"recover":      builtin.Recover,
+		"rest":         builtin.Rest,
+		"reverse":      builtin.Reverse,
+		"str!":         builtin.ReaderStr,
+		"str":          builtin.Str,
+		"sym":          builtin.Sym,
+		"vector":       builtin.Vector,
 
-	b.applicative("is-appender", builtin.IsAppender, 1)
-	b.applicative("is-apply", builtin.IsApply, 1)
-	b.applicative("is-atom", builtin.IsAtom, 1)
-	b.applicative("is-boolean", builtin.IsBoolean, 1)
-	b.applicative("is-cons", builtin.IsCons, 1)
-	b.applicative("is-counted", builtin.IsCounted, 1)
-	b.applicative("is-empty", builtin.IsEmpty, 1)
-	b.applicative("is-indexed", builtin.IsIndexed, 1)
-	b.applicative("is-keyword", builtin.IsKeyword, 1)
-	b.applicative("is-list", builtin.IsList, 1)
-	b.applicative("is-local", builtin.IsLocal, 1)
-	b.applicative("is-macro", builtin.IsMacro, 1)
-	b.applicative("is-mapped", builtin.IsMapped, 1)
-	b.applicative("is-nan", builtin.IsNaN, 1)
-	b.applicative("is-neg-inf", builtin.IsNegInf, 1)
-	b.applicative("is-number", builtin.IsNumber, 1)
-	b.applicative("is-object", builtin.IsObject, 1)
-	b.applicative("is-pair", builtin.IsPair, 1)
-	b.applicative("is-pos-inf", builtin.IsPosInf, 1)
-	b.applicative("is-promise", builtin.IsPromise, 1)
-	b.applicative("is-qualified", builtin.IsQualified, 1)
-	b.applicative("is-resolved", builtin.IsResolved, 1)
-	b.applicative("is-reversible", builtin.IsReverser, 1)
-	b.applicative("is-seq", builtin.IsSeq, 1)
-	b.applicative("is-special", builtin.IsSpecial, 1)
-	b.applicative("is-string", builtin.IsString, 1)
-	b.applicative("is-symbol", builtin.IsSymbol, 1)
-	b.applicative("is-vector", builtin.IsVector, 1)
+		"is-appender":   builtin.IsAppender,
+		"is-apply":      builtin.IsApply,
+		"is-atom":       builtin.IsAtom,
+		"is-boolean":    builtin.IsBoolean,
+		"is-cons":       builtin.IsCons,
+		"is-counted":    builtin.IsCounted,
+		"is-empty":      builtin.IsEmpty,
+		"is-indexed":    builtin.IsIndexed,
+		"is-keyword":    builtin.IsKeyword,
+		"is-list":       builtin.IsList,
+		"is-local":      builtin.IsLocal,
+		"is-macro":      builtin.IsMacro,
+		"is-mapped":     builtin.IsMapped,
+		"is-nan":        builtin.IsNaN,
+		"is-neg-inf":    builtin.IsNegInf,
+		"is-number":     builtin.IsNumber,
+		"is-object":     builtin.IsObject,
+		"is-pair":       builtin.IsPair,
+		"is-pos-inf":    builtin.IsPosInf,
+		"is-promise":    builtin.IsPromise,
+		"is-qualified":  builtin.IsQualified,
+		"is-resolved":   builtin.IsResolved,
+		"is-reversible": builtin.IsReverser,
+		"is-seq":        builtin.IsSeq,
+		"is-special":    builtin.IsSpecial,
+		"is-string":     builtin.IsString,
+		"is-symbol":     builtin.IsSymbol,
+		"is-vector":     builtin.IsVector,
+	})
 
-	b.macro("syntax-quote", macro.SyntaxQuote)
+	b.macros(map[data.Name]macro.Call{
+		"syntax-quote": macro.SyntaxQuote,
+	})
 }
 
-func (b *bootstrap) applicative(name data.Name, call data.Call, arity ...int) {
-	b.builtIn(name, call, arity...)
+func (b *bootstrap) functions(f map[data.Name]data.Function) {
+	for k, v := range f {
+		b.function(k, v)
+	}
 }
 
+func (b *bootstrap) function(name data.Name, call data.Function) {
+	b.funcMap[name] = call
+}
+
+func (b *bootstrap) macros(m map[data.Name]macro.Call) {
+	for k, v := range m {
+		b.macro(k, v)
+	}
+}
 func (b *bootstrap) macro(name data.Name, call macro.Call) {
 	b.macroMap[name] = call
 }
 
-func (b *bootstrap) special(name data.Name, call encoder.Call) {
-	b.specialMap[name] = call
+func (b *bootstrap) specials(s map[data.Name]encoder.Call) {
+	for k, v := range s {
+		b.special(k, v)
+	}
 }
 
-func (b *bootstrap) builtIn(name data.Name, call data.Call, a ...int) {
-	fn := data.MakeApplicative(call, arity.MakeChecker(a...))
-	b.funcMap[name] = fn
+func (b *bootstrap) special(name data.Name, call encoder.Call) {
+	b.specialMap[name] = call
 }

@@ -54,9 +54,6 @@ func callSymbol(e encoder.Encoder, s data.Symbol, args data.Values) {
 		case encoder.Call:
 			v(e, args...)
 			return
-		case data.Call:
-			callApplicative(e, v, args)
-			return
 		case data.Function:
 			callFunction(e, v, args)
 			return
@@ -73,8 +70,6 @@ func callNonSymbol(e encoder.Encoder, v data.Value, args data.Values) {
 	switch v := v.(type) {
 	case data.Function:
 		callFunction(e, v, args)
-	case data.Caller:
-		callCaller(e, v, args)
 	default:
 		callDynamic(e, v, args)
 	}
@@ -82,22 +77,9 @@ func callNonSymbol(e encoder.Encoder, v data.Value, args data.Values) {
 
 func callFunction(e encoder.Encoder, f data.Function, args data.Values) {
 	assertArity(f, args)
-	emitFunc := funcRef(e, f)
+	emitFunc := staticLiteral(e, f)
 	emitArgs := funcArgs(e, f, args)
 	callWith(e, emitFunc, emitArgs)
-}
-
-func callCaller(e encoder.Encoder, c data.Caller, args data.Values) {
-	emitFunc := callerLiteral(e, c)
-	emitArgs := applicativeArgs(e, args)
-	callWith(e, emitFunc, emitArgs)
-}
-
-func funcRef(e encoder.Encoder, f data.Function) funcEmitter {
-	if tc, ok := f.(TailCaller); ok {
-		return tailCallerLiteral(e, tc)
-	}
-	return callerLiteral(e, f)
 }
 
 func assertArity(f data.Function, args data.Values) {
@@ -132,7 +114,7 @@ func callWith(e encoder.Encoder, emitFunc funcEmitter, emitArgs argsEmitter) {
 	}
 }
 
-func callApplicative(e encoder.Encoder, f data.Call, args data.Values) {
+func callApplicative(e encoder.Encoder, f data.Function, args data.Values) {
 	emitFunc := staticLiteral(e, f)
 	emitArgs := applicativeArgs(e, args)
 	callWith(e, emitFunc, emitArgs)
@@ -150,23 +132,9 @@ func staticLiteral(e encoder.Encoder, fn data.Value) funcEmitter {
 	}
 }
 
-func callerLiteral(e encoder.Encoder, fn data.Caller) funcEmitter {
-	return func() {
-		Literal(e, fn.Call())
-	}
-}
-
-func tailCallerLiteral(e encoder.Encoder, fn data.Value) funcEmitter {
-	return func() {
-		Literal(e, fn)
-		e.Emit(isa.MakeCall)
-	}
-}
-
 func dynamicEval(e encoder.Encoder, v data.Value) funcEmitter {
 	return func() {
 		Value(e, v)
-		e.Emit(isa.MakeCall)
 	}
 }
 

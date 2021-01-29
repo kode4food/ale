@@ -10,26 +10,31 @@ import (
 )
 
 type stateInfo struct {
-	Name       string
-	Population int
+	Name        string
+	Population  int `ale:"pop"`
+	Loop        *stateInfo
+	notExported string
 }
 
 func TestStructWrap(t *testing.T) {
 	as := assert.New(t)
 	m := ffi.Wrap(&stateInfo{
-		Name:       "California",
-		Population: 40,
+		Name:        "California",
+		Population:  40,
+		notExported: "hello",
 	}).(data.Object)
 	as.Equal(S("California"), m[K("Name")])
-	as.Equal(I(40), m[K("Population")])
+	as.Equal(I(40), m[K("pop")])
+	_, ok := m[K("notExported")]
+	as.False(ok)
 }
 
 func TestStructUnwrap(t *testing.T) {
 	as := assert.New(t)
-	f := makeCall(ffi.Wrap(func(i *stateInfo) (string, int) {
+	f := ffi.Wrap(func(i *stateInfo) (string, int) {
 		return i.Name, i.Population
-	}))
-	r := f(ffi.Wrap(&stateInfo{
+	}).(data.Function)
+	r := f.Call(ffi.Wrap(&stateInfo{
 		Name:       "California",
 		Population: 40,
 	})).(data.Vector)

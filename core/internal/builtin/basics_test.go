@@ -12,7 +12,7 @@ import (
 func TestRead(t *testing.T) {
 	as := assert.New(t)
 
-	r1 := builtin.Read(S("[1 2 3]")).(data.Vector)
+	r1 := builtin.Read.Call(S("[1 2 3]")).(data.Vector)
 
 	v2, ok := r1.ElementAt(0)
 	as.True(ok)
@@ -25,7 +25,7 @@ func TestRead(t *testing.T) {
 
 func TestEmptyRead(t *testing.T) {
 	as := assert.New(t)
-	r1 := builtin.Read(S(""))
+	r1 := builtin.Read.Call(S(""))
 	as.Nil(r1)
 }
 
@@ -40,22 +40,22 @@ func TestRaise(t *testing.T) {
 		as.Fail("proper error not raised")
 	}()
 
-	builtin.Raise(S("blowed up!"))
+	builtin.Raise.Call(S("blowed up!"))
 }
 
 func TestRecover(t *testing.T) {
 	as := assert.New(t)
 	var triggered = false
-	builtin.Recover(
-		data.Call(func(_ ...data.Value) data.Value {
-			builtin.Raise(S("blowed up!"))
+	builtin.Recover.Call(
+		data.Applicative(func(_ ...data.Value) data.Value {
+			builtin.Raise.Call(S("blowed up!"))
 			return S("wrong")
-		}),
-		data.Call(func(args ...data.Value) data.Value {
+		}, 0),
+		data.Applicative(func(args ...data.Value) data.Value {
 			as.String("blowed up!", args[0])
 			triggered = true
 			return data.Nil
-		}),
+		}, 1),
 	)
 	as.True(triggered)
 }
@@ -69,15 +69,15 @@ func TestDefer(t *testing.T) {
 		recover()
 	}()
 
-	builtin.Defer(
-		data.Call(func(_ ...data.Value) data.Value {
-			builtin.Raise(S("blowed up!"))
+	builtin.Defer.Call(
+		data.Applicative(func(_ ...data.Value) data.Value {
+			builtin.Raise.Call(S("blowed up!"))
 			return S("wrong")
-		}),
-		data.Call(func(_ ...data.Value) data.Value {
+		}, 0),
+		data.Applicative(func(_ ...data.Value) data.Value {
 			triggered = true
 			return data.Nil
-		}),
+		}, 0),
 	)
 }
 

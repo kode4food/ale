@@ -14,26 +14,26 @@ var constants = data.Values{
 	I(5),
 	I(6),
 	S("a thrown error"),
-	data.Call(numLoopSum),
+	data.Applicative(numLoopSum),
 }
 
-func makeCode(coders []isa.Coder) data.Call {
+func makeCode(coders []isa.Coder) data.Function {
 	code := make([]isa.Word, len(coders))
 	for i, c := range coders {
 		code[i] = c.Word()
 	}
-	lambda := (&vm.Lambda{
+	lambda := &vm.Lambda{
 		Code:      code,
 		Constants: constants,
 		StackSize: 16,
-	}).Call()
-	closure := lambda(S("closure"))
-	return closure.(data.Caller).Call()
+	}
+	closure := lambda.Call(S("closure"))
+	return closure.(data.Function)
 }
 
 func runCode(coders []isa.Coder) data.Value {
-	call := makeCode(coders)
-	return call(S("arg"))
+	code := makeCode(coders)
+	return code.Call(S("arg"))
 }
 
 func testResult(t *testing.T, res data.Value, code []isa.Coder) {

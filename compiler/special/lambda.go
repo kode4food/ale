@@ -3,7 +3,6 @@ package special
 import (
 	"fmt"
 
-	"github.com/kode4food/ale/compiler/arity"
 	"github.com/kode4food/ale/compiler/encoder"
 	"github.com/kode4food/ale/compiler/generate"
 	"github.com/kode4food/ale/data"
@@ -53,14 +52,14 @@ func makeLambdaEncoder(e encoder.Encoder, v lambdaCases) *lambdaEncoder {
 
 func (le *lambdaEncoder) encodeCall() {
 	e := le.Parent()
-	fn := le.makeLambda().Call()
+	fn := le.makeLambda()
 
 	cells := le.Closure()
 	nl := len(cells)
 	if nl == 0 {
 		// nothing needed to be captured from local variables,
 		// so just pass the newly instantiated closure through
-		generate.Literal(e, fn())
+		generate.Literal(e, fn.Call())
 		return
 	}
 
@@ -104,13 +103,13 @@ func (le *lambdaEncoder) makeArityChecker() data.ArityChecker {
 	for _, s := range le.cases[1:] {
 		l, u := s.arityRange()
 		lower = util.IntMin(l, lower)
-		if u == arity.OrMore || upper == arity.OrMore {
-			upper = arity.OrMore
+		if u == data.OrMore || upper == data.OrMore {
+			upper = data.OrMore
 			continue
 		}
 		upper = util.IntMax(u, upper)
 	}
-	return arity.MakeChecker(lower, upper)
+	return data.MakeChecker(lower, upper)
 }
 
 func (le *lambdaEncoder) makePredicate(c *lambdaCase) {
@@ -185,7 +184,7 @@ func (c *lambdaCase) restArg() (data.Name, bool) {
 func (c *lambdaCase) arityRange() (int, int) {
 	fl := len(c.fixedArgs())
 	if _, ok := c.restArg(); ok {
-		return fl, arity.OrMore
+		return fl, data.OrMore
 	}
 	return fl, fl
 }

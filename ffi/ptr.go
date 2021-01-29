@@ -16,10 +16,13 @@ func makeWrappedPointer(t reflect.Type) Wrapper {
 	}
 }
 
-func (p *pointerWrapper) Wrap(v reflect.Value) data.Value {
-	return p.elem.Wrap(v.Elem())
+func (p *pointerWrapper) Wrap(c *WrapContext, v reflect.Value) data.Value {
+	if !v.IsValid() {
+		return data.Nil
+	}
+	return p.elem.Wrap(c, v.Elem())
 }
 
-func (p *pointerWrapper) Unwrap(v data.Value) reflect.Value {
-	return p.elem.Unwrap(v).Addr()
+func (p *pointerWrapper) Unwrap(c *UnwrapContext, v data.Value) reflect.Value {
+	return p.elem.Unwrap(c, v).Addr()
 }

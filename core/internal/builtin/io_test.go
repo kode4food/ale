@@ -15,13 +15,13 @@ import (
 
 const stdoutName = "*out*"
 
-func bindWrite(w stream.Writer) data.Call {
-	return func(args ...data.Value) data.Value {
+func bindWrite(w stream.Writer) data.Function {
+	return data.Applicative(func(args ...data.Value) data.Value {
 		for _, af := range args {
 			w.Write(af)
 		}
 		return nil
-	}
+	})
 }
 
 func testOutput(t *testing.T, src, expected string) {

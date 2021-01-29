@@ -1,24 +1,19 @@
 package data
 
 type (
-	// Call is the basic function type
-	Call func(...Value) Value
-
-	// Caller is any value that returns a calling interface
-	Caller interface {
-		Value
-		Call() Call
-	}
-
 	// ArityChecker is the interface for arity checks
 	ArityChecker func(int) error
 
 	// Convention describes the way a function should be called
 	Convention int
 
+	// Call is the type of function that can be turned into a Function
+	Call func(...Value) Value
+
 	// Function provides a caller, arity check, and calling convention
 	Function interface {
-		Caller
+		Value
+		Call(...Value) Value
 		CheckArity(int) error
 		Convention() Convention
 	}
@@ -36,31 +31,34 @@ const (
 	NormalCall                        // normal
 )
 
-// Call makes Call a Caller
-func (c Call) Call() Call {
-	return c
+// Applicative constructs an Applicative Function from a func that matches the
+// standard calling signature
+func Applicative(c Call, arity ...int) Function {
+	return MakeApplicative(c, MakeChecker(arity...))
 }
 
-func (c Call) String() string {
-	return "call"
-}
-
-func makeFunction(conv Convention, call Call, arity ArityChecker) Function {
+func makeFunction(c Call, conv Convention, arity ArityChecker) Function {
 	return &function{
-		call:  call,
+		call:  c,
 		arity: arity,
 		conv:  conv,
 	}
 }
 
-// MakeApplicative constructs an applicative function
-func MakeApplicative(call Call, arity ArityChecker) Function {
-	return makeFunction(ApplicativeCall, call, arity)
+// MakeApplicative constructs an applicative Function from a Caller
+// and ArityChecker
+func MakeApplicative(c Call, arity ArityChecker) Function {
+	return makeFunction(c, ApplicativeCall, arity)
 }
 
-// MakeNormal constructs a normal function
-func MakeNormal(call Call, arity ArityChecker) Function {
-	return makeFunction(NormalCall, call, arity)
+// Normal constructs a normal Function with
+func Normal(c Call, arity ...int) Function {
+	return MakeNormal(c, MakeChecker(arity...))
+}
+
+// MakeNormal constructs a normal Function from a Caller and ArityChecker
+func MakeNormal(c Call, arity ArityChecker) Function {
+	return makeFunction(c, NormalCall, arity)
 }
 
 // IsApplicative returns whether the function is applicative
@@ -73,17 +71,15 @@ func IsNormal(f Function) bool {
 	return f.Convention() == NormalCall
 }
 
-// Call returns the calling interface for a function
-func (f *function) Call() Call {
-	return f.call
-}
-
-// CheckArity checks to see if the argument count is valid
-func (f *function) CheckArity(count int) error {
+func (f *function) CheckArity(argCount int) error {
 	if a := f.arity; a != nil {
-		return a(count)
+		return a(argCount)
 	}
 	return nil
+}
+
+func (f *function) Call(args ...Value) Value {
+	return f.call(args...)
 }
 
 func (f *function) Convention() Convention {

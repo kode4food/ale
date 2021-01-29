@@ -28,21 +28,29 @@ func makeWrappedArray(t reflect.Type) Wrapper {
 	}
 }
 
-func (a *arrayWrapper) Wrap(v reflect.Value) data.Value {
+func (a *arrayWrapper) Wrap(c *WrapContext, v reflect.Value) data.Value {
+	if r, ok := c.Get(v); ok {
+		return r
+	}
 	vLen := v.Len()
 	out := make(data.Vector, vLen)
+	c.Put(v, out)
 	for i := 0; i < vLen; i++ {
-		out[i] = a.elem.Wrap(v.Index(i))
+		out[i] = a.elem.Wrap(c, v.Index(i))
 	}
 	return out
 }
 
-func (a *arrayWrapper) Unwrap(v data.Value) reflect.Value {
+func (a *arrayWrapper) Unwrap(c *UnwrapContext, v data.Value) reflect.Value {
+	if r, ok := c.Get(v); ok {
+		return r
+	}
 	in := sequence.ToValues(v.(data.Sequence))
 	inLen := len(in)
 	out := reflect.New(a.typ).Elem()
+	c.Put(v, out)
 	for i := 0; i < inLen; i++ {
-		v := a.elem.Unwrap(in[i])
+		v := a.elem.Unwrap(c, in[i])
 		out.Index(i).Set(v)
 	}
 	return out
@@ -55,21 +63,29 @@ func makeWrappedSlice(t reflect.Type) Wrapper {
 	}
 }
 
-func (s *sliceWrapper) Wrap(v reflect.Value) data.Value {
+func (s *sliceWrapper) Wrap(c *WrapContext, v reflect.Value) data.Value {
+	if r, ok := c.Get(v); ok {
+		return r
+	}
 	vLen := v.Len()
 	out := make(data.Vector, vLen)
+	c.Put(v, out)
 	for i := 0; i < vLen; i++ {
-		out[i] = s.elem.Wrap(v.Index(i))
+		out[i] = s.elem.Wrap(c, v.Index(i))
 	}
 	return out
 }
 
-func (s *sliceWrapper) Unwrap(v data.Value) reflect.Value {
+func (s *sliceWrapper) Unwrap(c *UnwrapContext, v data.Value) reflect.Value {
+	if r, ok := c.Get(v); ok {
+		return r
+	}
 	in := sequence.ToValues(v.(data.Sequence))
 	inLen := len(in)
 	out := reflect.MakeSlice(s.typ, inLen, inLen)
+	c.Put(v, out)
 	for i := 0; i < inLen; i++ {
-		v := s.elem.Unwrap(in[i])
+		v := s.elem.Unwrap(c, in[i])
 		out.Index(i).Set(v)
 	}
 	return out

@@ -46,9 +46,9 @@ func TestBuiltIns(t *testing.T) {
 	ns := e.GetRoot()
 
 	ns.Declare("hello").Bind(
-		data.Call(func(_ ...data.Value) data.Value {
+		data.Applicative(func(_ ...data.Value) data.Value {
 			return S("there")
-		}),
+		}, 0),
 	)
 
 	l := read.Scan(`(hello)`)

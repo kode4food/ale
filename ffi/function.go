@@ -13,12 +13,6 @@ type (
 		out []Wrapper
 	}
 
-	wrappedFunc struct {
-		*funcWrapper
-		elem reflect.Value
-		call data.Call
-	}
-
 	// the type accepted by reflect.MakeFunc
 	makeFuncType func(args []reflect.Value) (results []reflect.Value)
 )
@@ -43,83 +37,79 @@ func makeWrappedFunc(t reflect.Type) Wrapper {
 	}
 }
 
-func (f *funcWrapper) Wrap(v reflect.Value) data.Value {
-	return &wrappedFunc{
-		funcWrapper: f,
-		elem:        v,
-		call:        f.wrapCall(v),
-	}
-}
-
-func (f *funcWrapper) wrapCall(v reflect.Value) data.Call {
-	switch len(f.out) {
-	case 0:
-		return f.wrapVoidCall(v)
-	case 1:
-		return f.wrapValueCall(v)
-	default:
-		return f.wrapVectorCall(v)
-	}
-}
-
-func (f *funcWrapper) wrapVoidCall(v reflect.Value) data.Call {
-	inLen := len(f.in)
-
-	return func(in ...data.Value) data.Value {
-		wIn := make([]reflect.Value, inLen)
-		for i := 0; i < inLen; i++ {
-			wIn[i] = f.in[i].Unwrap(in[i])
-		}
-		v.Call(wIn)
+func (f *funcWrapper) Wrap(_ *WrapContext, v reflect.Value) data.Value {
+	if !v.IsValid() {
 		return data.Nil
 	}
-}
-
-func (f *funcWrapper) wrapValueCall(v reflect.Value) data.Call {
-	inLen := len(f.in)
-
-	return func(in ...data.Value) data.Value {
-		wIn := make([]reflect.Value, inLen)
-		for i := 0; i < inLen; i++ {
-			wIn[i] = f.in[i].Unwrap(in[i])
-		}
-		wOut := v.Call(wIn)
-		return f.out[0].Wrap(wOut[0])
+	switch len(f.out) {
+	case 0:
+		return f.wrapVoidFunction(v)
+	case 1:
+		return f.wrapValueFunction(v)
+	default:
+		return f.wrapVectorFunction(v)
 	}
 }
 
-func (f *funcWrapper) wrapVectorCall(v reflect.Value) data.Call {
+func (f *funcWrapper) wrapVoidFunction(fn reflect.Value) data.Function {
+	inLen := len(f.in)
+
+	return data.Applicative(func(in ...data.Value) data.Value {
+		uc := &UnwrapContext{}
+		wIn := make([]reflect.Value, inLen)
+		for i := 0; i < inLen; i++ {
+			wIn[i] = f.in[i].Unwrap(uc, in[i])
+		}
+		fn.Call(wIn)
+		return data.Nil
+	}, inLen)
+}
+
+func (f *funcWrapper) wrapValueFunction(fn reflect.Value) data.Function {
+	inLen := len(f.in)
+
+	return data.Applicative(func(in ...data.Value) data.Value {
+		uc := &UnwrapContext{}
+		wc := &WrapContext{}
+		wIn := make([]reflect.Value, inLen)
+		for i := 0; i < inLen; i++ {
+			wIn[i] = f.in[i].Unwrap(uc, in[i])
+		}
+		wOut := fn.Call(wIn)
+		return f.out[0].Wrap(wc, wOut[0])
+	}, inLen)
+}
+
+func (f *funcWrapper) wrapVectorFunction(fn reflect.Value) data.Function {
 	inLen := len(f.in)
 	outLen := len(f.out)
 
-	return func(in ...data.Value) data.Value {
+	return data.Applicative(func(in ...data.Value) data.Value {
+		uc := &UnwrapContext{}
+		wc := &WrapContext{}
 		wIn := make([]reflect.Value, inLen)
 		for i := 0; i < inLen; i++ {
-			wIn[i] = f.in[i].Unwrap(in[i])
+			wIn[i] = f.in[i].Unwrap(uc, in[i])
 		}
-		wOut := v.Call(wIn)
+		wOut := fn.Call(wIn)
 		out := make(data.Vector, outLen)
 		for i := 0; i < outLen; i++ {
-			out[i] = f.out[i].Wrap(wOut[i])
+			out[i] = f.out[i].Wrap(wc, wOut[i])
 		}
 		return out
-	}
+	}, inLen)
 }
 
-func (f *funcWrapper) Unwrap(v data.Value) reflect.Value {
+func (f *funcWrapper) Unwrap(_ *UnwrapContext, v data.Value) reflect.Value {
 	switch v := v.(type) {
-	case *wrappedFunc:
-		return v.elem
-	case data.Caller:
-		return f.unwrapCall(v.Call())
-	case data.Call:
+	case data.Function:
 		return f.unwrapCall(v)
 	default:
 		return reflect.ValueOf(v)
 	}
 }
 
-func (f *funcWrapper) unwrapCall(c data.Call) reflect.Value {
+func (f *funcWrapper) unwrapCall(c data.Function) reflect.Value {
 	var unwrapped makeFuncType
 	switch len(f.out) {
 	case 0:
@@ -132,56 +122,50 @@ func (f *funcWrapper) unwrapCall(c data.Call) reflect.Value {
 	return reflect.MakeFunc(f.typ, unwrapped)
 }
 
-func (f *funcWrapper) unwrapVoidCall(c data.Call) makeFuncType {
+func (f *funcWrapper) unwrapVoidCall(c data.Function) makeFuncType {
 	inLen := len(f.in)
 
 	return func(args []reflect.Value) []reflect.Value {
+		wc := &WrapContext{}
 		in := make([]data.Value, len(args))
 		for i := 0; i < inLen; i++ {
-			in[i] = f.in[i].Wrap(args[i])
+			in[i] = f.in[i].Wrap(wc, args[i])
 		}
-		return []reflect.Value{f.out[0].Unwrap(c(in...))}
+		c.Call(in...)
+		return []reflect.Value{}
 	}
 }
 
-func (f *funcWrapper) unwrapValueCall(c data.Call) makeFuncType {
+func (f *funcWrapper) unwrapValueCall(c data.Function) makeFuncType {
 	inLen := len(f.in)
 
 	return func(args []reflect.Value) []reflect.Value {
+		wc := &WrapContext{}
+		uc := &UnwrapContext{}
 		in := make([]data.Value, len(args))
 		for i := 0; i < inLen; i++ {
-			in[i] = f.in[i].Wrap(args[i])
+			in[i] = f.in[i].Wrap(wc, args[i])
 		}
-		return []reflect.Value{f.out[0].Unwrap(c(in...))}
+		return []reflect.Value{f.out[0].Unwrap(uc, c.Call(in...))}
 	}
 }
 
-func (f *funcWrapper) unwrapVectorCall(c data.Call) makeFuncType {
+func (f *funcWrapper) unwrapVectorCall(c data.Function) makeFuncType {
 	inLen := len(f.in)
 	outLen := len(f.out)
 
 	return func(args []reflect.Value) []reflect.Value {
+		wc := &WrapContext{}
+		uc := &UnwrapContext{}
 		in := make([]data.Value, len(args))
 		for i := 0; i < inLen; i++ {
-			in[i] = f.in[i].Wrap(args[i])
+			in[i] = f.in[i].Wrap(wc, args[i])
 		}
-		res := c(in...).(data.Vector)
+		res := c.Call(in...).(data.Vector)
 		out := make([]reflect.Value, outLen)
 		for i := 0; i < outLen; i++ {
-			out[i] = f.out[i].Unwrap(res[i])
+			out[i] = f.out[i].Unwrap(uc, res[i])
 		}
 		return out
 	}
-}
-
-func (w *wrappedFunc) Call() data.Call {
-	return w.call
-}
-
-func (*wrappedFunc) Type() data.Name {
-	return wrappedFuncType
-}
-
-func (w *wrappedFunc) String() string {
-	return data.DumpString(w)
 }

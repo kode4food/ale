@@ -15,10 +15,10 @@ func TestREPL(t *testing.T) {
 	as.NotNil(r)
 }
 
-func asFunction(t *testing.T, v data.Value) data.Call {
+func asCaller(t *testing.T, v data.Value) data.Function {
 	t.Helper()
-	if f, ok := v.(data.Caller); ok {
-		return f.Call()
+	if f, ok := v.(data.Function); ok {
+		return f
 	}
 	as := assert.New(t)
 	as.Fail("value is not a function")
@@ -32,10 +32,10 @@ func TestBuiltInUse(t *testing.T) {
 	e, ok := ns1.Resolve("use")
 	as.True(ok && e.IsBound())
 	as.NotNil(e.Value())
-	use := asFunction(t, e.Value())
+	use := asCaller(t, e.Value())
 
 	nsName := data.NewLocalSymbol("test-ns")
-	nothing := use(nsName)
+	nothing := use.Call(nsName)
 	as.NotNil(nothing)
 
 	ns2 := main.GetNS()

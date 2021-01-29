@@ -93,23 +93,19 @@ func Last(s Sequence) (Value, bool) {
 	return res, lok
 }
 
-func makeIndexedCall(s IndexedSequence) Call {
-	return func(args ...Value) Value {
-		idx := args[0].(Integer)
-		res, ok := s.ElementAt(int(idx))
-		if !ok && len(args) > 1 {
-			return args[1]
-		}
-		return res
+func indexedCall(s IndexedSequence, args []Value) Value {
+	idx := args[0].(Integer)
+	res, ok := s.ElementAt(int(idx))
+	if !ok && len(args) > 1 {
+		return args[1]
 	}
+	return res
 }
 
-func makeMappedCall(m Mapped) Call {
-	return func(args ...Value) Value {
-		res, ok := m.Get(args[0])
-		if !ok && len(args) > 1 {
-			return args[1]
-		}
-		return res
+func mappedCall(m Mapped, args []Value) Value {
+	res, ok := m.Get(args[0])
+	if !ok && len(args) > 1 {
+		return args[1]
 	}
+	return res
 }

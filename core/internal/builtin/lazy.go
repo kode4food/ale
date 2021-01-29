@@ -5,9 +5,9 @@ import (
 	"github.com/kode4food/ale/internal/sequence"
 )
 
-func makeLazyResolver(f data.Call) sequence.LazyResolver {
+func makeLazyResolver(f data.Function) sequence.LazyResolver {
 	return func() (data.Value, data.Sequence, bool) {
-		r := f()
+		r := f.Call()
 		if r != data.Nil {
 			s := r.(data.Sequence)
 			if sf, sr, ok := s.Split(); ok {
@@ -19,8 +19,8 @@ func makeLazyResolver(f data.Call) sequence.LazyResolver {
 }
 
 // LazySequence treats a function as a lazy sequence
-func LazySequence(args ...data.Value) data.Value {
-	fn := args[0].(data.Caller)
-	resolver := makeLazyResolver(fn.Call())
+var LazySequence = data.Applicative(func(args ...data.Value) data.Value {
+	fn := args[0].(data.Function)
+	resolver := makeLazyResolver(fn)
 	return sequence.NewLazy(resolver)
-}
+}, 1)

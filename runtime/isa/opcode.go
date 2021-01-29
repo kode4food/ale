@@ -31,7 +31,6 @@ const (
 	Load                       // Retrieve Local Value
 	Lt                         // Less Than Comparison
 	Lte                        // Less or Equal To
-	MakeCall                   // Make Value Callable
 	MakeTruthy                 // Make Value Boolean
 	Mod                        // Remainder
 	Mul                        // Multiplication
