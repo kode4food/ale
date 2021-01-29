@@ -131,6 +131,13 @@ func (l localSymbol) Name() Name {
 	return Name(l)
 }
 
+func (l localSymbol) Equal(v Value) bool {
+	if v, ok := v.(localSymbol); ok {
+		return l == v
+	}
+	return false
+}
+
 func (l localSymbol) String() string {
 	return string(l)
 }
@@ -159,6 +166,13 @@ func (s qualifiedSymbol) Qualified() Name {
 	buf.WriteRune(DomainSeparator)
 	buf.WriteString(string(s.name))
 	return Name(buf.String())
+}
+
+func (s qualifiedSymbol) Equal(v Value) bool {
+	if v, ok := v.(qualifiedSymbol); ok {
+		return s == v
+	}
+	return false
 }
 
 func (s qualifiedSymbol) String() string {

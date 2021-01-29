@@ -46,6 +46,14 @@ func (c Cons) Cdr() Value {
 	return c[Cdr]
 }
 
+// Equal compares this Cons to another for equality
+func (c Cons) Equal(v Value) bool {
+	if v, ok := v.(Cons); ok {
+		return c == v
+	}
+	return false
+}
+
 func (c Cons) String() string {
 	var buf bytes.Buffer
 	buf.WriteByte('(')

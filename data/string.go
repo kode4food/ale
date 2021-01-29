@@ -75,6 +75,14 @@ func (s String) ElementAt(index int) (Value, bool) {
 	return Nil, false
 }
 
+// Equal compares this String to another for equality
+func (s String) Equal(v Value) bool {
+	if v, ok := v.(String); ok {
+		return s == v
+	}
+	return false
+}
+
 // String converts this Value into a string
 func (s String) String() string {
 	return string(s)

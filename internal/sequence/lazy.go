@@ -75,6 +75,13 @@ func (l *lazySequence) Type() data.Name {
 	return "lazy-sequence"
 }
 
+func (l *lazySequence) Equal(v data.Value) bool {
+	if v, ok := v.(*lazySequence); ok {
+		return l == v
+	}
+	return false
+}
+
 func (l *lazySequence) String() string {
 	return data.DumpString(l)
 }

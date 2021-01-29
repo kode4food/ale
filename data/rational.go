@@ -120,6 +120,14 @@ func (l Float) IsNegInf() bool {
 	return math.IsInf(float64(l), -1)
 }
 
+// Equal compares this Float to another for equality
+func (l Float) Equal(r Value) bool {
+	if r, ok := r.(Float); ok {
+		return l == r
+	}
+	return false
+}
+
 // String converts this Float to a string
 func (l Float) String() string {
 	return fmt.Sprintf("%g", l)
@@ -226,6 +234,16 @@ func (*Ratio) IsPosInf() bool {
 
 // IsNegInf returns whether this Ratio represents negative infinity
 func (*Ratio) IsNegInf() bool {
+	return false
+}
+
+// Equal compares this Ratio to another for equality
+func (l *Ratio) Equal(r Value) bool {
+	if r, ok := r.(*Ratio); ok {
+		lb := (*big.Rat)(l)
+		rb := (*big.Rat)(r)
+		return lb.Cmp(rb) == 0
+	}
 	return false
 }
 

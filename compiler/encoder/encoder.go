@@ -128,6 +128,13 @@ func (e *encoder) Globals() env.Namespace {
 	return nil
 }
 
+func (e *encoder) Equal(v data.Value) bool {
+	if v, ok := v.(*encoder); ok {
+		return e == v
+	}
+	return false
+}
+
 func (e *encoder) String() string {
 	return "encoder"
 }

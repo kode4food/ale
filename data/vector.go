@@ -91,19 +91,35 @@ func (v Vector) Reverse() Sequence {
 	return res
 }
 
-// Applicative turns Vector into a Caller
+// Call turns Vector into a Function
 func (v Vector) Call(args ...Value) Value {
 	return indexedCall(v, args)
 }
 
-// Convention returns the function's calling convention
+// Convention returns the Function's calling convention
 func (v Vector) Convention() Convention {
 	return ApplicativeCall
 }
 
-// CheckArity performs a compile-time arity check for the function
+// CheckArity performs a compile-time arity check for the Function
 func (v Vector) CheckArity(argCount int) error {
 	return checkRangedArity(1, 2, argCount)
+}
+
+// Equal compares this Vector to another for equality
+func (v Vector) Equal(r Value) bool {
+	if r, ok := r.(Vector); ok {
+		if len(v) != len(r) {
+			return false
+		}
+		for i, elem := range r {
+			if !v[i].Equal(elem) {
+				return false
+			}
+		}
+		return true
+	}
+	return false
 }
 
 // String converts this Vector to a string

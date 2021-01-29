@@ -3,6 +3,8 @@ package isa
 import (
 	"fmt"
 	"strings"
+
+	"github.com/kode4food/ale/data"
 )
 
 type (
@@ -63,6 +65,22 @@ func New(oc Opcode, args ...Word) *Instruction {
 		Opcode: oc,
 		Args:   args,
 	}
+}
+
+// Equal compares this Instruction to another for equality
+func (i *Instruction) Equal(v data.Value) bool {
+	if v, ok := v.(*Instruction); ok {
+		if i.Opcode != v.Opcode || len(i.Args) != len(v.Args) {
+			return false
+		}
+		for i, l := range i.Args {
+			if l != v.Args[i] {
+				return false
+			}
+		}
+		return true
+	}
+	return false
 }
 
 func (i *Instruction) String() string {
