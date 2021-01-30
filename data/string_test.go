@@ -62,3 +62,16 @@ func TestEmptyStr(t *testing.T) {
 	as.False(ok)
 	as.Nil(c)
 }
+
+func TestStringEquality(t *testing.T) {
+	as := assert.New(t)
+
+	s1 := S("first string")
+	s2 := S("first string")
+	s3 := S("not the same")
+
+	as.True(s1.Equal(s1))
+	as.True(s1.Equal(s2))
+	as.False(s1.Equal(s3))
+	as.False(s1.Equal(I(32)))
+}

@@ -129,3 +129,21 @@ func TestUnexpectedChars(t *testing.T) {
 		T(read.Identifier, S("there")),
 	})
 }
+
+func TestTokenEquality(t *testing.T) {
+	as := assert.New(t)
+
+	t1 := T(read.Identifier, S("hello"))
+	t2 := T(read.Identifier, S("hello")) // Content same
+	t3 := T(read.String, S("hello"))     // Type different
+	t4 := T(read.Number, I(37))
+	t5 := T(read.Number, I(38)) // Value different
+
+	as.True(t1.Equal(t1))
+	as.True(t1.Equal(t2))
+	as.False(t1.Equal(t4))
+	as.False(t1.Equal(t3))
+	as.False(t1.Equal(t5))
+	as.False(t4.Equal(t5))
+	as.False(t1.Equal(I(37)))
+}

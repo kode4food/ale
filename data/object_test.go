@@ -88,3 +88,38 @@ func TestObjectSplitDeterminism(t *testing.T) {
 		as.Equal(r1Str, r2.String())
 	}
 }
+
+func TestObjectEquality(t *testing.T) {
+	as := assert.New(t)
+	o1 := data.Object{
+		K("z"): I(1024),
+		K("x"): I(5),
+		K("y"): I(99),
+	}
+	o2 := data.Object{ // Content same
+		K("z"): I(1024),
+		K("x"): I(5),
+		K("y"): I(99),
+	}
+	o3 := data.Object{ // Missing key
+		K("z"): I(1024),
+		K("y"): I(99),
+	}
+	o4 := data.Object{ // Additional Key
+		K("z"): I(1024),
+		K("x"): I(5),
+		K("y"): I(99),
+		K("g"): I(1024),
+	}
+	o5 := data.Object{ // Modified Value in x
+		K("z"): I(1024),
+		K("x"): I(6),
+		K("y"): I(99),
+	}
+	as.True(o1.Equal(o1))
+	as.True(o1.Equal(o2))
+	as.False(o1.Equal(o3))
+	as.False(o1.Equal(o4))
+	as.False(o1.Equal(o5))
+	as.False(o1.Equal(I(32)))
+}

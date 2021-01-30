@@ -5,6 +5,7 @@ import (
 
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/assert"
+	. "github.com/kode4food/ale/internal/assert/helpers"
 )
 
 func TestLocalSymbolEquality(t *testing.T) {
@@ -14,8 +15,11 @@ func TestLocalSymbolEquality(t *testing.T) {
 	sym2 := data.NewLocalSymbol("there")
 	sym3 := data.NewLocalSymbol("hello")
 
-	as.Identical(sym1, sym3)
-	as.NotIdentical(sym1, sym2)
+	as.True(sym1.Equal(sym1))
+	as.False(sym1.Equal(sym2))
+	as.True(sym1.Equal(sym3))
+	as.False(sym1.Equal(I(32)))
+	as.False(sym1.Equal(data.NewQualifiedSymbol("hello", "")))
 }
 
 func TestQualifiedSymbolEquality(t *testing.T) {
@@ -25,8 +29,11 @@ func TestQualifiedSymbolEquality(t *testing.T) {
 	sym2 := data.NewQualifiedSymbol("there", "domain")
 	sym3 := data.NewQualifiedSymbol("hello", "domain")
 
-	as.Identical(sym1, sym3)
-	as.NotIdentical(sym1, sym2)
+	as.True(sym1.Equal(sym1))
+	as.False(sym1.Equal(sym2))
+	as.True(sym1.Equal(sym3))
+	as.False(sym1.Equal(I(32)))
+	as.False(sym1.Equal(data.NewLocalSymbol("hello")))
 }
 
 func TestSymbolParsing(t *testing.T) {

@@ -69,3 +69,20 @@ func TestListCaller(t *testing.T) {
 	as.Nil(c1.Call(I(2)))
 	as.String("defaulted", c1.Call(I(2), S("defaulted")))
 }
+
+func TestListEquality(t *testing.T) {
+	as := assert.New(t)
+
+	l1 := L(I(99), I(37), I(56))
+	l2 := L(I(99), I(37), I(56))
+	l3 := L(I(99), I(37), I(55))
+	l4 := L()
+	l5 := L()
+
+	as.True(l1.Equal(l1))
+	as.True(l1.Equal(l2))
+	as.False(l1.Equal(l3))
+	as.False(l1.Equal(I(55)))
+	as.True(l4.Equal(l5))
+	as.False(l4.Equal(I(56)))
+}

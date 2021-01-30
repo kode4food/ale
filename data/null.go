@@ -52,9 +52,6 @@ func (*nilValue) Count() int {
 }
 
 func (*nilValue) Equal(v Value) bool {
-	if v == nil {
-		return true
-	}
 	if _, ok := v.(*nilValue); ok {
 		return true
 	}

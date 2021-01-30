@@ -65,3 +65,18 @@ func TestVectorCaller(t *testing.T) {
 	as.Nil(v1.Call(I(4)))
 	as.String("defaulted", v1.Call(I(4), S("defaulted")))
 }
+
+func TestVectorEquality(t *testing.T) {
+	as := assert.New(t)
+
+	v1 := V(S("hello"), S("how"), S("are"), S("you?"))
+	v2 := V(S("hello"), S("how"), S("are"), S("you?"))
+	v3 := V(S("hello"), S("are"), S("you?"), S("how"))
+	v4 := V(S("hello"), S("how"), S("are"))
+
+	as.True(v1.Equal(v1))
+	as.True(v1.Equal(v2))
+	as.False(v1.Equal(v3))
+	as.False(v1.Equal(v4))
+	as.False(v1.Equal(I(32)))
+}

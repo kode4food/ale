@@ -38,3 +38,12 @@ func TestNormalFunction(t *testing.T) {
 	err := f1.CheckArity(2)
 	as.EqualError(err, fmt.Sprintf(data.ErrFixedArity, 0, 2))
 }
+
+func TestFunctionEquality(t *testing.T) {
+	as := assert.New(t)
+	f1 := data.Applicative(func(...data.Value) data.Value { return nil })
+	f2 := data.Applicative(func(...data.Value) data.Value { return nil })
+	as.True(f1.Equal(f1))
+	as.False(f1.Equal(f2))
+	as.False(f1.Equal(I(42)))
+}
