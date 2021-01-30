@@ -6,6 +6,7 @@ import (
 
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/assert"
+	. "github.com/kode4food/ale/internal/assert/helpers"
 	"github.com/kode4food/ale/runtime/isa"
 )
 
@@ -48,4 +49,18 @@ func TestInstructionString(t *testing.T) {
 	as := assert.New(t)
 	inst := isa.New(isa.Const, isa.Offset(0).Word())
 	as.String(`Const(0)`, inst.String())
+}
+
+func TestInstructionEquality(t *testing.T) {
+	as := assert.New(t)
+	i1 := isa.New(isa.Const, isa.Offset(0).Word())
+	i2 := isa.New(isa.Const, isa.Offset(0).Word()) // Some content
+	i3 := isa.New(isa.Const, isa.Offset(1).Word()) // Different Arg
+	i4 := isa.New(isa.Load, isa.Offset(0).Word())  // Different Opcode
+
+	as.True(i1.Equal(i1))
+	as.True(i1.Equal(i2))
+	as.False(i1.Equal(i3))
+	as.False(i1.Equal(i4))
+	as.False(i1.Equal(I(37)))
 }
