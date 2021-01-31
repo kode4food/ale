@@ -16,13 +16,17 @@ type stateInfo struct {
 	notExported string
 }
 
-func TestStructWrap(t *testing.T) {
-	as := assert.New(t)
-	si := &stateInfo{
+func testStructStateInfo() *stateInfo {
+	return &stateInfo{
 		Name:        "California",
 		Population:  40,
 		notExported: "hello",
 	}
+}
+
+func TestStructWrap(t *testing.T) {
+	as := assert.New(t)
+	si := testStructStateInfo()
 	m := ffi.MustWrap(si).(data.Object)
 	as.Equal(S("California"), m[K("Name")])
 	as.Equal(I(40), m[K("pop")])
@@ -32,11 +36,7 @@ func TestStructWrap(t *testing.T) {
 
 func TestStructCycle(t *testing.T) {
 	as := assert.New(t)
-	si := &stateInfo{
-		Name:        "California",
-		Population:  40,
-		notExported: "hello",
-	}
+	si := testStructStateInfo()
 	si.Loop = si
 
 	res, err := ffi.Wrap(si)
@@ -47,13 +47,11 @@ func TestStructCycle(t *testing.T) {
 
 func TestStructUnwrap(t *testing.T) {
 	as := assert.New(t)
+	si := testStructStateInfo()
 	f := ffi.MustWrap(func(i *stateInfo) (string, int) {
 		return i.Name, i.Population
 	}).(data.Function)
-	r := f.Call(ffi.MustWrap(&stateInfo{
-		Name:       "California",
-		Population: 40,
-	})).(data.Vector)
+	r := f.Call(ffi.MustWrap(si)).(data.Vector)
 	as.Equal(S("California"), r[0])
 	as.Equal(I(40), r[1])
 }

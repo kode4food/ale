@@ -20,7 +20,7 @@ func TestArrayWrap(t *testing.T) {
 	as.Equal(I(3), d1[2])
 }
 
-func TestArrayWrapUniqueness(t *testing.T) {
+func TestArrayWrapEquality(t *testing.T) {
 	as := assert.New(t)
 	a1 := []int{1, 2, 3}
 	a2 := []int{4, 5, 6}
