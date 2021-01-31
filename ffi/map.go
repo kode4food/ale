@@ -21,30 +21,43 @@ func makeWrappedMap(t reflect.Type) Wrapper {
 	}
 }
 
-func (m *mapWrapper) Wrap(c *WrapContext, v reflect.Value) data.Value {
-	if r, ok := c.Get(v); ok {
-		return r
+func (m *mapWrapper) Wrap(c *Context, v reflect.Value) (data.Value, error) {
+	if !v.IsValid() {
+		return data.Nil, nil
+	}
+	c, err := c.Push(v)
+	if err != nil {
+		return nil, err
 	}
 	out := make(data.Object, v.Len())
-	c.Put(v, out)
 	pairs := v.MapRange()
 	for pairs.Next() {
-		k := pairs.Key()
-		v := pairs.Value()
-		out[m.key.Wrap(c, k)] = m.value.Wrap(c, v)
+		k, err := m.key.Wrap(c, pairs.Key())
+		if err != nil {
+			return nil, err
+		}
+		v, err := m.value.Wrap(c, pairs.Value())
+		if err != nil {
+			return nil, err
+		}
+		out[k] = v
 	}
-	return out
+	return out, nil
 }
 
-func (m *mapWrapper) Unwrap(c *UnwrapContext, v data.Value) reflect.Value {
-	if r, ok := c.Get(v); ok {
-		return r
-	}
+func (m *mapWrapper) Unwrap(v data.Value) (reflect.Value, error) {
 	in := sequence.ToObject(v.(data.Sequence))
 	out := reflect.MakeMapWithSize(m.typ, len(in))
-	c.Put(v, out)
 	for k, v := range in {
-		out.SetMapIndex(m.key.Unwrap(c, k), m.value.Unwrap(c, v))
+		k, err := m.key.Unwrap(k)
+		if err != nil {
+			return emptyReflectValue, err
+		}
+		v, err := m.value.Unwrap(v)
+		if err != nil {
+			return emptyReflectValue, err
+		}
+		out.SetMapIndex(k, v)
 	}
-	return out
+	return out, nil
 }

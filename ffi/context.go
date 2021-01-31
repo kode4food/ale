@@ -1,72 +1,54 @@
 package ffi
 
 import (
+	"errors"
 	"reflect"
-
-	"github.com/kode4food/ale/data"
 )
 
-type (
-	// WrapContext tracks items that have already been wrapped
-	WrapContext struct {
-		mappings []*wrapMapping
-	}
+type Context struct {
+	parent *Context
+	child  bool
+	value  reflect.Value
+}
 
-	wrapMapping struct {
-		From reflect.Value
-		To   data.Value
-	}
-
-	// UnwrapContext tracks items that have already been unwrapped
-	UnwrapContext struct {
-		mappings []*unwrapMapping
-	}
-
-	unwrapMapping struct {
-		From data.Value
-		To   reflect.Value
-	}
+// Error messages
+const (
+	ErrCycleDetected = "cycle detected in wrapping"
 )
 
 var emptyReflectValue = reflect.Value{}
 
-// Get returns a mapped item from the WrapContext list
-func (v *WrapContext) Get(from reflect.Value) (data.Value, bool) {
-	if !from.IsValid() {
-		return data.Nil, true
+// Push creates a new Context, checking the parent chain for cycles
+func (c *Context) Push(v reflect.Value) (*Context, error) {
+	if err := c.checkDuplicate(v); err != nil {
+		return nil, err
 	}
-	for i := len(v.mappings) - 1; i >= 0; i-- {
-		m := v.mappings[i]
-		if reflect.DeepEqual(m.From, from) {
-			return m.To, true
+	return &Context{
+		parent: c,
+		child:  true,
+		value:  v,
+	}, nil
+}
+
+func (c *Context) checkDuplicate(v reflect.Value) error {
+	if !c.child {
+		return nil
+	}
+	cv := c.value
+	if cv.IsValid() && v.IsValid() && cv.Type() == v.Type() {
+		switch cv.Kind() {
+		case reflect.Ptr:
+			if cv.Pointer() == v.Pointer() {
+				return errors.New(ErrCycleDetected)
+			}
+		case reflect.Slice, reflect.Map:
+			if cv.IsNil() || v.IsNil() {
+				break
+			}
+			if cv.Len() == v.Len() && cv.Pointer() == v.Pointer() {
+				return errors.New(ErrCycleDetected)
+			}
 		}
 	}
-	return nil, false
-}
-
-// Put stores a mapping in the WrapContext list
-func (v *WrapContext) Put(from reflect.Value, to data.Value) {
-	v.mappings = append(v.mappings, &wrapMapping{
-		From: from,
-		To:   to,
-	})
-}
-
-// Get returns a mapped item from the WrapContext list
-func (v *UnwrapContext) Get(from data.Value) (reflect.Value, bool) {
-	for i := len(v.mappings) - 1; i >= 0; i-- {
-		m := v.mappings[i]
-		if m.From == from {
-			return m.To, true
-		}
-	}
-	return emptyReflectValue, false
-}
-
-// Put stores a mapping in the WrapContext list
-func (v *UnwrapContext) Put(from data.Value, to reflect.Value) {
-	v.mappings = append(v.mappings, &unwrapMapping{
-		From: from,
-		To:   to,
-	})
+	return c.parent.checkDuplicate(v)
 }

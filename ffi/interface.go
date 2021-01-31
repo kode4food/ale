@@ -1,6 +1,7 @@
 package ffi
 
 import (
+	"errors"
 	"reflect"
 
 	"github.com/kode4food/ale/data"
@@ -14,6 +15,11 @@ type (
 		in   []Wrapper
 		out  []Wrapper
 	}
+)
+
+// Error messages
+const (
+	ErrNotImplemented = "not implemented"
 )
 
 func makeWrappedInterface(t reflect.Type) Wrapper {
@@ -48,16 +54,16 @@ func makeWrappedMethod(m reflect.Method) *methodWrapper {
 	}
 }
 
-func (i interfaceWrapper) Wrap(_ *WrapContext, v reflect.Value) data.Value {
+func (i interfaceWrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
 	if !v.IsValid() {
-		return data.Nil
+		return data.Nil, nil
 	}
 	res := make(data.Object, len(i))
 	for _, m := range i {
 		k := data.Keyword(m.name)
 		res[k] = m.wrapMethod(v)
 	}
-	return res
+	return res, nil
 }
 
 func (m *methodWrapper) wrapMethod(v reflect.Value) data.Function {
@@ -76,10 +82,13 @@ func (m *methodWrapper) wrapVoidMethod(v reflect.Value) data.Function {
 	fn := v.MethodByName(m.name)
 
 	return data.Applicative(func(in ...data.Value) data.Value {
-		uc := &UnwrapContext{}
 		wIn := make([]reflect.Value, inLen)
 		for i := 0; i < inLen; i++ {
-			wIn[i] = m.in[i].Unwrap(uc, in[i])
+			u, err := m.in[i].Unwrap(in[i])
+			if err != nil {
+				panic(err)
+			}
+			wIn[i] = u
 		}
 		fn.Call(wIn)
 		return data.Nil
@@ -91,14 +100,21 @@ func (m *methodWrapper) wrapValueMethod(v reflect.Value) data.Function {
 	fn := v.MethodByName(m.name)
 
 	return data.Applicative(func(in ...data.Value) data.Value {
-		wc := &WrapContext{}
-		uc := &UnwrapContext{}
+		c := &Context{}
 		wIn := make([]reflect.Value, inLen)
 		for i := 0; i < inLen; i++ {
-			wIn[i] = m.in[i].Unwrap(uc, in[i])
+			arg, err := m.in[i].Unwrap(in[i])
+			if err != nil {
+				panic(err)
+			}
+			wIn[i] = arg
 		}
 		wOut := fn.Call(wIn)
-		return m.out[0].Wrap(wc, wOut[0])
+		res, err := m.out[0].Wrap(c, wOut[0])
+		if err != nil {
+			panic(err)
+		}
+		return res
 	}, inLen)
 }
 
@@ -108,21 +124,28 @@ func (m *methodWrapper) wrapVectorMethod(v reflect.Value) data.Function {
 	fn := v.MethodByName(m.name)
 
 	return data.Applicative(func(in ...data.Value) data.Value {
-		wc := &WrapContext{}
-		uc := &UnwrapContext{}
+		c := &Context{}
 		wIn := make([]reflect.Value, inLen)
 		for i := 0; i < inLen; i++ {
-			wIn[i] = m.in[i].Unwrap(uc, in[i])
+			arg, err := m.in[i].Unwrap(in[i])
+			if err != nil {
+				panic(err)
+			}
+			wIn[i] = arg
 		}
 		wOut := fn.Call(wIn)
 		out := make(data.Vector, outLen)
 		for i := 0; i < outLen; i++ {
-			out[i] = m.out[i].Wrap(wc, wOut[i])
+			res, err := m.out[i].Wrap(c, wOut[i])
+			if err != nil {
+				panic(err)
+			}
+			out[i] = res
 		}
 		return out
 	}, inLen)
 }
 
-func (i interfaceWrapper) Unwrap(_ *UnwrapContext, _ data.Value) reflect.Value {
-	panic("not implemented")
+func (i interfaceWrapper) Unwrap(_ data.Value) (reflect.Value, error) {
+	return emptyReflectValue, errors.New(ErrNotImplemented)
 }

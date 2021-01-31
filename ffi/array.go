@@ -28,32 +28,34 @@ func makeWrappedArray(t reflect.Type) Wrapper {
 	}
 }
 
-func (a *arrayWrapper) Wrap(c *WrapContext, v reflect.Value) data.Value {
-	if r, ok := c.Get(v); ok {
-		return r
+func (a *arrayWrapper) Wrap(c *Context, v reflect.Value) (data.Value, error) {
+	if !v.IsValid() {
+		return data.Nil, nil
 	}
 	vLen := v.Len()
 	out := make(data.Vector, vLen)
-	c.Put(v, out)
 	for i := 0; i < vLen; i++ {
-		out[i] = a.elem.Wrap(c, v.Index(i))
+		elem, err := a.elem.Wrap(c, v.Index(i))
+		if err != nil {
+			return nil, err
+		}
+		out[i] = elem
 	}
-	return out
+	return out, nil
 }
 
-func (a *arrayWrapper) Unwrap(c *UnwrapContext, v data.Value) reflect.Value {
-	if r, ok := c.Get(v); ok {
-		return r
-	}
+func (a *arrayWrapper) Unwrap(v data.Value) (reflect.Value, error) {
 	in := sequence.ToValues(v.(data.Sequence))
 	inLen := len(in)
 	out := reflect.New(a.typ).Elem()
-	c.Put(v, out)
 	for i := 0; i < inLen; i++ {
-		v := a.elem.Unwrap(c, in[i])
+		v, err := a.elem.Unwrap(in[i])
+		if err != nil {
+			return emptyReflectValue, err
+		}
 		out.Index(i).Set(v)
 	}
-	return out
+	return out, nil
 }
 
 func makeWrappedSlice(t reflect.Type) Wrapper {
@@ -63,30 +65,36 @@ func makeWrappedSlice(t reflect.Type) Wrapper {
 	}
 }
 
-func (s *sliceWrapper) Wrap(c *WrapContext, v reflect.Value) data.Value {
-	if r, ok := c.Get(v); ok {
-		return r
+func (s *sliceWrapper) Wrap(c *Context, v reflect.Value) (data.Value, error) {
+	if !v.IsValid() {
+		return data.Nil, nil
+	}
+	c, err := c.Push(v)
+	if err != nil {
+		return nil, err
 	}
 	vLen := v.Len()
 	out := make(data.Vector, vLen)
-	c.Put(v, out)
 	for i := 0; i < vLen; i++ {
-		out[i] = s.elem.Wrap(c, v.Index(i))
+		v, err := s.elem.Wrap(c, v.Index(i))
+		if err != nil {
+			return nil, err
+		}
+		out[i] = v
 	}
-	return out
+	return out, nil
 }
 
-func (s *sliceWrapper) Unwrap(c *UnwrapContext, v data.Value) reflect.Value {
-	if r, ok := c.Get(v); ok {
-		return r
-	}
+func (s *sliceWrapper) Unwrap(v data.Value) (reflect.Value, error) {
 	in := sequence.ToValues(v.(data.Sequence))
 	inLen := len(in)
 	out := reflect.MakeSlice(s.typ, inLen, inLen)
-	c.Put(v, out)
 	for i := 0; i < inLen; i++ {
-		v := s.elem.Unwrap(c, in[i])
+		v, err := s.elem.Unwrap(in[i])
+		if err != nil {
+			return emptyReflectValue, err
+		}
 		out.Index(i).Set(v)
 	}
-	return out
+	return out, nil
 }

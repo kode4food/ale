@@ -13,7 +13,7 @@ import (
 func TestVoidResult(t *testing.T) {
 	var b bool
 	as := assert.New(t)
-	f := ffi.Wrap(func(i int) {
+	f := ffi.MustWrap(func(i int) {
 		b = i == 37
 	}).(data.Function)
 	as.NotNil(f)
@@ -25,7 +25,7 @@ func TestVoidResult(t *testing.T) {
 
 func TestSingleResult(t *testing.T) {
 	as := assert.New(t)
-	f := ffi.Wrap(func(i int) int {
+	f := ffi.MustWrap(func(i int) int {
 		return i * 2
 	}).(data.Function)
 	as.NotNil(f)
@@ -35,7 +35,7 @@ func TestSingleResult(t *testing.T) {
 
 func TestVectorResult(t *testing.T) {
 	as := assert.New(t)
-	f := ffi.Wrap(func(i int, s string) (int, string) {
+	f := ffi.MustWrap(func(i int, s string) (int, string) {
 		return i * 2, s + "-modified"
 	}).(data.Function)
 	as.NotNil(f)
@@ -50,12 +50,12 @@ func TestFuncUnwrap(t *testing.T) {
 	mark := func() {
 		set = true
 	}
-	f := ffi.Wrap(func(f func()) func() {
+	f := ffi.MustWrap(func(f func()) func() {
 		f()
 		as.True(set)
 		return f
 	}).(data.Function)
-	inFunc := ffi.Wrap(mark)
+	inFunc := ffi.MustWrap(mark)
 	res := f.Call(inFunc)
 	as.NotNil(res)
 	fmt.Println(res)

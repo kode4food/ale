@@ -51,29 +51,32 @@ func getFieldKeyword(f reflect.StructField) data.Keyword {
 	return data.Keyword(tag)
 }
 
-func (s *structWrapper) Wrap(c *WrapContext, v reflect.Value) data.Value {
-	if r, ok := c.Get(v); ok {
-		return r
+func (s *structWrapper) Wrap(c *Context, v reflect.Value) (data.Value, error) {
+	if !v.IsValid() {
+		return data.Nil, nil
 	}
 	out := make(data.Object, len(s.fields))
-	c.Put(v, out)
 	for k, w := range s.fields {
-		out[w.Keyword] = w.Wrap(c, v.FieldByName(k))
+		v, err := w.Wrap(c, v.FieldByName(k))
+		if err != nil {
+			return nil, err
+		}
+		out[w.Keyword] = v
 	}
-	return out
+	return out, nil
 }
 
-func (s *structWrapper) Unwrap(c *UnwrapContext, v data.Value) reflect.Value {
-	if r, ok := c.Get(v); ok {
-		return r
-	}
+func (s *structWrapper) Unwrap(v data.Value) (reflect.Value, error) {
 	in := sequence.ToObject(v.(data.Sequence))
 	out := reflect.New(s.typ).Elem()
-	c.Put(v, out)
 	for k, w := range s.fields {
 		if v, ok := in[w.Keyword]; ok {
-			out.FieldByName(k).Set(w.Unwrap(c, v))
+			v, err := w.Unwrap(v)
+			if err != nil {
+				return emptyReflectValue, err
+			}
+			out.FieldByName(k).Set(v)
 		}
 	}
-	return out
+	return out, nil
 }

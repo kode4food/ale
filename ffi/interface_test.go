@@ -22,7 +22,7 @@ type (
 
 func TestNotExported(t *testing.T) {
 	as := assert.New(t)
-	f := ffi.Wrap(func() testInterface {
+	f := ffi.MustWrap(func() testInterface {
 		return testReceiver(false)
 	}).(data.Function)
 	r := f.Call().(data.Object)
@@ -34,7 +34,7 @@ func TestNotExported(t *testing.T) {
 
 func TestVoidInterface(t *testing.T) {
 	as := assert.New(t)
-	f := ffi.Wrap(func() testInterface {
+	f := ffi.MustWrap(func() testInterface {
 		return testReceiver(false)
 	}).(data.Function)
 	r := f.Call().(data.Object)
@@ -42,7 +42,7 @@ func TestVoidInterface(t *testing.T) {
 
 	b := []bool{false}
 	m := r[K("Void")].(data.Function)
-	m.Call(ffi.Wrap(func() {
+	m.Call(ffi.MustWrap(func() {
 		b[0] = true
 	}))
 	as.True(b[0])
@@ -50,27 +50,27 @@ func TestVoidInterface(t *testing.T) {
 
 func TestValueInterface(t *testing.T) {
 	as := assert.New(t)
-	f := ffi.Wrap(func() testInterface {
+	f := ffi.MustWrap(func() testInterface {
 		return testReceiver(false)
 	}).(data.Function)
 	r := f.Call().(data.Object)
 	as.Equal(3, len(r))
 
 	m := r[K("Add")].(data.Function)
-	s := m.Call(ffi.Wrap(I(4)), ffi.Wrap(I(6)))
+	s := m.Call(ffi.MustWrap(I(4)), ffi.MustWrap(I(6)))
 	as.Equal(I(10), s)
 }
 
 func TestVectorInterface(t *testing.T) {
 	as := assert.New(t)
-	f := ffi.Wrap(func() testInterface {
+	f := ffi.MustWrap(func() testInterface {
 		return testReceiver(false)
 	}).(data.Function)
 	r := f.Call().(data.Object)
 	as.Equal(3, len(r))
 
 	m := r[K("Double")].(data.Function)
-	d := m.Call(ffi.Wrap(I(4)), ffi.Wrap(I(6))).(data.Vector)
+	d := m.Call(ffi.MustWrap(I(4)), ffi.MustWrap(I(6))).(data.Vector)
 	as.Equal(2, len(d))
 	as.Equal(I(8), d[0])
 	as.Equal(I(12), d[1])

@@ -1,6 +1,7 @@
 package ffi
 
 import (
+	"errors"
 	"reflect"
 
 	"github.com/kode4food/ale/data"
@@ -11,6 +12,12 @@ type (
 	intWrapper    reflect.Kind
 	stringWrapper reflect.Kind
 	boolWrapper   bool
+)
+
+// Error messages
+const (
+	ErrIncorrectFloatKind = "float kind is incorrect"
+	ErrIncorrectIntKind   = "int kind is incorrect"
 )
 
 var (
@@ -51,116 +58,116 @@ func makeWrappedString(_ reflect.Type) Wrapper {
 	return _stringWrapper
 }
 
-func (f floatWrapper) Wrap(_ *WrapContext, v reflect.Value) data.Value {
+func (f floatWrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
 	if !v.IsValid() {
-		return data.Nil
+		return data.Nil, nil
 	}
-	return data.Float(v.Float())
+	return data.Float(v.Float()), nil
 }
 
-func (f floatWrapper) Unwrap(_ *UnwrapContext, v data.Value) reflect.Value {
+func (f floatWrapper) Unwrap(v data.Value) (reflect.Value, error) {
 	switch reflect.Kind(f) {
 	case reflect.Float32:
 		if v == nil {
-			return float32zero
+			return float32zero, nil
 		}
-		return reflect.ValueOf(float32(v.(data.Float)))
+		return reflect.ValueOf(float32(v.(data.Float))), nil
 	case reflect.Float64:
 		if v == nil {
-			return float64zero
+			return float64zero, nil
 		}
-		return reflect.ValueOf(float64(v.(data.Float)))
+		return reflect.ValueOf(float64(v.(data.Float))), nil
 	}
-	panic("float kind is incorrect")
+	return emptyReflectValue, errors.New(ErrIncorrectFloatKind)
 }
 
-func (i intWrapper) Wrap(_ *WrapContext, v reflect.Value) data.Value {
+func (i intWrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
 	if !v.IsValid() {
-		return data.Nil
+		return data.Nil, nil
 	}
-	return data.Integer(v.Int())
+	return data.Integer(v.Int()), nil
 }
 
-func (i intWrapper) Unwrap(_ *UnwrapContext, v data.Value) reflect.Value {
+func (i intWrapper) Unwrap(v data.Value) (reflect.Value, error) {
 	switch reflect.Kind(i) {
 	case reflect.Int64:
 		if v == nil {
-			return int64zero
+			return int64zero, nil
 		}
-		return reflect.ValueOf(int64(v.(data.Integer)))
+		return reflect.ValueOf(int64(v.(data.Integer))), nil
 	case reflect.Int32:
 		if v == nil {
-			return int32zero
+			return int32zero, nil
 		}
-		return reflect.ValueOf(int32(v.(data.Integer)))
+		return reflect.ValueOf(int32(v.(data.Integer))), nil
 	case reflect.Int16:
 		if v == nil {
-			return int16zero
+			return int16zero, nil
 		}
-		return reflect.ValueOf(int16(v.(data.Integer)))
+		return reflect.ValueOf(int16(v.(data.Integer))), nil
 	case reflect.Int8:
 		if v == nil {
-			return int8zero
+			return int8zero, nil
 		}
-		return reflect.ValueOf(int8(v.(data.Integer)))
+		return reflect.ValueOf(int8(v.(data.Integer))), nil
 	case reflect.Int:
 		if v == nil {
-			return intZero
+			return intZero, nil
 		}
-		return reflect.ValueOf(int(v.(data.Integer)))
+		return reflect.ValueOf(int(v.(data.Integer))), nil
 	case reflect.Uint64:
 		if v == nil {
-			return uint64zero
+			return uint64zero, nil
 		}
-		return reflect.ValueOf(uint64(v.(data.Integer)))
+		return reflect.ValueOf(uint64(v.(data.Integer))), nil
 	case reflect.Uint32:
 		if v == nil {
-			return uint32zero
+			return uint32zero, nil
 		}
-		return reflect.ValueOf(uint32(v.(data.Integer)))
+		return reflect.ValueOf(uint32(v.(data.Integer))), nil
 	case reflect.Uint16:
 		if v == nil {
-			return uint16zero
+			return uint16zero, nil
 		}
-		return reflect.ValueOf(uint16(v.(data.Integer)))
+		return reflect.ValueOf(uint16(v.(data.Integer))), nil
 	case reflect.Uint8:
 		if v == nil {
-			return uint8zero
+			return uint8zero, nil
 		}
-		return reflect.ValueOf(uint8(v.(data.Integer)))
+		return reflect.ValueOf(uint8(v.(data.Integer))), nil
 	case reflect.Uint:
 		if v == nil {
-			return uintZero
+			return uintZero, nil
 		}
-		return reflect.ValueOf(uint(v.(data.Integer)))
+		return reflect.ValueOf(uint(v.(data.Integer))), nil
 	}
-	panic("int kind is incorrect")
+	return emptyReflectValue, errors.New(ErrIncorrectIntKind)
 }
 
-func (stringWrapper) Wrap(_ *WrapContext, v reflect.Value) data.Value {
+func (stringWrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
 	if !v.IsValid() {
-		return data.Nil
+		return data.Nil, nil
 	}
-	return data.String(v.Interface().(string))
+	return data.String(v.Interface().(string)), nil
 }
 
-func (stringWrapper) Unwrap(_ *UnwrapContext, v data.Value) reflect.Value {
+func (stringWrapper) Unwrap(v data.Value) (reflect.Value, error) {
 	if v == nil {
 		v = data.Nil
 	}
-	return reflect.ValueOf(v.String())
+	return reflect.ValueOf(v.String()), nil
 }
 
-func (b boolWrapper) Wrap(_ *WrapContext, v reflect.Value) data.Value {
+func (b boolWrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
 	if !v.IsValid() {
-		return data.False
+		return data.False, nil
 	}
-	return data.Bool(v.Bool())
+	return data.Bool(v.Bool()), nil
 }
 
-func (b boolWrapper) Unwrap(_ *UnwrapContext, v data.Value) reflect.Value {
+func (b boolWrapper) Unwrap(v data.Value) (reflect.Value, error) {
 	if v == nil {
-		return boolZero
+		return boolZero, nil
 	}
-	return reflect.ValueOf(bool(v.(data.Bool)))
+	return reflect.ValueOf(bool(v.(data.Bool))), nil
 }

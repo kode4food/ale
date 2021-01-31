@@ -10,8 +10,8 @@ import (
 type (
 	// Wrapper can marshal a native Go value to and from a data.Value
 	Wrapper interface {
-		Wrap(*WrapContext, reflect.Value) data.Value
-		Unwrap(*UnwrapContext, data.Value) reflect.Value
+		Wrap(*Context, reflect.Value) (data.Value, error)
+		Unwrap(data.Value) (reflect.Value, error)
 	}
 
 	typeCache struct {
@@ -20,20 +20,34 @@ type (
 	}
 )
 
+// Error messages
+const (
+	errUnsupportedType = "unsupported type"
+)
+
 var cache = makeTypeCache()
+
+// MustWrap calls Wrap, and panics if an error is returned
+func MustWrap(i interface{}) data.Value {
+	res, err := Wrap(i)
+	if err != nil {
+		panic(err)
+	}
+	return res
+}
 
 // Wrap takes a native Go value, potentially builds a Wrapper for
 // its type and then returns a marshalled data.Value from the Wrapper
-func Wrap(i interface{}) data.Value {
+func Wrap(i interface{}) (data.Value, error) {
 	if i == nil {
-		return data.Nil
+		return data.Nil, nil
 	}
 	if d, ok := i.(data.Value); ok {
-		return d
+		return d, nil
 	}
 	v := reflect.ValueOf(i)
 	w := wrapType(v.Type())
-	c := &WrapContext{}
+	c := &Context{}
 	return w.Wrap(c, v)
 }
 
@@ -89,7 +103,7 @@ func makeWrappedType(t reflect.Type) Wrapper {
 	case reflect.Struct:
 		return makeWrappedStruct(t)
 	default:
-		panic("unsupported type")
+		panic(errUnsupportedType)
 	}
 }
 

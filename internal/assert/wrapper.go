@@ -74,7 +74,11 @@ func (w *Wrapper) Equal(expect Any, expr Any) {
 		num := expr.(data.Number)
 		w.Assertions.Equal(data.EqualTo, expect.Cmp(num))
 	case data.Value:
-		w.String(expect.String(), expr)
+		if expr, ok := expr.(data.Value); ok {
+			w.True(expect.Equal(expr))
+		} else {
+			w.String(expect.String(), expr)
+		}
 	default:
 		w.Assertions.Equal(expect, expr)
 	}
