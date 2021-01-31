@@ -30,7 +30,7 @@ func (p *pointerWrapper) Wrap(c *Context, v reflect.Value) (data.Value, error) {
 func (p *pointerWrapper) Unwrap(v data.Value) (reflect.Value, error) {
 	e, err := p.elem.Unwrap(v)
 	if err != nil {
-		return emptyReflectValue, nil
+		return _emptyValue, nil
 	}
 	return e.Addr(), nil
 }

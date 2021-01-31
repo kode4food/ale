@@ -73,7 +73,7 @@ func (s *structWrapper) Unwrap(v data.Value) (reflect.Value, error) {
 		if v, ok := in[w.Keyword]; ok {
 			v, err := w.Unwrap(v)
 			if err != nil {
-				return emptyReflectValue, err
+				return _emptyValue, err
 			}
 			out.FieldByName(k).Set(v)
 		}

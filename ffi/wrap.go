@@ -47,8 +47,7 @@ func Wrap(i interface{}) (data.Value, error) {
 	}
 	v := reflect.ValueOf(i)
 	w := wrapType(v.Type())
-	c := &Context{}
-	return w.Wrap(c, v)
+	return w.Wrap(&Context{}, v)
 }
 
 func wrapType(t reflect.Type) Wrapper {

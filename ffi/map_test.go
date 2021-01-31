@@ -9,6 +9,8 @@ import (
 	. "github.com/kode4food/ale/internal/assert/helpers"
 )
 
+type cycleMap map[string]interface{}
+
 var stateMap = map[string]int{
 	"California":    40,
 	"Massachusetts": 7,
@@ -21,6 +23,20 @@ func TestMapWrap(t *testing.T) {
 	as.NotNil(m)
 	as.Equal(I(40), m[S("California")])
 	as.Equal(I(7), m[S("Massachusetts")])
+}
+
+func TestMapCycle(t *testing.T) {
+	as := assert.New(t)
+	m := cycleMap{
+		"k1": 99,
+		"k2": 100,
+	}
+	m["k3"] = m
+
+	res, err := ffi.Wrap(m)
+	as.Nil(res)
+	as.NotNil(err)
+	as.Equal(ffi.ErrCycleDetected, err.Error())
 }
 
 func TestMapUnwrap(t *testing.T) {

@@ -26,7 +26,7 @@ func TestNotExported(t *testing.T) {
 		return testReceiver(false)
 	}).(data.Function)
 	r := f.Call().(data.Object)
-	as.Equal(3, len(r))
+	as.Equal(4, len(r))
 
 	_, ok := r[K("notExported")]
 	as.False(ok)
@@ -38,7 +38,7 @@ func TestVoidInterface(t *testing.T) {
 		return testReceiver(false)
 	}).(data.Function)
 	r := f.Call().(data.Object)
-	as.Equal(3, len(r))
+	as.Equal(4, len(r))
 
 	b := []bool{false}
 	m := r[K("Void")].(data.Function)
@@ -54,7 +54,7 @@ func TestValueInterface(t *testing.T) {
 		return testReceiver(false)
 	}).(data.Function)
 	r := f.Call().(data.Object)
-	as.Equal(3, len(r))
+	as.Equal(4, len(r))
 
 	m := r[K("Add")].(data.Function)
 	s := m.Call(ffi.MustWrap(I(4)), ffi.MustWrap(I(6)))
@@ -67,7 +67,7 @@ func TestVectorInterface(t *testing.T) {
 		return testReceiver(false)
 	}).(data.Function)
 	r := f.Call().(data.Object)
-	as.Equal(3, len(r))
+	as.Equal(4, len(r))
 
 	m := r[K("Double")].(data.Function)
 	d := m.Call(ffi.MustWrap(I(4)), ffi.MustWrap(I(6))).(data.Vector)

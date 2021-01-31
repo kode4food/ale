@@ -51,7 +51,7 @@ func (a *arrayWrapper) Unwrap(v data.Value) (reflect.Value, error) {
 	for i := 0; i < inLen; i++ {
 		v, err := a.elem.Unwrap(in[i])
 		if err != nil {
-			return emptyReflectValue, err
+			return _emptyValue, err
 		}
 		out.Index(i).Set(v)
 	}
@@ -92,7 +92,7 @@ func (s *sliceWrapper) Unwrap(v data.Value) (reflect.Value, error) {
 	for i := 0; i < inLen; i++ {
 		v, err := s.elem.Unwrap(in[i])
 		if err != nil {
-			return emptyReflectValue, err
+			return _emptyValue, err
 		}
 		out.Index(i).Set(v)
 	}

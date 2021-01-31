@@ -51,11 +51,11 @@ func (m *mapWrapper) Unwrap(v data.Value) (reflect.Value, error) {
 	for k, v := range in {
 		k, err := m.key.Unwrap(k)
 		if err != nil {
-			return emptyReflectValue, err
+			return _emptyValue, err
 		}
 		v, err := m.value.Unwrap(v)
 		if err != nil {
-			return emptyReflectValue, err
+			return _emptyValue, err
 		}
 		out.SetMapIndex(k, v)
 	}

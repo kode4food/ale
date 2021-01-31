@@ -78,7 +78,7 @@ func (f floatWrapper) Unwrap(v data.Value) (reflect.Value, error) {
 		}
 		return reflect.ValueOf(float64(v.(data.Float))), nil
 	}
-	return emptyReflectValue, errors.New(ErrIncorrectFloatKind)
+	return _emptyValue, errors.New(ErrIncorrectFloatKind)
 }
 
 func (i intWrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
@@ -141,7 +141,7 @@ func (i intWrapper) Unwrap(v data.Value) (reflect.Value, error) {
 		}
 		return reflect.ValueOf(uint(v.(data.Integer))), nil
 	}
-	return emptyReflectValue, errors.New(ErrIncorrectIntKind)
+	return _emptyValue, errors.New(ErrIncorrectIntKind)
 }
 
 func (stringWrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {

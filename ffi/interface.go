@@ -8,7 +8,12 @@ import (
 )
 
 type (
-	interfaceWrapper []*methodWrapper
+	interfaceWrapper struct {
+		reflect.Type
+		methods []*methodWrapper
+	}
+
+	receiver reflect.Value
 
 	methodWrapper struct {
 		name string
@@ -17,20 +22,29 @@ type (
 	}
 )
 
+const (
+	ReceiverKey  = data.Keyword("receiver")
+	ReceiverType = data.Name("receiver")
+)
+
 // Error messages
 const (
-	ErrNotImplemented = "not implemented"
+	ErrInterfaceTypeMismatch         = "interface type mismatch"
+	ErrInterfaceCoercionNotSupported = "interface coercion not supported"
 )
 
 func makeWrappedInterface(t reflect.Type) Wrapper {
 	mLen := t.NumMethod()
-	res := make(interfaceWrapper, 0, mLen)
+	res := &interfaceWrapper{
+		Type:    t,
+		methods: make([]*methodWrapper, 0, mLen),
+	}
 	for i := 0; i < mLen; i++ {
 		m := t.Method(i)
 		if m.PkgPath != "" { // Not exported
 			continue
 		}
-		res = append(res, makeWrappedMethod(m))
+		res.methods = append(res.methods, makeWrappedMethod(m))
 	}
 	return res
 }
@@ -54,12 +68,17 @@ func makeWrappedMethod(m reflect.Method) *methodWrapper {
 	}
 }
 
-func (i interfaceWrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
+func (i interfaceWrapper) Wrap(c *Context, v reflect.Value) (data.Value, error) {
 	if !v.IsValid() {
 		return data.Nil, nil
 	}
-	res := make(data.Object, len(i))
-	for _, m := range i {
+	c, err := c.Push(v.Elem())
+	if err != nil {
+		return nil, err
+	}
+	res := make(data.Object, len(i.methods)+1)
+	res[ReceiverKey] = receiver(v)
+	for _, m := range i.methods {
 		k := data.Keyword(m.name)
 		res[k] = m.wrapMethod(v)
 	}
@@ -146,6 +165,29 @@ func (m *methodWrapper) wrapVectorMethod(v reflect.Value) data.Function {
 	}, inLen)
 }
 
-func (i interfaceWrapper) Unwrap(_ data.Value) (reflect.Value, error) {
-	return emptyReflectValue, errors.New(ErrNotImplemented)
+func (i interfaceWrapper) Unwrap(v data.Value) (reflect.Value, error) {
+	if v, ok := v.(data.Object); ok {
+		if r, ok := v[ReceiverKey]; ok {
+			if r, ok := r.(receiver); ok {
+				res := reflect.Value(r)
+				if i.Type != res.Type() {
+					return _emptyValue, errors.New(ErrInterfaceTypeMismatch)
+				}
+				return res, nil
+			}
+		}
+	}
+	return _emptyValue, errors.New(ErrInterfaceCoercionNotSupported)
+}
+
+func (receiver) Equal(_ data.Value) bool {
+	return false
+}
+
+func (receiver) Type() data.Name {
+	return ReceiverType
+}
+
+func (r receiver) String() string {
+	return data.DumpString(r)
 }
