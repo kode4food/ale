@@ -365,9 +365,6 @@ opSwitch:
 	case isa.RetNil:
 		return data.Nil
 
-	case isa.RetEmptyList:
-		return data.EmptyList
-
 	case isa.RetTrue:
 		return data.True
 
