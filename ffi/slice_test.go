@@ -9,9 +9,9 @@ import (
 	. "github.com/kode4food/ale/internal/assert/helpers"
 )
 
-func TestArrayWrap(t *testing.T) {
+func TestSliceWrap(t *testing.T) {
 	as := assert.New(t)
-	a1 := [3]int{1, 2, 3}
+	a1 := []int{1, 2, 3}
 	d1, ok := ffi.MustWrap(a1).(data.Vector)
 	as.True(ok)
 	as.Equal(3, len(d1))
@@ -20,23 +20,10 @@ func TestArrayWrap(t *testing.T) {
 	as.Equal(I(3), d1[2])
 }
 
-func TestArrayWrapEquality(t *testing.T) {
+func TestSliceUnwrap(t *testing.T) {
 	as := assert.New(t)
-	a1 := []int{1, 2, 3}
-	a2 := []int{4, 5, 6}
-	a3 := []int{1, 2, 3}
-	a4 := [][]int{a1, a2, a1, a3}
-	w, ok := ffi.MustWrap(a4).(data.Vector)
-	as.True(ok)
-	as.Equal(w[0], w[2])
-	as.NotEqual(w[0], w[1])
-	as.Equal(w[2], w[3])
-}
-
-func TestArrayUnwrap(t *testing.T) {
-	as := assert.New(t)
-	f := ffi.MustWrap(func(a [3]int) [3]int {
-		res := [3]int{}
+	f := ffi.MustWrap(func(a []int) []int {
+		res := make([]int, len(a))
 		for i, v := range a {
 			res[i] = v * 2
 		}

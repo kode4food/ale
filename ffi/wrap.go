@@ -89,10 +89,12 @@ func makeWrappedType(t reflect.Type) Wrapper {
 		return makeWrappedFunc(t)
 	case reflect.Interface:
 		return makeWrappedInterface(t)
-	case reflect.Int, reflect.Uint, reflect.Int8, reflect.Uint8,
-		reflect.Int16, reflect.Uint16, reflect.Int32, reflect.Uint32,
-		reflect.Int64, reflect.Uint64:
+	case reflect.Int, reflect.Int8, reflect.Int16,
+		reflect.Int32, reflect.Int64:
 		return makeWrappedInt(t)
+	case reflect.Uint, reflect.Uint8, reflect.Uint16,
+		reflect.Uint32, reflect.Uint64:
+		return makeWrappedUnsignedInt(t)
 	case reflect.Map:
 		return makeWrappedMap(t)
 	case reflect.Ptr:
