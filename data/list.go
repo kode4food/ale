@@ -45,7 +45,7 @@ func (l *list) Rest() Sequence {
 
 // IsEmpty returns whether this sequence is empty
 func (l *list) IsEmpty() bool {
-	return l.count == 0
+	return false
 }
 
 // Split breaks the List into its components (first, rest, ok)

@@ -5,6 +5,7 @@ import (
 	"reflect"
 )
 
+// Context tracks wrapped reflect.Values to detect cycles
 type Context struct {
 	parent *Context
 	child  bool

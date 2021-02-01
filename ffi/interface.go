@@ -23,7 +23,10 @@ type (
 )
 
 const (
-	ReceiverKey  = data.Keyword("receiver")
+	// ReceiverKey is the key used to store an interface receiver
+	ReceiverKey = data.Keyword("receiver")
+
+	// ReceiverType is the type name for an opaque interface receiver
 	ReceiverType = data.Name("receiver")
 )
 

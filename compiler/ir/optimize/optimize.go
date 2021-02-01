@@ -11,6 +11,7 @@ var optimizers = []optimizer{
 	splitReturns,   // roll standalone returns into preceding branches
 	tailCalls,      // replace calls in tail position with a tail-call
 	literalReturns, // convert some literal returns into single instructions
+	unTruthy,       // instructions that push bool don't need MakeTruthy
 }
 
 // Instructions performs optimizations on the provided instructions

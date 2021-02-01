@@ -1,8 +1,6 @@
 package encoder
 
 import (
-	"reflect"
-
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/runtime/isa"
 )
@@ -27,7 +25,7 @@ func (e *encoder) AddConstant(val data.Value) isa.Index {
 
 func (e *encoder) findConstant(val data.Value) (int, bool) {
 	for i, c := range e.constants {
-		if c == val || reflect.DeepEqual(c, val) {
+		if c.Equal(val) {
 			return i, true
 		}
 	}

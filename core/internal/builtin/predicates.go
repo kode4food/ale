@@ -5,11 +5,11 @@ import (
 	"github.com/kode4food/ale/data"
 )
 
-// IsIdentical returns whether the two values represent the same object
+// IsIdentical returns whether the values represent the same object
 var IsIdentical = data.Applicative(func(args ...data.Value) data.Value {
 	l := args[0]
 	for _, f := range args[1:] {
-		if l != f {
+		if !l.Equal(f) {
 			return data.False
 		}
 	}
