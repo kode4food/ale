@@ -22,9 +22,6 @@ func makeWrappedArray(t reflect.Type) Wrapper {
 }
 
 func (a *arrayWrapper) Wrap(c *Context, v reflect.Value) (data.Value, error) {
-	if !v.IsValid() {
-		return data.Nil, nil
-	}
 	vLen := v.Len()
 	out := make(data.Vector, vLen)
 	for i := 0; i < vLen; i++ {

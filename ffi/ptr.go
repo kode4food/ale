@@ -17,14 +17,15 @@ func makeWrappedPointer(t reflect.Type) Wrapper {
 }
 
 func (p *pointerWrapper) Wrap(c *Context, v reflect.Value) (data.Value, error) {
-	if !v.IsValid() {
-		return data.Nil, nil
-	}
 	c, err := c.Push(v)
 	if err != nil {
 		return nil, err
 	}
-	return p.elem.Wrap(c, v.Elem())
+	e := v.Elem()
+	if e.IsValid() {
+		return p.elem.Wrap(c, e)
+	}
+	return data.Nil, nil
 }
 
 func (p *pointerWrapper) Unwrap(v data.Value) (reflect.Value, error) {

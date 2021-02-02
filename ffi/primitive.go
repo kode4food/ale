@@ -27,9 +27,6 @@ func makeWrappedString(_ reflect.Type) Wrapper {
 }
 
 func (stringWrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
-	if !v.IsValid() {
-		return data.Nil, nil
-	}
 	return data.String(v.Interface().(string)), nil
 }
 
@@ -41,9 +38,6 @@ func (stringWrapper) Unwrap(v data.Value) (reflect.Value, error) {
 }
 
 func (b boolWrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
-	if !v.IsValid() {
-		return data.False, nil
-	}
 	return data.Bool(v.Bool()), nil
 }
 

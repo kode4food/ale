@@ -24,9 +24,6 @@ func makeWrappedFloat(t reflect.Type) Wrapper {
 }
 
 func (f floatWrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
-	if !v.IsValid() {
-		return data.Nil, nil
-	}
 	return data.Float(v.Float()), nil
 }
 

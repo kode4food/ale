@@ -38,9 +38,6 @@ func makeWrappedFunc(t reflect.Type) Wrapper {
 }
 
 func (f *funcWrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
-	if !v.IsValid() {
-		return data.Nil, nil
-	}
 	switch len(f.out) {
 	case 0:
 		return f.wrapVoidFunction(v), nil

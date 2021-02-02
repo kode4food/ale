@@ -20,9 +20,6 @@ func makeWrappedSlice(t reflect.Type) Wrapper {
 }
 
 func (s *sliceWrapper) Wrap(c *Context, v reflect.Value) (data.Value, error) {
-	if !v.IsValid() {
-		return data.Nil, nil
-	}
 	c, err := c.Push(v)
 	if err != nil {
 		return nil, err

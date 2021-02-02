@@ -41,9 +41,6 @@ func makeWrappedUnsignedInt(t reflect.Type) Wrapper {
 }
 
 func (i intWrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
-	if !v.IsValid() {
-		return data.Nil, nil
-	}
 	return data.Integer(v.Int()), nil
 }
 
@@ -79,10 +76,7 @@ func (i intWrapper) Unwrap(v data.Value) (reflect.Value, error) {
 }
 
 func (i uintWrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
-	if !v.IsValid() {
-		return data.Nil, nil
-	}
-	return data.Integer(v.Int()), nil
+	return data.Integer(v.Uint()), nil
 }
 
 func (i uintWrapper) Unwrap(v data.Value) (reflect.Value, error) {

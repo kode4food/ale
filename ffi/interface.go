@@ -72,10 +72,11 @@ func makeWrappedMethod(m reflect.Method) *methodWrapper {
 }
 
 func (i interfaceWrapper) Wrap(c *Context, v reflect.Value) (data.Value, error) {
-	if !v.IsValid() {
+	e := v.Elem()
+	if !e.IsValid() {
 		return data.Nil, nil
 	}
-	c, err := c.Push(v.Elem())
+	c, err := c.Push(e)
 	if err != nil {
 		return nil, err
 	}
