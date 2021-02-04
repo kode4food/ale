@@ -8,15 +8,15 @@ import (
 	"github.com/kode4food/ale/docstring/assets"
 )
 
+// Error messages
+const (
+	ErrDocNotFound = "could not find doc: %s"
+)
+
 const (
 	prefix    = "docstring/"
 	extension = ".md"
 	names     = data.Name("names")
-)
-
-// Error messages
-const (
-	ErrDocNotFound = "could not find doc: %s"
 )
 
 var cache = map[string]string{}

@@ -22,6 +22,12 @@ type (
 	}
 )
 
+// Error messages
+const (
+	ErrInterfaceTypeMismatch         = "interface type mismatch"
+	ErrInterfaceCoercionNotSupported = "interface coercion not supported"
+)
+
 const (
 	// ReceiverKey is the key used to store an interface receiver
 	ReceiverKey = data.Keyword("receiver")
@@ -30,13 +36,7 @@ const (
 	ReceiverType = data.Name("receiver")
 )
 
-// Error messages
-const (
-	ErrInterfaceTypeMismatch         = "interface type mismatch"
-	ErrInterfaceCoercionNotSupported = "interface coercion not supported"
-)
-
-func makeWrappedInterface(t reflect.Type) Wrapper {
+func makeWrappedInterface(t reflect.Type) (Wrapper, error) {
 	mLen := t.NumMethod()
 	res := &interfaceWrapper{
 		Type:    t,
@@ -47,28 +47,40 @@ func makeWrappedInterface(t reflect.Type) Wrapper {
 		if m.PkgPath != "" { // Not exported
 			continue
 		}
-		res.methods = append(res.methods, makeWrappedMethod(m))
+		w, err := makeWrappedMethod(m)
+		if err != nil {
+			return nil, err
+		}
+		res.methods = append(res.methods, w)
 	}
-	return res
+	return res, nil
 }
 
-func makeWrappedMethod(m reflect.Method) *methodWrapper {
+func makeWrappedMethod(m reflect.Method) (*methodWrapper, error) {
 	t := m.Type
 	cIn := t.NumIn()
 	in := make([]Wrapper, cIn)
 	for i := 0; i < cIn; i++ {
-		in[i] = wrapType(t.In(i))
+		w, err := wrapType(t.In(i))
+		if err != nil {
+			return nil, err
+		}
+		in[i] = w
 	}
 	cOut := t.NumOut()
 	out := make([]Wrapper, cOut)
 	for i := 0; i < cOut; i++ {
-		out[i] = wrapType(t.Out(i))
+		w, err := wrapType(t.Out(i))
+		if err != nil {
+			return nil, err
+		}
+		out[i] = w
 	}
 	return &methodWrapper{
 		name: m.Name,
 		in:   in,
 		out:  out,
-	}
+	}, nil
 }
 
 func (i interfaceWrapper) Wrap(c *Context, v reflect.Value) (data.Value, error) {

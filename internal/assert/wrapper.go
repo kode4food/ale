@@ -25,7 +25,7 @@ type (
 const (
 	ErrInvalidTestExpression = "invalid test expression: %v"
 
-	errProperErrorNotRaised = "proper error not raised"
+	ErrProperErrorNotRaised = "proper error not raised"
 )
 
 // New instantiates a new Wrapper instance from the specified test
@@ -158,7 +158,7 @@ func (w *Wrapper) ExpectPanic(errStr string) {
 			return
 		}
 	}
-	panic(errProperErrorNotRaised)
+	panic(ErrProperErrorNotRaised)
 }
 
 // ExpectNoPanic is used with defer to make sure no error occurs

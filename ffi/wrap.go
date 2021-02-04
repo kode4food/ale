@@ -1,6 +1,7 @@
 package ffi
 
 import (
+	"errors"
 	"reflect"
 	"sync"
 
@@ -22,12 +23,12 @@ type (
 
 // Error messages
 const (
-	errUnsupportedType = "unsupported type"
+	ErrUnsupportedType = "unsupported type"
 )
 
 var cache = makeTypeCache()
 
-// MustWrap calls Wrap, and panics if an error is returned
+// MustWrap wraps a Go value into a data.Value or explodes violently
 func MustWrap(i interface{}) data.Value {
 	res, err := Wrap(i)
 	if err != nil {
@@ -46,13 +47,16 @@ func Wrap(i interface{}) (data.Value, error) {
 		return d, nil
 	}
 	v := reflect.ValueOf(i)
-	w := wrapType(v.Type())
+	w, err := wrapType(v.Type())
+	if err != nil {
+		return data.Nil, err
+	}
 	return w.Wrap(&Context{}, v)
 }
 
-func wrapType(t reflect.Type) Wrapper {
+func wrapType(t reflect.Type) (Wrapper, error) {
 	if w, ok := cache.get(t); ok {
-		return w
+		return w, nil
 	}
 
 	// register a stub to avoid wrap cycles
@@ -61,10 +65,13 @@ func wrapType(t reflect.Type) Wrapper {
 
 	// register the final Wrapper, and wire it into the
 	// stub for those Wrappers that may refer to it
-	w := makeWrappedType(t)
+	w, err := makeWrappedType(t)
+	if err != nil {
+		return nil, err
+	}
 	cache.put(t, w)
 	s.Wrapper = w
-	return w
+	return w, nil
 }
 
 /*
@@ -75,7 +82,7 @@ func wrapType(t reflect.Type) Wrapper {
 	  * Complex128
 	  * UnsafePointer
 */
-func makeWrappedType(t reflect.Type) Wrapper {
+func makeWrappedType(t reflect.Type) (Wrapper, error) {
 	switch t.Kind() {
 	case reflect.Array:
 		return makeWrappedArray(t)
@@ -104,7 +111,7 @@ func makeWrappedType(t reflect.Type) Wrapper {
 	case reflect.Struct:
 		return makeWrappedStruct(t)
 	default:
-		panic(errUnsupportedType)
+		return nil, errors.New(ErrUnsupportedType)
 	}
 }
 

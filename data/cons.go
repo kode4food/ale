@@ -5,17 +5,6 @@ import (
 	"fmt"
 )
 
-// Cons fields
-const (
-	Car = 0
-	Cdr = 1
-)
-
-// Error messages
-const (
-	errValueNotAPair = "%s is not a pair"
-)
-
 type (
 	// Pair represents the interface for a binary structure, such as a Cons
 	Pair interface {
@@ -29,6 +18,17 @@ type (
 
 	// Cons cells are the standard implementation of a Pair
 	Cons [2]Value
+)
+
+// Error messages
+const (
+	ErrValueNotAPair = "%s is not a pair"
+)
+
+// Cons fields
+const (
+	Car = 0
+	Cdr = 1
 )
 
 // NewCons returns a new Cons cell instance
@@ -79,7 +79,7 @@ func SequenceCar(s Sequence) Value {
 	if f, _, ok := s.Split(); ok {
 		return f
 	}
-	panic(fmt.Errorf(errValueNotAPair, s))
+	panic(fmt.Errorf(ErrValueNotAPair, s))
 }
 
 // SequenceCdr performs a Cdr operation against a Sequence
@@ -87,5 +87,5 @@ func SequenceCdr(s Sequence) Value {
 	if _, r, ok := s.Split(); ok {
 		return r
 	}
-	panic(fmt.Errorf(errValueNotAPair, s))
+	panic(fmt.Errorf(ErrValueNotAPair, s))
 }

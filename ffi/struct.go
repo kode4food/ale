@@ -23,7 +23,7 @@ type (
 // wrapping a struct as an Object
 const AleTag = "ale"
 
-func makeWrappedStruct(t reflect.Type) Wrapper {
+func makeWrappedStruct(t reflect.Type) (Wrapper, error) {
 	fLen := t.NumField()
 	fields := make(map[string]*fieldWrapper, fLen)
 	for i := 0; i < fLen; i++ {
@@ -32,15 +32,19 @@ func makeWrappedStruct(t reflect.Type) Wrapper {
 			continue
 		}
 		k := getFieldKeyword(f)
+		w, err := wrapType(f.Type)
+		if err != nil {
+			return nil, err
+		}
 		fields[f.Name] = &fieldWrapper{
-			Wrapper: wrapType(f.Type),
+			Wrapper: w,
 			Keyword: k,
 		}
 	}
 	return &structWrapper{
 		typ:    t,
 		fields: fields,
-	}
+	}, nil
 }
 
 func getFieldKeyword(f reflect.StructField) data.Keyword {

@@ -18,7 +18,7 @@ type Number interface {
 
 // Error messages
 const (
-	errCouldNotPurify = "could not purify: %v and %v"
+	ErrCouldNotPurify = "could not purify: %v and %v"
 )
 
 // purify performs automatic contagion of operands
@@ -65,5 +65,5 @@ func purify(l, r Number) (Number, Number) {
 		}
 	}
 
-	panic(fmt.Errorf(errCouldNotPurify, l, r))
+	panic(fmt.Errorf(ErrCouldNotPurify, l, r))
 }

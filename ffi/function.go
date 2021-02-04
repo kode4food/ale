@@ -19,22 +19,30 @@ type (
 
 const wrappedFuncType = data.Name("wrapped-func")
 
-func makeWrappedFunc(t reflect.Type) Wrapper {
+func makeWrappedFunc(t reflect.Type) (Wrapper, error) {
 	cIn := t.NumIn()
 	in := make([]Wrapper, cIn)
 	for i := 0; i < cIn; i++ {
-		in[i] = wrapType(t.In(i))
+		w, err := wrapType(t.In(i))
+		if err != nil {
+			return nil, err
+		}
+		in[i] = w
 	}
 	cOut := t.NumOut()
 	out := make([]Wrapper, cOut)
 	for i := 0; i < cOut; i++ {
-		out[i] = wrapType(t.Out(i))
+		w, err := wrapType(t.Out(i))
+		if err != nil {
+			return nil, err
+		}
+		out[i] = w
 	}
 	return &funcWrapper{
 		typ: t,
 		in:  in,
 		out: out,
-	}
+	}, nil
 }
 
 func (f *funcWrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {

@@ -9,10 +9,10 @@ import (
 
 // Error messages
 const (
-	errPatternsNotSupported = "patterns not yet supported"
+	ErrPatternsNotSupported = "patterns not yet supported"
 )
 
 // Pattern instantiates a matchable pattern
-func Pattern(e encoder.Encoder, args ...data.Value) {
-	panic(errors.New(errPatternsNotSupported))
+func Pattern(_ encoder.Encoder, _ ...data.Value) {
+	panic(errors.New(ErrPatternsNotSupported))
 }

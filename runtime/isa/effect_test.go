@@ -1,6 +1,7 @@
 package isa_test
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/kode4food/ale/internal/assert"
@@ -15,8 +16,8 @@ func TestEffects(t *testing.T) {
 
 	defer func() {
 		rec := recover()
-		err := "effect not declared for opcode: Opcode(5000)"
-		as.String(err, rec)
+		err := fmt.Errorf(isa.ErrEffectNotDeclared, isa.Opcode(5000))
+		as.Equal(err, rec)
 	}()
 
 	isa.MustGetEffect(isa.Opcode(5000))

@@ -13,12 +13,16 @@ type arrayWrapper struct {
 	elem Wrapper
 }
 
-func makeWrappedArray(t reflect.Type) Wrapper {
+func makeWrappedArray(t reflect.Type) (Wrapper, error) {
+	w, err := wrapType(t.Elem())
+	if err != nil {
+		return nil, err
+	}
 	return &arrayWrapper{
 		typ:  t,
 		len:  t.Len(),
-		elem: wrapType(t.Elem()),
-	}
+		elem: w,
+	}, nil
 }
 
 func (a *arrayWrapper) Wrap(c *Context, v reflect.Value) (data.Value, error) {

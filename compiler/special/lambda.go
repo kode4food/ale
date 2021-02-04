@@ -26,12 +26,12 @@ type (
 	lambdaCases []*lambdaCase
 )
 
-const allArgsName = data.Name("*args*")
-
 // Error messages
 const (
 	ErrUnexpectedLambdaSyntax = "unexpected lambda syntax: %s"
 )
+
+const allArgsName = data.Name("*args*")
 
 // Lambda encodes a lambda
 func Lambda(e encoder.Encoder, args ...data.Value) {

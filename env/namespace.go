@@ -49,8 +49,8 @@ type (
 
 // Error messages
 const (
-	errNameAlreadyBound = "name is already bound in namespace: %s"
-	errNameNotBound     = "name is not bound in namespace: %s"
+	ErrNameAlreadyBound = "name is already bound in namespace: %s"
+	ErrNameNotBound     = "name is not bound in namespace: %s"
 )
 
 func (ns *namespace) Environment() *Environment {
@@ -100,7 +100,7 @@ func (e *entry) Value() data.Value {
 	if e.bound {
 		return e.value
 	}
-	panic(fmt.Errorf(errNameNotBound, e.name))
+	panic(fmt.Errorf(ErrNameNotBound, e.name))
 }
 
 func (e *entry) IsBound() bool {
@@ -113,7 +113,7 @@ func (e *entry) Bind(v data.Value) {
 	e.mutex.Lock()
 	defer e.mutex.Unlock()
 	if e.bound {
-		panic(fmt.Errorf(errNameAlreadyBound, e.name))
+		panic(fmt.Errorf(ErrNameAlreadyBound, e.name))
 	}
 	e.value = v
 	e.bound = true

@@ -8,7 +8,7 @@ import (
 
 // Error messages
 const (
-	errLabelNotAnchored = "label not anchored: %d"
+	ErrLabelNotAnchored = "label not anchored: %d"
 )
 
 func verifyJumps(code isa.Instructions) {
@@ -34,5 +34,5 @@ func mustFindLabel(code isa.Instructions, lbl isa.Index) int {
 	if res := findLabel(code, lbl); res >= 0 {
 		return res
 	}
-	panic(fmt.Sprintf(errLabelNotAnchored, lbl))
+	panic(fmt.Errorf(ErrLabelNotAnchored, lbl))
 }

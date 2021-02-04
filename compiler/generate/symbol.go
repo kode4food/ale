@@ -9,7 +9,7 @@ import (
 
 // Error messages
 const (
-	errUnknownScopeType = "unknown scope type"
+	ErrUnknownScopeType = "unknown scope type"
 )
 
 // Symbol encodes a symbol retrieval
@@ -51,7 +51,7 @@ func resolveLocal(e encoder.Encoder, l data.LocalSymbol) *encoder.ScopedCell {
 			c, _ := e.ResolveClosure(n)
 			e.Emit(isa.Closure, c.Index)
 		default:
-			panic(errUnknownScopeType)
+			panic(ErrUnknownScopeType)
 		}
 		return s
 	}

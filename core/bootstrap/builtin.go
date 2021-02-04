@@ -10,15 +10,17 @@ import (
 	"github.com/kode4food/ale/macro"
 )
 
+// Error messages
+const (
+	ErrBuiltInNotFound = "built-in not found: %s"
+	ErrSpecialNotFound = "special form not found: %s"
+	ErrMacroNotFound   = "macro not found: %s"
+)
+
 const (
 	defBuiltInName = "def-builtin"
 	defSpecialName = "def-special"
 	defMacroName   = "def-macro"
-
-	// Error messages
-	errBuiltInNotFound = "built-in not found: %s"
-	errSpecialNotFound = "special form not found: %s"
-	errMacroNotFound   = "macro not found: %s"
 )
 
 func (b *bootstrap) builtIns() {
@@ -37,7 +39,7 @@ func (b *bootstrap) initialFunctions() {
 			ns.Declare(n).Bind(nf)
 			return args[0]
 		}
-		panic(fmt.Errorf(errBuiltInNotFound, n))
+		panic(fmt.Errorf(ErrBuiltInNotFound, n))
 	}, 1)
 
 	defSpecial := data.Normal(func(args ...data.Value) data.Value {
@@ -47,7 +49,7 @@ func (b *bootstrap) initialFunctions() {
 			ns.Declare(n).Bind(sf)
 			return args[0]
 		}
-		panic(fmt.Errorf(errSpecialNotFound, n))
+		panic(fmt.Errorf(ErrSpecialNotFound, n))
 	}, 1)
 
 	defMacro := data.Normal(func(args ...data.Value) data.Value {
@@ -57,7 +59,7 @@ func (b *bootstrap) initialFunctions() {
 			ns.Declare(n).Bind(sf)
 			return args[0]
 		}
-		panic(fmt.Errorf(errMacroNotFound, n))
+		panic(fmt.Errorf(ErrMacroNotFound, n))
 	}, 1)
 
 	ns := b.environment.GetRoot()

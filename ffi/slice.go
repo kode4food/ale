@@ -12,11 +12,15 @@ type sliceWrapper struct {
 	elem Wrapper
 }
 
-func makeWrappedSlice(t reflect.Type) Wrapper {
+func makeWrappedSlice(t reflect.Type) (Wrapper, error) {
+	w, err := wrapType(t.Elem())
+	if err != nil {
+		return nil, err
+	}
 	return &sliceWrapper{
 		typ:  t,
-		elem: wrapType(t.Elem()),
-	}
+		elem: w,
+	}, nil
 }
 
 func (s *sliceWrapper) Wrap(c *Context, v reflect.Value) (data.Value, error) {

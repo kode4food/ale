@@ -15,7 +15,7 @@ type syntaxEnv struct {
 
 // Error messages
 const (
-	errUnsupportedSyntaxQuote = "unsupported type in syntax quote: %s"
+	ErrUnsupportedSyntaxQuote = "unsupported type in syntax quote: %s"
 )
 
 var (
@@ -98,7 +98,7 @@ func (se *syntaxEnv) quoteSequence(s data.Sequence) data.Value {
 	case data.Null:
 		return s
 	default:
-		panic(fmt.Errorf(errUnsupportedSyntaxQuote, s))
+		panic(fmt.Errorf(ErrUnsupportedSyntaxQuote, s))
 	}
 }
 

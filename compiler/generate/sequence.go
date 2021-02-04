@@ -11,7 +11,7 @@ import (
 
 // Error messages
 const (
-	errCannotCompile = "sequence cannot be compiled: %s"
+	ErrCannotCompile = "sequence cannot be compiled: %s"
 )
 
 var (
@@ -45,7 +45,7 @@ func Sequence(e encoder.Encoder, s data.Sequence) {
 	case data.Object:
 		Object(e, s)
 	default:
-		panic(fmt.Errorf(errCannotCompile, s))
+		panic(fmt.Errorf(ErrCannotCompile, s))
 	}
 }
 

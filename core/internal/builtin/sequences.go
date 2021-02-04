@@ -8,7 +8,7 @@ import (
 
 // Error messages
 const (
-	errIndexOutOfBounds = "index out of bounds"
+	ErrIndexOutOfBounds = "index out of bounds"
 )
 
 // First returns the first value in the sequence
@@ -51,7 +51,7 @@ var Nth = data.Applicative(func(args ...data.Value) data.Value {
 	if len(args) > 2 {
 		return args[2]
 	}
-	panic(errors.New(errIndexOutOfBounds))
+	panic(errors.New(ErrIndexOutOfBounds))
 }, 2, 3)
 
 // Get returns a value by key from the provided mapped sequence

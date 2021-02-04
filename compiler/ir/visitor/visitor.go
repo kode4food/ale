@@ -11,7 +11,7 @@ type Visitor interface {
 
 // Error messages
 const (
-	errUnexpectedNodeType = "unexpected node type"
+	ErrUnexpectedNodeType = "unexpected node type"
 )
 
 // DepthFirst performs a depth-first visitation
@@ -33,6 +33,6 @@ func depthFirst(node Node, visitor Visitor) {
 		depthFirst(node.Prologue(), visitor)
 		visitor.ExitBranches(node)
 	default:
-		panic(errUnexpectedNodeType)
+		panic(ErrUnexpectedNodeType)
 	}
 }

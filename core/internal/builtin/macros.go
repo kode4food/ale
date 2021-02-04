@@ -10,7 +10,7 @@ import (
 
 // Error messages
 const (
-	errFunctionRequired = "argument must be a function: %s"
+	ErrFunctionRequired = "argument must be a function: %s"
 )
 
 // Macro converts a function into a macro
@@ -25,7 +25,7 @@ var Macro = data.Applicative(func(args ...data.Value) data.Value {
 		}
 		return macro.Call(wrapper)
 	default:
-		panic(fmt.Errorf(errFunctionRequired, args[0]))
+		panic(fmt.Errorf(ErrFunctionRequired, args[0]))
 	}
 }, 1)
 

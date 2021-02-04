@@ -59,7 +59,7 @@ func (o Offset) Word() Word {
 func New(oc Opcode, args ...Word) *Instruction {
 	effect := MustGetEffect(oc)
 	if len(args) != effect.Size-1 {
-		panic(fmt.Sprintf(ErrBadInstructionArgs, oc.String()))
+		panic(fmt.Errorf(ErrBadInstructionArgs, oc.String()))
 	}
 	return &Instruction{
 		Opcode: oc,

@@ -10,10 +10,14 @@ type pointerWrapper struct {
 	elem Wrapper
 }
 
-func makeWrappedPointer(t reflect.Type) Wrapper {
-	return &pointerWrapper{
-		elem: wrapType(t.Elem()),
+func makeWrappedPointer(t reflect.Type) (Wrapper, error) {
+	w, err := wrapType(t.Elem())
+	if err != nil {
+		return nil, err
 	}
+	return &pointerWrapper{
+		elem: w,
+	}, nil
 }
 
 func (p *pointerWrapper) Wrap(c *Context, v reflect.Value) (data.Value, error) {

@@ -18,12 +18,12 @@ var (
 	boolZero = reflect.ValueOf(false)
 )
 
-func makeWrappedBool(_ reflect.Type) Wrapper {
-	return _boolWrapper
+func makeWrappedBool(_ reflect.Type) (Wrapper, error) {
+	return _boolWrapper, nil
 }
 
-func makeWrappedString(_ reflect.Type) Wrapper {
-	return _stringWrapper
+func makeWrappedString(_ reflect.Type) (Wrapper, error) {
+	return _stringWrapper, nil
 }
 
 func (stringWrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {

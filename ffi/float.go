@@ -11,7 +11,7 @@ type floatWrapper reflect.Kind
 
 // Error messages
 const (
-	errIncorrectFloatKind = "float kind is incorrect"
+	ErrIncorrectFloatKind = "float kind is incorrect"
 )
 
 var (
@@ -19,8 +19,8 @@ var (
 	float64zero = reflect.ValueOf(float64(0))
 )
 
-func makeWrappedFloat(t reflect.Type) Wrapper {
-	return floatWrapper(t.Kind())
+func makeWrappedFloat(t reflect.Type) (Wrapper, error) {
+	return floatWrapper(t.Kind()), nil
 }
 
 func (f floatWrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
@@ -40,5 +40,5 @@ func (f floatWrapper) Unwrap(v data.Value) (reflect.Value, error) {
 		}
 		return reflect.ValueOf(float64(v.(data.Float))), nil
 	}
-	panic(errors.New(errIncorrectFloatKind))
+	panic(errors.New(ErrIncorrectFloatKind))
 }

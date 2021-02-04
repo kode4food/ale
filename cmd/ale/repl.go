@@ -35,6 +35,12 @@ type (
 	}
 )
 
+// Error messages
+const (
+	ErrNonStandardError    = "non-standard error: %s"
+	ErrSymbolNotDocumented = "symbol not documented: %s"
+)
+
 const (
 	// UserDomain is the name of the namespace that the REPL starts in
 	UserDomain = data.Name("user")
@@ -46,10 +52,6 @@ const (
 	output = bold + "%s" + reset
 	good   = domain + result + "[%d]= " + output
 	bad    = domain + red + "[%d]! " + output
-
-	// Error messages
-	errNonStandardError    = "non-standard error: %s"
-	errSymbolNotDocumented = "symbol not documented: %s"
 )
 
 var (
@@ -201,7 +203,7 @@ func toError(i interface{}) error {
 	case data.Value:
 		return errors.New(i.String())
 	default:
-		panic(fmt.Errorf(errNonStandardError, i))
+		panic(fmt.Errorf(ErrNonStandardError, i))
 	}
 }
 
@@ -277,7 +279,7 @@ func doc(args ...data.Value) data.Value {
 		fmt.Println(f)
 		return nothing
 	}
-	panic(fmt.Errorf(errSymbolNotDocumented, sym))
+	panic(fmt.Errorf(ErrSymbolNotDocumented, sym))
 }
 
 func getBuiltInsNamespace() env.Namespace {

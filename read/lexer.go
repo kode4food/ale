@@ -52,6 +52,13 @@ const (
 	endOfFile
 )
 
+// Error messages
+const (
+	ErrStringNotTerminated = "string has no closing quote"
+	ErrUnexpectedCharacter = "unexpected character: %s"
+	ErrUnmatchedState      = "unmatched lexing state"
+)
+
 const (
 	structure  = `(){}\[\]\s\"`
 	prefixChar = "`,~@"
@@ -59,14 +66,6 @@ const (
 	idCont     = "[^" + structure + "]"
 	id         = idStart + idCont + "*"
 	numTail    = idStart + "*"
-)
-
-// Error messages
-const (
-	ErrStringNotTerminated = "string has no closing quote"
-	ErrUnexpectedCharacter = "unexpected character: %s"
-
-	errUnmatchedState = "unmatched lexing state"
 )
 
 var (
@@ -147,7 +146,7 @@ func matchToken(src string) (*Token, string) {
 			return s.function(sm), src[len(sm[0]):]
 		}
 	}
-	panic(errors.New(errUnmatchedState))
+	panic(errors.New(ErrUnmatchedState))
 }
 
 // Equal compares this Token to another for equality
@@ -228,6 +227,6 @@ func identifierState(sm []string) *Token {
 }
 
 func errorState(sm []string) *Token {
-	msg := fmt.Sprintf(ErrUnexpectedCharacter, sm[0])
-	return makeToken(Error, data.String(msg))
+	err := fmt.Errorf(ErrUnexpectedCharacter, sm[0])
+	return makeToken(Error, data.String(err.Error()))
 }

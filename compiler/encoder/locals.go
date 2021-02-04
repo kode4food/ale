@@ -12,7 +12,7 @@ type Locals map[data.Name]*IndexedCell
 
 // Error messages
 const (
-	errDuplicateName = "name duplicated in scope: %s"
+	ErrDuplicateName = "name duplicated in scope: %s"
 )
 
 func (e *encoder) LocalCount() int {
@@ -48,7 +48,7 @@ func (e *encoder) allocLocal() isa.Index {
 func (e *encoder) AddLocal(n data.Name, t CellType) *IndexedCell {
 	scope := e.peekLocals()
 	if _, ok := scope[n]; ok {
-		panic(fmt.Sprintf(errDuplicateName, n))
+		panic(fmt.Errorf(ErrDuplicateName, n))
 	}
 	c := newCell(t, n)
 	res := newIndexedCell(e.allocLocal(), c)

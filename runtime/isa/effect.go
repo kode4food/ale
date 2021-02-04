@@ -2,11 +2,6 @@ package isa
 
 import "fmt"
 
-// Error messages
-const (
-	errEffectNotDeclared = "effect not declared for opcode: %s"
-)
-
 // Effect captures how an instruction affects the stack and PC
 type Effect struct {
 	Size   int  // Fixed size of the encoded Instruction
@@ -17,6 +12,11 @@ type Effect struct {
 	Ignore bool // Skip this instruction (ex: Labels and NoOps)
 	Exit   bool // Results in a termination of the VM
 }
+
+// Error messages
+const (
+	ErrEffectNotDeclared = "effect not declared for opcode: %s"
+)
 
 // Effects is a lookup table of instruction effects
 var Effects = map[Opcode]*Effect{
@@ -79,5 +79,5 @@ func MustGetEffect(oc Opcode) *Effect {
 	if effect, ok := Effects[oc]; ok {
 		return effect
 	}
-	panic(fmt.Sprintf(errEffectNotDeclared, oc.String()))
+	panic(fmt.Errorf(ErrEffectNotDeclared, oc.String()))
 }

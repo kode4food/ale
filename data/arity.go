@@ -5,18 +5,17 @@ import (
 	"fmt"
 )
 
+// Error messages
+const (
+	ErrFixedArity       = "expected %d arguments, got %d"
+	ErrMinimumArity     = "expected at least %d arguments, got %d"
+	ErrRangedArity      = "expected between %d and %d arguments, got %d"
+	ErrTooManyArguments = "too many arity check arguments"
+)
+
 // OrMore is the constant used when you want to tell MakeChecker
 // to generate a minimum arity checker
 const OrMore = -1
-
-// Error messages
-const (
-	ErrFixedArity   = "expected %d arguments, got %d"
-	ErrMinimumArity = "expected at least %d arguments, got %d"
-	ErrRangedArity  = "expected between %d and %d arguments, got %d"
-
-	errTooManyArguments = "too many arity check arguments"
-)
 
 // MakeChecker produces an arity checker based on its parameters
 func MakeChecker(arity ...int) ArityChecker {
@@ -25,7 +24,7 @@ func MakeChecker(arity ...int) ArityChecker {
 	case al == 0:
 		return nil
 	case al > 2:
-		panic(errors.New(errTooManyArguments))
+		panic(errors.New(ErrTooManyArguments))
 	case al == 1 || arity[0] == arity[1]:
 		return MakeFixedChecker(arity[0])
 	case al == 2 && arity[1] == OrMore:

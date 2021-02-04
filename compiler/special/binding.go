@@ -10,14 +10,6 @@ import (
 	"github.com/kode4food/ale/runtime/isa"
 )
 
-// Error messages
-const (
-	ErrUnpairedBindings    = "binding must be a paired vector"
-	ErrUnexpectedLetSyntax = "unexpected binding syntax: %s"
-
-	errNameAlreadyBound = "name is already bound in local scope: %s"
-)
-
 type (
 	letBinding struct {
 		name  data.Name
@@ -27,6 +19,13 @@ type (
 	letBindings []*letBinding
 
 	uniqueNames map[data.Name]bool
+)
+
+// Error messages
+const (
+	ErrUnpairedBindings    = "binding must be a paired vector"
+	ErrUnexpectedLetSyntax = "unexpected binding syntax: %s"
+	ErrNameAlreadyBound    = "name is already bound in local scope: %s"
 )
 
 // Let encodes a binding form. Binding values are evaluated first, and
@@ -122,7 +121,7 @@ func parseLetBinding(b data.Vector) *letBinding {
 
 func (u uniqueNames) see(n data.Name) {
 	if _, ok := u[n]; ok {
-		panic(fmt.Errorf(errNameAlreadyBound, n))
+		panic(fmt.Errorf(ErrNameAlreadyBound, n))
 	}
 	u[n] = true
 }
