@@ -15,7 +15,8 @@ var (
 	_stringWrapper stringWrapper
 	_boolWrapper   boolWrapper
 
-	boolZero = reflect.ValueOf(false)
+	stringZero = reflect.ValueOf("")
+	boolZero   = reflect.ValueOf(false)
 )
 
 func makeWrappedBool(_ reflect.Type) (Wrapper, error) {
@@ -32,7 +33,7 @@ func (stringWrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
 
 func (stringWrapper) Unwrap(v data.Value) (reflect.Value, error) {
 	if v == nil {
-		v = data.Nil
+		return stringZero, nil
 	}
 	return reflect.ValueOf(v.String()), nil
 }

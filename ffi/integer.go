@@ -14,8 +14,8 @@ type (
 
 // Error messages
 const (
-	ErrIncorrectIntKind         = "int kind is incorrect"
-	ErrIncorrectUnsignedIntKind = "uint kind is incorrect"
+	errIncorrectIntKind         = "int kind is incorrect"
+	errIncorrectUnsignedIntKind = "uint kind is incorrect"
 )
 
 var (
@@ -23,7 +23,7 @@ var (
 	int32zero = reflect.ValueOf(int32(0))
 	int16zero = reflect.ValueOf(int16(0))
 	int8zero  = reflect.ValueOf(int8(0))
-	intZero   = reflect.ValueOf(int(0))
+	intZero   = reflect.ValueOf(0)
 
 	uint64zero = reflect.ValueOf(uint64(0))
 	uint32zero = reflect.ValueOf(uint32(0))
@@ -72,7 +72,8 @@ func (i intWrapper) Unwrap(v data.Value) (reflect.Value, error) {
 		}
 		return reflect.ValueOf(int(v.(data.Integer))), nil
 	}
-	panic(errors.New(ErrIncorrectIntKind))
+	// Programmer error
+	panic(errors.New(errIncorrectIntKind))
 }
 
 func (i uintWrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
@@ -107,5 +108,6 @@ func (i uintWrapper) Unwrap(v data.Value) (reflect.Value, error) {
 		}
 		return reflect.ValueOf(uint(v.(data.Integer))), nil
 	}
-	panic(errors.New(ErrIncorrectUnsignedIntKind))
+	// Programmer error
+	panic(errors.New(errIncorrectUnsignedIntKind))
 }

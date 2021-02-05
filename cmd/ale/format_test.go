@@ -12,7 +12,10 @@ import (
 func TestFormatMarkdown(t *testing.T) {
 	as := assert.New(t)
 
-	s := docstring.Get("if")
+	s, err := docstring.Get("if")
+	as.NotEmpty(s)
+	as.Nil(err)
+
 	r := data.String(main.FormatMarkdown(s))
 	as.NotContains("---", r)
 	as.Contains("\x1b[35m\x1b[1mperforms simple branching\x1b[0m\n\n", r)

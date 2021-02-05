@@ -156,7 +156,11 @@ func (r *reader) vector() data.Value {
 
 func (r *reader) object() data.Value {
 	v := r.readNonDotted(MapEnd)
-	return data.ValuesToObject(v...)
+	res, err := data.ValuesToObject(v...)
+	if err != nil {
+		panic(err)
+	}
+	return res
 }
 
 func (r *reader) readNonDotted(endToken TokenType) data.Values {

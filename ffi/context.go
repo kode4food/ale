@@ -17,8 +17,6 @@ const (
 	ErrCycleDetected = "cycle detected in wrapping"
 )
 
-var _emptyValue = reflect.Value{}
-
 // Push creates a new Context, checking the parent chain for cycles
 func (c *Context) Push(v reflect.Value) (*Context, error) {
 	if err := c.checkDuplicate(v); err != nil {

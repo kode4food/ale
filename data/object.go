@@ -37,15 +37,15 @@ func NewObject(pairs ...Pair) Object {
 }
 
 // ValuesToObject interprets a set of Values as an Object
-func ValuesToObject(v ...Value) Object {
+func ValuesToObject(v ...Value) (Object, error) {
 	if len(v)%2 != 0 {
-		panic(errors.New(ErrMapNotPaired))
+		return nil, errors.New(ErrMapNotPaired)
 	}
 	var p Pairs
 	for i := len(v) - 2; i >= 0; i -= 2 {
 		p = append(p, NewCons(v[i], v[i+1]))
 	}
-	return NewObject(p...)
+	return NewObject(p...), nil
 }
 
 // Get attempts to retrieve a Value from an Object

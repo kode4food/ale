@@ -37,7 +37,7 @@ func SyntaxQuote(ns env.Namespace, args ...data.Value) data.Value {
 	value := args[0]
 	sc := &syntaxEnv{
 		namespace: ns,
-		genSyms:   make(map[string]data.Symbol),
+		genSyms:   map[string]data.Symbol{},
 	}
 	return sc.quote(value)
 }

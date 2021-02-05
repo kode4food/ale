@@ -50,7 +50,10 @@ func (m *mapWrapper) Wrap(c *Context, v reflect.Value) (data.Value, error) {
 }
 
 func (m *mapWrapper) Unwrap(v data.Value) (reflect.Value, error) {
-	in := sequence.ToObject(v.(data.Sequence))
+	in, err := sequence.ToObject(v.(data.Sequence))
+	if err != nil {
+		return _emptyValue, err
+	}
 	out := reflect.MakeMapWithSize(m.typ, len(in))
 	for k, v := range in {
 		if k, err := m.key.Unwrap(k); err != nil {

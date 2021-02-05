@@ -1,7 +1,5 @@
 package isa
 
-import "math"
-
 type (
 	flattener struct {
 		labels labels
@@ -20,17 +18,14 @@ type (
 
 // Error messages
 const (
-	ErrLabelAlreadyAnchored = "label has already been anchored"
+	errLabelAlreadyAnchored = "label has already been anchored"
 )
-
-const placeholderOffset = Offset(math.MaxUint32)
 
 // Flatten takes a set of instructions and flattens them into
 // something that the virtual machine can execute
 func Flatten(code Instructions) []Word {
 	f := &flattener{
 		input:  code,
-		output: []Word{},
 		labels: labels{},
 	}
 	return f.flatten()
@@ -67,10 +62,7 @@ func (f *flattener) getLabel(idx Index) *label {
 	if l, ok := f.labels[idx]; ok {
 		return l
 	}
-	l := &label{
-		offset:   placeholderOffset,
-		backRefs: []Word{},
-	}
+	l := &label{}
 	f.labels[idx] = l
 	return l
 }
@@ -96,15 +88,12 @@ func (f *flattener) handleJump(inst *Instruction) {
 func (f *flattener) handleLabel(inst *Instruction) {
 	l := f.getLabel(Index(inst.Args[0]))
 	if l.anchored {
-		panic(ErrLabelAlreadyAnchored)
+		// Programmer error
+		panic(errLabelAlreadyAnchored)
 	}
 	l.offset = f.nextOutputOffset()
 	l.anchored = true
-	backRefs := l.backRefs
-	if len(backRefs) > 0 {
-		for _, off := range backRefs {
-			f.output[int(off)] = Word(l.offset)
-		}
-		l.backRefs = nil
+	for _, off := range l.backRefs {
+		f.output[int(off)] = Word(l.offset)
 	}
 }

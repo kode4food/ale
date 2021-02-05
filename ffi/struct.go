@@ -71,7 +71,10 @@ func (s *structWrapper) Wrap(c *Context, v reflect.Value) (data.Value, error) {
 }
 
 func (s *structWrapper) Unwrap(v data.Value) (reflect.Value, error) {
-	in := sequence.ToObject(v.(data.Sequence))
+	in, err := sequence.ToObject(v.(data.Sequence))
+	if err != nil {
+		return _emptyValue, err
+	}
 	out := reflect.New(s.typ).Elem()
 	for k, w := range s.fields {
 		if v, ok := in[w.Keyword]; ok {

@@ -22,20 +22,13 @@ const (
 var cache = map[string]string{}
 
 // Get resolves documentation using snapshot assets
-func Get(n string) string {
+func Get(n string) (string, error) {
 	ensureCache()
 	res, ok := cache[n]
 	if ok {
-		return res
+		return res, nil
 	}
-	panic(fmt.Errorf(ErrDocNotFound, n))
-}
-
-// Exists returns whether a specific docstring exists
-func Exists(n string) bool {
-	ensureCache()
-	_, ok := cache[n]
-	return ok
+	return "", fmt.Errorf(ErrDocNotFound, n)
 }
 
 func ensureCache() {

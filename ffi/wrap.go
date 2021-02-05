@@ -26,7 +26,11 @@ const (
 	ErrUnsupportedType = "unsupported type"
 )
 
-var cache = makeTypeCache()
+var (
+	cache = makeTypeCache()
+
+	_emptyValue = reflect.Value{}
+)
 
 // MustWrap wraps a Go value into a data.Value or explodes violently
 func MustWrap(i interface{}) data.Value {

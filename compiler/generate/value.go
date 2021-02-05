@@ -11,7 +11,7 @@ import (
 
 // Error messages
 const (
-	ErrUnknownValueType = "unknown value type: %s"
+	errUnknownValueType = "unknown value type: %s"
 )
 
 var consSym = env.RootSymbol("cons")
@@ -29,7 +29,8 @@ func Value(e encoder.Encoder, v data.Value) {
 	case data.Keyword, data.Number, data.Bool, data.Function:
 		Literal(e, expanded)
 	default:
-		panic(fmt.Errorf(ErrUnknownValueType, v))
+		// Programmer error
+		panic(fmt.Errorf(errUnknownValueType, v))
 	}
 }
 

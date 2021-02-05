@@ -61,10 +61,10 @@ func ToVector(s data.Sequence) data.Vector {
 }
 
 // ToObject takes any sequence and converts it to an Associative
-func ToObject(s data.Sequence) data.Object {
+func ToObject(s data.Sequence) (data.Object, error) {
 	switch s := s.(type) {
 	case data.Object:
-		return s
+		return s, nil
 	default:
 		v := ToValues(s)
 		return data.ValuesToObject(v...)

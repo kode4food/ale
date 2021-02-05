@@ -56,7 +56,8 @@ const (
 const (
 	ErrStringNotTerminated = "string has no closing quote"
 	ErrUnexpectedCharacter = "unexpected character: %s"
-	ErrUnmatchedState      = "unmatched lexing state"
+
+	errUnmatchedState = "unmatched lexing state"
 )
 
 const (
@@ -146,7 +147,8 @@ func matchToken(src string) (*Token, string) {
 			return s.function(sm), src[len(sm[0]):]
 		}
 	}
-	panic(errors.New(ErrUnmatchedState))
+	// Programmer error
+	panic(errors.New(errUnmatchedState))
 }
 
 // Equal compares this Token to another for equality

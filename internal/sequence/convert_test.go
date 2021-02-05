@@ -16,8 +16,14 @@ func TestSequenceConversions(t *testing.T) {
 	v2 := sequence.ToVector(v1)
 	l2 := sequence.ToList(v2)
 	l3 := sequence.ToList(l2)
-	a1 := sequence.ToObject(l3)
-	a2 := sequence.ToObject(a1)
+
+	a1, err := sequence.ToObject(l3)
+	as.NotNil(a1)
+	as.Nil(err)
+
+	a2, err := sequence.ToObject(a1)
+	as.NotNil(a2)
+	as.Nil(err)
 
 	l4 := L(S("hello"), data.Nil, S("there"), v1)
 	s1 := sequence.ToStr(l4)
@@ -44,8 +50,14 @@ func TestUncountedConversions(t *testing.T) {
 	v2 := sequence.ToVector(v1)
 	l2 := sequence.ToList(sequence.Filter(v2, alwaysTrue))
 	l3 := sequence.ToList(l2)
-	a1 := sequence.ToObject(sequence.Filter(l3, alwaysTrue))
-	a2 := sequence.ToObject(a1)
+
+	a1, err := sequence.ToObject(sequence.Filter(l3, alwaysTrue))
+	as.NotNil(a1)
+	as.Nil(err)
+
+	a2, err := sequence.ToObject(a1)
+	as.NotNil(a1)
+	as.Nil(err)
 
 	l4 := sequence.Filter(L(S("hello"), data.Nil, S("there"), v1), alwaysTrue)
 	s1 := sequence.ToStr(l4)
@@ -63,14 +75,16 @@ func TestAssocSequenceError(t *testing.T) {
 	as := assert.New(t)
 
 	v1 := V(K("boom"))
-	defer as.ExpectPanic(data.ErrMapNotPaired)
-	sequence.ToObject(v1)
+	o, err := sequence.ToObject(v1)
+	as.Nil(o)
+	as.Error(err, data.ErrMapNotPaired)
 }
 
 func TestUncountedAssocSequenceError(t *testing.T) {
 	as := assert.New(t)
 
 	v1 := sequence.Filter(V(K("boom")), alwaysTrue)
-	defer as.ExpectPanic(data.ErrMapNotPaired)
-	sequence.ToObject(v1)
+	o, err := sequence.ToObject(v1)
+	as.Nil(o)
+	as.Error(err, data.ErrMapNotPaired)
 }

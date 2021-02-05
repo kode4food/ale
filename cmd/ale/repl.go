@@ -37,8 +37,9 @@ type (
 
 // Error messages
 const (
-	ErrNonStandardError    = "non-standard error: %s"
 	ErrSymbolNotDocumented = "symbol not documented: %s"
+
+	errNonStandardError = "non-standard error: %s"
 )
 
 const (
@@ -203,7 +204,8 @@ func toError(i interface{}) error {
 	case data.Value:
 		return errors.New(i.String())
 	default:
-		panic(fmt.Errorf(ErrNonStandardError, i))
+		// Programmer error
+		panic(fmt.Errorf(errNonStandardError, i))
 	}
 }
 
@@ -265,7 +267,11 @@ func formatForREPL(s string) string {
 }
 
 func help(_ ...data.Value) data.Value {
-	md := docstring.Get("help")
+	md, err := docstring.Get("help")
+	if err != nil {
+		// Programmer error, help is missing
+		panic(err)
+	}
 	fmt.Println(formatForREPL(md))
 	return nothing
 }
@@ -273,8 +279,7 @@ func help(_ ...data.Value) data.Value {
 func doc(args ...data.Value) data.Value {
 	sym := args[0].(data.LocalSymbol)
 	name := string(sym.Name())
-	if docstring.Exists(name) {
-		docStr := docstring.Get(name)
+	if docStr, err := docstring.Get(name); err == nil {
 		f := formatForREPL(docStr)
 		fmt.Println(f)
 		return nothing

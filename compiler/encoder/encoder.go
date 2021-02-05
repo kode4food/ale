@@ -58,12 +58,7 @@ type (
 
 func newEncoder(globals env.Namespace) *encoder {
 	return &encoder{
-		globals:   globals,
-		constants: data.Values{},
-		closure:   IndexedCells{},
-		args:      argsStack{},
-		locals:    []Locals{{}},
-		code:      isa.Instructions{},
+		globals: globals,
 	}
 }
 
@@ -74,12 +69,7 @@ func NewEncoder(globals env.Namespace) Encoder {
 
 func (e *encoder) child() *encoder {
 	return &encoder{
-		parent:    e,
-		constants: data.Values{},
-		closure:   IndexedCells{},
-		args:      argsStack{},
-		locals:    []Locals{{}},
-		code:      isa.Instructions{},
+		parent: e,
 	}
 }
 

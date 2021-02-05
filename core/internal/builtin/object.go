@@ -4,7 +4,11 @@ import "github.com/kode4food/ale/data"
 
 // Object creates a new object instance
 var Object = data.Applicative(func(args ...data.Value) data.Value {
-	return data.ValuesToObject(args...)
+	res, err := data.ValuesToObject(args...)
+	if err != nil {
+		panic(err)
+	}
+	return res
 })
 
 // IsObject returns whether a value is an object

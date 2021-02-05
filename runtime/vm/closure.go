@@ -11,7 +11,7 @@ import (
 
 // Error messages
 const (
-	ErrUnknownOpcode = "unknown opcode: %s"
+	errUnknownOpcode = "unknown opcode: %s"
 )
 
 const closureType = "%s-closure"
@@ -372,7 +372,8 @@ opSwitch:
 		return data.False
 
 	default:
-		panic(fmt.Errorf(ErrUnknownOpcode, op))
+		// Programmer error
+		panic(fmt.Errorf(errUnknownOpcode, op))
 	}
 }
 
