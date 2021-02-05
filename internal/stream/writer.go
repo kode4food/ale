@@ -45,12 +45,12 @@ func NewWriter(w io.Writer, o OutputFunc) Writer {
 
 func (w *wrappedWriter) Write(v data.Value) {
 	w.output(w.writer, v)
-	w.writer.Flush()
+	_ = w.writer.Flush()
 }
 
 func (w *wrappedClosingWriter) Close() {
-	w.writer.Flush()
-	w.closer.Close()
+	_ = w.writer.Flush()
+	_ = w.closer.Close()
 }
 
 func (w *wrappedWriter) Equal(v data.Value) bool {
@@ -74,5 +74,5 @@ func stringToBytes(s string) []byte {
 
 // StrOutput is the standard string-based output function
 func StrOutput(w *bufio.Writer, v data.Value) {
-	w.Write(stringToBytes(v.String()))
+	_, _ = w.Write(stringToBytes(v.String()))
 }

@@ -71,7 +71,7 @@ func ParseSymbol(s String) Symbol {
 		domain := Name(n[:i])
 		return NewQualifiedSymbol(name, domain)
 	}
-	return localSymbol(Name(s))
+	return localSymbol(s)
 }
 
 // NewSymbolGenerator creates a new symbol generator. In general, it is safe

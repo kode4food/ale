@@ -48,7 +48,7 @@ func LineInput(r *bufio.Reader) (data.Value, bool) {
 // RuneInput is the standard single rune input function
 func RuneInput(r *bufio.Reader) (data.Value, bool) {
 	if c, _, err := r.ReadRune(); err == nil {
-		return data.String(string(c)), true
+		return data.String(c), true
 	}
 	return data.Nil, false
 }

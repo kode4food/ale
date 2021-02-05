@@ -17,8 +17,6 @@ type (
 	makeFuncType func(args []reflect.Value) (results []reflect.Value)
 )
 
-const wrappedFuncType = data.Name("wrapped-func")
-
 func makeWrappedFunc(t reflect.Type) (Wrapper, error) {
 	cIn := t.NumIn()
 	in := make([]Wrapper, cIn)
