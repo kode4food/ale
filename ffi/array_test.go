@@ -50,3 +50,28 @@ func TestArrayUnwrap(t *testing.T) {
 	as.Equal(I(4), out[1])
 	as.Equal(I(6), out[2])
 }
+
+func TestArrayEval(t *testing.T) {
+	as := NewWrapped(t)
+
+	as.EvalTo(
+		`[(first x) (rest x) (length x)]`,
+		Env{
+			"x": [3]int{10, 9, 8},
+		},
+		V(I(10), V(I(9), I(8)), I(3)),
+	)
+
+	as.EvalTo(
+		`(d [1 2 3])`,
+		Env{
+			"d": func(in [3]int) (res [3]int) {
+				for i, x := range in {
+					res[i] = x * 2
+				}
+				return
+			},
+		},
+		V(I(2), I(4), I(6)),
+	)
+}

@@ -38,7 +38,7 @@ func New(t *testing.T) *Wrapper {
 
 // String tests a Value for string equality
 func (w *Wrapper) String(expect string, expr Any) {
-	w.T.Helper()
+	w.Helper()
 	switch s := expr.(type) {
 	case string:
 		w.Assertions.Equal(expect, s)
@@ -51,7 +51,7 @@ func (w *Wrapper) String(expect string, expr Any) {
 
 // Number tests a Value for numeric equality
 func (w *Wrapper) Number(expect float64, expr Any) {
-	w.T.Helper()
+	w.Helper()
 	switch n := expr.(type) {
 	case float64:
 		w.Assertions.Equal(expect, n)
@@ -66,7 +66,7 @@ func (w *Wrapper) Number(expect float64, expr Any) {
 
 // Equal tests a Value for some kind of equality. Performs checks to do so
 func (w *Wrapper) Equal(expect Any, expr Any) {
-	w.T.Helper()
+	w.Helper()
 	switch expect := expect.(type) {
 	case data.String:
 		w.String(string(expect), expr)
@@ -86,7 +86,7 @@ func (w *Wrapper) Equal(expect Any, expr Any) {
 
 // True tests a Value for boolean true
 func (w *Wrapper) True(expr Any) {
-	w.T.Helper()
+	w.Helper()
 	if b, ok := expr.(data.Bool); ok {
 		w.Assertions.True(bool(b))
 		return
@@ -96,13 +96,13 @@ func (w *Wrapper) True(expr Any) {
 
 // Truthy tests a Value for system-specific Truthy
 func (w *Wrapper) Truthy(expr data.Value) {
-	w.T.Helper()
+	w.Helper()
 	w.Assertions.True(data.Truthy(expr))
 }
 
 // False tests a Value for boolean false
 func (w *Wrapper) False(expr Any) {
-	w.T.Helper()
+	w.Helper()
 	if b, ok := expr.(data.Bool); ok {
 		w.Assertions.False(bool(b))
 		return
@@ -112,45 +112,45 @@ func (w *Wrapper) False(expr Any) {
 
 // Falsey tests a Value for system-specific Falsey
 func (w *Wrapper) Falsey(expr data.Value) {
-	w.T.Helper()
+	w.Helper()
 	w.Assertions.False(data.Truthy(expr))
 }
 
 // Contains check if the expected string is in the provided Value
 func (w *Wrapper) Contains(expect string, expr data.Value) {
-	w.T.Helper()
+	w.Helper()
 	val := expr.String()
 	w.Assertions.True(strings.Contains(val, expect))
 }
 
 // NotContains checks if the expected string is not in the provided Value
 func (w *Wrapper) NotContains(expect string, expr data.Value) {
-	w.T.Helper()
+	w.Helper()
 	val := expr.String()
 	w.Assertions.False(strings.Contains(val, expect))
 }
 
 // Identical tests that two values are referentially identical
 func (w *Wrapper) Identical(expect Any, expr Any) {
-	w.T.Helper()
+	w.Helper()
 	w.Assertions.Equal(expect, expr)
 }
 
 // NotIdentical tests that two values are not referentially identical
 func (w *Wrapper) NotIdentical(expect Any, expr Any) {
-	w.T.Helper()
+	w.Helper()
 	w.Assertions.NotEqual(expect, expr)
 }
 
 // Compare tests if the Comparison of two Numbers is correct
 func (w *Wrapper) Compare(c data.Comparison, l data.Number, r data.Number) {
-	w.T.Helper()
+	w.Helper()
 	w.Assertions.Equal(c, l.Cmp(r))
 }
 
 // ExpectPanic is used with a defer to make sure an error was triggered
 func (w *Wrapper) ExpectPanic(errStr string) {
-	w.T.Helper()
+	w.Helper()
 	if rec := recover(); rec != nil {
 		if re, ok := rec.(error); ok {
 			recStr := re.Error()
@@ -163,7 +163,7 @@ func (w *Wrapper) ExpectPanic(errStr string) {
 
 // ExpectNoPanic is used with defer to make sure no error occurs
 func (w *Wrapper) ExpectNoPanic() {
-	w.T.Helper()
+	w.Helper()
 	rec := recover()
 	w.Nil(rec)
 }

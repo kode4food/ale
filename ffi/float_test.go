@@ -18,3 +18,17 @@ func TestFloatWrapper(t *testing.T) {
 	as.Equal(F(18), r[0])
 	as.Equal(F(45), r[1])
 }
+
+func TestFloatEval(t *testing.T) {
+	as := NewWrapped(t)
+
+	as.EvalTo(
+		`(d 2.5 2.4)`,
+		Env{
+			"d": func(f32 float32, f64 float64) (float32, float64) {
+				return f32 * 2, f64 * 2
+			},
+		},
+		V(F(5.0), F(4.8)),
+	)
+}
