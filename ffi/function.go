@@ -108,7 +108,7 @@ func (f *funcWrapper) wrapVectorFunction(fn reflect.Value) data.Function {
 			wIn[i] = arg
 		}
 		wOut := fn.Call(wIn)
-		out := make(data.Vector, outLen)
+		out := make(data.Values, outLen)
 		for i := 0; i < outLen; i++ {
 			res, err := f.out[i].Wrap(wc, wOut[i])
 			if err != nil {
@@ -116,7 +116,7 @@ func (f *funcWrapper) wrapVectorFunction(fn reflect.Value) data.Function {
 			}
 			out[i] = res
 		}
-		return out
+		return data.NewVector(out...)
 	}, inLen)
 }
 
@@ -195,7 +195,7 @@ func (f *funcWrapper) unwrapVectorCall(c data.Function) makeFuncType {
 			}
 			in[i] = arg
 		}
-		res := c.Call(in...).(data.Vector)
+		res := c.Call(in...).(data.Vector).Values()
 		out := make([]reflect.Value, outLen)
 		for i := 0; i < outLen; i++ {
 			res, err := f.out[i].Unwrap(res[i])

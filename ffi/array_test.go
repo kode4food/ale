@@ -12,8 +12,7 @@ import (
 func TestArrayWrap(t *testing.T) {
 	as := assert.New(t)
 	a1 := [3]int{1, 2, 3}
-	d1, ok := ffi.MustWrap(a1).(data.Vector)
-	as.True(ok)
+	d1 := ffi.MustWrap(a1).(data.Vector).Values()
 	as.Equal(3, len(d1))
 	as.Equal(I(1), d1[0])
 	as.Equal(I(2), d1[1])
@@ -26,8 +25,7 @@ func TestArrayWrapEquality(t *testing.T) {
 	a2 := []int{4, 5, 6}
 	a3 := []int{1, 2, 3}
 	a4 := [][]int{a1, a2, a1, a3}
-	w, ok := ffi.MustWrap(a4).(data.Vector)
-	as.True(ok)
+	w := ffi.MustWrap(a4).(data.Vector).Values()
 	as.Equal(w[0], w[2])
 	as.NotEqual(w[0], w[1])
 	as.Equal(w[2], w[3])
@@ -42,8 +40,7 @@ func TestArrayUnwrap(t *testing.T) {
 		}
 		return res
 	}).(data.Function)
-	out, ok := f.Call(data.Vector{I(1), I(2), I(3)}).(data.Vector)
-	as.True(ok)
+	out := f.Call(V(I(1), I(2), I(3))).(data.Vector).Values()
 	as.NotNil(out)
 	as.Equal(3, len(out))
 	as.Equal(I(2), out[0])

@@ -51,7 +51,7 @@ func TestStructUnwrap(t *testing.T) {
 	f := ffi.MustWrap(func(i *stateInfo) (string, int) {
 		return i.Name, i.Population
 	}).(data.Function)
-	r := f.Call(ffi.MustWrap(si)).(data.Vector)
+	r := f.Call(ffi.MustWrap(si)).(data.Vector).Values()
 	as.Equal(S("California"), r[0])
 	as.Equal(I(40), r[1])
 }

@@ -6,7 +6,7 @@ import "github.com/kode4food/ale/data"
 var Cons = data.Applicative(func(args ...data.Value) data.Value {
 	car := args[0]
 	cdr := args[1]
-	if p, ok := cdr.(data.Prepender); ok {
+	if p, ok := cdr.(data.PrependerSequence); ok {
 		return p.Prepend(car)
 	}
 	return data.NewCons(car, cdr)

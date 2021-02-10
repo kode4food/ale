@@ -23,7 +23,7 @@ func TestLazySeq(t *testing.T) {
 		return first, sequence.NewLazy(inc), true
 	}
 
-	l := sequence.NewLazy(inc).(data.Prepender).Prepend(F(0))
+	l := sequence.NewLazy(inc).(data.PrependerSequence).Prepend(F(0))
 	as.False(l.IsEmpty())
 	as.Number(0, l.First())
 	as.Number(1, l.Rest().First())

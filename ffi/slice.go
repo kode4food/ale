@@ -29,7 +29,7 @@ func (s *sliceWrapper) Wrap(c *Context, v reflect.Value) (data.Value, error) {
 		return nil, err
 	}
 	vLen := v.Len()
-	out := make(data.Vector, vLen)
+	out := make(data.Values, vLen)
 	for i := 0; i < vLen; i++ {
 		v, err := s.elem.Wrap(c, v.Index(i))
 		if err != nil {
@@ -37,7 +37,7 @@ func (s *sliceWrapper) Wrap(c *Context, v reflect.Value) (data.Value, error) {
 		}
 		out[i] = v
 	}
-	return out, nil
+	return data.NewVector(out...), nil
 }
 
 func (s *sliceWrapper) Unwrap(v data.Value) (reflect.Value, error) {

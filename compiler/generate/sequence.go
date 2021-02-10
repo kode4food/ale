@@ -53,7 +53,7 @@ func Sequence(e encoder.Encoder, s data.Sequence) {
 // Vector encodes a vector
 func Vector(e encoder.Encoder, v data.Vector) {
 	f := resolveBuiltIn(e, vectorSym)
-	callFunction(e, f, data.Values(v))
+	callFunction(e, f, v.Values())
 }
 
 // Object encodes an object

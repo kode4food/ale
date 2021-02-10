@@ -169,7 +169,7 @@ func (m *methodWrapper) wrapVectorMethod(v reflect.Value) data.Function {
 			wIn[i] = arg
 		}
 		wOut := fn.Call(wIn)
-		out := make(data.Vector, outLen)
+		out := make(data.Values, outLen)
 		for i := 0; i < outLen; i++ {
 			res, err := m.out[i].Wrap(c, wOut[i])
 			if err != nil {
@@ -177,7 +177,7 @@ func (m *methodWrapper) wrapVectorMethod(v reflect.Value) data.Function {
 			}
 			out[i] = res
 		}
-		return out
+		return data.NewVector(out...)
 	}, inLen)
 }
 

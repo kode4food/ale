@@ -109,16 +109,17 @@ func (se *syntaxEnv) quotePair(c data.Pair) data.Value {
 }
 
 func (se *syntaxEnv) quoteObject(as data.Object) data.Value {
-	res := data.EmptyVector
+	var res data.Values
 	for f, r, ok := as.Split(); ok; f, r, ok = r.Split() {
 		p := f.(data.Pair)
 		res = append(res, p.Car(), p.Cdr())
 	}
-	return data.NewList(applySym, objectSym, se.quoteElements(res))
+	v := data.NewVector(res...)
+	return data.NewList(applySym, objectSym, se.quoteElements(v))
 }
 
 func (se *syntaxEnv) quoteElements(s data.Sequence) data.Value {
-	res := data.EmptyVector
+	var res data.Values
 	for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {
 		if v, ok := isUnquoteSplicing(f); ok {
 			res = append(res, v)

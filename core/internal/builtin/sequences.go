@@ -21,16 +21,16 @@ var Rest = data.Applicative(func(args ...data.Value) data.Value {
 	return args[0].(data.Sequence).Rest()
 }, 1)
 
-// Append adds a value to the end of the provided Appender
+// Append adds a value to the end of the provided AppenderSequence
 var Append = data.Applicative(func(args ...data.Value) data.Value {
-	a := args[0].(data.Appender)
+	a := args[0].(data.AppenderSequence)
 	s := args[1]
 	return a.Append(s)
 }, 2)
 
 // Reverse returns a reversed copy of a Sequence
 var Reverse = data.Applicative(func(args ...data.Value) data.Value {
-	r := args[0].(data.Reverser)
+	r := args[0].(data.ReverserSequence)
 	return r.Reverse()
 }, 1)
 
@@ -43,7 +43,7 @@ var Length = data.Applicative(func(args ...data.Value) data.Value {
 
 // Nth returns the nth element of the provided sequence or a default
 var Nth = data.Applicative(func(args ...data.Value) data.Value {
-	s := args[0].(data.Indexed)
+	s := args[0].(data.IndexedSequence)
 	i := int(args[1].(data.Integer))
 	if res, ok := s.ElementAt(i); ok {
 		return res
@@ -56,7 +56,7 @@ var Nth = data.Applicative(func(args ...data.Value) data.Value {
 
 // Get returns a value by key from the provided mapped sequence
 var Get = data.Applicative(func(args ...data.Value) data.Value {
-	s := args[0].(data.Mapped)
+	s := args[0].(data.MappedSequence)
 	res, _ := s.Get(args[1])
 	return res
 }, 2)
@@ -87,6 +87,6 @@ var IsIndexed = data.Applicative(func(args ...data.Value) data.Value {
 
 // IsReverser returns whether the value is a reversible sequence
 var IsReverser = data.Applicative(func(args ...data.Value) data.Value {
-	_, ok := args[0].(data.Reverser)
+	_, ok := args[0].(data.ReverserSequence)
 	return data.Bool(ok)
 }, 1)

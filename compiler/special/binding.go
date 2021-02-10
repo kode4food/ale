@@ -86,7 +86,7 @@ func LetMutual(e encoder.Encoder, args ...data.Value) {
 func parseLet(args ...data.Value) (letBindings, data.Vector) {
 	data.AssertMinimum(2, len(args))
 	bindings := parseLetBindings(args[0])
-	return bindings, args[1:]
+	return bindings, data.NewVector(args[1:]...)
 }
 
 func parseLetBindings(v data.Value) letBindings {
@@ -110,12 +110,13 @@ func parseLetBindings(v data.Value) letBindings {
 }
 
 func parseLetBinding(b data.Vector) *letBinding {
-	if len(b) != 2 {
+	v := b.Values()
+	if len(v) != 2 {
 		panic(errors.New(ErrUnpairedBindings))
 	}
 	return &letBinding{
-		name:  b[0].(data.LocalSymbol).Name(),
-		value: b[1],
+		name:  v[0].(data.LocalSymbol).Name(),
+		value: v[1],
 	}
 }
 

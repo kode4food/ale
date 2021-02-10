@@ -103,7 +103,7 @@ func TestReverse(t *testing.T) {
 	as.EvalTo(`(reverse [])`, data.EmptyVector)
 	as.String(`(4 3 2 1)`, as.Eval(`(reverse! (take 4 (range 1 1000)))`))
 
-	err := interfaceErr("*sequence.lazySequence", "data.Reverser")
+	err := interfaceErr("*sequence.lazySequence", "data.ReverserSequence")
 	as.PanicWith(`
 		(reverse (take 4 (range 1 1000)))
 	`, err)

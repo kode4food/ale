@@ -12,28 +12,10 @@ type (
 		IsEmpty() bool
 	}
 
-	// Prepender is a Sequence that can be prepended to
-	Prepender interface {
+	// AppenderSequence is a Sequence that acts as an Appender
+	AppenderSequence interface {
 		Sequence
-		Prepend(Value) Sequence
-	}
-
-	// Appender is a Sequence that can be appended to
-	Appender interface {
-		Sequence
-		Append(Value) Sequence
-	}
-
-	// Reverser is a Sequence than can be reversed
-	Reverser interface {
-		Sequence
-		Reverse() Sequence
-	}
-
-	// IndexedSequence is a Sequence that provides an Indexed interface
-	IndexedSequence interface {
-		Sequence
-		Indexed
+		Appender
 	}
 
 	// CountedSequence is a Sequence that provides a Counted interface
@@ -42,17 +24,40 @@ type (
 		Counted
 	}
 
-	// RandomAccessSequence provides Indexed and Counted Sequence interfaces
-	RandomAccessSequence interface {
+	// IndexedSequence is a Sequence that provides an Indexed interface
+	IndexedSequence interface {
 		Sequence
 		Indexed
-		Counted
 	}
 
 	// MappedSequence is a Sequence that provides a Mapped interface
 	MappedSequence interface {
 		Sequence
 		Mapped
+	}
+
+	// PrependerSequence is a Sequence that acts as a Prepender
+	PrependerSequence interface {
+		Sequence
+		Prepender
+	}
+
+	// RandomAccessSequence provides a RandomAccess Sequence interface
+	RandomAccessSequence interface {
+		Sequence
+		RandomAccess
+	}
+
+	// ReverserSequence is a Sequence than acts as a Reverser
+	ReverserSequence interface {
+		Sequence
+		Reverser
+	}
+
+	// ValuerSequence is a Sequence that provides a Valuer interface
+	ValuerSequence interface {
+		Sequence
+		Valuer
 	}
 )
 

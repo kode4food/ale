@@ -40,7 +40,7 @@ func ensureCache() {
 			doc := string(assets.MustGet(filename))
 			meta, _ := ParseMarkdown(doc)
 			if names, ok := meta.Get(names); ok {
-				for _, name := range names.(data.Vector) {
+				for _, name := range names.(data.Vector).Values() {
 					cache[name.String()] = doc
 				}
 			} else {

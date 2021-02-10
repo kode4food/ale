@@ -23,11 +23,11 @@ func Env() data.Value {
 
 // Args returns a vector containing the args passed to this program
 func Args() data.Value {
-	r := data.EmptyVector
+	var r data.Values
 	for _, v := range os.Args {
 		r = append(r, data.String(v))
 	}
-	return r
+	return data.NewVector(r...)
 }
 
 // CurrentTime returns the current system time in nanoseconds

@@ -27,7 +27,7 @@ func makeWrappedArray(t reflect.Type) (Wrapper, error) {
 
 func (a *arrayWrapper) Wrap(c *Context, v reflect.Value) (data.Value, error) {
 	vLen := v.Len()
-	out := make(data.Vector, vLen)
+	out := make(data.Values, vLen)
 	for i := 0; i < vLen; i++ {
 		elem, err := a.elem.Wrap(c, v.Index(i))
 		if err != nil {
@@ -35,7 +35,7 @@ func (a *arrayWrapper) Wrap(c *Context, v reflect.Value) (data.Value, error) {
 		}
 		out[i] = elem
 	}
-	return out, nil
+	return data.NewVector(out...), nil
 }
 
 func (a *arrayWrapper) Unwrap(v data.Value) (reflect.Value, error) {

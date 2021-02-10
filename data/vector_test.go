@@ -43,7 +43,7 @@ func TestVector(t *testing.T) {
 func TestVectorReverse(t *testing.T) {
 	as := assert.New(t)
 
-	as.String("[4 3 2 1]", data.NewVector(I(1), I(2), I(3), I(4)).Reverse())
+	as.String("[4 3 2 1]", V(I(1), I(2), I(3), I(4)).Reverse())
 	as.String("[]", data.EmptyVector.Reverse())
 }
 
@@ -56,10 +56,10 @@ func TestEmptyVector(t *testing.T) {
 	as.String("[]", v.Rest())
 }
 
-func TestVectorCaller(t *testing.T) {
+func TestVectorAsFunction(t *testing.T) {
 	as := assert.New(t)
 
-	v1 := V(S("hello"), S("how"), S("are"), S("you?"))
+	v1 := V(S("hello"), S("how"), S("are"), S("you?")).(data.Function)
 	as.String("hello", v1.Call(I(0)))
 	as.String("how", v1.Call(I(1)))
 	as.Nil(v1.Call(I(4)))

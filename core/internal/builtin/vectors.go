@@ -15,6 +15,6 @@ var IsVector = data.Applicative(func(args ...data.Value) data.Value {
 
 // IsAppender returns whether the provided value is an appender
 var IsAppender = data.Applicative(func(args ...data.Value) data.Value {
-	_, ok := args[0].(data.Appender)
+	_, ok := args[0].(data.AppenderSequence)
 	return data.Bool(ok)
 }, 1)

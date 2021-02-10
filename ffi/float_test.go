@@ -14,7 +14,7 @@ func TestFloatWrapper(t *testing.T) {
 	f := ffi.MustWrap(func(f1 float32, f2 float64) (float32, float64) {
 		return f1 * 2, f2 * 3
 	}).(data.Function)
-	r := f.Call(F(9), F(15)).(data.Vector)
+	r := f.Call(F(9), F(15)).(data.Vector).Values()
 	as.Equal(F(18), r[0])
 	as.Equal(F(45), r[1])
 }

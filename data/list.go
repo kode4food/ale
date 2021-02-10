@@ -5,10 +5,9 @@ type (
 	List interface {
 		list() // marker
 		Sequence
-		Indexed
-		Counted
-		Prepend(Value) Sequence
-		Reverse() Sequence
+		RandomAccess
+		Prepender
+		Reverser
 	}
 
 	list struct {
@@ -31,7 +30,7 @@ func NewList(v ...Value) List {
 	return res
 }
 
-func (l *list) list() {}
+func (*list) list() {}
 
 // First returns the first element of the List
 func (l *list) First() Value {

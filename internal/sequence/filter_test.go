@@ -28,7 +28,7 @@ func TestFilter(t *testing.T) {
 	r1 := w.Rest().Rest()
 	as.True(r1.IsEmpty())
 
-	p := w.(data.Prepender).Prepend(S("filtered out"))
+	p := w.(data.PrependerSequence).Prepend(S("filtered out"))
 	v4 := p.First()
 	r2 := p.Rest()
 	as.String("filtered out", v4)

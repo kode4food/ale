@@ -15,7 +15,7 @@ func TestChannel(t *testing.T) {
 	as := assert.New(t)
 
 	e, seq := stream.NewChannel(0)
-	seq = seq.(data.Prepender).Prepend(F(1))
+	seq = seq.(data.PrependerSequence).Prepend(F(1))
 	as.Contains(":type channel-emitter", e)
 	as.Contains(":type channel-sequence", seq)
 

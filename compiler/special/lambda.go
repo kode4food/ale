@@ -35,7 +35,7 @@ const allArgsName = data.Name("*args*")
 
 // Lambda encodes a lambda
 func Lambda(e encoder.Encoder, args ...data.Value) {
-	vars := parseLambda(args)
+	vars := parseLambda(data.NewVector(args...))
 	le := makeLambdaEncoder(e, vars)
 	le.encodeCall()
 }

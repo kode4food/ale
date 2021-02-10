@@ -3,9 +3,6 @@ package data
 import "fmt"
 
 type (
-	// Any makes "interface{}" less ugly
-	Any = interface{}
-
 	// Bool represents the values True or False
 	Bool bool
 
@@ -24,14 +21,19 @@ type (
 	// Names represents a set of Names
 	Names []Name
 
+	// Named is the generic interface
+	Named interface {
+		Name() Name
+	}
+
 	// Typed is the generic interface for values that are typed
 	Typed interface {
 		Type() Name
 	}
 
-	// Named is the generic interface
-	Named interface {
-		Name() Name
+	// Appender can return a Sequence that has been appended
+	Appender interface {
+		Append(Value) Sequence
 	}
 
 	// Counted interfaces allow a Value to return a count of its items
@@ -39,14 +41,35 @@ type (
 		Count() int
 	}
 
+	// Indexed is the interface for values that have indexed elements
+	Indexed interface {
+		ElementAt(int) (Value, bool)
+	}
+
 	// Mapped is the interface for values that have retrievable properties
 	Mapped interface {
 		Get(Value) (Value, bool)
 	}
 
-	// Indexed is the interface for values that have indexed elements
-	Indexed interface {
-		ElementAt(int) (Value, bool)
+	// Prepender can return a Sequence that has been prepended
+	Prepender interface {
+		Prepend(Value) Sequence
+	}
+
+	// RandomAccess provides Indexed and Counted interfaces
+	RandomAccess interface {
+		Indexed
+		Counted
+	}
+
+	// Reverser can return a Sequence that has been reversed
+	Reverser interface {
+		Reverse() Sequence
+	}
+
+	// Valuer can return its data as a slice of Values
+	Valuer interface {
+		Values() Values
 	}
 )
 
