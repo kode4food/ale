@@ -40,3 +40,8 @@ func (k Keyword) Equal(v Value) bool {
 func (k Keyword) String() string {
 	return ":" + string(k)
 }
+
+// HashCode returns the hash code for this Keyword
+func (k Keyword) HashCode() uint64 {
+	return HashString(string(k))
+}

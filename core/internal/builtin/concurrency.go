@@ -33,12 +33,12 @@ var Chan = data.Applicative(func(args ...data.Value) data.Value {
 	}
 	e, s := stream.NewChannel(size)
 
-	return data.Object{
-		data.TypeKey: ChannelType,
-		EmitKey:      bindWriter(e),
-		CloseKey:     bindCloser(e),
-		SequenceKey:  s,
-	}
+	return data.NewObject(
+		data.NewCons(data.TypeKey, ChannelType),
+		data.NewCons(EmitKey, bindWriter(e)),
+		data.NewCons(CloseKey, bindCloser(e)),
+		data.NewCons(SequenceKey, s),
+	)
 }, 0, 1)
 
 // Promise instantiates a new eventually-fulfilled promise

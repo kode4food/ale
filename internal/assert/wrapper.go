@@ -24,8 +24,8 @@ type (
 // Error messages
 const (
 	ErrInvalidTestExpression = "invalid test expression: %v"
-
-	ErrProperErrorNotRaised = "proper error not raised"
+	ErrProperErrorNotRaised  = "proper error not raised"
+	ErrValueNotFound         = "value not found in object: %s"
 )
 
 // New instantiates a new Wrapper instance from the specified test
@@ -166,4 +166,12 @@ func (w *Wrapper) ExpectNoPanic() {
 	w.Helper()
 	rec := recover()
 	w.Nil(rec)
+}
+
+// MustGet retrieves a Value from a Mapped or explodes
+func (w *Wrapper) MustGet(m data.Mapped, k data.Value) data.Value {
+	if v, ok := m.Get(k); ok {
+		return v
+	}
+	panic(fmt.Errorf(ErrValueNotFound, k))
 }

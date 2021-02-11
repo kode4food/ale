@@ -88,6 +88,11 @@ func (s String) String() string {
 	return string(s)
 }
 
+// HashCode returns a hash code for the String
+func (s String) HashCode() uint64 {
+	return HashString(string(s))
+}
+
 // Quote quotes and escapes a string
 func (s String) Quote() string {
 	var buf bytes.Buffer

@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/kode4food/ale/core/internal/builtin"
 	"github.com/kode4food/ale/data"
+
+	"github.com/kode4food/ale/core/internal/builtin"
 	"github.com/kode4food/ale/env"
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
@@ -46,7 +47,7 @@ func TestGenerated(t *testing.T) {
 func TestResolveEval(t *testing.T) {
 	as := assert.New(t)
 
-	as.EvalTo(`(let [x 99] x)`, data.Integer(99))
+	as.EvalTo(`(let [x 99] x)`, I(99))
 
 	err := fmt.Errorf(env.ErrSymbolNotDeclared, "hello")
 	as.PanicWith(`hello`, err)

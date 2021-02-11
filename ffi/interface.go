@@ -92,13 +92,16 @@ func (i interfaceWrapper) Wrap(c *Context, v reflect.Value) (data.Value, error) 
 	if err != nil {
 		return nil, err
 	}
-	res := make(data.Object, len(i.methods)+1)
-	res[ReceiverKey] = receiver(v)
-	for _, m := range i.methods {
-		k := data.Keyword(m.name)
-		res[k] = m.wrapMethod(v)
+
+	res := make(data.Pairs, len(i.methods)+1)
+	res[len(res)-1] = data.NewCons(ReceiverKey, receiver(v))
+	for idx, m := range i.methods {
+		res[idx] = data.NewCons(
+			data.Keyword(m.name),
+			m.wrapMethod(v),
+		)
 	}
-	return res, nil
+	return data.NewObject(res...), nil
 }
 
 func (m *methodWrapper) wrapMethod(v reflect.Value) data.Function {
@@ -183,7 +186,7 @@ func (m *methodWrapper) wrapVectorMethod(v reflect.Value) data.Function {
 
 func (i interfaceWrapper) Unwrap(v data.Value) (reflect.Value, error) {
 	if v, ok := v.(data.Object); ok {
-		if r, ok := v[ReceiverKey]; ok {
+		if r, ok := v.Get(ReceiverKey); ok {
 			if r, ok := r.(receiver); ok {
 				res := reflect.Value(r)
 				if i.Type != res.Type() {

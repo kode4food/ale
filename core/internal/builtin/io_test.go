@@ -10,6 +10,7 @@ import (
 	"github.com/kode4food/ale/env"
 	"github.com/kode4food/ale/eval"
 	"github.com/kode4food/ale/internal/assert"
+	. "github.com/kode4food/ale/internal/assert/helpers"
 	"github.com/kode4food/ale/internal/stream"
 )
 
@@ -32,14 +33,14 @@ func testOutput(t *testing.T, src, expected string) {
 
 	e := env.NewEnvironment()
 	ns := e.GetRoot()
-	ns.Declare(stdoutName).Bind(data.Object{
-		builtin.WriterKey: w,
-		builtin.WriteKey:  bindWrite(w),
-	})
+	ns.Declare(stdoutName).Bind(O(
+		C(builtin.WriterKey, w),
+		C(builtin.WriteKey, bindWrite(w)),
+	))
 	bootstrap.Into(e)
 
 	anon := e.GetAnonymous()
-	eval.String(anon, data.String(src))
+	eval.String(anon, S(src))
 
 	as.String(expected, buf.String())
 }

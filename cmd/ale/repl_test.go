@@ -6,6 +6,7 @@ import (
 	main "github.com/kode4food/ale/cmd/ale"
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/assert"
+	. "github.com/kode4food/ale/internal/assert/helpers"
 )
 
 func TestREPL(t *testing.T) {
@@ -34,7 +35,7 @@ func TestBuiltInUse(t *testing.T) {
 	as.NotNil(e.Value())
 	use := asCaller(t, e.Value())
 
-	nsName := data.NewLocalSymbol("test-ns")
+	nsName := LS("test-ns")
 	nothing := use.Call(nsName)
 	as.NotNil(nothing)
 

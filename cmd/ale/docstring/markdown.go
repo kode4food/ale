@@ -27,10 +27,10 @@ func skipEmptyLines(lines []string) []string {
 }
 
 func parseKeyValues(doc string) (data.Object, []string) {
-	obj := data.Object{}
+	p := data.Pairs{}
 	lines := strings.Split(doc, "\n")
 	if strings.TrimSpace(lines[0]) != "---" {
-		return obj, lines
+		return data.NewObject(p...), lines
 	}
 	lines = lines[1:]
 	var rest = 1
@@ -40,10 +40,10 @@ func parseKeyValues(doc string) (data.Object, []string) {
 			break
 		}
 		if k, v, ok := parseKeyValue(l); ok {
-			obj[k] = v
+			p = append(p, data.NewCons(k, v))
 		}
 	}
-	return obj, lines[rest:]
+	return data.NewObject(p...), lines[rest:]
 }
 
 func parseKeyValue(l string) (n data.Name, v data.Value, ok bool) {

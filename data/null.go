@@ -61,3 +61,7 @@ func (*nilValue) Equal(v Value) bool {
 func (*nilValue) String() string {
 	return "()"
 }
+
+func (*nilValue) HashCode() uint64 {
+	return 0
+}

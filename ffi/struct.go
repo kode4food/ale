@@ -59,15 +59,15 @@ func (s *structWrapper) Wrap(c *Context, v reflect.Value) (data.Value, error) {
 	if !v.IsValid() {
 		return data.Nil, nil
 	}
-	out := make(data.Object, len(s.fields))
+	out := make(data.Pairs, 0, len(s.fields))
 	for k, w := range s.fields {
 		v, err := w.Wrap(c, v.FieldByName(k))
 		if err != nil {
 			return nil, err
 		}
-		out[w.Keyword] = v
+		out = append(out, data.NewCons(w.Keyword, v))
 	}
-	return out, nil
+	return data.NewObject(out...), nil
 }
 
 func (s *structWrapper) Unwrap(v data.Value) (reflect.Value, error) {
@@ -77,7 +77,7 @@ func (s *structWrapper) Unwrap(v data.Value) (reflect.Value, error) {
 	}
 	out := reflect.New(s.typ).Elem()
 	for k, w := range s.fields {
-		if v, ok := in[w.Keyword]; ok {
+		if v, ok := in.Get(w.Keyword); ok {
 			v, err := w.Unwrap(v)
 			if err != nil {
 				return _emptyValue, err

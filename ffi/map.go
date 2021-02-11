@@ -35,18 +35,17 @@ func (m *mapWrapper) Wrap(c *Context, v reflect.Value) (data.Value, error) {
 	if err != nil {
 		return nil, err
 	}
-	out := make(data.Object, v.Len())
-	pairs := v.MapRange()
-	for pairs.Next() {
+	out := make(data.Pairs, 0, v.Len())
+	for pairs := v.MapRange(); pairs.Next(); {
 		if k, err := m.key.Wrap(c, pairs.Key()); err != nil {
 			return nil, err
 		} else if v, err := m.value.Wrap(c, pairs.Value()); err != nil {
 			return nil, err
 		} else {
-			out[k] = v
+			out = append(out, data.NewCons(k, v))
 		}
 	}
-	return out, nil
+	return data.NewObject(out...), nil
 }
 
 func (m *mapWrapper) Unwrap(v data.Value) (reflect.Value, error) {
@@ -54,8 +53,11 @@ func (m *mapWrapper) Unwrap(v data.Value) (reflect.Value, error) {
 	if err != nil {
 		return _emptyValue, err
 	}
-	out := reflect.MakeMapWithSize(m.typ, len(in))
-	for k, v := range in {
+	out := reflect.MakeMapWithSize(m.typ, in.Count())
+	for f, r, ok := in.Split(); ok; f, r, ok = r.Split() {
+		p := f.(data.Pair)
+		k := p.Car()
+		v := p.Cdr()
 		if k, err := m.key.Unwrap(k); err != nil {
 			return _emptyValue, err
 		} else if v, err := m.value.Unwrap(v); err != nil {

@@ -28,9 +28,9 @@ func TestStructWrap(t *testing.T) {
 	as := assert.New(t)
 	si := testStructStateInfo()
 	m := ffi.MustWrap(si).(data.Object)
-	as.Equal(S("California"), m[K("Name")])
-	as.Equal(I(40), m[K("pop")])
-	_, ok := m[K("notExported")]
+	as.Equal(S("California"), as.MustGet(m, K("Name")))
+	as.Equal(I(40), as.MustGet(m, K("pop")))
+	_, ok := m.Get(K("notExported"))
 	as.False(ok)
 }
 

@@ -36,9 +36,19 @@ func L(args ...data.Value) data.List {
 	return data.NewList(args...)
 }
 
+// LS constructs a Local Symbol
+func LS(n string) data.Symbol {
+	return data.NewLocalSymbol(N(n))
+}
+
 // N constructs a Name
 func N(s string) data.Name {
 	return data.Name(s)
+}
+
+// O constructs an Object from Pairs
+func O(p ...data.Pair) data.Object {
+	return data.NewObject(p...)
 }
 
 // R constructs a Ratio

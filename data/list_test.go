@@ -19,7 +19,7 @@ func TestSimpleList(t *testing.T) {
 func TestList(t *testing.T) {
 	as := assert.New(t)
 	n1 := I(12)
-	l1 := L(n1)
+	l1 := data.NewList(n1)
 
 	as.Equal(n1, l1.First())
 	as.Equal(data.EmptyList, l1.Rest())
@@ -62,7 +62,7 @@ func TestListReverse(t *testing.T) {
 func TestListCaller(t *testing.T) {
 	as := assert.New(t)
 
-	l1 := L(I(99), I(37))
+	l1 := data.NewList(I(99), I(37))
 	c1 := l1.(data.Function)
 	as.Number(99, c1.Call(I(0)))
 	as.Number(37, c1.Call(I(1)))
@@ -73,11 +73,11 @@ func TestListCaller(t *testing.T) {
 func TestListEquality(t *testing.T) {
 	as := assert.New(t)
 
-	l1 := L(I(99), I(37), I(56))
-	l2 := L(I(99), I(37), I(56))
-	l3 := L(I(99), I(37), I(55))
-	l4 := L()
-	l5 := L()
+	l1 := data.NewList(I(99), I(37), I(56))
+	l2 := data.NewList(I(99), I(37), I(56))
+	l3 := data.NewList(I(99), I(37), I(55))
+	l4 := data.NewList()
+	l5 := data.NewList()
 
 	as.True(l1.Equal(l1))
 	as.True(l1.Equal(l2))

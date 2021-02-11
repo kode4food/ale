@@ -140,6 +140,10 @@ func (l localSymbol) String() string {
 	return string(l)
 }
 
+func (l localSymbol) HashCode() uint64 {
+	return HashString(string(l))
+}
+
 // NewQualifiedSymbol returns a Qualified Symbol for a specific domain
 func NewQualifiedSymbol(name Name, domain Name) Symbol {
 	return qualifiedSymbol{
@@ -175,4 +179,8 @@ func (s qualifiedSymbol) Equal(v Value) bool {
 
 func (s qualifiedSymbol) String() string {
 	return string(s.Qualified())
+}
+
+func (s qualifiedSymbol) HashCode() uint64 {
+	return HashString(string(s.name)) ^ HashString(string(s.domain))
 }

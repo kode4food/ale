@@ -14,7 +14,7 @@ func TestParseFloat(t *testing.T) {
 	as := assert.New(t)
 
 	n1 := data.MustParseFloat("12.8")
-	n2 := F(12.8)
+	n2 := data.Float(12.8)
 	as.Equal(n1, n2)
 
 	defer as.ExpectPanic(fmt.Sprintf(data.ErrExpectedFloat, S(`'splosion!`)))
@@ -25,7 +25,7 @@ func TestParseInteger(t *testing.T) {
 	as := assert.New(t)
 
 	n1 := data.MustParseInteger("37")
-	n2 := I(37)
+	n2 := data.Integer(37)
 	as.Equal(n1, n2)
 
 	defer as.ExpectPanic(fmt.Sprintf(data.ErrExpectedInteger, S(`'splosion!`)))
@@ -45,9 +45,9 @@ func TestParseRatio(t *testing.T) {
 
 func TestEqualTo(t *testing.T) {
 	as := assert.New(t)
-	n1 := I(20)
-	n2 := F(20.0)
-	n3 := F(25.75)
+	n1 := data.Integer(20)
+	n2 := data.Float(20.0)
+	n3 := data.Float(25.75)
 	n4 := data.MustParseRatio("40/2")
 
 	as.Compare(data.EqualTo, n1, n2)
@@ -61,11 +61,11 @@ func TestEqualTo(t *testing.T) {
 func TestLessThan(t *testing.T) {
 	as := assert.New(t)
 	n1 := data.MustParseFloat("12.8")
-	n2 := F(12.9)
-	n3 := I(20)
-	n4 := F(20.0)
-	n5 := F(25.75)
-	n6 := I(25)
+	n2 := data.Float(12.9)
+	n3 := data.Integer(20)
+	n4 := data.Float(20.0)
+	n5 := data.Float(25.75)
+	n6 := data.Integer(25)
 	n7 := data.MustParseRatio("3/4")
 
 	as.Compare(data.LessThan, n1, n2)
@@ -80,11 +80,11 @@ func TestLessThan(t *testing.T) {
 func TestGreaterThan(t *testing.T) {
 	as := assert.New(t)
 	n1 := data.MustParseFloat("12.8")
-	n2 := F(12.9)
-	n3 := I(20)
-	n4 := F(20.0)
-	n5 := F(25.75)
-	n6 := I(25)
+	n2 := data.Float(12.9)
+	n3 := data.Integer(20)
+	n4 := data.Float(20.0)
+	n5 := data.Float(25.75)
+	n6 := data.Integer(25)
 	n7 := data.MustParseInteger("1000000000000000000000000000000000000000000000")
 
 	as.Compare(data.GreaterThan, n2, n1)
@@ -98,11 +98,11 @@ func TestGreaterThan(t *testing.T) {
 
 func TestMultiplication(t *testing.T) {
 	as := assert.New(t)
-	n1 := I(20)
-	n2 := F(20.0)
-	n3 := I(5)
-	n4 := F(5.0)
-	n5 := F(9.25)
+	n1 := data.Integer(20)
+	n2 := data.Float(20.0)
+	n3 := data.Integer(5)
+	n4 := data.Float(5.0)
+	n5 := data.Float(9.25)
 	n6 := data.MustParseRatio("1/2")
 	n7 := data.MustParseInteger("1000000000000000000000000000000000000000000")
 	n8 := data.MustParseRatio("1/5")
@@ -120,10 +120,10 @@ func TestMultiplication(t *testing.T) {
 
 func TestDivision(t *testing.T) {
 	as := assert.New(t)
-	n1 := I(20)
-	n2 := F(20.0)
-	n3 := I(5)
-	n4 := F(5.0)
+	n1 := data.Integer(20)
+	n2 := data.Float(20.0)
+	n3 := data.Integer(5)
+	n4 := data.Float(5.0)
 	n5 := data.MustParseRatio("1/2")
 	n6 := data.MustParseInteger("1000000000000000000000000000000000000000000")
 
@@ -138,10 +138,10 @@ func TestDivision(t *testing.T) {
 
 func TestRemainder(t *testing.T) {
 	as := assert.New(t)
-	n1 := I(5)
-	n2 := F(5.0)
-	n3 := I(7)
-	n4 := F(7.0)
+	n1 := data.Integer(5)
+	n2 := data.Float(5.0)
+	n3 := data.Integer(7)
+	n4 := data.Float(7.0)
 	n5 := data.MustParseRatio("14/2")
 	n6 := data.MustParseInteger("1000000000000000000000000000000000000000000")
 
@@ -155,10 +155,10 @@ func TestRemainder(t *testing.T) {
 
 func TestAddition(t *testing.T) {
 	as := assert.New(t)
-	n1 := I(20)
-	n2 := I(5)
-	n3 := F(9.25)
-	n4 := F(7.0)
+	n1 := data.Integer(20)
+	n2 := data.Integer(5)
+	n3 := data.Float(9.25)
+	n4 := data.Float(7.0)
 	n5 := data.MustParseRatio("14/2")
 	n6 := data.MustParseInteger("1000000000000000000000000000000000000000000")
 
@@ -173,12 +173,12 @@ func TestAddition(t *testing.T) {
 
 func TestSubtraction(t *testing.T) {
 	as := assert.New(t)
-	n1 := I(20)
-	n2 := F(20.0)
-	n3 := I(5)
-	n4 := F(5.0)
-	n5 := F(9.25)
-	n6 := F(7.0)
+	n1 := data.Integer(20)
+	n2 := data.Float(20.0)
+	n3 := data.Integer(5)
+	n4 := data.Float(5.0)
+	n5 := data.Float(9.25)
+	n6 := data.Float(7.0)
 	n7 := data.MustParseRatio("14/2")
 	n8 := data.MustParseInteger("1000000000000000000000000000000000000000000")
 	n9 := data.MustParseRatio("1/5")
@@ -196,48 +196,48 @@ func TestSubtraction(t *testing.T) {
 func TestInfiniteNumbers(t *testing.T) {
 	as := assert.New(t)
 
-	as.False(I(98).IsPosInf())
-	as.False(I(0).IsNegInf())
+	as.False(data.Integer(98).IsPosInf())
+	as.False(data.Integer(0).IsNegInf())
 
-	posInf := F(1).Div(F(0))
-	negInf := F(-1).Div(F(0))
+	posInf := data.Float(1).Div(data.Float(0))
+	negInf := data.Float(-1).Div(data.Float(0))
 
 	as.True(posInf.IsPosInf())
 	as.False(posInf.IsNegInf())
 	as.True(negInf.IsNegInf())
 	as.False(negInf.IsPosInf())
 
-	as.Compare(data.GreaterThan, posInf, I(1))
-	as.Compare(data.LessThan, negInf, I(1))
-	as.Compare(data.LessThan, I(1), posInf)
-	as.Compare(data.GreaterThan, I(1), negInf)
+	as.Compare(data.GreaterThan, posInf, data.Integer(1))
+	as.Compare(data.LessThan, negInf, data.Integer(1))
+	as.Compare(data.LessThan, data.Integer(1), posInf)
+	as.Compare(data.GreaterThan, data.Integer(1), negInf)
 
-	as.Compare(data.LessThan, negInf, F(1))
-	as.Compare(data.GreaterThan, posInf, F(1))
-	as.Compare(data.LessThan, F(1), posInf)
-	as.Compare(data.GreaterThan, F(1), negInf)
+	as.Compare(data.LessThan, negInf, data.Float(1))
+	as.Compare(data.GreaterThan, posInf, data.Float(1))
+	as.Compare(data.LessThan, data.Float(1), posInf)
+	as.Compare(data.GreaterThan, data.Float(1), negInf)
 }
 
 func TestNonNumbers(t *testing.T) {
 	as := assert.New(t)
 
-	nan := F(math.Log(-1.0))
+	nan := data.Float(math.Log(-1.0))
 
 	as.True(nan.IsNaN())
-	as.False(F(35.5).IsNaN())
-	as.False(I(35).IsNaN())
+	as.False(data.Float(35.5).IsNaN())
+	as.False(data.Integer(35).IsNaN())
 
-	as.Compare(data.Incomparable, F(1), nan)
-	as.Compare(data.Incomparable, nan, F(1))
-	as.Compare(data.Incomparable, I(1), nan)
-	as.Compare(data.Incomparable, nan, I(1))
+	as.Compare(data.Incomparable, data.Float(1), nan)
+	as.Compare(data.Incomparable, nan, data.Float(1))
+	as.Compare(data.Incomparable, data.Integer(1), nan)
+	as.Compare(data.Incomparable, nan, data.Integer(1))
 }
 
 func TestStringifyNumbers(t *testing.T) {
 	as := assert.New(t)
 	n1 := data.MustParseFloat("12.8")
-	n2 := F(12.9)
-	n3 := F(20)
+	n2 := data.Float(12.9)
+	n3 := data.Float(20)
 
 	as.String("12.8", n1)
 	as.String("12.9", n2)

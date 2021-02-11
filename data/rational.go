@@ -133,6 +133,11 @@ func (l Float) String() string {
 	return fmt.Sprintf("%g", l)
 }
 
+// HashCode returns a hash code for this Float
+func (l Float) HashCode() uint64 {
+	return uint64(l)
+}
+
 // ParseRatio attempts to parse a string representing a ratio
 func ParseRatio(s string) (Number, error) {
 	if res, ok := new(big.Rat).SetString(s); ok {
@@ -250,6 +255,12 @@ func (l *Ratio) Equal(r Value) bool {
 // String converts this Ratio to a string
 func (l *Ratio) String() string {
 	return (*big.Rat)(l).String()
+}
+
+// HashCode returns a hash code for this Ratio
+func (l *Ratio) HashCode() uint64 {
+	br := (*big.Rat)(l)
+	return br.Num().Uint64() ^ br.Denom().Uint64()
 }
 
 func (l *Ratio) float() Float {

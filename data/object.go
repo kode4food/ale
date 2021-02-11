@@ -7,8 +7,20 @@ import (
 	"sort"
 )
 
-// Object maps values to values and supports the universal design pattern
-type Object map[Value]Value
+type (
+	// Object maps a set of Values, known as keys, to another set of Values
+	Object interface {
+		object() // marker
+		Sequence
+		Mapped
+		Counted
+	}
+
+	object struct {
+		pair     Pair
+		children [32]*object
+	}
+)
 
 // Standard Keys
 const (
@@ -20,18 +32,19 @@ const (
 
 // Error messages
 const (
-	ErrMapNotPaired  = "map does not contain an even number of elements"
-	ErrValueNotFound = "value not found in object: %s"
+	ErrMapNotPaired = "map does not contain an even number of elements"
 )
 
 // EmptyObject represents an empty Object
-var EmptyObject = Object{}
+var EmptyObject = &object{}
 
-// NewObject instantiates a new Object instance
+// NewObject instantiates a new Object instance. Based on Phil Bagwell's
+// Hashed Array Mapped Trie data structure. More information can be
+// found at http://lampwww.epfl.ch/papers/idealhashtrees.pdf
 func NewObject(pairs ...Pair) Object {
-	res := Object{}
+	res := &object{}
 	for _, p := range pairs {
-		res[p.Car()] = p.Cdr()
+		res = res.Put(p).(*object)
 	}
 	return res
 }
@@ -41,132 +54,128 @@ func ValuesToObject(v ...Value) (Object, error) {
 	if len(v)%2 != 0 {
 		return nil, errors.New(ErrMapNotPaired)
 	}
-	var p Pairs
+	res := &object{}
 	for i := len(v) - 2; i >= 0; i -= 2 {
-		p = append(p, NewCons(v[i], v[i+1]))
+		res = res.Put(NewCons(v[i], v[i+1])).(*object)
 	}
-	return NewObject(p...), nil
+	return res, nil
 }
 
-// Get attempts to retrieve a Value from an Object
-func (o Object) Get(k Value) (Value, bool) {
-	if v, ok := o[k]; ok {
-		return v, ok
+func (*object) object() {}
+
+func (o *object) Get(k Value) (Value, bool) {
+	h := HashCode(k)
+	return o.get(k, h)
+}
+
+func (o *object) Put(p Pair) Sequence {
+	h := HashCode(p.Car())
+	return o.put(p, h)
+}
+
+func (o *object) get(k Value, hash uint64) (Value, bool) {
+	if o.pair != nil && o.pair.Car().Equal(k) {
+		return o.pair.Cdr(), true
+	}
+	bucket := o.children[hash&0x1f]
+	if bucket != nil {
+		return bucket.get(k, hash>>5)
 	}
 	return Nil, false
 }
 
-// Merge creates a new Object that is the result of merging this and another
-func (o Object) Merge(v Object) Object {
-	res := o.Copy()
-	for k, v := range v {
-		res[k] = v
-	}
-	return res
-}
-
-// MustGet retrieves a Value from an Object or explodes
-func (o Object) MustGet(k Value) Value {
-	if v, ok := o.Get(k); ok {
-		return v
-	}
-	panic(fmt.Errorf(ErrValueNotFound, k))
-}
-
-// Copy creates an exact copy of the current Object
-func (o Object) Copy() Object {
-	newProps := make(Object, len(o))
-	for k, v := range o {
-		newProps[k] = v
-	}
-	return newProps
-}
-
-// Call turns Object into a Function
-func (o Object) Call(args ...Value) Value {
-	return mappedCall(o, args)
-}
-
-// Convention returns the Function's calling convention
-func (o Object) Convention() Convention {
-	return ApplicativeCall
-}
-
-// CheckArity performs a compile-time arity check for the Function
-func (o Object) CheckArity(argCount int) error {
-	return checkRangedArity(1, 2, argCount)
-}
-
-// First returns the first pair of this Object
-func (o Object) First() Value {
-	return o.firstFrom(o.sortedKeys())
-}
-
-func (o Object) firstFrom(keys []Value) Value {
-	if len(keys) > 0 {
-		k0 := keys[0]
-		return NewCons(k0, o[k0])
-	}
-	return Nil
-}
-
-// Rest returns the rest of the pairs of this Object
-func (o Object) Rest() Sequence {
-	return o.restFrom(o.sortedKeys())
-}
-
-func (o Object) restFrom(keys []Value) Object {
-	if len(keys) > 1 {
-		rest := make(Object, len(keys)-1)
-		for _, k := range keys[1:] {
-			rest[k] = o[k]
+func (o *object) put(p Pair, hash uint64) *object {
+	if o.pair == nil || o.pair.Car().Equal(p.Car()) {
+		return &object{
+			pair:     p,
+			children: o.children,
 		}
-		return rest
 	}
-	return EmptyObject
+
+	idx := hash & 0x1f
+	bucket := o.children[idx]
+	if bucket == nil {
+		bucket = &object{pair: p}
+	} else {
+		bucket = bucket.put(p, hash>>5)
+	}
+
+	// return a copy with the new bucket
+	var res object = *o
+	res.children[idx] = bucket
+	return &res
 }
 
-// Split performs a sequencing split of the pairs of this Object
-func (o Object) Split() (Value, Sequence, bool) {
-	if len(o) > 0 {
-		keys := o.sortedKeys()
-		first := o.firstFrom(keys)
-		rest := o.restFrom(keys)
-		return first, rest, true
+func (o *object) First() Value {
+	f, _, _ := o.Split()
+	return f
+}
+
+func (o *object) Rest() Sequence {
+	_, r, _ := o.Split()
+	return r
+}
+
+func (o *object) Split() (Value, Sequence, bool) {
+	return o.split()
+}
+
+func (o *object) split() (Value, *object, bool) {
+	for i, c := range o.children {
+		if c != nil {
+			if f, r, ok := c.split(); ok {
+				var res object = *o
+				res.children[i] = r
+				return f, &res, true
+			}
+		}
+	}
+	if o.pair != nil {
+		return o.pair, EmptyObject, true
 	}
 	return Nil, EmptyObject, false
 }
 
-func (o Object) sortedKeys() []Value {
-	keys := make([]Value, 0, len(o))
-	for k := range o {
-		keys = append(keys, k)
+func (o *object) Count() int {
+	res := 0
+	for _, r, ok := o.Split(); ok; _, r, ok = r.Split() {
+		res++
 	}
-	sort.Slice(keys, func(l, r int) bool {
-		return fmt.Sprintf("%p", keys[l]) < fmt.Sprintf("%p", keys[r])
-	})
-	return keys
+	return res
 }
 
-// IsEmpty returns whether this Object has no pairs
-func (o Object) IsEmpty() bool {
-	return len(o) == 0
+func (o *object) IsEmpty() bool {
+	return o.pair == nil
 }
 
-// Count returns the number of pairs in this Object
-func (o Object) Count() int {
-	return len(o)
+// Call turns Object into a Function
+func (o *object) Call(args ...Value) Value {
+	res, ok := o.Get(args[0])
+	if !ok && len(args) > 1 {
+		return args[1]
+	}
+	return res
 }
 
-// Equal compares this Object to another for equality
-func (o Object) Equal(v Value) bool {
-	if ro, ok := v.(Object); ok {
-		if len(o) != len(ro) {
+// Convention returns the Function's calling convention
+func (o *object) Convention() Convention {
+	return ApplicativeCall
+}
+
+// CheckArity performs a compile-time arity check for the Function
+func (o *object) CheckArity(argCount int) error {
+	return checkRangedArity(1, 2, argCount)
+}
+
+func (o *object) Equal(v Value) bool {
+	if v, ok := v.(*object); ok {
+		lp := sortedPairs(o.pairs())
+		rp := sortedPairs(v.pairs())
+		if len(lp) != len(rp) {
 			return false
 		}
-		for leftKey, leftVal := range o {
-			rightVal, ok := ro[leftKey]
-			if !ok || !leftVal.Equal(rightVal) {
+		for i, l := range lp {
+			if !l.Equal(rp[i]) {
 				return false
 			}
 		}
@@ -175,18 +184,43 @@ func (o Object) Equal(v Value) bool {
 	return false
 }
 
-// String converts this Value into a string
-func (o Object) String() string {
+func (o *object) HashCode() uint64 {
+	var h uint64
+	for f, r, ok := o.Split(); ok; f, r, ok = r.Split() {
+		p := f.(Pair)
+		h ^= HashCode(p.Car()) ^ HashCode(p.Cdr())
+	}
+	return h
+}
+
+func (o *object) pairs() Pairs {
+	res := Pairs{}
+	for f, r, ok := o.Split(); ok; f, r, ok = r.Split() {
+		res = append(res, f.(Pair))
+	}
+	return res
+}
+
+func (o *object) String() string {
 	var buf bytes.Buffer
 	buf.WriteString("{")
-	for i, k := range o.sortedKeys() {
+	for i, p := range sortedPairs(o.pairs()) {
 		if i > 0 {
 			buf.WriteString(" ")
 		}
-		buf.WriteString(MaybeQuoteString(k))
+		buf.WriteString(MaybeQuoteString(p.Car()))
 		buf.WriteString(" ")
-		buf.WriteString(MaybeQuoteString(o[k]))
+		buf.WriteString(MaybeQuoteString(p.Cdr()))
 	}
 	buf.WriteString("}")
 	return buf.String()
+}
+
+func sortedPairs(p Pairs) Pairs {
+	sort.Slice(p, func(l, r int) bool {
+		ls := fmt.Sprintf("%s", p[l].String())
+		rs := fmt.Sprintf("%s", p[r].String())
+		return ls < rs
+	})
+	return p
 }

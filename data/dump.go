@@ -5,7 +5,7 @@ import "fmt"
 // DumpString takes a Value and attempts to spit out a bunch of info
 func DumpString(v Value) string {
 	p := String(fmt.Sprintf("%p", v))
-	m := Object{InstanceKey: p}
+	m := ValueMap{InstanceKey: p}
 	if n, ok := v.(Named); ok {
 		m[NameKey] = n.Name()
 	}

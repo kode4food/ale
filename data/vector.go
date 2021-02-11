@@ -1,6 +1,8 @@
 package data
 
-import "bytes"
+import (
+	"bytes"
+)
 
 type (
 	// Vector is a fixed-length array of Values
@@ -18,7 +20,7 @@ type (
 )
 
 // EmptyVector represents an empty Vector
-var EmptyVector = NewVector()
+var EmptyVector = vector{}
 
 // NewVector creates a new Vector instance
 func NewVector(v ...Value) Vector {
@@ -31,12 +33,10 @@ func (v vector) Values() Values {
 	return Values(v)
 }
 
-// Count returns the number of elements in the Vector
 func (v vector) Count() int {
 	return len(v)
 }
 
-// ElementAt returns a specific element of the Vector
 func (v vector) ElementAt(index int) (Value, bool) {
 	if index >= 0 && index < len(v) {
 		return v[index], true
@@ -44,7 +44,6 @@ func (v vector) ElementAt(index int) (Value, bool) {
 	return Nil, false
 }
 
-// First returns the first element of the Vector
 func (v vector) First() Value {
 	if len(v) > 0 {
 		return v[0]
@@ -52,7 +51,6 @@ func (v vector) First() Value {
 	return Nil
 }
 
-// Rest returns the elements of the Vector that follow the first
 func (v vector) Rest() Sequence {
 	if len(v) > 1 {
 		return v[1:]
@@ -60,12 +58,10 @@ func (v vector) Rest() Sequence {
 	return EmptyVector
 }
 
-// IsEmpty returns whether this sequence is empty
 func (v vector) IsEmpty() bool {
 	return len(v) == 0
 }
 
-// Split breaks the Vector into its components (first, rest, ok)
 func (v vector) Split() (Value, Sequence, bool) {
 	lv := len(v)
 	if lv > 1 {
@@ -76,27 +72,22 @@ func (v vector) Split() (Value, Sequence, bool) {
 	return Nil, EmptyVector, false
 }
 
-// Car returns the first element of a Pair
 func (v vector) Car() Value {
 	return SequenceCar(v)
 }
 
-// Cdr returns the second element of a Pair
 func (v vector) Cdr() Value {
 	return SequenceCdr(v)
 }
 
-// Prepend inserts an element at the beginning of the Vector
 func (v vector) Prepend(e Value) Sequence {
 	return append(vector{e}, v...)
 }
 
-// Append appends elements to the end of the Vector
 func (v vector) Append(e Value) Sequence {
 	return append(v, e)
 }
 
-// Reverse returns a reversed copy of this Vector
 func (v vector) Reverse() Sequence {
 	vl := len(v)
 	if vl <= 1 {
@@ -109,22 +100,18 @@ func (v vector) Reverse() Sequence {
 	return res
 }
 
-// Call turns Vector into a Function
 func (v vector) Call(args ...Value) Value {
 	return indexedCall(v, args)
 }
 
-// Convention returns the Function's calling convention
 func (v vector) Convention() Convention {
 	return ApplicativeCall
 }
 
-// CheckArity performs a compile-time arity check for the Function
 func (v vector) CheckArity(argCount int) error {
 	return checkRangedArity(1, 2, argCount)
 }
 
-// Equal compares this Vector to another for equality
 func (v vector) Equal(r Value) bool {
 	if r, ok := r.(vector); ok {
 		if len(v) != len(r) {
@@ -140,7 +127,6 @@ func (v vector) Equal(r Value) bool {
 	return false
 }
 
-// String converts this Vector to a string
 func (v vector) String() string {
 	var b bytes.Buffer
 	l := len(v)
@@ -154,4 +140,12 @@ func (v vector) String() string {
 	}
 	b.WriteString("]")
 	return b.String()
+}
+
+func (v vector) HashCode() uint64 {
+	var code uint64
+	for _, e := range v {
+		code ^= HashCode(e)
+	}
+	return code
 }

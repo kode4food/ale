@@ -31,8 +31,8 @@ func TestToVectorEval(t *testing.T) {
 	as := assert.New(t)
 	as.EvalTo(`(vector? (seq->vector (list 1 2 3)))`, data.True)
 	as.EvalTo(`(counted? [1 2 3 4])`, data.True)
-	as.EvalTo(`(nth [1 2 3 4] 2)`, data.Integer(3))
-	as.EvalTo(`(nth [1 2 3 4] 10 "oops")`, data.String("oops"))
+	as.EvalTo(`(nth [1 2 3 4] 2)`, I(3))
+	as.EvalTo(`(nth [1 2 3 4] 10 "oops")`, S("oops"))
 
 	as.PanicWith(`(nth [1 2 3 4] 10)`, errors.New("index out of bounds"))
 }

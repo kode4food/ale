@@ -11,7 +11,7 @@ import (
 func TestVector(t *testing.T) {
 	as := assert.New(t)
 
-	v1 := V(S("hello"), S("how"), S("are"), S("you?"))
+	v1 := data.NewVector(S("hello"), S("how"), S("are"), S("you?"))
 	as.Number(4, v1.Count())
 	as.String("hello", v1.First())
 	as.Number(3, v1.Rest().(data.Counted).Count())
@@ -43,7 +43,7 @@ func TestVector(t *testing.T) {
 func TestVectorReverse(t *testing.T) {
 	as := assert.New(t)
 
-	as.String("[4 3 2 1]", V(I(1), I(2), I(3), I(4)).Reverse())
+	as.String("[4 3 2 1]", data.NewVector(I(1), I(2), I(3), I(4)).Reverse())
 	as.String("[]", data.EmptyVector.Reverse())
 }
 
@@ -59,7 +59,7 @@ func TestEmptyVector(t *testing.T) {
 func TestVectorAsFunction(t *testing.T) {
 	as := assert.New(t)
 
-	v1 := V(S("hello"), S("how"), S("are"), S("you?")).(data.Function)
+	v1 := data.NewVector(S("hello"), S("how"), S("are"), S("you?")).(data.Function)
 	as.String("hello", v1.Call(I(0)))
 	as.String("how", v1.Call(I(1)))
 	as.Nil(v1.Call(I(4)))
@@ -69,10 +69,10 @@ func TestVectorAsFunction(t *testing.T) {
 func TestVectorEquality(t *testing.T) {
 	as := assert.New(t)
 
-	v1 := V(S("hello"), S("how"), S("are"), S("you?"))
-	v2 := V(S("hello"), S("how"), S("are"), S("you?"))
-	v3 := V(S("hello"), S("are"), S("you?"), S("how"))
-	v4 := V(S("hello"), S("how"), S("are"))
+	v1 := data.NewVector(S("hello"), S("how"), S("are"), S("you?"))
+	v2 := data.NewVector(S("hello"), S("how"), S("are"), S("you?"))
+	v3 := data.NewVector(S("hello"), S("are"), S("you?"), S("how"))
+	v4 := data.NewVector(S("hello"), S("how"), S("are"))
 
 	as.True(v1.Equal(v1))
 	as.True(v1.Equal(v2))

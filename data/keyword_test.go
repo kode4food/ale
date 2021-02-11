@@ -12,7 +12,7 @@ import (
 func TestKeyword(t *testing.T) {
 	as := assert.New(t)
 
-	k1 := K("hello")
+	k1 := data.Keyword("hello")
 	as.String("hello", k1.Name())
 	as.String(":hello", k1)
 }
@@ -20,10 +20,10 @@ func TestKeyword(t *testing.T) {
 func TestKeywordCaller(t *testing.T) {
 	as := assert.New(t)
 
-	m1 := data.NewObject(C(K("name"), S("Ale")))
-	c1 := K("name")
+	m1 := O(C(data.Keyword("name"), S("Ale")))
+	c1 := data.Keyword("name")
 	as.String("Ale", c1.Call(m1))
 
-	c2 := K("missing")
+	c2 := data.Keyword("missing")
 	as.String("defaulted", c2.Call(m1, S("defaulted")))
 }

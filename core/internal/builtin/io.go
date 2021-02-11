@@ -30,17 +30,17 @@ func MakeReader(r io.Reader, i stream.InputFunc) stream.Reader {
 func MakeWriter(w io.Writer, o stream.OutputFunc) data.Object {
 	wrapped := stream.NewWriter(w, o)
 
-	res := data.Object{
-		data.TypeKey: WriterType,
-		WriterKey:    wrapped,
-		WriteKey:     bindWriter(wrapped),
+	pairs := []data.Pair{
+		data.NewCons(data.TypeKey, WriterType),
+		data.NewCons(WriterKey, wrapped),
+		data.NewCons(WriteKey, bindWriter(wrapped)),
 	}
 
 	if c, ok := w.(stream.Closer); ok {
-		res[CloseKey] = bindCloser(c)
+		pairs = append(pairs, data.NewCons(CloseKey, bindCloser(c)))
 	}
 
-	return res
+	return data.NewObject(pairs...)
 }
 
 func bindWriter(w stream.Writer) data.Function {

@@ -1,6 +1,9 @@
 package data
 
-import "fmt"
+import (
+	"fmt"
+	"hash/maphash"
+)
 
 type (
 	// Bool represents the values True or False
@@ -46,9 +49,10 @@ type (
 		ElementAt(int) (Value, bool)
 	}
 
-	// Mapped is the interface for values that have retrievable properties
+	// Mapped is the interface for Values that have properties
 	Mapped interface {
 		Get(Value) (Value, bool)
+		Put(Pair) Sequence
 	}
 
 	// Prepender can return a Sequence that has been prepended
@@ -71,6 +75,11 @@ type (
 	Valuer interface {
 		Values() Values
 	}
+
+	// Hasher can return a hash code for the value
+	Hasher interface {
+		HashCode() uint64
+	}
 )
 
 const (
@@ -86,6 +95,8 @@ const (
 	// FalseLiteral represents the literal value of False
 	FalseLiteral = "#f"
 )
+
+var seed = maphash.MakeSeed()
 
 // Name makes Name Named
 func (n Name) Name() Name {
@@ -105,6 +116,11 @@ func (n Name) String() string {
 	return string(n)
 }
 
+// HashCode returns the hash code for this Name
+func (n Name) HashCode() uint64 {
+	return HashString(string(n))
+}
+
 // Equal compares this Bool to another for equality
 func (b Bool) Equal(v Value) bool {
 	if v, ok := v.(Bool); ok {
@@ -121,10 +137,37 @@ func (b Bool) String() string {
 	return FalseLiteral
 }
 
+// HashCode returns the hash code for this Bool
+func (b Bool) HashCode() uint64 {
+	if b {
+		return 1
+	}
+	return 0
+}
+
 // Truthy evaluates whether a Value is truthy
 func Truthy(v Value) bool {
 	if v == False || v == Nil {
 		return false
 	}
 	return true
+}
+
+// HashCode returns a hash code for the provided Value. If the Value
+// implements the Hasher interface, it will call us the HashCode()
+// method. Otherwise, it will create a hash code from the stringified
+// form of the Value
+func HashCode(v Value) uint64 {
+	if h, ok := v.(Hasher); ok {
+		return h.HashCode()
+	}
+	return HashString(v.String())
+}
+
+// HashString returns a hash code for the provided string
+func HashString(s string) uint64 {
+	var b maphash.Hash
+	b.SetSeed(seed)
+	_, _ = b.WriteString(s)
+	return b.Sum64()
 }

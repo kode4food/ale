@@ -32,37 +32,30 @@ func NewList(v ...Value) List {
 
 func (*list) list() {}
 
-// First returns the first element of the List
 func (l *list) First() Value {
 	return l.first
 }
 
-// Rest returns the elements of the List that follow the first
 func (l *list) Rest() Sequence {
 	return l.rest
 }
 
-// IsEmpty returns whether this sequence is empty
 func (l *list) IsEmpty() bool {
 	return false
 }
 
-// Split breaks the List into its components (first, rest, ok)
 func (l *list) Split() (Value, Sequence, bool) {
 	return l.first, l.rest, l.count != 0
 }
 
-// Car returns the first element of a Pair
 func (l *list) Car() Value {
 	return SequenceCar(l)
 }
 
-// Cdr returns the second element of a Pair
 func (l *list) Cdr() Value {
 	return SequenceCdr(l)
 }
 
-// Prepend inserts an element at the beginning of the List
 func (l *list) Prepend(v Value) Sequence {
 	return &list{
 		first: v,
@@ -71,7 +64,6 @@ func (l *list) Prepend(v Value) Sequence {
 	}
 }
 
-// Reverse returns a reversed copy of this List
 func (l *list) Reverse() Sequence {
 	if l.count <= 1 {
 		return l
@@ -89,12 +81,10 @@ func (l *list) Reverse() Sequence {
 	return res
 }
 
-// Count returns the number of elements in the List
 func (l *list) Count() int {
 	return l.count
 }
 
-// ElementAt returns a specific element of the List
 func (l *list) ElementAt(index int) (Value, bool) {
 	if index > l.count-1 || index < 0 {
 		return Nil, false
@@ -107,17 +97,14 @@ func (l *list) ElementAt(index int) (Value, bool) {
 	return e.First(), true
 }
 
-// Applicative turns List into a Caller
 func (l *list) Call(args ...Value) Value {
 	return indexedCall(l, args)
 }
 
-// Convention returns the function's calling convention
 func (l *list) Convention() Convention {
 	return ApplicativeCall
 }
 
-// CheckArity performs a compile-time arity check for the function
 func (l *list) CheckArity(argCount int) error {
 	return checkRangedArity(1, 2, argCount)
 }
@@ -135,7 +122,14 @@ func (l *list) Equal(v Value) bool {
 	return false
 }
 
-// String converts this List to a string
 func (l *list) String() string {
 	return MakeSequenceStr(l)
+}
+
+func (l *list) HashCode() uint64 {
+	var h uint64
+	for f, r, ok := l.Split(); ok; f, r, ok = r.Split() {
+		h ^= HashCode(f)
+	}
+	return h
 }

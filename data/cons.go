@@ -49,7 +49,7 @@ func (c Cons) Cdr() Value {
 // Equal compares this Cons to another for equality
 func (c Cons) Equal(v Value) bool {
 	if v, ok := v.(Cons); ok {
-		return c == v
+		return c == v || c[Car].Equal(v[Car]) && c[Cdr].Equal(v[Cdr])
 	}
 	return false
 }
@@ -72,6 +72,11 @@ func (c Cons) String() string {
 	}
 	buf.WriteByte(')')
 	return buf.String()
+}
+
+// HashCode returns the has code for this Cons
+func (c Cons) HashCode() uint64 {
+	return HashCode(c[Car]) ^ HashCode(c[Cdr])
 }
 
 // SequenceCar performs a Car operation against a Sequence

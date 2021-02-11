@@ -6,6 +6,7 @@ import (
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/env"
 	"github.com/kode4food/ale/internal/assert"
+	. "github.com/kode4food/ale/internal/assert/helpers"
 )
 
 func TestChaining(t *testing.T) {
@@ -30,7 +31,7 @@ func TestChaining(t *testing.T) {
 	as.False(ok)
 	as.Nil(e3)
 
-	s1 := data.NewLocalSymbol("in-parent")
+	s1 := LS("in-parent")
 	v4, ok := env.ResolveValue(ns, s1)
 	as.True(ok)
 	as.True(v4)
@@ -39,7 +40,7 @@ func TestChaining(t *testing.T) {
 	as.True(ok)
 	as.True(v5)
 
-	s2 := data.NewLocalSymbol("in-child")
+	s2 := LS("in-child")
 	v6, ok := env.ResolveValue(ns, s2)
 	as.True(ok)
 	as.True(v6)

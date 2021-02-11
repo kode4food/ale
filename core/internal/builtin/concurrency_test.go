@@ -29,7 +29,7 @@ func TestGo(t *testing.T) {
 func TestChan(t *testing.T) {
 	as := assert.New(t)
 
-	ch := builtin.Chan.Call(data.Integer(0)).(data.Mapped)
+	ch := builtin.Chan.Call(I(0)).(data.Mapped)
 	emit, ok1 := ch.Get(builtin.EmitKey)
 	closeChan, ok2 := ch.Get(builtin.CloseKey)
 	seq, ok3 := ch.Get(builtin.SequenceKey)

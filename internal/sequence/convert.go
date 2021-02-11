@@ -56,8 +56,13 @@ func uncountedToValues(s data.Sequence) data.Values {
 
 // ToVector takes any sequence and converts it to a vector
 func ToVector(s data.Sequence) data.Vector {
-	v := ToValues(s)
-	return data.NewVector(v...)
+	switch s := s.(type) {
+	case data.Vector:
+		return s
+	default:
+		v := ToValues(s)
+		return data.NewVector(v...)
+	}
 }
 
 // ToObject takes any sequence and converts it to an Associative

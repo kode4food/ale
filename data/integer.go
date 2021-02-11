@@ -143,6 +143,11 @@ func (l Integer) Equal(r Value) bool {
 	return false
 }
 
+// HashCode returns a hash code for this Integer
+func (l Integer) HashCode() uint64 {
+	return uint64(l)
+}
+
 // String converts this Integer to a string
 func (l Integer) String() string {
 	return fmt.Sprintf("%d", l)
@@ -261,6 +266,11 @@ func (l *BigInt) Equal(r Value) bool {
 // String converts this BigInt to a string
 func (l *BigInt) String() string {
 	return (*big.Int)(l).String()
+}
+
+// HashCode returns a hash code for this BigInt
+func (l *BigInt) HashCode() uint64 {
+	return (*big.Int)(l).Uint64()
 }
 
 func (l *BigInt) float() Float {

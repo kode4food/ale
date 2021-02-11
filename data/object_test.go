@@ -12,35 +12,36 @@ import (
 func TestObject(t *testing.T) {
 	as := assert.New(t)
 
-	o1 := data.Object{
-		K("parent"): S("i am the parent"),
-		K("name"):   S("parent"),
-	}
+	o1 := data.NewObject(
+		C(K("parent"), S("i am the parent")),
+		C(K("name"), S("parent")),
+	)
 
-	o2 := o1.Merge(data.Object{
-		K("child"): S("i am the child"),
-		K("name"):  S("child"),
-	})
+	o2 := o1.Put(
+		C(K("child"), S("i am the child")),
+	).(data.Object).Put(
+		C(K("name"), S("child")),
+	).(data.Object)
 
-	as.String("i am the parent", o2.MustGet(K("parent")))
-	as.String("child", o2.MustGet(K("name")))
-	as.String("parent", o1.MustGet(K("name")))
+	as.String("i am the parent", as.MustGet(o2, K("parent")))
+	as.String("child", as.MustGet(o2, K("name")))
+	as.String("parent", as.MustGet(o1, K("name")))
 
 	as.Contains(`:name "child"`, o2)
 	as.Contains(`:child "i am the child"`, o2)
 	as.Contains(`:parent "i am the parent"`, o2)
 
-	defer as.ExpectPanic(fmt.Sprintf(data.ErrValueNotFound, ":missing"))
-	o2.MustGet(K("missing"))
+	defer as.ExpectPanic(fmt.Sprintf(assert.ErrValueNotFound, ":missing"))
+	as.MustGet(o2, K("missing"))
 }
 
 func TestObjectCaller(t *testing.T) {
 	as := assert.New(t)
 
-	o1 := data.Object{
-		K("parent"): S("i am the parent"),
-		K("name"):   S("parent"),
-	}
+	o1 := data.NewObject(
+		C(K("parent"), S("i am the parent")),
+		C(K("name"), S("parent")),
+	).(data.Function)
 
 	as.String("i am the parent", o1.Call(K("parent")))
 	as.Nil(o1.Call(K("missing")))
@@ -50,17 +51,17 @@ func TestObjectCaller(t *testing.T) {
 func TestObjectIterate(t *testing.T) {
 	as := assert.New(t)
 
-	o1 := data.Object{
-		K("second"): S("second value"),
-		K("first"):  S("first value"),
-	}
-	as.Equal(2, len(o1))
+	o1 := data.NewObject(
+		C(K("second"), S("second value")),
+		C(K("first"), S("first value")),
+	)
+	as.Equal(2, o1.Count())
 
 	f1, r1, ok := o1.Split()
 	as.True(ok)
 	as.Equal(K("first"), f1.(data.Cons).Car())
 	as.Equal(S("first value"), f1.(data.Cons).Cdr())
-	as.Equal(1, len(r1.(data.Object)))
+	as.Equal(1, r1.(data.Object).Count())
 
 	f2, r2, ok := r1.Split()
 	as.True(ok)
@@ -73,11 +74,11 @@ func TestObjectIterate(t *testing.T) {
 
 func TestObjectSplitDeterminism(t *testing.T) {
 	as := assert.New(t)
-	o := data.Object{
-		K("z"): I(1024),
-		K("x"): I(5),
-		K("y"): I(99),
-	}
+	o := data.NewObject(
+		C(K("z"), I(1024)),
+		C(K("x"), I(5)),
+		C(K("y"), I(99)),
+	)
 	f1, r1, ok := o.Split()
 	r1Str := r1.String()
 	as.True(ok)
@@ -91,31 +92,31 @@ func TestObjectSplitDeterminism(t *testing.T) {
 
 func TestObjectEquality(t *testing.T) {
 	as := assert.New(t)
-	o1 := data.Object{
-		K("z"): I(1024),
-		K("x"): I(5),
-		K("y"): I(99),
-	}
-	o2 := data.Object{ // Content same
-		K("z"): I(1024),
-		K("x"): I(5),
-		K("y"): I(99),
-	}
-	o3 := data.Object{ // Missing key
-		K("z"): I(1024),
-		K("y"): I(99),
-	}
-	o4 := data.Object{ // Additional Key
-		K("z"): I(1024),
-		K("x"): I(5),
-		K("y"): I(99),
-		K("g"): I(1024),
-	}
-	o5 := data.Object{ // Modified Value in x
-		K("z"): I(1024),
-		K("x"): I(6),
-		K("y"): I(99),
-	}
+	o1 := data.NewObject(
+		C(K("z"), I(1024)),
+		C(K("x"), I(5)),
+		C(K("y"), I(99)),
+	)
+	o2 := data.NewObject( // Content same
+		C(K("z"), I(1024)),
+		C(K("x"), I(5)),
+		C(K("y"), I(99)),
+	)
+	o3 := data.NewObject( // Missing key
+		C(K("z"), I(1024)),
+		C(K("y"), I(99)),
+	)
+	o4 := data.NewObject( // Additional Key
+		C(K("z"), I(1024)),
+		C(K("x"), I(5)),
+		C(K("y"), I(99)),
+		C(K("g"), I(1024)),
+	)
+	o5 := data.NewObject( // Modified Value in x
+		C(K("z"), I(1024)),
+		C(K("x"), I(6)),
+		C(K("y"), I(99)),
+	)
 	as.True(o1.Equal(o1))
 	as.True(o1.Equal(o2))
 	as.False(o1.Equal(o3))
