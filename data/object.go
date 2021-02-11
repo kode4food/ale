@@ -218,8 +218,8 @@ func (o *object) String() string {
 
 func sortedPairs(p Pairs) Pairs {
 	sort.Slice(p, func(l, r int) bool {
-		ls := fmt.Sprintf("%s", p[l].String())
-		rs := fmt.Sprintf("%s", p[r].String())
+		ls := fmt.Sprintf("%s", p[l].Car().String())
+		rs := fmt.Sprintf("%s", p[r].Car().String())
 		return ls < rs
 	})
 	return p

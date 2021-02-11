@@ -32,5 +32,11 @@ func TestPredicatesEval(t *testing.T) {
 	as.EvalTo(`(keyword? 99)`, data.False)
 	as.EvalTo(`(!keyword? 99)`, data.True)
 
+	as.EvalTo(
+		`(eq { :name "Ale" :age 3 :colors [:red :green :blue] }
+             { :age 3 :colors [:red :green :blue] :name "Ale" })`,
+		data.True,
+	)
+
 	as.PanicWith(`(null?)`, fmt.Errorf(data.ErrMinimumArity, 1, 0))
 }
