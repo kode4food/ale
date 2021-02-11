@@ -2,7 +2,6 @@ package data
 
 import (
 	"bytes"
-	"fmt"
 )
 
 type (
@@ -18,11 +17,6 @@ type (
 
 	// Cons cells are the standard implementation of a Pair
 	Cons [2]Value
-)
-
-// Error messages
-const (
-	ErrValueNotAPair = "%s is not a pair"
 )
 
 // Cons fields
@@ -61,7 +55,9 @@ func (c Cons) String() string {
 	for {
 		buf.WriteString(MaybeQuoteString(next.Car()))
 		cdr := next.Cdr()
-		if p, ok := cdr.(Pair); ok {
+		if s, ok := cdr.(Sequence); ok && s.IsEmpty() {
+			break
+		} else if p, ok := cdr.(Pair); ok {
 			buf.WriteByte(' ')
 			next = p
 		} else {
@@ -77,20 +73,4 @@ func (c Cons) String() string {
 // HashCode returns the has code for this Cons
 func (c Cons) HashCode() uint64 {
 	return HashCode(c[Car]) ^ HashCode(c[Cdr])
-}
-
-// SequenceCar performs a Car operation against a Sequence
-func SequenceCar(s Sequence) Value {
-	if f, _, ok := s.Split(); ok {
-		return f
-	}
-	panic(fmt.Errorf(ErrValueNotAPair, s))
-}
-
-// SequenceCdr performs a Cdr operation against a Sequence
-func SequenceCdr(s Sequence) Value {
-	if _, r, ok := s.Split(); ok {
-		return r
-	}
-	panic(fmt.Errorf(ErrValueNotAPair, s))
 }

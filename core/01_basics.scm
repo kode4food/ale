@@ -106,7 +106,7 @@
     `(begin ,@(declare names))))
 
 (define-macro (define . body)
-  (let [value (car body)]
+  (let [value (first body)]
     (assert-args
       (or (is-local value)
           (is-cons-or-list value))

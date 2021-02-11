@@ -73,11 +73,11 @@ func (v vector) Split() (Value, Sequence, bool) {
 }
 
 func (v vector) Car() Value {
-	return SequenceCar(v)
+	return v.First()
 }
 
 func (v vector) Cdr() Value {
-	return SequenceCdr(v)
+	return v.Rest()
 }
 
 func (v vector) Prepend(e Value) Sequence {

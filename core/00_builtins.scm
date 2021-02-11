@@ -32,6 +32,7 @@
 (def-builtin nth)
 (def-builtin object)
 (def-builtin promise)
+(def-builtin put)
 (def-builtin raise)
 (def-builtin read)
 (def-builtin recover)

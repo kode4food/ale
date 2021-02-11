@@ -9,6 +9,7 @@ import (
 // Error messages
 const (
 	ErrIndexOutOfBounds = "index out of bounds"
+	ErrPutRequiresPair  = "put requires a key/value combination or a pair"
 )
 
 // First returns the first value in the sequence
@@ -54,12 +55,25 @@ var Nth = data.Applicative(func(args ...data.Value) data.Value {
 	panic(errors.New(ErrIndexOutOfBounds))
 }, 2, 3)
 
-// Get returns a value by key from the provided mapped sequence
+// Get returns a value by key from the provided MappedSequence
 var Get = data.Applicative(func(args ...data.Value) data.Value {
 	s := args[0].(data.MappedSequence)
 	res, _ := s.Get(args[1])
 	return res
 }, 2)
+
+// Put returns a new MappedSequence containing the key/value association
+var Put = data.Applicative(func(args ...data.Value) data.Value {
+	s := args[0].(data.MappedSequence)
+	if len(args) == 3 {
+		p := data.NewCons(args[1], args[2])
+		return s.Put(p)
+	}
+	if p, ok := args[1].(data.Pair); ok {
+		return s.Put(p)
+	}
+	panic(errors.New(ErrPutRequiresPair))
+}, 2, 3)
 
 // IsSeq returns whether the provided value is a sequence
 var IsSeq = data.Applicative(func(args ...data.Value) data.Value {

@@ -111,6 +111,7 @@ func (b *bootstrap) availableFunctions() {
 		"first":        builtin.First,
 		"gensym":       builtin.GenSym,
 		"get":          builtin.Get,
+		"put":          builtin.Put,
 		"go*":          builtin.Go,
 		"lazy-seq*":    builtin.LazySequence,
 		"length":       builtin.Length,

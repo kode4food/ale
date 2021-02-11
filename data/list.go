@@ -45,15 +45,15 @@ func (l *list) IsEmpty() bool {
 }
 
 func (l *list) Split() (Value, Sequence, bool) {
-	return l.first, l.rest, l.count != 0
+	return l.first, l.rest, true
 }
 
 func (l *list) Car() Value {
-	return SequenceCar(l)
+	return l.first
 }
 
 func (l *list) Cdr() Value {
-	return SequenceCdr(l)
+	return l.rest
 }
 
 func (l *list) Prepend(v Value) Sequence {

@@ -55,11 +55,11 @@ func (l *lazySequence) Split() (data.Value, data.Sequence, bool) {
 }
 
 func (l *lazySequence) Car() data.Value {
-	return data.SequenceCar(l)
+	return l.resolve().result
 }
 
 func (l *lazySequence) Cdr() data.Value {
-	return data.SequenceCdr(l)
+	return l.resolve().rest
 }
 
 func (l *lazySequence) Prepend(v data.Value) data.Sequence {
