@@ -145,7 +145,7 @@ func (v vector) String() string {
 func (v vector) HashCode() uint64 {
 	var code uint64
 	for _, e := range v {
-		code ^= HashCode(e)
+		code *= HashCode(e)
 	}
 	return code
 }

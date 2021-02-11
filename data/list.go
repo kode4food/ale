@@ -129,7 +129,7 @@ func (l *list) String() string {
 func (l *list) HashCode() uint64 {
 	var h uint64
 	for f, r, ok := l.Split(); ok; f, r, ok = r.Split() {
-		h ^= HashCode(f)
+		h *= HashCode(f)
 	}
 	return h
 }

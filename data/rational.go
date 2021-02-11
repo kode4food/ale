@@ -260,7 +260,7 @@ func (l *Ratio) String() string {
 // HashCode returns a hash code for this Ratio
 func (l *Ratio) HashCode() uint64 {
 	br := (*big.Rat)(l)
-	return br.Num().Uint64() ^ br.Denom().Uint64()
+	return br.Num().Uint64() * br.Denom().Uint64()
 }
 
 func (l *Ratio) float() Float {

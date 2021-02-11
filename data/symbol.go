@@ -182,5 +182,5 @@ func (s qualifiedSymbol) String() string {
 }
 
 func (s qualifiedSymbol) HashCode() uint64 {
-	return HashString(string(s.name)) ^ HashString(string(s.domain))
+	return HashString(string(s.name)) * HashString(string(s.domain))
 }

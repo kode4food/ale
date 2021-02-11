@@ -72,5 +72,5 @@ func (c Cons) String() string {
 
 // HashCode returns the has code for this Cons
 func (c Cons) HashCode() uint64 {
-	return HashCode(c[Car]) ^ HashCode(c[Cdr])
+	return HashCode(c[Car]) * HashCode(c[Cdr])
 }

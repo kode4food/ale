@@ -188,7 +188,7 @@ func (o *object) HashCode() uint64 {
 	var h uint64
 	for f, r, ok := o.Split(); ok; f, r, ok = r.Split() {
 		p := f.(Pair)
-		h ^= HashCode(p.Car()) ^ HashCode(p.Cdr())
+		h *= HashCode(p.Car()) * HashCode(p.Cdr())
 	}
 	return h
 }
