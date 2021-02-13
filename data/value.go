@@ -3,6 +3,7 @@ package data
 import (
 	"fmt"
 	"hash/maphash"
+	"math/rand"
 )
 
 type (
@@ -97,7 +98,12 @@ const (
 	FalseLiteral = "#f"
 )
 
-var seed = maphash.MakeSeed()
+var (
+	seed = maphash.MakeSeed()
+
+	trueHash  = rand.Uint64()
+	falseHash = rand.Uint64()
+)
 
 // Name makes Name Named
 func (n Name) Name() Name {
@@ -141,9 +147,9 @@ func (b Bool) String() string {
 // HashCode returns the hash code for this Bool
 func (b Bool) HashCode() uint64 {
 	if b {
-		return 1
+		return trueHash
 	}
-	return 0
+	return falseHash
 }
 
 // Truthy evaluates whether a Value is truthy

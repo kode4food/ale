@@ -1,5 +1,7 @@
 package data
 
+import "math/rand"
+
 type (
 	// Null represents a null value, which is also the empty list
 	Null interface {
@@ -14,6 +16,8 @@ type (
 var (
 	EmptyList *nilValue
 	Nil       = EmptyList
+
+	nilHash = rand.Uint64()
 )
 
 func (*nilValue) null() {}
@@ -51,6 +55,18 @@ func (*nilValue) Count() int {
 	return 0
 }
 
+func (*nilValue) Call(args ...Value) Value {
+	return indexedCall(EmptyList, args)
+}
+
+func (*nilValue) Convention() Convention {
+	return ApplicativeCall
+}
+
+func (*nilValue) CheckArity(argCount int) error {
+	return checkRangedArity(1, 2, argCount)
+}
+
 func (*nilValue) Equal(v Value) bool {
 	if _, ok := v.(*nilValue); ok {
 		return true
@@ -63,5 +79,5 @@ func (*nilValue) String() string {
 }
 
 func (*nilValue) HashCode() uint64 {
-	return 0
+	return nilHash
 }

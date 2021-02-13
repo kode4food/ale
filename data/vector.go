@@ -2,6 +2,7 @@ package data
 
 import (
 	"bytes"
+	"math/rand"
 )
 
 type (
@@ -20,7 +21,11 @@ type (
 )
 
 // EmptyVector represents an empty Vector
-var EmptyVector = vector{}
+var (
+	EmptyVector = vector{}
+
+	emptyVectorHash = rand.Uint64()
+)
 
 // NewVector creates a new Vector instance
 func NewVector(v ...Value) Vector {
@@ -143,9 +148,9 @@ func (v vector) String() string {
 }
 
 func (v vector) HashCode() uint64 {
-	var code uint64
+	h := emptyVectorHash
 	for _, e := range v {
-		code *= HashCode(e)
+		h *= HashCode(e)
 	}
-	return code
+	return h
 }

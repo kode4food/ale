@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"math/rand"
 	"sort"
 )
 
@@ -20,6 +21,8 @@ type (
 		pair     Pair
 		children [32]*object
 	}
+
+	emptyObject struct{}
 )
 
 // Standard Keys
@@ -36,15 +39,18 @@ const (
 )
 
 // EmptyObject represents an empty Object
-var EmptyObject = &object{}
+var (
+	EmptyObject     *emptyObject
+	emptyObjectHash = rand.Uint64()
+)
 
 // NewObject instantiates a new Object instance. Based on Phil Bagwell's
 // Hashed Array Mapped Trie data structure. More information can be
 // found at http://lampwww.epfl.ch/papers/idealhashtrees.pdf
 func NewObject(pairs ...Pair) Object {
-	res := &object{}
+	var res Object = EmptyObject
 	for _, p := range pairs {
-		res = res.Put(p).(*object)
+		res = res.Put(p).(Object)
 	}
 	return res
 }
@@ -54,9 +60,9 @@ func ValuesToObject(v ...Value) (Object, error) {
 	if len(v)%2 != 0 {
 		return nil, errors.New(ErrMapNotPaired)
 	}
-	res := &object{}
+	var res Object = EmptyObject
 	for i := len(v) - 2; i >= 0; i -= 2 {
-		res = res.Put(NewCons(v[i], v[i+1])).(*object)
+		res = res.Put(NewCons(v[i], v[i+1])).(Object)
 	}
 	return res, nil
 }
@@ -64,9 +70,6 @@ func ValuesToObject(v ...Value) (Object, error) {
 func (*object) object() {}
 
 func (o *object) Get(k Value) (Value, bool) {
-	if o.pair == nil {
-		return Nil, false
-	}
 	h := HashCode(k)
 	return o.get(k, h)
 }
@@ -83,11 +86,6 @@ func (o *object) get(k Value, hash uint64) (Value, bool) {
 }
 
 func (o *object) Put(p Pair) Sequence {
-	if o.pair == nil {
-		return &object{
-			pair: p,
-		}
-	}
 	h := HashCode(p.Car())
 	return o.put(p, h)
 }
@@ -115,9 +113,6 @@ func (o *object) put(p Pair, hash uint64) *object {
 }
 
 func (o *object) Remove(k Value) (Value, Sequence, bool) {
-	if o.pair == nil {
-		return Nil, o, false
-	}
 	h := HashCode(k)
 	if v, r, ok := o.remove(k, h); ok {
 		if r != nil {
@@ -184,24 +179,17 @@ func (o *object) Count() int {
 }
 
 func (o *object) IsEmpty() bool {
-	return o.pair == nil
+	return false
 }
 
-// Call turns Object into a Function
 func (o *object) Call(args ...Value) Value {
-	res, ok := o.Get(args[0])
-	if !ok && len(args) > 1 {
-		return args[1]
-	}
-	return res
+	return mappedCall(o, args)
 }
 
-// Convention returns the Function's calling convention
 func (o *object) Convention() Convention {
 	return ApplicativeCall
 }
 
-// CheckArity performs a compile-time arity check for the Function
 func (o *object) CheckArity(argCount int) error {
 	return checkRangedArity(1, 2, argCount)
 }
@@ -262,4 +250,67 @@ func sortedPairs(p Pairs) Pairs {
 		return ls < rs
 	})
 	return p
+}
+
+func (*emptyObject) object() {}
+
+func (*emptyObject) Get(Value) (Value, bool) {
+	return Nil, false
+}
+
+func (*emptyObject) Put(p Pair) Sequence {
+	return &object{
+		pair: p,
+	}
+}
+
+func (*emptyObject) Remove(Value) (Value, Sequence, bool) {
+	return Nil, EmptyObject, false
+}
+
+func (*emptyObject) IsEmpty() bool {
+	return true
+}
+
+func (*emptyObject) Count() int {
+	return 0
+}
+
+func (*emptyObject) Split() (Value, Sequence, bool) {
+	return Nil, EmptyObject, false
+}
+
+func (*emptyObject) First() Value {
+	return Nil
+}
+
+func (*emptyObject) Rest() Sequence {
+	return EmptyObject
+}
+
+func (*emptyObject) Call(args ...Value) Value {
+	return mappedCall(EmptyObject, args)
+}
+
+func (*emptyObject) Convention() Convention {
+	return ApplicativeCall
+}
+
+func (*emptyObject) CheckArity(argCount int) error {
+	return checkRangedArity(1, 2, argCount)
+}
+
+func (*emptyObject) Equal(v Value) bool {
+	if _, ok := v.(*emptyObject); ok {
+		return true
+	}
+	return false
+}
+
+func (*emptyObject) String() string {
+	return "{}"
+}
+
+func (*emptyObject) HashCode() uint64 {
+	return emptyObjectHash
 }

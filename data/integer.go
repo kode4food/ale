@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math"
 	"math/big"
+	"math/rand"
 )
 
 type (
@@ -18,6 +19,8 @@ type (
 const (
 	ErrExpectedInteger = "value is not an integer: %s"
 )
+
+var intHash = rand.Uint64()
 
 // ParseInteger attempts to parse a string representing an integer
 func ParseInteger(s string) (Number, error) {
@@ -145,7 +148,7 @@ func (l Integer) Equal(r Value) bool {
 
 // HashCode returns a hash code for this Integer
 func (l Integer) HashCode() uint64 {
-	return uint64(l)
+	return intHash * uint64(l)
 }
 
 // String converts this Integer to a string
@@ -270,7 +273,7 @@ func (l *BigInt) String() string {
 
 // HashCode returns a hash code for this BigInt
 func (l *BigInt) HashCode() uint64 {
-	return (*big.Int)(l).Uint64()
+	return intHash * (*big.Int)(l).Uint64()
 }
 
 func (l *BigInt) float() Float {

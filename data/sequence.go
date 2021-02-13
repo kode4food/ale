@@ -106,3 +106,11 @@ func indexedCall(s IndexedSequence, args []Value) Value {
 	}
 	return res
 }
+
+func mappedCall(m MappedSequence, args []Value) Value {
+	res, ok := m.Get(args[0])
+	if !ok && len(args) > 1 {
+		return args[1]
+	}
+	return res
+}
