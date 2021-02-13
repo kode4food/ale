@@ -17,4 +17,4 @@ Returns a newly mapped sequence wherein the specified key and value are associat
 (assoc robert :age 46)
 ```
 
-This example returns a copy of _robert_ wherein the value associated with _:age_ has been replaced by the number _46_. The original object associated with _robert_ is unaffected.
+This example returns a copy of _robert_ wherein the value associated with _:age_ has been replaced by the number _46_. The original sequence is unaffected.
