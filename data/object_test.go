@@ -38,22 +38,36 @@ func TestObject(t *testing.T) {
 func TestObjectRemoval(t *testing.T) {
 	as := assert.New(t)
 
-	o1 := data.NewObject(
-		C(K("name"), S("parent")),
-		C(K("parent"), S("i am the parent")),
-	)
+	// Load it
+	var o1 data.Object = data.EmptyObject
+	for i := 0; i < 100; i++ {
+		k := K(fmt.Sprintf("key-%d", i))
+		v := S(fmt.Sprintf("value-%d", i))
+		o1 = o1.Put(C(k, v)).(data.Object)
+	}
+	as.Equal(100, o1.Count())
 
-	v, o2, ok := o1.Remove(K("name"))
-	as.True(ok)
-	as.String("parent", v)
-	as.Contains(`:parent "i am the parent"`, o2)
-	as.NotContains(`:name`, o2)
+	// Remove half of it
+	for i := 0; i < 100; i += 2 {
+		k := K(fmt.Sprintf("key-%d", i))
+		v, r, ok := o1.Remove(k)
+		o1 = r.(data.Object)
+		as.True(ok)
+		as.String(fmt.Sprintf("value-%d", i), v)
+	}
+	as.False(o1 == data.EmptyObject)
+	as.Equal(50, o1.Count())
 
-	v, o3, ok := o2.(data.MappedSequence).Remove(K("parent"))
-	as.True(ok)
-	as.True(o3.IsEmpty())
-	as.String("i am the parent", v)
-	as.String("{}", o3)
+	// Remove the other half
+	for i := 1; i < 100; i += 2 {
+		k := K(fmt.Sprintf("key-%d", i))
+		v, r, ok := o1.Remove(k)
+		o1 = r.(data.Object)
+		as.True(ok)
+		as.String(fmt.Sprintf("value-%d", i), v)
+	}
+	as.True(o1 == data.EmptyObject)
+	as.Equal(0, o1.Count())
 }
 
 func TestObjectCaller(t *testing.T) {
