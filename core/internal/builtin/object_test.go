@@ -10,7 +10,7 @@ import (
 	. "github.com/kode4food/ale/internal/assert/helpers"
 )
 
-func TestAssoc(t *testing.T) {
+func TestObject(t *testing.T) {
 	as := assert.New(t)
 
 	a1 := builtin.Object.Call(K("hello"), S("foo"))

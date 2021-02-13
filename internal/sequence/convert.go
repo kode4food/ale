@@ -65,7 +65,7 @@ func ToVector(s data.Sequence) data.Vector {
 	}
 }
 
-// ToObject takes any sequence and converts it to an Associative
+// ToObject takes any sequence and converts it to an Object
 func ToObject(s data.Sequence) (data.Object, error) {
 	switch s := s.(type) {
 	case data.Object:

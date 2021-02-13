@@ -71,7 +71,7 @@ func TestUncountedConversions(t *testing.T) {
 	as.String(`hellothere["hello" "there"]`, s1)
 }
 
-func TestAssocSequenceError(t *testing.T) {
+func TestMappedSequenceError(t *testing.T) {
 	as := assert.New(t)
 
 	v1 := V(K("boom"))
@@ -80,7 +80,7 @@ func TestAssocSequenceError(t *testing.T) {
 	as.Error(err, data.ErrMapNotPaired)
 }
 
-func TestUncountedAssocSequenceError(t *testing.T) {
+func TestUncountedMappedSequenceError(t *testing.T) {
 	as := assert.New(t)
 
 	v1 := sequence.Filter(V(K("boom")), alwaysTrue)

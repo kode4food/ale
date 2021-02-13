@@ -73,8 +73,8 @@ func TestObjectIterate(t *testing.T) {
 	as := assert.New(t)
 
 	o1 := data.NewObject(
-		C(K("second"), S("second value")),
 		C(K("first"), S("first value")),
+		C(K("second"), S("second value")),
 	)
 	as.Equal(2, o1.Count())
 

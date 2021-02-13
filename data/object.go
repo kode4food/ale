@@ -64,12 +64,15 @@ func ValuesToObject(v ...Value) (Object, error) {
 func (*object) object() {}
 
 func (o *object) Get(k Value) (Value, bool) {
+	if o.pair == nil {
+		return Nil, false
+	}
 	h := HashCode(k)
 	return o.get(k, h)
 }
 
 func (o *object) get(k Value, hash uint64) (Value, bool) {
-	if o.pair != nil && o.pair.Car().Equal(k) {
+	if o.pair.Car().Equal(k) {
 		return o.pair.Cdr(), true
 	}
 	bucket := o.children[hash&0x1f]
@@ -80,12 +83,17 @@ func (o *object) get(k Value, hash uint64) (Value, bool) {
 }
 
 func (o *object) Put(p Pair) Sequence {
+	if o.pair == nil {
+		return &object{
+			pair: p,
+		}
+	}
 	h := HashCode(p.Car())
 	return o.put(p, h)
 }
 
 func (o *object) put(p Pair, hash uint64) *object {
-	if o.pair == nil || o.pair.Car().Equal(p.Car()) {
+	if o.pair.Car().Equal(p.Car()) {
 		return &object{
 			pair:     p,
 			children: o.children,
@@ -107,6 +115,9 @@ func (o *object) put(p Pair, hash uint64) *object {
 }
 
 func (o *object) Remove(k Value) (Value, Sequence, bool) {
+	if o.pair == nil {
+		return Nil, o, false
+	}
 	h := HashCode(k)
 	if v, r, ok := o.remove(k, h); ok {
 		if r != nil {
@@ -118,7 +129,7 @@ func (o *object) Remove(k Value) (Value, Sequence, bool) {
 }
 
 func (o *object) remove(k Value, hash uint64) (Value, *object, bool) {
-	if o.pair != nil && o.pair.Car().Equal(k) {
+	if o.pair.Car().Equal(k) {
 		return o.pair.Cdr(), o.promote(), true
 	}
 	idx := hash & 0x1f
@@ -155,21 +166,11 @@ func (o *object) Rest() Sequence {
 }
 
 func (o *object) Split() (Value, Sequence, bool) {
-	return o.split()
-}
-
-func (o *object) split() (Value, *object, bool) {
-	for i, c := range o.children {
-		if c != nil {
-			if f, r, ok := c.split(); ok {
-				res := *o
-				res.children[i] = r
-				return f, &res, true
-			}
+	if f := o.pair; f != nil {
+		if r := o.promote(); r != nil {
+			return f, r, true
 		}
-	}
-	if o.pair != nil {
-		return o.pair, EmptyObject, true
+		return f, EmptyObject, true
 	}
 	return Nil, EmptyObject, false
 }
