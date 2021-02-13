@@ -68,11 +68,6 @@ func (o *object) Get(k Value) (Value, bool) {
 	return o.get(k, h)
 }
 
-func (o *object) Put(p Pair) Sequence {
-	h := HashCode(p.Car())
-	return o.put(p, h)
-}
-
 func (o *object) get(k Value, hash uint64) (Value, bool) {
 	if o.pair != nil && o.pair.Car().Equal(k) {
 		return o.pair.Cdr(), true
@@ -82,6 +77,11 @@ func (o *object) get(k Value, hash uint64) (Value, bool) {
 		return bucket.get(k, hash>>5)
 	}
 	return Nil, false
+}
+
+func (o *object) Put(p Pair) Sequence {
+	h := HashCode(p.Car())
+	return o.put(p, h)
 }
 
 func (o *object) put(p Pair, hash uint64) *object {
@@ -101,9 +101,47 @@ func (o *object) put(p Pair, hash uint64) *object {
 	}
 
 	// return a copy with the new bucket
-	var res object = *o
+	res := *o
 	res.children[idx] = bucket
 	return &res
+}
+
+func (o *object) Remove(k Value) (Value, Sequence, bool) {
+	h := HashCode(k)
+	if v, r, ok := o.remove(k, h); ok {
+		if r != nil {
+			return v, r, true
+		}
+		return v, EmptyObject, true
+	}
+	return Nil, o, false
+}
+
+func (o *object) remove(k Value, hash uint64) (Value, *object, bool) {
+	if o.pair != nil && o.pair.Car().Equal(k) {
+		return o.pair.Cdr(), o.promote(), true
+	}
+	idx := hash & 0x1f
+	if bucket := o.children[idx]; bucket != nil {
+		if v, r, ok := bucket.remove(k, hash>>5); ok {
+			res := *o
+			res.children[idx] = r
+			return v, &res, true
+		}
+	}
+	return nil, nil, false
+}
+
+func (o *object) promote() *object {
+	for i, c := range o.children {
+		if c != nil {
+			res := *o
+			res.pair = c.pair
+			res.children[i] = c.promote()
+			return &res
+		}
+	}
+	return nil
 }
 
 func (o *object) First() Value {
@@ -124,7 +162,7 @@ func (o *object) split() (Value, *object, bool) {
 	for i, c := range o.children {
 		if c != nil {
 			if f, r, ok := c.split(); ok {
-				var res object = *o
+				res := *o
 				res.children[i] = r
 				return f, &res, true
 			}

@@ -35,6 +35,27 @@ func TestObject(t *testing.T) {
 	as.MustGet(o2, K("missing"))
 }
 
+func TestObjectRemoval(t *testing.T) {
+	as := assert.New(t)
+
+	o1 := data.NewObject(
+		C(K("name"), S("parent")),
+		C(K("parent"), S("i am the parent")),
+	)
+
+	v, o2, ok := o1.Remove(K("name"))
+	as.True(ok)
+	as.String("parent", v)
+	as.Contains(`:parent "i am the parent"`, o2)
+	as.NotContains(`:name`, o2)
+
+	v, o3, ok := o2.(data.MappedSequence).Remove(K("parent"))
+	as.True(ok)
+	as.True(o3.IsEmpty())
+	as.String("i am the parent", v)
+	as.String("{}", o3)
+}
+
 func TestObjectCaller(t *testing.T) {
 	as := assert.New(t)
 

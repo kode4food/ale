@@ -62,8 +62,8 @@ var Get = data.Applicative(func(args ...data.Value) data.Value {
 	return res
 }, 2)
 
-// Put returns a new MappedSequence containing the key/value association
-var Put = data.Applicative(func(args ...data.Value) data.Value {
+// Assoc returns a new MappedSequence containing the key/value association
+var Assoc = data.Applicative(func(args ...data.Value) data.Value {
 	s := args[0].(data.MappedSequence)
 	if len(args) == 3 {
 		p := data.NewCons(args[1], args[2])
@@ -74,6 +74,15 @@ var Put = data.Applicative(func(args ...data.Value) data.Value {
 	}
 	panic(errors.New(ErrPutRequiresPair))
 }, 2, 3)
+
+// Dissoc returns a new MappedSequence with the key removed
+var Dissoc = data.Applicative(func(args ...data.Value) data.Value {
+	s := args[0].(data.MappedSequence)
+	if v, r, ok := s.Remove(args[1]); ok {
+		return data.NewVector(r, v)
+	}
+	return data.Nil
+}, 2)
 
 // IsSeq returns whether the provided value is a sequence
 var IsSeq = data.Applicative(func(args ...data.Value) data.Value {

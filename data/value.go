@@ -53,6 +53,7 @@ type (
 	Mapped interface {
 		Get(Value) (Value, bool)
 		Put(Pair) Sequence
+		Remove(Value) (Value, Sequence, bool)
 	}
 
 	// Prepender can return a Sequence that has been prepended
