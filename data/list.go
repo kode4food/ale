@@ -8,6 +8,7 @@ type (
 		RandomAccess
 		Prepender
 		Reverser
+		Caller
 	}
 
 	list struct {

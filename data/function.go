@@ -10,12 +10,17 @@ type (
 	// Call is the type of function that can be turned into a Function
 	Call func(...Value) Value
 
-	// Function provides a caller, arity check, and calling convention
-	Function interface {
-		Value
+	// Caller provides the necessary methods for performing a runtime call
+	Caller interface {
 		Call(...Value) Value
 		CheckArity(int) error
 		Convention() Convention
+	}
+
+	// Function is a Value that provides a Caller interface
+	Function interface {
+		Value
+		Caller
 	}
 
 	function struct {

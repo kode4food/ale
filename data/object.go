@@ -15,6 +15,7 @@ type (
 		Sequence
 		Mapped
 		Counted
+		Caller
 	}
 
 	object struct {

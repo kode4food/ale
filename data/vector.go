@@ -15,6 +15,7 @@ type (
 		Appender
 		Reverser
 		Valuer
+		Caller
 	}
 
 	vector []Value
