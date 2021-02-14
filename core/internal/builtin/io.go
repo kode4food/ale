@@ -7,20 +7,6 @@ import (
 	"github.com/kode4food/ale/internal/stream"
 )
 
-const (
-	// WriterType is the type name for a writer
-	WriterType = data.String("writer")
-
-	// WriterKey is the key used to wrap a Writer
-	WriterKey = data.Keyword("writer")
-
-	// WriteKey is key used to write to a Writer
-	WriteKey = data.Keyword("write")
-
-	// CloseKey is the key used to close a file
-	CloseKey = data.Keyword("close")
-)
-
 // MakeReader wraps the go Reader with an input function
 func MakeReader(r io.Reader, i stream.InputFunc) stream.Reader {
 	return stream.NewReader(r, i)
@@ -31,13 +17,13 @@ func MakeWriter(w io.Writer, o stream.OutputFunc) data.Object {
 	wrapped := stream.NewWriter(w, o)
 
 	pairs := []data.Pair{
-		data.NewCons(data.TypeKey, WriterType),
-		data.NewCons(WriterKey, wrapped),
-		data.NewCons(WriteKey, bindWriter(wrapped)),
+		data.NewCons(data.TypeKey, stream.WriterType),
+		data.NewCons(stream.WriterKey, wrapped),
+		data.NewCons(stream.WriteKey, bindWriter(wrapped)),
 	}
 
 	if c, ok := w.(stream.Closer); ok {
-		pairs = append(pairs, data.NewCons(CloseKey, bindCloser(c)))
+		pairs = append(pairs, data.NewCons(stream.CloseKey, bindCloser(c)))
 	}
 
 	return data.NewObject(pairs...)

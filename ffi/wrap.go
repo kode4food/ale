@@ -81,7 +81,6 @@ func wrapType(t reflect.Type) (Wrapper, error) {
 /*
 	Unsupported Kinds:
 	  * Uintptr
-	  * Chan
 	  * Complex64
 	  * Complex128
 	  * UnsafePointer
@@ -94,6 +93,8 @@ func makeWrappedType(t reflect.Type) (Wrapper, error) {
 		return makeWrappedSlice(t)
 	case reflect.Bool:
 		return makeWrappedBool(t)
+	case reflect.Chan:
+		return makeWrappedChannel(t)
 	case reflect.Float32, reflect.Float64:
 		return makeWrappedFloat(t)
 	case reflect.Func:

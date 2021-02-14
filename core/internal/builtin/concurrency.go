@@ -6,17 +6,6 @@ import (
 	"github.com/kode4food/ale/internal/stream"
 )
 
-const (
-	// ChannelType is the type name for a channel
-	ChannelType = data.String("channel")
-
-	// EmitKey is the key used to emit to a Channel
-	EmitKey = data.Keyword("emit")
-
-	// SequenceKey is the key used to retrieve the Sequence from a Channel
-	SequenceKey = data.Keyword("seq")
-)
-
 // Go runs the provided function asynchronously
 var Go = data.Applicative(func(args ...data.Value) data.Value {
 	fn := args[0].(data.Function)
@@ -34,10 +23,10 @@ var Chan = data.Applicative(func(args ...data.Value) data.Value {
 	e, s := stream.NewChannel(size)
 
 	return data.NewObject(
-		data.NewCons(data.TypeKey, ChannelType),
-		data.NewCons(EmitKey, bindWriter(e)),
-		data.NewCons(CloseKey, bindCloser(e)),
-		data.NewCons(SequenceKey, s),
+		data.NewCons(data.TypeKey, stream.ChannelType),
+		data.NewCons(stream.EmitKey, bindWriter(e)),
+		data.NewCons(stream.CloseKey, bindCloser(e)),
+		data.NewCons(stream.SequenceKey, s),
 	)
 }, 0, 1)
 

@@ -40,15 +40,15 @@ func TestObjectRemoval(t *testing.T) {
 
 	// Load it
 	var o1 data.Object = data.EmptyObject
-	for i := 0; i < 100; i++ {
+	for i := 0; i < 1000; i++ {
 		k := K(fmt.Sprintf("key-%d", i))
 		v := S(fmt.Sprintf("value-%d", i))
 		o1 = o1.Put(C(k, v)).(data.Object)
 	}
-	as.Equal(100, o1.Count())
+	as.Equal(1000, o1.Count())
 
 	// Remove half of it
-	for i := 0; i < 100; i += 2 {
+	for i := 0; i < 1000; i += 2 {
 		k := K(fmt.Sprintf("key-%d", i))
 		v, r, ok := o1.Remove(k)
 		o1 = r.(data.Object)
@@ -56,10 +56,10 @@ func TestObjectRemoval(t *testing.T) {
 		as.String(fmt.Sprintf("value-%d", i), v)
 	}
 	as.False(o1 == data.EmptyObject)
-	as.Equal(50, o1.Count())
+	as.Equal(500, o1.Count())
 
 	// Remove the other half
-	for i := 1; i < 100; i += 2 {
+	for i := 1; i < 1000; i += 2 {
 		k := K(fmt.Sprintf("key-%d", i))
 		v, r, ok := o1.Remove(k)
 		o1 = r.(data.Object)

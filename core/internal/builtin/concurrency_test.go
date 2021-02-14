@@ -7,6 +7,7 @@ import (
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
+	"github.com/kode4food/ale/internal/stream"
 )
 
 func TestGo(t *testing.T) {
@@ -30,9 +31,9 @@ func TestChan(t *testing.T) {
 	as := assert.New(t)
 
 	ch := builtin.Chan.Call(I(0)).(data.Mapped)
-	emit, ok1 := ch.Get(builtin.EmitKey)
-	closeChan, ok2 := ch.Get(builtin.CloseKey)
-	seq, ok3 := ch.Get(builtin.SequenceKey)
+	emit, ok1 := ch.Get(stream.EmitKey)
+	closeChan, ok2 := ch.Get(stream.CloseKey)
+	seq, ok3 := ch.Get(stream.SequenceKey)
 	as.True(ok1)
 	as.True(ok2)
 	as.True(ok3)
@@ -53,6 +54,7 @@ func makeWrapperFunc(v data.Value) data.Function {
 		return v
 	})
 }
+
 func TestPromise(t *testing.T) {
 	as := assert.New(t)
 

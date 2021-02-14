@@ -41,6 +41,17 @@ type (
 )
 
 const (
+	// ChannelType is the type name for a channel
+	ChannelType = data.String("channel")
+
+	// EmitKey is the key used to emit to a Channel
+	EmitKey = data.Keyword("emit")
+
+	// SequenceKey is the key used to retrieve the Sequence from a Channel
+	SequenceKey = data.Keyword("seq")
+)
+
+const (
 	channelReady uint32 = iota
 	channelCloseRequested
 	channelClosed

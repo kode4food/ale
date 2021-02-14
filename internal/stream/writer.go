@@ -28,6 +28,17 @@ type (
 	}
 )
 
+const (
+	// WriterType is the type name for a writer
+	WriterType = data.String("writer")
+
+	// WriterKey is the key used to wrap a Writer
+	WriterKey = data.Keyword("writer")
+
+	// WriteKey is key used to write to a Writer
+	WriteKey = data.Keyword("write")
+)
+
 // NewWriter wraps a Go Writer, coupling it with an output function
 func NewWriter(w io.Writer, o OutputFunc) Writer {
 	wrapped := &wrappedWriter{

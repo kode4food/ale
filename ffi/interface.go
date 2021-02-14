@@ -25,7 +25,7 @@ type (
 // Error messages
 const (
 	ErrInterfaceTypeMismatch         = "interface type mismatch"
-	ErrInterfaceCoercionNotSupported = "interface coercion not supported"
+	ErrInterfaceCoercionNotSupported = "value cannot be coerced into interface"
 )
 
 const (

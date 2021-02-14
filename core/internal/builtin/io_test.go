@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/kode4food/ale/core/bootstrap"
-	"github.com/kode4food/ale/core/internal/builtin"
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/env"
 	"github.com/kode4food/ale/eval"
@@ -34,8 +33,8 @@ func testOutput(t *testing.T, src, expected string) {
 	e := env.NewEnvironment()
 	ns := e.GetRoot()
 	ns.Declare(stdoutName).Bind(O(
-		C(builtin.WriterKey, w),
-		C(builtin.WriteKey, bindWrite(w)),
+		C(stream.WriterKey, w),
+		C(stream.WriteKey, bindWrite(w)),
 	))
 	bootstrap.Into(e)
 
