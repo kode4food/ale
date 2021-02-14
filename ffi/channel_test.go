@@ -26,7 +26,7 @@ func TestChannelTypes(t *testing.T) {
 	rw := ffi.MustWrap(recv)
 	as.Contains(`:seq`, rw)
 	as.NotContains(`:emit`, rw)
-	as.Contains(`:close`, rw)
+	as.NotContains(`:close`, rw)
 
 	sw := ffi.MustWrap(send)
 	as.NotContains(`:seq`, sw)
