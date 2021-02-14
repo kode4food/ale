@@ -14,26 +14,23 @@ import (
 func TestChannelTypes(t *testing.T) {
 	as := assert.New(t)
 
-	both := make(chan int, 0)
-	recv := (<-chan int)(both)
-	send := (chan<- int)(both)
-
-	bw := ffi.MustWrap(both)
+	ch := make(chan int, 0)
+	bw := ffi.MustWrap(ch)
 	as.Contains(`:seq`, bw)
 	as.Contains(`:emit`, bw)
 	as.Contains(`:close`, bw)
 
-	rw := ffi.MustWrap(recv)
+	rw := ffi.MustWrap((<-chan int)(ch))
 	as.Contains(`:seq`, rw)
 	as.NotContains(`:emit`, rw)
 	as.NotContains(`:close`, rw)
 
-	sw := ffi.MustWrap(send)
+	sw := ffi.MustWrap((chan<- int)(ch))
 	as.NotContains(`:seq`, sw)
 	as.Contains(`:emit`, sw)
 	as.Contains(`:close`, sw)
 
-	close(both)
+	close(ch)
 }
 
 func TestChannelSequence(t *testing.T) {
