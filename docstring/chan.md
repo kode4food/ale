@@ -1,3 +1,4 @@
+
 ---
 title: "chan"
 date: 2019-04-06T12:19:22+02:00
@@ -13,7 +14,7 @@ A channel is a data structure that is used to generate a lazy sequence of values
 
 ```
 *:seq*     the sequence to be generated
-*:emit*    an emitter function of the form (emit value)
+*:emit*    an emitter function of the form (emit value+)
 *:close*   a function to close the channel (close)
 ```
 
