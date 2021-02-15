@@ -49,55 +49,55 @@ func makeWrappedInt(t reflect.Type) (Wrapper, error) {
 	}
 }
 
-func (w intWrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
+func (intWrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
 	return data.Integer(v.Int()), nil
 }
 
-func (w intWrapper) Unwrap(v data.Value) (reflect.Value, error) {
+func (intWrapper) Unwrap(v data.Value) (reflect.Value, error) {
 	if i, ok := v.(data.Integer); ok {
 		return reflect.ValueOf(int(i)), nil
 	}
 	return intZero, errors.New(ErrValueMustBeInteger)
 }
 
-func (w int64Wrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
+func (int64Wrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
 	return data.Integer(v.Int()), nil
 }
 
-func (w int64Wrapper) Unwrap(v data.Value) (reflect.Value, error) {
+func (int64Wrapper) Unwrap(v data.Value) (reflect.Value, error) {
 	if i, ok := v.(data.Integer); ok {
 		return reflect.ValueOf(int64(i)), nil
 	}
 	return int64zero, errors.New(ErrValueMustBeInteger)
 }
 
-func (w int32Wrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
+func (int32Wrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
 	return data.Integer(v.Int()), nil
 }
 
-func (w int32Wrapper) Unwrap(v data.Value) (reflect.Value, error) {
+func (int32Wrapper) Unwrap(v data.Value) (reflect.Value, error) {
 	if i, ok := v.(data.Integer); ok {
 		return reflect.ValueOf(int32(i)), nil
 	}
 	return int32zero, errors.New(ErrValueMustBeInteger)
 }
 
-func (w int16Wrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
+func (int16Wrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
 	return data.Integer(v.Int()), nil
 }
 
-func (w int16Wrapper) Unwrap(v data.Value) (reflect.Value, error) {
+func (int16Wrapper) Unwrap(v data.Value) (reflect.Value, error) {
 	if i, ok := v.(data.Integer); ok {
 		return reflect.ValueOf(int16(i)), nil
 	}
 	return int16zero, errors.New(ErrValueMustBeInteger)
 }
 
-func (w int8Wrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
+func (int8Wrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
 	return data.Integer(v.Int()), nil
 }
 
-func (w int8Wrapper) Unwrap(v data.Value) (reflect.Value, error) {
+func (int8Wrapper) Unwrap(v data.Value) (reflect.Value, error) {
 	if i, ok := v.(data.Integer); ok {
 		return reflect.ValueOf(int8(i)), nil
 	}

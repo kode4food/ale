@@ -13,6 +13,10 @@ func TestBoolWrapper(t *testing.T) {
 	f := ffi.MustWrap(func(b bool) bool {
 		return !b
 	}).(data.Function)
+
 	b := f.Call(data.False)
 	as.True(b)
+
+	b = f.Call(data.True)
+	as.False(b)
 }

@@ -81,8 +81,6 @@ func wrapType(t reflect.Type) (Wrapper, error) {
 /*
 	Unsupported Kinds:
 	  * Uintptr
-	  * Complex64
-	  * Complex128
 	  * UnsafePointer
 */
 func makeWrappedType(t reflect.Type) (Wrapper, error) {

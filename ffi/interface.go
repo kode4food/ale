@@ -8,7 +8,7 @@ import (
 )
 
 type (
-	interfaceWrapper struct {
+	intfWrapper struct {
 		reflect.Type
 		methods []*methodWrapper
 	}
@@ -38,7 +38,7 @@ const (
 
 func makeWrappedInterface(t reflect.Type) (Wrapper, error) {
 	mLen := t.NumMethod()
-	res := &interfaceWrapper{
+	res := &intfWrapper{
 		Type:    t,
 		methods: make([]*methodWrapper, 0, mLen),
 	}
@@ -83,7 +83,7 @@ func makeWrappedMethod(m reflect.Method) (*methodWrapper, error) {
 	}, nil
 }
 
-func (w interfaceWrapper) Wrap(c *Context, v reflect.Value) (data.Value, error) {
+func (w *intfWrapper) Wrap(c *Context, v reflect.Value) (data.Value, error) {
 	e := v.Elem()
 	if !e.IsValid() {
 		return data.Nil, nil
@@ -184,7 +184,7 @@ func (w *methodWrapper) wrapVectorMethod(v reflect.Value) data.Function {
 	}, inLen)
 }
 
-func (w interfaceWrapper) Unwrap(v data.Value) (reflect.Value, error) {
+func (w *intfWrapper) Unwrap(v data.Value) (reflect.Value, error) {
 	if v, ok := v.(data.Object); ok {
 		if r, ok := v.Get(ReceiverKey); ok {
 			if r, ok := r.(receiver); ok {

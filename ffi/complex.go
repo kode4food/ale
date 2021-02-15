@@ -38,14 +38,14 @@ func makeWrappedComplex(t reflect.Type) (Wrapper, error) {
 	}
 }
 
-func (w complex128Wrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
+func (complex128Wrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
 	c := v.Complex()
 	r := data.Float(real(c))
 	i := data.Float(imag(c))
 	return data.NewCons(r, i), nil
 }
 
-func (w complex128Wrapper) Unwrap(v data.Value) (reflect.Value, error) {
+func (complex128Wrapper) Unwrap(v data.Value) (reflect.Value, error) {
 	if c, ok := v.(data.Cons); ok {
 		r, rok := c.Car().(data.Float)
 		i, iok := c.Cdr().(data.Float)
@@ -58,14 +58,14 @@ func (w complex128Wrapper) Unwrap(v data.Value) (reflect.Value, error) {
 	return complex128zero, errors.New(ErrValueMustBeCons)
 }
 
-func (w complex64Wrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
+func (complex64Wrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
 	c := v.Complex()
 	r := data.Float(real(c))
 	i := data.Float(imag(c))
 	return data.NewCons(r, i), nil
 }
 
-func (w complex64Wrapper) Unwrap(v data.Value) (reflect.Value, error) {
+func (complex64Wrapper) Unwrap(v data.Value) (reflect.Value, error) {
 	if c, ok := v.(data.Cons); ok {
 		r, rok := c.Car().(data.Float)
 		i, iok := c.Cdr().(data.Float)

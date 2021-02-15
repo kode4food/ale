@@ -9,6 +9,15 @@ import (
 	. "github.com/kode4food/ale/internal/assert/helpers"
 )
 
+func TestIntWrapper(t *testing.T) {
+	as := assert.New(t)
+	f := ffi.MustWrap(func(i1 int, i2 int) int {
+		return i1 + i2
+	}).(data.Function)
+	r := f.Call(I(9), I(15))
+	as.Equal(I(24), r)
+}
+
 func TestInt64Wrapper(t *testing.T) {
 	as := assert.New(t)
 	f := ffi.MustWrap(func(i1 int32, i2 int64) (int32, int64) {

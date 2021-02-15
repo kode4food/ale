@@ -20,20 +20,20 @@ func makeWrappedPointer(t reflect.Type) (Wrapper, error) {
 	}, nil
 }
 
-func (p *pointerWrapper) Wrap(c *Context, v reflect.Value) (data.Value, error) {
+func (w *pointerWrapper) Wrap(c *Context, v reflect.Value) (data.Value, error) {
 	c, err := c.Push(v)
 	if err != nil {
 		return data.Nil, err
 	}
 	e := v.Elem()
 	if e.IsValid() {
-		return p.elem.Wrap(c, e)
+		return w.elem.Wrap(c, e)
 	}
 	return data.Nil, nil
 }
 
-func (p *pointerWrapper) Unwrap(v data.Value) (reflect.Value, error) {
-	e, err := p.elem.Unwrap(v)
+func (w *pointerWrapper) Unwrap(v data.Value) (reflect.Value, error) {
+	e, err := w.elem.Unwrap(v)
 	if err != nil {
 		return _emptyValue, err
 	}

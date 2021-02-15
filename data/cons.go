@@ -1,8 +1,6 @@
 package data
 
-import (
-	"bytes"
-)
+import "bytes"
 
 type (
 	// Pair represents the interface for a binary structure, such as a Cons
@@ -79,7 +77,7 @@ func (c *cons) String() string {
 	return buf.String()
 }
 
-// HashCode returns the has code for this Cons
+// HashCode returns the hash code for this Cons
 func (c *cons) HashCode() uint64 {
 	return HashCode(c.car) * HashCode(c.cdr)
 }
