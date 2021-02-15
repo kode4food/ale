@@ -7,10 +7,15 @@ import (
 	"github.com/kode4food/ale/data"
 )
 
-type floatWrapper reflect.Kind
+type (
+	float32Wrapper reflect.Kind
+	float64Wrapper reflect.Kind
+)
 
 // Error messages
 const (
+	ErrValueMustBeFloat = "value must be a float"
+
 	errIncorrectFloatKind = "float kind is incorrect"
 )
 
@@ -20,26 +25,36 @@ var (
 )
 
 func makeWrappedFloat(t reflect.Type) (Wrapper, error) {
-	return floatWrapper(t.Kind()), nil
+	k := t.Kind()
+	switch k {
+	case reflect.Float32:
+		return float32Wrapper(k), nil
+	case reflect.Float64:
+		return float64Wrapper(k), nil
+	default:
+		// Programmer error
+		panic(errors.New(errIncorrectFloatKind))
+	}
 }
 
-func (f floatWrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
+func (float32Wrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
 	return data.Float(v.Float()), nil
 }
 
-func (f floatWrapper) Unwrap(v data.Value) (reflect.Value, error) {
-	switch reflect.Kind(f) {
-	case reflect.Float32:
-		if v == nil {
-			return float32zero, nil
-		}
-		return reflect.ValueOf(float32(v.(data.Float))), nil
-	case reflect.Float64:
-		if v == nil {
-			return float64zero, nil
-		}
-		return reflect.ValueOf(float64(v.(data.Float))), nil
+func (float32Wrapper) Unwrap(v data.Value) (reflect.Value, error) {
+	if f, ok := v.(data.Float); ok {
+		return reflect.ValueOf(float32(f)), nil
 	}
-	// Programmer error
-	panic(errors.New(errIncorrectFloatKind))
+	return float32zero, errors.New(ErrValueMustBeFloat)
+}
+
+func (float64Wrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
+	return data.Float(v.Float()), nil
+}
+
+func (float64Wrapper) Unwrap(v data.Value) (reflect.Value, error) {
+	if f, ok := v.(data.Float); ok {
+		return reflect.ValueOf(float64(f)), nil
+	}
+	return float64zero, errors.New(ErrValueMustBeFloat)
 }

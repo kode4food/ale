@@ -1,6 +1,7 @@
 package ffi
 
 import (
+	"errors"
 	"reflect"
 
 	"github.com/kode4food/ale/data"
@@ -23,33 +24,36 @@ func makeWrappedSlice(t reflect.Type) (Wrapper, error) {
 	}, nil
 }
 
-func (s *sliceWrapper) Wrap(c *Context, v reflect.Value) (data.Value, error) {
+func (w *sliceWrapper) Wrap(c *Context, v reflect.Value) (data.Value, error) {
 	c, err := c.Push(v)
 	if err != nil {
-		return nil, err
+		return data.Nil, err
 	}
 	vLen := v.Len()
 	out := make(data.Values, vLen)
 	for i := 0; i < vLen; i++ {
-		v, err := s.elem.Wrap(c, v.Index(i))
+		v, err := w.elem.Wrap(c, v.Index(i))
 		if err != nil {
-			return nil, err
+			return data.Nil, err
 		}
 		out[i] = v
 	}
 	return data.NewVector(out...), nil
 }
 
-func (s *sliceWrapper) Unwrap(v data.Value) (reflect.Value, error) {
-	in := sequence.ToValues(v.(data.Sequence))
-	inLen := len(in)
-	out := reflect.MakeSlice(s.typ, inLen, inLen)
-	for i := 0; i < inLen; i++ {
-		v, err := s.elem.Unwrap(in[i])
-		if err != nil {
-			return _emptyValue, err
+func (w *sliceWrapper) Unwrap(v data.Value) (reflect.Value, error) {
+	if s, ok := v.(data.Sequence); ok {
+		in := sequence.ToValues(s)
+		inLen := len(in)
+		out := reflect.MakeSlice(w.typ, inLen, inLen)
+		for i := 0; i < inLen; i++ {
+			v, err := w.elem.Unwrap(in[i])
+			if err != nil {
+				return _emptyValue, err
+			}
+			out.Index(i).Set(v)
 		}
-		out.Index(i).Set(v)
+		return out, nil
 	}
-	return out, nil
+	return _emptyValue, errors.New(ErrValueMustBeSequence)
 }

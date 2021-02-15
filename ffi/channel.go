@@ -58,7 +58,9 @@ func (w *channelWrapper) makeClose(v reflect.Value) data.Function {
 }
 
 func (w *channelWrapper) makeSequence(v reflect.Value) data.Sequence {
-	return sequence.NewLazy(func() (data.Value, data.Sequence, bool) {
+	var resolver sequence.LazyResolver
+
+	resolver = func() (data.Value, data.Sequence, bool) {
 		in, ok := v.Recv()
 		if !ok {
 			return data.Nil, data.EmptyObject, false
@@ -68,8 +70,10 @@ func (w *channelWrapper) makeSequence(v reflect.Value) data.Sequence {
 		if err != nil {
 			panic(err)
 		}
-		return f, w.makeSequence(v), true
-	})
+		return f, sequence.NewLazy(resolver), true
+	}
+
+	return sequence.NewLazy(resolver)
 }
 
 func (w *channelWrapper) makeEmitter(v reflect.Value) data.Function {

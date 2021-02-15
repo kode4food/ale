@@ -1,6 +1,7 @@
 package ffi
 
 import (
+	"errors"
 	"reflect"
 
 	"github.com/kode4food/ale/data"
@@ -55,35 +56,38 @@ func getFieldKeyword(f reflect.StructField) data.Keyword {
 	return data.Keyword(tag)
 }
 
-func (s *structWrapper) Wrap(c *Context, v reflect.Value) (data.Value, error) {
+func (w *structWrapper) Wrap(c *Context, v reflect.Value) (data.Value, error) {
 	if !v.IsValid() {
 		return data.Nil, nil
 	}
-	out := make(data.Pairs, 0, len(s.fields))
-	for k, w := range s.fields {
+	out := make(data.Pairs, 0, len(w.fields))
+	for k, w := range w.fields {
 		v, err := w.Wrap(c, v.FieldByName(k))
 		if err != nil {
-			return nil, err
+			return data.Nil, err
 		}
 		out = append(out, data.NewCons(w.Keyword, v))
 	}
 	return data.NewObject(out...), nil
 }
 
-func (s *structWrapper) Unwrap(v data.Value) (reflect.Value, error) {
-	in, err := sequence.ToObject(v.(data.Sequence))
-	if err != nil {
-		return _emptyValue, err
-	}
-	out := reflect.New(s.typ).Elem()
-	for k, w := range s.fields {
-		if v, ok := in.Get(w.Keyword); ok {
-			v, err := w.Unwrap(v)
-			if err != nil {
-				return _emptyValue, err
-			}
-			out.FieldByName(k).Set(v)
+func (w *structWrapper) Unwrap(v data.Value) (reflect.Value, error) {
+	if s, ok := v.(data.Sequence); ok {
+		in, err := sequence.ToObject(s)
+		if err != nil {
+			return _emptyValue, err
 		}
+		out := reflect.New(w.typ).Elem()
+		for k, w := range w.fields {
+			if v, ok := in.Get(w.Keyword); ok {
+				v, err := w.Unwrap(v)
+				if err != nil {
+					return _emptyValue, err
+				}
+				out.FieldByName(k).Set(v)
+			}
+		}
+		return out, nil
 	}
-	return out, nil
+	return _emptyValue, errors.New(ErrValueMustBeSequence)
 }

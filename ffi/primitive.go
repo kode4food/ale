@@ -1,6 +1,7 @@
 package ffi
 
 import (
+	"errors"
 	"reflect"
 
 	"github.com/kode4food/ale/data"
@@ -11,12 +12,19 @@ type (
 	boolWrapper   bool
 )
 
+// Error messages
+const (
+	ErrValueMustBeBool   = "value must be a bool"
+	ErrValueMustBeString = "value must be a string"
+)
+
 var (
 	_stringWrapper stringWrapper
 	_boolWrapper   boolWrapper
 
 	stringZero = reflect.ValueOf("")
-	boolZero   = reflect.ValueOf(false)
+	boolTrue   = reflect.ValueOf(true)
+	boolFalse  = reflect.ValueOf(false)
 )
 
 func makeWrappedBool(_ reflect.Type) (Wrapper, error) {
@@ -32,19 +40,22 @@ func (stringWrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
 }
 
 func (stringWrapper) Unwrap(v data.Value) (reflect.Value, error) {
-	if v == nil {
-		return stringZero, nil
+	if s, ok := v.(data.String); ok {
+		return reflect.ValueOf(string(s)), nil
 	}
-	return reflect.ValueOf(v.String()), nil
+	return stringZero, errors.New(ErrValueMustBeString)
 }
 
-func (b boolWrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
+func (w boolWrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
 	return data.Bool(v.Bool()), nil
 }
 
-func (b boolWrapper) Unwrap(v data.Value) (reflect.Value, error) {
-	if v == nil {
-		return boolZero, nil
+func (w boolWrapper) Unwrap(v data.Value) (reflect.Value, error) {
+	if b, ok := v.(data.Bool); ok {
+		if b {
+			return boolTrue, nil
+		}
+		return boolFalse, nil
 	}
-	return reflect.ValueOf(bool(v.(data.Bool))), nil
+	return boolFalse, errors.New(ErrValueMustBeBool)
 }

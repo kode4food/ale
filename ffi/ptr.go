@@ -23,7 +23,7 @@ func makeWrappedPointer(t reflect.Type) (Wrapper, error) {
 func (p *pointerWrapper) Wrap(c *Context, v reflect.Value) (data.Value, error) {
 	c, err := c.Push(v)
 	if err != nil {
-		return nil, err
+		return data.Nil, err
 	}
 	e := v.Elem()
 	if e.IsValid() {
@@ -35,7 +35,7 @@ func (p *pointerWrapper) Wrap(c *Context, v reflect.Value) (data.Value, error) {
 func (p *pointerWrapper) Unwrap(v data.Value) (reflect.Value, error) {
 	e, err := p.elem.Unwrap(v)
 	if err != nil {
-		return _emptyValue, nil
+		return _emptyValue, err
 	}
 	return e.Addr(), nil
 }

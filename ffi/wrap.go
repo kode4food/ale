@@ -95,6 +95,8 @@ func makeWrappedType(t reflect.Type) (Wrapper, error) {
 		return makeWrappedBool(t)
 	case reflect.Chan:
 		return makeWrappedChannel(t)
+	case reflect.Complex64, reflect.Complex128:
+		return makeWrappedComplex(t)
 	case reflect.Float32, reflect.Float64:
 		return makeWrappedFloat(t)
 	case reflect.Func:

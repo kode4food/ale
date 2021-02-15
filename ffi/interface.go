@@ -83,19 +83,19 @@ func makeWrappedMethod(m reflect.Method) (*methodWrapper, error) {
 	}, nil
 }
 
-func (i interfaceWrapper) Wrap(c *Context, v reflect.Value) (data.Value, error) {
+func (w interfaceWrapper) Wrap(c *Context, v reflect.Value) (data.Value, error) {
 	e := v.Elem()
 	if !e.IsValid() {
 		return data.Nil, nil
 	}
 	c, err := c.Push(e)
 	if err != nil {
-		return nil, err
+		return data.Nil, err
 	}
 
-	res := make(data.Pairs, len(i.methods)+1)
+	res := make(data.Pairs, len(w.methods)+1)
 	res[len(res)-1] = data.NewCons(ReceiverKey, receiver(v))
-	for idx, m := range i.methods {
+	for idx, m := range w.methods {
 		res[idx] = data.NewCons(
 			data.Keyword(m.name),
 			m.wrapMethod(v),
@@ -104,25 +104,25 @@ func (i interfaceWrapper) Wrap(c *Context, v reflect.Value) (data.Value, error) 
 	return data.NewObject(res...), nil
 }
 
-func (m *methodWrapper) wrapMethod(v reflect.Value) data.Function {
-	switch len(m.out) {
+func (w *methodWrapper) wrapMethod(v reflect.Value) data.Function {
+	switch len(w.out) {
 	case 0:
-		return m.wrapVoidMethod(v)
+		return w.wrapVoidMethod(v)
 	case 1:
-		return m.wrapValueMethod(v)
+		return w.wrapValueMethod(v)
 	default:
-		return m.wrapVectorMethod(v)
+		return w.wrapVectorMethod(v)
 	}
 }
 
-func (m *methodWrapper) wrapVoidMethod(v reflect.Value) data.Function {
-	inLen := len(m.in)
-	fn := v.MethodByName(m.name)
+func (w *methodWrapper) wrapVoidMethod(v reflect.Value) data.Function {
+	inLen := len(w.in)
+	fn := v.MethodByName(w.name)
 
 	return data.Applicative(func(in ...data.Value) data.Value {
 		wIn := make([]reflect.Value, inLen)
 		for i := 0; i < inLen; i++ {
-			u, err := m.in[i].Unwrap(in[i])
+			u, err := w.in[i].Unwrap(in[i])
 			if err != nil {
 				panic(err)
 			}
@@ -133,22 +133,22 @@ func (m *methodWrapper) wrapVoidMethod(v reflect.Value) data.Function {
 	}, inLen)
 }
 
-func (m *methodWrapper) wrapValueMethod(v reflect.Value) data.Function {
-	inLen := len(m.in)
-	fn := v.MethodByName(m.name)
+func (w *methodWrapper) wrapValueMethod(v reflect.Value) data.Function {
+	inLen := len(w.in)
+	fn := v.MethodByName(w.name)
 
 	return data.Applicative(func(in ...data.Value) data.Value {
 		c := &Context{}
 		wIn := make([]reflect.Value, inLen)
 		for i := 0; i < inLen; i++ {
-			arg, err := m.in[i].Unwrap(in[i])
+			arg, err := w.in[i].Unwrap(in[i])
 			if err != nil {
 				panic(err)
 			}
 			wIn[i] = arg
 		}
 		wOut := fn.Call(wIn)
-		res, err := m.out[0].Wrap(c, wOut[0])
+		res, err := w.out[0].Wrap(c, wOut[0])
 		if err != nil {
 			panic(err)
 		}
@@ -156,16 +156,16 @@ func (m *methodWrapper) wrapValueMethod(v reflect.Value) data.Function {
 	}, inLen)
 }
 
-func (m *methodWrapper) wrapVectorMethod(v reflect.Value) data.Function {
-	inLen := len(m.in)
-	outLen := len(m.out)
-	fn := v.MethodByName(m.name)
+func (w *methodWrapper) wrapVectorMethod(v reflect.Value) data.Function {
+	inLen := len(w.in)
+	outLen := len(w.out)
+	fn := v.MethodByName(w.name)
 
 	return data.Applicative(func(in ...data.Value) data.Value {
 		c := &Context{}
 		wIn := make([]reflect.Value, inLen)
 		for i := 0; i < inLen; i++ {
-			arg, err := m.in[i].Unwrap(in[i])
+			arg, err := w.in[i].Unwrap(in[i])
 			if err != nil {
 				panic(err)
 			}
@@ -174,7 +174,7 @@ func (m *methodWrapper) wrapVectorMethod(v reflect.Value) data.Function {
 		wOut := fn.Call(wIn)
 		out := make(data.Values, outLen)
 		for i := 0; i < outLen; i++ {
-			res, err := m.out[i].Wrap(c, wOut[i])
+			res, err := w.out[i].Wrap(c, wOut[i])
 			if err != nil {
 				panic(err)
 			}
@@ -184,12 +184,12 @@ func (m *methodWrapper) wrapVectorMethod(v reflect.Value) data.Function {
 	}, inLen)
 }
 
-func (i interfaceWrapper) Unwrap(v data.Value) (reflect.Value, error) {
+func (w interfaceWrapper) Unwrap(v data.Value) (reflect.Value, error) {
 	if v, ok := v.(data.Object); ok {
 		if r, ok := v.Get(ReceiverKey); ok {
 			if r, ok := r.(receiver); ok {
 				res := reflect.Value(r)
-				if i.Type != res.Type() {
+				if w.Type != res.Type() {
 					return _emptyValue, errors.New(ErrInterfaceTypeMismatch)
 				}
 				return res, nil

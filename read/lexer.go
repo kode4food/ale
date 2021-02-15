@@ -15,8 +15,10 @@ type (
 
 	// Token is a lexer value
 	Token struct {
-		Type  TokenType
-		Value data.Value
+		Type   TokenType
+		Value  data.Value
+		Line   int
+		Column int
 	}
 
 	tokenizer func([]string) *Token
