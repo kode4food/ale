@@ -144,6 +144,9 @@ func (l Float) HashCode() uint64 {
 // ParseRatio attempts to parse a string representing a ratio
 func ParseRatio(s string) (Number, error) {
 	if res, ok := new(big.Rat).SetString(s); ok {
+		if res.IsInt() {
+			return maybeInteger(res.Num()), nil
+		}
 		return (*Ratio)(res), nil
 	}
 	return nil, fmt.Errorf(ErrExpectedRatio, s)
@@ -175,6 +178,9 @@ func (l *Ratio) Add(r Number) Number {
 		lb := (*big.Rat)(l)
 		rb := (*big.Rat)(rr)
 		res := new(big.Rat).Add(lb, rb)
+		if res.IsInt() {
+			return maybeInteger(res.Num())
+		}
 		return (*Ratio)(res)
 	}
 	pl, pr := purify(l, r)
@@ -187,6 +193,9 @@ func (l *Ratio) Sub(r Number) Number {
 		lb := (*big.Rat)(l)
 		rb := (*big.Rat)(rr)
 		res := new(big.Rat).Sub(lb, rb)
+		if res.IsInt() {
+			return maybeInteger(res.Num())
+		}
 		return (*Ratio)(res)
 	}
 	pl, pr := purify(l, r)
@@ -199,6 +208,9 @@ func (l *Ratio) Mul(r Number) Number {
 		lb := (*big.Rat)(l)
 		rb := (*big.Rat)(rr)
 		res := new(big.Rat).Mul(lb, rb)
+		if res.IsInt() {
+			return maybeInteger(res.Num())
+		}
 		return (*Ratio)(res)
 	}
 	pl, pr := purify(l, r)
@@ -211,6 +223,9 @@ func (l *Ratio) Div(r Number) Number {
 		lb := (*big.Rat)(l)
 		rb := (*big.Rat)(rr)
 		res := new(big.Rat).Quo(lb, rb)
+		if res.IsInt() {
+			return maybeInteger(res.Num())
+		}
 		return (*Ratio)(res)
 	}
 	pl, pr := purify(l, r)
@@ -220,6 +235,7 @@ func (l *Ratio) Div(r Number) Number {
 // Mod calculates the remainder of dividing this Ratio by another Number
 func (l *Ratio) Mod(r Number) Number {
 	if rr, ok := r.(*Ratio); ok {
+		// TODO: This *can* return a Ratio
 		lb := (*big.Rat)(l)
 		rb := (*big.Rat)(rr)
 		lf, _ := lb.Float64()

@@ -131,7 +131,7 @@ func TestDivision(t *testing.T) {
 	as.Number(4.0, n2.Div(n3))
 	as.Number(4.0, n2.Div(n4))
 	as.Number(4, n1.Div(n3))
-	as.String("40/1", n1.Div(n5))
+	as.String("40", n1.Div(n5))
 	as.String("1/10", n5.Div(n3))
 	as.String("50000000000000000000000000000000000000000", n6.Div(n1))
 }

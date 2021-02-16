@@ -108,7 +108,11 @@ func (l Integer) Mul(r Number) Number {
 // Div divides this Integer by another Number
 func (l Integer) Div(r Number) Number {
 	if ri, ok := r.(Integer); ok {
-		return l / ri
+		res := big.NewRat(int64(l), int64(ri))
+		if res.IsInt() {
+			return maybeInteger(res.Num())
+		}
+		return (*Ratio)(res)
 	}
 	pl, pr := purify(l, r)
 	return pl.Div(pr)
