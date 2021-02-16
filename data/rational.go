@@ -16,7 +16,10 @@ type (
 	Ratio big.Rat
 )
 
-var rationalHash = rand.Uint64()
+var (
+	rationalHash = rand.Uint64()
+	one          = big.NewInt(1)
+)
 
 // Error messages
 const (
@@ -235,12 +238,17 @@ func (l *Ratio) Div(r Number) Number {
 // Mod calculates the remainder of dividing this Ratio by another Number
 func (l *Ratio) Mod(r Number) Number {
 	if rr, ok := r.(*Ratio); ok {
-		// TODO: This *can* return a Ratio
 		lb := (*big.Rat)(l)
 		rb := (*big.Rat)(rr)
-		lf, _ := lb.Float64()
-		rf, _ := rb.Float64()
-		return Float(math.Mod(lf, rf))
+		n := new(big.Int).Mul(lb.Num(), rb.Denom())
+		d := new(big.Int).Mul(lb.Denom(), rb.Num())
+		res := new(big.Rat).SetFrac(new(big.Int).Div(n, d), one)
+		res = res.Mul(res, rb)
+		res = res.Sub(lb, res)
+		if res.IsInt() {
+			return maybeInteger(res.Num())
+		}
+		return (*Ratio)(res)
 	}
 	pl, pr := purify(l, r)
 	return pl.Mod(pr)
