@@ -1,6 +1,7 @@
 package data
 
 import (
+	"errors"
 	"fmt"
 	"math"
 	"math/big"
@@ -108,6 +109,9 @@ func (l Integer) Mul(r Number) Number {
 // Div divides this Integer by another Number
 func (l Integer) Div(r Number) Number {
 	if ri, ok := r.(Integer); ok {
+		if ri == 0 {
+			panic(errors.New(ErrDivideByZero))
+		}
 		res := big.NewRat(int64(l), int64(ri))
 		if res.IsInt() {
 			return maybeInteger(res.Num())
@@ -121,6 +125,9 @@ func (l Integer) Div(r Number) Number {
 // Mod calculates the remainder of dividing this Integer by another Number
 func (l Integer) Mod(r Number) Number {
 	if ri, ok := r.(Integer); ok {
+		if ri == 0 {
+			panic(errors.New(ErrDivideByZero))
+		}
 		return l % ri
 	}
 	pl, pr := purify(l, r)
@@ -226,6 +233,9 @@ func (l *BigInt) Div(r Number) Number {
 	if ri, ok := r.(*BigInt); ok {
 		lb := (*big.Int)(l)
 		rb := (*big.Int)(ri)
+		if rb.IsInt64() && rb.Int64() == 0 {
+			panic(errors.New(ErrDivideByZero))
+		}
 		res := new(big.Int).Quo(lb, rb)
 		return maybeInteger(res)
 	}
@@ -238,6 +248,9 @@ func (l *BigInt) Mod(r Number) Number {
 	if ri, ok := r.(*BigInt); ok {
 		lb := (*big.Int)(l)
 		rb := (*big.Int)(ri)
+		if rb.IsInt64() && rb.Int64() == 0 {
+			panic(errors.New(ErrDivideByZero))
+		}
 		res := new(big.Int).Rem(lb, rb)
 		return maybeInteger(res)
 	}

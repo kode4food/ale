@@ -100,7 +100,7 @@ var (
 
 		pattern(`(")(?P<s>(\\\\|\\"|\\[^\\"]|[^"\\])*)("?)`, stringState),
 
-		pattern(`[+-]?[1-9]\d*/[1-9]\d*`+numTail, ratioState),
+		pattern(`[+-]?(0|[1-9]\d*)/[1-9]\d*`+numTail, ratioState),
 		pattern(`[+-]?(0|[1-9]\d*)\.\d+([eE][+-]?\d+)?`+numTail, floatState),
 		pattern(`[+-]?(0|[1-9]\d*)(\.\d+)?[eE][+-]?\d+`+numTail, floatState),
 		pattern(`[+-]?0[bB]\d+`+numTail, integerState),

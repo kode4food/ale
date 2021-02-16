@@ -18,6 +18,8 @@ type Number interface {
 
 // Error messages
 const (
+	ErrDivideByZero = "divide by zero"
+
 	errCouldNotPurify = "could not purify: %v and %v"
 )
 
