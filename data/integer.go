@@ -113,10 +113,7 @@ func (l Integer) Div(r Number) Number {
 			panic(errors.New(ErrDivideByZero))
 		}
 		res := big.NewRat(int64(l), int64(ri))
-		if res.IsInt() {
-			return maybeInteger(res.Num())
-		}
-		return (*Ratio)(res)
+		return maybeWhole(res)
 	}
 	pl, pr := purify(l, r)
 	return pl.Div(pr)

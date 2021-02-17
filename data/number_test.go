@@ -49,13 +49,36 @@ func TestEqualTo(t *testing.T) {
 	n2 := data.Float(20.0)
 	n3 := data.Float(25.75)
 	n4 := data.MustParseRatio("40/2")
+	n5 := data.MustParseRatio("5/2")
+
+	as.Compare(data.EqualTo, n1, n1)
+	as.Compare(data.EqualTo, n3, n3)
+	as.Compare(data.EqualTo, n5, n5)
 
 	as.Compare(data.EqualTo, n1, n2)
 	as.Compare(data.EqualTo, n2, n1)
-	as.Compare(data.EqualTo, n1, n1)
-	as.Compare(data.EqualTo, n3, n3)
-	as.Compare(data.EqualTo, n1, n4)
 	as.Compare(data.EqualTo, n2, n4)
+	as.Compare(data.EqualTo, n1, n4)
+}
+
+func TestIdentityEqual(t *testing.T) {
+	as := assert.New(t)
+	n1 := data.Integer(20)
+	n2 := data.Float(20.0)
+	n3 := data.Float(25.75)
+	n4 := data.MustParseRatio("40/2")
+	n5 := data.MustParseRatio("5/2")
+	n6 := data.MustParseInteger("100000000000000000000000000000000000000000000")
+
+	as.True(n1.Equal(n1))
+	as.True(n1.Equal(n4))
+	as.True(n3.Equal(n3))
+	as.True(n5.Equal(n5))
+	as.True(n6.Equal(n6))
+
+	as.False(n1.Equal(n2))
+	as.False(n2.Equal(n1))
+	as.False(n2.Equal(n4))
 }
 
 func TestLessThan(t *testing.T) {
@@ -85,7 +108,7 @@ func TestGreaterThan(t *testing.T) {
 	n4 := data.Float(20.0)
 	n5 := data.Float(25.75)
 	n6 := data.Integer(25)
-	n7 := data.MustParseInteger("1000000000000000000000000000000000000000000000")
+	n7 := data.MustParseInteger("100000000000000000000000000000000000000000000")
 
 	as.Compare(data.GreaterThan, n2, n1)
 	as.Compare(data.GreaterThan, n3, n1)

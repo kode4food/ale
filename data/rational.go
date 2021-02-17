@@ -147,10 +147,7 @@ func (l Float) HashCode() uint64 {
 // ParseRatio attempts to parse a string representing a ratio
 func ParseRatio(s string) (Number, error) {
 	if res, ok := new(big.Rat).SetString(s); ok {
-		if res.IsInt() {
-			return maybeInteger(res.Num()), nil
-		}
-		return (*Ratio)(res), nil
+		return maybeWhole(res), nil
 	}
 	return nil, fmt.Errorf(ErrExpectedRatio, s)
 }
@@ -181,10 +178,7 @@ func (l *Ratio) Add(r Number) Number {
 		lb := (*big.Rat)(l)
 		rb := (*big.Rat)(rr)
 		res := new(big.Rat).Add(lb, rb)
-		if res.IsInt() {
-			return maybeInteger(res.Num())
-		}
-		return (*Ratio)(res)
+		return maybeWhole(res)
 	}
 	pl, pr := purify(l, r)
 	return pl.Add(pr)
@@ -196,10 +190,7 @@ func (l *Ratio) Sub(r Number) Number {
 		lb := (*big.Rat)(l)
 		rb := (*big.Rat)(rr)
 		res := new(big.Rat).Sub(lb, rb)
-		if res.IsInt() {
-			return maybeInteger(res.Num())
-		}
-		return (*Ratio)(res)
+		return maybeWhole(res)
 	}
 	pl, pr := purify(l, r)
 	return pl.Sub(pr)
@@ -211,10 +202,7 @@ func (l *Ratio) Mul(r Number) Number {
 		lb := (*big.Rat)(l)
 		rb := (*big.Rat)(rr)
 		res := new(big.Rat).Mul(lb, rb)
-		if res.IsInt() {
-			return maybeInteger(res.Num())
-		}
-		return (*Ratio)(res)
+		return maybeWhole(res)
 	}
 	pl, pr := purify(l, r)
 	return pl.Mul(pr)
@@ -226,10 +214,7 @@ func (l *Ratio) Div(r Number) Number {
 		lb := (*big.Rat)(l)
 		rb := (*big.Rat)(rr)
 		res := new(big.Rat).Quo(lb, rb)
-		if res.IsInt() {
-			return maybeInteger(res.Num())
-		}
-		return (*Ratio)(res)
+		return maybeWhole(res)
 	}
 	pl, pr := purify(l, r)
 	return pl.Div(pr)
@@ -245,10 +230,7 @@ func (l *Ratio) Mod(r Number) Number {
 		res := new(big.Rat).SetFrac(new(big.Int).Div(n, d), one)
 		res = res.Mul(res, rb)
 		res = res.Sub(lb, res)
-		if res.IsInt() {
-			return maybeInteger(res.Num())
-		}
-		return (*Ratio)(res)
+		return maybeWhole(res)
 	}
 	pl, pr := purify(l, r)
 	return pl.Mod(pr)
@@ -293,4 +275,11 @@ func (l *Ratio) HashCode() uint64 {
 func (l *Ratio) float() Float {
 	f, _ := (*big.Rat)(l).Float64()
 	return Float(f)
+}
+
+func maybeWhole(r *big.Rat) Number {
+	if r.IsInt() {
+		return maybeInteger(r.Num())
+	}
+	return (*Ratio)(r)
 }
