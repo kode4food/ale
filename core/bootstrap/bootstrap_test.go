@@ -52,3 +52,10 @@ func TestBootstrapInto(t *testing.T) {
 	_, ok = d.Value().(encoder.Call)
 	as.True(ok)
 }
+
+func BenchmarkBootstrapping(b *testing.B) {
+	for n := 0; n < b.N; n++ {
+		e := bootstrap.DevNullEnvironment()
+		bootstrap.Into(e)
+	}
+}

@@ -8,11 +8,6 @@ import (
 	"github.com/kode4food/ale/runtime/isa"
 )
 
-var (
-	bValue data.Value
-	bInt   int
-)
-
 func numExplicitSum(n1, n2, n3 data.Integer) data.Value {
 	return n1 + n2 + n3
 }
@@ -38,43 +33,35 @@ func nativeLoopSum(args ...int) int {
 }
 
 func BenchmarkNativeExplicit(b *testing.B) {
-	var res int
 	for n := 0; n < b.N; n++ {
-		res = nativeExplicitSum(5, 6, 7) + 12
+		_ = nativeExplicitSum(5, 6, 7) + 12
 	}
-	bInt = res
 }
 
 func BenchmarkNativeLoop(b *testing.B) {
-	var res int
 	for n := 0; n < b.N; n++ {
-		res = nativeLoopSum(5, 6, 7) + 12
+		_ = nativeLoopSum(5, 6, 7) + 12
 	}
-	bInt = res
 }
 
 func BenchmarkNumberExplicit(b *testing.B) {
-	var res data.Value
 	i1 := I(5)
 	i2 := I(6)
 	i3 := I(7)
 	i4 := I(12)
 	for n := 0; n < b.N; n++ {
-		res = numExplicitSum(i1, i2, i3).(data.Integer) + i4
+		_ = numExplicitSum(i1, i2, i3).(data.Integer) + i4
 	}
-	bValue = res
 }
 
 func BenchmarkNumberLoop(b *testing.B) {
-	var res data.Value
 	i1 := I(5)
 	i2 := I(6)
 	i3 := I(7)
 	i4 := I(12)
 	for n := 0; n < b.N; n++ {
-		res = numLoopSum(i1, i2, i3).(data.Integer) + i4
+		_ = numLoopSum(i1, i2, i3).(data.Integer) + i4
 	}
-	bValue = res
 }
 
 var bCode = makeCode([]isa.Coder{
@@ -89,9 +76,7 @@ var bCode = makeCode([]isa.Coder{
 })
 
 func BenchmarkVMCalls(b *testing.B) {
-	var res data.Value
 	for n := 0; n < b.N; n++ {
-		res = bCode.Call()
+		_ = bCode.Call()
 	}
-	bValue = res
 }
