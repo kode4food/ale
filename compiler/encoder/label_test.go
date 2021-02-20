@@ -20,27 +20,11 @@ func TestLabels(t *testing.T) {
 	l1.DropAnchor()
 
 	as.Instructions(isa.Instructions{
-		&isa.Instruction{
-			Opcode: isa.Jump,
-			Args:   []isa.Word{1},
-		},
-		&isa.Instruction{
-			Opcode: isa.NoOp,
-		},
-		&isa.Instruction{
-			Opcode: isa.Jump,
-			Args:   []isa.Word{0},
-		},
-		&isa.Instruction{
-			Opcode: isa.Label,
-			Args:   []isa.Word{1},
-		},
-		&isa.Instruction{
-			Opcode: isa.NoOp,
-		},
-		&isa.Instruction{
-			Opcode: isa.Label,
-			Args:   []isa.Word{0},
-		},
+		isa.New(isa.Jump, 1),
+		isa.New(isa.NoOp),
+		isa.New(isa.Jump, 0),
+		isa.New(isa.Label, 1),
+		isa.New(isa.NoOp),
+		isa.New(isa.Label, 0),
 	}, e.Code())
 }
