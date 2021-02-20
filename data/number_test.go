@@ -194,7 +194,7 @@ func TestAddition(t *testing.T) {
 	as.Number(29.25, n3.Add(n1))
 	as.Number(25, n1.Add(n2))
 	as.Number(25, n2.Add(n1))
-	as.String("14", n4.Add(n5))
+	as.String("14.0", n4.Add(n5))
 	as.String("1000000000000000000000000000000000000000005", n6.Add(n2))
 }
 
@@ -215,7 +215,7 @@ func TestSubtraction(t *testing.T) {
 	as.Number(15.0, n2.Sub(n3))
 	as.Number(2.25, n5.Sub(n6))
 	as.Number(15, n1.Sub(n3))
-	as.String("2", n7.Sub(n4))
+	as.String("2.0", n7.Sub(n4))
 	as.String("34/5", n7.Sub(n9))
 	as.String("999999999999999999999999999999999999999980", n8.Sub(n1))
 }
@@ -268,7 +268,7 @@ func TestStringifyNumbers(t *testing.T) {
 
 	as.String("12.8", n1)
 	as.String("12.9", n2)
-	as.String("20", n3)
+	as.String("20.0", n3)
 }
 
 func TestPurify(t *testing.T) {
@@ -280,7 +280,7 @@ func TestPurify(t *testing.T) {
 	n4 := data.MustParseRatio("1/2")
 
 	as.String("1.5", n1.Add(n3))
-	as.String("1", n1.Add(n4))
+	as.String("1.0", n1.Add(n4))
 	as.String("1e+41", n1.Add(n2))
 	as.String("1e+41", n2.Add(n1))
 	as.String("100000000000000000000000000000000000000000", n2.Add(n3))
@@ -288,7 +288,7 @@ func TestPurify(t *testing.T) {
 	as.String("1.5", n3.Add(n1))
 	as.String("100000000000000000000000000000000000000000", n3.Add(n2))
 	as.String("3/2", n3.Add(n4))
-	as.String("1", n4.Add(n1))
+	as.String("1.0", n4.Add(n1))
 	as.String("199999999999999999999999999999999999999999/2", n4.Add(n2))
 	as.String("3/2", n4.Add(n3))
 }

@@ -17,6 +17,6 @@ func TestComplexWrapper(t *testing.T) {
 	c1 := C(F(9), F(15))
 	c2 := C(F(32), F(2))
 	r := f.Call(c1, c2).(data.Vector).Values()
-	as.String("(18 . 30)", r[0])
-	as.String("(96 . 6)", r[1])
+	as.String("(18.0 . 30.0)", r[0])
+	as.String("(96.0 . 6.0)", r[1])
 }

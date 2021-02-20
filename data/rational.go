@@ -136,6 +136,10 @@ func (l Float) Equal(r Value) bool {
 
 // String converts this Float to a string
 func (l Float) String() string {
+	i := int64(l)
+	if Float(i) == l {
+		return fmt.Sprintf("%d.0", i)
+	}
 	return fmt.Sprintf("%g", l)
 }
 
