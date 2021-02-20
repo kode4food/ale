@@ -55,7 +55,7 @@ func Wrap(i interface{}) (data.Value, error) {
 	if err != nil {
 		return data.Nil, err
 	}
-	return w.Wrap(&Context{}, v)
+	return w.Wrap(new(Context), v)
 }
 
 func wrapType(t reflect.Type) (Wrapper, error) {

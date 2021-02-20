@@ -41,8 +41,9 @@ const (
 
 // EmptyObject represents an empty Object
 var (
-	EmptyObject     *emptyObject
-	emptyObjectHash = rand.Uint64()
+	EmptyObject *emptyObject
+
+	objectHash = rand.Uint64()
 )
 
 // NewObject instantiates a new Object instance. Based on Phil Bagwell's
@@ -172,9 +173,11 @@ func (o *object) Split() (Value, Sequence, bool) {
 }
 
 func (o *object) Count() int {
-	res := 0
-	for _, r, ok := o.Split(); ok; _, r, ok = r.Split() {
-		res++
+	res := 1
+	for _, c := range o.children {
+		if c != nil {
+			res += c.Count()
+		}
 	}
 	return res
 }
@@ -197,8 +200,8 @@ func (o *object) CheckArity(argCount int) error {
 
 func (o *object) Equal(v Value) bool {
 	if v, ok := v.(*object); ok {
-		lp := sortedPairs(o.pairs())
-		rp := sortedPairs(v.pairs())
+		lp := sortedPairs(o.Pairs())
+		rp := sortedPairs(v.Pairs())
 		if len(lp) != len(rp) {
 			return false
 		}
@@ -213,26 +216,37 @@ func (o *object) Equal(v Value) bool {
 }
 
 func (o *object) HashCode() uint64 {
-	var h uint64
-	for f, r, ok := o.Split(); ok; f, r, ok = r.Split() {
-		p := f.(Pair)
-		h *= HashCode(p.Car()) * HashCode(p.Cdr())
+	return o.hashCode(objectHash)
+}
+
+func (o *object) hashCode(acc uint64) uint64 {
+	h := acc * HashCode(o.pair.Car()) * HashCode(o.pair.Cdr())
+	for _, c := range o.children {
+		if c != nil {
+			h = c.hashCode(h)
+		}
 	}
 	return h
 }
 
-func (o *object) pairs() Pairs {
-	res := Pairs{}
-	for f, r, ok := o.Split(); ok; f, r, ok = r.Split() {
-		res = append(res, f.(Pair))
+func (o *object) Pairs() Pairs {
+	return o.pairs(Pairs{})
+}
+
+func (o *object) pairs(p Pairs) Pairs {
+	p = append(p, o.pair)
+	for _, c := range o.children {
+		if c != nil {
+			p = c.pairs(p)
+		}
 	}
-	return res
+	return p
 }
 
 func (o *object) String() string {
 	var buf bytes.Buffer
 	buf.WriteString("{")
-	for i, p := range sortedPairs(o.pairs()) {
+	for i, p := range sortedPairs(o.Pairs()) {
 		if i > 0 {
 			buf.WriteString(" ")
 		}
@@ -313,5 +327,5 @@ func (*emptyObject) String() string {
 }
 
 func (*emptyObject) HashCode() uint64 {
-	return emptyObjectHash
+	return objectHash
 }

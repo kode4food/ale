@@ -138,7 +138,7 @@ func (w *methodWrapper) wrapValueMethod(v reflect.Value) data.Function {
 	fn := v.MethodByName(w.name)
 
 	return data.Applicative(func(in ...data.Value) data.Value {
-		c := &Context{}
+		c := new(Context)
 		wIn := make([]reflect.Value, inLen)
 		for i := 0; i < inLen; i++ {
 			arg, err := w.in[i].Unwrap(in[i])
@@ -162,7 +162,7 @@ func (w *methodWrapper) wrapVectorMethod(v reflect.Value) data.Function {
 	fn := v.MethodByName(w.name)
 
 	return data.Applicative(func(in ...data.Value) data.Value {
-		c := &Context{}
+		c := new(Context)
 		wIn := make([]reflect.Value, inLen)
 		for i := 0; i < inLen; i++ {
 			arg, err := w.in[i].Unwrap(in[i])

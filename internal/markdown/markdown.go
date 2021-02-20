@@ -1,4 +1,4 @@
-package docstring
+package markdown
 
 import (
 	"regexp"
@@ -10,12 +10,20 @@ import (
 
 var keyValue = regexp.MustCompile(`^([^:]+):\s*(.*)$`)
 
-// ParseMarkdown parses the kind of markdown document that might be processed
-// by a static site generator. It will parse any prologue parameters into the
+// Parse parses the kind of markdown document that might be processed by a
+// static site generator. It will parse any prologue parameters into the
 // resulting object and return the remaining content as individual lines
-func ParseMarkdown(doc string) (data.Object, []string) {
+func Parse(doc string) (data.Object, []string) {
 	obj, rest := parseKeyValues(doc)
 	return obj, skipEmptyLines(rest)
+}
+
+// ParseHeader parses the header of a markdown document that might be
+// processed by a static site generator, returning the prologue parameters as
+// a data.Object
+func ParseHeader(doc string) data.Object {
+	res, _ := parseKeyValues(doc)
+	return res
 }
 
 func skipEmptyLines(lines []string) []string {

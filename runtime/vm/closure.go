@@ -130,7 +130,7 @@ opSwitch:
 		goto nextPC
 
 	case isa.NewRef:
-		stack[SP] = &Ref{}
+		stack[SP] = new(Ref)
 		SP--
 		goto nextPC
 

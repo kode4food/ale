@@ -8,7 +8,7 @@ import (
 type returnSplitter struct{}
 
 func splitReturns(root visitor.Node) visitor.Node {
-	r := &returnSplitter{}
+	r := new(returnSplitter)
 	visitor.DepthFirst(root, r)
 	return root
 }

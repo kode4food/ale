@@ -1,7 +1,11 @@
 package data
 
+import "math/rand"
+
 // Keyword is a Value that represents a Name that resolves to itself
 type Keyword Name
+
+var keywordHash = rand.Uint64()
 
 // Name returns the name of the Keyword
 func (k Keyword) Name() Name {
@@ -43,5 +47,5 @@ func (k Keyword) String() string {
 
 // HashCode returns the hash code for this Keyword
 func (k Keyword) HashCode() uint64 {
-	return HashString(string(k))
+	return keywordHash * HashString(string(k))
 }

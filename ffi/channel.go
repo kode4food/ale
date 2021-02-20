@@ -65,7 +65,7 @@ func (w *channelWrapper) makeSequence(v reflect.Value) data.Sequence {
 		if !ok {
 			return data.Nil, data.EmptyObject, false
 		}
-		c := &Context{}
+		c := new(Context)
 		f, err := w.elem.Wrap(c, in)
 		if err != nil {
 			panic(err)

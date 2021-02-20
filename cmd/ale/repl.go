@@ -15,11 +15,12 @@ import (
 
 	"github.com/chzyer/readline"
 	"github.com/kode4food/ale"
-	"github.com/kode4food/ale/cmd/ale/docstring"
 	"github.com/kode4food/ale/core/bootstrap"
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/env"
 	"github.com/kode4food/ale/eval"
+	"github.com/kode4food/ale/internal/console"
+	"github.com/kode4food/ale/internal/markdown"
 	"github.com/kode4food/ale/read"
 )
 
@@ -46,33 +47,30 @@ const (
 	// UserDomain is the name of the namespace that the REPL starts in
 	UserDomain = data.Name("user")
 
-	domain = cyan + "%s" + reset + " "
-	prompt = domain + "[%d]> " + code
-	cont   = domain + "[%d]" + dgray + nlMarker + "   " + code
+	domain = console.Domain + "%s" + console.Reset + " "
+	prompt = domain + "[%d]> " + console.Code
+	cont   = domain + "[%d]" + console.NewLine + "   " + console.Code
 
-	output = bold + "%s" + reset
-	good   = domain + result + "[%d]= " + output
-	bad    = domain + red + "[%d]! " + output
+	output = console.Bold + "%s" + console.Reset
+	good   = domain + console.Result + "[%d]= " + output
+	bad    = domain + console.Error + "[%d]! " + output
 )
 
 var (
 	anyChar   = regexp.MustCompile(".")
 	notPaired = fmt.Sprintf(read.ErrPrefixedNotPaired, "")
-	nothing   = &sentinel{}
-
-	openers = map[rune]rune{')': '(', ']': '[', '}': '{'}
-	closers = map[rune]rune{'(': ')', '[': ']', '{': '}'}
+	nothing   = new(sentinel)
 
 	ns = bootstrap.TopLevelEnvironment().GetQualified(UserDomain)
 )
 
 // NewREPL instantiates a new REPL instance
 func NewREPL() *REPL {
-	repl := &REPL{}
+	repl := new(REPL)
 
 	rl, err := readline.NewEx(&readline.Config{
 		HistoryFile: getHistoryFile(),
-		Painter:     repl,
+		Painter:     console.Painter(),
 	})
 
 	if err != nil {
@@ -96,7 +94,7 @@ func (r *REPL) Run() {
 	for {
 		line, err := r.rl.Readline()
 		r.buf.WriteString(line + "\n")
-		fmt.Print(reset)
+		fmt.Print(console.Reset)
 
 		if err != nil {
 			emptyBuffer := isEmptyString(r.buf.String())
@@ -246,12 +244,12 @@ func debugInfo(_ ...data.Value) data.Value {
 }
 
 func cls(_ ...data.Value) data.Value {
-	fmt.Println(clear)
+	fmt.Println(console.Clear)
 	return nothing
 }
 
 func formatForREPL(s string) string {
-	md := FormatMarkdown(s)
+	md := markdown.FormatMarkdown(s)
 	lines := strings.Split(md, "\n")
 	var out []string
 	out = append(out, "")
@@ -267,7 +265,7 @@ func formatForREPL(s string) string {
 }
 
 func help(_ ...data.Value) data.Value {
-	md, err := docstring.Get("help")
+	md, err := GetDocString("help")
 	if err != nil {
 		// Programmer error, help is missing
 		panic(err)
@@ -279,7 +277,7 @@ func help(_ ...data.Value) data.Value {
 func doc(args ...data.Value) data.Value {
 	sym := args[0].(data.LocalSymbol)
 	name := string(sym.Name())
-	if docStr, err := docstring.Get(name); err == nil {
+	if docStr, err := GetDocString(name); err == nil {
 		f := formatForREPL(docStr)
 		fmt.Println(f)
 		return nothing
@@ -308,10 +306,6 @@ func registerREPLBuiltIns() {
 	registerBuiltIn("help", data.Applicative(help, 0))
 	registerBuiltIn("use", data.Normal(use, 1))
 	registerBuiltIn("doc", data.Normal(doc, 1))
-}
-
-func getScreenWidth() int {
-	return readline.GetScreenWidth()
 }
 
 func getHistoryFile() string {

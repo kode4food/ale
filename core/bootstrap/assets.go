@@ -3,14 +3,11 @@ package bootstrap
 import (
 	"fmt"
 	"os"
-	"strings"
 
-	"github.com/kode4food/ale/core/assets"
+	"github.com/kode4food/ale/core"
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/eval"
 )
-
-const prefix = "core/"
 
 func (b *bootstrap) assets() {
 	var filename string
@@ -29,11 +26,8 @@ func (b *bootstrap) assets() {
 	}()
 
 	ns := b.environment.GetRoot()
-	for _, filename = range assets.AssetNames() {
-		if !strings.HasPrefix(filename, prefix) {
-			continue
-		}
-		src := data.String(assets.MustGet(filename))
-		eval.String(ns, src)
+	for _, filename = range core.Names() {
+		src, _ := core.Get(filename)
+		eval.String(ns, data.String(src))
 	}
 }

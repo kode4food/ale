@@ -1,4 +1,4 @@
-package main
+package markdown
 
 import (
 	"bytes"
@@ -6,8 +6,8 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/kode4food/ale/cmd/ale/docstring"
 	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/internal/console"
 )
 
 // This is *not* a full-featured markdown formatter, or even a compliant
@@ -48,17 +48,17 @@ var (
 	}
 
 	docFormatters = []*patternFormatter{
-		{ticks, trimmedFormatter("`", code)},
-		{double, trimmedFormatter("**", bold)},
-		{stars, trimmedFormatter("*", italic)},
-		{unders, trimmedFormatter("_", result)},
+		{ticks, trimmedFormatter("`", console.Code)},
+		{double, trimmedFormatter("**", console.Bold)},
+		{stars, trimmedFormatter("*", console.Italic)},
+		{unders, trimmedFormatter("_", console.Result)},
 	}
 )
 
-// FormatMarkdown forms a markdown asset for REPL display
+// FormatMarkdown formats a markdown asset for REPL display
 func FormatMarkdown(s string) string {
 	doc := strings.TrimSpace(s)
-	meta, lines := docstring.ParseMarkdown(doc)
+	meta, lines := Parse(doc)
 
 	var pre []string
 	if desc, ok := meta.Get(descName); ok {
@@ -149,7 +149,7 @@ func firstFormatterMatch(src string) (formatter, []int, bool) {
 }
 
 func getFormatWidth() int {
-	if res := getScreenWidth(); res != -1 {
+	if res := console.GetScreenWidth(); res != -1 {
 		return res - 4
 	}
 	return 76
@@ -187,6 +187,10 @@ func wrapLine(s string, w int) []string {
 	return append(r, b.String())
 }
 
+func isEmptyString(s string) bool {
+	return len(strings.TrimSpace(s)) == 0
+}
+
 func lineIndent(s string) (string, string) {
 	l := indent.FindString(s)
 	return l, s[len(l):]
@@ -212,11 +216,15 @@ func trimmer(size int) formatter {
 }
 
 func formatHeader1(s string) string {
-	return h1 + stripHashes(s) + reset
+	return console.Header1 + stripHashes(s) + console.Reset
 }
 
 func formatHeader2(s string) string {
-	return h2 + stripHashes(s) + reset
+	return console.Header2 + stripHashes(s) + console.Reset
+}
+
+func formatIndent(s string) string {
+	return console.Code + s + console.Reset
 }
 
 func stripHashes(s string) string {
@@ -226,10 +234,6 @@ func stripHashes(s string) string {
 	return s
 }
 
-func formatIndent(s string) string {
-	return code + s + reset
-}
-
 func trimmedFormatter(delim, prefix string) formatter {
 	trim := trimmer(len(delim))
 	return func(s string) string {
@@ -237,6 +241,6 @@ func trimmedFormatter(delim, prefix string) formatter {
 		if t == delim {
 			return t
 		}
-		return prefix + t + reset
+		return prefix + t + console.Reset
 	}
 }

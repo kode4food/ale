@@ -25,7 +25,7 @@ type (
 var (
 	EmptyVector = vector{}
 
-	emptyVectorHash = rand.Uint64()
+	vectorHash = rand.Uint64()
 )
 
 // NewVector creates a new Vector instance
@@ -149,7 +149,7 @@ func (v vector) String() string {
 }
 
 func (v vector) HashCode() uint64 {
-	h := emptyVectorHash
+	h := vectorHash
 	for _, e := range v {
 		h *= HashCode(e)
 	}

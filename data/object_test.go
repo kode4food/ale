@@ -159,3 +159,29 @@ func TestObjectEquality(t *testing.T) {
 	as.False(o1.Equal(o5))
 	as.False(o1.Equal(I(32)))
 }
+
+func TestObjectHash(t *testing.T) {
+	as := assert.New(t)
+	o1 := data.NewObject(
+		C(K("z"), I(1024)),
+		C(K("x"), I(5)),
+		C(K("y"), I(99)),
+	)
+	o2 := data.NewObject(
+		C(K("y"), I(99)),
+		C(K("x"), I(5)),
+		C(K("z"), I(1024)),
+	)
+	o3 := data.NewObject(
+		C(K("y"), I(99)),
+		C(K("z"), I(1024)),
+	)
+	o4 := data.NewObject(
+		C(K("y"), I(99)),
+	)
+	o5 := data.NewObject()
+	as.Equal(o1.(data.Hasher).HashCode(), o2.(data.Hasher).HashCode())
+	as.NotEqual(o1.(data.Hasher).HashCode(), o3.(data.Hasher).HashCode())
+	as.NotEqual(uint64(0), o4.(data.Hasher).HashCode())
+	as.NotEqual(uint64(0), o5.(data.Hasher).HashCode())
+}

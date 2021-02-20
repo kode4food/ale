@@ -62,7 +62,7 @@ func (f *flattener) getLabel(idx Index) *label {
 	if l, ok := f.labels[idx]; ok {
 		return l
 	}
-	l := &label{}
+	l := new(label)
 	f.labels[idx] = l
 	return l
 }

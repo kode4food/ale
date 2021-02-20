@@ -20,7 +20,7 @@ const (
 )
 
 func verifyStackSize(code isa.Instructions) {
-	s := &stackSizes{}
+	s := new(stackSizes)
 	s.calculateNode(visitor.Branch(code))
 	if s.endSize != 0 {
 		// Programmer error
@@ -32,7 +32,7 @@ func verifyStackSize(code isa.Instructions) {
 // based on the instructions provided. If the final depth is non-zero,
 // this is usually an indication that bad instructions were encoded
 func CalculateStackSize(code isa.Instructions) (int, int) {
-	s := &stackSizes{}
+	s := new(stackSizes)
 	s.calculateNode(visitor.Branch(code))
 	return s.maxSize, s.endSize
 }

@@ -101,6 +101,7 @@ const (
 var (
 	seed = maphash.MakeSeed()
 
+	nameHash  = rand.Uint64()
 	trueHash  = rand.Uint64()
 	falseHash = rand.Uint64()
 )
@@ -125,7 +126,7 @@ func (n Name) String() string {
 
 // HashCode returns the hash code for this Name
 func (n Name) HashCode() uint64 {
-	return HashString(string(n))
+	return nameHash * HashString(string(n))
 }
 
 // Equal compares this Bool to another for equality
