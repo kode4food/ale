@@ -42,7 +42,7 @@ func (float32Wrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
 }
 
 func (float32Wrapper) Unwrap(v data.Value) (reflect.Value, error) {
-	if f, ok := v.(data.Float); ok {
+	if f, ok := makeFloat64(v); ok {
 		return reflect.ValueOf(float32(f)), nil
 	}
 	return float32zero, errors.New(ErrValueMustBeFloat)
@@ -53,8 +53,19 @@ func (float64Wrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
 }
 
 func (float64Wrapper) Unwrap(v data.Value) (reflect.Value, error) {
-	if f, ok := v.(data.Float); ok {
-		return reflect.ValueOf(float64(f)), nil
+	if f, ok := makeFloat64(v); ok {
+		return reflect.ValueOf(f), nil
 	}
 	return float64zero, errors.New(ErrValueMustBeFloat)
+}
+
+func makeFloat64(v data.Value) (float64, bool) {
+	switch v := v.(type) {
+	case data.Integer:
+		return float64(v), true
+	case data.Float:
+		return float64(v), true
+	default:
+		return 0, false
+	}
 }

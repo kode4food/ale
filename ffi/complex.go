@@ -47,10 +47,10 @@ func (complex128Wrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
 
 func (complex128Wrapper) Unwrap(v data.Value) (reflect.Value, error) {
 	if c, ok := v.(data.Cons); ok {
-		r, rok := c.Car().(data.Float)
-		i, iok := c.Cdr().(data.Float)
+		r, rok := makeFloat64(c.Car())
+		i, iok := makeFloat64(c.Cdr())
 		if rok && iok {
-			out := complex(float64(r), float64(i))
+			out := complex(r, i)
 			return reflect.ValueOf(out), nil
 		}
 		return complex128zero, errors.New(ErrConsMustContainFloat)
