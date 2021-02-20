@@ -26,8 +26,3 @@ func (e *encoder) ResolveScoped(n data.Name) (*ScopedCell, bool) {
 	}
 	return nil, false
 }
-
-func (e *encoder) InScope(n data.Name) bool {
-	_, ok := e.ResolveScoped(n)
-	return ok
-}

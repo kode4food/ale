@@ -39,7 +39,6 @@ type (
 		ResolveLocal(data.Name) (*IndexedCell, bool)
 
 		ResolveScoped(data.Name) (*ScopedCell, bool)
-		InScope(data.Name) bool
 	}
 
 	encoder struct {
