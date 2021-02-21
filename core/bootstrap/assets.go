@@ -7,6 +7,14 @@ import (
 	"github.com/kode4food/ale/core"
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/eval"
+	"github.com/kode4food/ale/internal/do"
+	"github.com/kode4food/ale/read"
+)
+
+var (
+	readAssetsOnce = do.Once()
+
+	assets []data.Sequence
 )
 
 func (b *bootstrap) assets() {
@@ -25,9 +33,17 @@ func (b *bootstrap) assets() {
 		}
 	}()
 
+	readAssetsOnce(func() {
+		names := core.Names()
+		assets = make([]data.Sequence, len(names))
+		for i, filename := range names {
+			src, _ := core.Get(filename)
+			assets[i] = read.FromString(data.String(src))
+		}
+	})
+
 	ns := b.environment.GetRoot()
-	for _, filename = range core.Names() {
-		src, _ := core.Get(filename)
-		eval.String(ns, data.String(src))
+	for _, s := range assets {
+		eval.Block(ns, s)
 	}
 }
