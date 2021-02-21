@@ -11,10 +11,15 @@ import (
 	"github.com/kode4food/ale/read"
 )
 
+type asset struct {
+	name  string
+	block data.Sequence
+}
+
 var (
 	readAssetsOnce = do.Once()
 
-	assets []data.Sequence
+	assets []asset
 )
 
 func (b *bootstrap) assets() {
@@ -34,16 +39,18 @@ func (b *bootstrap) assets() {
 	}()
 
 	readAssetsOnce(func() {
-		names := core.Names()
-		assets = make([]data.Sequence, len(names))
-		for i, filename := range names {
+		for _, filename = range core.Names() {
 			src, _ := core.Get(filename)
-			assets[i] = read.FromString(data.String(src))
+			assets = append(assets, asset{
+				name:  filename,
+				block: read.FromString(data.String(src)),
+			})
 		}
 	})
 
 	ns := b.environment.GetRoot()
-	for _, s := range assets {
-		eval.Block(ns, s)
+	for _, a := range assets {
+		filename = a.name
+		eval.Block(ns, a.block)
 	}
 }
