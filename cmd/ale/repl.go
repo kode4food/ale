@@ -208,6 +208,9 @@ func toError(i interface{}) error {
 }
 
 func isRecoverable(err error) bool {
+	for e := errors.Unwrap(err); e != nil; e = errors.Unwrap(e) {
+		err = e
+	}
 	msg := err.Error()
 	return msg == read.ErrListNotClosed ||
 		msg == read.ErrVectorNotClosed ||

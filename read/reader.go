@@ -9,9 +9,11 @@ import (
 	"github.com/kode4food/ale/env"
 )
 
-// reader is a stateful iteration interface for a token stream
+// reader is a stateful iteration interface for a Token stream that
+// is piloted by the FromScanner function and exposed as a LazySequence
 type reader struct {
-	seq data.Sequence
+	seq   data.Sequence
+	token *Token
 }
 
 // Error messages
@@ -43,7 +45,7 @@ var (
 
 	collectionErrors = map[TokenType]string{
 		VectorEnd: ErrVectorNotClosed,
-		MapEnd:    ErrMapNotClosed,
+		ObjectEnd: ErrMapNotClosed,
 	}
 )
 
@@ -54,16 +56,15 @@ func newReader(lexer data.Sequence) *reader {
 }
 
 func (r *reader) nextToken() *Token {
-	s := r.seq
-	if s.IsEmpty() {
-		return nil
+	if token, seq, ok := r.seq.Split(); ok {
+		r.token = token.(*Token)
+		r.seq = seq
+		if r.token.Type == Error {
+			panic(r.error(r.token.Value.String()))
+		}
+		return r.token
 	}
-	if f := s.First().(*Token); f.Type == Error {
-		panic(errors.New(f.Value.String()))
-	} else {
-		r.seq = s.Rest()
-		return f
-	}
+	return nil
 }
 
 func (r *reader) nextValue() (data.Value, bool) {
@@ -89,18 +90,18 @@ func (r *reader) value(t *Token) data.Value {
 		return r.list()
 	case VectorStart:
 		return r.vector()
-	case MapStart:
+	case ObjectStart:
 		return r.object()
 	case Identifier:
 		return readIdentifier(t)
 	case ListEnd:
-		panic(errors.New(ErrUnmatchedListEnd))
+		panic(r.error(ErrUnmatchedListEnd))
 	case VectorEnd:
-		panic(errors.New(ErrUnmatchedVectorEnd))
-	case MapEnd:
-		panic(errors.New(ErrUnmatchedMapEnd))
+		panic(r.error(ErrUnmatchedVectorEnd))
+	case ObjectEnd:
+		panic(r.error(ErrUnmatchedMapEnd))
 	case Dot:
-		panic(errors.New(ErrUnexpectedDot))
+		panic(r.error(ErrUnexpectedDot))
 	default:
 		return t.Value
 	}
@@ -110,7 +111,7 @@ func (r *reader) prefixed(s data.Symbol) data.Value {
 	if v, ok := r.nextValue(); ok {
 		return data.NewList(s, v)
 	}
-	panic(fmt.Errorf(ErrPrefixedNotPaired, s))
+	panic(r.errorf(ErrPrefixedNotPaired, s))
 }
 
 func (r *reader) list() data.Value {
@@ -121,21 +122,21 @@ func (r *reader) list() data.Value {
 			switch t.Type {
 			case Dot:
 				if i == 0 || sawDotAt != -1 {
-					panic(errors.New(ErrInvalidListSyntax))
+					panic(r.error(ErrInvalidListSyntax))
 				}
 				sawDotAt = i
 			case ListEnd:
 				if sawDotAt == -1 {
 					return data.NewList(res...)
 				} else if sawDotAt != len(res)-1 {
-					panic(errors.New(ErrInvalidListSyntax))
+					panic(r.error(ErrInvalidListSyntax))
 				}
 				return makeDottedList(res...)
 			default:
 				res = append(res, r.value(t))
 			}
 		} else {
-			panic(errors.New(ErrListNotClosed))
+			panic(r.error(ErrListNotClosed))
 		}
 	}
 }
@@ -155,10 +156,10 @@ func (r *reader) vector() data.Value {
 }
 
 func (r *reader) object() data.Value {
-	v := r.readNonDotted(MapEnd)
+	v := r.readNonDotted(ObjectEnd)
 	res, err := data.ValuesToObject(v...)
 	if err != nil {
-		panic(err)
+		panic(r.maybeWrap(err))
 	}
 	return res
 }
@@ -174,10 +175,24 @@ func (r *reader) readNonDotted(endToken TokenType) data.Values {
 				res = append(res, r.value(t))
 			}
 		} else {
-			err := collectionErrors[endToken]
-			panic(errors.New(err))
+			panic(r.error(collectionErrors[endToken]))
 		}
 	}
+}
+
+func (r *reader) maybeWrap(err error) error {
+	if t := r.token; t != nil {
+		return t.wrapError(err)
+	}
+	return err
+}
+
+func (r *reader) error(text string) error {
+	return r.maybeWrap(errors.New(text))
+}
+
+func (r *reader) errorf(text string, a ...interface{}) error {
+	return r.maybeWrap(fmt.Errorf(text, a...))
 }
 
 func readIdentifier(t *Token) data.Value {

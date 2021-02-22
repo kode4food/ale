@@ -42,14 +42,15 @@ const (
 	ListEnd
 	VectorStart
 	VectorEnd
-	MapStart
-	MapEnd
+	ObjectStart
+	ObjectEnd
 	QuoteMarker
 	SyntaxMarker
 	UnquoteMarker
 	SpliceMarker
 	PatternMarker
 	Whitespace
+	NewLine
 	Comment
 	endOfFile
 )
@@ -59,6 +60,7 @@ const (
 	ErrStringNotTerminated = "string has no closing quote"
 	ErrUnexpectedCharacter = "unexpected character: %s"
 
+	errTokenWrapped   = "%w (line %d, column %d)"
 	errUnmatchedState = "unmatched lexing state"
 )
 
@@ -85,13 +87,14 @@ var (
 	matchers = matchEntries{
 		pattern(`$`, endState(endOfFile)),
 		pattern(`;[^\n]*([\n]|$)`, tokenState(Comment)),
-		pattern(`\s+`, tokenState(Whitespace)),
+		pattern(`(\r\n|[\n\r])`, tokenState(NewLine)),
+		pattern(`[\t\f ]+`, tokenState(Whitespace)),
 		pattern(`\(`, tokenState(ListStart)),
 		pattern(`\[`, tokenState(VectorStart)),
-		pattern(`{`, tokenState(MapStart)),
+		pattern(`{`, tokenState(ObjectStart)),
 		pattern(`\)`, tokenState(ListEnd)),
 		pattern(`]`, tokenState(VectorEnd)),
-		pattern(`}`, tokenState(MapEnd)),
+		pattern(`}`, tokenState(ObjectEnd)),
 		pattern(`'`, tokenState(QuoteMarker)),
 		pattern("`", tokenState(SyntaxMarker)),
 		pattern(`,@`, tokenState(SpliceMarker)),
@@ -124,23 +127,34 @@ func pattern(p string, s tokenizer) matchEntry {
 // Scan creates a new lexer Sequence
 func Scan(src data.String) data.Sequence {
 	var resolver sequence.LazyResolver
-	s := string(src)
+	var line, column int
+	input := string(src)
 
 	resolver = func() (data.Value, data.Sequence, bool) {
-		if t, rs := matchToken(s); t.Type != endOfFile {
-			s = rs
+		if t, rest := matchToken(input); t.Type != endOfFile {
+			t.Line = line
+			t.Column = column
+
+			if t.isNewLine() {
+				line++
+				column = 0
+			} else {
+				column += len(input) - len(rest)
+			}
+
+			input = rest
 			return t, sequence.NewLazy(resolver), true
 		}
 		return data.Nil, data.EmptyList, false
 	}
 
-	l := sequence.NewLazy(resolver)
-	return sequence.Filter(l, notWhitespace)
+	res := sequence.NewLazy(resolver)
+	return sequence.Filter(res, notWhitespace)
 }
 
 var notWhitespace = data.Applicative(func(args ...data.Value) data.Value {
 	t := args[0].(*Token)
-	return data.Bool(t.Type != Whitespace && t.Type != Comment)
+	return data.Bool(!t.isWhitespace())
 }, 1)
 
 func matchToken(src string) (*Token, string) {
@@ -164,6 +178,18 @@ func (t *Token) Equal(v data.Value) bool {
 // String converts this Value into a string
 func (t *Token) String() string {
 	return data.NewVector(data.Integer(t.Type), t.Value).String()
+}
+
+func (t *Token) isNewLine() bool {
+	return t.Type == Comment || t.Type == NewLine
+}
+
+func (t *Token) isWhitespace() bool {
+	return t.Type == Comment || t.Type == NewLine || t.Type == Whitespace
+}
+
+func (t *Token) wrapError(e error) error {
+	return fmt.Errorf(errTokenWrapped, e, t.Line+1, t.Column+1)
 }
 
 func makeToken(t TokenType, v data.Value) *Token {
