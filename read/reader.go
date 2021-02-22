@@ -55,18 +55,6 @@ func newReader(lexer data.Sequence) *reader {
 	}
 }
 
-func (r *reader) nextToken() *Token {
-	if token, seq, ok := r.seq.Split(); ok {
-		r.token = token.(*Token)
-		r.seq = seq
-		if r.token.Type == Error {
-			panic(r.error(r.token.Value.String()))
-		}
-		return r.token
-	}
-	return nil
-}
-
 func (r *reader) nextValue() (data.Value, bool) {
 	if t := r.nextToken(); t != nil {
 		return r.value(t), true
@@ -74,8 +62,20 @@ func (r *reader) nextValue() (data.Value, bool) {
 	return nil, false
 }
 
+func (r *reader) nextToken() *Token {
+	if token, seq, ok := r.seq.Split(); ok {
+		r.token = token.(*Token)
+		r.seq = seq
+		if r.token.Type() == Error {
+			panic(r.error(r.token.Value().String()))
+		}
+		return r.token
+	}
+	return nil
+}
+
 func (r *reader) value(t *Token) data.Value {
-	switch t.Type {
+	switch t.Type() {
 	case QuoteMarker:
 		return r.prefixed(quoteSym)
 	case SyntaxMarker:
@@ -103,7 +103,7 @@ func (r *reader) value(t *Token) data.Value {
 	case Dot:
 		panic(r.error(ErrUnexpectedDot))
 	default:
-		return t.Value
+		return t.Value()
 	}
 }
 
@@ -119,7 +119,7 @@ func (r *reader) list() data.Value {
 	var sawDotAt = -1
 	for i := 0; ; i++ {
 		if t := r.nextToken(); t != nil {
-			switch t.Type {
+			switch t.Type() {
 			case Dot:
 				if i == 0 || sawDotAt != -1 {
 					panic(r.error(ErrInvalidListSyntax))
@@ -168,7 +168,7 @@ func (r *reader) readNonDotted(endToken TokenType) data.Values {
 	res := data.Values{}
 	for {
 		if t := r.nextToken(); t != nil {
-			switch t.Type {
+			switch t.Type() {
 			case endToken:
 				return res
 			default:
@@ -196,7 +196,7 @@ func (r *reader) errorf(text string, a ...interface{}) error {
 }
 
 func readIdentifier(t *Token) data.Value {
-	n := t.Value.(data.String)
+	n := t.Value().(data.String)
 	if v, ok := specialNames[n]; ok {
 		return v
 	}

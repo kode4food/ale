@@ -11,16 +11,13 @@ import (
 )
 
 func T(t read.TokenType, v data.Value) *read.Token {
-	return &read.Token{
-		Type:  t,
-		Value: v,
-	}
+	return read.MakeToken(t, v)
 }
 
 func assertToken(t *testing.T, like *read.Token, value *read.Token) {
 	t.Helper()
 	as := assert.New(t)
-	as.Equal(like.Type, value.Type)
+	as.Equal(like.Type(), value.Type())
 }
 
 func assertTokenSequence(t *testing.T, s data.Sequence, tokens []*read.Token) {
@@ -44,7 +41,7 @@ func TestCreateLexer(t *testing.T) {
 	as := assert.New(t)
 	l := read.Scan("hello")
 	as.NotNil(l)
-	as.String(`([1 "hello"])`, data.MakeSequenceStr(l))
+	as.String(`([Identifier "hello"])`, data.MakeSequenceStr(l))
 }
 
 func TestWhitespace(t *testing.T) {
