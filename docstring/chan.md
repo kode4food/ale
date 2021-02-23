@@ -26,5 +26,5 @@ A channel is a data structure that is used to generate a lazy sequence of values
       (: ch :emit "bar")
       (: ch :close))
 
-  (seq->vector (:seq ch)))
+  (seq->vector (ch :seq)))
 ```

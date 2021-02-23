@@ -12,7 +12,8 @@ The provided forms will be evaluated in a separate thread of execution. Any resu
 #### An Example
 
 ```scheme
-(define x (promise))
-(go (x "hello"))
-(str (x) " you!")
+(define ch (chan))
+(go (: ch :emit "hello")
+    (: ch :close))
+(str (first (ch :seq)) " world!")
 ```
