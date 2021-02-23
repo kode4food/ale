@@ -35,6 +35,10 @@
          result#))
      (:seq chan#)))
 
+;; spawn an actor. The provided func accepts a single mailbox argument
+;; that is a channel sequence. Returns a sender function that can send
+;; messages to the mailbox. Default mailbox size before send operations
+;; begin to block is 16 messages
 (define-lambda spawn
   [(func)
      (spawn func 16)]
@@ -44,7 +48,6 @@
      (let* ([channel (chan mbox-size)]
             [mailbox (:seq channel)  ]
             [sender  (:emit channel) ])
-       (go
-         (recover (lambda () (func mailbox))
-                   monitor))
-                   sender)])
+       (go (recover (lambda () (func mailbox))
+                    monitor))
+       sender)])
