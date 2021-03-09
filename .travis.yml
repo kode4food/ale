@@ -1,11 +1,17 @@
 language: go
 sudo: false
 
+env:
+  global:
+    - CC_TEST_REPORTER_ID=token
+
 go:
   - 1.16.x
 
-before_install:
-  - go get github.com/mattn/goveralls
+before_script:
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
+  - ./cc-test-reporter before-build
 
 install:
   - go get -u golang.org/x/tools/cmd/stringer
@@ -13,5 +19,7 @@ install:
 
 script:
   - make test
-  - go test -covermode=count -coverprofile=profile.cov ./...
-  - $GOPATH/bin/goveralls -coverprofile=profile.cov -ignore=runtime/isa/opcode_string.go,data/function_string.go,read/token_string.go
+  - go test -coverprofile c.out ./...
+
+after_script:
+  - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
