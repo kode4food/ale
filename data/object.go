@@ -20,10 +20,16 @@ type (
 
 	object struct {
 		pair     Pair
-		children [32]*object
+		children [bucketSize]*object
 	}
 
 	emptyObject struct{}
+)
+
+const (
+	bucketMask = 0x1f
+	bucketBits = 5
+	bucketSize = 32
 )
 
 // Standard Keys
@@ -47,8 +53,11 @@ var (
 )
 
 // NewObject instantiates a new Object instance. Based on Phil Bagwell's
-// Hashed Array Mapped Trie data structure. More information can be
-// found at http://lampwww.epfl.ch/papers/idealhashtrees.pdf
+// Hashed Array Mapped Trie data structure, though not as space efficient.
+// More information on HAMT's can be found at:
+//
+//    http://lampwww.epfl.ch/papers/idealhashtrees.pdf
+//
 func NewObject(pairs ...Pair) Object {
 	var res Object = EmptyObject
 	for _, p := range pairs {
@@ -80,9 +89,9 @@ func (o *object) get(k Value, hash uint64) (Value, bool) {
 	if o.pair.Car().Equal(k) {
 		return o.pair.Cdr(), true
 	}
-	bucket := o.children[hash&0x1f]
+	bucket := o.children[hash&bucketMask]
 	if bucket != nil {
-		return bucket.get(k, hash>>5)
+		return bucket.get(k, hash>>bucketBits)
 	}
 	return Nil, false
 }
@@ -100,12 +109,12 @@ func (o *object) put(p Pair, hash uint64) *object {
 		}
 	}
 
-	idx := hash & 0x1f
+	idx := hash & bucketMask
 	bucket := o.children[idx]
 	if bucket == nil {
 		bucket = &object{pair: p}
 	} else {
-		bucket = bucket.put(p, hash>>5)
+		bucket = bucket.put(p, hash>>bucketBits)
 	}
 
 	// return a copy with the new bucket
@@ -129,9 +138,9 @@ func (o *object) remove(k Value, hash uint64) (Value, *object, bool) {
 	if o.pair.Car().Equal(k) {
 		return o.pair.Cdr(), o.promote(), true
 	}
-	idx := hash & 0x1f
+	idx := hash & bucketMask
 	if bucket := o.children[idx]; bucket != nil {
-		if v, r, ok := bucket.remove(k, hash>>5); ok {
+		if v, r, ok := bucket.remove(k, hash>>bucketBits); ok {
 			res := *o
 			res.children[idx] = r
 			return v, &res, true
