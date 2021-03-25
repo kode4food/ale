@@ -1,6 +1,7 @@
 package main_test
 
 import (
+	"fmt"
 	"testing"
 
 	main "github.com/kode4food/ale/cmd/ale"
@@ -17,5 +18,5 @@ func TestDocString(t *testing.T) {
 
 	s, err := main.GetDocString("no-way-this-exists")
 	as.Empty(s)
-	as.Errorf(err, main.ErrDocNotFound, "no-way-this-exists")
+	as.EqualError(err, fmt.Sprintf(main.ErrDocNotFound, "no-way-this-exists"))
 }

@@ -35,15 +35,15 @@ func TestMakeChecker(t *testing.T) {
 
 	fn1 := data.MakeChecker(1)
 	as.Nil(fn1(1))
-	as.Errorf(fn1(2), data.ErrFixedArity, 1, 2)
+	as.EqualError(fn1(2), fmt.Sprintf(data.ErrFixedArity, 1, 2))
 
 	fn2 := data.MakeChecker(2, data.OrMore)
 	as.Nil(fn2(5))
-	as.Errorf(fn2(1), data.ErrMinimumArity, 2, 1)
+	as.EqualError(fn2(1), fmt.Sprintf(data.ErrMinimumArity, 2, 1))
 
 	fn3 := data.MakeChecker(2, 7)
 	as.Nil(fn3(4))
-	as.Errorf(fn3(8), data.ErrRangedArity, 2, 7, 8)
+	as.EqualError(fn3(8), fmt.Sprintf(data.ErrRangedArity, 2, 7, 8))
 
 	defer as.ExpectPanic("too many arity check arguments")
 	data.MakeChecker(1, 2, 3)

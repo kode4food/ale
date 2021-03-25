@@ -77,7 +77,7 @@ func TestMappedSequenceError(t *testing.T) {
 	v1 := V(K("boom"))
 	o, err := sequence.ToObject(v1)
 	as.Nil(o)
-	as.Error(err, data.ErrMapNotPaired)
+	as.EqualError(err, data.ErrMapNotPaired)
 }
 
 func TestUncountedMappedSequenceError(t *testing.T) {
@@ -86,5 +86,5 @@ func TestUncountedMappedSequenceError(t *testing.T) {
 	v1 := sequence.Filter(V(K("boom")), alwaysTrue)
 	o, err := sequence.ToObject(v1)
 	as.Nil(o)
-	as.Error(err, data.ErrMapNotPaired)
+	as.EqualError(err, data.ErrMapNotPaired)
 }
