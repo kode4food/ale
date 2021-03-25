@@ -1,7 +1,6 @@
 package encoder_test
 
 import (
-	"errors"
 	"testing"
 
 	"github.com/kode4food/ale/runtime/isa"
@@ -39,7 +38,7 @@ func TestLabelDoubleAnchor(t *testing.T) {
 
 	defer func() {
 		if rec := recover(); rec == nil {
-			as.Error(errors.New("error not raised on double anchoring"))
+			as.Fail("error not raised on double anchoring")
 		}
 	}()
 	l1.DropAnchor()
