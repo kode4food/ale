@@ -36,3 +36,5 @@ _testmain.go
 *.sublime-project
 
 .DS_Store
+
+.#*
