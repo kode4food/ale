@@ -3,7 +3,7 @@ package data
 import "bytes"
 
 type (
-	// Sequence interfaces expose a lazily resolved sequence of Vector
+	// Sequence interfaces expose a lazily resolved sequence
 	Sequence interface {
 		Value
 		First() Value

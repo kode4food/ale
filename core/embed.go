@@ -5,7 +5,7 @@ import (
 	"sort"
 )
 
-//go:embed *.scm
+//go:embed *.ale
 var assets embed.FS
 
 // Names returns the names of the embedded core scripts

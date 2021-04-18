@@ -17,11 +17,11 @@ go get github.com/kode4food/ale/cmd/ale
 Once you've installed the package, you can run it from `GOPATH/bin` like so:
 
 ```bash
-ale somefile.lisp
+ale somefile.ale
 
 # or
 
-cat somefile.lisp | ale
+cat somefile.ale | ale
 ```
 
 ## How To Start The REPL
