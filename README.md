@@ -1,6 +1,6 @@
 # Ale is a Lisp Environment
 
-[![Go Report Card](https://goreportcard.com/badge/github.com/kode4food/ale)](https://goreportcard.com/report/github.com/kode4food/ale) [![Build Status](https://travis-ci.org/kode4food/ale.svg?branch=master)](https://travis-ci.org/kode4food/ale) [![Test Coverage](https://api.codeclimate.com/v1/badges/f1eff5eeb0ae12973b4a/test_coverage)](https://codeclimate.com/github/kode4food/ale/test_coverage) [![Maintainability](https://api.codeclimate.com/v1/badges/f1eff5eeb0ae12973b4a/maintainability)](https://codeclimate.com/github/kode4food/ale/maintainability) [![GitHub](https://img.shields.io/github/license/kode4food/ale)](https://github.com/kode4food/ale/blob/master/LICENSE.md)
+[![Go Report Card](https://goreportcard.com/badge/github.com/kode4food/ale)](https://goreportcard.com/report/github.com/kode4food/ale) [![Build Status](https://travis-ci.org/kode4food/ale.svg?branch=master)](https://travis-ci.org/kode4food/ale) [![Test Coverage](https://api.codeclimate.com/v1/badges/bcf86d6aa52ebaaed63f/test_coverage)](https://codeclimate.com/github/kode4food/ale/test_coverage) [![Maintainability](https://api.codeclimate.com/v1/badges/bcf86d6aa52ebaaed63f/maintainability)](https://codeclimate.com/github/kode4food/ale/maintainability) [![GitHub](https://img.shields.io/github/license/kode4food/ale)](https://github.com/kode4food/ale/blob/master/LICENSE.md)
 
 Ale is a Lisp Environment for [Go](https://golang.org/) applications
 
