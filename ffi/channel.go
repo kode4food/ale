@@ -89,6 +89,6 @@ func (w *channelWrapper) makeEmitter(v reflect.Value) data.Function {
 	})
 }
 
-func (*channelWrapper) Unwrap(v data.Value) (reflect.Value, error) {
+func (*channelWrapper) Unwrap(_ data.Value) (reflect.Value, error) {
 	return _emptyValue, errors.New(ErrChannelCoercionNotSupported)
 }

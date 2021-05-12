@@ -19,11 +19,6 @@ func interfaceErr(concrete, expected string) error {
 	return fmt.Errorf(err, concrete, expected)
 }
 
-func typeErr(concrete, expected string) error {
-	err := "interface conversion: data.Value is %s, not %s"
-	return fmt.Errorf(err, concrete, expected)
-}
-
 func TestApply(t *testing.T) {
 	as := assert.New(t)
 

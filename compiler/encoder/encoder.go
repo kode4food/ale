@@ -91,7 +91,7 @@ func (e *encoder) Emit(oc isa.Opcode, args ...isa.Coder) {
 	e.code = append(e.code, isa.New(oc, words...))
 }
 
-// Word returns the encoder's resulting VM instructions
+// Code returns the encoder's resulting VM instructions
 func (e *encoder) Code() isa.Instructions {
 	code := e.code
 	analysis.Verify(code)
