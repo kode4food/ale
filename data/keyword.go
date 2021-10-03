@@ -1,6 +1,11 @@
 package data
 
-import "math/rand"
+import (
+	"math/rand"
+
+	"github.com/kode4food/ale/types"
+	"github.com/kode4food/ale/types/basic"
+)
 
 // Keyword is a Value that represents a Name that resolves to itself
 type Keyword Name
@@ -43,6 +48,11 @@ func (k Keyword) Equal(v Value) bool {
 // String converts Keyword into a string
 func (k Keyword) String() string {
 	return ":" + string(k)
+}
+
+// Type returns the Type for this Keyword Value
+func (Keyword) Type() types.Type {
+	return basic.Keyword
 }
 
 // HashCode returns the hash code for this Keyword

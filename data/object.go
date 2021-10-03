@@ -6,6 +6,9 @@ import (
 	"fmt"
 	"math/rand"
 	"sort"
+
+	"github.com/kode4food/ale/types"
+	"github.com/kode4food/ale/types/basic"
 )
 
 type (
@@ -222,6 +225,10 @@ func (o *object) Equal(v Value) bool {
 		return true
 	}
 	return false
+}
+
+func (*object) Type() types.Type {
+	return basic.Object
 }
 
 func (o *object) HashCode() uint64 {

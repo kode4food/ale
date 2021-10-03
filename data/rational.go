@@ -6,6 +6,9 @@ import (
 	"math/big"
 	"math/rand"
 	"strconv"
+
+	"github.com/kode4food/ale/types"
+	"github.com/kode4food/ale/types/basic"
 )
 
 type (
@@ -143,6 +146,11 @@ func (l Float) String() string {
 	return fmt.Sprintf("%g", l)
 }
 
+// Type returns the Type for this Float Value
+func (Float) Type() types.Type {
+	return basic.Number
+}
+
 // HashCode returns a hash code for this Float
 func (l Float) HashCode() uint64 {
 	return rationalHash * uint64(l)
@@ -268,6 +276,11 @@ func (l *Ratio) Equal(r Value) bool {
 // String converts this Ratio to a string
 func (l *Ratio) String() string {
 	return (*big.Rat)(l).String()
+}
+
+// Type returns the Type for this Ratio Value
+func (*Ratio) Type() types.Type {
+	return basic.Number
 }
 
 // HashCode returns a hash code for this Ratio

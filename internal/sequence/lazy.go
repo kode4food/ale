@@ -3,6 +3,7 @@ package sequence
 import (
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/do"
+	"github.com/kode4food/ale/types"
 )
 
 type (
@@ -18,6 +19,8 @@ type (
 		rest   data.Sequence
 	}
 )
+
+var lazySequenceType = types.Basic("lazy-sequence")
 
 // NewLazy creates a new lazy Sequence based on the provided resolver
 func NewLazy(r LazyResolver) data.Sequence {
@@ -71,8 +74,8 @@ func (l *lazySequence) Prepend(v data.Value) data.Sequence {
 	}
 }
 
-func (l *lazySequence) Type() data.Name {
-	return "lazy-sequence"
+func (l *lazySequence) Type() types.Type {
+	return lazySequenceType
 }
 
 func (l *lazySequence) Equal(v data.Value) bool {

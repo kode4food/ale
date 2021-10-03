@@ -5,6 +5,7 @@ import (
 	"io"
 
 	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/types"
 )
 
 type (
@@ -29,15 +30,14 @@ type (
 )
 
 const (
-	// WriterType is the type name for a writer
-	WriterType = data.String("writer")
-
 	// WriterKey is the key used to wrap a Writer
 	WriterKey = data.Keyword("writer")
 
 	// WriteKey is key used to write to a Writer
 	WriteKey = data.Keyword("write")
 )
+
+var writerType = types.Basic("writer")
 
 // NewWriter wraps a Go Writer, coupling it with an output function
 func NewWriter(w io.Writer, o OutputFunc) Writer {
@@ -75,8 +75,8 @@ func (w *wrappedWriter) String() string {
 	return data.DumpString(w)
 }
 
-func (w *wrappedWriter) Type() data.Name {
-	return "writer"
+func (w *wrappedWriter) Type() types.Type {
+	return writerType
 }
 
 func stringToBytes(s string) []byte {

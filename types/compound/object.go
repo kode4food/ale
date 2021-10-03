@@ -1,0 +1,62 @@
+package compound
+
+import (
+	"fmt"
+
+	"github.com/kode4food/ale/types"
+	"github.com/kode4food/ale/types/basic"
+)
+
+type (
+	// ObjectType describes a typed set of Key/Value Pairs
+	ObjectType interface {
+		types.Type
+		object() // marker
+		Key() types.Type
+		Value() types.Type
+	}
+
+	object struct {
+		types.Type
+		key   types.Type
+		value types.Type
+	}
+)
+
+// Object declares a new ObjectType that will only allow keys and values
+// of the provided types
+func Object(key types.Type, value types.Type) ObjectType {
+	return &object{
+		Type:  basic.Object,
+		key:   key,
+		value: value,
+	}
+}
+
+func (*object) object() {}
+
+func (o *object) Key() types.Type {
+	return o.key
+}
+
+func (o *object) Value() types.Type {
+	return o.value
+}
+
+func (o *object) Name() string {
+	return fmt.Sprintf("%s of %s to %s",
+		o.Type.Name(), o.key.Name(), o.value.Name(),
+	)
+}
+
+func (o *object) Accepts(other types.Type) bool {
+	if o == other {
+		return true
+	}
+	if other, ok := other.(ObjectType); ok {
+		return o.Type.Accepts(other) &&
+			o.key.Accepts(other.Key()) &&
+			o.value.Accepts(other.Value())
+	}
+	return false
+}

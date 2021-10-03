@@ -3,6 +3,9 @@ package data
 import (
 	"bytes"
 	"unicode/utf8"
+
+	"github.com/kode4food/ale/types"
+	"github.com/kode4food/ale/types/basic"
 )
 
 // String is the Sequence-compatible representation of string values
@@ -86,6 +89,11 @@ func (s String) Equal(v Value) bool {
 // String converts this Value into a string
 func (s String) String() string {
 	return string(s)
+}
+
+// Type returns the Type for this String Value
+func (String) Type() types.Type {
+	return basic.String
 }
 
 // HashCode returns a hash code for the String

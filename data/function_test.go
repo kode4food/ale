@@ -18,7 +18,7 @@ func TestApplicativeFunction(t *testing.T) {
 
 	as.True(data.IsApplicative(f1))
 	as.False(data.IsNormal(f1))
-	as.Contains(":type applicative", f1)
+	as.Contains(":type lambda", f1)
 
 	as.Nil(f1.CheckArity(99))
 }
@@ -32,7 +32,7 @@ func TestNormalFunction(t *testing.T) {
 
 	as.True(data.IsNormal(f1))
 	as.False(data.IsApplicative(f1))
-	as.Contains(":type normal", f1)
+	as.Contains(":type lambda", f1)
 
 	as.Nil(f1.CheckArity(0))
 	err := f1.CheckArity(2)

@@ -6,6 +6,9 @@ import (
 	"math"
 	"math/big"
 	"math/rand"
+
+	"github.com/kode4food/ale/types"
+	"github.com/kode4food/ale/types/basic"
 )
 
 type (
@@ -164,6 +167,11 @@ func (l Integer) String() string {
 	return fmt.Sprintf("%d", l)
 }
 
+// Type returns the Type for this Integer Value
+func (Integer) Type() types.Type {
+	return basic.Number
+}
+
 func (l Integer) float() Float {
 	return Float(l)
 }
@@ -283,6 +291,11 @@ func (l *BigInt) Equal(r Value) bool {
 // String converts this BigInt to a string
 func (l *BigInt) String() string {
 	return (*big.Int)(l).String()
+}
+
+// Type returns the Type for this BigInt Value
+func (*BigInt) Type() types.Type {
+	return basic.Number
 }
 
 // HashCode returns a hash code for this BigInt

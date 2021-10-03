@@ -1,6 +1,11 @@
 package data
 
-import "bytes"
+import (
+	"bytes"
+
+	"github.com/kode4food/ale/types"
+	"github.com/kode4food/ale/types/basic"
+)
 
 type (
 	// Pair represents the interface for a binary structure, such as a Cons
@@ -75,6 +80,10 @@ func (c *cons) String() string {
 	}
 	buf.WriteByte(')')
 	return buf.String()
+}
+
+func (*cons) Type() types.Type {
+	return basic.Pair
 }
 
 // HashCode returns the hash code for this Cons

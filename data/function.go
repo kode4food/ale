@@ -1,5 +1,10 @@
 package data
 
+import (
+	"github.com/kode4food/ale/types"
+	"github.com/kode4food/ale/types/basic"
+)
+
 type (
 	// ArityChecker is the interface for arity checks
 	ArityChecker func(int) error
@@ -91,8 +96,8 @@ func (f *function) Convention() Convention {
 	return f.conv
 }
 
-func (f *function) Type() Name {
-	return Name(f.conv.String())
+func (f *function) Type() types.Type {
+	return basic.Lambda
 }
 
 func (f *function) Equal(v Value) bool {

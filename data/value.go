@@ -4,6 +4,9 @@ import (
 	"fmt"
 	"hash/maphash"
 	"math/rand"
+
+	"github.com/kode4food/ale/types"
+	"github.com/kode4food/ale/types/basic"
 )
 
 type (
@@ -32,7 +35,7 @@ type (
 
 	// Typed is the generic interface for values that are typed
 	Typed interface {
-		Type() Name
+		Type() types.Type
 	}
 
 	// Appender can return a Sequence that has been appended
@@ -143,6 +146,11 @@ func (b Bool) String() string {
 		return TrueLiteral
 	}
 	return FalseLiteral
+}
+
+// Type returns the Type for this Bool Value
+func (Bool) Type() types.Type {
+	return basic.Bool
 }
 
 // HashCode returns the hash code for this Bool

@@ -3,6 +3,9 @@ package data
 import (
 	"bytes"
 	"math/rand"
+
+	"github.com/kode4food/ale/types"
+	"github.com/kode4food/ale/types/basic"
 )
 
 type (
@@ -146,6 +149,10 @@ func (v vector) String() string {
 	}
 	b.WriteString("]")
 	return b.String()
+}
+
+func (vector) Type() types.Type {
+	return basic.Vector
 }
 
 func (v vector) HashCode() uint64 {

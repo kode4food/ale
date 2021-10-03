@@ -5,6 +5,9 @@ import (
 	"fmt"
 	"strings"
 	"sync"
+
+	"github.com/kode4food/ale/types"
+	"github.com/kode4food/ale/types/basic"
 )
 
 type (
@@ -136,6 +139,10 @@ func (l localSymbol) Equal(v Value) bool {
 	return false
 }
 
+func (localSymbol) Type() types.Type {
+	return basic.Symbol
+}
+
 func (l localSymbol) String() string {
 	return string(l)
 }
@@ -175,6 +182,10 @@ func (s qualifiedSymbol) Equal(v Value) bool {
 		return s == v
 	}
 	return false
+}
+
+func (qualifiedSymbol) Type() types.Type {
+	return basic.Symbol
 }
 
 func (s qualifiedSymbol) String() string {

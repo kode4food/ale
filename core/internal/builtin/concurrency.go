@@ -23,7 +23,6 @@ var Chan = data.Applicative(func(args ...data.Value) data.Value {
 	e, s := stream.NewChannel(size)
 
 	return data.NewObject(
-		data.NewCons(data.TypeKey, stream.ChannelType),
 		data.NewCons(stream.EmitKey, bindWriter(e)),
 		data.NewCons(stream.CloseKey, bindCloser(e)),
 		data.NewCons(stream.SequenceKey, s),

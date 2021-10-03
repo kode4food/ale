@@ -6,6 +6,7 @@ import (
 
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/do"
+	"github.com/kode4food/ale/types"
 )
 
 type (
@@ -41,9 +42,6 @@ type (
 )
 
 const (
-	// ChannelType is the type name for a channel
-	ChannelType = data.String("channel")
-
 	// EmitKey is the key used to emit to a Channel
 	EmitKey = data.Keyword("emit")
 
@@ -57,7 +55,12 @@ const (
 	channelClosed
 )
 
-var emptyResult = channelResult{value: data.Nil, error: nil}
+var (
+	emptyResult = channelResult{value: data.Nil, error: nil}
+
+	channelEmitterType  = types.Basic("channel-emitter")
+	channelSequenceType = types.Basic("channel-sequence")
+)
 
 func (ch *channelWrapper) Close() {
 	if atomic.LoadUint32(&ch.status) != channelClosed {
@@ -66,7 +69,7 @@ func (ch *channelWrapper) Close() {
 	}
 }
 
-// NewChannel produces a Emitter and Sequence pair
+// NewChannel produces an Emitter and Sequence pair
 func NewChannel(size int) (Emitter, data.Sequence) {
 	seq := make(chan channelResult, size)
 	ch := &channelWrapper{
@@ -114,8 +117,8 @@ func (e *channelEmitter) Close() {
 	e.ch.Close()
 }
 
-func (e *channelEmitter) Type() data.Name {
-	return "channel-emitter"
+func (e *channelEmitter) Type() types.Type {
+	return channelEmitterType
 }
 
 func (e *channelEmitter) Equal(v data.Value) bool {
@@ -189,8 +192,8 @@ func (c *channelSequence) Prepend(v data.Value) data.Sequence {
 	}
 }
 
-func (c *channelSequence) Type() data.Name {
-	return "channel-sequence"
+func (c *channelSequence) Type() types.Type {
+	return channelSequenceType
 }
 
 func (c *channelSequence) Equal(v data.Value) bool {

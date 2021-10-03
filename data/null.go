@@ -1,6 +1,11 @@
 package data
 
-import "math/rand"
+import (
+	"math/rand"
+
+	"github.com/kode4food/ale/types"
+	"github.com/kode4food/ale/types/basic"
+)
 
 type (
 	// Null represents a null value, which is also the empty list
@@ -76,6 +81,10 @@ func (*nilValue) Equal(v Value) bool {
 
 func (*nilValue) String() string {
 	return "()"
+}
+
+func (*nilValue) Type() types.Type {
+	return basic.Null
 }
 
 func (*nilValue) HashCode() uint64 {

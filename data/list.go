@@ -1,5 +1,10 @@
 package data
 
+import (
+	"github.com/kode4food/ale/types"
+	"github.com/kode4food/ale/types/basic"
+)
+
 type (
 	// List represents a singly-linked List
 	List interface {
@@ -125,6 +130,10 @@ func (l *list) Equal(v Value) bool {
 
 func (l *list) String() string {
 	return MakeSequenceStr(l)
+}
+
+func (*list) Type() types.Type {
+	return basic.List
 }
 
 func (l *list) HashCode() uint64 {

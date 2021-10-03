@@ -5,6 +5,7 @@ import (
 	"reflect"
 
 	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/types"
 )
 
 type (
@@ -31,10 +32,9 @@ const (
 const (
 	// ReceiverKey is the key used to store an interface receiver
 	ReceiverKey = data.Keyword("receiver")
-
-	// ReceiverType is the type name for an opaque interface receiver
-	ReceiverType = data.Name("receiver")
 )
+
+var receiverType = types.Basic("receiver")
 
 func makeWrappedInterface(t reflect.Type) (Wrapper, error) {
 	mLen := t.NumMethod()
@@ -203,8 +203,8 @@ func (receiver) Equal(_ data.Value) bool {
 	return false
 }
 
-func (receiver) Type() data.Name {
-	return ReceiverType
+func (receiver) Type() types.Type {
+	return receiverType
 }
 
 func (r receiver) String() string {

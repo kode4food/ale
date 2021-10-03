@@ -14,16 +14,14 @@ const (
 	errUnknownOpcode = "unknown opcode: %s"
 )
 
-const closureType = "%s-closure"
-
 type closure struct {
-	lambda *Lambda
+	*Lambda
 	values data.Values
 }
 
 func newClosure(lambda *Lambda, values data.Values) *closure {
 	return &closure{
-		lambda: lambda,
+		Lambda: lambda,
 		values: values,
 	}
 }
@@ -31,7 +29,7 @@ func newClosure(lambda *Lambda, values data.Values) *closure {
 // Call turns closure into a Function
 func (c *closure) Call(args ...data.Value) data.Value {
 	current := c
-	lambda := current.lambda
+	lambda := current.Lambda
 	code := lambda.Code
 	stackSize := lambda.StackSize
 	localCount := lambda.LocalCount
@@ -326,7 +324,7 @@ opSwitch:
 		if vc, ok := val.(*closure); ok {
 			if vc != current {
 				current = vc
-				lambda = current.lambda
+				lambda = current.Lambda
 				code = lambda.Code
 				stackSize = lambda.StackSize
 				localCount = lambda.LocalCount
@@ -379,18 +377,12 @@ opSwitch:
 
 // CheckArity performs a compile-time arity check for the closure
 func (c *closure) CheckArity(i int) error {
-	return c.lambda.ArityChecker(i)
+	return c.ArityChecker(i)
 }
 
 // Convention returns the closure's calling convention
 func (c *closure) Convention() data.Convention {
 	return data.ApplicativeCall
-}
-
-// Type makes closure a typed value
-func (c *closure) Type() data.Name {
-	res := fmt.Sprintf(closureType, c.Convention())
-	return data.Name(res)
 }
 
 func (c *closure) Equal(v data.Value) bool {

@@ -6,9 +6,9 @@ import (
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/env"
 	"github.com/kode4food/ale/runtime/isa"
+	"github.com/kode4food/ale/types"
+	"github.com/kode4food/ale/types/basic"
 )
-
-const lambdaType = "lambda"
 
 // Lambda encapsulates the initial environment of a virtual machine
 type Lambda struct {
@@ -52,8 +52,8 @@ func (l *Lambda) Convention() data.Convention {
 }
 
 // Type makes Lambda a typed value
-func (l *Lambda) Type() data.Name {
-	return lambdaType
+func (l *Lambda) Type() types.Type {
+	return basic.Lambda
 }
 
 // Equal compares this Lambda to another for equality

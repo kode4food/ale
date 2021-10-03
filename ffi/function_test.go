@@ -59,5 +59,5 @@ func TestFuncUnwrap(t *testing.T) {
 	res := f.Call(inFunc)
 	as.NotNil(res)
 	fmt.Println(res)
-	as.Contains(":type applicative", res)
+	as.Contains(":type lambda", res)
 }

@@ -1,13 +1,18 @@
 package encoder
 
-import "github.com/kode4food/ale/data"
+import (
+	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/types"
+)
 
 // Call represents a code-generating function for the compiler
 type Call func(Encoder, ...data.Value)
 
+var encoderType = types.Basic("encoder")
+
 // Type makes Call a typed value
-func (Call) Type() data.Name {
-	return "encoder"
+func (Call) Type() types.Type {
+	return encoderType
 }
 
 // Equal makes Call a typed Value

@@ -31,9 +31,7 @@ func makeWrappedChannel(t reflect.Type) (Wrapper, error) {
 }
 
 func (w *channelWrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
-	o := data.NewObject(
-		data.NewCons(data.TypeKey, stream.ChannelType),
-	)
+	o := data.NewObject()
 	if w.dir&reflect.RecvDir != 0 {
 		o = o.Put(data.NewCons(
 			stream.SequenceKey, w.makeSequence(v),
