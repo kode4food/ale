@@ -10,14 +10,14 @@ import (
 type (
 	// ObjectType describes a typed set of Key/Value Pairs
 	ObjectType interface {
-		types.Type
+		types.BasicType
 		object() // marker
 		Key() types.Type
 		Value() types.Type
 	}
 
 	object struct {
-		types.Type
+		types.BasicType
 		key   types.Type
 		value types.Type
 	}
@@ -27,9 +27,9 @@ type (
 // of the provided types
 func Object(key types.Type, value types.Type) ObjectType {
 	return &object{
-		Type:  basic.Object,
-		key:   key,
-		value: value,
+		BasicType: basic.Object,
+		key:       key,
+		value:     value,
 	}
 }
 
@@ -45,7 +45,7 @@ func (o *object) Value() types.Type {
 
 func (o *object) Name() string {
 	return fmt.Sprintf("%s of %s to %s",
-		o.Type.Name(), o.key.Name(), o.value.Name(),
+		o.BasicType.Name(), o.key.Name(), o.value.Name(),
 	)
 }
 
@@ -54,7 +54,7 @@ func (o *object) Accepts(other types.Type) bool {
 		return true
 	}
 	if other, ok := other.(ObjectType); ok {
-		return o.Type.Accepts(other) &&
+		return o.BasicType.Accepts(other) &&
 			o.key.Accepts(other.Key()) &&
 			o.value.Accepts(other.Value())
 	}

@@ -2,6 +2,7 @@ package compound
 
 import (
 	"bytes"
+	"sort"
 
 	"github.com/kode4food/ale/types"
 )
@@ -9,38 +10,37 @@ import (
 type (
 	// UnionType describes a Type that can accept any of a set of Types
 	UnionType interface {
-		types.Type
+		types.BasicType
 		union() // marker
-		Options() []types.Type
+		Options() Options
 	}
 
+	// Options stores the type.Type options of a UnionType
+	Options []types.Type
+
 	union struct {
-		options []types.Type
+		types.BasicType
+		options Options
 	}
 )
 
 // Union declares a UnionType based on at least one provided Type
 func Union(first types.Type, rest ...types.Type) UnionType {
-	all := append([]types.Type{first}, rest...)
+	all := append(Options{first}, rest...).flatten()
 	return &union{
-		options: flattenUnions(all),
+		BasicType: all.basicType(),
+		options:   all,
 	}
 }
 
 func (*union) union() {}
 
-func (u *union) Options() []types.Type {
-	return u.options
+func (u *union) Name() string {
+	return u.options.name()
 }
 
-func (u *union) Name() string {
-	var buf bytes.Buffer
-	buf.WriteString(u.options[0].Name())
-	for _, n := range u.options[1:] {
-		buf.WriteByte('|')
-		buf.WriteString(n.Name())
-	}
-	return buf.String()
+func (u *union) Options() Options {
+	return u.options
 }
 
 func (u *union) Accepts(other types.Type) bool {
@@ -71,14 +71,66 @@ func (u *union) acceptsType(other types.Type) bool {
 	return false
 }
 
-func flattenUnions(options []types.Type) []types.Type {
-	var res []types.Type
-	for _, o := range options {
+func (o Options) name() string {
+	var buf bytes.Buffer
+	s := o.sorted().names()
+	buf.WriteString(s[0])
+	for _, n := range s[1:] {
+		buf.WriteByte('|')
+		buf.WriteString(n)
+	}
+	return buf.String()
+}
+
+func (o Options) names() []string {
+	res := make([]string, len(o))
+	for i, t := range o {
+		res[i] = t.Name()
+	}
+	return res
+}
+
+func (o Options) basicType() types.BasicType {
+	if first, ok := o[0].(types.BasicType); ok {
+		for _, next := range o[1:] {
+			if !first.Accepts(next) {
+				return types.Basic(o.name())
+			}
+		}
+		return first
+	}
+	return types.Basic(o.name())
+}
+
+func (o Options) flatten() Options {
+	var res Options
+	for _, o := range o {
 		if o, ok := o.(UnionType); ok {
 			res = append(res, o.Options()...)
 			continue
 		}
 		res = append(res, o)
+	}
+	return res.deduped()
+}
+
+func (o Options) sorted() Options {
+	res := o[:]
+	sort.Slice(res, func(i, j int) bool {
+		return res[i].Name() < res[j].Name()
+	})
+	return res
+}
+
+func (o Options) deduped() Options {
+	var res Options
+	var last types.Type
+	for _, t := range o.sorted() {
+		if t == last {
+			continue
+		}
+		res = append(res, t)
+		last = t
 	}
 	return res
 }

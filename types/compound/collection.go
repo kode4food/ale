@@ -10,13 +10,13 @@ import (
 type (
 	// CollectionType describes a typed Sequence
 	CollectionType interface {
-		types.Type
+		types.BasicType
 		collection() // marker
 		Element() types.Type
 	}
 
 	collection struct {
-		types.Type
+		types.BasicType
 		elem types.Type
 	}
 )
@@ -33,10 +33,10 @@ func Vector(elem types.Type) CollectionType {
 	return makeCollection(basic.Vector, elem)
 }
 
-func makeCollection(primitive types.Type, elem types.Type) CollectionType {
+func makeCollection(base types.BasicType, elem types.Type) CollectionType {
 	return &collection{
-		Type: primitive,
-		elem: elem,
+		BasicType: base,
+		elem:      elem,
 	}
 }
 
@@ -47,7 +47,7 @@ func (c *collection) Element() types.Type {
 }
 
 func (c *collection) Name() string {
-	return fmt.Sprintf("%s of %s", c.Type.Name(), c.elem.Name())
+	return fmt.Sprintf("%s of %s", c.BasicType.Name(), c.elem.Name())
 }
 
 func (c *collection) Accepts(other types.Type) bool {
@@ -55,7 +55,7 @@ func (c *collection) Accepts(other types.Type) bool {
 		return true
 	}
 	if other, ok := other.(CollectionType); ok {
-		return c.Type.Accepts(other) &&
+		return c.BasicType.Accepts(other) &&
 			c.elem.Accepts(other.Element())
 	}
 	return false
