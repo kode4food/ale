@@ -24,9 +24,13 @@ type (
 	}
 )
 
-// Union declares a UnionType based on at least one provided Type
-func Union(first types.Type, rest ...types.Type) UnionType {
+// Union declares a UnionType based on at least one provided Type. If any of
+// the provided types is a types.Any, then types.Any will be returned
+func Union(first types.Type, rest ...types.Type) types.Type {
 	all := append(Options{first}, rest...).flatten()
+	if all.hasAny() {
+		return types.Any
+	}
 	return &union{
 		BasicType: all.basicType(),
 		options:   all,
@@ -111,18 +115,10 @@ func (o Options) flatten() Options {
 		}
 		res = append(res, o)
 	}
-	return res.deduped()
+	return res.deduplicated()
 }
 
-func (o Options) sorted() Options {
-	res := o[:]
-	sort.Slice(res, func(i, j int) bool {
-		return res[i].Name() < res[j].Name()
-	})
-	return res
-}
-
-func (o Options) deduped() Options {
+func (o Options) deduplicated() Options {
 	var res Options
 	var last types.Type
 	for _, t := range o.sorted() {
@@ -133,4 +129,21 @@ func (o Options) deduped() Options {
 		last = t
 	}
 	return res
+}
+
+func (o Options) sorted() Options {
+	res := o[:]
+	sort.Slice(res, func(i, j int) bool {
+		return res[i].Name() < res[j].Name()
+	})
+	return res
+}
+
+func (o Options) hasAny() bool {
+	for _, t := range o {
+		if _, ok := t.(types.AnyType); ok {
+			return true
+		}
+	}
+	return false
 }
