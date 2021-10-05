@@ -5,19 +5,20 @@ import (
 
 	"github.com/kode4food/ale/types"
 	"github.com/kode4food/ale/types/basic"
+	"github.com/kode4food/ale/types/extended"
 )
 
 type (
 	// ObjectType describes a typed set of Key/Value Pairs
 	ObjectType interface {
-		types.BasicType
+		types.Extended
 		object() // marker
 		Key() types.Type
 		Value() types.Type
 	}
 
 	object struct {
-		types.BasicType
+		types.Extended
 		key   types.Type
 		value types.Type
 	}
@@ -27,9 +28,9 @@ type (
 // of the provided types
 func Object(key types.Type, value types.Type) ObjectType {
 	return &object{
-		BasicType: basic.Object,
-		key:       key,
-		value:     value,
+		Extended: extended.New(basic.Object),
+		key:      key,
+		value:    value,
 	}
 }
 
@@ -45,7 +46,7 @@ func (o *object) Value() types.Type {
 
 func (o *object) Name() string {
 	return fmt.Sprintf("%s of %s to %s",
-		o.BasicType.Name(), o.key.Name(), o.value.Name(),
+		o.Extended.Name(), o.key.Name(), o.value.Name(),
 	)
 }
 
@@ -54,7 +55,7 @@ func (o *object) Accepts(other types.Type) bool {
 		return true
 	}
 	if other, ok := other.(ObjectType); ok {
-		return o.BasicType.Accepts(other) &&
+		return o.Extended.Accepts(other) &&
 			o.key.Accepts(other.Key()) &&
 			o.value.Accepts(other.Value())
 	}

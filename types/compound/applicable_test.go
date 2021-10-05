@@ -50,6 +50,7 @@ func TestApplicable(t *testing.T) {
 	as.False(a1.Accepts(basic.Number))
 	as.False(a1.Accepts(basic.Lambda))
 	as.True(basic.Lambda.Accepts(a1))
+	as.False(basic.Number.Accepts(a1))
 
 	u1 := compound.Union(a1, a2)
 	u2 := compound.Union(compound.List(basic.Symbol), a1)

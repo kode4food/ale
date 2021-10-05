@@ -6,6 +6,7 @@ import (
 
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/types"
+	"github.com/kode4food/ale/types/basic"
 )
 
 type (
@@ -37,7 +38,7 @@ const (
 	WriteKey = data.Keyword("write")
 )
 
-var writerType = types.Basic("writer")
+var writerType = basic.New("writer")
 
 // NewWriter wraps a Go Writer, coupling it with an output function
 func NewWriter(w io.Writer, o OutputFunc) Writer {

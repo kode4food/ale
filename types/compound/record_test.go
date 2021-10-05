@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/kode4food/ale/types/basic"
-
 	"github.com/kode4food/ale/types/compound"
 	"github.com/stretchr/testify/assert"
 )

@@ -26,3 +26,27 @@ func TestTuple(t *testing.T) {
 
 	as.False(t1.Accepts(basic.Null))
 }
+
+func TestVectorTuple(t *testing.T) {
+	as := assert.New(t)
+
+	t1 := compound.VectorTuple(basic.Number, basic.Keyword)
+	t2 := compound.Tuple(basic.Number, basic.Keyword)
+	t3 := compound.ListTuple(basic.Number, basic.Keyword)
+
+	as.True(t2.Accepts(t1))
+	as.False(t1.Accepts(t2))
+	as.False(t1.Accepts(t3))
+}
+
+func TestListTuple(t *testing.T) {
+	as := assert.New(t)
+
+	t1 := compound.ListTuple(basic.Number, basic.Keyword)
+	t2 := compound.Tuple(basic.Number, basic.Keyword)
+	t3 := compound.VectorTuple(basic.Number, basic.Keyword)
+
+	as.True(t2.Accepts(t1))
+	as.False(t1.Accepts(t2))
+	as.False(t1.Accepts(t3))
+}

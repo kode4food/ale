@@ -4,6 +4,7 @@ import (
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/do"
 	"github.com/kode4food/ale/types"
+	"github.com/kode4food/ale/types/basic"
 )
 
 type (
@@ -20,7 +21,7 @@ type (
 	}
 )
 
-var lazySequenceType = types.Basic("lazy-sequence")
+var lazySequenceType = basic.New("lazy-sequence")
 
 // NewLazy creates a new lazy Sequence based on the provided resolver
 func NewLazy(r LazyResolver) data.Sequence {

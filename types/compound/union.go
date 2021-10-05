@@ -5,12 +5,14 @@ import (
 	"sort"
 
 	"github.com/kode4food/ale/types"
+	"github.com/kode4food/ale/types/basic"
+	"github.com/kode4food/ale/types/extended"
 )
 
 type (
 	// UnionType describes a Type that can accept any of a set of Types
 	UnionType interface {
-		types.BasicType
+		types.Extended
 		union() // marker
 		Options() Options
 	}
@@ -19,7 +21,7 @@ type (
 	Options []types.Type
 
 	union struct {
-		types.BasicType
+		types.Extended
 		options Options
 	}
 )
@@ -29,11 +31,11 @@ type (
 func Union(first types.Type, rest ...types.Type) types.Type {
 	all := append(Options{first}, rest...).flatten()
 	if all.hasAny() {
-		return types.Any
+		return basic.Any
 	}
 	return &union{
-		BasicType: all.basicType(),
-		options:   all,
+		Extended: extended.New(all.basicType()),
+		options:  all,
 	}
 }
 
@@ -94,16 +96,14 @@ func (o Options) names() []string {
 	return res
 }
 
-func (o Options) basicType() types.BasicType {
-	if first, ok := o[0].(types.BasicType); ok {
-		for _, next := range o[1:] {
-			if !first.Accepts(next) {
-				return types.Basic(o.name())
-			}
+func (o Options) basicType() types.Type {
+	first := o[0]
+	for _, next := range o[1:] {
+		if !first.Accepts(next) {
+			return basic.New(o.name())
 		}
-		return first
 	}
-	return types.Basic(o.name())
+	return first
 }
 
 func (o Options) flatten() Options {
@@ -141,7 +141,7 @@ func (o Options) sorted() Options {
 
 func (o Options) hasAny() bool {
 	for _, t := range o {
-		if _, ok := t.(types.AnyType); ok {
+		if _, ok := t.(basic.AnyType); ok {
 			return true
 		}
 	}

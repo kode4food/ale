@@ -3,6 +3,7 @@ package compound
 import (
 	"github.com/kode4food/ale/types"
 	"github.com/kode4food/ale/types/basic"
+	"github.com/kode4food/ale/types/extended"
 )
 
 type (
@@ -10,7 +11,7 @@ type (
 	// application. Such application may expose multiple Signatures to
 	// describe the various ways that the type can be applied
 	ApplicableType interface {
-		types.BasicType
+		types.Extended
 		applicable() // marker
 		Signatures() []Signature
 	}
@@ -22,7 +23,7 @@ type (
 	}
 
 	applicable struct {
-		types.BasicType
+		types.Extended
 		signatures []Signature
 	}
 )
@@ -32,7 +33,7 @@ type (
 func Applicable(first Signature, rest ...Signature) ApplicableType {
 	all := append([]Signature{first}, rest...)
 	return &applicable{
-		BasicType:  basic.Lambda,
+		Extended:   extended.New(basic.Lambda),
 		signatures: all,
 	}
 }

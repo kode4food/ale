@@ -3,13 +3,14 @@ package compound
 import (
 	"github.com/kode4food/ale/types"
 	"github.com/kode4food/ale/types/basic"
+	"github.com/kode4food/ale/types/extended"
 )
 
 type (
 	// RecordType describes an Object that allows a fixed set of fields,
 	// each of which has a keyword
 	RecordType interface {
-		types.BasicType
+		types.Extended
 		record() // marker
 		Fields() []Field
 	}
@@ -21,7 +22,7 @@ type (
 	}
 
 	record struct {
-		types.BasicType
+		types.Extended
 		fields []Field
 	}
 )
@@ -30,8 +31,8 @@ type (
 // entries, each being identified by a Keyword and having a specified Type
 func Record(fields ...Field) RecordType {
 	return &record{
-		BasicType: basic.Object,
-		fields:    fields,
+		Extended: extended.New(basic.Object),
+		fields:   fields,
 	}
 }
 

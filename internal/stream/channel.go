@@ -7,6 +7,7 @@ import (
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/do"
 	"github.com/kode4food/ale/types"
+	"github.com/kode4food/ale/types/basic"
 )
 
 type (
@@ -58,8 +59,8 @@ const (
 var (
 	emptyResult = channelResult{value: data.Nil, error: nil}
 
-	channelEmitterType  = types.Basic("channel-emitter")
-	channelSequenceType = types.Basic("channel-sequence")
+	channelEmitterType  = basic.New("channel-emitter")
+	channelSequenceType = basic.New("channel-sequence")
 )
 
 func (ch *channelWrapper) Close() {

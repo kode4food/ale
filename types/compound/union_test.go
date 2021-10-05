@@ -3,8 +3,6 @@ package compound_test
 import (
 	"testing"
 
-	"github.com/kode4food/ale/types"
-
 	"github.com/kode4food/ale/types/basic"
 	"github.com/kode4food/ale/types/compound"
 	"github.com/stretchr/testify/assert"
@@ -18,7 +16,7 @@ func TestUnion(t *testing.T) {
 	u3 := compound.Union(u1, u2)
 	u4 := compound.Union(basic.Pair, basic.Symbol)
 	u5 := compound.Union(basic.Number, basic.Bool, u1)
-	u6 := compound.Union(u1, u2, types.Any, u5)
+	u6 := compound.Union(u1, u2, basic.Any, u5)
 
 	as.Equal("keyword|number", u1.Name())
 	as.Equal("keyword|list|number|vector", u3.Name())
@@ -47,6 +45,6 @@ func TestUnion(t *testing.T) {
 
 	as.False(basic.List.Accepts(u1))
 
-	_, ok := u6.(types.AnyType)
+	_, ok := u6.(basic.AnyType)
 	as.True(ok)
 }

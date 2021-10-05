@@ -6,6 +6,7 @@ import (
 
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/types"
+	"github.com/kode4food/ale/types/basic"
 )
 
 type (
@@ -34,7 +35,7 @@ const (
 	ReceiverKey = data.Keyword("receiver")
 )
 
-var receiverType = types.Basic("receiver")
+var receiverType = basic.New("receiver")
 
 func makeWrappedInterface(t reflect.Type) (Wrapper, error) {
 	mLen := t.NumMethod()
