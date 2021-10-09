@@ -1,6 +1,8 @@
 package basic
 
 import (
+	"encoding/binary"
+	"math/rand"
 	"sync"
 
 	"github.com/kode4food/ale/types"
@@ -11,9 +13,24 @@ type basic struct {
 	kind types.Kind
 }
 
+// Basic Types
 var (
-	kindCounter types.Kind
-	kindMutex   sync.Mutex
+	Bool    = New("boolean")
+	Keyword = New("keyword")
+	Lambda  = New("lambda")
+	List    = New("list")
+	Null    = New("null")
+	Number  = New("number")
+	Object  = New("object")
+	Pair    = New("pair")
+	String  = New("string")
+	Symbol  = New("symbol")
+	Vector  = New("vector")
+)
+
+var (
+	kindSequence uint64
+	kindMutex    sync.Mutex
 )
 
 // New returns a Basic type that accepts a Value of its own Basic type
@@ -49,24 +66,17 @@ func (b *basic) Accepts(other types.Type) bool {
 }
 
 func nextKind() types.Kind {
-	kindMutex.Lock()
-	defer kindMutex.Unlock()
-	res := kindCounter
-	kindCounter++
+	var res types.Kind
+	next := nextKindSequence()
+	binary.BigEndian.PutUint64(res[0:], next)
+	rand.Read(res[8:])
 	return res
 }
 
-// Basic Types
-var (
-	Bool    = New("boolean")
-	Keyword = New("keyword")
-	Lambda  = New("lambda")
-	List    = New("list")
-	Null    = New("null")
-	Number  = New("number")
-	Object  = New("object")
-	Pair    = New("pair")
-	String  = New("string")
-	Symbol  = New("symbol")
-	Vector  = New("vector")
-)
+func nextKindSequence() uint64 {
+	kindMutex.Lock()
+	defer kindMutex.Unlock()
+	res := kindSequence
+	kindSequence++
+	return res
+}

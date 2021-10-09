@@ -14,6 +14,9 @@ func TestCollection(t *testing.T) {
 	c1 := compound.List(basic.Number)
 	c2 := compound.Vector(basic.Number)
 
+	as.Equal("list(number)", c1.Name())
+	as.Equal("vector(number)", c2.Name())
+
 	as.Equal(basic.Number, c1.Element())
 	as.True(c1.Accepts(c1))
 	as.False(c1.Accepts(c2))

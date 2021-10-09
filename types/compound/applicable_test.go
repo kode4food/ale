@@ -22,6 +22,7 @@ func TestApplicable(t *testing.T) {
 			Result:    basic.Bool,
 		},
 	)
+	as.Equal(`lambda(number,number->boolean,number->boolean)`, a1.Name())
 
 	a2 := compound.Applicable(
 		compound.Signature{
@@ -41,6 +42,8 @@ func TestApplicable(t *testing.T) {
 			Result:    basic.Bool,
 		},
 	)
+
+	as.Equal(`lambda(symbol,boolean->boolean,->number,number->boolean,number,number->boolean)`, a2.Name())
 
 	as.True(a1.Accepts(a1))
 	as.True(a1.Accepts(a2))

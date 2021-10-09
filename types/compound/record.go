@@ -1,6 +1,10 @@
 package compound
 
 import (
+	"bytes"
+	"fmt"
+	"sort"
+
 	"github.com/kode4food/ale/types"
 	"github.com/kode4food/ale/types/basic"
 	"github.com/kode4food/ale/types/extended"
@@ -21,9 +25,11 @@ type (
 		Value types.Type
 	}
 
+	fields []Field
+
 	record struct {
 		types.Extended
-		fields []Field
+		fields
 	}
 )
 
@@ -42,8 +48,8 @@ func (r *record) Fields() []Field {
 	return r.fields
 }
 
-func (*record) Name() string {
-	return "record"
+func (r *record) Name() string {
+	return fmt.Sprintf("record(%s)", r.fields.name())
 }
 
 func (r *record) Accepts(other types.Type) bool {
@@ -56,8 +62,8 @@ func (r *record) Accepts(other types.Type) bool {
 		if len(rf) > len(of) {
 			return false
 		}
-		om := fieldsToMap(of)
-		for k, v := range fieldsToMap(rf) {
+		om := fields(of).toMap()
+		for k, v := range rf.toMap() {
 			if tv, ok := om[k]; !ok || !v.Accepts(tv) {
 				return false
 			}
@@ -67,10 +73,28 @@ func (r *record) Accepts(other types.Type) bool {
 	return false
 }
 
-func fieldsToMap(fields []Field) map[string]types.Type {
+func (f fields) toMap() map[string]types.Type {
 	res := map[string]types.Type{}
-	for _, f := range fields {
-		res[f.Name] = f.Value
+	for _, p := range f {
+		res[p.Name] = p.Value
 	}
 	return res
+}
+
+func (f fields) name() string {
+	in := f[:]
+	sort.Slice(in, func(i, j int) bool {
+		return in[i].Name < in[j].Name
+	})
+	var buf bytes.Buffer
+	for i, elem := range in {
+		if i > 0 {
+			buf.WriteRune(',')
+		}
+		buf.WriteRune('"')
+		buf.WriteString(elem.Name) // todo: escape the value
+		buf.WriteString("\"->")
+		buf.WriteString(elem.Value.Name())
+	}
+	return buf.String()
 }

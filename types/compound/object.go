@@ -45,7 +45,7 @@ func (o *object) Value() types.Type {
 }
 
 func (o *object) Name() string {
-	return fmt.Sprintf("%s of %s to %s",
+	return fmt.Sprintf("%s(%s->%s)",
 		o.Extended.Name(), o.key.Name(), o.value.Name(),
 	)
 }

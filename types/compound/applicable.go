@@ -1,6 +1,9 @@
 package compound
 
 import (
+	"fmt"
+	"strings"
+
 	"github.com/kode4food/ale/types"
 	"github.com/kode4food/ale/types/basic"
 	"github.com/kode4food/ale/types/extended"
@@ -24,14 +27,16 @@ type (
 
 	applicable struct {
 		types.Extended
-		signatures []Signature
+		signatures
 	}
+
+	signatures []Signature
 )
 
 // Applicable declares an ApplicableType that will only allow an applicable
 // value capable of the provided Signature set
 func Applicable(first Signature, rest ...Signature) ApplicableType {
-	all := append([]Signature{first}, rest...)
+	all := append(signatures{first}, rest...)
 	return &applicable{
 		Extended:   extended.New(basic.Lambda),
 		signatures: all,
@@ -42,6 +47,10 @@ func (a *applicable) applicable() {}
 
 func (a *applicable) Signatures() []Signature {
 	return a.signatures
+}
+
+func (a *applicable) Name() string {
+	return fmt.Sprintf("%s(%s)", a.Extended.Name(), a.signatures.name())
 }
 
 func (a *applicable) Accepts(other types.Type) bool {
@@ -84,4 +93,18 @@ func (s Signature) accepts(other Signature) bool {
 		}
 	}
 	return true
+}
+
+func (s signatures) name() string {
+	return strings.Join(s.names(), ",")
+}
+
+func (s signatures) names() []string {
+	res := make([]string, len(s))
+	for i, sig := range s {
+		res[i] = fmt.Sprintf("%s->%s",
+			typeList(sig.Arguments).name(), sig.Result.Name(),
+		)
+	}
+	return res
 }

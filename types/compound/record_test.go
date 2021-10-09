@@ -48,7 +48,7 @@ func TestRecord(t *testing.T) {
 		},
 	)
 
-	as.Equal("record", r1.Name())
+	as.Equal(`record("first"->string,"last"->keyword)`, r3.Name())
 
 	as.True(r1.Accepts(r1))
 	as.True(r1.Accepts(r2))

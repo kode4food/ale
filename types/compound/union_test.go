@@ -18,9 +18,9 @@ func TestUnion(t *testing.T) {
 	u5 := compound.Union(basic.Number, basic.Bool, u1)
 	u6 := compound.Union(u1, u2, basic.Any, u5)
 
-	as.Equal("keyword|number", u1.Name())
-	as.Equal("keyword|list|number|vector", u3.Name())
-	as.Equal("boolean|keyword|number", u5.Name())
+	as.Equal("union(keyword,number)", u1.Name())
+	as.Equal("union(keyword,list,number,vector)", u3.Name())
+	as.Equal("union(boolean,keyword,number)", u5.Name())
 	as.Equal("any", u6.Name())
 
 	as.True(u1.Accepts(u1))

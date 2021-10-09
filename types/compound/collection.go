@@ -48,7 +48,7 @@ func (c *collection) Element() types.Type {
 }
 
 func (c *collection) Name() string {
-	return fmt.Sprintf("%s of %s", c.Extended.Name(), c.elem.Name())
+	return fmt.Sprintf("%s(%s)", c.Extended.Name(), c.elem.Name())
 }
 
 func (c *collection) Accepts(other types.Type) bool {

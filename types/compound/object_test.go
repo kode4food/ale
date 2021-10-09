@@ -15,9 +15,9 @@ func TestObject(t *testing.T) {
 	o2 := compound.Object(basic.Number, basic.Keyword)
 	o3 := compound.Object(basic.String, basic.Lambda)
 
-	as.Equal("object of string to lambda", o1.Name())
-	as.Equal("object of number to keyword", o2.Name())
-	as.Equal("object of string to lambda", o3.Name())
+	as.Equal("object(string->lambda)", o1.Name())
+	as.Equal("object(number->keyword)", o2.Name())
+	as.Equal("object(string->lambda)", o3.Name())
 
 	as.True(o1.Accepts(o1))
 	as.False(o1.Accepts(o2))

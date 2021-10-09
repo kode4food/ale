@@ -1,6 +1,8 @@
 package compound
 
 import (
+	"fmt"
+
 	"github.com/kode4food/ale/types"
 	"github.com/kode4food/ale/types/basic"
 	"github.com/kode4food/ale/types/extended"
@@ -17,7 +19,7 @@ type (
 
 	tuple struct {
 		types.Extended
-		elems []types.Type
+		elems typeList
 	}
 )
 
@@ -48,8 +50,8 @@ func makeTuple(base types.Type, elems []types.Type) TupleType {
 
 func (*tuple) tuple() {}
 
-func (*tuple) Name() string {
-	return "tuple"
+func (t *tuple) Name() string {
+	return fmt.Sprintf("tuple(%s)", t.elems.name())
 }
 
 func (t *tuple) Elements() []types.Type {

@@ -21,7 +21,7 @@ type (
 	}
 
 	// Kind uniquely identifies a Type within a process
-	Kind uint64
+	Kind [16]byte
 
 	// Extended describes a Type that extends another Type
 	Extended interface {

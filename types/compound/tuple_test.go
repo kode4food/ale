@@ -16,7 +16,7 @@ func TestTuple(t *testing.T) {
 	t3 := compound.Tuple(basic.Keyword, basic.Number)
 	t4 := compound.Tuple()
 
-	as.Equal("tuple", t1.Name())
+	as.Equal("tuple(keyword,number)", t1.Name())
 
 	as.True(t1.Accepts(t1))
 	as.True(t1.Accepts(t3))
