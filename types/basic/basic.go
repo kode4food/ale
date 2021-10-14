@@ -29,7 +29,7 @@ var (
 )
 
 var (
-	kindSequence uint64
+	kindSequence uint32
 	kindMutex    sync.Mutex
 )
 
@@ -68,12 +68,12 @@ func (b *basic) Accepts(other types.Type) bool {
 func nextKind() types.Kind {
 	var res types.Kind
 	next := nextKindSequence()
-	binary.BigEndian.PutUint64(res[0:], next)
-	rand.Read(res[8:])
+	binary.BigEndian.PutUint32(res[0:], next)
+	rand.Read(res[4:])
 	return res
 }
 
-func nextKindSequence() uint64 {
+func nextKindSequence() uint32 {
 	kindMutex.Lock()
 	defer kindMutex.Unlock()
 	res := kindSequence
