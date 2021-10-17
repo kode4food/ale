@@ -53,14 +53,14 @@ func (a *applicable) Name() string {
 	return fmt.Sprintf("%s(%s)", a.Extended.Name(), a.signatures.name())
 }
 
-func (a *applicable) Accepts(other types.Type) bool {
+func (a *applicable) Accepts(c types.Checker, other types.Type) bool {
 	if a == other {
 		return true
 	}
 	if other, ok := other.(ApplicableType); ok {
 		os := other.Signatures()
 		for _, s := range a.signatures {
-			if !s.acceptsFromSignatures(os) {
+			if !s.acceptsFromSignatures(c, os) {
 				return false
 			}
 		}
@@ -69,17 +69,19 @@ func (a *applicable) Accepts(other types.Type) bool {
 	return false
 }
 
-func (s Signature) acceptsFromSignatures(other []Signature) bool {
+func (s Signature) acceptsFromSignatures(
+	c types.Checker, other []Signature,
+) bool {
 	for _, o := range other {
-		if s.accepts(o) {
+		if s.accepts(c, o) {
 			return true
 		}
 	}
 	return false
 }
 
-func (s Signature) accepts(other Signature) bool {
-	if !s.Result.Accepts(other.Result) {
+func (s Signature) accepts(c types.Checker, other Signature) bool {
+	if c.Check(s.Result).Accepts(other.Result) == nil {
 		return false
 	}
 	sa := s.Arguments
@@ -88,7 +90,7 @@ func (s Signature) accepts(other Signature) bool {
 		return false
 	}
 	for i, a := range sa {
-		if !a.Accepts(oa[i]) {
+		if c.Check(a).Accepts(oa[i]) == nil {
 			return false
 		}
 	}

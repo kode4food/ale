@@ -52,7 +52,7 @@ func (r *record) Name() string {
 	return fmt.Sprintf("record(%s)", r.fields.name())
 }
 
-func (r *record) Accepts(other types.Type) bool {
+func (r *record) Accepts(c types.Checker, other types.Type) bool {
 	if r == other {
 		return true
 	}
@@ -64,7 +64,7 @@ func (r *record) Accepts(other types.Type) bool {
 		}
 		om := fields(of).toMap()
 		for k, v := range rf.toMap() {
-			if tv, ok := om[k]; !ok || !v.Accepts(tv) {
+			if tv, ok := om[k]; !ok || c.Check(v).Accepts(tv) == nil {
 				return false
 			}
 		}

@@ -22,6 +22,6 @@ var Any AnyType = &any{
 
 func (*any) any() {}
 
-func (*any) Accepts(types.Type) bool {
+func (*any) Accepts(types.Checker, types.Type) bool {
 	return true
 }

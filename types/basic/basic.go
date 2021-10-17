@@ -22,7 +22,7 @@ var (
 	Null    = New("null")
 	Number  = New("number")
 	Object  = New("object")
-	Pair    = New("pair")
+	Cons    = New("cons")
 	String  = New("string")
 	Symbol  = New("symbol")
 	Vector  = New("vector")
@@ -51,7 +51,7 @@ func (b *basic) Kind() types.Kind {
 	return b.kind
 }
 
-func (b *basic) Accepts(other types.Type) bool {
+func (b *basic) Accepts(c types.Checker, other types.Type) bool {
 	if b == other {
 		return true
 	}
@@ -59,7 +59,7 @@ func (b *basic) Accepts(other types.Type) bool {
 	case types.Basic:
 		return b.kind == other.Kind()
 	case types.Extended:
-		return b.Accepts(other.Base())
+		return b.Accepts(c, other.Base())
 	default:
 		return false
 	}

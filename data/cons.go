@@ -83,7 +83,7 @@ func (c *cons) String() string {
 }
 
 func (*cons) Type() types.Type {
-	return basic.Pair
+	return basic.Cons
 }
 
 // HashCode returns the hash code for this Cons

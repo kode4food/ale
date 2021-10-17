@@ -21,20 +21,20 @@ func TestBasic(t *testing.T) {
 
 	as.Equal("number", i99.Name())
 	as.Equal("boolean", bTrue.Name())
-	as.True(i99.Accepts(i0))
-	as.False(i99.Accepts(bTrue))
+	as.NotNil(types.Check(i99).Accepts(i0))
+	as.Nil(types.Check(i99).Accepts(bTrue))
 
-	as.True(i99.Accepts(i99))
-	as.False(i99.Accepts(basic.Any))
-	as.False(i99.Accepts(compound.Union(basic.Symbol, basic.Pair)))
+	as.NotNil(types.Check(i99).Accepts(i99))
+	as.Nil(types.Check(i99).Accepts(basic.Any))
+	as.Nil(types.Check(i99).Accepts(compound.Union(basic.Symbol, basic.Cons)))
 
-	as.False(i99.Accepts(testType{}))
+	as.Nil(types.Check(i99).Accepts(testType{}))
 }
 
 func (testType) Name() string {
 	return "test"
 }
 
-func (testType) Accepts(_ types.Type) bool {
+func (testType) Accepts(_ types.Checker, _ types.Type) bool {
 	return false
 }

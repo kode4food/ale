@@ -45,18 +45,18 @@ func TestApplicable(t *testing.T) {
 
 	as.Equal(`lambda(symbol,boolean->boolean,->number,number->boolean,number,number->boolean)`, a2.Name())
 
-	as.True(a1.Accepts(a1))
-	as.True(a1.Accepts(a2))
-	as.False(a2.Accepts(a1))
-	as.True(a2.Accepts(a2))
+	as.NotNil(types.Check(a1).Accepts(a1))
+	as.NotNil(types.Check(a1).Accepts(a2))
+	as.Nil(types.Check(a2).Accepts(a1))
+	as.NotNil(types.Check(a2).Accepts(a2))
 
-	as.False(a1.Accepts(basic.Number))
-	as.False(a1.Accepts(basic.Lambda))
-	as.True(basic.Lambda.Accepts(a1))
-	as.False(basic.Number.Accepts(a1))
+	as.Nil(types.Check(a1).Accepts(basic.Number))
+	as.Nil(types.Check(a1).Accepts(basic.Lambda))
+	as.NotNil(types.Check(basic.Lambda).Accepts(a1))
+	as.Nil(types.Check(basic.Number).Accepts(a1))
 
 	u1 := compound.Union(a1, a2)
 	u2 := compound.Union(compound.List(basic.Symbol), a1)
-	as.True(basic.Lambda.Accepts(u1))
-	as.False(basic.Lambda.Accepts(u2))
+	as.NotNil(types.Check(basic.Lambda).Accepts(u1))
+	as.Nil(types.Check(basic.Lambda).Accepts(u2))
 }

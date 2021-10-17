@@ -50,14 +50,14 @@ func (o *object) Name() string {
 	)
 }
 
-func (o *object) Accepts(other types.Type) bool {
+func (o *object) Accepts(c types.Checker, other types.Type) bool {
 	if o == other {
 		return true
 	}
 	if other, ok := other.(ObjectType); ok {
-		return o.Extended.Accepts(other) &&
-			o.key.Accepts(other.Key()) &&
-			o.value.Accepts(other.Value())
+		return c.Check(o.Extended).Accepts(other) != nil &&
+			c.Check(o.key).Accepts(other.Key()) != nil &&
+			c.Check(o.value).Accepts(other.Value()) != nil
 	}
 	return false
 }

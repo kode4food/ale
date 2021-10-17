@@ -53,9 +53,14 @@ type (
 		ElementAt(int) (Value, bool)
 	}
 
-	// Mapped is the interface for Values that have properties
+	// Mapped is the interface for Values that have accessible properties
 	Mapped interface {
 		Get(Value) (Value, bool)
+	}
+
+	// Mapper is the interface for Mapped Values that have mutable properties
+	Mapper interface {
+		Mapped
 		Put(Pair) Sequence
 		Remove(Value) (Value, Sequence, bool)
 	}
@@ -81,8 +86,8 @@ type (
 		Values() Values
 	}
 
-	// Hasher can return a hash code for the value
-	Hasher interface {
+	// Hashed can return a hash code for the value
+	Hashed interface {
 		HashCode() uint64
 	}
 )
@@ -170,11 +175,11 @@ func Truthy(v Value) bool {
 }
 
 // HashCode returns a hash code for the provided Value. If the Value
-// implements the Hasher interface, it will call us the HashCode()
+// implements the Hashed interface, it will call us the HashCode()
 // method. Otherwise, it will create a hash code from the stringified
 // form of the Value
 func HashCode(v Value) uint64 {
-	if h, ok := v.(Hasher); ok {
+	if h, ok := v.(Hashed); ok {
 		return h.HashCode()
 	}
 	return HashString(v.String())

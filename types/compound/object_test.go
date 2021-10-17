@@ -3,6 +3,7 @@ package compound_test
 import (
 	"testing"
 
+	"github.com/kode4food/ale/types"
 	"github.com/kode4food/ale/types/basic"
 	"github.com/kode4food/ale/types/compound"
 	"github.com/stretchr/testify/assert"
@@ -19,11 +20,11 @@ func TestObject(t *testing.T) {
 	as.Equal("object(number->keyword)", o2.Name())
 	as.Equal("object(string->lambda)", o3.Name())
 
-	as.True(o1.Accepts(o1))
-	as.False(o1.Accepts(o2))
-	as.True(o1.Accepts(o3))
+	as.NotNil(types.Check(o1).Accepts(o1))
+	as.Nil(types.Check(o1).Accepts(o2))
+	as.NotNil(types.Check(o1).Accepts(o3))
 
-	as.True(basic.Object.Accepts(o1))
-	as.False(o1.Accepts(basic.Object))
-	as.False(o1.Accepts(basic.Bool))
+	as.NotNil(types.Check(basic.Object).Accepts(o1))
+	as.Nil(types.Check(o1).Accepts(basic.Object))
+	as.Nil(types.Check(o1).Accepts(basic.Bool))
 }

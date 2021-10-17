@@ -180,8 +180,8 @@ func TestObjectHash(t *testing.T) {
 		C(K("y"), I(99)),
 	)
 	o5 := data.NewObject()
-	as.Equal(o1.(data.Hasher).HashCode(), o2.(data.Hasher).HashCode())
-	as.NotEqual(o1.(data.Hasher).HashCode(), o3.(data.Hasher).HashCode())
-	as.NotEqual(uint64(0), o4.(data.Hasher).HashCode())
-	as.NotEqual(uint64(0), o5.(data.Hasher).HashCode())
+	as.Equal(o1.(data.Hashed).HashCode(), o2.(data.Hashed).HashCode())
+	as.NotEqual(o1.(data.Hashed).HashCode(), o3.(data.Hashed).HashCode())
+	as.NotEqual(uint64(0), o4.(data.Hashed).HashCode())
+	as.NotEqual(uint64(0), o5.(data.Hashed).HashCode())
 }

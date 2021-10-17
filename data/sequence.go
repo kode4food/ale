@@ -30,10 +30,10 @@ type (
 		Indexed
 	}
 
-	// MappedSequence is a Sequence that provides a Mapped interface
+	// MappedSequence is a Sequence that provides a Mapper interface
 	MappedSequence interface {
 		Sequence
-		Mapped
+		Mapper
 	}
 
 	// PrependerSequence is a Sequence that acts as a Prepender
