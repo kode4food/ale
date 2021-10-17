@@ -60,3 +60,16 @@ func TestRecord(t *testing.T) {
 	as.Nil(types.Check(r1).Accepts(basic.Object))
 	as.NotNil(types.Check(basic.Object).Accepts(r1))
 }
+
+func TestRecordNameEscape(t *testing.T) {
+	as := assert.New(t)
+
+	r1 := compound.Record(
+		compound.Field{
+			Name:  `I am "quoted"`,
+			Value: basic.String,
+		},
+	)
+
+	as.Equal(`record("I am \"quoted\""->string)`, r1.Name())
+}

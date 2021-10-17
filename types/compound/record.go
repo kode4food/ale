@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"sort"
+	"strings"
 
 	"github.com/kode4food/ale/types"
 	"github.com/kode4food/ale/types/basic"
@@ -92,7 +93,7 @@ func (f fields) name() string {
 			buf.WriteRune(',')
 		}
 		buf.WriteRune('"')
-		buf.WriteString(elem.Name) // todo: escape the value
+		buf.WriteString(strings.ReplaceAll(elem.Name, `"`, `\"`))
 		buf.WriteString("\"->")
 		buf.WriteString(elem.Value.Name())
 	}
