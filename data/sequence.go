@@ -12,49 +12,52 @@ type (
 		IsEmpty() bool
 	}
 
-	// AppenderSequence is a Sequence that acts as an Appender
-	AppenderSequence interface {
+	// Appender is a Sequence that can be appended to
+	Appender interface {
 		Sequence
-		Appender
+		Append(Value) Sequence
 	}
 
-	// CountedSequence is a Sequence that provides a Counted interface
-	CountedSequence interface {
+	// Mapper is a Sequence that provides a mutable Mapped interface
+	Mapper interface {
 		Sequence
+		Mapped
+		Put(Pair) Sequence
+		Remove(Value) (Value, Sequence, bool)
+	}
+
+	// Prepender is a Sequence that can be prepended to
+	Prepender interface {
+		Sequence
+		Prepend(Value) Sequence
+	}
+
+	// Reverser is a Sequence than can be reversed
+	Reverser interface {
+		Sequence
+		Reverse() Sequence
+	}
+
+	// RandomAccess provides a Sequence that supports random access
+	RandomAccess interface {
+		Sequence
+		Indexed
 		Counted
 	}
 
-	// IndexedSequence is a Sequence that provides an Indexed interface
+	// IndexedSequence is a Sequence that has indexed elements
 	IndexedSequence interface {
 		Sequence
 		Indexed
 	}
 
-	// MappedSequence is a Sequence that provides a Mapper interface
-	MappedSequence interface {
+	// CountedSequence is a Sequence that returns a count of its items
+	CountedSequence interface {
 		Sequence
-		Mapper
+		Counted
 	}
 
-	// PrependerSequence is a Sequence that acts as a Prepender
-	PrependerSequence interface {
-		Sequence
-		Prepender
-	}
-
-	// RandomAccessSequence provides a RandomAccess Sequence interface
-	RandomAccessSequence interface {
-		Sequence
-		RandomAccess
-	}
-
-	// ReverserSequence is a Sequence than acts as a Reverser
-	ReverserSequence interface {
-		Sequence
-		Reverser
-	}
-
-	// ValuerSequence is a Sequence that provides a Valuer interface
+	// ValuerSequence is a Sequence that returns its data as a slice of Values
 	ValuerSequence interface {
 		Sequence
 		Valuer
@@ -85,7 +88,7 @@ func Last(s Sequence) (Value, bool) {
 		return Nil, false
 	}
 
-	if i, ok := s.(RandomAccessSequence); ok {
+	if i, ok := s.(RandomAccess); ok {
 		return i.ElementAt(i.Count() - 1)
 	}
 
@@ -107,7 +110,7 @@ func indexedCall(s IndexedSequence, args []Value) Value {
 	return res
 }
 
-func mappedCall(m MappedSequence, args []Value) Value {
+func mappedCall(m Mapper, args []Value) Value {
 	res, ok := m.Get(args[0])
 	if !ok && len(args) > 1 {
 		return args[1]

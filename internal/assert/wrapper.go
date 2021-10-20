@@ -172,8 +172,8 @@ func (w *Wrapper) ExpectNoPanic() {
 	w.Nil(rec)
 }
 
-// MustGet retrieves a Value from a Mapper or explodes
-func (w *Wrapper) MustGet(m data.Mapper, k data.Value) data.Value {
+// MustGet retrieves a Value from a Mapped or explodes
+func (w *Wrapper) MustGet(m data.Mapped, k data.Value) data.Value {
 	if v, ok := m.Get(k); ok {
 		return v
 	}

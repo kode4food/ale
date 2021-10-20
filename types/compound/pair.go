@@ -7,6 +7,7 @@ import (
 )
 
 type (
+	// PairType describes a pair of typed Values
 	PairType interface {
 		types.Extended
 		pair() // marker

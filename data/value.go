@@ -38,11 +38,6 @@ type (
 		Type() types.Type
 	}
 
-	// Appender can return a Sequence that has been appended
-	Appender interface {
-		Append(Value) Sequence
-	}
-
 	// Counted interfaces allow a Value to return a count of its items
 	Counted interface {
 		Count() int
@@ -56,29 +51,6 @@ type (
 	// Mapped is the interface for Values that have accessible properties
 	Mapped interface {
 		Get(Value) (Value, bool)
-	}
-
-	// Mapper is the interface for Mapped Values that have mutable properties
-	Mapper interface {
-		Mapped
-		Put(Pair) Sequence
-		Remove(Value) (Value, Sequence, bool)
-	}
-
-	// Prepender can return a Sequence that has been prepended
-	Prepender interface {
-		Prepend(Value) Sequence
-	}
-
-	// RandomAccess provides Indexed and Counted interfaces
-	RandomAccess interface {
-		Indexed
-		Counted
-	}
-
-	// Reverser can return a Sequence that has been reversed
-	Reverser interface {
-		Reverse() Sequence
 	}
 
 	// Valuer can return its data as a slice of Values

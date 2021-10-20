@@ -13,11 +13,11 @@ type (
 	Vector interface {
 		vector() // marker
 		Sequence
-		RandomAccess
+		ValuerSequence
 		Prepender
 		Appender
 		Reverser
-		Valuer
+		RandomAccess
 		Caller
 	}
 

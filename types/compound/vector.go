@@ -9,7 +9,7 @@ import (
 )
 
 type (
-	// VectorType describes a typed Sequence
+	// VectorType describes a typed fixed array of Values
 	VectorType interface {
 		types.Extended
 		collection() // marker

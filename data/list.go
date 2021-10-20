@@ -10,9 +10,9 @@ type (
 	List interface {
 		list() // marker
 		Sequence
-		RandomAccess
 		Prepender
 		Reverser
+		RandomAccess
 		Caller
 	}
 

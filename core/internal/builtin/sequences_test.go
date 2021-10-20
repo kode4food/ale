@@ -75,7 +75,7 @@ func TestLenEval(t *testing.T) {
 
 	as.PanicWith(`
 		(length (take 10000 (range 1 1000000000)))
-	`, interfaceErr("*sequence.lazySequence", "data.CountedSequence"))
+	`, interfaceErr("*sequence.lazySequence", "data.Counted"))
 }
 
 func TestLastEval(t *testing.T) {
@@ -88,7 +88,7 @@ func TestLastEval(t *testing.T) {
 		(last! (take 10000 (range 1 1000000000 2)))
 	`, I(19999))
 
-	err := interfaceErr("*sequence.lazySequence", "data.CountedSequence")
+	err := interfaceErr("*sequence.lazySequence", "data.Counted")
 	as.PanicWith(`
 		(last (take 10000 (range 1 1000000000)))
 	`, err)
@@ -103,7 +103,7 @@ func TestReverse(t *testing.T) {
 	as.EvalTo(`(reverse [])`, data.EmptyVector)
 	as.String(`(4 3 2 1)`, as.Eval(`(reverse! (take 4 (range 1 1000)))`))
 
-	err := interfaceErr("*sequence.lazySequence", "data.ReverserSequence")
+	err := interfaceErr("*sequence.lazySequence", "data.Reverser")
 	as.PanicWith(`
 		(reverse (take 4 (range 1 1000)))
 	`, err)

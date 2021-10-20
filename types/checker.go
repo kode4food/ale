@@ -1,11 +1,13 @@
 package types
 
 type (
+	// Checker is used to determine whether a Type will accept another
 	Checker interface {
 		Check(Type) Checker
 		Accepts(Type) Accepted
 	}
 
+	// Accepted is returned if a checked Type has been accepted
 	Accepted interface {
 		Checker
 	}
@@ -21,6 +23,7 @@ type (
 	}
 )
 
+// Check creates a Type Checker
 func Check(receiver Type) Checker {
 	return &checker{
 		receiver: receiver,
