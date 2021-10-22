@@ -64,7 +64,7 @@ func wrapType(t reflect.Type) (Wrapper, error) {
 	}
 
 	// register a stub to avoid wrap cycles
-	s := &struct{ Wrapper }{}
+	s := new(struct{ Wrapper })
 	cache.put(t, s)
 
 	// register the final Wrapper, and wire it into the
