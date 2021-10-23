@@ -84,6 +84,10 @@ func (e *encoder) Parent() Encoder {
 
 // Emit adds instructions to the Type's eventual output
 func (e *encoder) Emit(oc isa.Opcode, args ...isa.Coder) {
+	if len(args) == 0 {
+		e.code = append(e.code, isa.New(oc))
+		return
+	}
 	words := make([]isa.Word, len(args))
 	for i, a := range args {
 		words[i] = a.Word()

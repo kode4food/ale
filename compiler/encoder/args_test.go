@@ -5,13 +5,14 @@ import (
 
 	"github.com/kode4food/ale/compiler/encoder"
 	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
 )
 
 func TestArgs(t *testing.T) {
-	as := NewWrapped(t)
+	as := assert.New(t)
 
-	e := getTestEncoder()
+	e := assert.GetTestEncoder()
 	e.PushArgs(data.Names{"arg0"}, false)
 	e.PushArgs(data.Names{"arg1", "arg2", "arg3"}, true)
 

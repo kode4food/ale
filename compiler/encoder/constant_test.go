@@ -3,13 +3,14 @@ package encoder_test
 import (
 	"testing"
 
+	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
 )
 
 func TestConstants(t *testing.T) {
-	as := NewWrapped(t)
+	as := assert.New(t)
 
-	e := getTestEncoder()
+	e := assert.GetTestEncoder()
 	i1 := e.AddConstant(S("hello"))
 	i2 := e.AddConstant(I(42))
 	i3 := e.AddConstant(S("hello"))

@@ -3,13 +3,14 @@ package encoder_test
 import (
 	"testing"
 
+	"github.com/kode4food/ale/internal/assert"
 	"github.com/kode4food/ale/runtime/isa"
 )
 
 func TestLabels(t *testing.T) {
-	as := NewWrapped(t)
+	as := assert.New(t)
 
-	e := getTestEncoder()
+	e := assert.GetTestEncoder()
 	l1 := e.NewLabel()
 	l2 := e.NewLabel()
 	e.Emit(isa.Jump, l2)
@@ -30,9 +31,9 @@ func TestLabels(t *testing.T) {
 }
 
 func TestLabelDoubleAnchor(t *testing.T) {
-	as := NewWrapped(t)
+	as := assert.New(t)
 
-	e := getTestEncoder()
+	e := assert.GetTestEncoder()
 	l1 := e.NewLabel()
 	l1.DropAnchor()
 

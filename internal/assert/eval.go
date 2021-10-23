@@ -1,25 +1,14 @@
 package assert
 
 import (
-	"github.com/kode4food/ale/core/bootstrap"
 	"github.com/kode4food/ale/data"
-	"github.com/kode4food/ale/env"
 	"github.com/kode4food/ale/eval"
-)
-
-var (
-	testEnv = env.NewEnvironment()
-	ready   bool
 )
 
 // Eval will evaluate source code on behalf of the test framework
 func (w *Wrapper) Eval(src string) data.Value {
 	w.Helper()
-	if !ready {
-		bootstrap.Into(testEnv)
-		ready = true
-	}
-	ns := testEnv.GetAnonymous()
+	ns := GetTestNamespace()
 	return eval.String(ns, data.String(src))
 }
 
