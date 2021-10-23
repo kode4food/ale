@@ -98,7 +98,7 @@ func funcArgs(e encoder.Encoder, f data.Function, args data.Values) argsEmitter 
 		return normalArgs(e, args)
 	default:
 		// Programmer error
-		panic(fmt.Errorf(errUnknownConvention, c))
+		panic(fmt.Sprintf(errUnknownConvention, c))
 	}
 }
 

@@ -67,5 +67,5 @@ func purify(l, r Number) (Number, Number) {
 		}
 	}
 	// Programmer error
-	panic(fmt.Errorf(errCouldNotPurify, l, r))
+	panic(fmt.Sprintf(errCouldNotPurify, l, r))
 }

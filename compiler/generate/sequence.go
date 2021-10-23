@@ -46,7 +46,7 @@ func Sequence(e encoder.Encoder, s data.Sequence) {
 		Object(e, s)
 	default:
 		// Programmer error
-		panic(fmt.Errorf(errCannotCompile, s))
+		panic(fmt.Sprintf(errCannotCompile, s))
 	}
 }
 

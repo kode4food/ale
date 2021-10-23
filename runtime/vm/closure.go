@@ -371,7 +371,7 @@ opSwitch:
 
 	default:
 		// Programmer error
-		panic(fmt.Errorf(errUnknownOpcode, op))
+		panic(fmt.Sprintf(errUnknownOpcode, op))
 	}
 }
 

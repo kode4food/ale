@@ -30,7 +30,7 @@ func Value(e encoder.Encoder, v data.Value) {
 		Literal(e, expanded)
 	default:
 		// Programmer error
-		panic(fmt.Errorf(errUnknownValueType, v))
+		panic(fmt.Sprintf(errUnknownValueType, v))
 	}
 }
 

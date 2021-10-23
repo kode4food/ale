@@ -24,7 +24,7 @@ func verifyStackSize(code isa.Instructions) {
 	s.calculateNode(visitor.Branch(code))
 	if s.endSize != 0 {
 		// Programmer error
-		panic(fmt.Errorf(errBadStackTermination, s.endSize))
+		panic(fmt.Sprintf(errBadStackTermination, s.endSize))
 	}
 }
 
