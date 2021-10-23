@@ -14,11 +14,11 @@ func TestLiteral(t *testing.T) {
 	as := assert.New(t)
 
 	e := assert.GetTestEncoder()
-	generate.Literal(e, data.Integer(0))
-	generate.Literal(e, data.Integer(1))
-	generate.Literal(e, data.Integer(2))
-	generate.Literal(e, data.Integer(3))
-	generate.Literal(e, data.Integer(-1))
+	generate.Literal(e, I(0))
+	generate.Literal(e, I(1))
+	generate.Literal(e, I(2))
+	generate.Literal(e, I(3))
+	generate.Literal(e, I(-1))
 	generate.Literal(e, data.True)
 	generate.Literal(e, data.False)
 	generate.Literal(e, data.Nil)
@@ -52,4 +52,8 @@ func TestLiteral(t *testing.T) {
 		},
 		e.Code(),
 	)
+
+	c := e.Constants()
+	as.Equal(I(3), c[0])
+	as.Equal(S("hello there!"), c[1])
 }
