@@ -43,7 +43,7 @@ type (
 	}
 )
 
-// Branch splits linear instructions into a tree conditional branches
+// Branch splits linear instructions into a tree of conditional branches
 func Branch(code isa.Instructions) Node {
 	for pc, inst := range code {
 		oc := inst.Opcode
