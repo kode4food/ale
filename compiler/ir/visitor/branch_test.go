@@ -4,10 +4,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/kode4food/ale/compiler/ir/visitor"
-
 	"github.com/kode4food/ale/compiler/generate"
-
+	"github.com/kode4food/ale/compiler/ir/visitor"
 	"github.com/kode4food/ale/internal/assert"
 	"github.com/kode4food/ale/runtime/isa"
 )
@@ -46,17 +44,10 @@ func TestBranch(t *testing.T) {
 		isa.New(isa.Return),
 	}, b.Epilogue().Code())
 
-	as.Equal(`NegOne()
-True()
-CondJump(0)
-  One()
-else:
-  Zero()
-Pop()
-Return()
-`, b.(fmt.Stringer).String())
+	as.Equal(
+		"NegOne()\nTrue()\nCondJump(0)\n  One()\nelse:\n  Zero()\nPop()\nReturn()\n",
+		b.(fmt.Stringer).String(),
+	)
 
-	as.Equal(`Pop()
-Return()
-`, b.Epilogue().(fmt.Stringer).String())
+	as.Equal("Pop()\nReturn()\n", b.Epilogue().(fmt.Stringer).String())
 }
