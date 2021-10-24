@@ -10,7 +10,7 @@ type optimizer func(visitor.Node) visitor.Node
 var optimizers = []optimizer{
 	splitReturns,   // roll standalone returns into preceding branches
 	tailCalls,      // replace calls in tail position with a tail-call
-	unTruthy,       // instructions that push bool don't need MakeTruthy
+	stripTruthy,    // instructions that push bool don't need MakeTruthy
 	literalReturns, // convert some literal returns into single instructions
 }
 
