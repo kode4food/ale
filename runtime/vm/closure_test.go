@@ -149,6 +149,19 @@ func TestCalls(t *testing.T) {
 		isa.Add,
 		isa.Return,
 	})
+
+	testResult(t, I(5), []isa.Coder{
+		isa.Const, isa.Index(0),
+		isa.Const, isa.Index(3),
+		isa.Call1,
+		isa.Return,
+	})
+
+	testResult(t, I(0), []isa.Coder{
+		isa.Const, isa.Index(3),
+		isa.Call0,
+		isa.Return,
+	})
 }
 
 func TestMaths(t *testing.T) {
@@ -224,6 +237,29 @@ func TestGlobals(t *testing.T) {
 		isa.One,
 		isa.Const, isa.Index(5),
 		isa.Resolve,
+		isa.Add,
+		isa.Return,
+	})
+}
+
+func TestJumps(t *testing.T) {
+	testResult(t, I(4), []isa.Coder{
+		isa.Two,
+		isa.Jump, isa.Offset(4),
+		isa.One,
+		isa.Two,
+		isa.Add,
+		isa.Return,
+	})
+
+	testResult(t, I(4), []isa.Coder{
+		isa.Two,
+		isa.True,
+		isa.CondJump, isa.Offset(8),
+		isa.One,
+		isa.Add,
+		isa.Jump, isa.Offset(10),
+		isa.Two,
 		isa.Add,
 		isa.Return,
 	})
