@@ -144,13 +144,6 @@ opSwitch:
 		stack[SP1] = stack[SP1].(*Ref).Value
 		goto nextPC
 
-	case isa.Resolve:
-		SP1 := SP + 1
-		sym := stack[SP1].(data.Symbol)
-		val := env.MustResolveValue(lambda.Globals, sym)
-		stack[SP1] = val
-		goto nextPC
-
 	case isa.Declare:
 		SP++
 		name := stack[SP].(data.Name)
@@ -163,6 +156,13 @@ opSwitch:
 		SP++
 		val := stack[SP].(data.Value)
 		lambda.Globals.Declare(name).Bind(val)
+		goto nextPC
+
+	case isa.Resolve:
+		SP1 := SP + 1
+		sym := stack[SP1].(data.Symbol)
+		val := env.MustResolveValue(lambda.Globals, sym)
+		stack[SP1] = val
 		goto nextPC
 
 	case isa.Dup:

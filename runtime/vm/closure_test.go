@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/env"
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
 	"github.com/kode4food/ale/runtime/isa"
@@ -15,6 +16,8 @@ var constants = data.Values{
 	I(6),
 	S("a thrown error"),
 	data.Applicative(numLoopSum),
+	N("a-name"),
+	data.NewLocalSymbol("a-name"),
 }
 
 func makeCode(coders []isa.Coder) data.Function {
@@ -23,9 +26,11 @@ func makeCode(coders []isa.Coder) data.Function {
 		code[i] = c.Word()
 	}
 	lambda := &vm.Lambda{
-		Code:      code,
-		Constants: constants,
-		StackSize: 16,
+		Code:       code,
+		Constants:  constants,
+		StackSize:  16,
+		LocalCount: 10,
+		Globals:    env.NewEnvironment().GetAnonymous(),
 	}
 	closure := lambda.Call(S("closure"))
 	return closure.(data.Function)
@@ -179,6 +184,49 @@ func TestRelational(t *testing.T) {
 	testResult(t, data.True, []isa.Coder{isa.Two, isa.One, isa.Gte, isa.Return})
 	testResult(t, data.True, []isa.Coder{isa.Two, isa.Two, isa.Gte, isa.Return})
 	testResult(t, data.False, []isa.Coder{isa.One, isa.Two, isa.Gte, isa.Return})
+}
+
+func TestLoadStore(t *testing.T) {
+	testResult(t, I(4), []isa.Coder{
+		isa.Two,
+		isa.Store, isa.Index(0),
+		isa.Load, isa.Index(0),
+		isa.Load, isa.Index(0),
+		isa.Mul,
+		isa.Return,
+	})
+}
+
+func TestRefs(t *testing.T) {
+	testResult(t, I(-1), []isa.Coder{
+		isa.Two,
+		isa.Store, isa.Index(1),
+		isa.NewRef,
+		isa.Store, isa.Index(2),
+		isa.Load, isa.Index(1),
+		isa.Load, isa.Index(2),
+		isa.BindRef,
+		isa.One,
+		isa.Load, isa.Index(2),
+		isa.Deref,
+		isa.Sub,
+		isa.Return,
+	})
+}
+
+func TestGlobals(t *testing.T) {
+	testResult(t, I(3), []isa.Coder{
+		isa.Const, isa.Index(4),
+		isa.Declare,
+		isa.Two,
+		isa.Const, isa.Index(4),
+		isa.Bind,
+		isa.One,
+		isa.Const, isa.Index(5),
+		isa.Resolve,
+		isa.Add,
+		isa.Return,
+	})
 }
 
 func TestErrors(t *testing.T) {
