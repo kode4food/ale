@@ -122,10 +122,7 @@ func (e *encoder) Globals() env.Namespace {
 }
 
 func (e *encoder) Equal(v data.Value) bool {
-	if v, ok := v.(*encoder); ok {
-		return e == v
-	}
-	return false
+	return e == v
 }
 
 func (e *encoder) String() string {

@@ -66,10 +66,7 @@ func (w *wrappedClosingWriter) Close() {
 }
 
 func (w *wrappedWriter) Equal(v data.Value) bool {
-	if v, ok := v.(*wrappedWriter); ok {
-		return w == v
-	}
-	return false
+	return w == v
 }
 
 func (w *wrappedWriter) String() string {

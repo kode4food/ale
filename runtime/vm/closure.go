@@ -386,10 +386,7 @@ func (c *closure) Convention() data.Convention {
 }
 
 func (c *closure) Equal(v data.Value) bool {
-	if v, ok := v.(*closure); ok {
-		return c == v
-	}
-	return false
+	return c == v
 }
 
 func (c *closure) String() string {

@@ -73,10 +73,8 @@ func (*nilValue) CheckArity(argCount int) error {
 }
 
 func (*nilValue) Equal(v Value) bool {
-	if _, ok := v.(*nilValue); ok {
-		return true
-	}
-	return false
+	_, ok := v.(*nilValue)
+	return ok
 }
 
 func (*nilValue) String() string {

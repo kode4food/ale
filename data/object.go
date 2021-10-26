@@ -211,6 +211,9 @@ func (o *object) CheckArity(argCount int) error {
 }
 
 func (o *object) Equal(v Value) bool {
+	if o == v {
+		return true
+	}
 	if v, ok := v.(*object); ok {
 		lp := sortedPairs(o.Pairs())
 		rp := sortedPairs(v.Pairs())
@@ -332,10 +335,8 @@ func (*emptyObject) CheckArity(argCount int) error {
 }
 
 func (*emptyObject) Equal(v Value) bool {
-	if _, ok := v.(*emptyObject); ok {
-		return true
-	}
-	return false
+	_, ok := v.(*emptyObject)
+	return ok
 }
 
 func (*emptyObject) String() string {

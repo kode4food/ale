@@ -265,6 +265,9 @@ func (*Ratio) IsNegInf() bool {
 
 // Equal compares this Ratio to another for equality
 func (l *Ratio) Equal(r Value) bool {
+	if l == r {
+		return true
+	}
 	if r, ok := r.(*Ratio); ok {
 		lb := (*big.Rat)(l)
 		rb := (*big.Rat)(r)

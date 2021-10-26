@@ -74,10 +74,7 @@ func (p *promise) Type() data.Name {
 }
 
 func (p *promise) Equal(v data.Value) bool {
-	if v, ok := v.(*promise); ok {
-		return p == v
-	}
-	return false
+	return p == v
 }
 
 func (p *promise) String() string {

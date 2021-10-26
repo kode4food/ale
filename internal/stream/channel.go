@@ -123,10 +123,7 @@ func (e *channelEmitter) Type() types.Type {
 }
 
 func (e *channelEmitter) Equal(v data.Value) bool {
-	if v, ok := v.(*channelEmitter); ok {
-		return e == v
-	}
-	return false
+	return e == v
 }
 
 func (e *channelEmitter) String() string {
@@ -198,10 +195,7 @@ func (c *channelSequence) Type() types.Type {
 }
 
 func (c *channelSequence) Equal(v data.Value) bool {
-	if v, ok := v.(*channelSequence); ok {
-		return c == v
-	}
-	return false
+	return c == v
 }
 
 func (c *channelSequence) String() string {

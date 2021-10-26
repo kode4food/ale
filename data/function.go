@@ -101,10 +101,7 @@ func (f *function) Type() types.Type {
 }
 
 func (f *function) Equal(v Value) bool {
-	if v, ok := v.(*function); ok {
-		return f == v
-	}
-	return false
+	return f == v
 }
 
 func (f *function) String() string {

@@ -80,10 +80,7 @@ func (l *lazySequence) Type() types.Type {
 }
 
 func (l *lazySequence) Equal(v data.Value) bool {
-	if v, ok := v.(*lazySequence); ok {
-		return l == v
-	}
-	return false
+	return l == v
 }
 
 func (l *lazySequence) String() string {

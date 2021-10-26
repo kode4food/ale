@@ -58,10 +58,7 @@ func (l *Lambda) Type() types.Type {
 
 // Equal compares this Lambda to another for equality
 func (l *Lambda) Equal(v data.Value) bool {
-	if v, ok := v.(*Lambda); ok {
-		return l == v
-	}
-	return false
+	return l == v
 }
 
 func (l *Lambda) String() string {

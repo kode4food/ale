@@ -86,6 +86,9 @@ func (t *Token) Column() int {
 
 // Equal compares this Token to another for equality
 func (t *Token) Equal(v data.Value) bool {
+	if t == v {
+		return true
+	}
 	if v, ok := v.(*Token); ok {
 		return t.typ == v.typ && t.value.Equal(v.value)
 	}

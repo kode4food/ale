@@ -116,10 +116,10 @@ func (l *list) CheckArity(argCount int) error {
 }
 
 func (l *list) Equal(v Value) bool {
+	if l == v {
+		return true
+	}
 	if v, ok := v.(*list); ok {
-		if l == v {
-			return true
-		}
 		if l.count != v.count || !l.first.Equal(v.first) {
 			return false
 		}
