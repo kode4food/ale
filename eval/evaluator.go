@@ -20,10 +20,7 @@ func String(ns env.Namespace, src data.String) data.Value {
 func Block(ns env.Namespace, s data.Sequence) data.Value {
 	var res data.Value
 	for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {
-		e := encoder.NewEncoder(ns)
-		generate.Value(e, f)
-		e.Emit(isa.Return)
-		res = encodeAndRun(e)
+		res = Value(ns, f)
 	}
 	return res
 }

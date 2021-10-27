@@ -86,3 +86,22 @@ func TestListEquality(t *testing.T) {
 	as.True(l4.Equal(l5))
 	as.False(l4.Equal(I(56)))
 }
+
+func TestListAsKey(t *testing.T) {
+	as := assert.New(t)
+
+	o1, err := data.ValuesToObject(
+		L(S("hello"), S("there")), I(42),
+		L(S("hello")), I(96),
+		L(S("there")), I(128),
+	)
+
+	as.Nil(err)
+	v, ok := o1.Get(L(S("hello")))
+	as.True(ok)
+	as.Equal(I(96), v)
+
+	v, ok = o1.Get(L(S("hello"), S("there")))
+	as.True(ok)
+	as.Equal(I(42), v)
+}

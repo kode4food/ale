@@ -37,3 +37,22 @@ func TestConsStringify(t *testing.T) {
 	as.String("(1 . 2)", c3)
 	as.String("(1)", c4)
 }
+
+func TestConsAsKey(t *testing.T) {
+	as := assert.New(t)
+
+	o1, err := data.ValuesToObject(
+		C(S("hello"), S("there")), I(42),
+		C(S("hello"), S("you")), I(96),
+		C(S("there"), S("there")), I(128),
+	)
+
+	as.Nil(err)
+	v, ok := o1.Get(C(S("hello"), S("you")))
+	as.True(ok)
+	as.Equal(I(96), v)
+
+	v, ok = o1.Get(C(S("hello"), S("there")))
+	as.True(ok)
+	as.Equal(I(42), v)
+}
