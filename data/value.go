@@ -28,7 +28,7 @@ type (
 	// Names represents a set of Names
 	Names []Name
 
-	// Named is the generic interface
+	// Named is the generic interface for values that are named
 	Named interface {
 		Name() Name
 	}

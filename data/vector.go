@@ -19,6 +19,7 @@ type (
 		Reverser
 		RandomAccess
 		Caller
+		Valuer
 	}
 
 	vector []Value

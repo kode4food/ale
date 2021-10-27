@@ -80,3 +80,46 @@ func TestVectorEquality(t *testing.T) {
 	as.False(v1.Equal(v4))
 	as.False(v1.Equal(I(32)))
 }
+
+func TestVectorSplit(t *testing.T) {
+	as := assert.New(t)
+
+	v1 := data.NewVector(S("hello"), S("how"), S("are"), S("you?"))
+	f, r, ok := v1.Split()
+
+	as.True(ok)
+	as.Equal(S("hello"), f)
+	as.Equal(
+		data.Values{S("how"), S("are"), S("you?")},
+		r.(data.Vector).Values(),
+	)
+
+	v2 := data.NewVector(S("hello"))
+	f, r, ok = v2.Split()
+	as.True(ok)
+	as.Equal(S("hello"), f)
+	as.Equal(data.Values{}, r.(data.Vector).Values())
+
+	v3 := data.NewVector()
+	f, r, ok = v3.Split()
+	as.False(ok)
+}
+
+func TestVectorAsKey(t *testing.T) {
+	as := assert.New(t)
+
+	o1, err := data.ValuesToObject(
+		V(S("hello"), S("there")), I(42),
+		V(S("hello")), I(96),
+		V(S("there")), I(128),
+	)
+
+	as.Nil(err)
+	v, ok := o1.Get(V(S("hello")))
+	as.True(ok)
+	as.Equal(I(96), v)
+
+	v, ok = o1.Get(V(S("hello"), S("there")))
+	as.True(ok)
+	as.Equal(I(42), v)
+}
