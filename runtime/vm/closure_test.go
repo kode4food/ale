@@ -263,6 +263,44 @@ func TestJumps(t *testing.T) {
 		isa.Add,
 		isa.Return,
 	})
+
+	testResult(t, I(3), []isa.Coder{
+		isa.Two,
+		isa.False,
+		isa.CondJump, isa.Offset(8),
+		isa.One,
+		isa.Add,
+		isa.Jump, isa.Offset(10),
+		isa.Two,
+		isa.Add,
+		isa.Return,
+	})
+}
+
+func TestArgs(t *testing.T) {
+	as := assert.New(t)
+	args := []data.Value{S("arg1"), S("arg2"), S("arg3"), S("arg4")}
+
+	c1 := makeCode([]isa.Coder{
+		isa.ArgLen,
+		isa.Return,
+	})
+	r1 := c1.Call(args...)
+	as.Equal(I(4), r1)
+
+	c2 := makeCode([]isa.Coder{
+		isa.Arg, isa.Index(1),
+		isa.Return,
+	})
+	r2 := c2.Call(args...)
+	as.Equal(S("arg2"), r2)
+
+	c3 := makeCode([]isa.Coder{
+		isa.RestArg, isa.Index(2),
+		isa.Return,
+	})
+	r3 := c3.Call(args...)
+	as.Equal(data.NewVector(S("arg3"), S("arg4")), r3)
 }
 
 func TestErrors(t *testing.T) {
