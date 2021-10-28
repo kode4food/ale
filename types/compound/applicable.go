@@ -22,6 +22,7 @@ type (
 	// Signature describes an ApplicableType calling signature
 	Signature struct {
 		Arguments []types.Type
+		TakesRest bool
 		Result    types.Type
 	}
 
@@ -69,6 +70,21 @@ func (a *applicable) Accepts(c types.Checker, other types.Type) bool {
 	return false
 }
 
+func (s Signature) name() string {
+	return fmt.Sprintf("%s->%s", s.argNames(), s.Result.Name())
+}
+
+func (s Signature) argNames() string {
+	a := s.Arguments
+	if !s.TakesRest {
+		return typeList(a).name()
+	}
+	l := len(a)
+	args := typeList(a[:l-1]).name()
+	rest := a[l-1].Name()
+	return fmt.Sprintf("%s.%s", args, rest)
+}
+
 func (s Signature) acceptsFromSignatures(
 	c types.Checker, other []Signature,
 ) bool {
@@ -86,7 +102,7 @@ func (s Signature) accepts(c types.Checker, other Signature) bool {
 	}
 	sa := s.Arguments
 	oa := other.Arguments
-	if len(sa) != len(oa) {
+	if len(sa) != len(oa) || s.TakesRest != other.TakesRest {
 		return false
 	}
 	for i, a := range sa {
@@ -104,9 +120,7 @@ func (s signatures) name() string {
 func (s signatures) names() []string {
 	res := make([]string, len(s))
 	for i, sig := range s {
-		res[i] = fmt.Sprintf("%s->%s",
-			typeList(sig.Arguments).name(), sig.Result.Name(),
-		)
+		res[i] = sig.name()
 	}
 	return res
 }

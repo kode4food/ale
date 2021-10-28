@@ -60,3 +60,38 @@ func TestApplicable(t *testing.T) {
 	as.NotNil(types.Check(basic.Lambda).Accepts(u1))
 	as.Nil(types.Check(basic.Lambda).Accepts(u2))
 }
+
+func TestApplicableRest(t *testing.T) {
+	as := assert.New(t)
+
+	a1 := compound.Applicable(
+		compound.Signature{
+			Arguments: []types.Type{basic.Number, basic.Number},
+			Result:    basic.Bool,
+		},
+	)
+	a2 := compound.Applicable(
+		compound.Signature{
+			Arguments: []types.Type{basic.Number, basic.Number},
+			TakesRest: true,
+			Result:    basic.Bool,
+		},
+	)
+	a3 := compound.Applicable(
+		compound.Signature{
+			Arguments: []types.Type{basic.Number, basic.Number},
+			Result:    basic.Bool,
+		},
+		compound.Signature{
+			Arguments: []types.Type{basic.Number, basic.Number},
+			TakesRest: true,
+			Result:    basic.Bool,
+		},
+	)
+
+	as.Nil(types.Check(a1).Accepts(a2))
+	as.Nil(types.Check(a3).Accepts(a1))
+	as.Nil(types.Check(a3).Accepts(a2))
+	as.NotNil(types.Check(a1).Accepts(a3))
+	as.NotNil(types.Check(a2).Accepts(a3))
+}
