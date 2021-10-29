@@ -2,7 +2,6 @@ package stream
 
 import (
 	"runtime"
-	"sync/atomic"
 
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/do"
@@ -23,18 +22,13 @@ type (
 		error interface{}
 	}
 
-	channelWrapper struct {
-		seq    chan channelResult
-		status uint32
-	}
-
 	channelEmitter struct {
-		ch *channelWrapper
+		ch chan<- channelResult
 	}
 
 	channelSequence struct {
 		once do.Action
-		ch   *channelWrapper
+		ch   <-chan channelResult
 
 		result channelResult
 		rest   data.Sequence
@@ -50,12 +44,6 @@ const (
 	SequenceKey = data.Keyword("seq")
 )
 
-const (
-	channelReady uint32 = iota
-	channelCloseRequested
-	channelClosed
-)
-
 var (
 	emptyResult = channelResult{value: data.Nil, error: nil}
 
@@ -63,59 +51,38 @@ var (
 	channelSequenceType = basic.New("channel-sequence")
 )
 
-func (ch *channelWrapper) Close() {
-	if atomic.LoadUint32(&ch.status) != channelClosed {
-		atomic.StoreUint32(&ch.status, channelClosed)
-		close(ch.seq)
-	}
-}
-
 // NewChannel produces an Emitter and Sequence pair
 func NewChannel(size int) (Emitter, data.Sequence) {
-	seq := make(chan channelResult, size)
-	ch := &channelWrapper{
-		seq:    seq,
-		status: channelReady,
-	}
+	ch := make(chan channelResult, size)
 	return NewChannelEmitter(ch), NewChannelSequence(ch)
 }
 
 // NewChannelEmitter produces an Emitter for sending values to a Go chan
-func NewChannelEmitter(ch *channelWrapper) Emitter {
+func NewChannelEmitter(ch chan<- channelResult) Emitter {
 	r := &channelEmitter{
 		ch: ch,
 	}
 	runtime.SetFinalizer(r, func(e *channelEmitter) {
 		defer func() { recover() }()
-		if atomic.LoadUint32(&ch.status) != channelClosed {
-			e.Close()
-		}
+		close(ch)
 	})
 	return r
 }
 
 // Write will send a Value to the Go chan
 func (e *channelEmitter) Write(v data.Value) {
-	if atomic.LoadUint32(&e.ch.status) == channelReady {
-		e.ch.seq <- channelResult{v, nil}
-	}
-	if atomic.LoadUint32(&e.ch.status) == channelCloseRequested {
-		e.Close()
-	}
+	e.ch <- channelResult{v, nil}
 }
 
 // Error will send an Error to the Go chan
 func (e *channelEmitter) Error(err interface{}) {
-	if atomic.LoadUint32(&e.ch.status) == channelReady {
-		e.ch.seq <- channelResult{data.Nil, err}
-	}
-	e.Close()
+	e.ch <- channelResult{data.Nil, err}
 }
 
 // Close will Close the Go chan
 func (e *channelEmitter) Close() {
 	runtime.SetFinalizer(e, nil)
-	e.ch.Close()
+	close(e.ch)
 }
 
 func (e *channelEmitter) Type() types.Type {
@@ -131,31 +98,21 @@ func (e *channelEmitter) String() string {
 }
 
 // NewChannelSequence produces a new Sequence whose values come from a Go chan
-func NewChannelSequence(ch *channelWrapper) data.Sequence {
-	r := &channelSequence{
+func NewChannelSequence(ch <-chan channelResult) data.Sequence {
+	return &channelSequence{
 		once:   do.Once(),
 		ch:     ch,
 		result: emptyResult,
 		rest:   data.EmptyList,
 	}
-	runtime.SetFinalizer(r, func(c *channelSequence) {
-		defer func() { recover() }()
-		if atomic.LoadUint32(&c.ch.status) == channelReady {
-			atomic.StoreUint32(&c.ch.status, channelCloseRequested)
-			<-ch.seq // consume whatever is there
-		}
-	})
-	return r
 }
 
 func (c *channelSequence) resolve() *channelSequence {
 	c.once(func() {
-		runtime.SetFinalizer(c, nil)
-		ch := c.ch
-		if result, ok := <-ch.seq; ok {
+		if result, ok := <-c.ch; ok {
 			c.ok = ok
 			c.result = result
-			c.rest = NewChannelSequence(ch)
+			c.rest = NewChannelSequence(c.ch)
 		}
 	})
 	if e := c.result.error; e != nil {
