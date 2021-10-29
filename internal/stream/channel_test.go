@@ -1,6 +1,7 @@
 package stream_test
 
 import (
+	"fmt"
 	"sync"
 	"testing"
 	"time"
@@ -55,4 +56,20 @@ func TestChannel(t *testing.T) {
 	go gen()
 	go check()
 	wg.Wait()
+}
+
+func TestChannelError(t *testing.T) {
+	as := assert.New(t)
+
+	e, seq := stream.NewChannel(2)
+	e.Write(S("hello"))
+	e.Error(fmt.Errorf("boom"))
+
+	f, r, ok := seq.Split()
+	as.True(ok)
+	as.Equal(S("hello"), f)
+	as.NotNil(r)
+
+	defer as.ExpectPanic("boom")
+	_ = r.First()
 }
