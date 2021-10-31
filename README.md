@@ -31,5 +31,4 @@ to start if you invoke `ale` with no arguments from your shell.
 
 ## Current Status
 
-Still a work in progress, and the compiler is pretty fragile, but that will
-change rapidly.
+Still a work in progress. Use at your own risk.
