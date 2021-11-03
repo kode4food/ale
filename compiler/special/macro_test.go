@@ -3,15 +3,12 @@ package special_test
 import (
 	"testing"
 
-	"github.com/kode4food/ale/compiler/special"
-
 	"github.com/kode4food/ale/compiler/encoder"
-
-	"github.com/kode4food/ale/runtime/isa"
-
+	"github.com/kode4food/ale/compiler/special"
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
+	"github.com/kode4food/ale/runtime/isa"
 )
 
 type testEncoder func(encoder.Encoder, ...data.Value)
