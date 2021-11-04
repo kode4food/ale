@@ -2,7 +2,7 @@
 title: "length"
 date: 2019-04-06T12:19:22+02:00
 description: "returns the size of a sequence"
-names: ["length", "length!"]
+names: ["length" "length!"]
 usage: "(length seq) (length! seq)"
 tags: ["sequence"]
 ---

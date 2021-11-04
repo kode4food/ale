@@ -2,9 +2,9 @@
 title: "indexed?"
 date: 2019-04-06T12:19:22+02:00
 description: "tests whether the provided forms are indexed sequences"
-names: ["indexed?", "!indexed?", "is-indexed"]
+names: ["indexed?" "!indexed?" "is-indexed"]
 usage: "(indexed? form+) (!indexed? form+) (is-indexed form)"
-tags: ["sequence", "predicate"]
+tags: ["sequence" "predicate"]
 ---
 
 If all forms evaluate to a valid sequence than can be accessed by index, then this function will return _#t_ (true). The first non-indexed sequence will result in the function returning _#f_ (false).
@@ -17,7 +17,7 @@ If all forms evaluate to a valid sequence than can be accessed by index, then th
 
 This example will return _#t_ (true).
 
-Like most predicates, this function can also be negated by prepending the `!` character. This means that all of the provided forms must not be valid indexed sequences.
+Like most predicates, this function can also be negated by prepending the `!` character. This means that all the provided forms must not be valid indexed sequences.
 
 ```scheme
 (!indexed? "hello" 99)

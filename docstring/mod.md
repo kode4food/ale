@@ -4,7 +4,7 @@ date: 2019-04-06T12:19:22+02:00
 description: "calculates the remainder of a number sequence"
 names: ["mod"]
 usage: "(mod form+)"
-tags: ["math", "number"]
+tags: ["math" "number"]
 ---
 
 Takes a set of numbers and calculates the collective remainder of dividing each by the next.

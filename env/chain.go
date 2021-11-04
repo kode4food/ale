@@ -27,6 +27,10 @@ func (ns *chainedNamespace) Domain() data.Name {
 	return ns.child.Domain()
 }
 
+func (ns *chainedNamespace) Declared() []data.Name {
+	return ns.child.Declared()
+}
+
 func (ns *chainedNamespace) Declare(n data.Name) Entry {
 	return ns.child.Declare(n)
 }

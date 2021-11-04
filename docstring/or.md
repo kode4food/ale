@@ -4,7 +4,7 @@ date: 2019-04-06T12:19:22+02:00
 description: "performs a short-circuiting or"
 names: ["or"]
 usage: "(or form*)"
-tags: ["conditional", "logic"]
+tags: ["conditional" "logic"]
 ---
 
 Evaluates the forms from left to right. As soon as one evaluates to a truthy value, will return that value. Otherwise it will proceed to evaluating the next form.

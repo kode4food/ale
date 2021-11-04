@@ -11,9 +11,9 @@ import (
 func TestLocalSymbolEquality(t *testing.T) {
 	as := assert.New(t)
 
-	sym1 := data.NewLocalSymbol("hello")
-	sym2 := data.NewLocalSymbol("there")
-	sym3 := data.NewLocalSymbol("hello")
+	sym1 := LS("hello")
+	sym2 := LS("there")
+	sym3 := LS("hello")
 
 	as.True(sym1.Equal(sym1))
 	as.False(sym1.Equal(sym2))
@@ -33,7 +33,7 @@ func TestQualifiedSymbolEquality(t *testing.T) {
 	as.False(sym1.Equal(sym2))
 	as.True(sym1.Equal(sym3))
 	as.False(sym1.Equal(I(32)))
-	as.False(sym1.Equal(data.NewLocalSymbol("hello")))
+	as.False(sym1.Equal(LS("hello")))
 }
 
 func TestSymbolParsing(t *testing.T) {

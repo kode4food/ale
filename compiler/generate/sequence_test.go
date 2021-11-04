@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/kode4food/ale/compiler/generate"
-	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
 	"github.com/kode4food/ale/runtime/isa"
@@ -24,7 +23,7 @@ func TestBlock(t *testing.T) {
 
 	e2 := assert.GetTestEncoder()
 	generate.Block(e2, V(
-		L(data.NewLocalSymbol("+"), I(1), I(2)),
+		L(LS("+"), I(1), I(2)),
 		B(true),
 	))
 	e2.Emit(isa.Return)

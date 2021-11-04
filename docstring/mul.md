@@ -4,7 +4,7 @@ date: 2019-04-06T12:19:22+02:00
 description: "calculates the product of a number sequence"
 names: ["*"]
 usage: "(* form*)"
-tags: ["math", "number"]
+tags: ["math" "number"]
 ---
 
 Takes a set of numbers and calculates their product.

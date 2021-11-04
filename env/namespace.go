@@ -2,6 +2,7 @@ package env
 
 import (
 	"fmt"
+	"sort"
 	"sync"
 
 	"github.com/kode4food/ale/data"
@@ -12,6 +13,7 @@ type (
 	Namespace interface {
 		Environment() *Environment
 		Domain() data.Name
+		Declared() []data.Name
 		Declare(data.Name) Entry
 		Resolve(data.Name) (Entry, bool)
 	}
@@ -59,6 +61,20 @@ func (ns *namespace) Environment() *Environment {
 
 func (ns *namespace) Domain() data.Name {
 	return ns.domain
+}
+
+func (ns *namespace) Declared() []data.Name {
+	ns.mutex.RLock()
+	defer ns.mutex.RUnlock()
+	e := ns.entries
+	res := make([]data.Name, 0, len(e))
+	for k := range e {
+		res = append(res, k)
+	}
+	sort.Slice(res, func(i, j int) bool {
+		return string(res[i]) < string(res[j])
+	})
+	return res
 }
 
 func (ns *namespace) Declare(n data.Name) Entry {

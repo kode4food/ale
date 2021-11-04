@@ -2,7 +2,7 @@
 title: "atom?"
 date: 2019-04-06T12:19:22+02:00
 description: "tests whether the provided forms are atomic"
-names: ["atom?", "!atom?", "is-atom"]
+names: ["atom?" "!atom?" "is-atom"]
 usage: "(atom? form+) (!atom? form+) (is-atom form)"
 tags: ["predicate"]
 ---
@@ -17,7 +17,7 @@ A form is considered to be atomic if it cannot be further evaluated and would ot
 
 This example will return _#t_ (true) because each value is atomic.
 
-Like most predicates, this function can also be negated by prepending the `!` character. This means that all of the provided forms must not be atomic.
+Like most predicates, this function can also be negated by prepending the `!` character. This means that all the provided forms must not be atomic.
 
 ```scheme
 (!atom? '(+ 1 2 3) [4 5 6])

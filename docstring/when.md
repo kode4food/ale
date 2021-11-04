@@ -2,7 +2,7 @@
 title: "when"
 date: 2019-04-06T12:19:22+02:00
 description: "conditionally evaluates a block"
-names: ["when", "when-not"]
+names: ["when" "when-not"]
 usage: "(when pred form*)"
 tags: ["conditional"]
 ---

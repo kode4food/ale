@@ -2,7 +2,7 @@
 title: "try/catch"
 date: 2019-04-06T12:19:22+02:00
 description: "handles raised errors"
-names: ["try", "catch", "finally"]
+names: ["try"]
 usage: "(try form* catch-clause* finally-clause?)"
 ---
 

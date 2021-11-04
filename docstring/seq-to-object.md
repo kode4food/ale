@@ -4,7 +4,7 @@ date: 2019-04-06T12:19:22+02:00
 description: "converts sequences to an object"
 names: ["seq->object"]
 usage: "(seq->object seq+)"
-tags: ["sequence", "conversion"]
+tags: ["sequence" "conversion"]
 ---
 
 Will concatenate a set of sequences into an object (hash-map). Unlike the standard `concat` function, which is lazily computed, the result of this function will be materialized immediately.

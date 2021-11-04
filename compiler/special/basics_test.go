@@ -15,7 +15,7 @@ func TestBegin(t *testing.T) {
 
 	e1 := assert.GetTestEncoder()
 	special.Begin(e1,
-		L(data.NewLocalSymbol("+"), I(1), I(2)),
+		L(LS("+"), I(1), I(2)),
 		B(true),
 	)
 	e1.Emit(isa.Return)
@@ -37,10 +37,10 @@ func TestBegin(t *testing.T) {
 func TestEval(t *testing.T) {
 	as := assert.New(t)
 
-	add := L(data.NewLocalSymbol("+"), I(1), I(2))
+	add := L(LS("+"), I(1), I(2))
 	e1 := assert.GetTestEncoder()
 	special.Eval(e1,
-		add.Prepend(data.NewLocalSymbol("list")),
+		add.Prepend(LS("list")),
 	)
 	e1.Emit(isa.Return)
 
@@ -57,7 +57,7 @@ func TestEval(t *testing.T) {
 	}, e1.Code())
 
 	c := e1.Constants()
-	as.Equal(data.NewLocalSymbol("+"), c[0])
+	as.Equal(LS("+"), c[0])
 	as.Equal(assert.GetRootSymbol(e1, "list"), c[1])
 
 	// check to see that the third constant is evalFor

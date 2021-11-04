@@ -2,7 +2,7 @@
 title: "let"
 date: 2019-04-06T12:19:22+02:00
 description: "binds local values"
-names: ["let", "let*"]
+names: ["let" "let*"]
 usage: "(let ([name expr]*) form*) (let* ([name expr]*) form*)"
 tags: ["binding"]
 ---

@@ -4,7 +4,7 @@ date: 2019-04-06T12:19:22+02:00
 description: "binds a reader macro"
 names: ["define-macro"]
 usage: "(define-macro name (param*) form*) (define-macro (name param*) form*)"
-tags: ["function", "macro", "binding"]
+tags: ["function" "macro" "binding"]
 ---
 
 Will bind a macro to a global name. A macro is expanded by the reader in order to alter the source code's data representation before it is evaluated.

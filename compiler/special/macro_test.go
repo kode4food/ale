@@ -25,7 +25,7 @@ func testMacroExpandWith(t *testing.T, enc testEncoder) {
 	as := assert.New(t)
 	e1 := assert.GetTestEncoder()
 
-	neq := L(data.NewLocalSymbol("!eq"), I(1), I(2))
+	neq := L(LS("!eq"), I(1), I(2))
 	enc(e1, neq)
 	e1.Emit(isa.Return)
 

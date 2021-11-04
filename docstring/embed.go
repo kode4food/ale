@@ -5,8 +5,8 @@ import "embed"
 //go:embed *.md
 var assets embed.FS
 
-// Names returns the names of the available docstring files
-func Names() []string {
+// assetNames returns the names of the available docstring files
+func assetNames() []string {
 	files, _ := assets.ReadDir(".")
 	res := make([]string, 0, len(files))
 	for _, f := range files {
@@ -15,5 +15,5 @@ func Names() []string {
 	return res
 }
 
-// Get exposes the assets FS ReadFile method
-var Get = assets.ReadFile
+// getAsset exposes the assets FS ReadFile method
+var getAsset = assets.ReadFile

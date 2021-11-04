@@ -17,6 +17,7 @@ import (
 	"github.com/kode4food/ale"
 	"github.com/kode4food/ale/core/bootstrap"
 	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/docstring"
 	"github.com/kode4food/ale/env"
 	"github.com/kode4food/ale/eval"
 	"github.com/kode4food/ale/internal/console"
@@ -268,7 +269,7 @@ func formatForREPL(s string) string {
 }
 
 func help(_ ...data.Value) data.Value {
-	md, err := GetDocString("help")
+	md, err := docstring.Get("help")
 	if err != nil {
 		// Programmer error, help is missing
 		panic(err)
@@ -280,7 +281,7 @@ func help(_ ...data.Value) data.Value {
 func doc(args ...data.Value) data.Value {
 	sym := args[0].(data.LocalSymbol)
 	name := string(sym.Name())
-	if docStr, err := GetDocString(name); err == nil {
+	if docStr, err := docstring.Get(name); err == nil {
 		f := formatForREPL(docStr)
 		fmt.Println(f)
 		return nothing

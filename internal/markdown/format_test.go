@@ -14,7 +14,7 @@ import (
 func TestFormatMarkdown(t *testing.T) {
 	as := assert.New(t)
 
-	s, err := docstring.Get("if.md")
+	s, err := docstring.Get("if")
 	as.NotEmpty(s)
 	as.Nil(err)
 

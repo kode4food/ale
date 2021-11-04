@@ -17,7 +17,7 @@ var constants = data.Values{
 	S("a thrown error"),
 	data.Applicative(numLoopSum),
 	N("a-name"),
-	data.NewLocalSymbol("a-name"),
+	LS("a-name"),
 }
 
 func makeCode(coders []isa.Coder) data.Function {
