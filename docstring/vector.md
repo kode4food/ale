@@ -1,6 +1,5 @@
 ---
 title: "vector"
-date: 2019-04-06T12:19:22+02:00
 description: "creates a new vector"
 names: ["vector"]
 usage: "(vector form*)"

@@ -1,6 +1,5 @@
 ---
 title: "object"
-date: 2019-04-06T12:19:22+02:00
 description: "creates a new object instance"
 names: ["object"]
 usage: "(object <key value>*)"

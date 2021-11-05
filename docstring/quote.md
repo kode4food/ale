@@ -1,6 +1,5 @@
 ---
 title: "quote"
-date: 2019-04-06T12:19:22+02:00
 description: "returns the specified form in data mode"
 names: ["quote"]
 usage: "(quote form)"

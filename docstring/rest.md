@@ -1,6 +1,5 @@
 ---
 title: "rest"
-date: 2019-04-06T12:19:22+02:00
 description: "returns the rest of the sequence"
 names: ["rest"]
 usage: "(rest seq)"

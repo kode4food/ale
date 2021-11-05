@@ -1,6 +1,5 @@
 ---
 title: "if"
-date: 2019-04-06T12:19:22+02:00
 description: "performs simple branching"
 names: ["if" "unless"]
 usage: "(if pred then else?)"

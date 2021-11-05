@@ -1,6 +1,5 @@
 ---
 title: "range"
-date: 2019-04-06T12:19:22+02:00
 description: "creates a range"
 names: ["range"]
 usage: "(range min max inc)"

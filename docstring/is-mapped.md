@@ -1,6 +1,5 @@
 ---
 title: "mapped?"
-date: 2019-04-06T12:19:22+02:00
 description: "tests whether the provided forms are mapped"
 names: ["mapped?" "!mapped?" "is-mapped"]
 usage: "(mapped? form+) (!mapped? form+) (is-mapped form)"

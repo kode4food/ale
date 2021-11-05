@@ -1,6 +1,5 @@
 ---
 title: "cons"
-date: 2019-04-06T12:19:22+02:00
 description: "combines two values into a pair"
 names: ["cons"]
 usage: "(cons car cdr)"

@@ -1,7 +1,5 @@
-
 ---
 title: "dissoc"
-date: 2021-02-11T12:19:22+02:00
 description: "removes an association by key"
 names: ["dissoc"]
 usage: "(dissoc seq key)"

@@ -1,6 +1,5 @@
 ---
 title: "division (/)"
-date: 2019-04-06T12:19:22+02:00
 description: "calculates the quotient of a number sequence"
 names: ["/"]
 usage: "(/ form+)"

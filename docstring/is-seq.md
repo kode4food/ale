@@ -1,6 +1,5 @@
 ---
 title: "seq?"
-date: 2019-04-06T12:19:22+02:00
 description: "tests whether the provided forms are sequences"
 names: ["seq?" "!seq?" "is-seq"]
 usage: "(seq? form+) (!seq? form+) (is-seq form)"

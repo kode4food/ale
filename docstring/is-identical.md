@@ -1,6 +1,5 @@
 ---
 title: "identical (eq)"
-date: 2019-04-06T12:19:22+02:00
 description: "tests if a set of values are identical to the first"
 names: ["eq" "!eq"]
 usage: "(eq form form+) (!eq form form+)"

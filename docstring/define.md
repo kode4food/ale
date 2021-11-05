@@ -1,6 +1,5 @@
 ---
 title: "define"
-date: 2019-04-06T12:19:22+02:00
 description: "binds a namespace entry"
 names: ["define"]
 usage: "(define name form) (define (name param*) form*)"

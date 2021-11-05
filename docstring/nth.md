@@ -1,6 +1,5 @@
 ---
 title: "nth"
-date: 2019-04-06T12:19:22+02:00
 description: "retrieves a value by index"
 names: ["nth" "nth!"]
 usage: "(nth seq index default?) (nth! seq index default?)"

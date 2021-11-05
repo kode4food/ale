@@ -1,7 +1,5 @@
-
 ---
 title: "get"
-date: 2019-04-06T12:19:22+02:00
 description: "retrieves a value by key"
 names: ["get"]
 usage: "(get seq key default?)"

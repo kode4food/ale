@@ -1,6 +1,5 @@
 ---
 title: "promise?"
-date: 2019-04-06T12:19:22+02:00
 description: "tests whether the provided forms are promises"
 names: ["promise?" "!promise?" "is-promise"]
 usage: "(promise? form+) (!promise? form+) (is-promise form)"

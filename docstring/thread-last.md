@@ -1,7 +1,7 @@
 ---
 title: "thread last (->>)"
 description: "threads value through calls as their last argument"
-date: 2019-04-06T12:19:22+02:00
+
 names: ["->>"]
 usage: "(->> expr forms*)"
 tags: ["function"]

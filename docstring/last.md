@@ -1,6 +1,5 @@
 ---
 title: "last"
-date: 2019-04-06T12:19:22+02:00
 description: "returns the last element of the sequence"
 names: ["last"]
 usage: "(last seq) (last! seq)"

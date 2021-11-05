@@ -1,6 +1,5 @@
 ---
 title: "seq->object"
-date: 2019-04-06T12:19:22+02:00
 description: "converts sequences to an object"
 names: ["seq->object"]
 usage: "(seq->object seq+)"

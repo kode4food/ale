@@ -1,6 +1,5 @@
 ---
 title: "generate"
-date: 2019-04-06T12:19:22+02:00
 description: "generates a sequence asynchronously"
 names: ["generate"]
 usage: "(generate form+)"

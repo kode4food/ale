@@ -1,6 +1,5 @@
 ---
 title: "conj"
-date: 2019-04-06T12:19:22+02:00
 description: "adds elements to a sequence"
 names: ["conj"]
 usage: "(conj seq form+)"

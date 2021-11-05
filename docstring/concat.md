@@ -1,6 +1,5 @@
 ---
 title: "concat"
-date: 2019-04-06T12:19:22+02:00
 description: "concatenates sequences"
 names: ["concat"]
 usage: "(concat seq+) (concat! seq+)"

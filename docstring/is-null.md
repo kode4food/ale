@@ -1,6 +1,5 @@
 ---
 title: "null?"
-date: 2019-04-06T12:19:22+02:00
 description: "tests whether the provided forms are nil"
 names: ["null?" "!null?" "is-null"]
 usage: "(null? form+) (!null? form+) (is-null form)"

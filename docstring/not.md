@@ -1,6 +1,5 @@
 ---
 title: "not"
-date: 2019-04-06T12:19:22+02:00
 description: "logically inverts the truthiness of the provided form"
 names: ["not"]
 usage: "(not form)"

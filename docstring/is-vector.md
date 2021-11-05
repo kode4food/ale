@@ -1,6 +1,5 @@
 ---
 title: "vector?"
-date: 2019-04-06T12:19:22+02:00
 description: "tests whether the provided forms are vectors"
 names: ["vector?" "!vector?" "is-vector"]
 usage: "(vector? form+) (!vector? form+) (is-vector form)"

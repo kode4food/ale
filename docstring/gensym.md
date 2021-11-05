@@ -1,6 +1,5 @@
 ---
 title: "gensym"
-date: 2019-04-06T12:19:22+02:00
 description: "creates a unique symbol, useful in macros"
 names: ["gensym"]
 usage: "(gensym str?)"

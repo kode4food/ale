@@ -1,6 +1,5 @@
 ---
 title: "future"
-date: 2019-04-06T12:19:22+02:00
 description: "evaluates a set of forms asynchronously"
 names: ["future"]
 usage: "(future form*)"

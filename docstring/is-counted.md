@@ -1,6 +1,5 @@
 ---
 title: "counted?"
-date: 2019-04-06T12:19:22+02:00
 description: "tests whether the provided forms are counted sequences"
 names: ["counted?" "!counted?" "is-counted"]
 usage: "(counted? form+) (!counted? form+) (is-counted form)"

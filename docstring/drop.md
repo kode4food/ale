@@ -1,6 +1,5 @@
 ---
 title: "drop"
-date: 2019-04-06T12:19:22+02:00
 description: "drops the first elements of a sequence"
 names: ["drop"]
 usage: "(drop count seq)"

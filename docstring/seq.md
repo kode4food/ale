@@ -1,6 +1,5 @@
 ---
 title: "seq"
-date: 2019-04-06T12:19:22+02:00
 description: "attempts to convert form to a sequence"
 names: ["seq"]
 usage: "(seq form)"

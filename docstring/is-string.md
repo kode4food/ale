@@ -1,6 +1,5 @@
 ---
 title: "str?"
-date: 2019-04-06T12:19:22+02:00
 description: "tests whether the provided forms are strings"
 names: ["string?" "!string?" "is-string"]
 usage: "(string? form+) (!string? form+) (is-string form)"

@@ -1,6 +1,5 @@
 ---
 title: "lazy-seq"
-date: 2019-04-06T12:19:22+02:00
 description: "produces a sequence that is evaluated lazily"
 names: ["lazy-seq"]
 usage: "(lazy-seq form*)"

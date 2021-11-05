@@ -1,7 +1,7 @@
 ---
 title: "str"
 description: "converts forms to a string"
-date: 2019-04-06T12:19:22+02:00
+
 names: ["str" "str!"]
 usage: "(str form*) (str! form*)"
 tags: ["sequence" "conversion"]

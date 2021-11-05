@@ -1,6 +1,5 @@
 ---
 title: "list?"
-date: 2019-04-06T12:19:22+02:00
 description: "tests whether the provided forms are lists"
 names: ["list?" "!list?" "is-list"]
 usage: "(list? form+) (!list? form+) (is-list form)"

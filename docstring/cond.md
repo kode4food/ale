@@ -1,6 +1,5 @@
 ---
 title: "cond"
-date: 2019-04-06T12:19:22+02:00
 description: "performs conditional branching"
 names: ["cond"]
 usage: "(cond [pred then]*)"

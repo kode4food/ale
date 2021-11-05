@@ -1,7 +1,7 @@
 ---
 title: "take"
 description: "takes the first elements of a sequence"
-date: 2019-04-06T12:19:22+02:00
+
 names: ["take"]
 usage: "(take count seq)"
 tags: ["sequence" "comprehension"]

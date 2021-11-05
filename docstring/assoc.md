@@ -1,7 +1,5 @@
-
 ---
 title: "assoc"
-date: 2021-02-11T12:19:22+02:00
 description: "associates a value to a key"
 names: ["assoc"]
 usage: "(assoc seq key value) (assoc seq pair)"

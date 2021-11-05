@@ -1,6 +1,5 @@
 ---
 title: "current-time"
-date: 2019-04-06T12:19:22+02:00
 description: "returns the current system time (in nanoseconds)"
 names: ["current-time"]
 usage: "(current-time)"

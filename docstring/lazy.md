@@ -1,6 +1,5 @@
 ---
 title: "lazy"
-date: 2019-04-06T12:19:22+02:00
 description: "produces a lazy evaluation"
 names: ["lazy"]
 usage: "(lazy expr*)"

@@ -1,6 +1,5 @@
 ---
 title: "partial"
-date: 2019-04-06T12:19:22+02:00
 description: "generates a function based on a partial apply"
 names: ["partial"]
 usage: "(partial func arg+)"
