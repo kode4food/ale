@@ -22,8 +22,8 @@ type (
 	}
 )
 
-// Vector declares a new VectorType that will only allow a Vector with
-// elements of the provided elem Type
+// Vector declares a new VectorType that will only allow a Vector with elements
+// of the provided elem Type
 func Vector(elem types.Type) VectorType {
 	return &vector{
 		Extended: extended.New(basic.Vector),

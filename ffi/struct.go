@@ -20,8 +20,8 @@ type (
 	}
 )
 
-// AleTag identifies the tag used to specify the Keyword used when
-// wrapping a struct as an Object
+// AleTag identifies the tag used to specify the Keyword used when wrapping a
+// struct as an Object
 const AleTag = "ale"
 
 func makeWrappedStruct(t reflect.Type) (Wrapper, error) {

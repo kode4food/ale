@@ -24,8 +24,8 @@ type (
 	}
 )
 
-// Object declares a new ObjectType that will only allow keys and values
-// of the provided types
+// Object declares a new ObjectType that will only allow keys and values of the
+// provided types
 func Object(key types.Type, value types.Type) ObjectType {
 	return &object{
 		Extended: extended.New(basic.Object),

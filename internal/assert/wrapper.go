@@ -165,8 +165,8 @@ func (w *Wrapper) ExpectPanic(errStr string) {
 	panic(ErrProperErrorNotRaised)
 }
 
-// ExpectProgrammerError is used with a defer to make sure a programmer
-// error was triggered
+// ExpectProgrammerError is used with a defer to make sure a programmer error
+// was triggered
 func (w *Wrapper) ExpectProgrammerError(errStr string) {
 	w.Helper()
 	if rec := recover(); rec != nil {

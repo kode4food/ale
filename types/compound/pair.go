@@ -29,8 +29,8 @@ type (
 
 func (*pair) pair() {}
 
-// Cons declares a new PairType that will only allow a List with
-// elements of the provided elem Type
+// Cons declares a new PairType that will only allow a List with elements of
+// the provided elem Type
 func Cons(left, right types.Type) types.Type {
 	base := basic.Cons
 	return &pair{

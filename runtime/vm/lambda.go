@@ -20,8 +20,8 @@ type Lambda struct {
 	ArityChecker data.ArityChecker
 }
 
-// LambdaFromEncoder instantiates a VM Lambda from the provided
-// Encoder's intermediate representation
+// LambdaFromEncoder instantiates a VM Lambda from the provided Encoder's
+// intermediate representation
 func LambdaFromEncoder(e encoder.Encoder) *Lambda {
 	code := e.Code()
 	optimized := optimize.Instructions(code)

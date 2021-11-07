@@ -13,8 +13,8 @@ const (
 	ErrTooManyArguments = "too many arity check arguments"
 )
 
-// OrMore is the constant used when you want to tell MakeChecker
-// to generate a minimum arity checker
+// OrMore is the constant used when you want to tell MakeChecker to generate a
+// minimum arity checker
 const OrMore = -1
 
 // MakeChecker produces an arity checker based on its parameters

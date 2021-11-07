@@ -9,8 +9,8 @@ import (
 	"github.com/kode4food/ale/env"
 )
 
-// reader is a stateful iteration interface for a Token stream that
-// is piloted by the FromScanner function and exposed as a LazySequence
+// reader is a stateful iteration interface for a Token stream that is piloted
+// by the FromScanner function and exposed as a LazySequence
 type reader struct {
 	seq   data.Sequence
 	token *Token

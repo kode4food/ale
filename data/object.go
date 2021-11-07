@@ -55,9 +55,9 @@ var (
 	objectHash = rand.Uint64()
 )
 
-// NewObject instantiates a new Object instance. Based on Phil Bagwell's
-// Hashed Array Mapped Trie data structure, though not as space efficient.
-// More information on HAMT's can be found at:
+// NewObject instantiates a new Object instance. Based on Phil Bagwell's Hashed
+// Array Mapped Trie data structure, though not as space efficient. More
+// information on HAMT's can be found at:
 //
 //    http://lampwww.epfl.ch/papers/idealhashtrees.pdf
 //

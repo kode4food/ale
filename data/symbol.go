@@ -77,8 +77,8 @@ func ParseSymbol(s String) Symbol {
 	return localSymbol(s)
 }
 
-// NewSymbolGenerator creates a new symbol generator. In general, it is safe
-// to use the global generator because it only maintains an incrementer
+// NewSymbolGenerator creates a new symbol generator. In general, it is safe to
+// use the global generator because it only maintains an incrementer
 func NewSymbolGenerator() *SymbolGenerator {
 	return new(SymbolGenerator)
 }

@@ -21,8 +21,8 @@ const (
 	errLabelAlreadyAnchored = "label has already been anchored"
 )
 
-// Flatten takes a set of instructions and flattens them into
-// something that the virtual machine can execute
+// Flatten takes a set of instructions and flattens them into something that
+// the virtual machine can execute
 func Flatten(code Instructions) []Word {
 	f := &flattener{
 		input:  code,

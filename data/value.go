@@ -146,10 +146,9 @@ func Truthy(v Value) bool {
 	return true
 }
 
-// HashCode returns a hash code for the provided Value. If the Value
-// implements the Hashed interface, it will call us the HashCode()
-// method. Otherwise, it will create a hash code from the stringified
-// form of the Value
+// HashCode returns a hash code for the provided Value. If the Value implements
+// the Hashed interface, it will call us the HashCode() method. Otherwise, it
+// will create a hash code from the stringified form of the Value
 func HashCode(v Value) uint64 {
 	if h, ok := v.(Hashed); ok {
 		return h.HashCode()

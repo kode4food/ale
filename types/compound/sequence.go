@@ -8,8 +8,8 @@ import (
 	"github.com/kode4food/ale/types/extended"
 )
 
-// List declares a new PairType that will only allow a List with
-// elements of the provided elem Type
+// List declares a new PairType that will only allow a List with elements of
+// the provided elem Type
 func List(elem types.Type) types.Type {
 	return makeSequence(basic.List, elem)
 }

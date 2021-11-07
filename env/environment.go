@@ -98,9 +98,9 @@ func (e *Environment) GetQualified(n data.Name) Namespace {
 	})
 }
 
-// ResolveSymbol attempts to resolve a symbol. If it's a qualified symbol,
-// it will be retrieved directly from the identified namespace. Otherwise
-// it will be searched in the current namespace
+// ResolveSymbol attempts to resolve a symbol. If it's a qualified symbol, it
+// will be retrieved directly from the identified namespace. Otherwise it will
+// be searched in the current namespace
 func ResolveSymbol(ns Namespace, s data.Symbol) (Entry, bool) {
 	if q, ok := s.(data.QualifiedSymbol); ok {
 		e := ns.Environment()

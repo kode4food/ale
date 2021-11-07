@@ -9,10 +9,9 @@ import (
 	"github.com/kode4food/ale/internal/console"
 )
 
-// This is *not* a full-featured markdown formatter, or even a compliant
-// one for that matter. It only supports the productions that are used
-// by the system's documentation strings and will likely not evolve much
-// beyond that
+// This is *not* a full-featured markdown formatter, or even a compliant one
+// for that matter. It only supports the productions that are used by the
+// system's documentation strings and will likely not evolve much beyond that
 
 type (
 	formatter func(string) string

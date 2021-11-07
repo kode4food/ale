@@ -28,9 +28,8 @@ const (
 	ErrNameAlreadyBound    = "name is already bound in local scope: %s"
 )
 
-// Let encodes a binding form. Binding values are evaluated first, and
-// are then bound to fresh names, meaning that mutual recursion is not
-// supported
+// Let encodes a binding form. Binding values are evaluated first, and are then
+// bound to fresh names, meaning that mutual recursion is not supported
 func Let(e encoder.Encoder, args ...data.Value) {
 	bindings, body := parseLet(args...)
 

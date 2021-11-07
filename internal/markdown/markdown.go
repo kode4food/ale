@@ -6,8 +6,8 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-// Header stores the fields of a Markdown document header (at least the ones
-// we care about for processing)
+// Header stores the fields of a Markdown document header (at least the ones we
+// care about for processing)
 type Header struct {
 	Title       string   `yaml:"title"`
 	Description string   `yaml:"description"`
@@ -24,9 +24,8 @@ func Parse(doc string) (*Header, []string) {
 	return obj, skipEmptyLines(rest)
 }
 
-// ParseHeader parses the header of a markdown document that might be
-// processed by a static site generator, returning the prologue parameters as
-// a data.Object
+// ParseHeader parses the header of a markdown document that might be processed
+// by a static site generator, returning the prologue parameters as a Header
 func ParseHeader(doc string) *Header {
 	res, _ := parseDocument(doc)
 	return res

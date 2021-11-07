@@ -41,8 +41,8 @@ func MustWrap(i interface{}) data.Value {
 	return res
 }
 
-// Wrap takes a native Go value, potentially builds a Wrapper for
-// its type, and returns a marshalled data.Value from the Wrapper
+// Wrap takes a native Go value, potentially builds a Wrapper for its type, and
+// returns a marshalled data.Value from the Wrapper
 func Wrap(i interface{}) (data.Value, error) {
 	if i == nil {
 		return data.Nil, nil

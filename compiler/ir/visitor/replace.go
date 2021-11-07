@@ -18,9 +18,8 @@ type (
 	}
 )
 
-// Replace visits all Instruction nodes and if any of the
-// instructions therein match the provided Pattern, they
-// will be replaced using the provided Mapper
+// Replace visits all Instruction nodes and if any of the instructions therein
+// match the provided Pattern, they will be replaced using the provided Mapper
 func Replace(root Node, pattern Pattern, mapper Mapper) {
 	r := &replace{
 		pattern: pattern,

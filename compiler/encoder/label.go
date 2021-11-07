@@ -26,8 +26,8 @@ func (e *encoder) NewLabel() *Label {
 	return res
 }
 
-// Word turns Label into a Coder, allowing a references to be
-// placed at the current encoding position.
+// Word turns Label into a Coder, allowing a references to be placed at the
+// current encoding position.
 func (l *Label) Word() isa.Word {
 	return l.number.Word()
 }

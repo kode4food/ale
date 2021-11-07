@@ -55,8 +55,8 @@ func makeFunction(c Call, conv Convention, arity ArityChecker) Function {
 	}
 }
 
-// MakeApplicative constructs an applicative Function from a Caller
-// and ArityChecker
+// MakeApplicative constructs an applicative Function from a Caller and
+// ArityChecker
 func MakeApplicative(c Call, arity ArityChecker) Function {
 	return makeFunction(c, ApplicativeCall, arity)
 }

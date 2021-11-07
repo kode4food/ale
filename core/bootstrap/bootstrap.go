@@ -36,9 +36,9 @@ func Into(e *env.Environment) {
 	b.assets()
 }
 
-// TopLevelEnvironment configures an environment that could be used
-// at the top-level of the system, such as the REPL. It has access to
-// the *env*, *args*, and standard in/out/err file streams.
+// TopLevelEnvironment configures an environment that could be used at the
+// top-level of the system, such as the REPL. It has access to the *env*,
+// *args*, and standard in/out/err file streams.
 func TopLevelEnvironment() *env.Environment {
 	e := env.NewEnvironment()
 	ns := e.GetRoot()

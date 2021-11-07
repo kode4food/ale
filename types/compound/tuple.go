@@ -8,8 +8,8 @@ import (
 	"github.com/kode4food/ale/types/extended"
 )
 
-// Tuple declares a new TupleType that will only allow a List or Vector
-// with positional elements of the provided Types
+// Tuple declares a new TupleType that will only allow a List or Vector with
+// positional elements of the provided Types
 func Tuple(elems ...types.Type) types.Type {
 	return makeTuple(basic.List, elems)
 }
