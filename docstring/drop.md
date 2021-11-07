@@ -3,7 +3,7 @@ title: "drop"
 description: "drops the first elements of a sequence"
 names: ["drop"]
 usage: "(drop count seq)"
-tags: ["sequence" "comprehension"]
+tags: ["sequence", "comprehension"]
 ---
 
 Will return a lazy sequence that excludes the first _count_ elements of the provided sequence. If the source sequence is shorter than the requested count, an empty list will be returned.

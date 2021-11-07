@@ -1,28 +1,34 @@
 package markdown
 
 import (
-	"regexp"
 	"strings"
 
-	"github.com/kode4food/ale/data"
-	"github.com/kode4food/ale/read"
+	"gopkg.in/yaml.v2"
 )
 
-var keyValue = regexp.MustCompile(`^([^:]+):\s*(.*)$`)
+// Header stores the fields of a Markdown document header (at least the ones
+// we care about for processing)
+type Header struct {
+	Title       string   `yaml:"title"`
+	Description string   `yaml:"description"`
+	Usage       string   `yaml:"usage"`
+	Names       []string `yaml:"names"`
+	Tags        []string `yaml:"tags"`
+}
 
 // Parse parses the kind of markdown document that might be processed by a
 // static site generator. It will parse any prologue parameters into the
 // resulting object and return the remaining content as individual lines
-func Parse(doc string) (data.Object, []string) {
-	obj, rest := parseKeyValues(doc)
+func Parse(doc string) (*Header, []string) {
+	obj, rest := parseDocument(doc)
 	return obj, skipEmptyLines(rest)
 }
 
 // ParseHeader parses the header of a markdown document that might be
 // processed by a static site generator, returning the prologue parameters as
 // a data.Object
-func ParseHeader(doc string) data.Object {
-	res, _ := parseKeyValues(doc)
+func ParseHeader(doc string) *Header {
+	res, _ := parseDocument(doc)
 	return res
 }
 
@@ -34,12 +40,12 @@ func skipEmptyLines(lines []string) []string {
 	return lines[first:]
 }
 
-func parseKeyValues(doc string) (data.Object, []string) {
-	p := data.Pairs{}
+func parseDocument(doc string) (*Header, []string) {
 	lines := strings.Split(doc, "\n")
 	if strings.TrimSpace(lines[0]) != "---" {
-		return data.NewObject(p...), lines
+		return nil, lines
 	}
+
 	lines = lines[1:]
 	var rest = 1
 	for i, l := range lines {
@@ -47,24 +53,17 @@ func parseKeyValues(doc string) (data.Object, []string) {
 			rest = i + 1
 			break
 		}
-		if k, v, ok := parseKeyValue(l); ok {
-			p = append(p, data.NewCons(k, v))
-		}
 	}
-	return data.NewObject(p...), lines[rest:]
+
+	head := lines[:rest-1]
+	y := strings.Join(head, "\n")
+	return parseHeader(y), lines[rest:]
 }
 
-func parseKeyValue(l string) (n data.Name, v data.Value, ok bool) {
-	defer func() {
-		if rec := recover(); rec != nil {
-			ok = false
-		}
-	}()
-
-	if sm := keyValue.FindStringSubmatch(l); sm != nil {
-		name := data.Name(sm[1])
-		value := read.FromString(data.String(sm[2])).First()
-		return name, value, true
+func parseHeader(b string) *Header {
+	m := &Header{}
+	if err := yaml.Unmarshal([]byte(b), &m); err != nil {
+		panic(err)
 	}
-	return "", nil, false
+	return m
 }

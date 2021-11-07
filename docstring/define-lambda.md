@@ -3,7 +3,7 @@ title: "define-lambda"
 description: "binds a namespace function"
 names: ["define-lambda"]
 usage: "(define-lambda name (param*) form*) (define-lambda (name param*) form*)"
-tags: ["function" "binding"]
+tags: ["function", "binding"]
 ---
 
 Will bind a function by name to the current namespace.

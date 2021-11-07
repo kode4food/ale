@@ -3,7 +3,7 @@ title: "seq->list"
 description: "converts sequences to a list"
 names: ["seq->list"]
 usage: "(seq->list seq+)"
-tags: ["sequence" "conversion"]
+tags: ["sequence", "conversion"]
 ---
 
 Will concatenate a set of sequences into a list. Unlike the standard `concat` function, which is lazily computed, the result of this function will be materialized immediately.

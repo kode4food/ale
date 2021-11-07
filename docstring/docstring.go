@@ -48,9 +48,9 @@ func ensureDocStringCache() {
 		for _, filename := range assetNames() {
 			doc, _ := getAsset(filename)
 			meta := markdown.ParseHeader(string(doc))
-			if names, ok := meta.Get(names); ok {
-				for _, name := range names.(data.Vector).Values() {
-					docStringCache[name.String()] = doc
+			if names := meta.Names; len(names) > 0 {
+				for _, name := range names {
+					docStringCache[name] = doc
 				}
 			} else {
 				n := filename[0 : len(filename)-len(extension)]

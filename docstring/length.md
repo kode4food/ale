@@ -1,7 +1,7 @@
 ---
 title: "length"
 description: "returns the size of a sequence"
-names: ["length" "length!"]
+names: ["length", "length!"]
 usage: "(length seq) (length! seq)"
 tags: ["sequence"]
 ---

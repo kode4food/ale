@@ -3,7 +3,7 @@ title: "reduce"
 description: "reduces a sequence"
 names: ["reduce"]
 usage: "(reduce func val? seq)"
-tags: ["sequence" "comprehension"]
+tags: ["sequence", "comprehension"]
 ---
 
 Iterates over a set of sequence, reducing their elements to a single resulting value. The function provided must take two arguments. The first and second sequence elements encountered are the initial values applied to that function. Thereafter, the result of the previous calculation is used as the first argument, while the next element is used as the second argument.

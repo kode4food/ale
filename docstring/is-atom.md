@@ -1,7 +1,7 @@
 ---
 title: "atom?"
 description: "tests whether the provided forms are atomic"
-names: ["atom?" "!atom?" "is-atom"]
+names: ["atom?", "!atom?", "is-atom"]
 usage: "(atom? form+) (!atom? form+) (is-atom form)"
 tags: ["predicate"]
 ---

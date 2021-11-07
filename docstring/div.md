@@ -3,7 +3,7 @@ title: "division (/)"
 description: "calculates the quotient of a number sequence"
 names: ["/"]
 usage: "(/ form+)"
-tags: ["math" "number"]
+tags: ["math", "number"]
 ---
 
 Takes a set of numbers and calculates their collective quotient.

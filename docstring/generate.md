@@ -3,7 +3,7 @@ title: "generate"
 description: "generates a sequence asynchronously"
 names: ["generate"]
 usage: "(generate form+)"
-tags: ["sequence" "concurrency"]
+tags: ["sequence", "concurrency"]
 ---
 
 Evaluates the specified forms in a separate thread of execution. Returns a sequence that will iterate over any of the values that are emitted. Values are emitted using a locally scoped function of the form `(emit value)`. The forms are executed as a co-routine, meaning that a call to emit **will block** until the corresponding element is resolved by a consumer of the sequence.

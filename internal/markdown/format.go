@@ -6,7 +6,6 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/console"
 )
 
@@ -24,12 +23,7 @@ type (
 	}
 )
 
-const (
-	usageName = data.Name("usage")
-	descName  = data.Name("description")
-
-	blockPrefix = "```"
-)
+const blockPrefix = "```"
 
 var (
 	header = regexp.MustCompile("^#+\\s(.*)$")
@@ -58,13 +52,13 @@ var (
 // FormatMarkdown formats a markdown asset for REPL display
 func FormatMarkdown(s string) string {
 	doc := strings.TrimSpace(s)
-	meta, lines := Parse(doc)
+	header, lines := Parse(doc)
 
 	var pre []string
-	if desc, ok := meta.Get(descName); ok {
+	if desc := header.Description; desc != "" {
 		pre = append(pre, fmt.Sprintf("# %s", desc))
 	}
-	if usage, ok := meta.Get(usageName); ok {
+	if usage := header.Usage; usage != "" {
 		pre = append(pre, "")
 		pre = append(pre, fmt.Sprintf("Usage: `%s`", usage))
 		pre = append(pre, "")

@@ -1,9 +1,9 @@
 ---
 title: "mapped?"
 description: "tests whether the provided forms are mapped"
-names: ["mapped?" "!mapped?" "is-mapped"]
+names: ["mapped?", "!mapped?", "is-mapped"]
 usage: "(mapped? form+) (!mapped? form+) (is-mapped form)"
-tags: ["sequence" "predicate"]
+tags: ["sequence", "predicate"]
 ---
 
 If all forms evaluate to a mapped type, then this function will return _#t_ (true). The first non-mapped will result in the function returning _#f_ (false).

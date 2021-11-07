@@ -1,7 +1,7 @@
 ---
 title: "null?"
 description: "tests whether the provided forms are nil"
-names: ["null?" "!null?" "is-null"]
+names: ["null?", "!null?", "is-null"]
 usage: "(null? form+) (!null? form+) (is-null form)"
 tags: ["predicate"]
 ---

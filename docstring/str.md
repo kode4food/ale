@@ -2,9 +2,9 @@
 title: "str"
 description: "converts forms to a string"
 
-names: ["str" "str!"]
+names: ["str", "str!"]
 usage: "(str form*) (str! form*)"
-tags: ["sequence" "conversion"]
+tags: ["sequence", "conversion"]
 ---
 
 Creates a new string from the stringified values of the provided forms.

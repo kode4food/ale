@@ -1,9 +1,9 @@
 ---
 title: "promise?"
 description: "tests whether the provided forms are promises"
-names: ["promise?" "!promise?" "is-promise"]
+names: ["promise?", "!promise?", "is-promise"]
 usage: "(promise? form+) (!promise? form+) (is-promise form)"
-tags: ["concurrency" "predicate"]
+tags: ["concurrency", "predicate"]
 ---
 
 If all forms evaluate to a promise, then this function will return _#t_ (true). The first non-promise will result in the function returning _#f_ (false).

@@ -1,9 +1,9 @@
 ---
 title: "vector?"
 description: "tests whether the provided forms are vectors"
-names: ["vector?" "!vector?" "is-vector"]
+names: ["vector?", "!vector?", "is-vector"]
 usage: "(vector? form+) (!vector? form+) (is-vector form)"
-tags: ["sequence" "predicate"]
+tags: ["sequence", "predicate"]
 ---
 
 If all forms evaluate to a vector, then this function will return _#t_ (true). The first non-vector will result in the function returning _#f_ (false).

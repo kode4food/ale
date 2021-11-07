@@ -1,7 +1,7 @@
 ---
 title: "nth"
 description: "retrieves a value by index"
-names: ["nth" "nth!"]
+names: ["nth", "nth!"]
 usage: "(nth seq index default?) (nth! seq index default?)"
 tags: ["sequence"]
 ---

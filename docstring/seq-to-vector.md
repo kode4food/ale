@@ -3,7 +3,7 @@ title: "seq->vector"
 description: "converts sequences to a vector"
 names: ["seq->vector"]
 usage: "(seq->vector seq+)"
-tags: ["sequence" "conversion"]
+tags: ["sequence", "conversion"]
 ---
 
 Will concatenate a set of sequences into a vector. Unlike the standard `concat` function, which is lazily computed, the result of this function will be materialized immediately.

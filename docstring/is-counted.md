@@ -1,9 +1,9 @@
 ---
 title: "counted?"
 description: "tests whether the provided forms are counted sequences"
-names: ["counted?" "!counted?" "is-counted"]
+names: ["counted?", "!counted?", "is-counted"]
 usage: "(counted? form+) (!counted? form+) (is-counted form)"
-tags: ["sequence" "predicate"]
+tags: ["sequence", "predicate"]
 ---
 
 If all forms evaluate to a valid sequence than can report its length without counting, then this function will return _#t_ (true). The first non-counted sequence will result in the function returning _#f_ (false).

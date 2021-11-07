@@ -3,7 +3,7 @@ title: "addition (+)"
 description: "calculates the sum of a number sequence"
 names: ["+"]
 usage: "(+ form*)"
-tags: ["math" "number"]
+tags: ["math", "number"]
 ---
 
 Takes a set of numbers and calculates their sum.

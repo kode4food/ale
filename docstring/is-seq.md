@@ -1,9 +1,9 @@
 ---
 title: "seq?"
 description: "tests whether the provided forms are sequences"
-names: ["seq?" "!seq?" "is-seq"]
+names: ["seq?", "!seq?", "is-seq"]
 usage: "(seq? form+) (!seq? form+) (is-seq form)"
-tags: ["sequence" "predicate"]
+tags: ["sequence", "predicate"]
 ---
 
 If all forms evaluate to a valid sequence, then this function will return _#t_ (true). The first non-sequence will result in the function returning _#f_ (false).

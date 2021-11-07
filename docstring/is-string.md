@@ -1,9 +1,9 @@
 ---
 title: "str?"
 description: "tests whether the provided forms are strings"
-names: ["string?" "!string?" "is-string"]
+names: ["string?", "!string?", "is-string"]
 usage: "(string? form+) (!string? form+) (is-string form)"
-tags: ["sequence" "predicate"]
+tags: ["sequence", "predicate"]
 ---
 
 If all forms evaluate to strings, then this function will return _#t_ (true). The first non-string will result in the function returning _#f_ (false).
