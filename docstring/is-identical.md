@@ -6,7 +6,7 @@ usage: "(eq form form+) (!eq form form+)"
 tags: ["comparison"]
 ---
 
-Will return _#f_ (false) as soon as it encounters a form that is not identical to the first. Otherwise will return _#t_ (true).
+Will return _#f_ (false) as soon as it encounters a form that is not identical to the first. Otherwise, will return _#t_ (true).
 
 #### An Example
 

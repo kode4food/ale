@@ -6,7 +6,7 @@ usage: "(string? form+) (!string? form+) (is-string form)"
 tags: ["sequence", "predicate"]
 ---
 
-If all forms evaluate to strings, then this function will return _#t_ (true). The first non-string will result in the function returning _#f_ (false).
+If all forms evaluate to string, then this function will return _#t_ (true). The first non-string will result in the function returning _#f_ (false).
 
 #### An Example
 

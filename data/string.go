@@ -117,7 +117,7 @@ func (s String) Quote() string {
 	return buf.String()
 }
 
-// MaybeQuoteString converts Values to strings, quoting wrapped Strings
+// MaybeQuoteString converts Values to string, quoting wrapped Strings
 func MaybeQuoteString(v Value) string {
 	if s, ok := v.(String); ok {
 		return s.Quote()

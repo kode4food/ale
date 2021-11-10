@@ -16,7 +16,7 @@ If all forms evaluate to a valid sequence, then this function will return _#t_ (
 
 This example will return _#t_ (true).
 
-Like most predicates, this function can also be negated by prepending the `!` character. This means that all of the provided forms must not be valid sequences.
+Like most predicates, this function can also be negated by prepending the `!` character. This means that all the provided forms must not be valid sequences.
 
 ```scheme
 (!seq? "hello" 99)

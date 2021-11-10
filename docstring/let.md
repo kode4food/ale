@@ -16,4 +16,4 @@ Will create a new local scope, evaluate the provided expressions, and then bind 
   (concat x y))
 ```
 
-This example will create a list called _x_ and a vector called _y_ and return the lazy concatenation of those sequences. Note that the two names do not exist outside of the `let` form.
+This example will create a list called _x_ and a vector called _y_ and return the lazy concatenation of those sequences. Note that the two names do not exist outside the `let` form.

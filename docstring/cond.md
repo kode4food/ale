@@ -19,4 +19,4 @@ For each _pred-then_ clause, the predicate will be evaluated, and if it is truth
   [:else     "was in between"      ])
 ```
 
-In this case, _"was in between"_ will be returned. The reason that this works is because the `:else` keyword, like all keywords, evaluates to truthy.
+In this case, _"was in between"_ will be returned. The reason that this works is that the `:else` keyword, like all keywords, evaluates to truthy.
