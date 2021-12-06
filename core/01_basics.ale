@@ -27,7 +27,7 @@
     (lambda (name form)
       `(let-rec [,name ,form] ,name))))
 
-(define* is-cons-or-list
+(define* ^is-cons-or-list
   (lambda (value)
     (if (is-cons value)
         true
@@ -39,7 +39,7 @@
           (lambda forms
             (let ([f (car forms)]
                   [r (cdr forms)])
-              (if (is-cons-or-list f)
+              (if (^is-cons-or-list f)
                   (quoter (car f) (cons (cdr f) r))
                   (quoter f r))))))]
 
@@ -109,7 +109,7 @@
   (let [value (first body)]
     (assert-args
       (or (is-local value)
-          (is-cons-or-list value))
+          (^is-cons-or-list value))
       (str "invalid define: " body))
     (if (is-local value)
         `(define* ,@body)

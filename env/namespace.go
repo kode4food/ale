@@ -2,6 +2,7 @@ package env
 
 import (
 	"fmt"
+	"regexp"
 	"sort"
 	"sync"
 
@@ -54,6 +55,8 @@ const (
 	ErrNameAlreadyBound = "name is already bound in namespace: %s"
 	ErrNameNotBound     = "name is not bound in namespace: %s"
 )
+
+var privateSymbol = regexp.MustCompile(`^\^.+$`)
 
 func (ns *namespace) Environment() *Environment {
 	return ns.environment
@@ -133,4 +136,15 @@ func (e *entry) Bind(v data.Value) {
 	}
 	e.value = v
 	e.bound = true
+}
+
+func resolvePublic(from, in Namespace, n data.Name) (Entry, bool) {
+	if isPrivateSymbol(n) && from != in {
+		return nil, false
+	}
+	return in.Resolve(n)
+}
+
+func isPrivateSymbol(n data.Name) bool {
+	return privateSymbol.MatchString(string(n))
 }

@@ -39,5 +39,5 @@ func (ns *chainedNamespace) Resolve(n data.Name) (Entry, bool) {
 	if e, ok := ns.child.Resolve(n); ok {
 		return e, true
 	}
-	return ns.parent.Resolve(n)
+	return resolvePublic(ns, ns.parent, n)
 }

@@ -109,7 +109,7 @@
   (apply concat (apply map func colls)))
 
 (define-macro (for seq-exprs . body)
-  (let [b (make-bindings seq-exprs)]
+  (let [b (^make-bindings seq-exprs)]
     (assert-args
       (!empty? b) "at least one for binding is required")
     (let* ([this (first b)]

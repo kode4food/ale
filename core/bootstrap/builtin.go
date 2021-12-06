@@ -18,9 +18,9 @@ const (
 )
 
 const (
-	defBuiltInName = "def-builtin"
-	defSpecialName = "def-special"
-	defMacroName   = "def-macro"
+	defBuiltInName = "^def-builtin"
+	defSpecialName = "^def-special"
+	defMacroName   = "^def-macro"
 )
 
 func (b *bootstrap) builtIns() {

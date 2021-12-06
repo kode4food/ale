@@ -105,7 +105,7 @@ func ResolveSymbol(ns Namespace, s data.Symbol) (Entry, bool) {
 	if q, ok := s.(data.QualifiedSymbol); ok {
 		e := ns.Environment()
 		qns := e.GetQualified(q.Domain())
-		return qns.Resolve(q.Name())
+		return resolvePublic(ns, qns, q.Name())
 	}
 	return ns.Resolve(s.Name())
 }
