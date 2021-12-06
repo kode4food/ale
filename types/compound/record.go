@@ -82,13 +82,17 @@ func (f fields) toMap() map[string]types.Type {
 	return res
 }
 
-func (f fields) name() string {
-	in := f[:]
-	sort.Slice(in, func(i, j int) bool {
-		return in[i].Name < in[j].Name
+func (f fields) sorted() fields {
+	res := f[:]
+	sort.Slice(res, func(i, j int) bool {
+		return res[i].Name < res[j].Name
 	})
+	return res
+}
+
+func (f fields) name() string {
 	var buf bytes.Buffer
-	for i, elem := range in {
+	for i, elem := range f.sorted() {
 		if i > 0 {
 			buf.WriteRune(',')
 		}

@@ -3,9 +3,7 @@ package data
 import (
 	"bytes"
 	"errors"
-	"fmt"
 	"math/rand"
-	"sort"
 
 	"github.com/kode4food/ale/types"
 	"github.com/kode4food/ale/types/basic"
@@ -215,8 +213,8 @@ func (o *object) Equal(v Value) bool {
 		return true
 	}
 	if v, ok := v.(*object); ok {
-		lp := sortedPairs(o.Pairs())
-		rp := sortedPairs(v.Pairs())
+		lp := o.Pairs().Sorted()
+		rp := v.Pairs().Sorted()
 		if len(lp) != len(rp) {
 			return false
 		}
@@ -265,7 +263,7 @@ func (o *object) pairs(p Pairs) Pairs {
 func (o *object) String() string {
 	var buf bytes.Buffer
 	buf.WriteString("{")
-	for i, p := range sortedPairs(o.Pairs()) {
+	for i, p := range o.Pairs().Sorted() {
 		if i > 0 {
 			buf.WriteString(" ")
 		}
@@ -275,15 +273,6 @@ func (o *object) String() string {
 	}
 	buf.WriteString("}")
 	return buf.String()
-}
-
-func sortedPairs(p Pairs) Pairs {
-	sort.Slice(p, func(l, r int) bool {
-		ls := fmt.Sprintf("%s", p[l].Car().String())
-		rs := fmt.Sprintf("%s", p[r].Car().String())
-		return ls < rs
-	})
-	return p
 }
 
 func (*emptyObject) object() {}

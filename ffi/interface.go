@@ -19,8 +19,8 @@ type (
 
 	methodWrapper struct {
 		name string
-		in   []Wrapper
-		out  []Wrapper
+		in   Wrappers
+		out  Wrappers
 	}
 )
 
@@ -60,7 +60,7 @@ func makeWrappedInterface(t reflect.Type) (Wrapper, error) {
 func makeWrappedMethod(m reflect.Method) (*methodWrapper, error) {
 	t := m.Type
 	cIn := t.NumIn()
-	in := make([]Wrapper, cIn)
+	in := make(Wrappers, cIn)
 	for i := 0; i < cIn; i++ {
 		w, err := wrapType(t.In(i))
 		if err != nil {
@@ -69,7 +69,7 @@ func makeWrappedMethod(m reflect.Method) (*methodWrapper, error) {
 		in[i] = w
 	}
 	cOut := t.NumOut()
-	out := make([]Wrapper, cOut)
+	out := make(Wrappers, cOut)
 	for i := 0; i < cOut; i++ {
 		w, err := wrapType(t.Out(i))
 		if err != nil {

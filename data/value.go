@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"hash/maphash"
 	"math/rand"
+	"sort"
 
 	"github.com/kode4food/ale/types"
 	"github.com/kode4food/ale/types/basic"
@@ -85,6 +86,15 @@ var (
 	trueHash  = rand.Uint64()
 	falseHash = rand.Uint64()
 )
+
+// Sorted returns a sorted set of Names
+func (n Names) Sorted() Names {
+	res := n[:]
+	sort.Slice(res, func(i, j int) bool {
+		return string(res[i]) < string(res[j])
+	})
+	return res
+}
 
 // Name makes Name Named
 func (n Name) Name() Name {

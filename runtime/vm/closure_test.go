@@ -279,7 +279,7 @@ func TestJumps(t *testing.T) {
 
 func TestArgs(t *testing.T) {
 	as := assert.New(t)
-	args := []data.Value{S("arg1"), S("arg2"), S("arg3"), S("arg4")}
+	args := data.Values{S("arg1"), S("arg2"), S("arg3"), S("arg4")}
 
 	c1 := makeCode([]isa.Coder{
 		isa.ArgLen,

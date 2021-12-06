@@ -9,8 +9,8 @@ import (
 // ValueMap is used to bootstrap a new Object
 type ValueMap map[Value]Value
 
-func (v ValueMap) sortedKeys() []Value {
-	keys := make([]Value, 0, len(v))
+func (v ValueMap) sortedKeys() Values {
+	keys := make(Values, 0, len(v))
 	for k := range v {
 		keys = append(keys, k)
 	}

@@ -2,6 +2,8 @@ package data
 
 import (
 	"bytes"
+	"fmt"
+	"sort"
 
 	"github.com/kode4food/ale/types"
 	"github.com/kode4food/ale/types/basic"
@@ -31,6 +33,17 @@ type (
 		cdr Value
 	}
 )
+
+// Sorted returns a sorted set of Pairs
+func (p Pairs) Sorted() Pairs {
+	res := p[:]
+	sort.Slice(res, func(l, r int) bool {
+		ls := fmt.Sprintf("%s", res[l].Car().String())
+		rs := fmt.Sprintf("%s", res[r].Car().String())
+		return ls < rs
+	})
+	return res
+}
 
 // NewCons returns a new Cons cell instance
 func NewCons(car, cdr Value) Cons {

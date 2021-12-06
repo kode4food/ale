@@ -10,8 +10,8 @@ import (
 type (
 	funcWrapper struct {
 		typ reflect.Type
-		in  []Wrapper
-		out []Wrapper
+		in  Wrappers
+		out Wrappers
 	}
 
 	// the type accepted by reflect.MakeFunc
@@ -25,7 +25,7 @@ const (
 
 func makeWrappedFunc(t reflect.Type) (Wrapper, error) {
 	cIn := t.NumIn()
-	in := make([]Wrapper, cIn)
+	in := make(Wrappers, cIn)
 	for i := 0; i < cIn; i++ {
 		w, err := wrapType(t.In(i))
 		if err != nil {
@@ -34,7 +34,7 @@ func makeWrappedFunc(t reflect.Type) (Wrapper, error) {
 		in[i] = w
 	}
 	cOut := t.NumOut()
-	out := make([]Wrapper, cOut)
+	out := make(Wrappers, cOut)
 	for i := 0; i < cOut; i++ {
 		w, err := wrapType(t.Out(i))
 		if err != nil {
@@ -151,7 +151,7 @@ func (w *funcWrapper) unwrapVoidCall(c data.Function) makeFuncType {
 
 	return func(args []reflect.Value) []reflect.Value {
 		wc := new(Context)
-		in := make([]data.Value, len(args))
+		in := make(data.Values, len(args))
 		for i := 0; i < inLen; i++ {
 			arg, err := w.in[i].Wrap(wc, args[i])
 			if err != nil {
@@ -169,7 +169,7 @@ func (w *funcWrapper) unwrapValueCall(c data.Function) makeFuncType {
 
 	return func(args []reflect.Value) []reflect.Value {
 		wc := new(Context)
-		in := make([]data.Value, len(args))
+		in := make(data.Values, len(args))
 		for i := 0; i < inLen; i++ {
 			arg, err := w.in[i].Wrap(wc, args[i])
 			if err != nil {
@@ -191,7 +191,7 @@ func (w *funcWrapper) unwrapVectorCall(c data.Function) makeFuncType {
 
 	return func(args []reflect.Value) []reflect.Value {
 		wc := new(Context)
-		in := make([]data.Value, len(args))
+		in := make(data.Values, len(args))
 		for i := 0; i < inLen; i++ {
 			arg, err := w.in[i].Wrap(wc, args[i])
 			if err != nil {

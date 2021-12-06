@@ -3,7 +3,6 @@ package env
 import (
 	"fmt"
 	"regexp"
-	"sort"
 	"sync"
 
 	"github.com/kode4food/ale/data"
@@ -14,7 +13,7 @@ type (
 	Namespace interface {
 		Environment() *Environment
 		Domain() data.Name
-		Declared() []data.Name
+		Declared() data.Names
 		Declare(data.Name) Entry
 		Resolve(data.Name) (Entry, bool)
 	}
@@ -56,7 +55,7 @@ const (
 	ErrNameNotBound     = "name is not bound in namespace: %s"
 )
 
-var privateSymbol = regexp.MustCompile(`^\^.+$`)
+var privateName = regexp.MustCompile(`^\^.+$`)
 
 func (ns *namespace) Environment() *Environment {
 	return ns.environment
@@ -66,18 +65,10 @@ func (ns *namespace) Domain() data.Name {
 	return ns.domain
 }
 
-func (ns *namespace) Declared() []data.Name {
+func (ns *namespace) Declared() data.Names {
 	ns.mutex.RLock()
 	defer ns.mutex.RUnlock()
-	e := ns.entries
-	res := make([]data.Name, 0, len(e))
-	for k := range e {
-		res = append(res, k)
-	}
-	sort.Slice(res, func(i, j int) bool {
-		return string(res[i]) < string(res[j])
-	})
-	return res
+	return ns.entries.publicNames().Sorted()
 }
 
 func (ns *namespace) Declare(n data.Name) Entry {
@@ -103,6 +94,16 @@ func (ns *namespace) Resolve(n data.Name) (Entry, bool) {
 		return res, true
 	}
 	return nil, false
+}
+
+func (e entries) publicNames() data.Names {
+	res := make(data.Names, 0, len(e))
+	for k := range e {
+		if !isPrivateName(k) {
+			res = append(res, k)
+		}
+	}
+	return res
 }
 
 func (e *entry) Owner() Namespace {
@@ -139,12 +140,12 @@ func (e *entry) Bind(v data.Value) {
 }
 
 func resolvePublic(from, in Namespace, n data.Name) (Entry, bool) {
-	if isPrivateSymbol(n) && from != in {
+	if isPrivateName(n) && from != in {
 		return nil, false
 	}
 	return in.Resolve(n)
 }
 
-func isPrivateSymbol(n data.Name) bool {
-	return privateSymbol.MatchString(string(n))
+func isPrivateName(n data.Name) bool {
+	return privateName.MatchString(string(n))
 }

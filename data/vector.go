@@ -22,7 +22,7 @@ type (
 		Valuer
 	}
 
-	vector []Value
+	vector Values
 )
 
 // EmptyVector represents an empty Vector
