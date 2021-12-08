@@ -9,6 +9,34 @@ import (
 	. "github.com/kode4food/ale/internal/assert/helpers"
 )
 
+func TestDeclarations(t *testing.T) {
+	as := assert.New(t)
+
+	e := env.NewEnvironment()
+	root := e.GetRoot()
+	as.Equal(e, root.Environment())
+	as.Equal(env.RootDomain, root.Domain())
+
+	root.Declare("public2").Bind(data.True)
+	root.Declare("^private").Bind(data.True)
+	root.Declare("public1").Bind(data.True)
+
+	n := root.Declared()
+	as.Equal(2, len(n))
+	as.Equal(N("public1"), n[0])
+	as.Equal(N("public2"), n[1])
+
+	e1, ok := root.Resolve(n[0])
+	as.NotNil(e1)
+	as.True(ok)
+
+	as.Equal(n[0], e1.Name())
+	as.Equal(root, e1.Owner())
+
+	e2 := root.Declare(n[0])
+	as.Equal(e1, e2)
+}
+
 func TestChaining(t *testing.T) {
 	as := assert.New(t)
 
