@@ -69,7 +69,7 @@
                   (try-catch-branch clauses err-sym)]))))
 
         (lambda-rec try-body (clauses)
-           `(lambda () [false (begin ,@clauses)]))
+           `(thunk [false (begin ,@clauses)]))
 
         (lambda-rec try-catch (clauses)
            (let [err (gensym "err")]
@@ -86,9 +86,9 @@
                [(seq? cleanup)
                 (let ([first# (rest (first cleanup))                 ]
                       [rest#  (conj parsed [:finally (rest cleanup)])])
-                  `(defer
-                     (lambda () ,(try-catch-finally rest#))
-                     (lambda () ,@first#)))]
+                  `(defer*
+                     (thunk ,(try-catch-finally rest#))
+                     (thunk ,@first#)))]
 
                [(seq? recover)
                 `(let ([rec# (recover ,(try-body block) ,(try-catch recover))]

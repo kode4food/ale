@@ -2,7 +2,6 @@ package env
 
 import (
 	"fmt"
-	"regexp"
 	"sync"
 
 	"github.com/kode4food/ale/data"
@@ -54,8 +53,6 @@ const (
 	ErrNameAlreadyBound = "name is already bound in namespace: %s"
 	ErrNameNotBound     = "name is not bound in namespace: %s"
 )
-
-var privateName = regexp.MustCompile(`^\^.+$`)
 
 func (ns *namespace) Environment() *Environment {
 	return ns.environment
@@ -147,5 +144,5 @@ func resolvePublic(from, in Namespace, n data.Name) (Entry, bool) {
 }
 
 func isPrivateName(n data.Name) bool {
-	return privateName.MatchString(string(n))
+	return len(n) > 1 && n[0] == '^'
 }

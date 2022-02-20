@@ -117,28 +117,25 @@ func (r *reader) prefixed(s data.Symbol) data.Value {
 func (r *reader) list() data.Value {
 	res := data.Values{}
 	var sawDotAt = -1
-	for i := 0; ; i++ {
-		if t := r.nextToken(); t != nil {
-			switch t.Type() {
-			case Dot:
-				if i == 0 || sawDotAt != -1 {
-					panic(r.error(ErrInvalidListSyntax))
-				}
-				sawDotAt = i
-			case ListEnd:
-				if sawDotAt == -1 {
-					return data.NewList(res...)
-				} else if sawDotAt != len(res)-1 {
-					panic(r.error(ErrInvalidListSyntax))
-				}
-				return makeDottedList(res...)
-			default:
-				res = append(res, r.value(t))
+	for t, i := r.nextToken(), 0; t != nil; t, i = r.nextToken(), i+1 {
+		switch t.Type() {
+		case Dot:
+			if i == 0 || sawDotAt != -1 {
+				panic(r.error(ErrInvalidListSyntax))
 			}
-		} else {
-			panic(r.error(ErrListNotClosed))
+			sawDotAt = i
+		case ListEnd:
+			if sawDotAt == -1 {
+				return data.NewList(res...)
+			} else if sawDotAt != len(res)-1 {
+				panic(r.error(ErrInvalidListSyntax))
+			}
+			return makeDottedList(res...)
+		default:
+			res = append(res, r.value(t))
 		}
 	}
+	panic(r.error(ErrListNotClosed))
 }
 
 func makeDottedList(v ...data.Value) data.Value {

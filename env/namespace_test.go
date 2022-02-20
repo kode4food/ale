@@ -1,6 +1,7 @@
 package env_test
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/kode4food/ale/data"
@@ -81,4 +82,26 @@ func TestChaining(t *testing.T) {
 	v8, ok := env.ResolveValue(ns, s3)
 	as.True(ok)
 	as.True(v8)
+}
+
+func TestBinding(t *testing.T) {
+	as := assert.New(t)
+
+	e := env.NewEnvironment()
+	root := e.GetRoot()
+	d := root.Declare("some-name")
+
+	func() {
+		defer as.ExpectPanic(fmt.Sprintf(env.ErrNameNotBound, d.Name()))
+		d.Value()
+	}()
+
+	d.Bind(S("some-value"))
+
+	func() {
+		defer as.ExpectPanic(fmt.Sprintf(env.ErrNameAlreadyBound, d.Name()))
+		d.Bind(S("some-other-value"))
+	}()
+
+	as.String("some-value", d.Value())
 }

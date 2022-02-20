@@ -1,15 +1,15 @@
 ;;;; ale core: concurrency
 
 (define-macro (go . body)
-  `(go* (lambda () ,@body)))
-
-(define-macro (future . body)
-  `(let [promise# (promise (lambda () ,@body))]
-     (go (promise#))
-     promise#))
+  `(go* (thunk ,@body)))
 
 (define-macro (delay . body)
-  `(promise (lambda () ,@body)))
+  `(promise* (thunk ,@body)))
+
+(define-macro (future . body)
+  `(let [promise# (delay ,@body)]
+     (go (promise#))
+     promise#))
 
 (define (force value)
   (if (promise? value)
@@ -48,6 +48,6 @@
      (let* ([channel (chan mbox-size)]
             [mailbox (:seq channel)  ]
             [sender  (:emit channel) ])
-       (go (recover (lambda () (func mailbox))
+       (go (recover (thunk (func mailbox))
                     monitor))
        sender)])

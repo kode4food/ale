@@ -60,11 +60,11 @@
        [(coll pos)
           (if (indexed? coll)
               (nth coll pos)
-              (scan coll pos (lambda () (raise "index out of bounds"))))]
+              (scan coll pos (thunk (raise "index out of bounds"))))]
        [(coll pos default)
           (if (indexed? coll)
               (nth coll pos default)
-              (scan coll pos (lambda () default)))])))
+              (scan coll pos (thunk default)))])))
 
 (define (last coll)
   (let [s (length coll)]

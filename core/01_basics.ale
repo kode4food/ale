@@ -55,6 +55,9 @@
         `(define* ,name
            (label ,name (macro (lambda ,@body))))))))
 
+(define-macro (thunk . forms)
+  `(lambda () ,@forms))
+
 (define-macro assert-args
   [() nil]
   [(clause)

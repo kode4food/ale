@@ -1,7 +1,7 @@
 ;;;; ale core: lazy sequences
 
 (define-macro (lazy-seq . body)
-  `(lazy-seq* (lambda () ,@body)))
+  `(lazy-seq* (thunk ,@body)))
 
 (define (take count coll)
   ((lambda-rec take-inner (count coll)
