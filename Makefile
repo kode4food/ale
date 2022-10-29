@@ -5,12 +5,10 @@ install: build test
 
 test: build
 	go vet ./...
+	go run golang.org/x/lint/golint ./...
 	go test ./...
 
 build: generate
 
 generate:
 	go generate ./...
-
-deps:
-	go get golang.org/x/tools/cmd/stringer@latest
