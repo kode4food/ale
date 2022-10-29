@@ -13,4 +13,4 @@ generate:
 	go generate ./...
 
 deps:
-	go install golang.org/x/tools/cmd/stringer@latest
+	go get golang.org/x/tools/cmd/stringer@latest

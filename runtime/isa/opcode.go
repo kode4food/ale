@@ -6,7 +6,7 @@ type Opcode Word
 // Label is an internal Opcode
 const Label Opcode = 256
 
-//go:generate stringer -type=Opcode
+//go:generate go run golang.org/x/tools/cmd/stringer -type=Opcode
 const (
 	Add        Opcode = iota // Addition
 	Arg                      // Retrieve Argument Value

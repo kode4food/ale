@@ -34,7 +34,7 @@ type (
 	}
 )
 
-//go:generate stringer -output function_string.go -type Convention -linecomment
+//go:generate go run golang.org/x/tools/cmd/stringer -output function_string.go -type Convention -linecomment
 const (
 	ApplicativeCall Convention = iota // applicative
 	NormalCall                        // normal
