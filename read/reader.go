@@ -188,7 +188,7 @@ func (r *reader) error(text string) error {
 	return r.maybeWrap(errors.New(text))
 }
 
-func (r *reader) errorf(text string, a ...interface{}) error {
+func (r *reader) errorf(text string, a ...any) error {
 	return r.maybeWrap(fmt.Errorf(text, a...))
 }
 

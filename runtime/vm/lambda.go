@@ -7,7 +7,6 @@ import (
 	"github.com/kode4food/ale/env"
 	"github.com/kode4food/ale/runtime/isa"
 	"github.com/kode4food/ale/types"
-	"github.com/kode4food/ale/types/basic"
 )
 
 // Lambda encapsulates the initial environment of a virtual machine
@@ -53,7 +52,7 @@ func (l *Lambda) Convention() data.Convention {
 
 // Type makes Lambda a typed value
 func (l *Lambda) Type() types.Type {
-	return basic.Lambda
+	return types.Lambda
 }
 
 // Equal compares this Lambda to another for equality

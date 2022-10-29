@@ -8,7 +8,6 @@ import (
 	"strconv"
 
 	"github.com/kode4food/ale/types"
-	"github.com/kode4food/ale/types/basic"
 )
 
 type (
@@ -148,7 +147,7 @@ func (l Float) String() string {
 
 // Type returns the Type for this Float Value
 func (Float) Type() types.Type {
-	return basic.Number
+	return types.Number
 }
 
 // HashCode returns a hash code for this Float
@@ -283,7 +282,7 @@ func (l *Ratio) String() string {
 
 // Type returns the Type for this Ratio Value
 func (*Ratio) Type() types.Type {
-	return basic.Number
+	return types.Number
 }
 
 // HashCode returns a hash code for this Ratio

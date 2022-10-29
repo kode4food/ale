@@ -2,7 +2,6 @@ package data
 
 import (
 	"github.com/kode4food/ale/types"
-	"github.com/kode4food/ale/types/basic"
 )
 
 type (
@@ -133,7 +132,7 @@ func (l *list) String() string {
 }
 
 func (*list) Type() types.Type {
-	return basic.List
+	return types.AnyList
 }
 
 func (l *list) HashCode() uint64 {

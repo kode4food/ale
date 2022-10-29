@@ -11,7 +11,7 @@ import (
 
 func TestArrayWrap(t *testing.T) {
 	as := assert.New(t)
-	a1 := [3]int{1, 2, 3}
+	a1 := [...]int{1, 2, 3}
 	d1 := ffi.MustWrap(a1).(data.Vector).Values()
 	as.Equal(3, len(d1))
 	as.Equal(I(1), d1[0])
@@ -54,7 +54,7 @@ func TestArrayEval(t *testing.T) {
 	as.EvalTo(
 		`[(first x) (rest x) (length x)]`,
 		Env{
-			"x": [3]int{10, 9, 8},
+			"x": [...]int{10, 9, 8},
 		},
 		V(I(10), V(I(9), I(8)), I(3)),
 	)

@@ -10,17 +10,12 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-type (
-	// Any is the friendly name for a generic interface
-	Any interface{}
-
-	// Wrapper wraps the testify assertions module in order to perform
-	// checking and conversion that is system-specific
-	Wrapper struct {
-		*testing.T
-		*assert.Assertions
-	}
-)
+// Wrapper wraps testify assertions in order to perform checking and
+// conversion that is system-specific
+type Wrapper struct {
+	*testing.T
+	*assert.Assertions
+}
 
 // Error messages
 const (
@@ -38,7 +33,7 @@ func New(t *testing.T) *Wrapper {
 }
 
 // String tests a Value for string equality
-func (w *Wrapper) String(expect string, expr Any) {
+func (w *Wrapper) String(expect string, expr any) {
 	w.Helper()
 	switch s := expr.(type) {
 	case string:
@@ -51,7 +46,7 @@ func (w *Wrapper) String(expect string, expr Any) {
 }
 
 // Number tests a Value for numeric equality
-func (w *Wrapper) Number(expect float64, expr Any) {
+func (w *Wrapper) Number(expect float64, expr any) {
 	w.Helper()
 	switch n := expr.(type) {
 	case float64:
@@ -65,8 +60,8 @@ func (w *Wrapper) Number(expect float64, expr Any) {
 	}
 }
 
-// Equal tests a Value for some kind of equality. Performs checks to do so
-func (w *Wrapper) Equal(expect Any, expr Any) {
+// Equal tests a Value for some kind of equality
+func (w *Wrapper) Equal(expect any, expr any) {
 	w.Helper()
 	switch expect := expect.(type) {
 	case data.String:
@@ -86,7 +81,7 @@ func (w *Wrapper) Equal(expect Any, expr Any) {
 }
 
 // True tests a Value for boolean true
-func (w *Wrapper) True(expr Any) {
+func (w *Wrapper) True(expr any) {
 	w.Helper()
 	if b, ok := expr.(data.Bool); ok {
 		w.Assertions.True(bool(b))
@@ -102,7 +97,7 @@ func (w *Wrapper) Truthy(expr data.Value) {
 }
 
 // False tests a Value for boolean false
-func (w *Wrapper) False(expr Any) {
+func (w *Wrapper) False(expr any) {
 	w.Helper()
 	if b, ok := expr.(data.Bool); ok {
 		w.Assertions.False(bool(b))
@@ -132,13 +127,13 @@ func (w *Wrapper) NotContains(expect string, expr data.Value) {
 }
 
 // Identical tests that two values are referentially identical
-func (w *Wrapper) Identical(expect Any, expr Any) {
+func (w *Wrapper) Identical(expect any, expr any) {
 	w.Helper()
 	w.Assertions.Equal(expect, expr)
 }
 
 // NotIdentical tests that two values are not referentially identical
-func (w *Wrapper) NotIdentical(expect Any, expr Any) {
+func (w *Wrapper) NotIdentical(expect any, expr any) {
 	w.Helper()
 	w.Assertions.NotEqual(expect, expr)
 }
@@ -165,7 +160,7 @@ func (w *Wrapper) ExpectPanic(errStr string) {
 	panic(ErrProperErrorNotRaised)
 }
 
-// ExpectProgrammerError is used with a defer to make sure a programmer error
+// ExpectProgrammerError is used with defer to make sure a programmer error
 // was triggered
 func (w *Wrapper) ExpectProgrammerError(errStr string) {
 	w.Helper()

@@ -1,12 +1,8 @@
-package compound
+package types
 
 import (
 	"fmt"
 	"strings"
-
-	"github.com/kode4food/ale/types"
-	"github.com/kode4food/ale/types/basic"
-	"github.com/kode4food/ale/types/extended"
 )
 
 type (
@@ -14,20 +10,21 @@ type (
 	// application. Such application may expose multiple Signatures to
 	// describe the various ways that the type can be applied
 	ApplicableType interface {
-		types.Extended
+		Type
 		applicable() // marker
 		Signatures() []Signature
+		Accepts(*Checker, Type) bool
 	}
 
 	// Signature describes an ApplicableType calling signature
 	Signature struct {
-		Arguments []types.Type
+		Arguments []Type
 		TakesRest bool
-		Result    types.Type
+		Result    Type
 	}
 
 	applicable struct {
-		types.Extended
+		BasicType
 		signatures
 	}
 
@@ -39,7 +36,7 @@ type (
 func Applicable(first Signature, rest ...Signature) ApplicableType {
 	all := append(signatures{first}, rest...)
 	return &applicable{
-		Extended:   extended.New(basic.Lambda),
+		BasicType:  Lambda,
 		signatures: all,
 	}
 }
@@ -51,13 +48,10 @@ func (a *applicable) Signatures() []Signature {
 }
 
 func (a *applicable) Name() string {
-	return fmt.Sprintf("%s(%s)", a.Extended.Name(), a.signatures.name())
+	return fmt.Sprintf("%s(%s)", a.BasicType.Name(), a.signatures.name())
 }
 
-func (a *applicable) Accepts(c types.Checker, other types.Type) bool {
-	if a == other {
-		return true
-	}
+func (a *applicable) Accepts(c *Checker, other Type) bool {
 	if other, ok := other.(ApplicableType); ok {
 		os := other.Signatures()
 		for _, s := range a.signatures {
@@ -86,7 +80,7 @@ func (s Signature) argNames() string {
 }
 
 func (s Signature) acceptsFromSignatures(
-	c types.Checker, other []Signature,
+	c *Checker, other []Signature,
 ) bool {
 	for _, o := range other {
 		if s.accepts(c, o) {
@@ -96,8 +90,8 @@ func (s Signature) acceptsFromSignatures(
 	return false
 }
 
-func (s Signature) accepts(c types.Checker, other Signature) bool {
-	if c.Check(s.Result).Accepts(other.Result) == nil {
+func (s Signature) accepts(c *Checker, other Signature) bool {
+	if !c.AcceptsChild(s.Result, other.Result) {
 		return false
 	}
 	sa := s.Arguments
@@ -106,7 +100,7 @@ func (s Signature) accepts(c types.Checker, other Signature) bool {
 		return false
 	}
 	for i, a := range sa {
-		if c.Check(a).Accepts(oa[i]) == nil {
+		if !c.AcceptsChild(a, oa[i]) {
 			return false
 		}
 	}

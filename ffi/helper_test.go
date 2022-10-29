@@ -16,7 +16,7 @@ type (
 		*assert.Wrapper
 	}
 
-	Env map[data.Name]interface{}
+	Env map[data.Name]any
 )
 
 var (

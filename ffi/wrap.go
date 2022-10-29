@@ -36,7 +36,7 @@ var (
 )
 
 // MustWrap wraps a Go value into a data.Value or explodes violently
-func MustWrap(i interface{}) data.Value {
+func MustWrap(i any) data.Value {
 	res, err := Wrap(i)
 	if err != nil {
 		panic(err)
@@ -46,7 +46,7 @@ func MustWrap(i interface{}) data.Value {
 
 // Wrap takes a native Go value, potentially builds a Wrapper for its type, and
 // returns a marshalled data.Value from the Wrapper
-func Wrap(i interface{}) (data.Value, error) {
+func Wrap(i any) (data.Value, error) {
 	if i == nil {
 		return data.Nil, nil
 	}

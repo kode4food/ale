@@ -6,7 +6,6 @@ import (
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/do"
 	"github.com/kode4food/ale/types"
-	"github.com/kode4food/ale/types/basic"
 )
 
 type (
@@ -14,12 +13,12 @@ type (
 	Emitter interface {
 		Writer
 		Closer
-		Error(interface{})
+		Error(any)
 	}
 
 	channelResult struct {
 		value data.Value
-		error interface{}
+		error any
 	}
 
 	channelEmitter struct {
@@ -47,8 +46,8 @@ const (
 var (
 	emptyResult = channelResult{value: data.Nil, error: nil}
 
-	channelEmitterType  = basic.New("channel-emitter")
-	channelSequenceType = basic.New("channel-sequence")
+	channelEmitterType  = types.Basic("channel-emitter")
+	channelSequenceType = types.Basic("channel-sequence")
 )
 
 // NewChannel produces an Emitter and Sequence pair
@@ -75,7 +74,7 @@ func (e *channelEmitter) Write(v data.Value) {
 }
 
 // Error will send an Error to the Go chan
-func (e *channelEmitter) Error(err interface{}) {
+func (e *channelEmitter) Error(err any) {
 	e.ch <- channelResult{data.Nil, err}
 }
 

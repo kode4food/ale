@@ -10,6 +10,7 @@ import (
 	"path"
 	"regexp"
 	"runtime"
+	"sort"
 	"strings"
 	"time"
 
@@ -26,7 +27,6 @@ import (
 )
 
 type (
-	any      interface{}
 	sentinel struct{}
 
 	// REPL manages a FromScanner-Eval-Print Loop
@@ -86,7 +86,9 @@ func NewREPL() *REPL {
 
 // Run will perform the Eval-Print-Loop
 func (r *REPL) Run() {
-	defer r.rl.Close()
+	defer func() {
+		_ = r.rl.Close()
+	}()
 
 	fmt.Println(ale.AppName, ale.Version)
 	help()
@@ -193,7 +195,7 @@ func isEmptyString(s string) bool {
 	return len(strings.TrimSpace(s)) == 0
 }
 
-func toError(i interface{}) error {
+func toError(i any) error {
 	if i == nil {
 		return nil
 	}
@@ -278,15 +280,44 @@ func help(_ ...data.Value) data.Value {
 	return nothing
 }
 
+var docTemplate = strings.Join([]string{
+	"---",
+	`description: "display documentation of a form"`,
+	`usage: "(doc form)"`,
+	"---",
+	"Where `form` is any of the core language symbols:",
+	"",
+	"%s",
+}, "\n")
+
 func doc(args ...data.Value) data.Value {
-	sym := args[0].(data.LocalSymbol)
+	if len(args) != 0 {
+		docSymbol(args[0].(data.LocalSymbol))
+	} else {
+		docSymbolList()
+	}
+	return nothing
+}
+
+func docSymbol(sym data.Symbol) {
 	name := string(sym.Name())
 	if docStr, err := docstring.Get(name); err == nil {
 		f := formatForREPL(docStr)
 		fmt.Println(f)
-		return nothing
+		return
+	} else if name == "doc" {
+		docSymbolList()
+		return
 	}
 	panic(fmt.Errorf(ErrSymbolNotDocumented, sym))
+}
+
+func docSymbolList() {
+	names := docstring.Names()
+	sort.Strings(names)
+	joined := strings.Join(names, ", ")
+	f := formatForREPL(fmt.Sprintf(docTemplate, joined))
+	fmt.Println(f)
 }
 
 func getBuiltInsNamespace() env.Namespace {
@@ -309,7 +340,7 @@ func registerREPLBuiltIns() {
 	registerBuiltIn("cls", data.Applicative(cls, 0))
 	registerBuiltIn("help", data.Applicative(help, 0))
 	registerBuiltIn("use", data.Normal(use, 1))
-	registerBuiltIn("doc", data.Normal(doc, 1))
+	registerBuiltIn("doc", data.Normal(doc, 0, 1))
 }
 
 func getHistoryFile() string {

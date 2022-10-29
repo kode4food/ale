@@ -55,15 +55,11 @@ type (
 	}
 )
 
-func newEncoder(globals env.Namespace) *encoder {
+// NewEncoder instantiates a new Encoder
+func NewEncoder(globals env.Namespace) Encoder {
 	return &encoder{
 		globals: globals,
 	}
-}
-
-// NewEncoder instantiates a new Encoder
-func NewEncoder(globals env.Namespace) Encoder {
-	return newEncoder(globals)
 }
 
 func (e *encoder) child() *encoder {

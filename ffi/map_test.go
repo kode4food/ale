@@ -9,7 +9,7 @@ import (
 	. "github.com/kode4food/ale/internal/assert/helpers"
 )
 
-type cycleMap map[string]interface{}
+type cycleMap map[string]any
 
 var stateMap = map[string]int{
 	"California":    40,

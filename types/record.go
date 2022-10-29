@@ -1,21 +1,17 @@
-package compound
+package types
 
 import (
 	"bytes"
 	"fmt"
 	"sort"
 	"strings"
-
-	"github.com/kode4food/ale/types"
-	"github.com/kode4food/ale/types/basic"
-	"github.com/kode4food/ale/types/extended"
 )
 
 type (
 	// RecordType describes an Object that allows a fixed set of fields,
 	// each of which has a keyword
 	RecordType interface {
-		types.Extended
+		Type
 		record() // marker
 		Fields() []Field
 	}
@@ -23,13 +19,13 @@ type (
 	// Field describes one of the fields of a RecordType
 	Field struct {
 		Name  string
-		Value types.Type
+		Value Type
 	}
 
 	fields []Field
 
 	record struct {
-		types.Extended
+		BasicType
 		fields
 	}
 )
@@ -38,8 +34,8 @@ type (
 // entries, each being identified by a Keyword and having a specified Type
 func Record(fields ...Field) RecordType {
 	return &record{
-		Extended: extended.New(basic.Object),
-		fields:   fields,
+		BasicType: AnyObject,
+		fields:    fields,
 	}
 }
 
@@ -53,10 +49,7 @@ func (r *record) Name() string {
 	return fmt.Sprintf("record(%s)", r.fields.name())
 }
 
-func (r *record) Accepts(c types.Checker, other types.Type) bool {
-	if r == other {
-		return true
-	}
+func (r *record) Accepts(c *Checker, other Type) bool {
 	if other, ok := other.(RecordType); ok {
 		rf := r.fields
 		of := other.Fields()
@@ -65,7 +58,7 @@ func (r *record) Accepts(c types.Checker, other types.Type) bool {
 		}
 		om := fields(of).toMap()
 		for k, v := range rf.toMap() {
-			if tv, ok := om[k]; !ok || c.Check(v).Accepts(tv) == nil {
+			if tv, ok := om[k]; !ok || !c.AcceptsChild(v, tv) {
 				return false
 			}
 		}
@@ -74,8 +67,8 @@ func (r *record) Accepts(c types.Checker, other types.Type) bool {
 	return false
 }
 
-func (f fields) toMap() map[string]types.Type {
-	res := map[string]types.Type{}
+func (f fields) toMap() map[string]Type {
+	res := map[string]Type{}
 	for _, p := range f {
 		res[p.Name] = p.Value
 	}

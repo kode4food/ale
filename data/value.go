@@ -7,7 +7,6 @@ import (
 	"sort"
 
 	"github.com/kode4food/ale/types"
-	"github.com/kode4food/ale/types/basic"
 )
 
 type (
@@ -137,7 +136,7 @@ func (b Bool) String() string {
 
 // Type returns the Type for this Bool Value
 func (Bool) Type() types.Type {
-	return basic.Bool
+	return types.Bool
 }
 
 // HashCode returns the hash code for this Bool

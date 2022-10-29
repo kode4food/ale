@@ -3,7 +3,7 @@ package markdown
 import (
 	"strings"
 
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 )
 
 // Header stores the fields of a Markdown document header (at least the ones we

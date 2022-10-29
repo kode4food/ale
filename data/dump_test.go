@@ -8,7 +8,6 @@ import (
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
 	"github.com/kode4food/ale/types"
-	"github.com/kode4food/ale/types/basic"
 )
 
 type dumpTest struct{}
@@ -22,7 +21,7 @@ func (dumpTest) Count() int {
 }
 
 func (dumpTest) Type() types.Type {
-	return basic.List
+	return types.AnyList
 }
 
 func (dumpTest) String() string          { return "" }

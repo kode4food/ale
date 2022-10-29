@@ -17,7 +17,7 @@ type (
 	promise struct {
 		once     do.Action
 		resolver data.Function
-		result   interface{}
+		result   any
 		status   promiseStatus
 	}
 )

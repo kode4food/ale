@@ -7,7 +7,6 @@ import (
 	"sync"
 
 	"github.com/kode4food/ale/types"
-	"github.com/kode4food/ale/types/basic"
 )
 
 type (
@@ -140,7 +139,7 @@ func (l localSymbol) Equal(v Value) bool {
 }
 
 func (localSymbol) Type() types.Type {
-	return basic.Symbol
+	return types.Symbol
 }
 
 func (l localSymbol) String() string {
@@ -185,7 +184,7 @@ func (s qualifiedSymbol) Equal(v Value) bool {
 }
 
 func (qualifiedSymbol) Type() types.Type {
-	return basic.Symbol
+	return types.Symbol
 }
 
 func (s qualifiedSymbol) String() string {

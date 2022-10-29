@@ -4,7 +4,6 @@ import (
 	"math/rand"
 
 	"github.com/kode4food/ale/types"
-	"github.com/kode4food/ale/types/basic"
 )
 
 type (
@@ -82,7 +81,7 @@ func (*nilValue) String() string {
 }
 
 func (*nilValue) Type() types.Type {
-	return basic.Null
+	return types.Null
 }
 
 func (*nilValue) HashCode() uint64 {

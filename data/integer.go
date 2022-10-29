@@ -8,7 +8,6 @@ import (
 	"math/rand"
 
 	"github.com/kode4food/ale/types"
-	"github.com/kode4food/ale/types/basic"
 )
 
 type (
@@ -169,7 +168,7 @@ func (l Integer) String() string {
 
 // Type returns the Type for this Integer Value
 func (Integer) Type() types.Type {
-	return basic.Number
+	return types.Number
 }
 
 func (l Integer) float() Float {
@@ -295,7 +294,7 @@ func (l *BigInt) String() string {
 
 // Type returns the Type for this BigInt Value
 func (*BigInt) Type() types.Type {
-	return basic.Number
+	return types.Number
 }
 
 // HashCode returns a hash code for this BigInt

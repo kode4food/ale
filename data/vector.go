@@ -5,7 +5,6 @@ import (
 	"math/rand"
 
 	"github.com/kode4food/ale/types"
-	"github.com/kode4food/ale/types/basic"
 )
 
 type (
@@ -153,7 +152,7 @@ func (v vector) String() string {
 }
 
 func (vector) Type() types.Type {
-	return basic.Vector
+	return types.AnyVector
 }
 
 func (v vector) HashCode() uint64 {

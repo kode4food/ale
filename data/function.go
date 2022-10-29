@@ -2,7 +2,6 @@ package data
 
 import (
 	"github.com/kode4food/ale/types"
-	"github.com/kode4food/ale/types/basic"
 )
 
 type (
@@ -97,7 +96,7 @@ func (f *function) Convention() Convention {
 }
 
 func (f *function) Type() types.Type {
-	return basic.Lambda
+	return types.Lambda
 }
 
 func (f *function) Equal(v Value) bool {

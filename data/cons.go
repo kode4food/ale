@@ -6,7 +6,6 @@ import (
 	"sort"
 
 	"github.com/kode4food/ale/types"
-	"github.com/kode4food/ale/types/basic"
 )
 
 type (
@@ -99,7 +98,7 @@ func (c *cons) String() string {
 }
 
 func (*cons) Type() types.Type {
-	return basic.Cons
+	return types.AnyCons
 }
 
 // HashCode returns the hash code for this Cons

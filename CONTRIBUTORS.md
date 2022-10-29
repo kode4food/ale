@@ -2,7 +2,7 @@
 
 Five simple steps:
 
-1. Create a [GitLab Issue](https://github.com/kode4food/ale/issues)
+1. Create a [GitHub Issue](https://github.com/kode4food/ale/issues)
    to propose and discuss your potential contribution.
 
 2. Fork our [Git Repository](https://github.com/kode4food/ale.git)
