@@ -31,8 +31,8 @@ var (
 	hashes = regexp.MustCompile("^#+ ")
 	ticks  = regexp.MustCompile("`[^`]*`")
 	unders = regexp.MustCompile("_[^_]*_")
-	stars  = regexp.MustCompile("[*][^*]*[*]")
 	double = regexp.MustCompile("[*][*][^*]*[*][*]")
+	stars  = regexp.MustCompile("[*][^*]*[*]")
 
 	lineFormatters = map[*regexp.Regexp]formatter{
 		regexp.MustCompile("^#\\s.*$"):   formatHeader1,
@@ -46,6 +46,8 @@ var (
 		{stars, trimmedFormatter("*", console.Italic)},
 		{unders, trimmedFormatter("_", console.Result)},
 	}
+
+	escaped = regexp.MustCompile("\\\\.")
 )
 
 // FormatMarkdown formats a markdown asset for REPL display
@@ -122,7 +124,9 @@ func formatContent(doc string) string {
 			src = ""
 		}
 	}
-	return buf.String()
+	return escaped.ReplaceAllStringFunc(buf.String(), func(s string) string {
+		return s[1:]
+	})
 }
 
 func firstFormatterMatch(src string) (formatter, []int, bool) {
@@ -131,11 +135,16 @@ func firstFormatterMatch(src string) (formatter, []int, bool) {
 	var format formatter
 	for _, f := range docFormatters {
 		if sm := f.pattern.FindStringSubmatchIndex(src); sm != nil {
-			if idx == -1 || sm[0] < idx {
-				idx = sm[0]
-				format = f.format
-				match = sm
+			pos := sm[0]
+			if idx != -1 && pos >= idx {
+				continue
 			}
+			if pos > 0 && src[pos-1] == '\\' {
+				continue
+			}
+			idx = pos
+			format = f.format
+			match = sm
 		}
 	}
 	return format, match, idx != -1

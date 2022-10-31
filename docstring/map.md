@@ -11,7 +11,7 @@ Creates a lazy sequence whose elements are the result of applying the provided f
 #### An Example
 
 ```scheme
-(map (lambda (x) (* x 2)) [1 2 3 4])
+(map (lambda (x) (\* x 2)) [1 2 3 4])
 ```
 
 This will return the lazy sequence _(2 4 6 8)_. The following example performs mapping in parallel.

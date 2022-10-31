@@ -13,7 +13,7 @@ Will create a lambda function that may be passed around in a first-class manner.
 ```scheme
 (define double
   (let [mul 2]
-    (lambda (x) (* x mul))))
+    (lambda (x) (\* x mul))))
 
 (seq->vector
   (map double '(1 2 3 4 5 6)))

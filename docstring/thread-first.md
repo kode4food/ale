@@ -12,7 +12,7 @@ Evaluates _expr_ and threads it through the supplied forms as their first argume
 #### An Example
 
 ```scheme
-(-> 0 (+ 10) (* 2) (/ 5))
+(-> 0 (+ 10) (\* 2) (/ 5))
 ```
 
-Will expand to `(/ (* (+ 0 10) 2) 5)` and return _4_.
+Will expand to `(/ (\* (+ 0 10) 2) 5)` and return _4_.

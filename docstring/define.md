@@ -13,7 +13,7 @@ Will bind a value to a global name. All bindings are immutable and result in an 
 ```scheme
 (define x
   (map
-    (lambda (y) (* y 2))
+    (lambda (y) (\* y 2))
     seq1 seq2 seq3))
 ```
 

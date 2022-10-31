@@ -315,9 +315,18 @@ func docSymbol(sym data.Symbol) {
 func docSymbolList() {
 	names := docstring.Names()
 	sort.Strings(names)
+	escapeNames(names)
 	joined := strings.Join(names, ", ")
 	f := formatForREPL(fmt.Sprintf(docTemplate, joined))
 	fmt.Println(f)
+}
+
+func escapeNames(names []string) {
+	for i, n := range names {
+		if strings.Contains("`*_", n[0:1]) {
+			names[i] = "\\" + n
+		}
+	}
 }
 
 func getBuiltInsNamespace() env.Namespace {
