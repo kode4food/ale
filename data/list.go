@@ -1,8 +1,6 @@
 package data
 
-import (
-	"github.com/kode4food/ale/types"
-)
+import "github.com/kode4food/ale/types"
 
 type (
 	// List represents a singly-linked List
