@@ -72,9 +72,9 @@ func (w *Wrapper) Equal(expect any, expr any) {
 	case data.Value:
 		if expr, ok := expr.(data.Value); ok {
 			w.True(expect.Equal(expr))
-		} else {
-			w.String(expect.String(), expr)
+			return
 		}
+		w.String(expect.String(), expr)
 	default:
 		w.Assertions.Equal(expect, expr)
 	}

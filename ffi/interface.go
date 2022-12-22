@@ -88,7 +88,7 @@ func (w *intfWrapper) Wrap(c *Context, v reflect.Value) (data.Value, error) {
 	if !e.IsValid() {
 		return data.Nil, nil
 	}
-	c, err := c.Push(e)
+	_, err := c.Push(e)
 	if err != nil {
 		return data.Nil, err
 	}

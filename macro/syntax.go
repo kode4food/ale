@@ -89,14 +89,14 @@ func (se *syntaxEnv) quoteSequence(s data.Sequence) data.Value {
 	switch s := s.(type) {
 	case data.String:
 		return s
+	case data.Null:
+		return s
 	case data.List:
 		return data.NewList(applySym, listSym, se.quoteElements(s))
 	case data.Vector:
 		return data.NewList(applySym, vectorSym, se.quoteElements(s))
 	case data.Object:
 		return se.quoteObject(s)
-	case data.Null:
-		return s
 	default:
 		panic(fmt.Errorf(ErrUnsupportedSyntaxQuote, s))
 	}

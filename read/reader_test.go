@@ -96,7 +96,7 @@ func TestReadNestedList(t *testing.T) {
 	as.True(ok)
 	as.Number(55.12, f)
 
-	_, r, ok = r.Split()
+	_, _, ok = r.Split()
 	as.False(ok)
 
 	// iterate over the nested list

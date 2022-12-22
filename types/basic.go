@@ -39,8 +39,6 @@ func Basic(name string) BasicType {
 	}
 }
 
-func (*basic) basic() {}
-
 func (b *basic) Kind() Kind {
 	return b.kind
 }

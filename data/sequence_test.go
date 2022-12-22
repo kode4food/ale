@@ -32,7 +32,7 @@ func TestLastOfSequence(t *testing.T) {
 	as.String("hello", v)
 	as.True(ok)
 
-	v, ok = data.Last(sequence.NewLazy(
+	_, ok = data.Last(sequence.NewLazy(
 		func() (data.Value, data.Sequence, bool) {
 			return data.Nil, data.EmptyList, false
 		},

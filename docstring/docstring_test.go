@@ -13,9 +13,6 @@ import (
 	. "github.com/kode4food/ale/internal/assert/helpers"
 )
 
-// starts with ^ or ends (but does not start) with *
-var ignorable = regexp.MustCompile(`^(\^.*|[^*]+\*)$`)
-
 func TestDocString(t *testing.T) {
 	as := assert.New(t)
 
@@ -43,6 +40,10 @@ func TestDocumentedBuiltinsExist(t *testing.T) {
 
 func TestBuiltinsHaveDocs(t *testing.T) {
 	t.Skip("initially to drive back-filling of documentation")
+
+	// starts with ^ or ends (but does not start) with *
+	ignorable := regexp.MustCompile(`^(\^.*|[^*]+\*)$`)
+
 	as := assert.New(t)
 	ns := assert.GetTestEnvironment().GetRoot()
 

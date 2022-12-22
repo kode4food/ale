@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"os"
 
 	"github.com/kode4food/ale/data"
@@ -20,7 +20,7 @@ const (
 func EvaluateStdIn() {
 	defer exitWithError()
 
-	buffer, _ := ioutil.ReadAll(os.Stdin)
+	buffer, _ := io.ReadAll(os.Stdin)
 	evalBuffer(ns, buffer)
 }
 
@@ -29,7 +29,7 @@ func EvaluateFile() {
 	defer exitWithError()
 
 	filename := os.Args[1]
-	if buffer, err := ioutil.ReadFile(filename); err != nil {
+	if buffer, err := os.ReadFile(filename); err != nil {
 		fmt.Println(fmt.Errorf(ErrFileNotFound, filename))
 		os.Exit(-1)
 	} else {

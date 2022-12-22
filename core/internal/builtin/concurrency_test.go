@@ -12,7 +12,7 @@ import (
 
 func TestGo(t *testing.T) {
 	as := assert.New(t)
-	done := make(chan bool, 0)
+	done := make(chan bool)
 
 	var called bool
 	fn := data.Applicative(func(args ...data.Value) data.Value {

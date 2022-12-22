@@ -1,4 +1,4 @@
-// +build !windows
+//go:build !windows
 
 package console
 
@@ -36,7 +36,7 @@ func Painter() readline.Painter {
 }
 
 func (*painter) Paint(line []rune, pos int) []rune {
-	if line == nil || len(line) == 0 {
+	if len(line) == 0 {
 		return line
 	}
 

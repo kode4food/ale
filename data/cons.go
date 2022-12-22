@@ -2,7 +2,6 @@ package data
 
 import (
 	"bytes"
-	"fmt"
 	"sort"
 
 	"github.com/kode4food/ale/types"
@@ -37,8 +36,8 @@ type (
 func (p Pairs) Sorted() Pairs {
 	res := p[:]
 	sort.Slice(res, func(l, r int) bool {
-		ls := fmt.Sprintf("%s", res[l].Car().String())
-		rs := fmt.Sprintf("%s", res[r].Car().String())
+		ls := res[l].Car().String()
+		rs := res[r].Car().String()
 		return ls < rs
 	})
 	return res

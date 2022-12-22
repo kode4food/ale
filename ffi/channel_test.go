@@ -14,7 +14,7 @@ import (
 func TestChannelTypes(t *testing.T) {
 	as := assert.New(t)
 
-	ch := make(chan int, 0)
+	ch := make(chan int)
 	bw := ffi.MustWrap(ch)
 	as.Contains(`:seq`, bw)
 	as.Contains(`:emit`, bw)
@@ -36,7 +36,7 @@ func TestChannelTypes(t *testing.T) {
 func TestChannelSequence(t *testing.T) {
 	as := assert.New(t)
 
-	ch := make(chan int, 0)
+	ch := make(chan int)
 	go func() {
 		for i := 0; i < 10; i++ {
 			ch <- i
@@ -52,7 +52,7 @@ func TestChannelSequence(t *testing.T) {
 func TestChannelEmit(t *testing.T) {
 	as := assert.New(t)
 
-	ch := make(chan int, 0)
+	ch := make(chan int)
 	go func() {
 		w := ffi.MustWrap(ch).(data.Object)
 		emitFunc := as.MustGet(w, stream.EmitKey).(data.Function)

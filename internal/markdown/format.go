@@ -25,29 +25,29 @@ type (
 const blockPrefix = "```"
 
 var (
-	header = regexp.MustCompile("^#+\\s(.*)$")
+	header = regexp.MustCompile(`^#+\s(.*)$`)
 
-	indent = regexp.MustCompile("^#+ |^\\s\\s+")
-	hashes = regexp.MustCompile("^#+ ")
+	indent = regexp.MustCompile(`^#+ |^\s\s+`)
+	hashes = regexp.MustCompile(`^#+ `)
 	ticks  = regexp.MustCompile("`[^`]*`")
-	unders = regexp.MustCompile("_[^_]*_")
-	double = regexp.MustCompile("[*][*][^*]*[*][*]")
-	stars  = regexp.MustCompile("[*][^*]*[*]")
+	unders = regexp.MustCompile(`_[^_]*_`)
+	double = regexp.MustCompile(`[*][*][^*]*[*][*]`)
+	stars  = regexp.MustCompile(`[*][^*]*[*]`)
 
 	lineFormatters = map[*regexp.Regexp]formatter{
-		regexp.MustCompile("^#\\s.*$"):   formatHeader1,
-		regexp.MustCompile("^##+\\s.*$"): formatHeader2,
-		regexp.MustCompile("^\\s\\s.*$"): formatIndent,
+		regexp.MustCompile(`^#\s.*$`):   formatHeader1,
+		regexp.MustCompile(`^##+\s.*$`): formatHeader2,
+		regexp.MustCompile(`^\s\s.*$`):  formatIndent,
 	}
 
 	docFormatters = []*patternFormatter{
 		{ticks, trimmedFormatter("`", console.Code)},
-		{double, trimmedFormatter("**", console.Bold)},
-		{stars, trimmedFormatter("*", console.Italic)},
-		{unders, trimmedFormatter("_", console.Result)},
+		{double, trimmedFormatter(`**`, console.Bold)},
+		{stars, trimmedFormatter(`*`, console.Italic)},
+		{unders, trimmedFormatter(`_`, console.Result)},
 	}
 
-	escaped = regexp.MustCompile("\\\\.")
+	escaped = regexp.MustCompile(`\\.`)
 )
 
 // FormatMarkdown formats a markdown asset for REPL display

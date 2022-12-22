@@ -56,7 +56,7 @@ func TestResolveValue(t *testing.T) {
 	as.True(res)
 
 	_, ok = env.ResolveValue(ns, LS("public-parent"))
-	as.True(res)
+	as.True(ok)
 
 	ls := LS("^private-parent")
 	defer as.ExpectPanic(fmt.Sprintf(env.ErrSymbolNotBound, ls.Name()))

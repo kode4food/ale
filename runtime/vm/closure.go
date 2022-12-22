@@ -136,7 +136,7 @@ opSwitch:
 		SP++
 		ref := stack[SP].(*Ref)
 		SP++
-		ref.Value = stack[SP].(data.Value)
+		ref.Value = stack[SP]
 		goto nextPC
 
 	case isa.Deref:
@@ -154,7 +154,7 @@ opSwitch:
 		SP++
 		name := stack[SP].(data.Name)
 		SP++
-		val := stack[SP].(data.Value)
+		val := stack[SP]
 		lambda.Globals.Declare(name).Bind(val)
 		goto nextPC
 

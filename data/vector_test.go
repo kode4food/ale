@@ -101,7 +101,7 @@ func TestVectorSplit(t *testing.T) {
 	as.Equal(data.Values{}, r.(data.Vector).Values())
 
 	v3 := data.NewVector()
-	f, r, ok = v3.Split()
+	_, _, ok = v3.Split()
 	as.False(ok)
 }
 
