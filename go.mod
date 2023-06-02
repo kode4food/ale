@@ -5,7 +5,7 @@ go 1.18
 require (
 	github.com/chzyer/readline v1.5.1
 	github.com/google/uuid v1.3.0
-	github.com/stretchr/testify v1.8.1
+	github.com/stretchr/testify v1.8.2
 	golang.org/x/tools v0.5.0
 	gopkg.in/yaml.v3 v3.0.1
 	honnef.co/go/tools v0.3.3
