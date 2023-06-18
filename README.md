@@ -1,6 +1,6 @@
 # Ale is a Lisp Environment
 
-[![Build Status](https://app.travis-ci.com/kode4food/ale.svg?branch=master)](https://app.travis-ci.com/kode4food/ale) [![Test Coverage](https://api.codeclimate.com/v1/badges/bcf86d6aa52ebaaed63f/test_coverage)](https://codeclimate.com/github/kode4food/ale/test_coverage) [![Maintainability](https://api.codeclimate.com/v1/badges/bcf86d6aa52ebaaed63f/maintainability)](https://codeclimate.com/github/kode4food/ale/maintainability) [![GitHub](https://img.shields.io/github/license/kode4food/ale)](https://github.com/kode4food/ale/blob/master/LICENSE.md)
+[![Build Status](https://app.travis-ci.com/kode4food/ale.svg?branch=main)](https://app.travis-ci.com/kode4food/ale) [![Test Coverage](https://api.codeclimate.com/v1/badges/bcf86d6aa52ebaaed63f/test_coverage)](https://codeclimate.com/github/kode4food/ale/test_coverage) [![Maintainability](https://api.codeclimate.com/v1/badges/bcf86d6aa52ebaaed63f/maintainability)](https://codeclimate.com/github/kode4food/ale/maintainability) [![GitHub](https://img.shields.io/github/license/kode4food/ale)](https://github.com/kode4food/ale/blob/main/LICENSE.md)
 
 Ale is a Lisp Environment for [Go](https://golang.org/) applications
 
