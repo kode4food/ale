@@ -1,6 +1,8 @@
 package vm_test
 
 import (
+	"fmt"
+	"math"
 	"testing"
 
 	"github.com/kode4food/ale/data"
@@ -315,4 +317,12 @@ func TestExplosions(t *testing.T) {
 	testPanic(t, "runtime error: index out of range", []isa.Coder{
 		isa.Return,
 	})
+}
+
+func TestBadOpcode(t *testing.T) {
+	badOpcode := isa.Opcode(math.MaxUint)
+	testPanic(t,
+		fmt.Sprintf("unknown opcode: %s", badOpcode.String()),
+		[]isa.Coder{badOpcode},
+	)
 }
