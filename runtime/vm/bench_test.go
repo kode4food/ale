@@ -3,6 +3,9 @@ package vm_test
 import (
 	"testing"
 
+	"github.com/kode4food/ale/core/bootstrap"
+	"github.com/kode4food/ale/eval"
+
 	"github.com/kode4food/ale/data"
 	. "github.com/kode4food/ale/internal/assert/helpers"
 	"github.com/kode4food/ale/runtime/isa"
@@ -78,5 +81,31 @@ var bCode = makeCode([]isa.Coder{
 func BenchmarkVMCalls(b *testing.B) {
 	for n := 0; n < b.N; n++ {
 		_ = bCode.Call()
+	}
+}
+
+func BenchmarkVMTailCalls(b *testing.B) {
+	env := bootstrap.DevNullEnvironment()
+	bootstrap.Into(env)
+	ns := env.GetAnonymous()
+	_ = eval.String(ns, `
+		(define (bottles n)
+		  (str
+		    (cond [ (= n 0) "No more bottles"]
+		          [ (= n 1) "One bottle"]
+		          [:else (str n " bottles")])
+		    " of beer"))
+		(define (beer n)
+		  (when (> n 0)
+		    (println (bottles n) "on the wall")
+		    (println (bottles n)) (println "Take one down, pass it around")
+		    (println (bottles (- n 1)) "on the wall")
+		    (println)
+		    (beer (- n 1))))
+	`)
+	entry, _ := ns.Resolve("beer")
+	beer := entry.Value().(data.Function)
+	for n := 0; n < b.N; n++ {
+		_ = beer.Call(data.Integer(9999))
 	}
 }
