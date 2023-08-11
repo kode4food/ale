@@ -28,22 +28,28 @@ func newClosure(lambda *Lambda, values data.Values) *closure {
 
 // Call turns closure into a Function, and serves as the virtual machine
 func (c *closure) Call(args ...data.Value) data.Value {
-	values := make(data.Values, c.Lambda.StackSize+c.Lambda.LocalCount)
+	var (
+		DATA   data.Values
+		CODE   []isa.Word
+		STACK  data.Values
+		LOCALS data.Values
+		SP     int
+		PC     int
+	)
 
-	CODE := c.Lambda.Code
-	STACK := values[0:c.Lambda.StackSize]
-	LOCALS := values[c.Lambda.StackSize:]
-	SP := len(STACK) - 1
-	PC := 0
-
-	goto opSwitch
+initFrame:
+	CODE = c.Lambda.Code
+	DATA = make(data.Values, c.Lambda.StackSize+c.Lambda.LocalCount)
+	STACK = DATA[0:c.Lambda.StackSize]
+	LOCALS = DATA[c.Lambda.StackSize:]
+	SP = len(STACK) - 1
+	PC = -1 // cheaper than a goto
 
 nextPC:
 	PC++
 
 opSwitch:
-	op := isa.Opcode(CODE[PC])
-	switch op {
+	switch isa.Opcode(CODE[PC]) {
 	case isa.Nil:
 		STACK[SP] = data.Nil
 		SP--
@@ -319,20 +325,16 @@ opSwitch:
 		val := STACK[SP1]
 		if vc, ok := val.(*closure); ok {
 			if vc != c {
-				c = vc
+				c = vc // intentional
+				if len(DATA) < c.Lambda.StackSize+c.Lambda.LocalCount {
+					goto initFrame
+				}
 				CODE = c.Lambda.Code
-				if len(values) < c.Lambda.StackSize+c.Lambda.LocalCount {
-					ss := c.Lambda.StackSize
-					values = make(data.Values, ss+c.Lambda.LocalCount)
-					STACK = values[0:ss]
-					LOCALS = values[ss:]
-				} else {
-					if len(STACK) != c.Lambda.StackSize {
-						STACK = values[0:c.Lambda.StackSize]
-					}
-					if len(LOCALS) != c.Lambda.LocalCount {
-						LOCALS = values[len(values)-c.Lambda.LocalCount:]
-					}
+				if len(STACK) != c.Lambda.StackSize {
+					STACK = DATA[0:c.Lambda.StackSize]
+				}
+				if len(LOCALS) != c.Lambda.LocalCount {
+					LOCALS = DATA[len(DATA)-c.Lambda.LocalCount:]
 				}
 			}
 			SP = len(STACK) - 1
@@ -371,7 +373,7 @@ opSwitch:
 
 	default:
 		// Programmer error
-		panic(fmt.Sprintf(errUnknownOpcode, op))
+		panic(fmt.Sprintf(errUnknownOpcode, isa.Opcode(CODE[PC])))
 	}
 }
 
