@@ -42,6 +42,8 @@ initFrame:
 	DATA = make(data.Values, c.Lambda.StackSize+c.Lambda.LocalCount)
 	STACK = DATA[0:c.Lambda.StackSize]
 	LOCALS = DATA[c.Lambda.StackSize:]
+
+initState:
 	SP = len(STACK) - 1
 	PC = -1 // cheaper than a goto
 
@@ -324,22 +326,21 @@ opSwitch:
 		// call function
 		val := STACK[SP1]
 		if vc, ok := val.(*closure); ok {
-			if vc != c {
-				c = vc // intentional
-				if len(DATA) < c.Lambda.StackSize+c.Lambda.LocalCount {
-					goto initFrame
-				}
-				CODE = c.Lambda.Code
-				if len(STACK) != c.Lambda.StackSize {
-					STACK = DATA[0:c.Lambda.StackSize]
-				}
-				if len(LOCALS) != c.Lambda.LocalCount {
-					LOCALS = DATA[len(DATA)-c.Lambda.LocalCount:]
-				}
+			if vc == c {
+				goto initState
 			}
-			SP = len(STACK) - 1
-			PC = 0
-			goto opSwitch
+			c = vc // intentional
+			if len(DATA) < c.Lambda.StackSize+c.Lambda.LocalCount {
+				goto initFrame
+			}
+			CODE = c.Lambda.Code
+			if len(STACK) != c.Lambda.StackSize {
+				STACK = DATA[0:c.Lambda.StackSize]
+			}
+			if len(LOCALS) != c.Lambda.LocalCount {
+				LOCALS = DATA[len(DATA)-c.Lambda.LocalCount:]
+			}
+			goto initState
 		}
 		return val.(data.Function).Call(args...)
 
