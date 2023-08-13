@@ -48,13 +48,13 @@ func (e *Environment) Snapshot() *Environment {
 	e.RLock()
 	defer e.RUnlock()
 
-	newEnv := &Environment{
+	res := &Environment{
 		data: make(map[data.Name]Namespace, len(e.data)),
 	}
 	for k, v := range e.data {
-		newEnv.data[k] = v.Snapshot(newEnv)
+		res.data[k] = v.Snapshot(res)
 	}
-	return newEnv
+	return res
 }
 
 // New constructs a new namespace

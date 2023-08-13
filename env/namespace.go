@@ -98,20 +98,20 @@ func (ns *namespace) Snapshot(e *Environment) Namespace {
 	ns.mutex.RLock()
 	defer ns.mutex.RUnlock()
 
-	ent := make(entries, len(ns.entries))
+	res := &namespace{
+		environment: e,
+		domain:      ns.domain,
+		entries:     make(entries, len(ns.entries)),
+	}
 	for k, v := range ns.entries {
-		ent[k] = &entry{
-			owner: v.owner,
+		res.entries[k] = &entry{
+			owner: res,
 			name:  v.name,
 			value: v.value,
 			bound: v.bound,
 		}
 	}
-	return &namespace{
-		environment: e,
-		domain:      ns.domain,
-		entries:     ent,
-	}
+	return res
 }
 
 func (e entries) publicNames() data.Names {
