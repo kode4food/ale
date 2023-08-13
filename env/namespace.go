@@ -28,10 +28,10 @@ type (
 	}
 
 	namespace struct {
+		sync.RWMutex
 		environment *Environment
 		domain      data.Name
 		entries     entries
-		mutex       sync.RWMutex
 	}
 
 	anonymous struct {
@@ -39,11 +39,11 @@ type (
 	}
 
 	entry struct {
+		sync.RWMutex
 		owner Namespace
 		name  data.Name
 		value data.Value
 		bound bool
-		mutex sync.RWMutex
 	}
 
 	entries map[data.Name]*entry
@@ -64,14 +64,14 @@ func (ns *namespace) Domain() data.Name {
 }
 
 func (ns *namespace) Declared() data.Names {
-	ns.mutex.RLock()
-	defer ns.mutex.RUnlock()
+	ns.RLock()
+	defer ns.RUnlock()
 	return ns.entries.publicNames().Sorted()
 }
 
 func (ns *namespace) Declare(n data.Name) Entry {
-	ns.mutex.Lock()
-	defer ns.mutex.Unlock()
+	ns.Lock()
+	defer ns.Unlock()
 	if res, ok := ns.entries[n]; ok {
 		return res
 	}
@@ -86,8 +86,8 @@ func (ns *namespace) Declare(n data.Name) Entry {
 }
 
 func (ns *namespace) Resolve(n data.Name) (Entry, bool) {
-	ns.mutex.RLock()
-	defer ns.mutex.RUnlock()
+	ns.RLock()
+	defer ns.RUnlock()
 	if res, ok := ns.entries[n]; ok {
 		return res, true
 	}
@@ -95,8 +95,8 @@ func (ns *namespace) Resolve(n data.Name) (Entry, bool) {
 }
 
 func (ns *namespace) Snapshot(e *Environment) Namespace {
-	ns.mutex.RLock()
-	defer ns.mutex.RUnlock()
+	ns.RLock()
+	defer ns.RUnlock()
 
 	res := &namespace{
 		environment: e,
@@ -104,12 +104,7 @@ func (ns *namespace) Snapshot(e *Environment) Namespace {
 		entries:     make(entries, len(ns.entries)),
 	}
 	for k, v := range ns.entries {
-		res.entries[k] = &entry{
-			owner: res,
-			name:  v.name,
-			value: v.value,
-			bound: v.bound,
-		}
+		res.entries[k] = v.snapshot(res)
 	}
 	return res
 }
@@ -124,6 +119,17 @@ func (e entries) publicNames() data.Names {
 	return res
 }
 
+func (e *entry) snapshot(owner Namespace) *entry {
+	e.RLock()
+	defer e.RUnlock()
+	return &entry{
+		owner: owner,
+		name:  e.name,
+		value: e.value,
+		bound: e.bound,
+	}
+}
+
 func (e *entry) Owner() Namespace {
 	return e.owner
 }
@@ -133,8 +139,8 @@ func (e *entry) Name() data.Name {
 }
 
 func (e *entry) Value() data.Value {
-	e.mutex.RLock()
-	defer e.mutex.RUnlock()
+	e.RLock()
+	defer e.RUnlock()
 	if e.bound {
 		return e.value
 	}
@@ -142,14 +148,14 @@ func (e *entry) Value() data.Value {
 }
 
 func (e *entry) IsBound() bool {
-	e.mutex.RLock()
-	defer e.mutex.RUnlock()
+	e.RLock()
+	defer e.RUnlock()
 	return e.bound
 }
 
 func (e *entry) Bind(v data.Value) {
-	e.mutex.Lock()
-	defer e.mutex.Unlock()
+	e.Lock()
+	defer e.Unlock()
 	if e.bound {
 		panic(fmt.Errorf(ErrNameAlreadyBound, e.name))
 	}
