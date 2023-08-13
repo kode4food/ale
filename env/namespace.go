@@ -15,6 +15,7 @@ type (
 		Declared() data.Names
 		Declare(data.Name) Entry
 		Resolve(data.Name) (Entry, bool)
+		Snapshot(*Environment) Namespace
 	}
 
 	// Entry represents a namespace entry
@@ -45,7 +46,7 @@ type (
 		mutex sync.RWMutex
 	}
 
-	entries map[data.Name]Entry
+	entries map[data.Name]*entry
 )
 
 // Error messages
@@ -91,6 +92,26 @@ func (ns *namespace) Resolve(n data.Name) (Entry, bool) {
 		return res, true
 	}
 	return nil, false
+}
+
+func (ns *namespace) Snapshot(e *Environment) Namespace {
+	ns.mutex.RLock()
+	defer ns.mutex.RUnlock()
+
+	ent := make(entries, len(ns.entries))
+	for k, v := range ns.entries {
+		ent[k] = &entry{
+			owner: v.owner,
+			name:  v.name,
+			value: v.value,
+			bound: v.bound,
+		}
+	}
+	return &namespace{
+		environment: e,
+		domain:      ns.domain,
+		entries:     ent,
+	}
 }
 
 func (e entries) publicNames() data.Names {

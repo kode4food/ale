@@ -19,6 +19,13 @@ func chain(parent Namespace, child Namespace) *chainedNamespace {
 	}
 }
 
+func (ns *chainedNamespace) Snapshot(e *Environment) Namespace {
+	return &chainedNamespace{
+		parent: ns.parent.Snapshot(e),
+		child:  ns.child.Snapshot(e),
+	}
+}
+
 func (ns *chainedNamespace) Environment() *Environment {
 	return ns.child.Environment()
 }

@@ -86,7 +86,6 @@ func BenchmarkVMCalls(b *testing.B) {
 
 func BenchmarkVMTailCalls(b *testing.B) {
 	env := bootstrap.DevNullEnvironment()
-	bootstrap.Into(env)
 	ns := env.GetAnonymous()
 	_ = eval.String(ns, `
 		(define (bottles n)

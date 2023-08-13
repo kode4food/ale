@@ -16,8 +16,9 @@ func TestDevNullEnvironment(t *testing.T) {
 	e := bootstrap.DevNullEnvironment()
 	ns := e.GetRoot()
 
-	_, ok := ns.Resolve("*args*")
-	as.False(ok)
+	a, ok := ns.Resolve("*args*")
+	as.True(ok)
+	as.False(a.IsBound())
 
 	i, ok := ns.Resolve("*in*")
 	as.True(ok && i.IsBound())
@@ -43,7 +44,6 @@ func TestBootstrapInto(t *testing.T) {
 	as := assert.New(t)
 
 	e := bootstrap.TopLevelEnvironment()
-	bootstrap.Into(e)
 	ns := e.GetRoot()
 
 	d, ok := ns.Resolve("define*")
@@ -55,7 +55,6 @@ func TestBootstrapInto(t *testing.T) {
 
 func BenchmarkBootstrapping(b *testing.B) {
 	for n := 0; n < b.N; n++ {
-		e := bootstrap.DevNullEnvironment()
-		bootstrap.Into(e)
+		bootstrap.DevNullEnvironment()
 	}
 }

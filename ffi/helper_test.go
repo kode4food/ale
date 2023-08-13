@@ -19,10 +19,7 @@ type (
 	Env map[data.Name]any
 )
 
-var (
-	testEnv = env.NewEnvironment()
-	ready   bool
-)
+var testEnv = bootstrap.Into(env.NewEnvironment())
 
 func NewWrapped(t *testing.T) *EvalWrapped {
 	return &EvalWrapped{
@@ -32,10 +29,6 @@ func NewWrapped(t *testing.T) *EvalWrapped {
 
 func (e *EvalWrapped) EvalTo(src string, env Env, expect data.Value) {
 	e.Helper()
-	if !ready {
-		bootstrap.Into(testEnv)
-		ready = true
-	}
 	ns := testEnv.GetAnonymous()
 	for n, v := range env {
 		v, err := ffi.Wrap(v)

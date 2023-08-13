@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/kode4food/ale/core/bootstrap"
+
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/env"
 	"github.com/kode4food/ale/eval"
@@ -50,8 +51,7 @@ func TestQuoteEval(t *testing.T) {
 func TestUnquoteEval(t *testing.T) {
 	as := assert.New(t)
 
-	e := env.NewEnvironment()
-	bootstrap.Into(e)
+	e := bootstrap.Into(env.NewEnvironment())
 	ns := e.GetAnonymous()
 
 	ns.Declare("foo").Bind(F(456))

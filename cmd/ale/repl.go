@@ -360,6 +360,5 @@ func getHistoryFile() string {
 }
 
 func init() {
-	bootstrap.Into(ns.Environment())
 	registerREPLBuiltIns()
 }

@@ -50,7 +50,6 @@ func TestFunctionPredicates(t *testing.T) {
 	as := assert.New(t)
 
 	e := bootstrap.DevNullEnvironment()
-	bootstrap.Into(e)
 
 	as.False(builtin.IsSpecial.Call(builtin.Str))
 	as.True(builtin.IsApply.Call(builtin.Str))
