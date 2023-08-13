@@ -6,7 +6,6 @@ import (
 	"github.com/kode4food/ale/compiler/encoder"
 	"github.com/kode4food/ale/compiler/generate"
 	"github.com/kode4food/ale/data"
-	"github.com/kode4food/ale/internal/util"
 	"github.com/kode4food/ale/runtime/isa"
 	"github.com/kode4food/ale/runtime/vm"
 )
@@ -102,12 +101,12 @@ func (le *lambdaEncoder) makeArityChecker() data.ArityChecker {
 	lower, upper := v0.arityRange()
 	for _, s := range le.cases[1:] {
 		l, u := s.arityRange()
-		lower = util.IntMin(l, lower)
+		lower = min(l, lower)
 		if u == data.OrMore || upper == data.OrMore {
 			upper = data.OrMore
 			continue
 		}
-		upper = util.IntMax(u, upper)
+		upper = max(u, upper)
 	}
 	return data.MakeChecker(lower, upper)
 }

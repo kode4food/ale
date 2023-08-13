@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/kode4food/ale/compiler/ir/visitor"
-	"github.com/kode4food/ale/internal/util"
 	"github.com/kode4food/ale/runtime/isa"
 )
 
@@ -60,7 +59,7 @@ func (s *stackSizes) calculateInstruction(inst *isa.Instruction) {
 	dPop := getStackChange(inst, effect.DPop)
 	dPush := getStackChange(inst, effect.DPush)
 	s.endSize += (effect.Push - effect.Pop) + (dPush - dPop)
-	s.maxSize = util.IntMax(s.endSize, s.maxSize)
+	s.maxSize = max(s.endSize, s.maxSize)
 }
 
 func (s *stackSizes) calculateBranches(thenNode, elseNode visitor.Node) {
@@ -78,7 +77,7 @@ func (s *stackSizes) calculateBranch(n visitor.Node) *stackSizes {
 		maxSize: s.maxSize,
 	}
 	res.calculateNode(n)
-	s.maxSize = util.IntMax(s.maxSize, res.maxSize)
+	s.maxSize = max(s.maxSize, res.maxSize)
 	return res
 }
 

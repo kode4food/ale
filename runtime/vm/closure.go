@@ -219,28 +219,31 @@ opSwitch:
 	case isa.Eq:
 		SP++
 		SP1 := SP + 1
-		cmp := STACK[SP1].(data.Number).Cmp(
-			STACK[SP].(data.Number),
+		STACK[SP1] = data.Bool(
+			data.EqualTo == STACK[SP1].(data.Number).Cmp(
+				STACK[SP].(data.Number),
+			),
 		)
-		STACK[SP1] = data.Bool(cmp == data.EqualTo)
 		goto nextPC
 
 	case isa.Neq:
 		SP++
 		SP1 := SP + 1
-		cmp := STACK[SP1].(data.Number).Cmp(
-			STACK[SP].(data.Number),
+		STACK[SP1] = data.Bool(
+			data.EqualTo != STACK[SP1].(data.Number).Cmp(
+				STACK[SP].(data.Number),
+			),
 		)
-		STACK[SP1] = data.Bool(cmp != data.EqualTo)
 		goto nextPC
 
 	case isa.Lt:
 		SP++
 		SP1 := SP + 1
-		cmp := STACK[SP1].(data.Number).Cmp(
-			STACK[SP].(data.Number),
+		STACK[SP1] = data.Bool(
+			data.LessThan == STACK[SP1].(data.Number).Cmp(
+				STACK[SP].(data.Number),
+			),
 		)
-		STACK[SP1] = data.Bool(cmp == data.LessThan)
 		goto nextPC
 
 	case isa.Lte:
@@ -257,10 +260,11 @@ opSwitch:
 	case isa.Gt:
 		SP++
 		SP1 := SP + 1
-		cmp := STACK[SP1].(data.Number).Cmp(
-			STACK[SP].(data.Number),
+		STACK[SP1] = data.Bool(
+			data.GreaterThan == STACK[SP1].(data.Number).Cmp(
+				STACK[SP].(data.Number),
+			),
 		)
-		STACK[SP1] = data.Bool(cmp == data.GreaterThan)
 		goto nextPC
 
 	case isa.Gte:

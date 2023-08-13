@@ -2,8 +2,9 @@ package types
 
 import (
 	"bytes"
+	"cmp"
 	"fmt"
-	"sort"
+	"slices"
 	"strings"
 )
 
@@ -77,8 +78,8 @@ func (f fields) toMap() map[string]Type {
 
 func (f fields) sorted() fields {
 	res := f[:]
-	sort.Slice(res, func(i, j int) bool {
-		return res[i].Name < res[j].Name
+	slices.SortFunc(res, func(l, r Field) int {
+		return cmp.Compare(l.Name, r.Name)
 	})
 	return res
 }

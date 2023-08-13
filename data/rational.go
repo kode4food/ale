@@ -1,6 +1,7 @@
 package data
 
 import (
+	"cmp"
 	"fmt"
 	"math"
 	"math/big"
@@ -56,13 +57,7 @@ func (l Float) Cmp(r Number) Comparison {
 		if math.IsNaN(float64(rf)) {
 			return Incomparable
 		}
-		if l > rf {
-			return GreaterThan
-		}
-		if l < rf {
-			return LessThan
-		}
-		return EqualTo
+		return Comparison(cmp.Compare(l, rf))
 	}
 	pl, pr := purify(l, r)
 	return pl.Cmp(pr)

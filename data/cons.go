@@ -2,7 +2,8 @@ package data
 
 import (
 	"bytes"
-	"sort"
+	"cmp"
+	"slices"
 
 	"github.com/kode4food/ale/types"
 )
@@ -35,10 +36,8 @@ type (
 // Sorted returns a sorted set of Pairs
 func (p Pairs) Sorted() Pairs {
 	res := p[:]
-	sort.Slice(res, func(l, r int) bool {
-		ls := res[l].Car().String()
-		rs := res[r].Car().String()
-		return ls < rs
+	slices.SortFunc(res, func(l, r Pair) int {
+		return cmp.Compare(l.Car().String(), r.Car().String())
 	})
 	return res
 }

@@ -2,8 +2,9 @@ package data
 
 import (
 	"bytes"
+	"cmp"
 	"fmt"
-	"sort"
+	"slices"
 )
 
 type dumpStringMap map[Value]Value
@@ -29,8 +30,10 @@ func (d dumpStringMap) sortedKeys() Values {
 	for k := range d {
 		keys = append(keys, k)
 	}
-	sort.Slice(keys, func(l, r int) bool {
-		return fmt.Sprintf("%p", keys[l]) < fmt.Sprintf("%p", keys[r])
+	slices.SortFunc(keys, func(l, r Value) int {
+		return cmp.Compare(
+			fmt.Sprintf("%p", l), fmt.Sprintf("%p", r),
+		)
 	})
 	return keys
 }

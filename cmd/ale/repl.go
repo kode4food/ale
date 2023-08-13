@@ -10,7 +10,7 @@ import (
 	"path"
 	"regexp"
 	"runtime"
-	"sort"
+	"slices"
 	"strings"
 	"time"
 
@@ -314,7 +314,7 @@ func docSymbol(sym data.Symbol) {
 
 func docSymbolList() {
 	names := docstring.Names()
-	sort.Strings(names)
+	slices.Sort(names)
 	escapeNames(names)
 	joined := strings.Join(names, ", ")
 	f := formatForREPL(fmt.Sprintf(docTemplate, joined))

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"hash/maphash"
 	"math/rand"
-	"sort"
+	"slices"
 
 	"github.com/kode4food/ale/types"
 )
@@ -89,9 +89,7 @@ var (
 // Sorted returns a sorted set of Names
 func (n Names) Sorted() Names {
 	res := n[:]
-	sort.Slice(res, func(i, j int) bool {
-		return string(res[i]) < string(res[j])
-	})
+	slices.Sort(res)
 	return res
 }
 

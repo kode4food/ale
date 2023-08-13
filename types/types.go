@@ -1,7 +1,8 @@
 package types
 
 import (
-	"sort"
+	"cmp"
+	"slices"
 	"strings"
 )
 
@@ -25,8 +26,8 @@ type (
 
 func (t typeList) sorted() typeList {
 	res := t[:]
-	sort.Slice(res, func(i, j int) bool {
-		return res[i].Name() < res[j].Name()
+	slices.SortFunc(res, func(l, r Type) int {
+		return cmp.Compare(l.Name(), r.Name())
 	})
 	return res
 }

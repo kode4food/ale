@@ -2,7 +2,7 @@ package core
 
 import (
 	"embed"
-	"sort"
+	"slices"
 )
 
 //go:embed *.ale
@@ -15,7 +15,7 @@ func Names() []string {
 	for _, f := range files {
 		res = append(res, f.Name())
 	}
-	sort.Strings(res)
+	slices.Sort(res)
 	return res
 }
 

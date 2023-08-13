@@ -1,6 +1,7 @@
 package data
 
 import (
+	"cmp"
 	"errors"
 	"fmt"
 	"math"
@@ -48,13 +49,7 @@ func MustParseInteger(s string) Number {
 // Cmp compares this Integer to another Number
 func (l Integer) Cmp(r Number) Comparison {
 	if ri, ok := r.(Integer); ok {
-		if l > ri {
-			return GreaterThan
-		}
-		if l < ri {
-			return LessThan
-		}
-		return EqualTo
+		return Comparison(cmp.Compare(l, ri))
 	}
 	pl, pr := purify(l, r)
 	return pl.Cmp(pr)
