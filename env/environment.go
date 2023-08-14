@@ -10,7 +10,7 @@ import (
 type (
 	// Environment maintains a mapping of domain names to namespaces
 	Environment struct {
-		sync.RWMutex
+		sync.Mutex
 		data map[data.Name]Namespace
 	}
 
@@ -45,8 +45,8 @@ func NewEnvironment() *Environment {
 }
 
 func (e *Environment) Snapshot() (*Environment, error) {
-	e.RLock()
-	defer e.RUnlock()
+	e.Lock()
+	defer e.Unlock()
 
 	res := &Environment{
 		data: make(map[data.Name]Namespace, len(e.data)),
@@ -72,19 +72,12 @@ func (e *Environment) New(n data.Name) Namespace {
 
 // Get returns a mapped namespace or instantiates a new one to be cached
 func (e *Environment) Get(domain data.Name, res Resolver) Namespace {
-	e.RLock()
-	r, ok := e.data[domain]
-	e.RUnlock()
-	if ok {
-		return r
-	}
-
-	r = res()
 	e.Lock()
 	defer e.Unlock()
-	if orig, ok := e.data[domain]; ok {
-		return orig
+	if r, ok := e.data[domain]; ok {
+		return r
 	}
+	r := res()
 	e.data[domain] = r
 	return r
 }
