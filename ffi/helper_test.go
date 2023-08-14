@@ -5,7 +5,6 @@ import (
 
 	"github.com/kode4food/ale/core/bootstrap"
 	"github.com/kode4food/ale/data"
-	"github.com/kode4food/ale/env"
 	"github.com/kode4food/ale/eval"
 	"github.com/kode4food/ale/ffi"
 	"github.com/kode4food/ale/internal/assert"
@@ -19,7 +18,7 @@ type (
 	Env map[data.Name]any
 )
 
-var testEnv = bootstrap.Into(env.NewEnvironment())
+var testEnv = bootstrap.DevNullEnvironment()
 
 func NewWrapped(t *testing.T) *EvalWrapped {
 	return &EvalWrapped{

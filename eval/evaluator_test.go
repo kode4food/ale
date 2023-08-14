@@ -5,7 +5,6 @@ import (
 
 	"github.com/kode4food/ale/core/bootstrap"
 	"github.com/kode4food/ale/data"
-	"github.com/kode4food/ale/env"
 	"github.com/kode4food/ale/eval"
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
@@ -15,7 +14,7 @@ import (
 func TestBasicEval(t *testing.T) {
 	as := assert.New(t)
 
-	e := bootstrap.Into(env.NewEnvironment())
+	e := bootstrap.DevNullEnvironment()
 	ns := e.GetAnonymous()
 
 	v1 := eval.String(ns, "(if true 1 0)")
@@ -39,8 +38,7 @@ func TestBasicEval(t *testing.T) {
 func TestBuiltIns(t *testing.T) {
 	as := assert.New(t)
 
-	e := env.NewEnvironment()
-	bootstrap.Into(e)
+	e := bootstrap.DevNullEnvironment()
 	b := e.GetAnonymous()
 	ns := e.GetRoot()
 

@@ -6,7 +6,7 @@ import (
 	"github.com/kode4food/ale/env"
 )
 
-var testEnv = bootstrap.Into(env.NewEnvironment())
+var testEnv = bootstrap.DevNullEnvironment()
 
 // GetTestEnvironment returns an immutable root testing Environment
 func GetTestEnvironment() *env.Environment {
