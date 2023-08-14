@@ -15,7 +15,7 @@ type (
 		Declared() data.Names
 		Declare(data.Name) Entry
 		Resolve(data.Name) (Entry, bool)
-		Snapshot(*Environment) Namespace
+		Snapshot(*Environment) (Namespace, error)
 	}
 
 	// Entry represents a namespace entry
@@ -43,16 +43,25 @@ type (
 		owner Namespace
 		name  data.Name
 		value data.Value
-		bound bool
+		state entryState
 	}
+
+	entryState int
 
 	entries map[data.Name]*entry
 )
 
 // Error messages
 const (
-	ErrNameAlreadyBound = "name is already bound in namespace: %s"
-	ErrNameNotBound     = "name is not bound in namespace: %s"
+	ErrNameAlreadyBound   = "name is already bound in namespace: %s"
+	ErrNameNotBound       = "name is not bound in namespace: %s"
+	ErrSnapshotIncomplete = "can't snapshot environment. entry not bound: %s"
+)
+
+const (
+	unbound entryState = iota
+	resolved
+	bound
 )
 
 func (ns *namespace) Environment() *Environment {
@@ -79,7 +88,6 @@ func (ns *namespace) Declare(n data.Name) Entry {
 		owner: ns,
 		name:  n,
 		value: data.Nil,
-		bound: false,
 	}
 	ns.entries[n] = e
 	return e
@@ -89,12 +97,13 @@ func (ns *namespace) Resolve(n data.Name) (Entry, bool) {
 	ns.RLock()
 	defer ns.RUnlock()
 	if res, ok := ns.entries[n]; ok {
+		res.markResolved()
 		return res, true
 	}
 	return nil, false
 }
 
-func (ns *namespace) Snapshot(e *Environment) Namespace {
+func (ns *namespace) Snapshot(e *Environment) (Namespace, error) {
 	ns.RLock()
 	defer ns.RUnlock()
 
@@ -104,9 +113,13 @@ func (ns *namespace) Snapshot(e *Environment) Namespace {
 		entries:     make(entries, len(ns.entries)),
 	}
 	for k, v := range ns.entries {
-		res.entries[k] = v.snapshot(res)
+		if s, err := v.snapshot(res); err != nil {
+			return nil, err
+		} else {
+			res.entries[k] = s
+		}
 	}
-	return res
+	return res, nil
 }
 
 func (e entries) publicNames() data.Names {
@@ -119,14 +132,25 @@ func (e entries) publicNames() data.Names {
 	return res
 }
 
-func (e *entry) snapshot(owner Namespace) *entry {
+func (e *entry) snapshot(owner Namespace) (*entry, error) {
 	e.RLock()
 	defer e.RUnlock()
+	if e.state == resolved {
+		return nil, fmt.Errorf(ErrSnapshotIncomplete, e.name)
+	}
 	return &entry{
 		owner: owner,
 		name:  e.name,
 		value: e.value,
-		bound: e.bound,
+		state: e.state,
+	}, nil
+}
+
+func (e *entry) markResolved() {
+	e.Lock()
+	defer e.Unlock()
+	if e.state == unbound {
+		e.state = resolved
 	}
 }
 
@@ -141,7 +165,7 @@ func (e *entry) Name() data.Name {
 func (e *entry) Value() data.Value {
 	e.RLock()
 	defer e.RUnlock()
-	if e.bound {
+	if e.state == bound {
 		return e.value
 	}
 	panic(fmt.Errorf(ErrNameNotBound, e.name))
@@ -150,17 +174,17 @@ func (e *entry) Value() data.Value {
 func (e *entry) IsBound() bool {
 	e.RLock()
 	defer e.RUnlock()
-	return e.bound
+	return e.state == bound
 }
 
 func (e *entry) Bind(v data.Value) {
 	e.Lock()
 	defer e.Unlock()
-	if e.bound {
+	if e.state == bound {
 		panic(fmt.Errorf(ErrNameAlreadyBound, e.name))
 	}
 	e.value = v
-	e.bound = true
+	e.state = bound
 }
 
 func resolvePublic(from, in Namespace, n data.Name) (Entry, bool) {

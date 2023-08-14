@@ -16,6 +16,8 @@ func TestDevNullEnvironment(t *testing.T) {
 	e := bootstrap.DevNullEnvironment()
 	ns := e.GetRoot()
 
+	// It's okay to snapshot an environment if nobody has attempted to resolve
+	// an unbound namespace value
 	a, ok := ns.Resolve("*args*")
 	as.True(ok)
 	as.False(a.IsBound())
