@@ -18,9 +18,9 @@ const (
 )
 
 const (
-	defBuiltInName = "^def-builtin"
-	defSpecialName = "^def-special"
-	defMacroName   = "^def-macro"
+	defBuiltInName = "def-builtin"
+	defSpecialName = "def-special"
+	defMacroName   = "def-macro"
 )
 
 func (b *bootstrap) builtIns() {
@@ -63,9 +63,9 @@ func (b *bootstrap) initialFunctions() {
 	}, 1)
 
 	ns := b.environment.GetRoot()
-	ns.Declare(defBuiltInName).Bind(defBuiltIn)
-	ns.Declare(defSpecialName).Bind(defSpecial)
-	ns.Declare(defMacroName).Bind(defMacro)
+	ns.Private(defBuiltInName).Bind(defBuiltIn)
+	ns.Private(defSpecialName).Bind(defSpecial)
+	ns.Private(defMacroName).Bind(defMacro)
 }
 
 func (b *bootstrap) specialForms() {
@@ -80,8 +80,9 @@ func (b *bootstrap) specialForms() {
 		"let-rec":       special.LetMutual,
 		"macroexpand-1": special.MacroExpand1,
 		"macroexpand":   special.MacroExpand,
-		"quote":         special.Quote,
 		"pattern":       special.Pattern,
+		"private*":      special.Private,
+		"quote":         special.Quote,
 	})
 }
 

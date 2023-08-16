@@ -50,6 +50,10 @@ func (ns *chainedNamespace) Declare(n data.Name) Entry {
 	return ns.child.Declare(n)
 }
 
+func (ns *chainedNamespace) Private(n data.Name) Entry {
+	return ns.child.Private(n)
+}
+
 func (ns *chainedNamespace) Resolve(n data.Name) (Entry, bool) {
 	if e, ok := ns.child.Resolve(n); ok {
 		return e, true

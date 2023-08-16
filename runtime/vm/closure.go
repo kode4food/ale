@@ -152,6 +152,13 @@ opSwitch:
 		)
 		goto nextPC
 
+	case isa.Private:
+		SP++
+		c.Lambda.Globals.Declare(
+			STACK[SP].(data.Name),
+		)
+		goto nextPC
+
 	case isa.Bind:
 		SP++
 		name := STACK[SP].(data.Name)

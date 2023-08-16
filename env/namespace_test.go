@@ -19,7 +19,7 @@ func TestDeclarations(t *testing.T) {
 	as.Equal(env.RootDomain, root.Domain())
 
 	root.Declare("public2").Bind(data.True)
-	root.Declare("^private").Bind(data.True)
+	root.Private("private").Bind(data.True)
 	root.Declare("public1").Bind(data.True)
 
 	n := root.Declared()

@@ -7,12 +7,21 @@ import (
 	"github.com/kode4food/ale/runtime/isa"
 )
 
-// Declare encodes a global forward-declaration
+// Declare encodes a public global forward-declaration
 func Declare(e encoder.Encoder, args ...data.Value) {
+	declare(e, isa.Declare, args...)
+}
+
+// Private encodes a private global forward-declaration
+func Private(e encoder.Encoder, args ...data.Value) {
+	declare(e, isa.Private, args...)
+}
+
+func declare(e encoder.Encoder, oc isa.Opcode, args ...data.Value) {
 	data.AssertFixed(1, len(args))
 	name := args[0].(data.LocalSymbol).Name()
 	generate.Literal(e, name)
-	e.Emit(isa.Declare)
+	e.Emit(oc)
 	generate.Literal(e, args[0])
 }
 

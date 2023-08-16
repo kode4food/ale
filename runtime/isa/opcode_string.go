@@ -47,33 +47,34 @@ func _() {
 	_ = x[Panic-35]
 	_ = x[Pop-36]
 	_ = x[PosInf-37]
-	_ = x[Resolve-38]
-	_ = x[RestArg-39]
-	_ = x[RetFalse-40]
-	_ = x[RetNil-41]
-	_ = x[RetTrue-42]
-	_ = x[Return-43]
-	_ = x[Self-44]
-	_ = x[Store-45]
-	_ = x[Sub-46]
-	_ = x[TailCall-47]
-	_ = x[True-48]
-	_ = x[Two-49]
-	_ = x[Zero-50]
+	_ = x[Private-38]
+	_ = x[Resolve-39]
+	_ = x[RestArg-40]
+	_ = x[RetFalse-41]
+	_ = x[RetNil-42]
+	_ = x[RetTrue-43]
+	_ = x[Return-44]
+	_ = x[Self-45]
+	_ = x[Store-46]
+	_ = x[Sub-47]
+	_ = x[TailCall-48]
+	_ = x[True-49]
+	_ = x[Two-50]
+	_ = x[Zero-51]
 }
 
 const (
-	_Opcode_name_0 = "AddArgArgLenBindBindRefCallCall0Call1ClosureCondJumpConstDeclareDerefDivDupEqFalseGtGteJumpLoadLtLteMakeTruthyModMulNegNegInfNegOneNeqNewRefNoOpNotNilOnePanicPopPosInfResolveRestArgRetFalseRetNilRetTrueReturnSelfStoreSubTailCallTrueTwoZero"
+	_Opcode_name_0 = "AddArgArgLenBindBindRefCallCall0Call1ClosureCondJumpConstDeclareDerefDivDupEqFalseGtGteJumpLoadLtLteMakeTruthyModMulNegNegInfNegOneNeqNewRefNoOpNotNilOnePanicPopPosInfPrivateResolveRestArgRetFalseRetNilRetTrueReturnSelfStoreSubTailCallTrueTwoZero"
 	_Opcode_name_1 = "Label"
 )
 
 var (
-	_Opcode_index_0 = [...]uint8{0, 3, 6, 12, 16, 23, 27, 32, 37, 44, 52, 57, 64, 69, 72, 75, 77, 82, 84, 87, 91, 95, 97, 100, 110, 113, 116, 119, 125, 131, 134, 140, 144, 147, 150, 153, 158, 161, 167, 174, 181, 189, 195, 202, 208, 212, 217, 220, 228, 232, 235, 239}
+	_Opcode_index_0 = [...]uint8{0, 3, 6, 12, 16, 23, 27, 32, 37, 44, 52, 57, 64, 69, 72, 75, 77, 82, 84, 87, 91, 95, 97, 100, 110, 113, 116, 119, 125, 131, 134, 140, 144, 147, 150, 153, 158, 161, 167, 174, 181, 188, 196, 202, 209, 215, 219, 224, 227, 235, 239, 242, 246}
 )
 
 func (i Opcode) String() string {
 	switch {
-	case i <= 50:
+	case i <= 51:
 		return _Opcode_name_0[_Opcode_index_0[i]:_Opcode_index_0[i+1]]
 	case i == 256:
 		return _Opcode_name_1

@@ -19,7 +19,7 @@ const (
 	Closure                  // Retrieve Closure Value
 	CondJump                 // Conditional Jump
 	Const                    // Retrieve Constant
-	Declare                  // Declare Global
+	Declare                  // Declare a public Namespace entry
 	Deref                    // Pointer Dereference
 	Div                      // Division
 	Dup                      // Duplicate Value
@@ -46,6 +46,7 @@ const (
 	Panic                    // Abnormally Halt
 	Pop                      // Discard Value
 	PosInf                   // Positive Infinity
+	Private                  // Declare a private Namespace entry
 	Resolve                  // Resolve Global Symbol
 	RestArg                  // Retrieve Arguments Tail
 	RetFalse                 // Return False

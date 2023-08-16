@@ -1,7 +1,5 @@
 ;;;; ale core: branching
 
-(define not is-false)
-
 (define-macro unless
   [(test)           nil]
   [(test then)      `(if ,test nil ,then)]
@@ -30,12 +28,6 @@
        `(if ,test
             ,branch
             (cond ,@(rest clauses)))))])
-
-;; case requires it
-(define (map! func coll)
-  (unless (is-empty coll)
-          (cons (func (first coll)) (map! func (rest coll)))
-          '()))
 
 (define-macro (case expr . cases)
   (let-rec ([val       (gensym "val")                    ]

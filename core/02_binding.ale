@@ -1,17 +1,19 @@
 ;;;; ale core: binding
 
-(define (^is-binding-clause clause)
+(private is-binding-clause make-bindings)
+
+(define (is-binding-clause clause)
   (and (is-vector clause)
        (= 2 (length clause))
        (is-local (clause 0))))
 
-(define (^make-bindings value)
+(define (make-bindings value)
   (let-rec [is-bindings
             (lambda (value)
-              (or (^is-binding-clause value)
+              (or (is-binding-clause value)
                   (and (is-list value)
                        (or (is-empty value)
-                           (and (^is-binding-clause (first value))
+                           (and (is-binding-clause (first value))
                                 (is-bindings (rest value)))))))]
     (assert-args
       (is-bindings value) (str "invalid binding: " value))
@@ -20,7 +22,7 @@
         value)))
 
 (define-macro (let* bindings . body)
-  (let [b (^make-bindings bindings)]
+  (let [b (make-bindings bindings)]
     (let ([binding (first b)]
           [next    (rest b) ])
       (let ([name  (binding 0)]

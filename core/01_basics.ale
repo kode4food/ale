@@ -8,69 +8,57 @@
 (define* nil '())
 
 ;; syntax-quoting requires it
+(private* concat!)
 (define* concat!
   (lambda colls
     (let-rec [concat-inner
               (lambda (colls head)
                 (if (is-empty colls)
-                    (apply list head)
-                    (let ([f (first colls)]
-                          [r (rest colls) ])
-                      (if (is-empty f)
-                          (concat-inner r head)
-                          (concat-inner (cons (rest f) r)
-                                        (append head (first f)))))))]
+                  (apply list head)
+                  (let ([f (first colls)]
+                        [r (rest colls) ])
+                    (if (is-empty f)
+                      (concat-inner r head)
+                      (concat-inner (cons (rest f) r)
+                                    (append head (first f)))))))]
       (concat-inner colls []))))
+
+;; bootstrap the basic lambda, macro, and definition facilities
 
 (define* label
   (macro
     (lambda (name form)
       `(let-rec [,name ,form] ,name))))
 
-(define* ^is-cons-or-list
+(private* is-cons-or-list)
+(define* is-cons-or-list
   (lambda (value)
     (if (is-cons value)
-        true
-        (is-list value))))
+      true
+      (is-list value))))
 
-(let [make-macro
-      (lambda (quoter)
-        (macro
-          (lambda forms
-            (let ([f (car forms)]
-                  [r (cdr forms)])
-              (if (^is-cons-or-list f)
-                  (quoter (car f) (cons (cdr f) r))
-                  (quoter f r))))))]
+(private* make-macro)
+(define* make-macro
+  (lambda (quoter)
+    (macro
+      (lambda forms
+        (let ([f (car forms)]
+              [r (cdr forms)])
+          (if (is-cons-or-list f)
+            (quoter (car f) (cons (cdr f) r))
+            (quoter f r)))))))
 
-  (define* define-lambda
-    (make-macro
-      (lambda (name body)
-        `(define* ,name
-           (label ,name (lambda ,@body))))))
+(define* define-lambda
+  (make-macro
+    (lambda (name body)
+      `(define* ,name
+         (label ,name (lambda ,@body))))))
 
-  (define* define-macro
-    (make-macro
-      (lambda (name body)
-        `(define* ,name
-           (label ,name (macro (lambda ,@body))))))))
-
-(define-macro (thunk . forms)
-  `(lambda () ,@forms))
-
-(define-macro assert-args
-  [() nil]
-  [(clause)
-     (raise "assert-args clauses must be paired")]
-  [clauses
-     `(if ,(clauses 0)
-          (assert-args ,@(rest (rest clauses)))
-          (raise ,(clauses 1)))])
-
-(define-macro (lambda-rec name . forms)
-  (if (is-local name)
-      `(label ,name (lambda ,@forms))
-      `(lambda ,name ,@forms)))
+(define* define-macro
+  (make-macro
+    (lambda (name body)
+      `(define* ,name
+         (label ,name (macro (lambda ,@body)))))))
 
 (define-macro (!eq value . comps)
   `(not (eq ,value ,@comps)))
@@ -79,10 +67,10 @@
   [() true]
   [(clause) clause]
   [clauses
-     `(let [and# ,(clauses 0)]
-        (if and#
-            (and ,@(rest clauses))
-            and#))])
+    `(let [and# ,(clauses 0)]
+       (if and#
+              (and ,@(rest clauses))
+              and#))])
 
 (define-macro (!and . clauses)
   `(not (and ,@clauses)))
@@ -91,32 +79,62 @@
   [() nil]
   [(clause) clause]
   [clauses
-     `(let [or# ,(clauses 0)]
-        (if or#
-            or#
-            (or ,@(rest clauses))))])
+    `(let [or# ,(clauses 0)]
+       (if or#
+             or#
+             (or ,@(rest clauses))))])
 
 (define-macro (!or . clauses)
   `(not (or ,@clauses)))
 
-(define-macro (declare . names)
-  (let-rec [declare
-            (lambda (names)
-              (if (is-empty names)
-                  '()
-                  (cons (list 'ale/declare* (first names))
-                        (declare (rest names)))))]
-    `(begin ,@(declare names))))
+(define-macro assert-args
+  [() nil]
+  [(clause)
+    (raise "assert-args clauses must be paired")]
+  [clauses
+    `(if ,(clauses 0)
+       (assert-args ,@(rest (rest clauses)))
+       (raise ,(clauses 1)))])
 
 (define-macro (define . body)
   (let [value (first body)]
     (assert-args
       (or (is-local value)
-          (^is-cons-or-list value))
+          (is-cons-or-list value))
       (str "invalid define: " body))
     (if (is-local value)
-        `(define* ,@body)
-        `(define-lambda ,@body))))
+      `(define* ,@body)
+      `(define-lambda ,@body))))
+
+(define-macro (lambda-rec name . forms)
+  (if (is-local name)
+    `(label ,name (lambda ,@forms))
+    `(lambda ,name ,@forms)))
+
+(define-macro (thunk . forms)
+  `(lambda () ,@forms))
+
+;; case and some macros require it
+(private* map!)
+(define-lambda map! (func coll)
+   (if (is-empty coll)
+     '()
+     (cons (func (first coll))
+           (map! func (rest coll)))))
+
+(define-macro (declare . names)
+  `(begin ,@(map! (lambda (n) (list 'ale/declare* n)) names)))
+
+(define-macro (private . names)
+  `(begin ,@(map! (lambda (n) (list 'ale/private* n)) names)))
+
+;; some basic predicates
+
+(define (is-null value)
+  (eq value nil))
+
+(define (is-zero value)
+  (= value 0))
 
 (define (is-even value)
   (= (mod value 2) 0))
@@ -129,6 +147,10 @@
 
 (define (is-false value)
   (if value false true))
+
+(define not is-false)
+
+;; some conveniences
 
 (define (inc value)
   (+ value 1))
