@@ -8,7 +8,6 @@
 (define* nil '())
 
 ;; syntax-quoting requires it
-(private* concat!)
 (define* concat!
   (lambda colls
     (let-rec [concat-inner
@@ -115,7 +114,6 @@
   `(lambda () ,@forms))
 
 ;; case and some macros require it
-(private* map!)
 (define-lambda map! (func coll)
    (if (is-empty coll)
      '()

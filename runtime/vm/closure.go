@@ -154,7 +154,7 @@ opSwitch:
 
 	case isa.Private:
 		SP++
-		c.Lambda.Globals.Declare(
+		c.Lambda.Globals.Private(
 			STACK[SP].(data.Name),
 		)
 		goto nextPC
