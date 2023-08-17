@@ -19,8 +19,8 @@ func (w *Wrapper) EvalTo(src string, expect data.Value) {
 }
 
 // PanicWith will evaluate source code and expect a panic to happen
-func (w *Wrapper) PanicWith(src string, err error) {
+func (w *Wrapper) PanicWith(src string, err any) {
 	w.Helper()
-	defer w.ExpectPanic(err.Error())
+	defer w.ExpectPanic(err)
 	w.Eval(src)
 }

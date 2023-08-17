@@ -1,7 +1,14 @@
 ;;;; ale core: concurrency
 
+(declare *err*)
+
+(define-macro (go-with-monitor monitor . body)
+  `(go* (thunk (recover
+                 (thunk ,@body)
+                 ,monitor))))
+
 (define-macro (go . body)
-  `(go* (thunk ,@body)))
+  `(go-with-monitor raise ,@body))
 
 (define-macro (delay . body)
   `(promise* (thunk ,@body)))
@@ -48,6 +55,5 @@
      (let* ([channel (chan mbox-size)]
             [mailbox (:seq channel)  ]
             [sender  (:emit channel) ])
-       (go (recover (thunk (func mailbox))
-                    monitor))
+       (go-with-monitor monitor (func mailbox))
        sender)])

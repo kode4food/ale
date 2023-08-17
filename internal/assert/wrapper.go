@@ -20,6 +20,7 @@ type Wrapper struct {
 const (
 	ErrInvalidTestExpression = "invalid test expression: %v"
 	ErrProperErrorNotRaised  = "proper error not raised"
+	ErrCannotMakeString      = "can't convert value to string"
 	ErrValueNotFound         = "value not found in object: %s"
 )
 
@@ -144,14 +145,13 @@ func (w *Wrapper) Compare(c data.Comparison, l data.Number, r data.Number) {
 }
 
 // ExpectPanic is used with a defer to make sure an error was triggered
-func (w *Wrapper) ExpectPanic(errStr string) {
+func (w *Wrapper) ExpectPanic(err any) {
 	w.Helper()
 	if rec := recover(); rec != nil {
-		if re, ok := rec.(error); ok {
-			recStr := re.Error()
-			w.True(strings.HasPrefix(recStr, errStr))
-			return
-		}
+		errStr := w.makeString(rec)
+		pfx := w.makeString(err)
+		w.True(strings.HasPrefix(errStr, pfx))
+		return
 	}
 	panic(ErrProperErrorNotRaised)
 }
@@ -166,7 +166,7 @@ func (w *Wrapper) ExpectProgrammerError(errStr string) {
 			return
 		}
 	}
-	panic(ErrProperErrorNotRaised)
+	w.Fail(ErrProperErrorNotRaised)
 }
 
 // ExpectNoPanic is used with defer to make sure no error occurs
@@ -182,4 +182,22 @@ func (w *Wrapper) MustGet(m data.Mapped, k data.Value) data.Value {
 		return v
 	}
 	panic(fmt.Errorf(ErrValueNotFound, k))
+}
+
+func (w *Wrapper) makeString(val any) string {
+	switch val := val.(type) {
+	case data.String:
+		return string(val)
+	case string:
+		return val
+	case error:
+		return val.Error()
+	case data.Value:
+		return val.String()
+	case fmt.Stringer:
+		return val.String()
+	default:
+		w.Fail(ErrCannotMakeString)
+	}
+	return ""
 }

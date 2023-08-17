@@ -5,9 +5,12 @@ import (
 	"regexp"
 	"runtime"
 	"strings"
+
+	"github.com/kode4food/ale/data"
 )
 
 type aleRuntimeError struct {
+	data.Object
 	message string
 	wrapped error
 }
@@ -29,8 +32,14 @@ var (
 )
 
 func AleRuntimeError(wrapped error, format string, a ...any) error {
+	message := fmt.Sprintf(format, a...)
+	object, _ := data.ValuesToObject(
+		data.Keyword("message"), data.String(message),
+		data.Keyword("wrapped"), data.String(wrapped.Error()),
+	)
 	return &aleRuntimeError{
-		message: fmt.Sprintf(format, a...),
+		Object:  object,
+		message: message,
 		wrapped: wrapped,
 	}
 }

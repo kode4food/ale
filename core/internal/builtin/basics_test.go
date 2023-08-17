@@ -34,7 +34,7 @@ func TestRaise(t *testing.T) {
 
 	defer func() {
 		if rec := recover(); rec != nil {
-			as.String("blowed up!", rec.(error).Error())
+			as.String("blowed up!", rec)
 			return
 		}
 		as.Fail("proper error not raised")
