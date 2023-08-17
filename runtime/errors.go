@@ -1,4 +1,4 @@
-package eval
+package runtime
 
 import (
 	"fmt"
@@ -6,6 +6,11 @@ import (
 	"runtime"
 	"strings"
 )
+
+type aleRuntimeError struct {
+	message string
+	wrapped error
+}
 
 // Error messages
 const (
@@ -16,12 +21,27 @@ var (
 	firstCamel = regexp.MustCompile(`(.)([A-Z][a-z]+)`)
 	restCamel  = regexp.MustCompile(`([a-z0-9])([A-Z])`)
 
-	intfConv = regexp.MustCompile(
+	interfaceConversion = regexp.MustCompile(
 		`^interface conversion: ` +
 			`[^.]+[.](?P<got>[a-zA-Z0-9]+) ` +
 			`is not [^.]+[.](?P<expected>[a-zA-Z0-9]+):.*$`,
 	)
 )
+
+func AleRuntimeError(wrapped error, format string, a ...any) error {
+	return &aleRuntimeError{
+		message: fmt.Sprintf(format, a...),
+		wrapped: wrapped,
+	}
+}
+
+func (a *aleRuntimeError) Error() string {
+	return a.message
+}
+
+func (a *aleRuntimeError) Unwrap() error {
+	return a.wrapped
+}
 
 func NormalizeGoRuntimeErrors() {
 	if rec := recover(); rec != nil {
@@ -29,22 +49,23 @@ func NormalizeGoRuntimeErrors() {
 	}
 }
 
-func NormalizeGoRuntimeError(rec interface{}) interface{} {
-	switch rec := rec.(type) {
+func NormalizeGoRuntimeError(value any) any {
+	switch value := value.(type) {
 	case *runtime.TypeAssertionError:
-		return normalizeTypeAssertionError(rec)
+		return normalizeTypeAssertionError(value)
 	default:
-		return rec
+		return value
 	}
 }
 
 func normalizeTypeAssertionError(e *runtime.TypeAssertionError) error {
-	if m := intfConv.FindStringSubmatch(e.Error()); m != nil {
-		return fmt.Errorf(
+	if m := interfaceConversion.FindStringSubmatch(e.Error()); m != nil {
+		return AleRuntimeError(e,
 			ErrUnexpectedType, camelToWords(m[1]), camelToWords(m[2]),
 		)
 	}
-	panic("couldn't normalize type assertion error")
+	// Programmer error
+	panic("could not normalize type assertion error")
 }
 
 func camelToWords(s string) string {

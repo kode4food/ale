@@ -9,14 +9,14 @@ import (
 	"github.com/kode4food/ale/core/bootstrap"
 	"github.com/kode4food/ale/core/internal/builtin"
 	"github.com/kode4food/ale/data"
-	"github.com/kode4food/ale/eval"
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
 	"github.com/kode4food/ale/read"
+	"github.com/kode4food/ale/runtime"
 )
 
 func unexpectedTypeError(got, expected string) error {
-	return fmt.Errorf(eval.ErrUnexpectedType, got, expected)
+	return fmt.Errorf(runtime.ErrUnexpectedType, got, expected)
 }
 
 func TestApply(t *testing.T) {

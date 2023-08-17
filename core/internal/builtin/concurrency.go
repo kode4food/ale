@@ -4,13 +4,17 @@ import (
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/async"
 	"github.com/kode4food/ale/internal/stream"
+	"github.com/kode4food/ale/runtime"
 )
 
 // Go runs the provided function asynchronously
 var Go = data.Applicative(func(args ...data.Value) data.Value {
 	fn := args[0].(data.Function)
 	restArgs := args[1:]
-	go fn.Call(restArgs...)
+	go func() {
+		defer runtime.NormalizeGoRuntimeErrors()
+		fn.Call(restArgs...)
+	}()
 	return data.Nil
 }, 1)
 

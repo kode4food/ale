@@ -320,9 +320,10 @@ func TestExplosions(t *testing.T) {
 }
 
 func TestBadOpcode(t *testing.T) {
+	as := assert.New(t)
 	badOpcode := isa.Opcode(math.MaxUint)
-	testPanic(t,
+	defer as.ExpectProgrammerError(
 		fmt.Sprintf("unknown opcode: %s", badOpcode.String()),
-		[]isa.Coder{badOpcode},
 	)
+	runCode([]isa.Coder{badOpcode})
 }

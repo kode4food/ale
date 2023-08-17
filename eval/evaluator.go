@@ -6,6 +6,7 @@ import (
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/env"
 	"github.com/kode4food/ale/read"
+	"github.com/kode4food/ale/runtime"
 	"github.com/kode4food/ale/runtime/isa"
 	"github.com/kode4food/ale/runtime/vm"
 )
@@ -27,7 +28,7 @@ func Block(ns env.Namespace, s data.Sequence) data.Value {
 
 // Value evaluates the provided Value
 func Value(ns env.Namespace, v data.Value) data.Value {
-	defer NormalizeGoRuntimeErrors()
+	defer runtime.NormalizeGoRuntimeErrors()
 	e := encoder.NewEncoder(ns)
 	generate.Value(e, v)
 	e.Emit(isa.Return)

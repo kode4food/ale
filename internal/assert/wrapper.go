@@ -1,7 +1,6 @@
 package assert
 
 import (
-	"errors"
 	"fmt"
 	"strings"
 	"testing"
@@ -149,9 +148,6 @@ func (w *Wrapper) ExpectPanic(errStr string) {
 	w.Helper()
 	if rec := recover(); rec != nil {
 		if re, ok := rec.(error); ok {
-			for e := errors.Unwrap(re); e != nil; e = errors.Unwrap(e) {
-				re = e
-			}
 			recStr := re.Error()
 			w.True(strings.HasPrefix(recStr, errStr))
 			return

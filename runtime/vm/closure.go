@@ -385,7 +385,7 @@ opSwitch:
 
 	default:
 		// Programmer error
-		panic(fmt.Errorf(errUnknownOpcode, isa.Opcode(CODE[PC])))
+		panic(fmt.Sprintf(errUnknownOpcode, isa.Opcode(CODE[PC])))
 	}
 }
 
