@@ -49,7 +49,7 @@ func TestNonNumberEval(t *testing.T) {
 
 func TestBadMathsEval(t *testing.T) {
 	as := assert.New(t)
-	e := interfaceErr("data.String", "data.Number")
+	e := unexpectedTypeError("string", "number")
 
 	as.PanicWith(`(+ 99 "hello")`, e)
 	as.PanicWith(`(+ "hello")`, e)
@@ -102,7 +102,7 @@ func TestCompareEval(t *testing.T) {
 
 func TestBadCompareEval(t *testing.T) {
 	as := assert.New(t)
-	e := interfaceErr("data.String", "data.Number")
+	e := unexpectedTypeError("string", "number")
 	as.PanicWith(`(< 99 "hello")`, e)
 	as.PanicWith(`(< "hello" "there")`, e)
 }

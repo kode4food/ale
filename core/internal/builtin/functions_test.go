@@ -9,14 +9,14 @@ import (
 	"github.com/kode4food/ale/core/bootstrap"
 	"github.com/kode4food/ale/core/internal/builtin"
 	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/eval"
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
 	"github.com/kode4food/ale/read"
 )
 
-func interfaceErr(concrete, expected string) error {
-	err := "interface conversion: %s is not %s: missing method"
-	return fmt.Errorf(err, concrete, expected)
+func unexpectedTypeError(got, expected string) error {
+	return fmt.Errorf(eval.ErrUnexpectedType, got, expected)
 }
 
 func TestApply(t *testing.T) {
@@ -99,7 +99,7 @@ func TestApplyEval(t *testing.T) {
 			[1 2 3])
 	`, F(6))
 
-	e := interfaceErr("data.Integer", "data.Function")
+	e := unexpectedTypeError("integer", "function")
 	as.PanicWith(`(apply 32 [1 2 3])`, e)
 }
 

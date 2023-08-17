@@ -100,7 +100,7 @@ func TestTakeDropEval(t *testing.T) {
 		(nth (apply vector (drop 3 x)) 0)
 	`, F(4))
 
-	err := interfaceErr("data.Integer", "data.Sequence")
+	err := unexpectedTypeError("integer", "sequence")
 	as.PanicWith(`(last! (drop 99 57))`, err)
 	as.PanicWith(`(last! (take 99 57))`, err)
 }

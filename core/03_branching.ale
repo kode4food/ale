@@ -33,7 +33,6 @@
   (let-rec ([val       (gensym "val")                    ]
             [pred-list (lambda (l) `(or ,@(map! pred l)))]
             [pred      (lambda (x) `(eq ,val ,x))        ]
-
             [case*
              (lambda
                [() '(raise "no cases could be matched")]

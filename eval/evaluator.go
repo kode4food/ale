@@ -27,6 +27,7 @@ func Block(ns env.Namespace, s data.Sequence) data.Value {
 
 // Value evaluates the provided Value
 func Value(ns env.Namespace, v data.Value) data.Value {
+	defer NormalizeGoRuntimeErrors()
 	e := encoder.NewEncoder(ns)
 	generate.Value(e, v)
 	e.Emit(isa.Return)

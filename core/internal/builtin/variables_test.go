@@ -37,7 +37,7 @@ func TestLetBindingErrors(t *testing.T) {
 
 	as.PanicWith(`
 		(let ((a blah)) "hello")
-	`, interfaceErr("*data.list", "data.Vector"))
+	`, unexpectedTypeError("list", "vector"))
 }
 
 func TestMutualBindingsEval(t *testing.T) {
