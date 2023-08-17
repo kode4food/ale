@@ -44,14 +44,6 @@ func AleRuntimeError(wrapped error, format string, a ...any) error {
 	}
 }
 
-func (a *aleRuntimeError) Error() string {
-	return a.message
-}
-
-func (a *aleRuntimeError) Unwrap() error {
-	return a.wrapped
-}
-
 func NormalizeGoRuntimeErrors() {
 	if rec := recover(); rec != nil {
 		panic(NormalizeGoRuntimeError(rec))
@@ -65,6 +57,18 @@ func NormalizeGoRuntimeError(value any) any {
 	default:
 		return value
 	}
+}
+
+func (a *aleRuntimeError) Error() string {
+	return a.message
+}
+
+func (a *aleRuntimeError) String() string {
+	return a.message
+}
+
+func (a *aleRuntimeError) Unwrap() error {
+	return a.wrapped
 }
 
 func normalizeTypeAssertionError(e *runtime.TypeAssertionError) error {
