@@ -15,8 +15,8 @@ const (
 	ErrDuplicateName = "name duplicated in scope: %s"
 )
 
-func (e *encoder) LocalCount() int {
-	return e.maxLocal
+func (e *encoder) LocalCount() isa.Count {
+	return isa.Count(e.maxLocal)
 }
 
 func (e *encoder) PushLocals() {
@@ -25,7 +25,7 @@ func (e *encoder) PushLocals() {
 
 func (e *encoder) PopLocals() {
 	scope := e.peekLocals()
-	e.nextLocal -= len(scope)
+	e.nextLocal -= isa.Index(len(scope))
 	scopes := e.locals
 	e.locals = scopes[0 : len(scopes)-1]
 }
@@ -37,7 +37,7 @@ func (e *encoder) peekLocals() Locals {
 }
 
 func (e *encoder) allocLocal() isa.Index {
-	idx := isa.Index(e.nextLocal)
+	idx := e.nextLocal
 	e.nextLocal++
 	if e.nextLocal > e.maxLocal {
 		e.maxLocal = e.nextLocal

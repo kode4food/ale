@@ -52,11 +52,11 @@ func (e *Environment) Snapshot() (*Environment, error) {
 		data: make(map[data.Name]Namespace, len(e.data)),
 	}
 	for k, v := range e.data {
-		if s, err := v.Snapshot(res); err != nil {
+		s, err := v.Snapshot(res)
+		if err != nil {
 			return nil, err
-		} else {
-			res.data[k] = s
 		}
+		res.data[k] = s
 	}
 	return res, nil
 }

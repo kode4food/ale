@@ -138,14 +138,12 @@ func (v vector) Equal(r Value) bool {
 
 func (v vector) String() string {
 	var b bytes.Buffer
-	l := len(v)
-
 	b.WriteString("[")
-	for i := 0; i < l; i++ {
+	for i, e := range v {
 		if i > 0 {
 			b.WriteString(" ")
 		}
-		b.WriteString(MaybeQuoteString(v[i]))
+		b.WriteString(MaybeQuoteString(e))
 	}
 	b.WriteString("]")
 	return b.String()

@@ -9,7 +9,7 @@ import (
 
 type (
 	// Word represents the atomic unit of the ISA's code stream
-	Word uint
+	Word uint32
 
 	// Index represents a lookup offset for value arrays
 	Index Word
@@ -39,6 +39,11 @@ type (
 const (
 	ErrBadInstructionArgs = "instruction argument mismatch: %s"
 )
+
+// Word makes Word a Word
+func (w Word) Word() Word {
+	return w
+}
 
 // Word makes Index a Word
 func (i Index) Word() Word {

@@ -17,7 +17,7 @@ func Branch(e encoder.Encoder, predicate, consequent, alternative Builder) {
 	e.Emit(isa.CondJump, thenLabel)
 	alternative()
 	e.Emit(isa.Jump, endLabel)
-	thenLabel.DropAnchor()
+	e.Emit(isa.Label, thenLabel)
 	consequent()
-	endLabel.DropAnchor()
+	e.Emit(isa.Label, endLabel)
 }

@@ -102,11 +102,11 @@ func (ns *namespace) Snapshot(e *Environment) (Namespace, error) {
 		entries:     make(entries, len(ns.entries)),
 	}
 	for k, v := range ns.entries {
-		if s, err := v.snapshot(res); err != nil {
+		s, err := v.snapshot(res)
+		if err != nil {
 			return nil, err
-		} else {
-			res.entries[k] = s
 		}
+		res.entries[k] = s
 	}
 	return res, nil
 }

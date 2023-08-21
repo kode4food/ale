@@ -75,17 +75,16 @@ func FormatMarkdown(s string) string {
 func formatCode(lines []string) []string {
 	var res []string
 	for i := 0; i < len(lines); i++ {
-		l := lines[i]
-		if strings.HasPrefix(l, blockPrefix) {
-			for i = i + 1; i < len(lines); i++ {
-				c := lines[i]
-				if strings.HasPrefix(c, blockPrefix) {
-					break
-				}
-				res = append(res, fmt.Sprintf("  %s", c))
-			}
-		} else {
+		if l := lines[i]; !strings.HasPrefix(l, blockPrefix) {
 			res = append(res, l)
+			continue
+		}
+		for i = i + 1; i < len(lines); i++ {
+			c := lines[i]
+			if strings.HasPrefix(c, blockPrefix) {
+				break
+			}
+			res = append(res, fmt.Sprintf("  %s", c))
 		}
 	}
 	return res
@@ -112,17 +111,18 @@ func formatContent(doc string) string {
 	var buf bytes.Buffer
 	var src = strings.TrimSpace(doc)
 	for len(src) > 0 {
-		if f, sm, ok := firstFormatterMatch(src); ok {
-			start := sm[0]
-			end := sm[1]
-			fragment := src[start:end]
-			buf.WriteString(src[0:start])
-			buf.WriteString(f(fragment))
-			src = src[end:]
-		} else {
+		f, sm, ok := firstFormatterMatch(src)
+		if !ok {
 			buf.WriteString(src)
 			src = ""
+			continue
 		}
+		start := sm[0]
+		end := sm[1]
+		fragment := src[start:end]
+		buf.WriteString(src[0:start])
+		buf.WriteString(f(fragment))
+		src = src[end:]
 	}
 	return escaped.ReplaceAllStringFunc(buf.String(), func(s string) string {
 		return s[1:]

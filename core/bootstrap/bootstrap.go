@@ -88,11 +88,11 @@ func TopLevelEnvironment() *env.Environment {
 		StandardIO(topLevel)
 		Into(topLevel)
 	})
-	if res, err := topLevel.Snapshot(); err != nil {
+	res, err := topLevel.Snapshot()
+	if err != nil {
 		panic(err)
-	} else {
-		return res
 	}
+	return res
 }
 
 // DevNullEnvironment configures a bootstrapped environment that is completely
@@ -104,9 +104,9 @@ func DevNullEnvironment() *env.Environment {
 		DevNull(devNull)
 		Into(devNull)
 	})
-	if res, err := devNull.Snapshot(); err != nil {
+	res, err := devNull.Snapshot()
+	if err != nil {
 		panic(err)
-	} else {
-		return res
 	}
+	return res
 }

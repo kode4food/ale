@@ -77,11 +77,11 @@ func (w *channelWrapper) makeSequence(v reflect.Value) data.Sequence {
 func (w *channelWrapper) makeEmitter(v reflect.Value) data.Function {
 	return data.Applicative(func(args ...data.Value) data.Value {
 		for _, arg := range args {
-			if arg, err := w.elem.Unwrap(arg); err == nil {
-				v.Send(arg)
-			} else {
+			arg, err := w.elem.Unwrap(arg)
+			if err != nil {
 				panic(err)
 			}
+			v.Send(arg)
 		}
 		return data.Nil
 	})

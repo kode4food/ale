@@ -80,16 +80,18 @@ func (c *cons) String() string {
 	for {
 		buf.WriteString(MaybeQuoteString(next.Car()))
 		cdr := next.Cdr()
-		if s, ok := cdr.(Sequence); ok && s.IsEmpty() {
+		s, ok := cdr.(Sequence)
+		if ok && s.IsEmpty() {
 			break
-		} else if p, ok := cdr.(Pair); ok {
-			buf.WriteByte(' ')
-			next = p
-		} else {
+		}
+		p, ok := cdr.(Pair)
+		if !ok {
 			buf.WriteString(" . ")
 			buf.WriteString(MaybeQuoteString(cdr))
 			break
 		}
+		buf.WriteByte(' ')
+		next = p
 	}
 	buf.WriteByte(')')
 	return buf.String()

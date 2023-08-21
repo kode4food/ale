@@ -47,10 +47,9 @@ func (w *arrayWrapper) Wrap(c *Context, v reflect.Value) (data.Value, error) {
 func (w *arrayWrapper) Unwrap(v data.Value) (reflect.Value, error) {
 	if s, ok := v.(data.Sequence); ok {
 		in := sequence.ToValues(s)
-		inLen := len(in)
 		out := reflect.New(w.typ).Elem()
-		for i := 0; i < inLen; i++ {
-			v, err := w.elem.Unwrap(in[i])
+		for i, e := range in {
+			v, err := w.elem.Unwrap(e)
 			if err != nil {
 				return _emptyValue, err
 			}

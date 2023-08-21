@@ -293,9 +293,9 @@ var docTemplate = strings.Join([]string{
 func doc(args ...data.Value) data.Value {
 	if len(args) != 0 {
 		docSymbol(args[0].(data.LocalSymbol))
-	} else {
-		docSymbolList()
+		return nothing
 	}
+	docSymbolList()
 	return nothing
 }
 
@@ -305,7 +305,8 @@ func docSymbol(sym data.Symbol) {
 		f := formatForREPL(docStr)
 		fmt.Println(f)
 		return
-	} else if name == "doc" {
+	}
+	if name == "doc" {
 		docSymbolList()
 		return
 	}

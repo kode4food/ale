@@ -3,6 +3,7 @@ package encoder_test
 import (
 	"testing"
 
+	"github.com/kode4food/ale/compiler/ir/analysis"
 	"github.com/kode4food/ale/internal/assert"
 	"github.com/kode4food/ale/runtime/isa"
 )
@@ -16,9 +17,9 @@ func TestLabels(t *testing.T) {
 	e.Emit(isa.Jump, l2)
 	e.Emit(isa.NoOp)
 	e.Emit(isa.Jump, l1)
-	l2.DropAnchor()
+	e.Emit(isa.Label, l2)
 	e.Emit(isa.NoOp)
-	l1.DropAnchor()
+	e.Emit(isa.Label, l1)
 
 	as.Instructions(isa.Instructions{
 		isa.New(isa.Jump, 1),
@@ -35,12 +36,10 @@ func TestLabelDoubleAnchor(t *testing.T) {
 
 	e := assert.GetTestEncoder()
 	l1 := e.NewLabel()
-	l1.DropAnchor()
+	e.Emit(isa.Label, l1)
+	e.Emit(isa.Label, l1)
+	e.Emit(isa.Jump, l1)
 
-	defer func() {
-		if rec := recover(); rec == nil {
-			as.Fail("error not raised on double anchoring")
-		}
-	}()
-	l1.DropAnchor()
+	defer as.ExpectPanic("label anchored multiple times: 0")
+	analysis.Verify(e.Code())
 }

@@ -15,17 +15,19 @@ type mapWrapper struct {
 }
 
 func makeWrappedMap(t reflect.Type) (Wrapper, error) {
-	if kw, err := wrapType(t.Key()); err != nil {
+	kw, err := wrapType(t.Key())
+	if err != nil {
 		return nil, err
-	} else if vw, err := wrapType(t.Elem()); err != nil {
-		return nil, err
-	} else {
-		return &mapWrapper{
-			typ:   t,
-			key:   kw,
-			value: vw,
-		}, nil
 	}
+	vw, err := wrapType(t.Elem())
+	if err != nil {
+		return nil, err
+	}
+	return &mapWrapper{
+		typ:   t,
+		key:   kw,
+		value: vw,
+	}, nil
 }
 
 func (w *mapWrapper) Wrap(c *Context, v reflect.Value) (data.Value, error) {
@@ -38,13 +40,15 @@ func (w *mapWrapper) Wrap(c *Context, v reflect.Value) (data.Value, error) {
 	}
 	out := make(data.Pairs, 0, v.Len())
 	for pairs := v.MapRange(); pairs.Next(); {
-		if k, err := w.key.Wrap(c, pairs.Key()); err != nil {
+		k, err := w.key.Wrap(c, pairs.Key())
+		if err != nil {
 			return data.Nil, err
-		} else if v, err := w.value.Wrap(c, pairs.Value()); err != nil {
-			return data.Nil, err
-		} else {
-			out = append(out, data.NewCons(k, v))
 		}
+		v, err := w.value.Wrap(c, pairs.Value())
+		if err != nil {
+			return data.Nil, err
+		}
+		out = append(out, data.NewCons(k, v))
 	}
 	return data.NewObject(out...), nil
 }
@@ -60,13 +64,15 @@ func (w *mapWrapper) Unwrap(v data.Value) (reflect.Value, error) {
 			p := f.(data.Pair)
 			k := p.Car()
 			v := p.Cdr()
-			if k, err := w.key.Unwrap(k); err != nil {
+			uk, err := w.key.Unwrap(k)
+			if err != nil {
 				return _emptyValue, err
-			} else if v, err := w.value.Unwrap(v); err != nil {
-				return _emptyValue, err
-			} else {
-				out.SetMapIndex(k, v)
 			}
+			uv, err := w.value.Unwrap(v)
+			if err != nil {
+				return _emptyValue, err
+			}
+			out.SetMapIndex(uk, uv)
 		}
 		return out, nil
 	}

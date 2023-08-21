@@ -39,11 +39,11 @@ func ParseInteger(s string) (Number, error) {
 
 // MustParseInteger forcefully parse a string representing an integer
 func MustParseInteger(s string) Number {
-	if res, err := ParseInteger(s); err != nil {
+	res, err := ParseInteger(s)
+	if err != nil {
 		panic(err)
-	} else {
-		return res
 	}
+	return res
 }
 
 // Cmp compares this Integer to another Number
@@ -57,75 +57,80 @@ func (l Integer) Cmp(r Number) Comparison {
 
 // Add adds this Integer to another Number
 func (l Integer) Add(r Number) Number {
-	if ri, ok := r.(Integer); ok {
-		res := l + ri
-		if (res^l) >= 0 || (res^ri) >= 0 {
-			return res
-		}
-		lb := big.NewInt(int64(l))
-		rb := big.NewInt(int64(ri))
-		lb.Add(lb, rb)
-		return (*BigInt)(lb)
+	ri, ok := r.(Integer)
+	if !ok {
+		pl, pr := purify(l, r)
+		return pl.Add(pr)
 	}
-	pl, pr := purify(l, r)
-	return pl.Add(pr)
+	res := l + ri
+	if (res^l) >= 0 || (res^ri) >= 0 {
+		return res
+	}
+	lb := big.NewInt(int64(l))
+	rb := big.NewInt(int64(ri))
+	lb.Add(lb, rb)
+	return (*BigInt)(lb)
 }
 
 // Sub subtracts another Number from this Integer
 func (l Integer) Sub(r Number) Number {
-	if ri, ok := r.(Integer); ok {
-		res := l - ri
-		if (res^l) >= 0 || (res^^ri) >= 0 {
-			return res
-		}
-		lb := big.NewInt(int64(l))
-		rb := big.NewInt(int64(ri))
-		lb.Sub(lb, rb)
-		return (*BigInt)(lb)
+	ri, ok := r.(Integer)
+	if !ok {
+		pl, pr := purify(l, r)
+		return pl.Sub(pr)
 	}
-	pl, pr := purify(l, r)
-	return pl.Sub(pr)
+	res := l - ri
+	if (res^l) >= 0 || (res^^ri) >= 0 {
+		return res
+	}
+	lb := big.NewInt(int64(l))
+	rb := big.NewInt(int64(ri))
+	lb.Sub(lb, rb)
+	return (*BigInt)(lb)
 }
 
 // Mul multiples this Integer by another Number
 func (l Integer) Mul(r Number) Number {
-	if ri, ok := r.(Integer); ok {
-		res := l * ri
-		if (l != math.MinInt64 || ri >= 0) && (ri == 0 || res/ri == l) {
-			return res
-		}
-		lb := big.NewInt(int64(l))
-		rb := big.NewInt(int64(ri))
-		lb.Mul(lb, rb)
-		return (*BigInt)(lb)
+	ri, ok := r.(Integer)
+	if !ok {
+		pl, pr := purify(l, r)
+		return pl.Mul(pr)
 	}
-	pl, pr := purify(l, r)
-	return pl.Mul(pr)
+	res := l * ri
+	if (l != math.MinInt64 || ri >= 0) && (ri == 0 || res/ri == l) {
+		return res
+	}
+	lb := big.NewInt(int64(l))
+	rb := big.NewInt(int64(ri))
+	lb.Mul(lb, rb)
+	return (*BigInt)(lb)
 }
 
 // Div divides this Integer by another Number
 func (l Integer) Div(r Number) Number {
-	if ri, ok := r.(Integer); ok {
-		if ri == 0 {
-			panic(errors.New(ErrDivideByZero))
-		}
-		res := big.NewRat(int64(l), int64(ri))
-		return maybeWhole(res)
+	ri, ok := r.(Integer)
+	if !ok {
+		pl, pr := purify(l, r)
+		return pl.Div(pr)
 	}
-	pl, pr := purify(l, r)
-	return pl.Div(pr)
+	if ri == 0 {
+		panic(errors.New(ErrDivideByZero))
+	}
+	res := big.NewRat(int64(l), int64(ri))
+	return maybeWhole(res)
 }
 
 // Mod calculates the remainder of dividing this Integer by another Number
 func (l Integer) Mod(r Number) Number {
-	if ri, ok := r.(Integer); ok {
-		if ri == 0 {
-			panic(errors.New(ErrDivideByZero))
-		}
-		return l % ri
+	ri, ok := r.(Integer)
+	if !ok {
+		pl, pr := purify(l, r)
+		return pl.Mod(pr)
 	}
-	pl, pr := purify(l, r)
-	return pl.Mod(pr)
+	if ri == 0 {
+		panic(errors.New(ErrDivideByZero))
+	}
+	return l % ri
 }
 
 // IsNaN tells you that this Integer is, in fact, a Number

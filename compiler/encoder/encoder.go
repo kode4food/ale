@@ -17,9 +17,9 @@ type (
 
 		Emit(isa.Opcode, ...isa.Coder)
 		Code() isa.Instructions
-		StackSize() int
+		StackSize() isa.Count
 
-		NewLabel() *Label
+		NewLabel() isa.Index
 
 		Globals() env.Namespace
 		Constants() data.Values
@@ -32,7 +32,7 @@ type (
 		PopArgs()
 		ResolveArg(data.Name) (*IndexedCell, bool)
 
-		LocalCount() int
+		LocalCount() isa.Count
 		PushLocals()
 		PopLocals()
 		AddLocal(data.Name, CellType) *IndexedCell
@@ -49,9 +49,9 @@ type (
 		args      argsStack
 		locals    []Locals
 		code      isa.Instructions
-		maxLocal  int
-		nextLocal int
-		nextLabel int
+		nextLabel isa.Index
+		nextLocal isa.Index
+		maxLocal  isa.Index
 	}
 )
 
@@ -101,7 +101,7 @@ func (e *encoder) Code() isa.Instructions {
 }
 
 // StackSize returns the encoder's calculated stack size
-func (e *encoder) StackSize() int {
+func (e *encoder) StackSize() isa.Count {
 	res, _ := analysis.CalculateStackSize(e.code)
 	return res
 }

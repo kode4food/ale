@@ -30,10 +30,10 @@ func verifyStackSize(code isa.Instructions) {
 // CalculateStackSize returns the maximum and final depths for the stack based
 // on the instructions provided. If the final depth is non-zero, this is
 // usually an indication that bad instructions were encoded
-func CalculateStackSize(code isa.Instructions) (int, int) {
+func CalculateStackSize(code isa.Instructions) (isa.Count, isa.Count) {
 	s := new(stackSizes)
 	s.calculateNode(visitor.Branch(code))
-	return s.maxSize, s.endSize
+	return isa.Count(s.maxSize), isa.Count(s.endSize)
 }
 
 func (s *stackSizes) calculateNode(n visitor.Node) {

@@ -8,7 +8,8 @@ import (
 
 // Error messages
 const (
-	errLabelNotAnchored = "label not anchored: %d"
+	errLabelNotAnchored     = "label not anchored: %d"
+	errLabelMultipleAnchors = "label anchored multiple times: %d"
 )
 
 func verifyJumps(code isa.Instructions) {
@@ -20,19 +21,27 @@ func verifyJumps(code isa.Instructions) {
 	}
 }
 
-func findLabel(code isa.Instructions, lbl isa.Index) int {
+func findLabel(code isa.Instructions, lbl isa.Index) (int, error) {
 	ic := lbl.Word()
+	res := -1
 	for pc, inst := range code {
 		if inst.Opcode == isa.Label && inst.Args[0] == ic {
-			return pc
+			if res != -1 {
+				return res, fmt.Errorf(errLabelMultipleAnchors, lbl)
+			}
+			res = pc
 		}
 	}
-	return -1
+	if res == -1 {
+		return res, fmt.Errorf(errLabelNotAnchored, lbl)
+	}
+	return res, nil
 }
 
 func mustFindLabel(code isa.Instructions, lbl isa.Index) int {
-	if res := findLabel(code, lbl); res >= 0 {
-		return res
+	res, err := findLabel(code, lbl)
+	if err != nil {
+		panic(err)
 	}
-	panic(fmt.Sprintf(errLabelNotAnchored, lbl))
+	return res
 }

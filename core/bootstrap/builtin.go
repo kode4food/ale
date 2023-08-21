@@ -70,6 +70,7 @@ func (b *bootstrap) initialFunctions() {
 
 func (b *bootstrap) specialForms() {
 	b.specials(map[data.Name]encoder.Call{
+		"asm*":          special.Asm,
 		"begin":         special.Begin,
 		"declare*":      special.Declare,
 		"define*":       special.Define,

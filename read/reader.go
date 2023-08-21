@@ -164,15 +164,15 @@ func (r *reader) object() data.Value {
 func (r *reader) readNonDotted(endToken TokenType) data.Values {
 	res := data.Values{}
 	for {
-		if t := r.nextToken(); t != nil {
-			switch t.Type() {
-			case endToken:
-				return res
-			default:
-				res = append(res, r.value(t))
-			}
-		} else {
+		t := r.nextToken()
+		if t == nil {
 			panic(r.error(collectionErrors[endToken]))
+		}
+		switch t.Type() {
+		case endToken:
+			return res
+		default:
+			res = append(res, r.value(t))
 		}
 	}
 }

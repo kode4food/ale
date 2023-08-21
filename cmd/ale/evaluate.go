@@ -29,12 +29,12 @@ func EvaluateFile() {
 	defer exitWithError()
 
 	filename := os.Args[1]
-	if buffer, err := os.ReadFile(filename); err != nil {
+	buffer, err := os.ReadFile(filename)
+	if err != nil {
 		fmt.Println(fmt.Errorf(ErrFileNotFound, filename))
 		os.Exit(-1)
-	} else {
-		evalBuffer(ns, buffer)
 	}
+	evalBuffer(ns, buffer)
 }
 
 func evalBuffer(ns env.Namespace, src []byte) data.Value {

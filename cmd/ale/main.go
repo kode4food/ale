@@ -3,11 +3,12 @@ package main
 import "os"
 
 func main() {
-	if isStdInPiped() {
+	switch {
+	case isStdInPiped():
 		EvaluateStdIn()
-	} else if len(os.Args) < 2 {
+	case len(os.Args) < 2:
 		NewREPL().Run()
-	} else {
+	default:
 		EvaluateFile()
 	}
 }

@@ -27,8 +27,8 @@ func LambdaFromEncoder(e encoder.Encoder) *Lambda {
 	return &Lambda{
 		Globals:    e.Globals(),
 		Constants:  e.Constants(),
-		StackSize:  e.StackSize(),
-		LocalCount: e.LocalCount(),
+		StackSize:  int(e.StackSize()),
+		LocalCount: int(e.LocalCount()),
 		Code:       isa.Flatten(optimized),
 	}
 }

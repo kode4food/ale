@@ -65,11 +65,11 @@ func (s String) ElementAt(index int) (Value, bool) {
 	ns := string(s)
 	p := 0
 	for i := 0; i < index; i++ {
-		if _, w := utf8.DecodeRuneInString(ns[p:]); w > 0 {
-			p += w
-		} else {
+		_, w := utf8.DecodeRuneInString(ns[p:])
+		if w == 0 {
 			return Nil, false
 		}
+		p += w
 	}
 	if r, w := utf8.DecodeRuneInString(ns[p:]); w > 0 {
 		return String(r), true

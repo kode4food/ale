@@ -57,7 +57,7 @@ func TestVerifyGoodJump(t *testing.T) {
 
 	e := assert.GetTestEncoder()
 	lbl := e.NewLabel()
-	lbl.DropAnchor()
+	e.Emit(isa.Label, lbl)
 	e.Emit(isa.True)
 	e.Emit(isa.Pop)
 	e.Emit(isa.Jump, lbl)
@@ -75,6 +75,6 @@ func TestVerifyBadJump(t *testing.T) {
 	e.Emit(isa.Pop)
 	e.Emit(isa.Jump, lbl)
 
-	defer as.ExpectProgrammerError("label not anchored: 0")
+	defer as.ExpectPanic("label not anchored: 0")
 	analysis.Verify(e.Code())
 }
