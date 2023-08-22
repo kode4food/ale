@@ -47,7 +47,7 @@ func TestRecover(t *testing.T) {
 	as := assert.New(t)
 	var triggered = false
 	builtin.Recover.Call(
-		data.Applicative(func(_ ...data.Value) data.Value {
+		data.Applicative(func(...data.Value) data.Value {
 			builtin.Raise.Call(S("blowed up!"))
 			return S("wrong")
 		}, 0),
@@ -70,11 +70,11 @@ func TestDefer(t *testing.T) {
 	}()
 
 	builtin.Defer.Call(
-		data.Applicative(func(_ ...data.Value) data.Value {
+		data.Applicative(func(...data.Value) data.Value {
 			builtin.Raise.Call(S("blowed up!"))
 			return S("wrong")
 		}, 0),
-		data.Applicative(func(_ ...data.Value) data.Value {
+		data.Applicative(func(...data.Value) data.Value {
 			triggered = true
 			return data.Nil
 		}, 0),

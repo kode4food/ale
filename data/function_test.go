@@ -12,7 +12,7 @@ import (
 func TestApplicativeFunction(t *testing.T) {
 	as := assert.New(t)
 
-	f1 := data.Applicative(func(_ ...data.Value) data.Value {
+	f1 := data.Applicative(func(...data.Value) data.Value {
 		return S("hello!")
 	})
 
@@ -26,7 +26,7 @@ func TestApplicativeFunction(t *testing.T) {
 func TestNormalFunction(t *testing.T) {
 	as := assert.New(t)
 
-	f1 := data.Normal(func(_ ...data.Value) data.Value {
+	f1 := data.Normal(func(...data.Value) data.Value {
 		return S("hello!")
 	}, 0)
 

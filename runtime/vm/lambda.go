@@ -41,7 +41,7 @@ func (l *Lambda) Call(values ...data.Value) data.Value {
 }
 
 // CheckArity performs a compile-time arity check for the Function
-func (l *Lambda) CheckArity(_ int) error {
+func (l *Lambda) CheckArity(int) error {
 	return nil
 }
 

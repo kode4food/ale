@@ -34,7 +34,7 @@ func makeWrappedComplex(t reflect.Type) (Wrapper, error) {
 		return complex64Wrapper(k), nil
 	default:
 		// Programmer error
-		panic(errors.New(errIncorrectComplexKind))
+		panic(errIncorrectComplexKind)
 	}
 }
 

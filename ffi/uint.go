@@ -43,7 +43,7 @@ func makeWrappedUnsignedInt(t reflect.Type) (Wrapper, error) {
 		return uint8Wrapper(k), nil
 	default:
 		// Programmer error
-		panic(errors.New(errIncorrectUnsignedIntKind))
+		panic(errIncorrectUnsignedIntKind)
 	}
 }
 

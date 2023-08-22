@@ -1,7 +1,6 @@
 package read
 
 import (
-	"errors"
 	"fmt"
 	"regexp"
 
@@ -127,7 +126,7 @@ func matchToken(src string) (*Token, string) {
 		}
 	}
 	// Programmer error
-	panic(errors.New(errUnmatchedState))
+	panic(errUnmatchedState)
 }
 
 func tokenState(t TokenType) tokenizer {
@@ -137,7 +136,7 @@ func tokenState(t TokenType) tokenizer {
 }
 
 func endState(t TokenType) tokenizer {
-	return func(_ []string) *Token {
+	return func([]string) *Token {
 		return MakeToken(t, nil)
 	}
 }

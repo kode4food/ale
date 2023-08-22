@@ -2,6 +2,7 @@ package isa
 
 import (
 	"fmt"
+	"math"
 	"strings"
 
 	"github.com/kode4food/ale/data"
@@ -34,6 +35,9 @@ type (
 	// Instructions represent a set of Instructions
 	Instructions []*Instruction
 )
+
+// MaxWord is the highest value of an Instruction Word
+const MaxWord = math.MaxUint32
 
 // Error messages
 const (

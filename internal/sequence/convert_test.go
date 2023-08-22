@@ -39,7 +39,7 @@ func TestSequenceConversions(t *testing.T) {
 	as.Identical(s1, s2)
 }
 
-var alwaysTrue = data.Applicative(func(_ ...data.Value) data.Value {
+var alwaysTrue = data.Applicative(func(...data.Value) data.Value {
 	return data.True
 }, 1)
 

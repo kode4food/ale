@@ -39,7 +39,7 @@ func NewPromise(resolver data.Function) Promise {
 	}
 }
 
-func (p *promise) Call(_ ...data.Value) data.Value {
+func (p *promise) Call(...data.Value) data.Value {
 	p.once(func() {
 		defer func() {
 			if rec := recover(); rec != nil {

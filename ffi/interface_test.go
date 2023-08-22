@@ -41,7 +41,7 @@ func TestVoidInterface(t *testing.T) {
 	r := testWrap(as)
 	b := []bool{false}
 	m := as.MustGet(r, K("Void")).(data.Function)
-	m.Call(ffi.MustWrap(func(_ testInterface) {
+	m.Call(ffi.MustWrap(func(testInterface) {
 		b[0] = true
 	}))
 	as.True(b[0])

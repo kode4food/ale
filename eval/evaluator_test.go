@@ -43,7 +43,7 @@ func TestBuiltIns(t *testing.T) {
 	ns := e.GetRoot()
 
 	ns.Declare("hello").Bind(
-		data.Applicative(func(_ ...data.Value) data.Value {
+		data.Applicative(func(...data.Value) data.Value {
 			return S("there")
 		}, 0),
 	)

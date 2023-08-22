@@ -16,7 +16,7 @@ func (Call) Type() types.Type {
 }
 
 // Equal makes Call a typed Value
-func (Call) Equal(_ data.Value) bool {
+func (Call) Equal(data.Value) bool {
 	return false
 }
 

@@ -183,7 +183,7 @@ func (r *REPL) outputError(err error) {
 	fmt.Println(res)
 }
 
-func (*sentinel) Equal(_ data.Value) bool {
+func (*sentinel) Equal(data.Value) bool {
 	return false
 }
 
@@ -206,7 +206,7 @@ func toError(i any) error {
 		return errors.New(i.String())
 	default:
 		// Programmer error
-		panic(fmt.Errorf(errNonStandardError, i))
+		panic(fmt.Sprintf(errNonStandardError, i))
 	}
 }
 
@@ -233,7 +233,7 @@ func use(args ...data.Value) data.Value {
 	return nothing
 }
 
-func shutdown(_ ...data.Value) data.Value {
+func shutdown(...data.Value) data.Value {
 	t := time.Now().UTC().UnixNano()
 	rs := rand.NewSource(t)
 	rg := rand.New(rs)
@@ -243,13 +243,13 @@ func shutdown(_ ...data.Value) data.Value {
 	return nothing
 }
 
-func debugInfo(_ ...data.Value) data.Value {
+func debugInfo(...data.Value) data.Value {
 	runtime.GC()
 	fmt.Println("Number of goroutines: ", runtime.NumGoroutine())
 	return nothing
 }
 
-func cls(_ ...data.Value) data.Value {
+func cls(...data.Value) data.Value {
 	fmt.Println(console.Clear)
 	return nothing
 }
@@ -270,7 +270,7 @@ func formatForREPL(s string) string {
 	return strings.Join(out, "\n")
 }
 
-func help(_ ...data.Value) data.Value {
+func help(...data.Value) data.Value {
 	md, err := docstring.Get("help")
 	if err != nil {
 		// Programmer error, help is missing

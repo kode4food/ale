@@ -12,7 +12,7 @@ import (
 
 func TestPromiseCaller(t *testing.T) {
 	as := assert.New(t)
-	p1 := async.NewPromise(data.Applicative(func(_ ...data.Value) data.Value {
+	p1 := async.NewPromise(data.Applicative(func(...data.Value) data.Value {
 		return S("hello")
 	}, 0))
 	c1 := p1.(data.Function)
@@ -21,7 +21,7 @@ func TestPromiseCaller(t *testing.T) {
 
 func TestPromiseFailure(t *testing.T) {
 	as := assert.New(t)
-	p1 := async.NewPromise(data.Applicative(func(_ ...data.Value) data.Value {
+	p1 := async.NewPromise(data.Applicative(func(...data.Value) data.Value {
 		panic(errors.New("explosion"))
 	}, 0))
 	c1 := p1.(data.Function)

@@ -5,11 +5,8 @@ import (
 	"github.com/kode4food/ale/runtime/isa"
 )
 
-// Builder is a function that a composer (ex: Branch) will invoke
-type Builder func()
-
-// Branch constructs conditional branching
-func Branch(e encoder.Encoder, predicate, consequent, alternative Builder) {
+// Branch constructs predicate, consequent, alternative branching
+func Branch(e encoder.Encoder, predicate, consequent, alternative func()) {
 	thenLabel := e.NewLabel()
 	endLabel := e.NewLabel()
 

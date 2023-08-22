@@ -24,8 +24,8 @@ func (dumpTest) Type() types.Type {
 	return types.AnyList
 }
 
-func (dumpTest) String() string          { return "" }
-func (dumpTest) Equal(_ data.Value) bool { return false }
+func (dumpTest) String() string        { return "" }
+func (dumpTest) Equal(data.Value) bool { return false }
 
 func TestDumpString(t *testing.T) {
 	as := assert.New(t)

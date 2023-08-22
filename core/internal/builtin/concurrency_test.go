@@ -50,7 +50,7 @@ func TestChan(t *testing.T) {
 }
 
 func makeWrapperFunc(v data.Value) data.Function {
-	return data.Applicative(func(_ ...data.Value) data.Value {
+	return data.Applicative(func(...data.Value) data.Value {
 		return v
 	})
 }

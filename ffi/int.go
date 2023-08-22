@@ -45,7 +45,7 @@ func makeWrappedInt(t reflect.Type) (Wrapper, error) {
 		return int8Wrapper(k), nil
 	default:
 		// Programmer error
-		panic(errors.New(errIncorrectIntKind))
+		panic(errIncorrectIntKind)
 	}
 }
 

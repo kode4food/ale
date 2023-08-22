@@ -2,6 +2,7 @@ package ffi
 
 import (
 	"errors"
+	"fmt"
 	"reflect"
 
 	"github.com/kode4food/ale/data"
@@ -33,7 +34,7 @@ func makeWrappedFloat(t reflect.Type) (Wrapper, error) {
 		return float64Wrapper(k), nil
 	default:
 		// Programmer error
-		panic(errors.New(errIncorrectFloatKind))
+		panic(fmt.Sprintf(errIncorrectFloatKind))
 	}
 }
 

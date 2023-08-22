@@ -199,7 +199,7 @@ func (w *intfWrapper) Unwrap(v data.Value) (reflect.Value, error) {
 	return _emptyValue, errors.New(ErrInterfaceCoercionNotSupported)
 }
 
-func (receiver) Equal(_ data.Value) bool {
+func (receiver) Equal(data.Value) bool {
 	return false
 }
 

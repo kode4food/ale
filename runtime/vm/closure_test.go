@@ -2,7 +2,6 @@ package vm_test
 
 import (
 	"fmt"
-	"math"
 	"testing"
 
 	"github.com/kode4food/ale/data"
@@ -321,7 +320,7 @@ func TestExplosions(t *testing.T) {
 
 func TestBadOpcode(t *testing.T) {
 	as := assert.New(t)
-	badOpcode := isa.Opcode(math.MaxUint32)
+	badOpcode := isa.Opcode(isa.MaxWord)
 	defer as.ExpectProgrammerError(
 		fmt.Sprintf("unknown opcode: %s", badOpcode.String()),
 	)

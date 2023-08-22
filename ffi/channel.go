@@ -49,7 +49,7 @@ func (w *channelWrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
 }
 
 func (w *channelWrapper) makeClose(v reflect.Value) data.Function {
-	return data.Applicative(func(_ ...data.Value) data.Value {
+	return data.Applicative(func(...data.Value) data.Value {
 		v.Close()
 		return data.Nil
 	}, 0)
@@ -87,6 +87,6 @@ func (w *channelWrapper) makeEmitter(v reflect.Value) data.Function {
 	})
 }
 
-func (*channelWrapper) Unwrap(_ data.Value) (reflect.Value, error) {
+func (*channelWrapper) Unwrap(data.Value) (reflect.Value, error) {
 	return _emptyValue, errors.New(ErrChannelCoercionNotSupported)
 }

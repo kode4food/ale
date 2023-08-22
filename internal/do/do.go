@@ -37,7 +37,7 @@ func Always() Action {
 
 // Never returns a Do instance for never performing an action
 func Never() Action {
-	return func(_ func()) {
+	return func(func()) {
 		// no-op
 	}
 }

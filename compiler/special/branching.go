@@ -2,7 +2,6 @@ package special
 
 import (
 	"github.com/kode4food/ale/compiler/encoder"
-	"github.com/kode4food/ale/compiler/generate"
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/runtime/isa"
 )
@@ -10,20 +9,23 @@ import (
 // If encodes an (if predicate consequent alternative) form
 func If(e encoder.Encoder, args ...data.Value) {
 	al := data.AssertRanged(2, 3, len(args))
-	generate.Branch(e,
-		func() {
-			generate.Value(e, args[0])
+	branch(e,
+		data.Applicative(func(...data.Value) data.Value {
+			value(e, args[0])
 			e.Emit(isa.MakeTruthy)
-		},
-		func() {
-			generate.Value(e, args[1])
-		},
-		func() {
+			return data.Nil
+		}, 0),
+		data.Applicative(func(...data.Value) data.Value {
+			value(e, args[1])
+			return data.Nil
+		}, 0),
+		data.Applicative(func(...data.Value) data.Value {
 			if al == 3 {
-				generate.Value(e, args[2])
+				value(e, args[2])
 			} else {
-				generate.Nil(e)
+				e.Emit(isa.Nil)
 			}
-		},
+			return data.Nil
+		}, 0),
 	)
 }

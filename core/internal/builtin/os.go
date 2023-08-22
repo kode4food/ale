@@ -31,6 +31,6 @@ func Args() data.Value {
 }
 
 // CurrentTime returns the current system time in nanoseconds
-var CurrentTime = data.Applicative(func(_ ...data.Value) data.Value {
+var CurrentTime = data.Applicative(func(...data.Value) data.Value {
 	return data.Integer(time.Now().UnixNano())
 }, 0)
