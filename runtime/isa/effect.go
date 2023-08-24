@@ -4,13 +4,17 @@ import "fmt"
 
 // Effect captures how an instruction affects the stack and PC
 type Effect struct {
-	Size   int  // Fixed size of the encoded Instruction
-	Pop    int  // Fixed number of items to be popped from the stack
-	Push   int  // Fixed number of items to be pushed onto the stack
-	DPop   int  // Dynamic number of items to be popped (arg number)
-	DPush  int  // Dynamic number of items to be pushed (arg number)
-	Ignore bool // Skip this instruction (ex: Labels and NoOps)
-	Exit   bool // Results in a termination of the VM
+	Size  int // Fixed size of the encoded Instruction
+	Pop   int // Fixed number of items to be popped from the stack
+	Push  int // Fixed number of items to be pushed onto the stack
+	DPop  int // Dynamic number of items to be popped (arg number)
+	DPush int // Dynamic number of items to be pushed (arg number)
+
+	Ignore    bool // Skip this instruction (ex: Labels and NoOps)
+	Exit      bool // Results in a termination of the VM
+	Locals    bool // Instruction operates on Locals
+	Constants bool // Instruction operates on Constants
+	Labels    bool // Instruction operates on Labels
 }
 
 // Error messages
@@ -29,8 +33,8 @@ var Effects = map[Opcode]*Effect{
 	Call0:      {Size: 1, Pop: 1, Push: 1},
 	Call1:      {Size: 1, Pop: 2, Push: 1},
 	Closure:    {Size: 2, Push: 1},
-	CondJump:   {Size: 2, Pop: 1},
-	Const:      {Size: 2, Push: 1},
+	CondJump:   {Size: 2, Pop: 1, Labels: true},
+	Const:      {Size: 2, Push: 1, Constants: true},
 	Deref:      {Size: 1, Pop: 1, Push: 1},
 	Div:        {Size: 1, Pop: 2, Push: 1},
 	Dup:        {Size: 1, Pop: 1, Push: 2},
@@ -38,9 +42,9 @@ var Effects = map[Opcode]*Effect{
 	False:      {Size: 1, Push: 1},
 	Gt:         {Size: 1, Pop: 2, Push: 1},
 	Gte:        {Size: 1, Pop: 2, Push: 1},
-	Jump:       {Size: 2},
-	Label:      {Size: 2, Ignore: true},
-	Load:       {Size: 2, Push: 1},
+	Jump:       {Size: 2, Labels: true},
+	Label:      {Size: 2, Ignore: true, Labels: true},
+	Load:       {Size: 2, Push: 1, Locals: true},
 	Lt:         {Size: 1, Pop: 2, Push: 1},
 	Lte:        {Size: 1, Pop: 2, Push: 1},
 	MakeTruthy: {Size: 1, Pop: 1, Push: 1},
@@ -67,7 +71,7 @@ var Effects = map[Opcode]*Effect{
 	RetTrue:    {Size: 1, Exit: true},
 	Return:     {Size: 1, Pop: 1, Exit: true},
 	Self:       {Size: 1, Push: 1},
-	Store:      {Size: 2, Pop: 1},
+	Store:      {Size: 2, Pop: 1, Locals: true},
 	Sub:        {Size: 1, Pop: 2, Push: 1},
 	TailCall:   {Size: 2, Pop: 1, DPop: 1},
 	True:       {Size: 1, Push: 1},

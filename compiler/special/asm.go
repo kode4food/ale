@@ -10,6 +10,11 @@ import (
 )
 
 type (
+	asmEncoder struct {
+		encoder.Encoder
+		labels map[data.Name]isa.Index
+	}
+
 	call struct {
 		encoder.Call
 		argCount int
@@ -20,51 +25,64 @@ type (
 
 // Error messages
 const (
-	ErrIncompleteInstruction = "incomplete instruction: %s"
-	ErrExpectedWord          = "expected unsigned word: %s"
-	ErrUnknownDirective      = "unknown opcode: %s"
-	ErrUnexpectedForm        = "unexpected form: %s"
+	ErrUnknownDirective         = "unknown directive: %s"
+	ErrUnexpectedForm           = "unexpected form: %s"
+	ErrIncompleteInstruction    = "incomplete instruction: %s"
+	ErrUnexpectedInstructionArg = "unexpected instruction argument: %s"
+	ErrUnexpectedName           = "unexpected local name: %s"
+	ErrUnexpectedLabel          = "unexpected label: %s"
+	ErrExpectedWord             = "expected unsigned word: %s"
 )
 
 // Asm provides indirect access to the Encoder's methods and generators
 //
 // (asm*
-//   push-locals
+//   .push-locals
 //   true
-//   cond-jump some-label
+//   cond-jump :some-label
 //   ret-nil
 // :some-label
-//   literal "hello"
-//   pop-locals)
+//   .add-local some-name :val
+//   .const "hello"
+//	 store some-name
+//   .pop-locals)
 
 var (
 	instCalls = getInstructionCalls()
 	encCalls  = getEncoderCalls()
-	calls     = mergeCalls(instCalls, encCalls)
+	genCalls  = getGeneratorCalls()
+	calls     = mergeCalls(instCalls, encCalls, genCalls)
+
+	cellTypes = map[data.Keyword]encoder.CellType{
+		data.Keyword("val"):  encoder.ValueCell,
+		data.Keyword("ref"):  encoder.ReferenceCell,
+		data.Keyword("rest"): encoder.RestCell,
+	}
 )
 
 func Asm(e encoder.Encoder, args ...data.Value) {
-	labels := map[data.Name]isa.Index{}
+	ae := &asmEncoder{
+		Encoder: e,
+		labels:  map[data.Name]isa.Index{},
+	}
 	v := data.NewVector(args...)
 	for f, r, ok := v.Split(); ok; f, r, ok = r.Split() {
 		switch v := f.(type) {
 		case data.Keyword:
-			n := v.Name()
-			if _, ok := labels[n]; ok {
-				panic(fmt.Errorf("label already placed: %s", n))
-			}
-			labels[n] = e.NewLabel()
+			e.Emit(isa.Label, ae.getLabelIndex(v))
+
 		case data.LocalSymbol:
 			n := v.Name()
 			if d, ok := calls[n]; ok {
 				if args, rest, ok := take(r, d.argCount); ok {
-					d.Call(e, args...)
+					d.Call(ae, args...)
 					r = rest
 					continue
 				}
 				panic(fmt.Errorf(ErrIncompleteInstruction, n))
 			}
 			panic(fmt.Errorf(ErrUnknownDirective, n))
+
 		default:
 			panic(fmt.Errorf(ErrUnexpectedForm, f.String()))
 		}
@@ -85,7 +103,7 @@ func getInstructionCalls() callMap {
 func makeEmitCall(oc isa.Opcode, argCount int) *call {
 	return &call{
 		Call: func(e encoder.Encoder, args ...data.Value) {
-			e.Emit(oc, toWords(args)...)
+			e.Emit(oc, e.(*asmEncoder).toWords(oc, args)...)
 		},
 		argCount: argCount,
 	}
@@ -93,6 +111,25 @@ func makeEmitCall(oc isa.Opcode, argCount int) *call {
 
 func getEncoderCalls() callMap {
 	return callMap{
+		".const": {
+			Call: func(e encoder.Encoder, args ...data.Value) {
+				index := e.AddConstant(args[0])
+				e.Emit(isa.Const, index)
+			},
+			argCount: 1,
+		},
+		".local": {
+			Call: func(e encoder.Encoder, args ...data.Value) {
+				name := args[0].(data.LocalSymbol).Name()
+				kwd := args[1].(data.Keyword)
+				cellType, ok := cellTypes[kwd]
+				if !ok {
+					panic(fmt.Errorf("unknown local type: %s", kwd))
+				}
+				e.AddLocal(name, cellType)
+			},
+			argCount: 2,
+		},
 		".push-locals": {
 			Call: func(e encoder.Encoder, _ ...data.Value) {
 				e.PushLocals()
@@ -104,6 +141,10 @@ func getEncoderCalls() callMap {
 			},
 		},
 	}
+}
+
+func getGeneratorCalls() callMap {
+	return callMap{}
 }
 
 func mergeCalls(maps ...callMap) callMap {
@@ -132,14 +173,39 @@ func take(s data.Sequence, count int) (data.Values, data.Sequence, bool) {
 	return res, s, true
 }
 
-func toWords(args data.Values) []isa.Coder {
+func (e *asmEncoder) getLabelIndex(k data.Keyword) isa.Index {
+	name := k.Name()
+	if idx, ok := e.labels[name]; ok {
+		return idx
+	}
+	idx := e.NewLabel()
+	e.labels[name] = idx
+	return idx
+}
+
+func (e *asmEncoder) toWords(oc isa.Opcode, args data.Values) []isa.Coder {
 	words := make([]isa.Coder, len(args))
-	for i, a := range args {
-		arg := a.(data.Integer)
-		if !isValidWord(arg) {
-			panic(fmt.Errorf(ErrExpectedWord, args[i]))
+	for _, a := range args {
+		switch arg := a.(type) {
+		case data.Integer:
+			if !isValidWord(arg) {
+				panic(fmt.Errorf(ErrExpectedWord, a))
+			}
+			words = append(words, isa.Word(arg))
+		case data.Keyword:
+			if !isa.Effects[oc].Labels {
+				panic(fmt.Errorf(ErrUnexpectedLabel, a))
+			}
+			words = append(words, e.getLabelIndex(arg))
+		case data.LocalSymbol:
+			cell, ok := e.ResolveLocal(arg.Name())
+			if !ok || !isa.Effects[oc].Locals {
+				panic(fmt.Errorf(ErrUnexpectedName, arg))
+			}
+			words = append(words, cell.Index)
+		default:
+			panic(fmt.Errorf(ErrUnexpectedInstructionArg, a.String()))
 		}
-		words = append(words, isa.Word(arg))
 	}
 	return words
 }
