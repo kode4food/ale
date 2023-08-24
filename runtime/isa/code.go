@@ -76,6 +76,14 @@ func New(oc Opcode, args ...Word) *Instruction {
 	}
 }
 
+func (i Instructions) String() string {
+	strs := make([]string, len(i))
+	for j, l := range i {
+		strs[j] = l.String()
+	}
+	return strings.Join(strs, "\n")
+}
+
 // Equal compares this Instruction to another for equality
 func (i *Instruction) Equal(v data.Value) bool {
 	if v, ok := v.(*Instruction); ok {

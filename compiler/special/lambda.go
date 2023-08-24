@@ -7,7 +7,6 @@ import (
 	"github.com/kode4food/ale/compiler/generate"
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/runtime/isa"
-	"github.com/kode4food/ale/runtime/vm"
 )
 
 type (
@@ -30,58 +29,34 @@ const (
 	ErrUnexpectedLambdaSyntax = "unexpected lambda syntax: %s"
 )
 
-const allArgsName = data.Name("*args*")
-
 // Lambda encodes a lambda
 func Lambda(e encoder.Encoder, args ...data.Value) {
+	var le *lambdaEncoder
 	vars := parseLambda(data.NewVector(args...))
-	le := makeLambdaEncoder(e, vars)
-	le.encodeCall()
+	fn := generate.Lambda(e, func(c encoder.Encoder) {
+		le = makeLambda(c, vars)
+		le.encode()
+	})
+	fn.ArityChecker = le.makeArityChecker()
 }
 
-func makeLambdaEncoder(e encoder.Encoder, v lambdaCases) *lambdaEncoder {
-	child := e.Child()
+func makeLambda(e encoder.Encoder, v lambdaCases) *lambdaEncoder {
 	res := &lambdaEncoder{
-		Encoder: child,
+		Encoder: e,
 		cases:   v,
 	}
-	res.PushArgs(data.Names{allArgsName}, true)
 	return res
 }
 
-func (le *lambdaEncoder) encodeCall() {
-	e := le.Parent()
-	fn := le.makeLambda()
-
-	cells := le.Closure()
-	nl := len(cells)
-	if nl == 0 {
-		// nothing needed to be captured from local variables,
-		// so just pass the newly instantiated closure through
-		generate.Literal(e, fn.Call())
-		return
-	}
-
-	for i := nl - 1; i >= 0; i-- {
-		name := cells[i].Name
-		generate.Symbol(e, data.NewLocalSymbol(name))
-	}
-	e.Emit(isa.Const, e.AddConstant(fn))
-	e.Emit(isa.Call, isa.Count(nl))
-}
-
-func (le *lambdaEncoder) makeLambda() *vm.Lambda {
+func (le *lambdaEncoder) encode() {
 	if len(le.cases) == 0 {
 		le.Emit(isa.RetNil)
-	} else {
-		le.makeLambdaCases(le.cases)
+		return
 	}
-	res := vm.LambdaFromEncoder(le)
-	res.ArityChecker = le.makeArityChecker()
-	return res
+	le.encodeCases(le.cases)
 }
 
-func (le *lambdaEncoder) makeLambdaCases(cases lambdaCases) {
+func (le *lambdaEncoder) encodeCases(cases lambdaCases) {
 	if len(cases) == 0 {
 		generate.Literal(le, data.String("no matching argument pattern"))
 		le.Emit(isa.Panic)
@@ -90,9 +65,9 @@ func (le *lambdaEncoder) makeLambdaCases(cases lambdaCases) {
 
 	c := cases[0]
 	generate.Branch(le,
-		func() { le.makePredicate(c) },
-		func() { le.makeConsequent(c) },
-		func() { le.makeLambdaCases(cases[1:]) },
+		func(encoder.Encoder) { le.predicate(c) },
+		func(encoder.Encoder) { le.consequent(c) },
+		func(encoder.Encoder) { le.encodeCases(cases[1:]) },
 	)
 }
 
@@ -111,7 +86,7 @@ func (le *lambdaEncoder) makeArityChecker() data.ArityChecker {
 	return data.MakeChecker(lower, upper)
 }
 
-func (le *lambdaEncoder) makePredicate(c *lambdaCase) {
+func (le *lambdaEncoder) predicate(c *lambdaCase) {
 	le.Emit(isa.ArgLen)
 	al := len(c.args)
 	if c.rest {
@@ -123,7 +98,7 @@ func (le *lambdaEncoder) makePredicate(c *lambdaCase) {
 	le.Emit(isa.Eq)
 }
 
-func (le *lambdaEncoder) makeConsequent(c *lambdaCase) {
+func (le *lambdaEncoder) consequent(c *lambdaCase) {
 	body := c.body
 	if body.IsEmpty() {
 		le.Emit(isa.RetNil)

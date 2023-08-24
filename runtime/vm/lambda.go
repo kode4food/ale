@@ -25,12 +25,17 @@ func LambdaFromEncoder(e encoder.Encoder) *Lambda {
 	code := e.Code()
 	optimized := optimize.Instructions(code)
 	return &Lambda{
-		Globals:    e.Globals(),
-		Constants:  e.Constants(),
-		StackSize:  int(e.StackSize()),
-		LocalCount: int(e.LocalCount()),
-		Code:       isa.Flatten(optimized),
+		Globals:      e.Globals(),
+		Constants:    e.Constants(),
+		StackSize:    int(e.StackSize()),
+		LocalCount:   int(e.LocalCount()),
+		Code:         isa.Flatten(optimized),
+		ArityChecker: NoArityChecker,
 	}
+}
+
+func NoArityChecker(int) error {
+	return nil
 }
 
 // Call allows a VM Lambda to be called for the purpose

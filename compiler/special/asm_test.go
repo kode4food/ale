@@ -4,9 +4,14 @@ import (
 	"testing"
 
 	"github.com/kode4food/ale/internal/assert"
+	. "github.com/kode4food/ale/internal/assert/helpers"
 )
 
 func TestAsm(t *testing.T) {
 	as := assert.New(t)
-	as.Eval(`(asm* (emit :return))`)
+	as.EvalTo(`
+		(define* test 
+		  (lambda () (asm* one two add)))
+		(test)
+	`, I(3))
 }

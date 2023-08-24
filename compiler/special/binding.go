@@ -7,19 +7,9 @@ import (
 	"github.com/kode4food/ale/compiler/encoder"
 	"github.com/kode4food/ale/compiler/generate"
 	"github.com/kode4food/ale/data"
-	"github.com/kode4food/ale/runtime/isa"
 )
 
-type (
-	letBinding struct {
-		name  data.Name
-		value data.Value
-	}
-
-	letBindings []*letBinding
-
-	uniqueNames map[data.Name]bool
-)
+type uniqueNames map[data.Name]bool
 
 // Error messages
 const (
@@ -32,22 +22,9 @@ const (
 // bound to fresh names, meaning that mutual recursion is not supported
 func Let(e encoder.Encoder, args ...data.Value) {
 	bindings, body := parseLet(args...)
-
-	e.PushLocals()
-	// Push the evaluated expressions to be bound
-	for _, b := range bindings {
-		generate.Value(e, b.value)
-	}
-
-	// Bind the popped expression results to names
-	for i := len(bindings) - 1; i >= 0; i-- {
-		b := bindings[i]
-		l := e.AddLocal(b.name, encoder.ValueCell)
-		e.Emit(isa.Store, l.Index)
-	}
-
-	generate.Block(e, body)
-	e.PopLocals()
+	generate.Locals(e, bindings, func(e encoder.Encoder) {
+		generate.Block(e, body)
+	})
 }
 
 // LetMutual encodes a binding form. First fresh names are introduced,
@@ -55,52 +32,30 @@ func Let(e encoder.Encoder, args ...data.Value) {
 // the MutualScope
 func LetMutual(e encoder.Encoder, args ...data.Value) {
 	bindings, body := parseLet(args...)
-
-	e.PushLocals()
-	// Create references
-	cells := make(encoder.IndexedCells, len(bindings))
-	for i, b := range bindings {
-		c := e.AddLocal(b.name, encoder.ReferenceCell)
-		e.Emit(isa.NewRef)
-		e.Emit(isa.Store, c.Index)
-		cells[i] = c
-	}
-
-	// Push the evaluated expressions to be bound
-	for _, b := range bindings {
-		generate.Value(e, b.value)
-	}
-
-	// Bind the references
-	for i := len(cells) - 1; i >= 0; i-- {
-		c := cells[i]
-		e.Emit(isa.Load, c.Index)
-		e.Emit(isa.BindRef)
-	}
-
-	generate.Block(e, body)
-	e.PopLocals()
+	generate.MutualLocals(e, bindings, func(e encoder.Encoder) {
+		generate.Block(e, body)
+	})
 }
 
-func parseLet(args ...data.Value) (letBindings, data.Vector) {
+func parseLet(args ...data.Value) (generate.Bindings, data.Vector) {
 	data.AssertMinimum(2, len(args))
 	bindings := parseLetBindings(args[0])
 	return bindings, data.NewVector(args[1:]...)
 }
 
-func parseLetBindings(v data.Value) letBindings {
+func parseLetBindings(v data.Value) generate.Bindings {
 	switch v := v.(type) {
 	case data.List:
 		names := uniqueNames{}
-		res := letBindings{}
+		res := generate.Bindings{}
 		for f, r, ok := v.Split(); ok; f, r, ok = r.Split() {
 			b := parseLetBinding(f.(data.Vector))
-			names.see(b.name)
+			names.see(b.Name)
 			res = append(res, b)
 		}
 		return res
 	case data.Vector:
-		return letBindings{
+		return generate.Bindings{
 			parseLetBinding(v),
 		}
 	default:
@@ -108,14 +63,14 @@ func parseLetBindings(v data.Value) letBindings {
 	}
 }
 
-func parseLetBinding(b data.Vector) *letBinding {
+func parseLetBinding(b data.Vector) *generate.Binding {
 	v := b.Values()
 	if len(v) != 2 {
 		panic(errors.New(ErrUnpairedBindings))
 	}
-	return &letBinding{
-		name:  v[0].(data.LocalSymbol).Name(),
-		value: v[1],
+	return &generate.Binding{
+		Name:  v[0].(data.LocalSymbol).Name(),
+		Value: v[1],
 	}
 }
 

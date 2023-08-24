@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/kode4food/ale/compiler/encoder"
 	"github.com/kode4food/ale/compiler/generate"
 	"github.com/kode4food/ale/compiler/ir/visitor"
 	"github.com/kode4food/ale/internal/assert"
@@ -16,9 +17,9 @@ func TestBranch(t *testing.T) {
 	e1 := assert.GetTestEncoder()
 	e1.Emit(isa.NegOne)
 	generate.Branch(e1,
-		func() { e1.Emit(isa.True) },
-		func() { e1.Emit(isa.One) },
-		func() { e1.Emit(isa.Zero) },
+		func(encoder.Encoder) { e1.Emit(isa.True) },
+		func(encoder.Encoder) { e1.Emit(isa.One) },
+		func(encoder.Encoder) { e1.Emit(isa.Zero) },
 	)
 	e1.Emit(isa.Pop)
 	e1.Emit(isa.Return)
