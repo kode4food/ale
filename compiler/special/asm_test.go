@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/kode4food/ale/compiler/special"
+
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
 )
@@ -37,7 +38,7 @@ func TestAsmJump(t *testing.T) {
     `, I(1))
 
 	defer as.ExpectPanic(
-		fmt.Sprintf(special.ErrUnexpectedName, "not-a-label"),
+		fmt.Sprintf(special.ErrUnexpectedLabel, "not-a-label"),
 	)
 	as.EvalTo(`
 		(define* test

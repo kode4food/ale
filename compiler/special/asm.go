@@ -1,6 +1,7 @@
 package special
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/kode4food/ale/compiler/encoder"
@@ -21,17 +22,18 @@ type (
 	}
 
 	callMap map[data.Name]*call
+
+	toWordFunc func(data.Value) (isa.Word, error)
 )
 
 // Error messages
 const (
-	ErrUnknownDirective         = "unknown directive: %s"
-	ErrUnexpectedForm           = "unexpected form: %s"
-	ErrIncompleteInstruction    = "incomplete instruction: %s"
-	ErrUnexpectedInstructionArg = "unexpected instruction argument: %s"
-	ErrUnexpectedName           = "unexpected local name: %s"
-	ErrUnexpectedLabel          = "unexpected label: %s"
-	ErrExpectedWord             = "expected unsigned word: %s"
+	ErrUnknownDirective      = "unknown directive: %s"
+	ErrUnexpectedForm        = "unexpected form: %s"
+	ErrIncompleteInstruction = "incomplete instruction: %s"
+	ErrUnexpectedName        = "unexpected local name: %s"
+	ErrUnexpectedLabel       = "unexpected label: %s"
+	ErrExpectedWord          = "expected unsigned word: %s"
 )
 
 var (
@@ -170,30 +172,67 @@ func (e *asmEncoder) getLabelIndex(k data.Keyword) isa.Index {
 }
 
 func (e *asmEncoder) toWords(oc isa.Opcode, args data.Values) []isa.Coder {
-	words := make([]isa.Coder, len(args))
+	toWord := e.getToWordFor(isa.Effects[oc])
+	res := make([]isa.Coder, len(args))
 	for i, a := range args {
-		switch arg := a.(type) {
-		case data.Integer:
-			if !isValidWord(arg) {
-				panic(fmt.Errorf(ErrExpectedWord, a))
+		r, err := toWord(a)
+		if err != nil {
+			panic(err)
+		}
+		res[i] = r
+	}
+	return res
+}
+
+func (e *asmEncoder) getToWordFor(effect *isa.Effect) toWordFunc {
+	fn := toWord
+	if effect.Locals {
+		fn = makeNameToWord(e, fn)
+	}
+	if effect.Labels {
+		fn = makeLabelToWord(e, fn)
+	}
+	return fn
+}
+
+func makeLabelToWord(e *asmEncoder, next toWordFunc) toWordFunc {
+	return wrapToWordError(func(val data.Value) (isa.Word, error) {
+		if val, ok := val.(data.Keyword); ok {
+			return isa.Word(e.getLabelIndex(val)), nil
+		}
+		return next(val)
+	}, ErrUnexpectedLabel)
+}
+
+func makeNameToWord(e *asmEncoder, next toWordFunc) toWordFunc {
+	return wrapToWordError(func(val data.Value) (isa.Word, error) {
+		if val, ok := val.(data.LocalSymbol); ok {
+			if cell, ok := e.ResolveLocal(val.Name()); ok {
+				return isa.Word(cell.Index), nil
 			}
-			words[i] = isa.Word(arg)
-		case data.Keyword:
-			if !isa.Effects[oc].Labels {
-				panic(fmt.Errorf(ErrUnexpectedLabel, a))
-			}
-			words[i] = e.getLabelIndex(arg)
-		case data.LocalSymbol:
-			cell, ok := e.ResolveLocal(arg.Name())
-			if !ok || !isa.Effects[oc].Locals {
-				panic(fmt.Errorf(ErrUnexpectedName, arg))
-			}
-			words[i] = cell.Index
-		default:
-			panic(fmt.Errorf(ErrUnexpectedInstructionArg, a.String()))
+			return 0, fmt.Errorf(ErrUnexpectedName, val)
+		}
+		return next(val)
+	}, ErrUnexpectedName)
+}
+
+func wrapToWordError(toWord toWordFunc, errStr string) toWordFunc {
+	return func(val data.Value) (isa.Word, error) {
+		res, err := toWord(val)
+		if err != nil {
+			return 0, errors.Join(fmt.Errorf(errStr, val), err)
+		}
+		return res, nil
+	}
+}
+
+func toWord(val data.Value) (isa.Word, error) {
+	if val, ok := val.(data.Integer); ok {
+		if isValidWord(val) {
+			return isa.Word(val), nil
 		}
 	}
-	return words
+	return 0, fmt.Errorf(ErrExpectedWord, val)
 }
 
 func isValidWord(i data.Integer) bool {
