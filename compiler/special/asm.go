@@ -185,24 +185,24 @@ func (e *asmEncoder) getLabelIndex(k data.Keyword) isa.Index {
 
 func (e *asmEncoder) toWords(oc isa.Opcode, args data.Values) []isa.Coder {
 	words := make([]isa.Coder, len(args))
-	for _, a := range args {
+	for i, a := range args {
 		switch arg := a.(type) {
 		case data.Integer:
 			if !isValidWord(arg) {
 				panic(fmt.Errorf(ErrExpectedWord, a))
 			}
-			words = append(words, isa.Word(arg))
+			words[i] = isa.Word(arg)
 		case data.Keyword:
 			if !isa.Effects[oc].Labels {
 				panic(fmt.Errorf(ErrUnexpectedLabel, a))
 			}
-			words = append(words, e.getLabelIndex(arg))
+			words[i] = e.getLabelIndex(arg)
 		case data.LocalSymbol:
 			cell, ok := e.ResolveLocal(arg.Name())
 			if !ok || !isa.Effects[oc].Locals {
 				panic(fmt.Errorf(ErrUnexpectedName, arg))
 			}
-			words = append(words, cell.Index)
+			words[i] = cell.Index
 		default:
 			panic(fmt.Errorf(ErrUnexpectedInstructionArg, a.String()))
 		}
