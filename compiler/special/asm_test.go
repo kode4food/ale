@@ -1,7 +1,10 @@
 package special_test
 
 import (
+	"fmt"
 	"testing"
+
+	"github.com/kode4food/ale/compiler/special"
 
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
@@ -21,13 +24,28 @@ func TestAsmJump(t *testing.T) {
 	as.EvalTo(`
 		(define* test
 			(lambda () (asm*
+				.local some-value :val
 				true
+				store some-value
+				load some-value
 				cond-jump :first
 				zero
 				jump :second
-				:first
+			:first
 				one
-				:second)))
+			:second)))
+		(test)
+    `, I(1))
+
+	defer as.ExpectPanic(
+		fmt.Sprintf(special.ErrUnexpectedName, "not-a-label"),
+	)
+	as.EvalTo(`
+		(define* test
+			(lambda () (asm*
+				true
+				cond-jump not-a-label
+			:not-a-label)))
 		(test)
     `, I(1))
 }

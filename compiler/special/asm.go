@@ -34,19 +34,6 @@ const (
 	ErrExpectedWord             = "expected unsigned word: %s"
 )
 
-// Asm provides indirect access to the Encoder's methods and generators
-//
-// (asm*
-//   .push-locals
-//   true
-//   cond-jump :some-label
-//   ret-nil
-// :some-label
-//   .add-local some-name :val
-//   .const "hello"
-//	 store some-name
-//   .pop-locals)
-
 var (
 	instCalls = getInstructionCalls()
 	encCalls  = getEncoderCalls()
@@ -60,6 +47,7 @@ var (
 	}
 )
 
+// Asm provides indirect access to the Encoder's methods and generators
 func Asm(e encoder.Encoder, args ...data.Value) {
 	ae := &asmEncoder{
 		Encoder: e,
