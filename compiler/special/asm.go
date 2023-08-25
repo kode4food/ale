@@ -58,7 +58,6 @@ func Asm(e encoder.Encoder, args ...data.Value) {
 		switch v := f.(type) {
 		case data.Keyword:
 			e.Emit(isa.Label, ae.getLabelIndex(v))
-
 		case data.LocalSymbol:
 			n := v.Name()
 			if d, ok := calls[n]; ok {
@@ -70,7 +69,6 @@ func Asm(e encoder.Encoder, args ...data.Value) {
 				panic(fmt.Errorf(ErrIncompleteInstruction, n))
 			}
 			panic(fmt.Errorf(ErrUnknownDirective, n))
-
 		default:
 			panic(fmt.Errorf(ErrUnexpectedForm, f.String()))
 		}
