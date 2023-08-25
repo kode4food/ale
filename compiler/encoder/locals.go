@@ -1,6 +1,7 @@
 package encoder
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/kode4food/ale/data"
@@ -12,6 +13,7 @@ type Locals map[data.Name]*IndexedCell
 
 // Error messages
 const (
+	ErrNoLocalScope  = "no local scope provided"
 	ErrDuplicateName = "name duplicated in scope: %s"
 )
 
@@ -32,6 +34,9 @@ func (e *encoder) PopLocals() {
 
 func (e *encoder) peekLocals() Locals {
 	scopes := e.locals
+	if len(scopes) == 0 {
+		panic(errors.New(ErrNoLocalScope))
+	}
 	tailPos := len(scopes) - 1
 	return scopes[tailPos]
 }

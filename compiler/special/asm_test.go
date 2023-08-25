@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/kode4food/ale/compiler/encoder"
 	"github.com/kode4food/ale/compiler/special"
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
@@ -83,7 +84,7 @@ func TestAsmLabelNumbering(t *testing.T) {
 	:first)`)
 }
 
-func TestPushLocalsError(t *testing.T) {
+func TestOutOfScopeError(t *testing.T) {
 	as := assert.New(t)
 	defer as.ExpectPanic(
 		fmt.Sprintf(special.ErrUnexpectedName, "wont-be-found"),
@@ -97,4 +98,10 @@ func TestPushLocalsError(t *testing.T) {
 			.pop-locals
 			load wont-be-found)
     `)
+}
+
+func TestLocalScopeError(t *testing.T) {
+	as := assert.New(t)
+	defer as.ExpectPanic(encoder.ErrNoLocalScope)
+	as.Eval(`(asm* .local hello :val)`)
 }
