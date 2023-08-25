@@ -2,10 +2,20 @@ package assert
 
 import (
 	"github.com/kode4food/ale/compiler/encoder"
+	"github.com/kode4food/ale/compiler/generate"
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/env"
+	"github.com/kode4food/ale/read"
 	"github.com/kode4food/ale/runtime/isa"
 )
+
+// EncodesAs tests that a string generates the expected set of Instructions
+func (w *Wrapper) EncodesAs(expected isa.Instructions, src data.String) {
+	e := GetTestEncoder()
+	v := read.FromString(src)
+	generate.Block(e, v)
+	w.Instructions(expected, e.Code())
+}
 
 // Instructions tests that two sets of Instructions are identical
 func (w *Wrapper) Instructions(expected, actual isa.Instructions) {

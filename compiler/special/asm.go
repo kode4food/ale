@@ -31,6 +31,7 @@ const (
 	ErrUnknownDirective      = "unknown directive: %s"
 	ErrUnexpectedForm        = "unexpected form: %s"
 	ErrIncompleteInstruction = "incomplete instruction: %s"
+	ErrUnknownLocalType      = "unknown local type: %s"
 	ErrUnexpectedName        = "unexpected local name: %s"
 	ErrUnexpectedLabel       = "unexpected label: %s"
 	ErrExpectedWord          = "expected unsigned word: %s"
@@ -112,7 +113,7 @@ func getEncoderCalls() callMap {
 				kwd := args[1].(data.Keyword)
 				cellType, ok := cellTypes[kwd]
 				if !ok {
-					panic(fmt.Errorf("unknown local type: %s", kwd))
+					panic(fmt.Errorf(ErrUnknownLocalType, kwd))
 				}
 				e.AddLocal(name, cellType)
 			},
@@ -140,6 +141,7 @@ func mergeCalls(maps ...callMap) callMap {
 	for _, m := range maps {
 		for k, v := range m {
 			if _, ok := res[k]; ok {
+				// Programmer error
 				panic(fmt.Sprintf("duplicate entry: %s", k))
 			}
 			res[k] = v
