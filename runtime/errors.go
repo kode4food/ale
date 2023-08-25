@@ -23,20 +23,15 @@ const (
 
 var interfaceConversion = []*regexp.Regexp{
 	regexp.MustCompile(
-		`^interface conversion: ` +
-			`[^.]+[.](?P<got>[a-zA-Z0-9]+) ` +
+		`: [^.]+[.](?P<got>[a-zA-Z0-9]+) ` +
 			`is not [^.]+[.](?P<expected>[a-zA-Z0-9]+).*$`,
 	),
 	regexp.MustCompile(
-		`^interface conversion: ` +
-			`[^.]+[.](?P<inter>[a-zA-Z0-9]+) is ` +
-			`[^.]+[.](?P<got>[a-zA-Z0-9]+), ` +
+		` is [^.]+[.](?P<got>[a-zA-Z0-9]+), ` +
 			`not [^.]+[.](?P<expected>[a-zA-Z0-9]+).*$`,
 	),
 	regexp.MustCompile(
-		`^interface conversion: ` +
-			`[^.]+[.](?P<inter>[a-zA-Z0-9]+) is ` +
-			`(?P<got>nil), ` +
+		` is (?P<got>nil), ` +
 			`not [^.]+[.](?P<expected>[a-zA-Z0-9]+).*$`),
 }
 
