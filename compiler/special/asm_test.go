@@ -25,6 +25,11 @@ func TestAsmConstant(t *testing.T) {
 		`(asm* .const ("this is a list" 1 2 3))`,
 		L(S("this is a list"), I(1), I(2), I(3)),
 	)
+
+	as.EvalTo(
+		`(asm* .const 1 .const 2 .const 3 add add)`,
+		I(6),
+	)
 }
 
 func TestAsmJump(t *testing.T) {
@@ -51,14 +56,12 @@ func TestAsmLabelError(t *testing.T) {
 	defer as.ExpectPanic(
 		fmt.Sprintf(special.ErrUnexpectedLabel, "not-a-label"),
 	)
-	as.EvalTo(`
-		(define* test
-			(lambda () (asm*
-				true
-				cond-jump not-a-label
-			:not-a-label)))
-		(test)
-    `, I(1))
+	as.Eval(`
+		(asm*
+			true
+			cond-jump not-a-label
+		:not-a-label)
+    `)
 }
 
 func TestAsmLabelNumbering(t *testing.T) {
@@ -78,4 +81,20 @@ func TestAsmLabelNumbering(t *testing.T) {
  	:second
 		no-op
 	:first)`)
+}
+
+func TestPushLocalsError(t *testing.T) {
+	as := assert.New(t)
+	defer as.ExpectPanic(
+		fmt.Sprintf(special.ErrUnexpectedName, "wont-be-found"),
+	)
+	as.Eval(`
+		(asm*
+			.push-locals
+			.local wont-be-found :val
+			.const "hello"
+			store wont-be-found
+			.pop-locals
+			load wont-be-found)
+    `)
 }

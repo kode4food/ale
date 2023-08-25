@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"regexp"
 	"runtime"
+	"slices"
 
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/strings"
@@ -20,11 +21,24 @@ const (
 	ErrUnexpectedType = "got %s, expected %s"
 )
 
-var interfaceConversion = regexp.MustCompile(
-	`^interface conversion: ` +
-		`[^.]+[.](?P<got>[a-zA-Z0-9]+) ` +
-		`is not [^.]+[.](?P<expected>[a-zA-Z0-9]+):.*$`,
-)
+var interfaceConversion = []*regexp.Regexp{
+	regexp.MustCompile(
+		`^interface conversion: ` +
+			`[^.]+[.](?P<got>[a-zA-Z0-9]+) ` +
+			`is not [^.]+[.](?P<expected>[a-zA-Z0-9]+).*$`,
+	),
+	regexp.MustCompile(
+		`^interface conversion: ` +
+			`[^.]+[.](?P<inter>[a-zA-Z0-9]+) is ` +
+			`[^.]+[.](?P<got>[a-zA-Z0-9]+), ` +
+			`not [^.]+[.](?P<expected>[a-zA-Z0-9]+).*$`,
+	),
+	regexp.MustCompile(
+		`^interface conversion: ` +
+			`[^.]+[.](?P<inter>[a-zA-Z0-9]+) is ` +
+			`(?P<got>nil), ` +
+			`not [^.]+[.](?P<expected>[a-zA-Z0-9]+).*$`),
+}
 
 func AleRuntimeError(wrapped error, format string, a ...any) error {
 	message := fmt.Sprintf(format, a...)
@@ -67,12 +81,17 @@ func (a *aleRuntimeError) Unwrap() error {
 }
 
 func normalizeTypeAssertionError(e *runtime.TypeAssertionError) error {
-	if m := interfaceConversion.FindStringSubmatch(e.Error()); m != nil {
-		return AleRuntimeError(e,
-			ErrUnexpectedType,
-			strings.CamelToWords(m[1]),
-			strings.CamelToWords(m[2]),
-		)
+	for _, re := range interfaceConversion {
+		if m := re.FindStringSubmatch(e.Error()); m != nil {
+			names := re.SubexpNames()
+			expected := slices.Index(names, "expected")
+			got := slices.Index(names, "got")
+			return AleRuntimeError(e,
+				ErrUnexpectedType,
+				strings.CamelToWords(m[got]),
+				strings.CamelToWords(m[expected]),
+			)
+		}
 	}
 	// Programmer error
 	panic("could not normalize type assertion error")
