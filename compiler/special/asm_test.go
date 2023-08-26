@@ -103,5 +103,7 @@ func TestOutOfScopeError(t *testing.T) {
 func TestLocalScopeError(t *testing.T) {
 	as := assert.New(t)
 	defer as.ExpectPanic(encoder.ErrNoLocalScope)
-	as.Eval(`(asm* .local hello :val)`)
+	as.Eval(`(asm*
+		.pop-locals
+		.local hello :val)`)
 }

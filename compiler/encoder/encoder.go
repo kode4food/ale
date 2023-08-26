@@ -12,7 +12,6 @@ type (
 	Encoder interface {
 		data.Value
 
-		Parent() Encoder
 		Child() Encoder
 
 		Emit(isa.Opcode, ...isa.Coder)
@@ -59,23 +58,20 @@ type (
 func NewEncoder(globals env.Namespace) Encoder {
 	return &encoder{
 		globals: globals,
+		locals:  []Locals{{}},
 	}
 }
 
 func (e *encoder) child() *encoder {
 	return &encoder{
 		parent: e,
+		locals: []Locals{{}},
 	}
 }
 
 // Child creates a child Type
 func (e *encoder) Child() Encoder {
 	return e.child()
-}
-
-// Parent returns the parent of this encoder
-func (e *encoder) Parent() Encoder {
-	return e.parent
 }
 
 // Emit adds instructions to the Type's eventual output

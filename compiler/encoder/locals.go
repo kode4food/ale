@@ -13,7 +13,7 @@ type Locals map[data.Name]*IndexedCell
 
 // Error messages
 const (
-	ErrNoLocalScope  = "no local scope provided"
+	ErrNoLocalScope  = "no local scopes have been pushed"
 	ErrDuplicateName = "name duplicated in scope: %s"
 )
 
@@ -26,6 +26,9 @@ func (e *encoder) PushLocals() {
 }
 
 func (e *encoder) PopLocals() {
+	if len(e.locals) == 1 {
+		panic(errors.New(ErrNoLocalScope))
+	}
 	scope := e.peekLocals()
 	e.nextLocal -= isa.Index(len(scope))
 	scopes := e.locals
@@ -34,9 +37,6 @@ func (e *encoder) PopLocals() {
 
 func (e *encoder) peekLocals() Locals {
 	scopes := e.locals
-	if len(scopes) == 0 {
-		panic(errors.New(ErrNoLocalScope))
-	}
 	tailPos := len(scopes) - 1
 	return scopes[tailPos]
 }
