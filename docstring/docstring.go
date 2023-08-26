@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/markdown"
 )
 
@@ -13,10 +12,7 @@ const (
 	ErrDocNotFound = "could not find doc: %s"
 )
 
-const (
-	extension = ".md"
-	names     = data.Name("names")
-)
+const extension = ".md"
 
 var (
 	docStringCache     = map[string][]byte{}
