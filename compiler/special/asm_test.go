@@ -37,17 +37,18 @@ func TestAsmJump(t *testing.T) {
 	as := assert.New(t)
 	as.EvalTo(`
 		(define* test
-			(lambda () (asm*
-				.local some-value :val
-				true
-				store some-value
-				load some-value
-				cond-jump :first
-				zero
-				jump :second
-			:first
-				one
-			:second)))
+			(lambda () 
+				(asm*
+					.local some-value :val
+					true
+					store some-value
+					load some-value
+					cond-jump :first
+					zero
+					jump :second
+				:first
+					one
+				:second)))
 		(test)
     `, I(1))
 }
@@ -75,13 +76,15 @@ func TestAsmLabelNumbering(t *testing.T) {
 		isa.New(isa.Label, 0),
 		isa.New(isa.NoOp),
 		isa.New(isa.Label, 1),
-	}, `(asm*
-		jump :second
-		no-op
-		jump :first
- 	:second
-		no-op
-	:first)`)
+	}, `
+		(asm*
+			jump :second
+			no-op
+			jump :first
+		:second
+			no-op
+		:first)
+	`)
 }
 
 func TestOutOfScopeError(t *testing.T) {
@@ -103,7 +106,9 @@ func TestOutOfScopeError(t *testing.T) {
 func TestLocalScopeError(t *testing.T) {
 	as := assert.New(t)
 	defer as.ExpectPanic(encoder.ErrNoLocalScope)
-	as.Eval(`(asm*
-		.pop-locals
-		.local hello :val)`)
+	as.Eval(`
+		(asm*
+			.pop-locals
+			.local hello :val)
+	`)
 }
