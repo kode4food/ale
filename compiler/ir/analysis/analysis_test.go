@@ -1,6 +1,7 @@
 package analysis_test
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/kode4food/ale/compiler/encoder"
@@ -39,7 +40,7 @@ func TestVerifyBadBranchStack(t *testing.T) {
 	)
 	e.Emit(isa.Return)
 
-	defer as.ExpectProgrammerError("branches should end in the same state")
+	defer as.ExpectPanic(analysis.ErrBadBranchTermination)
 	analysis.Verify(e.Code())
 }
 
@@ -49,7 +50,7 @@ func TestVerifyBadEndStack(t *testing.T) {
 	e := assert.GetTestEncoder()
 	e.Emit(isa.True)
 
-	defer as.ExpectProgrammerError("invalid stack end-state: 1")
+	defer as.ExpectPanic(fmt.Sprintf(analysis.ErrBadStackTermination, 1))
 	analysis.Verify(e.Code())
 }
 
@@ -76,6 +77,6 @@ func TestVerifyBadJump(t *testing.T) {
 	e.Emit(isa.Pop)
 	e.Emit(isa.Jump, lbl)
 
-	defer as.ExpectPanic("label not anchored: 0")
+	defer as.ExpectPanic(fmt.Sprintf(analysis.ErrLabelNotAnchored, 0))
 	analysis.Verify(e.Code())
 }

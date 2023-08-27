@@ -1,5 +1,7 @@
 package isa
 
+import "errors"
+
 type (
 	flattener struct {
 		labels labels
@@ -18,7 +20,7 @@ type (
 
 // Error messages
 const (
-	errLabelAlreadyAnchored = "label has already been anchored"
+	ErrLabelAlreadyAnchored = "label has already been anchored"
 )
 
 // Flatten takes a set of instructions and flattens them into something that
@@ -88,8 +90,7 @@ func (f *flattener) handleJump(inst *Instruction) {
 func (f *flattener) handleLabel(inst *Instruction) {
 	l := f.getLabel(Index(inst.Args[0]))
 	if l.anchored {
-		// Programmer error
-		panic(errLabelAlreadyAnchored)
+		panic(errors.New(ErrLabelAlreadyAnchored))
 	}
 	l.offset = f.nextOutputOffset()
 	l.anchored = true

@@ -1,6 +1,7 @@
 package encoder_test
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/kode4food/ale/compiler/ir/analysis"
@@ -40,6 +41,6 @@ func TestLabelDoubleAnchor(t *testing.T) {
 	e.Emit(isa.Label, l1)
 	e.Emit(isa.Jump, l1)
 
-	defer as.ExpectPanic("label anchored multiple times: 0")
+	defer as.ExpectPanic(fmt.Sprintf(analysis.ErrLabelMultipleAnchors, 0))
 	analysis.Verify(e.Code())
 }

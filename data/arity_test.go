@@ -45,6 +45,6 @@ func TestMakeChecker(t *testing.T) {
 	as.Nil(fn3(4))
 	as.EqualError(fn3(8), fmt.Sprintf(data.ErrRangedArity, 2, 7, 8))
 
-	defer as.ExpectPanic("too many arity check arguments")
+	defer as.ExpectPanic(data.ErrTooManyArguments)
 	data.MakeChecker(1, 2, 3)
 }

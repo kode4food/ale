@@ -9,11 +9,6 @@ import (
 	"github.com/kode4food/ale/runtime/isa"
 )
 
-// Error messages
-const (
-	errCannotCompile = "sequence cannot be compiled: %s"
-)
-
 var (
 	vectorSym = env.RootSymbol("vector")
 	objectSym = env.RootSymbol("object")
@@ -46,7 +41,7 @@ func Sequence(e encoder.Encoder, s data.Sequence) {
 		Object(e, s)
 	default:
 		// Programmer error
-		panic(fmt.Sprintf(errCannotCompile, s))
+		panic(fmt.Sprintf("sequence cannot be compiled: %s", s))
 	}
 }
 

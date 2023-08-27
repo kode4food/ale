@@ -7,11 +7,6 @@ import (
 	"github.com/kode4food/ale/runtime/isa"
 )
 
-// Error messages
-const (
-	errUnknownScopeType = "unknown scope type"
-)
-
 // Symbol encodes a symbol retrieval
 func Symbol(e encoder.Encoder, s data.Symbol) {
 	if l, ok := s.(data.LocalSymbol); ok {
@@ -52,7 +47,7 @@ func resolveLocal(e encoder.Encoder, l data.LocalSymbol) *encoder.ScopedCell {
 			e.Emit(isa.Closure, c.Index)
 		default:
 			// Programmer error
-			panic(errUnknownScopeType)
+			panic("unknown scope type")
 		}
 		return s
 	}

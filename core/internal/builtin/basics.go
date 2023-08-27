@@ -26,7 +26,7 @@ var Recover = data.Applicative(func(args ...data.Value) (res data.Value) {
 				res = rescue.Call(data.String(rec.Error()))
 			default:
 				// Programmer error
-				panic("rescue returned an invalid result")
+				panic("recover returned an invalid result")
 			}
 		}
 	}()

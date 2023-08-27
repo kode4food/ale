@@ -19,8 +19,6 @@ type Number interface {
 // Error messages
 const (
 	ErrDivideByZero = "divide by zero"
-
-	errCouldNotPurify = "could not purify: %v and %v"
 )
 
 // purify performs automatic contagion of operands
@@ -67,5 +65,5 @@ func purify(l, r Number) (Number, Number) {
 		}
 	}
 	// Programmer error
-	panic(fmt.Sprintf(errCouldNotPurify, l, r))
+	panic(fmt.Sprintf("could not purify: %v and %v", l, r))
 }

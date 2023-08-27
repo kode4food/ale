@@ -1,6 +1,7 @@
 package analysis
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/kode4food/ale/compiler/ir/visitor"
@@ -22,8 +23,7 @@ func verifyStackSize(code isa.Instructions) {
 	s := new(stackSizes)
 	s.calculateNode(visitor.Branch(code))
 	if s.endSize != 0 {
-		// Programmer error
-		panic(fmt.Sprintf(ErrBadStackTermination, s.endSize))
+		panic(fmt.Errorf(ErrBadStackTermination, s.endSize))
 	}
 }
 
@@ -66,8 +66,7 @@ func (s *stackSizes) calculateBranches(thenNode, elseNode visitor.Node) {
 	thenRes := s.calculateBranch(thenNode)
 	elseRes := s.calculateBranch(elseNode)
 	if elseRes.endSize != thenRes.endSize {
-		// Programmer error
-		panic(ErrBadBranchTermination)
+		panic(errors.New(ErrBadBranchTermination))
 	}
 	s.endSize += elseRes.endSize
 }

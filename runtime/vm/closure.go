@@ -9,11 +9,6 @@ import (
 	"github.com/kode4food/ale/runtime/isa"
 )
 
-// Error messages
-const (
-	errUnknownOpcode = "unknown opcode: %s"
-)
-
 type closure struct {
 	*Lambda
 	values data.Values
@@ -385,7 +380,7 @@ opSwitch:
 
 	default:
 		// Programmer error
-		panic(fmt.Sprintf(errUnknownOpcode, isa.Opcode(CODE[PC])))
+		panic(fmt.Sprintf("unknown opcode: %s", isa.Opcode(CODE[PC])))
 	}
 }
 

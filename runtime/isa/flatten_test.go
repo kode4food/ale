@@ -63,7 +63,7 @@ func TestForwardJump(t *testing.T) {
 func TestDoubleAnchor(t *testing.T) {
 	as := assert.New(t)
 
-	defer as.ExpectProgrammerError("label has already been anchored")
+	defer as.ExpectPanic(isa.ErrLabelAlreadyAnchored)
 
 	isa.Flatten(isa.Instructions{
 		isa.New(isa.Label, 0),

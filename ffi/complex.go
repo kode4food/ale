@@ -16,8 +16,6 @@ type (
 const (
 	ErrValueMustBeCons      = "value must be a cons cell"
 	ErrConsMustContainFloat = "components must be float values"
-
-	errIncorrectComplexKind = "complex kind is incorrect"
 )
 
 var (
@@ -34,7 +32,7 @@ func makeWrappedComplex(t reflect.Type) (Wrapper, error) {
 		return complex64Wrapper(k), nil
 	default:
 		// Programmer error
-		panic(errIncorrectComplexKind)
+		panic("complex kind is incorrect")
 	}
 }
 

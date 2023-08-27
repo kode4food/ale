@@ -17,11 +17,6 @@ type (
 	valEmitter  func(encoder.Encoder, data.Value)
 )
 
-// Error messages
-const (
-	errUnknownConvention = "unknown calling convention: %s"
-)
-
 // Call encodes a function call
 func Call(e encoder.Encoder, l data.List) {
 	if l.Count() == 0 {
@@ -98,7 +93,7 @@ func funcArgs(e encoder.Encoder, f data.Function, args data.Values) argsEmitter 
 		return normalArgs(e, args)
 	default:
 		// Programmer error
-		panic(fmt.Sprintf(errUnknownConvention, c))
+		panic(fmt.Sprintf("unknown calling convention: %s", c))
 	}
 }
 

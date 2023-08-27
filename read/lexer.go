@@ -23,8 +23,6 @@ type (
 const (
 	ErrStringNotTerminated = "string has no closing quote"
 	ErrUnexpectedCharacter = "unexpected character: %s"
-
-	errUnmatchedState = "unmatched lexing state"
 )
 
 const (
@@ -126,7 +124,7 @@ func matchToken(src string) (*Token, string) {
 		}
 	}
 	// Programmer error
-	panic(errUnmatchedState)
+	panic("unmatched lexing state")
 }
 
 func tokenState(t TokenType) tokenizer {

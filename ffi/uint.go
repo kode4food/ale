@@ -15,11 +15,6 @@ type (
 	uint8Wrapper  reflect.Kind
 )
 
-// Error messages
-const (
-	errIncorrectUnsignedIntKind = "uint kind is incorrect"
-)
-
 var (
 	uintZero   = reflect.ValueOf(uint(0))
 	uint64zero = reflect.ValueOf(uint64(0))
@@ -43,7 +38,7 @@ func makeWrappedUnsignedInt(t reflect.Type) (Wrapper, error) {
 		return uint8Wrapper(k), nil
 	default:
 		// Programmer error
-		panic(errIncorrectUnsignedIntKind)
+		panic("uint kind is incorrect")
 	}
 }
 

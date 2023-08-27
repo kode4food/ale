@@ -40,8 +40,6 @@ type (
 // Error messages
 const (
 	ErrSymbolNotDocumented = "symbol not documented: %s"
-
-	errNonStandardError = "non-standard error: %s"
 )
 
 const (
@@ -206,7 +204,7 @@ func toError(i any) error {
 		return errors.New(i.String())
 	default:
 		// Programmer error
-		panic(fmt.Sprintf(errNonStandardError, i))
+		panic(fmt.Sprintf("non-standard error: %s", i))
 	}
 }
 

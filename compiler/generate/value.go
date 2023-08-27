@@ -9,11 +9,6 @@ import (
 	"github.com/kode4food/ale/macro"
 )
 
-// Error messages
-const (
-	errUnknownValueType = "unknown value type: %s"
-)
-
 var consSym = env.RootSymbol("cons")
 
 // Value encodes an expression
@@ -30,7 +25,7 @@ func Value(e encoder.Encoder, v data.Value) {
 		Literal(e, expanded)
 	default:
 		// Programmer error
-		panic(fmt.Sprintf(errUnknownValueType, v))
+		panic(fmt.Sprintf("unknown value type: %s", v))
 	}
 }
 
