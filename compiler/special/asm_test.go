@@ -128,3 +128,19 @@ func TestAsmValue(t *testing.T) {
 		return)
 	`)
 }
+
+func TestAsmBranching(t *testing.T) {
+	as := assert.New(t)
+
+	as.EvalTo(`
+		(asm*
+			.value true
+			make-truthy
+			cond-jump :consequent
+			.value "nope"
+			jump :end
+		:consequent
+			.value "yep"
+		:end)
+    `, S("yep"))
+}
