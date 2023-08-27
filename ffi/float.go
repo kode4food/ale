@@ -15,8 +15,6 @@ type (
 // Error messages
 const (
 	ErrValueMustBeFloat = "value must be a float"
-
-	errIncorrectFloatKind = "float kind is incorrect"
 )
 
 var (
@@ -33,7 +31,7 @@ func makeWrappedFloat(t reflect.Type) (Wrapper, error) {
 		return float64Wrapper(k), nil
 	default:
 		// Programmer error
-		panic(errIncorrectFloatKind)
+		panic("float kind is incorrect")
 	}
 }
 

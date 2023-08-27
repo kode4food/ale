@@ -18,8 +18,6 @@ type (
 // Error messages
 const (
 	ErrValueMustBeInteger = "value must be an integer"
-
-	errIncorrectIntKind = "int kind is incorrect"
 )
 
 var (
@@ -45,7 +43,7 @@ func makeWrappedInt(t reflect.Type) (Wrapper, error) {
 		return int8Wrapper(k), nil
 	default:
 		// Programmer error
-		panic(errIncorrectIntKind)
+		panic("int kind is incorrect")
 	}
 }
 
