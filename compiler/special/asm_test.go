@@ -87,7 +87,7 @@ func TestAsmLabelNumbering(t *testing.T) {
 	`)
 }
 
-func TestOutOfScopeError(t *testing.T) {
+func TestAsmOutOfScopeError(t *testing.T) {
 	as := assert.New(t)
 	defer as.ExpectPanic(
 		fmt.Sprintf(special.ErrUnexpectedName, "wont-be-found"),
@@ -103,12 +103,28 @@ func TestOutOfScopeError(t *testing.T) {
     `)
 }
 
-func TestLocalScopeError(t *testing.T) {
+func TestAsmLocalScopeError(t *testing.T) {
 	as := assert.New(t)
 	defer as.ExpectPanic(encoder.ErrNoLocalScope)
 	as.Eval(`
 		(asm*
 			.pop-locals
 			.local hello :val)
+	`)
+}
+
+func TestAsmValue(t *testing.T) {
+	as := assert.New(t)
+	as.EvalTo(`(asm* .value (+ 1 2))`, I(3))
+	as.EncodesAs(isa.Instructions{
+		isa.New(isa.Two),
+		isa.New(isa.One),
+		isa.New(isa.Const, 0),
+		isa.New(isa.Call, 2),
+		isa.New(isa.Return),
+	}, `
+	(asm* 
+		.value (+ 1 2)
+		return)
 	`)
 }

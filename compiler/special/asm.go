@@ -4,6 +4,8 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/kode4food/ale/compiler/generate"
+
 	"github.com/kode4food/ale/compiler/encoder"
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/strings"
@@ -38,10 +40,9 @@ const (
 )
 
 var (
-	instCalls = getInstructionCalls()
-	encCalls  = getEncoderCalls()
-	genCalls  = getGeneratorCalls()
-	calls     = mergeCalls(instCalls, encCalls, genCalls)
+	instructionCalls = getInstructionCalls()
+	encoderCalls     = getEncoderCalls()
+	calls            = mergeCalls(instructionCalls, encoderCalls)
 
 	cellTypes = map[data.Keyword]encoder.CellType{
 		data.Keyword("val"):  encoder.ValueCell,
@@ -100,6 +101,12 @@ func makeEmitCall(oc isa.Opcode, argCount int) *call {
 
 func getEncoderCalls() callMap {
 	return callMap{
+		".value": {
+			Call: func(e encoder.Encoder, args ...data.Value) {
+				generate.Value(e, args[0])
+			},
+			argCount: 1,
+		},
 		".const": {
 			Call: func(e encoder.Encoder, args ...data.Value) {
 				index := e.AddConstant(args[0])
@@ -130,10 +137,6 @@ func getEncoderCalls() callMap {
 			},
 		},
 	}
-}
-
-func getGeneratorCalls() callMap {
-	return callMap{}
 }
 
 func mergeCalls(maps ...callMap) callMap {
