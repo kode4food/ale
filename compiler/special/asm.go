@@ -4,9 +4,8 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/kode4food/ale/compiler/generate"
-
 	"github.com/kode4food/ale/compiler/encoder"
+	"github.com/kode4food/ale/compiler/generate"
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/strings"
 	"github.com/kode4food/ale/runtime/isa"
@@ -37,6 +36,14 @@ const (
 	ErrUnexpectedName        = "unexpected local name: %s"
 	ErrUnexpectedLabel       = "unexpected label: %s"
 	ErrExpectedWord          = "expected unsigned word: %s"
+)
+
+const (
+	Value      = data.Name(".value")
+	Const      = data.Name(".const")
+	Local      = data.Name(".local")
+	PushLocals = data.Name(".push-locals")
+	PopLocals  = data.Name(".pop-locals")
 )
 
 var (
@@ -101,20 +108,20 @@ func makeEmitCall(oc isa.Opcode, argCount int) *call {
 
 func getEncoderCalls() callMap {
 	return callMap{
-		".value": {
+		Value: {
 			Call: func(e encoder.Encoder, args ...data.Value) {
 				generate.Value(e, args[0])
 			},
 			argCount: 1,
 		},
-		".const": {
+		Const: {
 			Call: func(e encoder.Encoder, args ...data.Value) {
 				index := e.AddConstant(args[0])
 				e.Emit(isa.Const, index)
 			},
 			argCount: 1,
 		},
-		".local": {
+		Local: {
 			Call: func(e encoder.Encoder, args ...data.Value) {
 				name := args[0].(data.LocalSymbol).Name()
 				kwd := args[1].(data.Keyword)
@@ -126,12 +133,12 @@ func getEncoderCalls() callMap {
 			},
 			argCount: 2,
 		},
-		".push-locals": {
+		PushLocals: {
 			Call: func(e encoder.Encoder, _ ...data.Value) {
 				e.PushLocals()
 			},
 		},
-		".pop-locals": {
+		PopLocals: {
 			Call: func(e encoder.Encoder, _ ...data.Value) {
 				e.PopLocals()
 			},
