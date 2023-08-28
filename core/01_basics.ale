@@ -8,16 +8,16 @@
 (define* nil '())
 
 (define* if*
-   (asm*
-     !make-encoder (predicate consequent alternative)
-     .value predicate
-     make-truthy
-     cond-jump :consequent
-     .value alternative
-     jump :end
-   :consequent
-     .value consequent
-   :end))
+  (asm*
+    !make-encoder (predicate consequent alternative)
+        .value predicate
+        make-truthy
+        cond-jump :consequent
+        .value alternative
+        jump :end
+    :consequent
+        .value consequent
+    :end))
 
 ;; syntax-quoting requires it
 (define* concat!
