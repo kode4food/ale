@@ -66,7 +66,7 @@ func splitCondJump(code isa.Instructions, condJumpIdx int) *branches {
 
 	condJump := code[condJumpIdx]
 	rest := code[condJumpIdx+1:]
-	thenIdx, thenLabel := findLabel(rest, isa.Index(condJump.Args[0]))
+	thenIdx, thenLabel := findLabel(rest, isa.Index(condJump.Operands[0]))
 	if thenIdx <= 0 {
 		return nil // not part of this block
 	}
@@ -77,7 +77,7 @@ func splitCondJump(code isa.Instructions, condJumpIdx int) *branches {
 		return nil // not created with build.Cond
 	}
 
-	joinIdx, joinLabel := findLabel(rest, isa.Index(elseJump.Args[0]))
+	joinIdx, joinLabel := findLabel(rest, isa.Index(elseJump.Operands[0]))
 
 	return &branches{
 		prologue:   prologue,
@@ -137,7 +137,7 @@ func (i *instructions) String() string {
 func findLabel(code isa.Instructions, lbl isa.Index) (int, *isa.Instruction) {
 	ic := lbl.Word()
 	for pc, inst := range code {
-		if inst.Opcode == isa.Label && inst.Args[0] == ic {
+		if inst.Opcode == isa.Label && inst.Operands[0] == ic {
 			return pc, inst
 		}
 	}

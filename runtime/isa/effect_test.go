@@ -12,7 +12,8 @@ func TestEffects(t *testing.T) {
 	as := assert.New(t)
 
 	e1 := isa.MustGetEffect(isa.CondJump)
-	as.Number(2, e1.Size)
+	as.Equal(1, len(e1.Operands))
+	as.Equal(isa.Labels, e1.Operands[0])
 
 	defer func() {
 		rec := recover()

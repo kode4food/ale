@@ -21,7 +21,7 @@ func tailCallMapper(i isa.Instructions) isa.Instructions {
 	case isa.Call1:
 		argCount = 1
 	case isa.Call:
-		argCount = i[0].Args[0]
+		argCount = i[0].Operands[0]
 	}
 	return isa.Instructions{
 		isa.New(isa.TailCall, argCount),

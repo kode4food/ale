@@ -26,10 +26,10 @@ type (
 		Word() Word
 	}
 
-	// Instruction represents a single instruction and its arguments
+	// Instruction represents a single instruction and its operands
 	Instruction struct {
 		Opcode
-		Args []Word
+		Operands []Word
 	}
 
 	// Instructions represent a set of Instructions
@@ -67,12 +67,12 @@ func (o Offset) Word() Word {
 // New creates a new Instruction instance
 func New(oc Opcode, args ...Word) *Instruction {
 	effect := MustGetEffect(oc)
-	if len(args) != effect.Size-1 {
+	if len(args) != len(effect.Operands) {
 		panic(fmt.Errorf(ErrBadInstructionArgs, oc.String()))
 	}
 	return &Instruction{
-		Opcode: oc,
-		Args:   args,
+		Opcode:   oc,
+		Operands: args,
 	}
 }
 
@@ -87,11 +87,11 @@ func (i Instructions) String() string {
 // Equal compares this Instruction to another for equality
 func (i *Instruction) Equal(v data.Value) bool {
 	if v, ok := v.(*Instruction); ok {
-		if i.Opcode != v.Opcode || len(i.Args) != len(v.Args) {
+		if i.Opcode != v.Opcode || len(i.Operands) != len(v.Operands) {
 			return false
 		}
-		for i, l := range i.Args {
-			if l != v.Args[i] {
+		for i, l := range i.Operands {
+			if l != v.Operands[i] {
 				return false
 			}
 		}
@@ -101,7 +101,7 @@ func (i *Instruction) Equal(v data.Value) bool {
 }
 
 func (i *Instruction) String() string {
-	args := i.Args
+	args := i.Operands
 	strs := make([]string, len(args))
 	for i, a := range args {
 		strs[i] = fmt.Sprintf("%d", a)

@@ -2,20 +2,31 @@ package isa
 
 import "fmt"
 
-// Effect captures how an instruction affects the stack and PC
-type Effect struct {
-	Size  int // Fixed size of the encoded Instruction
-	Pop   int // Fixed number of items to be popped from the stack
-	Push  int // Fixed number of items to be pushed onto the stack
-	DPop  int // Dynamic number of items to be popped (arg number)
-	DPush int // Dynamic number of items to be pushed (arg number)
+type (
+	// Effect captures how an instruction impacts the state of the machine
+	Effect struct {
+		Operands []ActOn // Describe elements the operands act on
 
-	Ignore    bool // Skip this instruction (ex: Labels and NoOps)
-	Exit      bool // Results in a termination of the VM
-	Locals    bool // Instruction operates on Locals
-	Constants bool // Instruction operates on Constants
-	Labels    bool // Instruction operates on Labels
-}
+		Pop  int // Fixed number of items to be popped from the stack
+		Push int // Fixed number of items to be pushed onto the stack
+		DPop int // Dynamic number of items to be popped (first operand)
+
+		Ignore bool // Skip this instruction (ex: Labels and NoOps)
+		Exit   bool // Results in a termination of the VM
+	}
+
+	ActOn int
+)
+
+const (
+	Nothing ActOn = iota
+	Locals
+	Constants
+	Labels
+	Arguments
+	Stack
+	Values
+)
 
 // Error messages
 const (
@@ -24,59 +35,59 @@ const (
 
 // Effects is a lookup table of instruction effects
 var Effects = map[Opcode]*Effect{
-	Add:        {Size: 1, Pop: 2, Push: 1},
-	Arg:        {Size: 2, Push: 1},
-	ArgLen:     {Size: 1, Push: 1},
-	Bind:       {Size: 1, Pop: 2},
-	BindRef:    {Size: 1, Pop: 2},
-	Call:       {Size: 2, Pop: 1, Push: 1, DPop: 1},
-	Call0:      {Size: 1, Pop: 1, Push: 1},
-	Call1:      {Size: 1, Pop: 2, Push: 1},
-	Closure:    {Size: 2, Push: 1},
-	CondJump:   {Size: 2, Pop: 1, Labels: true},
-	Const:      {Size: 2, Push: 1, Constants: true},
-	Deref:      {Size: 1, Pop: 1, Push: 1},
-	Div:        {Size: 1, Pop: 2, Push: 1},
-	Dup:        {Size: 1, Pop: 1, Push: 2},
-	Eq:         {Size: 1, Pop: 2, Push: 1},
-	False:      {Size: 1, Push: 1},
-	Gt:         {Size: 1, Pop: 2, Push: 1},
-	Gte:        {Size: 1, Pop: 2, Push: 1},
-	Jump:       {Size: 2, Labels: true},
-	Label:      {Size: 2, Ignore: true, Labels: true},
-	Load:       {Size: 2, Push: 1, Locals: true},
-	Lt:         {Size: 1, Pop: 2, Push: 1},
-	Lte:        {Size: 1, Pop: 2, Push: 1},
-	MakeTruthy: {Size: 1, Pop: 1, Push: 1},
-	Mod:        {Size: 1, Pop: 2, Push: 1},
-	Mul:        {Size: 1, Pop: 2, Push: 1},
-	Neg:        {Size: 1, Pop: 1, Push: 1},
-	NegInf:     {Size: 1, Push: 1},
-	NegOne:     {Size: 1, Push: 1},
-	Neq:        {Size: 1, Pop: 2, Push: 1},
-	NewRef:     {Size: 1, Push: 1},
-	NoOp:       {Size: 1, Ignore: true},
-	Not:        {Size: 1, Pop: 1, Push: 1},
-	Nil:        {Size: 1, Push: 1},
-	One:        {Size: 1, Push: 1},
-	Panic:      {Size: 1, Pop: 1, Exit: true},
-	Pop:        {Size: 1, Pop: 1},
-	PosInf:     {Size: 1, Push: 1},
-	Declare:    {Size: 1, Pop: 1},
-	Private:    {Size: 1, Pop: 1},
-	Resolve:    {Size: 1, Pop: 1, Push: 1},
-	RestArg:    {Size: 2, Push: 1},
-	RetFalse:   {Size: 1, Exit: true},
-	RetNil:     {Size: 1, Exit: true},
-	RetTrue:    {Size: 1, Exit: true},
-	Return:     {Size: 1, Pop: 1, Exit: true},
-	Self:       {Size: 1, Push: 1},
-	Store:      {Size: 2, Pop: 1, Locals: true},
-	Sub:        {Size: 1, Pop: 2, Push: 1},
-	TailCall:   {Size: 2, Pop: 1, DPop: 1},
-	True:       {Size: 1, Push: 1},
-	Two:        {Size: 1, Push: 1},
-	Zero:       {Size: 1, Push: 1},
+	Add:        {Pop: 2, Push: 1},
+	Arg:        {Push: 1, Operands: []ActOn{Arguments}},
+	ArgLen:     {Push: 1},
+	Bind:       {Pop: 2},
+	BindRef:    {Pop: 2},
+	Call:       {Pop: 1, Push: 1, DPop: 1, Operands: []ActOn{Stack}},
+	Call0:      {Pop: 1, Push: 1},
+	Call1:      {Pop: 2, Push: 1},
+	Closure:    {Push: 1, Operands: []ActOn{Values}},
+	CondJump:   {Pop: 1, Operands: []ActOn{Labels}},
+	Const:      {Push: 1, Operands: []ActOn{Constants}},
+	Deref:      {Pop: 1, Push: 1},
+	Div:        {Pop: 2, Push: 1},
+	Dup:        {Pop: 1, Push: 2},
+	Eq:         {Pop: 2, Push: 1},
+	False:      {Push: 1},
+	Gt:         {Pop: 2, Push: 1},
+	Gte:        {Pop: 2, Push: 1},
+	Jump:       {Operands: []ActOn{Labels}},
+	Label:      {Ignore: true, Operands: []ActOn{Labels}},
+	Load:       {Push: 1, Operands: []ActOn{Locals}},
+	Lt:         {Pop: 2, Push: 1},
+	Lte:        {Pop: 2, Push: 1},
+	MakeTruthy: {Pop: 1, Push: 1},
+	Mod:        {Pop: 2, Push: 1},
+	Mul:        {Pop: 2, Push: 1},
+	Neg:        {Pop: 1, Push: 1},
+	NegInf:     {Push: 1},
+	NegOne:     {Push: 1},
+	Neq:        {Pop: 2, Push: 1},
+	NewRef:     {Push: 1},
+	NoOp:       {Ignore: true},
+	Not:        {Pop: 1, Push: 1},
+	Nil:        {Push: 1},
+	One:        {Push: 1},
+	Panic:      {Pop: 1, Exit: true},
+	Pop:        {Pop: 1},
+	PosInf:     {Push: 1},
+	Declare:    {Pop: 1},
+	Private:    {Pop: 1},
+	Resolve:    {Pop: 1, Push: 1},
+	RestArg:    {Push: 1, Operands: []ActOn{Arguments}},
+	RetFalse:   {Exit: true},
+	RetNil:     {Exit: true},
+	RetTrue:    {Exit: true},
+	Return:     {Pop: 1, Exit: true},
+	Self:       {Push: 1},
+	Store:      {Pop: 1, Operands: []ActOn{Locals}},
+	Sub:        {Pop: 2, Push: 1},
+	TailCall:   {Pop: 1, DPop: 1, Operands: []ActOn{Stack}},
+	True:       {Push: 1},
+	Two:        {Push: 1},
+	Zero:       {Push: 1},
 }
 
 // MustGetEffect gives you effect information or explodes violently

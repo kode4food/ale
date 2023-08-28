@@ -56,7 +56,7 @@ func (f *flattener) handleInst(l *Instruction) {
 			return
 		}
 		f.output = append(f.output, Word(oc))
-		f.output = append(f.output, l.Args...)
+		f.output = append(f.output, l.Operands...)
 	}
 }
 
@@ -79,7 +79,7 @@ func (f *flattener) addLabelBackRef(l *label) {
 }
 
 func (f *flattener) handleJump(inst *Instruction) {
-	l := f.getLabel(Index(inst.Args[0]))
+	l := f.getLabel(Index(inst.Operands[0]))
 	f.output = append(f.output, Word(inst.Opcode))
 	if !l.anchored {
 		f.addLabelBackRef(l)
@@ -88,7 +88,7 @@ func (f *flattener) handleJump(inst *Instruction) {
 }
 
 func (f *flattener) handleLabel(inst *Instruction) {
-	l := f.getLabel(Index(inst.Args[0]))
+	l := f.getLabel(Index(inst.Operands[0]))
 	if l.anchored {
 		panic(errors.New(ErrLabelAlreadyAnchored))
 	}

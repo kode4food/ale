@@ -92,7 +92,7 @@ func getInstructionCalls() callMap {
 		name := data.Name(strings.CamelToSnake(oc.String()))
 		res[name] = func(oc isa.Opcode, argCount int) *call {
 			return makeEmitCall(oc, argCount)
-		}(oc, effect.Size-1)
+		}(oc, len(effect.Operands))
 	}
 	return res
 }
@@ -184,9 +184,10 @@ func (e *asmEncoder) getLabelIndex(k data.Keyword) isa.Index {
 }
 
 func (e *asmEncoder) toWords(oc isa.Opcode, args data.Values) []isa.Coder {
-	toWord := e.getToWordFor(isa.Effects[oc])
 	res := make([]isa.Coder, len(args))
 	for i, a := range args {
+		ao := isa.Effects[oc].Operands[i]
+		toWord := e.getToWordFor(ao)
 		r, err := toWord(a)
 		if err != nil {
 			panic(err)
@@ -196,27 +197,27 @@ func (e *asmEncoder) toWords(oc isa.Opcode, args data.Values) []isa.Coder {
 	return res
 }
 
-func (e *asmEncoder) getToWordFor(effect *isa.Effect) toWordFunc {
-	fn := toWord
-	if effect.Locals {
-		fn = makeNameToWord(e, fn)
+func (e *asmEncoder) getToWordFor(ao isa.ActOn) toWordFunc {
+	switch ao {
+	case isa.Locals:
+		return makeNameToWord(e)
+	case isa.Labels:
+		return makeLabelToWord(e)
+	default:
+		return toWord
 	}
-	if effect.Labels {
-		fn = makeLabelToWord(e, fn)
-	}
-	return fn
 }
 
-func makeLabelToWord(e *asmEncoder, next toWordFunc) toWordFunc {
+func makeLabelToWord(e *asmEncoder) toWordFunc {
 	return wrapToWordError(func(val data.Value) (isa.Word, error) {
 		if val, ok := val.(data.Keyword); ok {
 			return isa.Word(e.getLabelIndex(val)), nil
 		}
-		return next(val)
+		return toWord(val)
 	}, ErrUnexpectedLabel)
 }
 
-func makeNameToWord(e *asmEncoder, next toWordFunc) toWordFunc {
+func makeNameToWord(e *asmEncoder) toWordFunc {
 	return wrapToWordError(func(val data.Value) (isa.Word, error) {
 		if val, ok := val.(data.LocalSymbol); ok {
 			if cell, ok := e.ResolveLocal(val.Name()); ok {
@@ -224,7 +225,7 @@ func makeNameToWord(e *asmEncoder, next toWordFunc) toWordFunc {
 			}
 			return 0, fmt.Errorf(ErrUnexpectedName, val)
 		}
-		return next(val)
+		return toWord(val)
 	}, ErrUnexpectedName)
 }
 

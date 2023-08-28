@@ -24,9 +24,9 @@ func (w *Wrapper) Instructions(expected, actual isa.Instructions) {
 	for i, l := range expected {
 		a := actual[i]
 		w.Assertions.Equal(l.Opcode, a.Opcode)
-		w.Assertions.Equal(len(l.Args), len(a.Args))
-		if len(l.Args) > 0 {
-			w.Assertions.Equal(l.Args, a.Args)
+		w.Assertions.Equal(len(l.Operands), len(a.Operands))
+		if len(l.Operands) > 0 {
+			w.Assertions.Equal(l.Operands, a.Operands)
 		}
 	}
 }
