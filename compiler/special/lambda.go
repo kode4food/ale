@@ -26,7 +26,8 @@ type (
 
 // Error messages
 const (
-	ErrUnexpectedLambdaSyntax = "unexpected lambda syntax: %s"
+	ErrUnexpectedLambdaSyntax   = "unexpected lambda syntax: %s"
+	ErrUnexpectedArgumentSyntax = "unexpected argument syntax: %s"
 )
 
 // Lambda encodes a lambda
@@ -172,7 +173,7 @@ func parseArgBindings(v data.Value) (data.Names, bool) {
 	case data.Cons:
 		return parseConsArgNames(v), true
 	default:
-		panic(fmt.Errorf(ErrUnexpectedLambdaSyntax, v))
+		panic(fmt.Errorf(ErrUnexpectedArgumentSyntax, v))
 	}
 }
 

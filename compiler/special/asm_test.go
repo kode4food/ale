@@ -129,18 +129,22 @@ func TestAsmValue(t *testing.T) {
 	`)
 }
 
-func TestAsmBranching(t *testing.T) {
+func TestAsmMakeEncoder(t *testing.T) {
 	as := assert.New(t)
 
 	as.EvalTo(`
-		(asm*
-			.value true
-			make-truthy
-			cond-jump :consequent
-			.value "nope"
-			jump :end
-		:consequent
-			.value "yep"
-		:end)
+		(define* if'
+			(asm*
+				!make-encoder (predicate consequent alternative)
+				.value predicate
+				make-truthy
+				cond-jump :consequent
+				.value alternative
+				jump :end
+			:consequent
+				.value consequent
+			:end))
+
+		(if' true "yep" "nope")
     `, S("yep"))
 }

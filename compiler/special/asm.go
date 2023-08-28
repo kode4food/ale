@@ -15,6 +15,7 @@ type (
 	asmEncoder struct {
 		encoder.Encoder
 		labels map[data.Name]isa.Index
+		args   map[data.Name]data.Value
 	}
 
 	call struct {
@@ -39,11 +40,12 @@ const (
 )
 
 const (
-	Value      = data.Name(".value")
-	Const      = data.Name(".const")
-	Local      = data.Name(".local")
-	PushLocals = data.Name(".push-locals")
-	PopLocals  = data.Name(".pop-locals")
+	MakeEncoder = data.Name("!make-encoder")
+	Value       = data.Name(".value")
+	Const       = data.Name(".const")
+	Local       = data.Name(".local")
+	PushLocals  = data.Name(".push-locals")
+	PopLocals   = data.Name(".pop-locals")
 )
 
 var (
@@ -60,20 +62,60 @@ var (
 
 // Asm provides indirect access to the Encoder's methods and generators
 func Asm(e encoder.Encoder, args ...data.Value) {
-	ae := &asmEncoder{
+	makeEncoder(e).process(data.NewVector(args...))
+}
+
+func makeEncoder(e encoder.Encoder) *asmEncoder {
+	return &asmEncoder{
 		Encoder: e,
 		labels:  map[data.Name]isa.Index{},
+		args:    map[data.Name]data.Value{},
 	}
-	v := data.NewVector(args...)
-	for f, r, ok := v.Split(); ok; f, r, ok = r.Split() {
+}
+
+func (e *asmEncoder) withArgs(n data.Names, v data.Values) *asmEncoder {
+	res := *e
+	args := make(map[data.Name]data.Value, len(n))
+	for i, k := range n {
+		args[k] = v[i]
+	}
+	res.args = args
+	return &res
+}
+
+func (e *asmEncoder) process(forms data.Sequence) {
+	if v, r, ok := take(forms, 2); ok {
+		if l, ok := v[0].(data.LocalSymbol); ok {
+			switch l.Name() {
+			case MakeEncoder:
+				e.makeEncoder(v[1], r)
+				return
+			}
+		}
+	}
+	e.encode(forms)
+}
+
+func (e *asmEncoder) makeEncoder(arg data.Value, forms data.Sequence) {
+	names := parseListArgNames(arg.(data.List))
+	fn := func(e encoder.Encoder, args ...data.Value) {
+		ae := makeEncoder(e).withArgs(names, args)
+		data.AssertFixed(len(names), len(args))
+		ae.process(forms)
+	}
+	e.Emit(isa.Const, e.AddConstant(encoder.Call(fn)))
+}
+
+func (e *asmEncoder) encode(forms data.Sequence) {
+	for f, r, ok := forms.Split(); ok; f, r, ok = r.Split() {
 		switch v := f.(type) {
 		case data.Keyword:
-			e.Emit(isa.Label, ae.getLabelIndex(v))
+			e.Emit(isa.Label, e.getLabelIndex(v))
 		case data.LocalSymbol:
 			n := v.Name()
 			if d, ok := calls[n]; ok {
 				if args, rest, ok := take(r, d.argCount); ok {
-					d.Call(ae, args...)
+					d.Call(e, args...)
 					r = rest
 					continue
 				}
@@ -84,6 +126,62 @@ func Asm(e encoder.Encoder, args ...data.Value) {
 			panic(fmt.Errorf(ErrUnexpectedForm, f.String()))
 		}
 	}
+}
+
+func (e *asmEncoder) getLabelIndex(k data.Keyword) isa.Index {
+	name := k.Name()
+	if idx, ok := e.labels[name]; ok {
+		return idx
+	}
+	idx := e.NewLabel()
+	e.labels[name] = idx
+	return idx
+}
+
+func (e *asmEncoder) toWords(oc isa.Opcode, args data.Values) []isa.Coder {
+	res := make([]isa.Coder, len(args))
+	for i, a := range args {
+		ao := isa.Effects[oc].Operands[i]
+		toWord := e.getToWordFor(ao)
+		r, err := toWord(a)
+		if err != nil {
+			panic(err)
+		}
+		res[i] = r
+	}
+	return res
+}
+
+func (e *asmEncoder) getToWordFor(ao isa.ActOn) toWordFunc {
+	switch ao {
+	case isa.Locals:
+		return e.makeNameToWord()
+	case isa.Labels:
+		return e.makeLabelToWord()
+	default:
+		return toWord
+	}
+}
+
+func (e *asmEncoder) makeLabelToWord() toWordFunc {
+	return wrapToWordError(func(val data.Value) (isa.Word, error) {
+		if val, ok := val.(data.Keyword); ok {
+			return isa.Word(e.getLabelIndex(val)), nil
+		}
+		return toWord(val)
+	}, ErrUnexpectedLabel)
+}
+
+func (e *asmEncoder) makeNameToWord() toWordFunc {
+	return wrapToWordError(func(val data.Value) (isa.Word, error) {
+		if val, ok := val.(data.LocalSymbol); ok {
+			if cell, ok := e.ResolveLocal(val.Name()); ok {
+				return isa.Word(cell.Index), nil
+			}
+			return 0, fmt.Errorf(ErrUnexpectedName, val)
+		}
+		return toWord(val)
+	}, ErrUnexpectedName)
 }
 
 func getInstructionCalls() callMap {
@@ -110,6 +208,12 @@ func getEncoderCalls() callMap {
 	return callMap{
 		Value: {
 			Call: func(e encoder.Encoder, args ...data.Value) {
+				if arg, ok := args[0].(data.LocalSymbol); ok {
+					if v, ok := e.(*asmEncoder).args[arg.Name()]; ok {
+						generate.Value(e, v)
+						return
+					}
+				}
 				generate.Value(e, args[0])
 			},
 			argCount: 1,
@@ -171,62 +275,6 @@ func take(s data.Sequence, count int) (data.Values, data.Sequence, bool) {
 		res[i] = f
 	}
 	return res, s, true
-}
-
-func (e *asmEncoder) getLabelIndex(k data.Keyword) isa.Index {
-	name := k.Name()
-	if idx, ok := e.labels[name]; ok {
-		return idx
-	}
-	idx := e.NewLabel()
-	e.labels[name] = idx
-	return idx
-}
-
-func (e *asmEncoder) toWords(oc isa.Opcode, args data.Values) []isa.Coder {
-	res := make([]isa.Coder, len(args))
-	for i, a := range args {
-		ao := isa.Effects[oc].Operands[i]
-		toWord := e.getToWordFor(ao)
-		r, err := toWord(a)
-		if err != nil {
-			panic(err)
-		}
-		res[i] = r
-	}
-	return res
-}
-
-func (e *asmEncoder) getToWordFor(ao isa.ActOn) toWordFunc {
-	switch ao {
-	case isa.Locals:
-		return makeNameToWord(e)
-	case isa.Labels:
-		return makeLabelToWord(e)
-	default:
-		return toWord
-	}
-}
-
-func makeLabelToWord(e *asmEncoder) toWordFunc {
-	return wrapToWordError(func(val data.Value) (isa.Word, error) {
-		if val, ok := val.(data.Keyword); ok {
-			return isa.Word(e.getLabelIndex(val)), nil
-		}
-		return toWord(val)
-	}, ErrUnexpectedLabel)
-}
-
-func makeNameToWord(e *asmEncoder) toWordFunc {
-	return wrapToWordError(func(val data.Value) (isa.Word, error) {
-		if val, ok := val.(data.LocalSymbol); ok {
-			if cell, ok := e.ResolveLocal(val.Name()); ok {
-				return isa.Word(cell.Index), nil
-			}
-			return 0, fmt.Errorf(ErrUnexpectedName, val)
-		}
-		return toWord(val)
-	}, ErrUnexpectedName)
 }
 
 func wrapToWordError(toWord toWordFunc, errStr string) toWordFunc {
