@@ -136,14 +136,14 @@ func TestAsmMakeEncoder(t *testing.T) {
 		(define* if'
 			(asm*
 				!make-encoder (predicate consequent alternative)
-				.value predicate
-				make-truthy
-				cond-jump :consequent
-				.value alternative
-				jump :end
-			:consequent
-				.value consequent
-			:end))
+					.value predicate
+					make-truthy
+					cond-jump :consequent
+					.value alternative
+					jump :end
+				:consequent
+					.value consequent
+				:end))
 
 		(if' true "yep" "nope")
     `, S("yep"))
