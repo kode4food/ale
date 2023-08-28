@@ -82,7 +82,6 @@
 (def-special declare*)
 (def-special define*)
 (def-special eval)
-(def-special if)
 (def-special lambda)
 (def-special let)
 (def-special let-rec)

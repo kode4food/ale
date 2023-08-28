@@ -75,7 +75,6 @@ func (b *bootstrap) specialForms() {
 		"declare*":      special.Declare,
 		"define*":       special.Define,
 		"eval":          special.Eval,
-		"if":            special.If,
 		"lambda":        special.Lambda,
 		"let":           special.Let,
 		"let-rec":       special.LetMutual,

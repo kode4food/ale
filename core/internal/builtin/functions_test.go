@@ -54,7 +54,7 @@ func TestFunctionPredicates(t *testing.T) {
 	as.False(builtin.IsSpecial.Call(builtin.Str))
 	as.True(builtin.IsApply.Call(builtin.Str))
 
-	i, ok := e.GetRoot().Resolve("if")
+	i, ok := e.GetRoot().Resolve("if*")
 	as.True(ok && i.IsBound())
 	as.True(builtin.IsSpecial.Call(i.Value()))
 	as.False(builtin.IsApply.Call(i.Value()))

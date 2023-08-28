@@ -99,8 +99,8 @@ func (e *asmEncoder) process(forms data.Sequence) {
 func (e *asmEncoder) makeEncoder(arg data.Value, forms data.Sequence) {
 	names := parseListArgNames(arg.(data.List))
 	fn := func(e encoder.Encoder, args ...data.Value) {
-		ae := makeEncoder(e).withArgs(names, args)
 		data.AssertFixed(len(names), len(args))
+		ae := makeEncoder(e).withArgs(names, args)
 		ae.process(forms)
 	}
 	e.Emit(isa.Const, e.AddConstant(encoder.Call(fn)))

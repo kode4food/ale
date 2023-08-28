@@ -12,8 +12,10 @@ func TestMacroPredicatesEval(t *testing.T) {
 	as := assert.New(t)
 	as.EvalTo(`(macro? cond)`, data.True)
 	as.EvalTo(`(!macro? cond)`, data.False)
-	as.EvalTo(`(macro? if)`, data.False)
-	as.EvalTo(`(!macro? if)`, data.True)
+	as.EvalTo(`(macro? if*)`, data.False)
+	as.EvalTo(`(!macro? if*)`, data.True)
+	as.EvalTo(`(macro? if)`, data.True)
+	as.EvalTo(`(!macro? if)`, data.False)
 }
 
 func TestMacroReplaceEval(t *testing.T) {
