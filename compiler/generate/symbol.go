@@ -36,7 +36,7 @@ func resolveLocal(e encoder.Encoder, l data.LocalSymbol) *encoder.ScopedCell {
 			c, _ := e.ResolveLocal(n)
 			e.Emit(isa.Load, c.Index)
 		case encoder.ArgScope:
-			c, _ := e.ResolveArg(n)
+			c, _ := e.ResolveParam(n)
 			if c.Type == encoder.RestCell {
 				e.Emit(isa.RestArg, c.Index)
 			} else {

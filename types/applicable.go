@@ -18,7 +18,7 @@ type (
 
 	// Signature describes an ApplicableType calling signature
 	Signature struct {
-		Arguments []Type
+		Params    []Type
 		TakesRest bool
 		Result    Type
 	}
@@ -69,7 +69,7 @@ func (s Signature) name() string {
 }
 
 func (s Signature) argNames() string {
-	a := s.Arguments
+	a := s.Params
 	if !s.TakesRest {
 		return typeList(a).name()
 	}
@@ -94,8 +94,8 @@ func (s Signature) accepts(c *Checker, other Signature) bool {
 	if !c.AcceptsChild(s.Result, other.Result) {
 		return false
 	}
-	sa := s.Arguments
-	oa := other.Arguments
+	sa := s.Params
+	oa := other.Params
 	if len(sa) != len(oa) || s.TakesRest != other.TakesRest {
 		return false
 	}

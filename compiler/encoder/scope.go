@@ -16,7 +16,7 @@ func (e *encoder) ResolveScoped(n data.Name) (*ScopedCell, bool) {
 	if i, ok := e.ResolveLocal(n); ok {
 		return newScopedCell(LocalScope, i.Cell), true
 	}
-	if _, ok := e.ResolveArg(n); ok {
+	if _, ok := e.ResolveParam(n); ok {
 		return newScopedCell(ArgScope, newCell(ValueCell, n)), true
 	}
 	if e.parent != nil {

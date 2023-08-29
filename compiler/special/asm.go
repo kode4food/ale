@@ -111,7 +111,7 @@ func (e *asmEncoder) makeEncoderCall(forms data.Sequence) {
 				return
 			}
 		}
-		panic(ErrNoMatchingArgumentPattern)
+		panic(ErrNoMatchingParamPattern)
 	}
 	e.Emit(isa.Const, e.AddConstant(encoder.Call(fn)))
 }

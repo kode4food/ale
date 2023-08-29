@@ -12,32 +12,32 @@ func TestApplicable(t *testing.T) {
 
 	a1 := types.Applicable(
 		types.Signature{
-			Arguments: []types.Type{types.Number, types.Number},
-			Result:    types.Bool,
+			Params: []types.Type{types.Number, types.Number},
+			Result: types.Bool,
 		},
 		types.Signature{
-			Arguments: []types.Type{types.Number},
-			Result:    types.Bool,
+			Params: []types.Type{types.Number},
+			Result: types.Bool,
 		},
 	)
 	as.Equal(`lambda(number,number->boolean,number->boolean)`, a1.Name())
 
 	a2 := types.Applicable(
 		types.Signature{
-			Arguments: []types.Type{types.Symbol, types.Bool},
-			Result:    types.Bool,
+			Params: []types.Type{types.Symbol, types.Bool},
+			Result: types.Bool,
 		},
 		types.Signature{
-			Arguments: []types.Type{},
-			Result:    types.Number,
+			Params: []types.Type{},
+			Result: types.Number,
 		},
 		types.Signature{
-			Arguments: []types.Type{types.Number},
-			Result:    types.Bool,
+			Params: []types.Type{types.Number},
+			Result: types.Bool,
 		},
 		types.Signature{
-			Arguments: []types.Type{types.Number, types.Number},
-			Result:    types.Bool,
+			Params: []types.Type{types.Number, types.Number},
+			Result: types.Bool,
 		},
 	)
 
@@ -64,24 +64,24 @@ func TestApplicableRest(t *testing.T) {
 
 	a1 := types.Applicable(
 		types.Signature{
-			Arguments: []types.Type{types.Number, types.Number},
-			Result:    types.Bool,
+			Params: []types.Type{types.Number, types.Number},
+			Result: types.Bool,
 		},
 	)
 	a2 := types.Applicable(
 		types.Signature{
-			Arguments: []types.Type{types.Number, types.Number},
+			Params:    []types.Type{types.Number, types.Number},
 			TakesRest: true,
 			Result:    types.Bool,
 		},
 	)
 	a3 := types.Applicable(
 		types.Signature{
-			Arguments: []types.Type{types.Number, types.Number},
-			Result:    types.Bool,
+			Params: []types.Type{types.Number, types.Number},
+			Result: types.Bool,
 		},
 		types.Signature{
-			Arguments: []types.Type{types.Number, types.Number},
+			Params:    []types.Type{types.Number, types.Number},
 			TakesRest: true,
 			Result:    types.Bool,
 		},

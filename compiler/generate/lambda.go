@@ -11,7 +11,7 @@ const allArgsName = data.Name("*args*")
 
 func Lambda(e encoder.Encoder, build Builder) *vm.Lambda {
 	child := e.Child()
-	child.PushArgs(data.Names{allArgsName}, true)
+	child.PushParams(data.Names{allArgsName}, true)
 	build(child)
 	fn := vm.LambdaFromEncoder(child)
 

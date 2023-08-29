@@ -27,9 +27,9 @@ type (
 		Closure() IndexedCells
 		ResolveClosure(data.Name) (*IndexedCell, bool)
 
-		PushArgs(data.Names, bool)
-		PopArgs()
-		ResolveArg(data.Name) (*IndexedCell, bool)
+		PushParams(data.Names, bool)
+		PopParams()
+		ResolveParam(data.Name) (*IndexedCell, bool)
 
 		LocalCount() isa.Count
 		PushLocals()
@@ -45,7 +45,7 @@ type (
 		globals   env.Namespace
 		constants data.Values
 		closure   IndexedCells
-		args      argsStack
+		params    paramStack
 		locals    []Locals
 		code      isa.Instructions
 		nextLabel isa.Index

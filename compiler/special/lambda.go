@@ -16,8 +16,8 @@ type (
 
 // Error messages
 const (
-	ErrUnexpectedCaseSyntax      = "unexpected case syntax: %s"
-	ErrNoMatchingArgumentPattern = "no matching argument pattern"
+	ErrUnexpectedCaseSyntax   = "unexpected case syntax: %s"
+	ErrNoMatchingParamPattern = "no matching parameter pattern"
 )
 
 // Lambda encodes a lambda
@@ -49,7 +49,7 @@ func (le *lambdaEncoder) encode() {
 
 func (le *lambdaEncoder) encodeCases(cases paramCases) {
 	if len(cases) == 0 {
-		generate.Literal(le, data.String(ErrNoMatchingArgumentPattern))
+		generate.Literal(le, data.String(ErrNoMatchingParamPattern))
 		le.Emit(isa.Panic)
 		return
 	}
@@ -81,10 +81,10 @@ func (le *lambdaEncoder) consequent(c *paramCase) {
 		return
 	}
 
-	le.PushArgs(c.params, c.rest)
+	le.PushParams(c.params, c.rest)
 	le.PushLocals()
 	generate.Block(le, c.body)
 	le.Emit(isa.Return)
 	le.PopLocals()
-	le.PopArgs()
+	le.PopParams()
 }
