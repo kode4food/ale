@@ -12,28 +12,18 @@ type (
 	// Word represents the atomic unit of the ISA's code stream
 	Word uint32
 
-	// Index represents a lookup offset for value arrays
-	Index Word
+	// Instruction represents a single instruction and its operand
+	Instruction Word
 
-	// Count represents a count of values
-	Count Word
-
-	// Offset represents a relative program counter offset for jumps
-	Offset Word
-
-	// Coder allows a value to return an ISA Word
 	Coder interface {
-		Word() Word
+		Instruction() Instruction
 	}
 
-	// Instruction represents a single instruction and its operands
-	Instruction struct {
-		Opcode
-		Operands []Word
-	}
+	// Operand parameterizes an Instruction
+	Operand Word
 
 	// Instructions represent a set of Instructions
-	Instructions []*Instruction
+	Instructions []Instruction
 )
 
 // MaxWord is the highest value of an Instruction Word
@@ -41,39 +31,24 @@ const MaxWord = math.MaxUint32
 
 // Error messages
 const (
-	ErrBadInstructionArgs = "instruction argument mismatch: %s"
+	ErrBadInstruction = "instruction operand mismatch: %s"
 )
 
-// Word makes Word a Word
-func (w Word) Word() Word {
-	return w
-}
-
-// Word makes Index a Word
-func (i Index) Word() Word {
-	return Word(i)
-}
-
-// Word makes Count a Word
-func (c Count) Word() Word {
-	return Word(c)
-}
-
-// Word makes Offset a Word
-func (o Offset) Word() Word {
-	return Word(o)
-}
-
 // New creates a new Instruction instance
-func New(oc Opcode, args ...Word) *Instruction {
+func New(oc Opcode, args ...Operand) Instruction {
 	effect := MustGetEffect(oc)
-	if len(args) != len(effect.Operands) {
-		panic(fmt.Errorf(ErrBadInstructionArgs, oc.String()))
+	switch {
+	case effect.Operand != Nothing && len(args) == 1:
+		return Instruction(Opcode(args[0]<<OpcodeSize) | oc)
+	case effect.Operand == Nothing && len(args) == 0:
+		return Instruction(oc)
+	default:
+		panic(fmt.Errorf(ErrBadInstruction, oc.String()))
 	}
-	return &Instruction{
-		Opcode:   oc,
-		Operands: args,
-	}
+}
+
+func (i Instruction) Instruction() Instruction {
+	return i
 }
 
 func (i Instructions) String() string {
@@ -84,28 +59,22 @@ func (i Instructions) String() string {
 	return strings.Join(strs, "\n")
 }
 
+func (i Instruction) Split() (Opcode, Operand) {
+	return Opcode(i & OpcodeMask), Operand(i >> OpcodeSize & OperandMask)
+}
+
 // Equal compares this Instruction to another for equality
-func (i *Instruction) Equal(v data.Value) bool {
-	if v, ok := v.(*Instruction); ok {
-		if i.Opcode != v.Opcode || len(i.Operands) != len(v.Operands) {
-			return false
-		}
-		for i, l := range i.Operands {
-			if l != v.Operands[i] {
-				return false
-			}
-		}
-		return true
+func (i Instruction) Equal(v data.Value) bool {
+	if v, ok := v.(Instruction); ok {
+		return i == v
 	}
 	return false
 }
 
-func (i *Instruction) String() string {
-	args := i.Operands
-	strs := make([]string, len(args))
-	for i, a := range args {
-		strs[i] = fmt.Sprintf("%d", a)
+func (i Instruction) String() string {
+	oc, operand := i.Split()
+	if Effects[oc].Operand != Nothing {
+		return fmt.Sprintf("%s(%d)", oc.String(), operand)
 	}
-	joined := strings.Join(strs, ", ")
-	return fmt.Sprintf("%s(%s)", i.Opcode.String(), joined)
+	return fmt.Sprintf("%s()", oc.String())
 }

@@ -35,10 +35,10 @@ type (
 	branches struct {
 		prologue   Instructions
 		elseBranch Node
-		elseJump   *isa.Instruction
-		thenLabel  *isa.Instruction
+		elseJump   isa.Instruction
+		thenLabel  isa.Instruction
 		thenBranch Node
-		joinLabel  *isa.Instruction
+		joinLabel  isa.Instruction
 		epilogue   Node
 	}
 )
@@ -46,7 +46,7 @@ type (
 // Branch splits linear instructions into a tree of conditional branches
 func Branch(code isa.Instructions) Node {
 	for pc, inst := range code {
-		oc := inst.Opcode
+		oc, _ := inst.Split()
 		if oc != isa.CondJump {
 			continue
 		}
@@ -66,18 +66,20 @@ func splitCondJump(code isa.Instructions, condJumpIdx int) *branches {
 
 	condJump := code[condJumpIdx]
 	rest := code[condJumpIdx+1:]
-	thenIdx, thenLabel := findLabel(rest, isa.Index(condJump.Operands[0]))
+	_, idx := condJump.Split()
+	thenIdx, thenLabel := findLabel(rest, idx)
 	if thenIdx <= 0 {
 		return nil // not part of this block
 	}
 
 	elseJumpIdx := thenIdx - 1
 	elseJump := rest[elseJumpIdx]
-	if elseJump.Opcode != isa.Jump {
+	if oc, _ := elseJump.Split(); oc != isa.Jump {
 		return nil // not created with build.Cond
 	}
 
-	joinIdx, joinLabel := findLabel(rest, isa.Index(elseJump.Operands[0]))
+	_, idx = elseJump.Split()
+	joinIdx, joinLabel := findLabel(rest, idx)
 
 	return &branches{
 		prologue:   prologue,
@@ -134,14 +136,13 @@ func (i *instructions) String() string {
 	return indentedString(0, i)
 }
 
-func findLabel(code isa.Instructions, lbl isa.Index) (int, *isa.Instruction) {
-	ic := lbl.Word()
+func findLabel(code isa.Instructions, lbl isa.Operand) (int, isa.Instruction) {
 	for pc, inst := range code {
-		if inst.Opcode == isa.Label && inst.Operands[0] == ic {
+		if oc, op := inst.Split(); oc == isa.Label && op == lbl {
 			return pc, inst
 		}
 	}
-	return -1, nil
+	return -1, 0
 }
 
 func indentedString(lvl int, n Node) string {

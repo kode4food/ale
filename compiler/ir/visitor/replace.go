@@ -39,7 +39,7 @@ func (r *replace) Instructions(i Instructions) {
 	var state, start, found int
 	res := isa.Instructions{}
 	for pc, inst := range code {
-		if pattern.matchesState(inst.Opcode, state) {
+		if oc, _ := inst.Split(); pattern.matchesState(oc, state) {
 			if state == 0 {
 				found = pc
 			}

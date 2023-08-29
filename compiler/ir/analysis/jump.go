@@ -14,18 +14,16 @@ const (
 
 func verifyJumps(code isa.Instructions) {
 	for _, l := range code {
-		oc := l.Opcode
-		if oc == isa.CondJump || oc == isa.Jump {
-			mustFindLabel(code, isa.Index(l.Operands[0]))
+		if oc, op := l.Split(); oc == isa.CondJump || oc == isa.Jump {
+			mustFindLabel(code, op)
 		}
 	}
 }
 
-func findLabel(code isa.Instructions, lbl isa.Index) (int, error) {
-	ic := lbl.Word()
+func findLabel(code isa.Instructions, lbl isa.Operand) (int, error) {
 	res := -1
 	for pc, inst := range code {
-		if inst.Opcode == isa.Label && inst.Operands[0] == ic {
+		if oc, op := inst.Split(); oc == isa.Label && op == lbl {
 			if res != -1 {
 				return res, fmt.Errorf(ErrLabelMultipleAnchors, lbl)
 			}
@@ -38,7 +36,7 @@ func findLabel(code isa.Instructions, lbl isa.Index) (int, error) {
 	return res, nil
 }
 
-func mustFindLabel(code isa.Instructions, lbl isa.Index) int {
+func mustFindLabel(code isa.Instructions, lbl isa.Operand) int {
 	res, err := findLabel(code, lbl)
 	if err != nil {
 		panic(err)

@@ -8,7 +8,7 @@ func _() {
 	// An "invalid array index" compiler error signifies that the constant values have changed.
 	// Re-run the stringer command to generate them again.
 	var x [1]struct{}
-	_ = x[Label-256]
+	_ = x[Label-63]
 	_ = x[Add-0]
 	_ = x[Arg-1]
 	_ = x[ArgLen-2]
@@ -76,7 +76,7 @@ func (i Opcode) String() string {
 	switch {
 	case i <= 51:
 		return _Opcode_name_0[_Opcode_index_0[i]:_Opcode_index_0[i+1]]
-	case i == 256:
+	case i == 63:
 		return _Opcode_name_1
 	default:
 		return "Opcode(" + strconv.FormatInt(int64(i), 10) + ")"

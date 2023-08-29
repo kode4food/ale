@@ -25,7 +25,7 @@ func newClosure(lambda *Lambda, values data.Values) *closure {
 func (c *closure) Call(args ...data.Value) data.Value {
 	var (
 		DATA   data.Values
-		CODE   []isa.Word
+		CODE   isa.Instructions
 		STACK  data.Values
 		LOCALS data.Values
 		SP     int
@@ -46,7 +46,8 @@ nextPC:
 	PC++
 
 opSwitch:
-	switch isa.Opcode(CODE[PC]) {
+	oc, op := CODE[PC].Split()
+	switch oc {
 	case isa.Nil:
 		STACK[SP] = data.Nil
 		SP--
@@ -83,20 +84,17 @@ opSwitch:
 		goto nextPC
 
 	case isa.Const:
-		PC++
-		STACK[SP] = c.Lambda.Constants[CODE[PC]]
+		STACK[SP] = c.Lambda.Constants[op]
 		SP--
 		goto nextPC
 
 	case isa.Arg:
-		PC++
-		STACK[SP] = args[CODE[PC]]
+		STACK[SP] = args[op]
 		SP--
 		goto nextPC
 
 	case isa.RestArg:
-		PC++
-		STACK[SP] = data.NewVector(args[CODE[PC]:]...)
+		STACK[SP] = data.NewVector(args[op:]...)
 		SP--
 		goto nextPC
 
@@ -106,21 +104,18 @@ opSwitch:
 		goto nextPC
 
 	case isa.Closure:
-		PC++
-		STACK[SP] = c.values[CODE[PC]]
+		STACK[SP] = c.values[op]
 		SP--
 		goto nextPC
 
 	case isa.Load:
-		PC++
-		STACK[SP] = LOCALS[CODE[PC]]
+		STACK[SP] = LOCALS[op]
 		SP--
 		goto nextPC
 
 	case isa.Store:
-		PC++
 		SP++
-		LOCALS[CODE[PC]] = STACK[SP]
+		LOCALS[op] = STACK[SP]
 		goto nextPC
 
 	case isa.NewRef:
@@ -311,10 +306,9 @@ opSwitch:
 		goto nextPC
 
 	case isa.Call:
-		PC++
 		SP1 := SP + 1
 		// prepare args
-		argCount := int(CODE[PC])
+		argCount := int(op)
 		args := make(data.Values, argCount)
 		copy(args, STACK[SP1+1:]) // must be a copy
 		// call function
@@ -326,7 +320,7 @@ opSwitch:
 	case isa.TailCall:
 		SP1 := SP + 1
 		// prepare args
-		argCount := int(CODE[PC+1])
+		argCount := int(op)
 		args = make(data.Values, argCount)
 		copy(args, STACK[SP1+1:]) // must be a copy
 		// call function
@@ -351,17 +345,16 @@ opSwitch:
 		return val.(data.Function).Call(args...)
 
 	case isa.Jump:
-		PC = int(CODE[PC+1])
+		PC = int(op)
 		goto opSwitch
 
 	case isa.CondJump:
 		SP++
 		if STACK[SP].(data.Bool) {
-			PC = int(CODE[PC+1])
+			PC = int(op)
 			goto opSwitch
 		}
-		PC += 2
-		goto opSwitch
+		goto nextPC
 
 	case isa.Panic:
 		panic(errors.New(STACK[SP+1].String()))
@@ -380,7 +373,7 @@ opSwitch:
 
 	default:
 		// Programmer error
-		panic(fmt.Sprintf("unknown opcode: %s", isa.Opcode(CODE[PC])))
+		panic(fmt.Sprintf("unknown opcode: %s", oc))
 	}
 }
 

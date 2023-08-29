@@ -21,13 +21,8 @@ func (w *Wrapper) EncodesAs(expected isa.Instructions, src data.String) {
 func (w *Wrapper) Instructions(expected, actual isa.Instructions) {
 	w.Helper()
 	w.Equal(len(expected), len(actual))
-	for i, l := range expected {
-		a := actual[i]
-		w.Assertions.Equal(l.Opcode, a.Opcode)
-		w.Assertions.Equal(len(l.Operands), len(a.Operands))
-		if len(l.Operands) > 0 {
-			w.Assertions.Equal(l.Operands, a.Operands)
-		}
+	for i, e := range expected {
+		w.Assertions.Equal(e, actual[i])
 	}
 }
 

@@ -14,7 +14,7 @@ import (
 type (
 	asmEncoder struct {
 		encoder.Encoder
-		labels map[data.Name]isa.Index
+		labels map[data.Name]isa.Operand
 		args   map[data.Name]data.Value
 	}
 
@@ -25,7 +25,7 @@ type (
 
 	callMap map[data.Name]*call
 
-	toWordFunc func(data.Value) (isa.Word, error)
+	toOperandFunc func(data.Value) (isa.Operand, error)
 )
 
 // Error messages
@@ -36,7 +36,7 @@ const (
 	ErrUnknownLocalType      = "unknown local type: %s"
 	ErrUnexpectedName        = "unexpected local name: %s"
 	ErrUnexpectedLabel       = "unexpected label: %s"
-	ErrExpectedWord          = "expected unsigned word: %s"
+	ErrExpectedOperand       = "expected unsigned word: %s"
 )
 
 const (
@@ -68,7 +68,7 @@ func Asm(e encoder.Encoder, args ...data.Value) {
 func makeAsmEncoder(e encoder.Encoder) *asmEncoder {
 	return &asmEncoder{
 		Encoder: e,
-		labels:  map[data.Name]isa.Index{},
+		labels:  map[data.Name]isa.Operand{},
 		args:    map[data.Name]data.Value{},
 	}
 }
@@ -138,7 +138,7 @@ func (e *asmEncoder) encode(forms data.Sequence) {
 	}
 }
 
-func (e *asmEncoder) getLabelIndex(k data.Keyword) isa.Index {
+func (e *asmEncoder) getLabelIndex(k data.Keyword) isa.Operand {
 	name := k.Name()
 	if idx, ok := e.labels[name]; ok {
 		return idx
@@ -148,12 +148,14 @@ func (e *asmEncoder) getLabelIndex(k data.Keyword) isa.Index {
 	return idx
 }
 
-func (e *asmEncoder) toWords(oc isa.Opcode, args data.Values) []isa.Coder {
-	res := make([]isa.Coder, len(args))
+func (e *asmEncoder) toOperands(
+	oc isa.Opcode, args data.Values,
+) []isa.Operand {
+	res := make([]isa.Operand, len(args))
 	for i, a := range args {
-		ao := isa.Effects[oc].Operands[i]
-		toWord := e.getToWordFor(ao)
-		r, err := toWord(a)
+		ao := isa.Effects[oc].Operand
+		toOperand := e.getToOperandFor(ao)
+		r, err := toOperand(a)
 		if err != nil {
 			panic(err)
 		}
@@ -162,35 +164,35 @@ func (e *asmEncoder) toWords(oc isa.Opcode, args data.Values) []isa.Coder {
 	return res
 }
 
-func (e *asmEncoder) getToWordFor(ao isa.ActOn) toWordFunc {
+func (e *asmEncoder) getToOperandFor(ao isa.ActOn) toOperandFunc {
 	switch ao {
 	case isa.Locals:
 		return e.makeNameToWord()
 	case isa.Labels:
 		return e.makeLabelToWord()
 	default:
-		return toWord
+		return toOperand
 	}
 }
 
-func (e *asmEncoder) makeLabelToWord() toWordFunc {
-	return wrapToWordError(func(val data.Value) (isa.Word, error) {
+func (e *asmEncoder) makeLabelToWord() toOperandFunc {
+	return wrapToOperandError(func(val data.Value) (isa.Operand, error) {
 		if val, ok := val.(data.Keyword); ok {
-			return isa.Word(e.getLabelIndex(val)), nil
+			return e.getLabelIndex(val), nil
 		}
-		return toWord(val)
+		return toOperand(val)
 	}, ErrUnexpectedLabel)
 }
 
-func (e *asmEncoder) makeNameToWord() toWordFunc {
-	return wrapToWordError(func(val data.Value) (isa.Word, error) {
+func (e *asmEncoder) makeNameToWord() toOperandFunc {
+	return wrapToOperandError(func(val data.Value) (isa.Operand, error) {
 		if val, ok := val.(data.LocalSymbol); ok {
 			if cell, ok := e.ResolveLocal(val.Name()); ok {
-				return isa.Word(cell.Index), nil
+				return cell.Index, nil
 			}
 			return 0, fmt.Errorf(ErrUnexpectedName, val)
 		}
-		return toWord(val)
+		return toOperand(val)
 	}, ErrUnexpectedName)
 }
 
@@ -198,17 +200,21 @@ func getInstructionCalls() callMap {
 	res := make(callMap, len(isa.Effects))
 	for oc, effect := range isa.Effects {
 		name := data.Name(strings.CamelToSnake(oc.String()))
-		res[name] = func(oc isa.Opcode, argCount int) *call {
-			return makeEmitCall(oc, argCount)
-		}(oc, len(effect.Operands))
+		res[name] = func(oc isa.Opcode, ao isa.ActOn) *call {
+			return makeEmitCall(oc, ao)
+		}(oc, effect.Operand)
 	}
 	return res
 }
 
-func makeEmitCall(oc isa.Opcode, argCount int) *call {
+func makeEmitCall(oc isa.Opcode, actOn isa.ActOn) *call {
+	argCount := 0
+	if actOn != isa.Nothing {
+		argCount = 1
+	}
 	return &call{
 		Call: func(e encoder.Encoder, args ...data.Value) {
-			e.Emit(oc, e.(*asmEncoder).toWords(oc, args)...)
+			e.Emit(oc, e.(*asmEncoder).toOperands(oc, args)...)
 		},
 		argCount: argCount,
 	}
@@ -287,9 +293,9 @@ func take(s data.Sequence, count int) (data.Values, data.Sequence, bool) {
 	return res, s, true
 }
 
-func wrapToWordError(toWord toWordFunc, errStr string) toWordFunc {
-	return func(val data.Value) (isa.Word, error) {
-		res, err := toWord(val)
+func wrapToOperandError(toOperand toOperandFunc, errStr string) toOperandFunc {
+	return func(val data.Value) (isa.Operand, error) {
+		res, err := toOperand(val)
 		if err != nil {
 			return 0, errors.Join(fmt.Errorf(errStr, val), err)
 		}
@@ -297,15 +303,15 @@ func wrapToWordError(toWord toWordFunc, errStr string) toWordFunc {
 	}
 }
 
-func toWord(val data.Value) (isa.Word, error) {
+func toOperand(val data.Value) (isa.Operand, error) {
 	if val, ok := val.(data.Integer); ok {
-		if isValidWord(val) {
-			return isa.Word(val), nil
+		if isValidOperand(val) {
+			return isa.Operand(val), nil
 		}
 	}
-	return 0, fmt.Errorf(ErrExpectedWord, val)
+	return 0, fmt.Errorf(ErrExpectedOperand, val)
 }
 
-func isValidWord(i data.Integer) bool {
-	return i >= 0 && i <= isa.MaxWord
+func isValidOperand(i data.Integer) bool {
+	return i >= 0 && i <= 0xFFFFFF
 }

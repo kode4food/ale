@@ -11,7 +11,7 @@ func (e *encoder) PushParams(names data.Names, rest bool) {
 	cells := make(IndexedCells, len(names))
 	for i, n := range names {
 		c := newCell(ValueCell, n)
-		cells[i] = newIndexedCell(isa.Index(i), c)
+		cells[i] = newIndexedCell(isa.Operand(i), c)
 	}
 	if rest {
 		cells[len(cells)-1].Type = RestCell

@@ -21,7 +21,7 @@ type (
 	// IndexedCell attaches an Index to a Cell
 	IndexedCell struct {
 		*Cell
-		Index isa.Index
+		Index isa.Operand
 	}
 
 	// ScopedCell attaches a Scope to a Cell
@@ -45,7 +45,7 @@ func newCell(t CellType, n data.Name) *Cell {
 	}
 }
 
-func newIndexedCell(i isa.Index, c *Cell) *IndexedCell {
+func newIndexedCell(i isa.Operand, c *Cell) *IndexedCell {
 	return &IndexedCell{
 		Cell:  c,
 		Index: i,

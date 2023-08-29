@@ -30,10 +30,10 @@ func verifyStackSize(code isa.Instructions) {
 // CalculateStackSize returns the maximum and final depths for the stack based
 // on the instructions provided. If the final depth is non-zero, this is
 // usually an indication that bad instructions were encoded
-func CalculateStackSize(code isa.Instructions) (isa.Count, isa.Count) {
+func CalculateStackSize(code isa.Instructions) (isa.Operand, isa.Operand) {
 	s := new(stackSizes)
 	s.calculateNode(visitor.Branch(code))
-	return isa.Count(s.maxSize), isa.Count(s.endSize)
+	return isa.Operand(s.maxSize), isa.Operand(s.endSize)
 }
 
 func (s *stackSizes) calculateNode(n visitor.Node) {
@@ -53,8 +53,8 @@ func (s *stackSizes) calculateInstructions(inst visitor.Instructions) {
 	}
 }
 
-func (s *stackSizes) calculateInstruction(inst *isa.Instruction) {
-	oc := inst.Opcode
+func (s *stackSizes) calculateInstruction(inst isa.Instruction) {
+	oc, _ := inst.Split()
 	effect := isa.MustGetEffect(oc)
 	dPop := getStackChange(inst, effect.DPop)
 	s.endSize += (effect.Push - effect.Pop) - dPop
@@ -79,9 +79,10 @@ func (s *stackSizes) calculateBranch(n visitor.Node) *stackSizes {
 	return res
 }
 
-func getStackChange(inst *isa.Instruction, countIndex int) int {
-	if countIndex > 0 {
-		return int(inst.Operands[countIndex-1])
+func getStackChange(inst isa.Instruction, dPop bool) int {
+	if dPop {
+		_, op := inst.Split()
+		return int(op)
 	}
 	return 0
 }

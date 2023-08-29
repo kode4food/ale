@@ -5,12 +5,12 @@ import "fmt"
 type (
 	// Effect captures how an instruction impacts the state of the machine
 	Effect struct {
-		Operands []ActOn // Describe elements the operands act on
+		Operand ActOn // Describe elements the operands act on
 
 		Pop  int // Fixed number of items to be popped from the stack
 		Push int // Fixed number of items to be pushed onto the stack
-		DPop int // Dynamic number of items to be popped (first operand)
 
+		DPop   bool // Dynamic number of items to be popped (in operand)
 		Ignore bool // Skip this instruction (ex: Labels and NoOps)
 		Exit   bool // Results in a termination of the VM
 	}
@@ -36,16 +36,16 @@ const (
 // Effects is a lookup table of instruction effects
 var Effects = map[Opcode]*Effect{
 	Add:        {Pop: 2, Push: 1},
-	Arg:        {Push: 1, Operands: []ActOn{Arguments}},
+	Arg:        {Push: 1, Operand: Arguments},
 	ArgLen:     {Push: 1},
 	Bind:       {Pop: 2},
 	BindRef:    {Pop: 2},
-	Call:       {Pop: 1, Push: 1, DPop: 1, Operands: []ActOn{Stack}},
+	Call:       {Pop: 1, Push: 1, DPop: true, Operand: Stack},
 	Call0:      {Pop: 1, Push: 1},
 	Call1:      {Pop: 2, Push: 1},
-	Closure:    {Push: 1, Operands: []ActOn{Values}},
-	CondJump:   {Pop: 1, Operands: []ActOn{Labels}},
-	Const:      {Push: 1, Operands: []ActOn{Constants}},
+	Closure:    {Push: 1, Operand: Values},
+	CondJump:   {Pop: 1, Operand: Labels},
+	Const:      {Push: 1, Operand: Constants},
 	Deref:      {Pop: 1, Push: 1},
 	Div:        {Pop: 2, Push: 1},
 	Dup:        {Pop: 1, Push: 2},
@@ -53,9 +53,9 @@ var Effects = map[Opcode]*Effect{
 	False:      {Push: 1},
 	Gt:         {Pop: 2, Push: 1},
 	Gte:        {Pop: 2, Push: 1},
-	Jump:       {Operands: []ActOn{Labels}},
-	Label:      {Ignore: true, Operands: []ActOn{Labels}},
-	Load:       {Push: 1, Operands: []ActOn{Locals}},
+	Jump:       {Operand: Labels},
+	Label:      {Ignore: true, Operand: Labels},
+	Load:       {Push: 1, Operand: Locals},
 	Lt:         {Pop: 2, Push: 1},
 	Lte:        {Pop: 2, Push: 1},
 	MakeTruthy: {Pop: 1, Push: 1},
@@ -76,15 +76,15 @@ var Effects = map[Opcode]*Effect{
 	Declare:    {Pop: 1},
 	Private:    {Pop: 1},
 	Resolve:    {Pop: 1, Push: 1},
-	RestArg:    {Push: 1, Operands: []ActOn{Arguments}},
+	RestArg:    {Push: 1, Operand: Arguments},
 	RetFalse:   {Exit: true},
 	RetNil:     {Exit: true},
 	RetTrue:    {Exit: true},
 	Return:     {Pop: 1, Exit: true},
 	Self:       {Push: 1},
-	Store:      {Pop: 1, Operands: []ActOn{Locals}},
+	Store:      {Pop: 1, Operand: Locals},
 	Sub:        {Pop: 2, Push: 1},
-	TailCall:   {Pop: 1, DPop: 1, Operands: []ActOn{Stack}},
+	TailCall:   {Pop: 1, DPop: true, Operand: Stack},
 	True:       {Push: 1},
 	Two:        {Push: 1},
 	Zero:       {Push: 1},

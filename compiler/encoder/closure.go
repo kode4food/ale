@@ -26,7 +26,7 @@ func (e *encoder) resolveClosureParent(n data.Name) (*IndexedCell, bool) {
 	}
 	if s, ok := parent.ResolveScoped(n); ok {
 		closure := e.closure
-		idx := isa.Index(len(closure))
+		idx := isa.Operand(len(closure))
 		res := newIndexedCell(idx, s.Cell)
 		e.closure = append(closure, res)
 		return res, true

@@ -14,15 +14,15 @@ type (
 
 		Child() Encoder
 
-		Emit(isa.Opcode, ...isa.Coder)
+		Emit(isa.Opcode, ...isa.Operand)
 		Code() isa.Instructions
-		StackSize() isa.Count
+		StackSize() isa.Operand
 
-		NewLabel() isa.Index
+		NewLabel() isa.Operand
 
 		Globals() env.Namespace
 		Constants() data.Values
-		AddConstant(data.Value) isa.Index
+		AddConstant(data.Value) isa.Operand
 
 		Closure() IndexedCells
 		ResolveClosure(data.Name) (*IndexedCell, bool)
@@ -31,7 +31,7 @@ type (
 		PopParams()
 		ResolveParam(data.Name) (*IndexedCell, bool)
 
-		LocalCount() isa.Count
+		LocalCount() isa.Operand
 		PushLocals()
 		PopLocals()
 		AddLocal(data.Name, CellType) *IndexedCell
@@ -48,9 +48,9 @@ type (
 		params    paramStack
 		locals    []Locals
 		code      isa.Instructions
-		nextLabel isa.Index
-		nextLocal isa.Index
-		maxLocal  isa.Index
+		nextLabel isa.Operand
+		nextLocal isa.Operand
+		maxLocal  isa.Operand
 	}
 )
 
@@ -75,12 +75,8 @@ func (e *encoder) Child() Encoder {
 }
 
 // Emit adds instructions to the Type's eventual output
-func (e *encoder) Emit(oc isa.Opcode, args ...isa.Coder) {
-	words := make([]isa.Word, len(args))
-	for i, a := range args {
-		words[i] = a.Word()
-	}
-	e.code = append(e.code, isa.New(oc, words...))
+func (e *encoder) Emit(oc isa.Opcode, args ...isa.Operand) {
+	e.code = append(e.code, isa.New(oc, args...))
 }
 
 // Code returns the encoder's resulting VM instructions
@@ -93,7 +89,7 @@ func (e *encoder) Code() isa.Instructions {
 }
 
 // StackSize returns the encoder's calculated stack size
-func (e *encoder) StackSize() isa.Count {
+func (e *encoder) StackSize() isa.Operand {
 	res, _ := analysis.CalculateStackSize(e.code)
 	return res
 }

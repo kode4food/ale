@@ -13,7 +13,7 @@ import (
 type Lambda struct {
 	Globals      env.Namespace
 	Constants    data.Values
-	Code         []isa.Word
+	Code         isa.Instructions
 	StackSize    int
 	LocalCount   int
 	ArityChecker data.ArityChecker

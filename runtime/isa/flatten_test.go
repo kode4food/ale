@@ -16,8 +16,8 @@ func TestFlattenJump(t *testing.T) {
 		isa.New(isa.Jump, 0),
 	})
 
-	as.Equal([]isa.Word{
-		isa.Word(isa.Jump), 0,
+	as.Equal(isa.Instructions{
+		isa.Instruction(isa.Jump),
 	}, i1)
 }
 
@@ -34,9 +34,9 @@ func TestFlattenCondJump(t *testing.T) {
 		isa.New(isa.NoOp),
 	})
 
-	as.Equal([]isa.Word{
-		isa.Word(isa.False),
-		isa.Word(isa.CondJump), 0,
+	as.Equal(isa.Instructions{
+		isa.Instruction(isa.False),
+		isa.Instruction(isa.CondJump),
 	}, i1)
 }
 
@@ -54,9 +54,9 @@ func TestForwardJump(t *testing.T) {
 		isa.New(isa.Jump, 0),
 	})
 
-	as.Equal([]isa.Word{
-		isa.Word(isa.Jump), 2,
-		isa.Word(isa.Jump), 0,
+	as.Equal(isa.Instructions{
+		isa.New(isa.Jump, 1),
+		isa.New(isa.Jump, 0),
 	}, i1)
 }
 

@@ -22,9 +22,9 @@ var constants = data.Values{
 }
 
 func makeCode(coders []isa.Coder) data.Function {
-	code := make([]isa.Word, len(coders))
+	code := make(isa.Instructions, len(coders))
 	for i, c := range coders {
-		code[i] = c.Word()
+		code[i] = c.Instruction()
 	}
 	lambda := &vm.Lambda{
 		Code:       code,
@@ -56,26 +56,26 @@ func testPanic(t *testing.T, errStr string, code []isa.Coder) {
 
 func TestSimple(t *testing.T) {
 	testResult(t, I(11), []isa.Coder{
-		isa.Const, isa.Index(0),
-		isa.Const, isa.Index(1),
+		isa.New(isa.Const, 0),
+		isa.New(isa.Const, 1),
 		isa.Add,
 		isa.Return,
 	})
 
 	testResult(t, I(0), []isa.Coder{
 		isa.Zero,
-		isa.Const, isa.Index(0),
+		isa.New(isa.Const, 0),
 		isa.Mul,
 		isa.Return,
 	})
 
 	testResult(t, S("closure"), []isa.Coder{
-		isa.Closure, isa.Index(0),
+		isa.New(isa.Closure, 0),
 		isa.Return,
 	})
 
 	testResult(t, S("arg"), []isa.Coder{
-		isa.Arg, isa.Index(0),
+		isa.New(isa.Arg, 0),
 		isa.Return,
 	})
 }
@@ -115,7 +115,7 @@ func TestUnary(t *testing.T) {
 
 func TestMakeTruthy(t *testing.T) {
 	testResult(t, data.True, []isa.Coder{
-		isa.Const, isa.Index(3),
+		isa.New(isa.Const, 3),
 		isa.MakeTruthy,
 		isa.Return,
 	})
@@ -141,25 +141,25 @@ func TestMakeTruthy(t *testing.T) {
 
 func TestCalls(t *testing.T) {
 	testResult(t, I(17), []isa.Coder{
-		isa.Const, isa.Index(0),
-		isa.Const, isa.Index(0),
-		isa.Const, isa.Index(1),
+		isa.New(isa.Const, 0),
+		isa.New(isa.Const, 0),
+		isa.New(isa.Const, 1),
 		isa.One,
-		isa.Const, isa.Index(3),
-		isa.Call, isa.Count(3),
+		isa.New(isa.Const, 3),
+		isa.New(isa.Call, 3),
 		isa.Add,
 		isa.Return,
 	})
 
 	testResult(t, I(5), []isa.Coder{
-		isa.Const, isa.Index(0),
-		isa.Const, isa.Index(3),
+		isa.New(isa.Const, 0),
+		isa.New(isa.Const, 3),
 		isa.Call1,
 		isa.Return,
 	})
 
 	testResult(t, I(0), []isa.Coder{
-		isa.Const, isa.Index(3),
+		isa.New(isa.Const, 3),
 		isa.Call0,
 		isa.Return,
 	})
@@ -203,9 +203,9 @@ func TestRelational(t *testing.T) {
 func TestLoadStore(t *testing.T) {
 	testResult(t, I(4), []isa.Coder{
 		isa.Two,
-		isa.Store, isa.Index(0),
-		isa.Load, isa.Index(0),
-		isa.Load, isa.Index(0),
+		isa.New(isa.Store, 0),
+		isa.New(isa.Load, 0),
+		isa.New(isa.Load, 0),
 		isa.Mul,
 		isa.Return,
 	})
@@ -214,14 +214,14 @@ func TestLoadStore(t *testing.T) {
 func TestRefs(t *testing.T) {
 	testResult(t, I(-1), []isa.Coder{
 		isa.Two,
-		isa.Store, isa.Index(1),
+		isa.New(isa.Store, 1),
 		isa.NewRef,
-		isa.Store, isa.Index(2),
-		isa.Load, isa.Index(1),
-		isa.Load, isa.Index(2),
+		isa.New(isa.Store, 2),
+		isa.New(isa.Load, 1),
+		isa.New(isa.Load, 2),
 		isa.BindRef,
 		isa.One,
-		isa.Load, isa.Index(2),
+		isa.New(isa.Load, 2),
 		isa.Deref,
 		isa.Sub,
 		isa.Return,
@@ -230,13 +230,13 @@ func TestRefs(t *testing.T) {
 
 func TestGlobals(t *testing.T) {
 	testResult(t, I(3), []isa.Coder{
-		isa.Const, isa.Index(4),
+		isa.New(isa.Const, 4),
 		isa.Declare,
 		isa.Two,
-		isa.Const, isa.Index(4),
+		isa.New(isa.Const, 4),
 		isa.Bind,
 		isa.One,
-		isa.Const, isa.Index(5),
+		isa.New(isa.Const, 5),
 		isa.Resolve,
 		isa.Add,
 		isa.Return,
@@ -246,7 +246,7 @@ func TestGlobals(t *testing.T) {
 func TestJumps(t *testing.T) {
 	testResult(t, I(4), []isa.Coder{
 		isa.Two,
-		isa.Jump, isa.Offset(4),
+		isa.New(isa.Jump, 3),
 		isa.One,
 		isa.Two,
 		isa.Add,
@@ -256,10 +256,10 @@ func TestJumps(t *testing.T) {
 	testResult(t, I(4), []isa.Coder{
 		isa.Two,
 		isa.True,
-		isa.CondJump, isa.Offset(8),
+		isa.New(isa.CondJump, 6),
 		isa.One,
 		isa.Add,
-		isa.Jump, isa.Offset(10),
+		isa.New(isa.Jump, 8),
 		isa.Two,
 		isa.Add,
 		isa.Return,
@@ -268,10 +268,10 @@ func TestJumps(t *testing.T) {
 	testResult(t, I(3), []isa.Coder{
 		isa.Two,
 		isa.False,
-		isa.CondJump, isa.Offset(8),
+		isa.New(isa.CondJump, 6),
 		isa.One,
 		isa.Add,
-		isa.Jump, isa.Offset(10),
+		isa.New(isa.Jump, 8),
 		isa.Two,
 		isa.Add,
 		isa.Return,
@@ -290,14 +290,14 @@ func TestArgs(t *testing.T) {
 	as.Equal(I(4), r1)
 
 	c2 := makeCode([]isa.Coder{
-		isa.Arg, isa.Index(1),
+		isa.New(isa.Arg, 1),
 		isa.Return,
 	})
 	r2 := c2.Call(args...)
 	as.Equal(S("arg2"), r2)
 
 	c3 := makeCode([]isa.Coder{
-		isa.RestArg, isa.Index(2),
+		isa.New(isa.RestArg, 2),
 		isa.Return,
 	})
 	r3 := c3.Call(args...)
@@ -306,8 +306,7 @@ func TestArgs(t *testing.T) {
 
 func TestErrors(t *testing.T) {
 	testPanic(t, "a thrown error", []isa.Coder{
-		isa.Const,
-		isa.Index(2),
+		isa.New(isa.Const, 2),
 		isa.Panic,
 	})
 }
@@ -322,7 +321,9 @@ func TestBadOpcode(t *testing.T) {
 	as := assert.New(t)
 	badOpcode := isa.Opcode(isa.MaxWord)
 	defer as.ExpectProgrammerError(
-		fmt.Sprintf("unknown opcode: %s", badOpcode.String()),
+		fmt.Sprintf(
+			"opcode can't be encoded as instruction: %s", badOpcode,
+		),
 	)
 	runCode([]isa.Coder{badOpcode})
 }

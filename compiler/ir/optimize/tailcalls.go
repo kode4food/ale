@@ -16,12 +16,13 @@ func tailCalls(root visitor.Node) visitor.Node {
 }
 
 func tailCallMapper(i isa.Instructions) isa.Instructions {
-	var argCount isa.Word
-	switch i[0].Opcode {
+	var argCount isa.Operand
+	oc, op := i[0].Split()
+	switch oc {
 	case isa.Call1:
 		argCount = 1
 	case isa.Call:
-		argCount = i[0].Operands[0]
+		argCount = op
 	}
 	return isa.Instructions{
 		isa.New(isa.TailCall, argCount),

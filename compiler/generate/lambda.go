@@ -29,6 +29,6 @@ func Lambda(e encoder.Encoder, build Builder) *vm.Lambda {
 		Symbol(e, data.NewLocalSymbol(name))
 	}
 	e.Emit(isa.Const, e.AddConstant(fn))
-	e.Emit(isa.Call, isa.Count(clen))
+	e.Emit(isa.Call, isa.Operand(clen))
 	return fn
 }

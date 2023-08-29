@@ -6,16 +6,16 @@ type (
 	flattener struct {
 		labels labels
 		input  Instructions
-		output []Word
+		output Instructions
 	}
 
 	label struct {
 		anchored bool
-		offset   Offset
-		backRefs []Word
+		offset   Operand
+		backRefs []Operand
 	}
 
-	labels map[Index]*label
+	labels map[Operand]*label
 )
 
 // Error messages
@@ -25,7 +25,7 @@ const (
 
 // Flatten takes a set of instructions and flattens them into something that
 // the virtual machine can execute
-func Flatten(code Instructions) []Word {
+func Flatten(code Instructions) Instructions {
 	f := &flattener{
 		input:  code,
 		labels: labels{},
@@ -33,17 +33,17 @@ func Flatten(code Instructions) []Word {
 	return f.flatten()
 }
 
-func (f *flattener) flatten() []Word {
+func (f *flattener) flatten() Instructions {
 	for _, l := range f.input {
 		f.handleInst(l)
 	}
-	res := make([]Word, len(f.output))
+	res := make(Instructions, len(f.output))
 	copy(res, f.output)
 	return res
 }
 
-func (f *flattener) handleInst(l *Instruction) {
-	oc := l.Opcode
+func (f *flattener) handleInst(l Instruction) {
+	oc, _ := l.Split()
 	switch oc {
 	case Jump:
 		f.handleJump(l)
@@ -55,12 +55,11 @@ func (f *flattener) handleInst(l *Instruction) {
 		if effect := MustGetEffect(oc); effect.Ignore {
 			return
 		}
-		f.output = append(f.output, Word(oc))
-		f.output = append(f.output, l.Operands...)
+		f.output = append(f.output, l)
 	}
 }
 
-func (f *flattener) getLabel(idx Index) *label {
+func (f *flattener) getLabel(idx Operand) *label {
 	if l, ok := f.labels[idx]; ok {
 		return l
 	}
@@ -69,32 +68,35 @@ func (f *flattener) getLabel(idx Index) *label {
 	return l
 }
 
-func (f *flattener) nextOutputOffset() Offset {
-	return Offset(len(f.output))
+func (f *flattener) nextOutputOffset() Operand {
+	return Operand(len(f.output))
 }
 
 func (f *flattener) addLabelBackRef(l *label) {
 	off := f.nextOutputOffset()
-	l.backRefs = append(l.backRefs, Word(off))
+	l.backRefs = append(l.backRefs, off)
 }
 
-func (f *flattener) handleJump(inst *Instruction) {
-	l := f.getLabel(Index(inst.Operands[0]))
-	f.output = append(f.output, Word(inst.Opcode))
+func (f *flattener) handleJump(inst Instruction) {
+	_, op := inst.Split()
+	l := f.getLabel(op)
 	if !l.anchored {
 		f.addLabelBackRef(l)
 	}
-	f.output = append(f.output, Word(l.offset))
+	f.output = append(f.output, inst)
 }
 
-func (f *flattener) handleLabel(inst *Instruction) {
-	l := f.getLabel(Index(inst.Operands[0]))
+func (f *flattener) handleLabel(inst Instruction) {
+	_, op := inst.Split()
+	l := f.getLabel(op)
 	if l.anchored {
 		panic(errors.New(ErrLabelAlreadyAnchored))
 	}
 	l.offset = f.nextOutputOffset()
 	l.anchored = true
 	for _, off := range l.backRefs {
-		f.output[int(off)] = Word(l.offset)
+		oc, _ := f.output[int(off)].Split()
+		ni := New(oc, l.offset)
+		f.output[int(off)] = ni
 	}
 }

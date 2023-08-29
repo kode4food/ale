@@ -1,10 +1,18 @@
 package isa
 
-// Opcode represents an Instruction's operation Word
+import "fmt"
+
+// Opcode represents an Instruction's operation
 type Opcode Word
 
-// Label is an internal Opcode
-const Label Opcode = 256
+const (
+	OpcodeMask  = 0x3F     // 6 bit mask
+	OpcodeSize  = 6        // number of bits to shift
+	OperandMask = 0xFFFFFF // 24 bit mask
+
+	// Label is an internal Opcode
+	Label Opcode = Opcode(OpcodeMask)
+)
 
 //go:generate go run golang.org/x/tools/cmd/stringer -type=Opcode
 const (
@@ -62,7 +70,10 @@ const (
 	Zero                     // Push Zero
 )
 
-// Word makes Opcode a Coder
-func (i Opcode) Word() Word {
-	return Word(i)
+func (oc Opcode) Instruction() Instruction {
+	if f, ok := Effects[oc]; ok && f.Operand == Nothing {
+		return Instruction(oc)
+	}
+	// Programmer error
+	panic(fmt.Sprintf("opcode can't be encoded as instruction: %s", oc))
 }

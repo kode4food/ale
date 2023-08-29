@@ -106,7 +106,7 @@ func callWith(e encoder.Encoder, emitFunc funcEmitter, emitArgs argsEmitter) {
 	case 1:
 		e.Emit(isa.Call1)
 	default:
-		e.Emit(isa.Call, isa.Count(al))
+		e.Emit(isa.Call, isa.Operand(al))
 	}
 }
 
