@@ -123,7 +123,7 @@ func TestAsmValue(t *testing.T) {
 		isa.New(isa.Call, 2),
 		isa.New(isa.Return),
 	}, `
-	(asm* 
+	(asm*
 		.value (+ 1 2)
 		return)
 	`)
@@ -134,8 +134,8 @@ func TestAsmMakeEncoder(t *testing.T) {
 
 	as.EvalTo(`
 		(define* if'
-			(asm*
-				!make-encoder (predicate consequent alternative)
+			(asm* !make-encoder
+				[(predicate consequent alternative)
 					.value predicate
 					make-truthy
 					cond-jump :consequent
@@ -143,7 +143,16 @@ func TestAsmMakeEncoder(t *testing.T) {
 					jump :end
 				:consequent
 					.value consequent
-				:end))
+				:end]
+				[(predicate consequent)
+					.value predicate
+					make-truthy
+					cond-jump :consequent
+					nil
+					jump :end
+				:consequent
+					.value consequent
+				:end]))
 
 		(if' true "yep" "nope")
     `, S("yep"))

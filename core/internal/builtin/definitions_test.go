@@ -25,7 +25,7 @@ func TestFunctionEval(t *testing.T) {
 
 func TestBadFunctionEval(t *testing.T) {
 	symErr := unexpectedTypeError("integer", "local symbol")
-	numErr := fmt.Errorf(special.ErrUnexpectedLambdaSyntax, "99")
+	numErr := fmt.Errorf(special.ErrUnexpectedCaseSyntax, "99")
 	vecErr := unexpectedTypeError("integer", "vector")
 	listErr := unexpectedTypeError("integer", "local symbol")
 

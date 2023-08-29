@@ -7,28 +7,37 @@
 (define* false #f)
 (define* nil '())
 
-(define* if*
-  (asm*
-    !make-encoder (predicate consequent alternative)
-        .value predicate
-        make-truthy
-        cond-jump :consequent
-        .value alternative
-        jump :end
-    :consequent
-        .value consequent
-    :end))
+(define* if
+  (asm* !make-encoder
+    [(predicate consequent alternative)
+         .value predicate
+          make-truthy
+          cond-jump :consequent
+          .value alternative
+          jump :end
+      :consequent
+          .value consequent
+      :end]
+    [(predicate consequent)
+          .value predicate
+          make-truthy
+          cond-jump :consequent
+          nil
+          jump :end
+      :consequent
+          .value consequent
+      :end]))
 
 ;; syntax-quoting requires it
 (define* concat!
   (lambda colls
     (let-rec [concat-inner
               (lambda (colls head)
-                (if* (is-empty colls)
+                (if (is-empty colls)
                   (apply list head)
                   (let ([f (first colls)]
                         [r (rest colls) ])
-                    (if* (is-empty f)
+                    (if (is-empty f)
                       (concat-inner r head)
                       (concat-inner (cons (rest f) r)
                                     (append head (first f)))))))]
@@ -44,7 +53,7 @@
 (private* is-cons-or-list)
 (define* is-cons-or-list
   (lambda (value)
-    (if* (is-cons value)
+    (if (is-cons value)
       true
       (is-list value))))
 
@@ -55,7 +64,7 @@
       (lambda forms
         (let ([f (car forms)]
               [r (cdr forms)])
-          (if* (is-cons-or-list f)
+          (if (is-cons-or-list f)
             (quoter (car f) (cons (cdr f) r))
             (quoter f r)))))))
 
@@ -70,12 +79,6 @@
     (lambda (name body)
       `(define* ,name
          (label ,name (macro (lambda ,@body)))))))
-
-(define-macro if
-  [(predicate consequent alternative)
-    `(if* ,predicate ,consequent ,alternative)]
-  [(predicate consequent)
-    `(if* ,predicate ,consequent nil)])
 
 (define-macro (!eq value . comps)
   `(not (eq ,value ,@comps)))

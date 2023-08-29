@@ -54,7 +54,7 @@ func TestFunctionPredicates(t *testing.T) {
 	as.False(builtin.IsSpecial.Call(builtin.Str))
 	as.True(builtin.IsApply.Call(builtin.Str))
 
-	i, ok := e.GetRoot().Resolve("if*")
+	i, ok := e.GetRoot().Resolve("if")
 	as.True(ok && i.IsBound())
 	as.True(builtin.IsSpecial.Call(i.Value()))
 	as.False(builtin.IsApply.Call(i.Value()))
@@ -83,10 +83,10 @@ func TestLambdaEval(t *testing.T) {
 func TestBadLambdaEval(t *testing.T) {
 	as := assert.New(t)
 
-	eNum := fmt.Errorf(special.ErrUnexpectedLambdaSyntax, "99")
+	eNum := fmt.Errorf(special.ErrUnexpectedCaseSyntax, "99")
 	as.PanicWith(`(lambda-rec 99 "hello")`, eNum)
 
-	eSym := fmt.Errorf(special.ErrUnexpectedLambdaSyntax, "foo/bar")
+	eSym := fmt.Errorf(special.ErrUnexpectedCaseSyntax, "foo/bar")
 	as.PanicWith(`(lambda-rec foo/bar () "hello")`, eSym)
 }
 

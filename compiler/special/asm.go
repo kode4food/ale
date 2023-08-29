@@ -62,10 +62,10 @@ var (
 
 // Asm provides indirect access to the Encoder's methods and generators
 func Asm(e encoder.Encoder, args ...data.Value) {
-	makeEncoder(e).process(data.NewVector(args...))
+	makeAsmEncoder(e).process(data.NewVector(args...))
 }
 
-func makeEncoder(e encoder.Encoder) *asmEncoder {
+func makeAsmEncoder(e encoder.Encoder) *asmEncoder {
 	return &asmEncoder{
 		Encoder: e,
 		labels:  map[data.Name]isa.Index{},
@@ -74,21 +74,21 @@ func makeEncoder(e encoder.Encoder) *asmEncoder {
 }
 
 func (e *asmEncoder) withArgs(n data.Names, v data.Values) *asmEncoder {
-	res := *e
 	args := make(map[data.Name]data.Value, len(n))
 	for i, k := range n {
 		args[k] = v[i]
 	}
+	res := *e
 	res.args = args
 	return &res
 }
 
 func (e *asmEncoder) process(forms data.Sequence) {
-	if v, r, ok := take(forms, 2); ok {
-		if l, ok := v[0].(data.LocalSymbol); ok {
+	if f, r, ok := forms.Split(); ok {
+		if l, ok := f.(data.LocalSymbol); ok {
 			switch l.Name() {
 			case MakeEncoder:
-				e.makeEncoder(v[1], r)
+				e.makeEncoderCall(r)
 				return
 			}
 		}
@@ -96,12 +96,22 @@ func (e *asmEncoder) process(forms data.Sequence) {
 	e.encode(forms)
 }
 
-func (e *asmEncoder) makeEncoder(arg data.Value, forms data.Sequence) {
-	names := parseListArgNames(arg.(data.List))
+func (e *asmEncoder) makeEncoderCall(forms data.Sequence) {
+	cases := parseParamCases(forms)
+	ac := cases.makeArityChecker()
+	f := cases.makeFetchers()
 	fn := func(e encoder.Encoder, args ...data.Value) {
-		data.AssertFixed(len(names), len(args))
-		ae := makeEncoder(e).withArgs(names, args)
-		ae.process(forms)
+		if err := ac(len(args)); err != nil {
+			panic(err)
+		}
+		for i, c := range cases {
+			if a, ok := f[i](args); ok {
+				ae := makeAsmEncoder(e).withArgs(c.params, a)
+				ae.process(c.body)
+				return
+			}
+		}
+		panic(ErrNoMatchingArgumentPattern)
 	}
 	e.Emit(isa.Const, e.AddConstant(encoder.Call(fn)))
 }
