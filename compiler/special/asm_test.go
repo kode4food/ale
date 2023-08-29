@@ -37,7 +37,7 @@ func TestAsmJump(t *testing.T) {
 	as := assert.New(t)
 	as.EvalTo(`
 		(define* test
-			(lambda () 
+			(lambda ()
 				(asm*
 					.local some-value :val
 					true
@@ -156,4 +156,24 @@ func TestAsmMakeEncoder(t *testing.T) {
 
 		(if' true "yep" "nope")
     `, S("yep"))
+}
+
+func TestAsmMakeRestEncoder(t *testing.T) {
+	as := assert.New(t)
+
+	as.EvalTo(`
+		(define* test
+			(asm* !make-encoder
+				[(head . rest)
+					.value head]))
+		(test 1 2 3 4)
+	`, I(1))
+
+	as.EvalTo(`
+		(define* test
+			(asm* !make-encoder
+				[(head . rest)
+					.value rest]))
+		(test 1 2 3 4)
+	`, V(I(2), I(3), I(4)))
 }

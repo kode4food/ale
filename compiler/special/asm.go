@@ -73,7 +73,7 @@ func makeAsmEncoder(e encoder.Encoder) *asmEncoder {
 	}
 }
 
-func (e *asmEncoder) withArgs(n data.Names, v data.Values) *asmEncoder {
+func (e *asmEncoder) withParams(n data.Names, v data.Values) *asmEncoder {
 	args := make(map[data.Name]data.Value, len(n))
 	for i, k := range n {
 		args[k] = v[i]
@@ -106,8 +106,8 @@ func (e *asmEncoder) makeEncoderCall(forms data.Sequence) {
 		}
 		for i, c := range cases {
 			if a, ok := f[i](args); ok {
-				ae := makeAsmEncoder(e).withArgs(c.params, a)
-				ae.process(c.body)
+				ae := makeAsmEncoder(e).withParams(c.params, a)
+				ae.encode(c.body)
 				return
 			}
 		}

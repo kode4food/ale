@@ -103,7 +103,10 @@ func (c *paramCase) makeFetcher() argFetcher {
 			if len(args) < cl {
 				return args, false
 			}
-			return append(args[0:cl-2], args[cl-1:]...), true
+			res := make(data.Values, cl)
+			copy(res, args[0:cl-1])
+			res[cl-1] = data.NewVector(args[cl-1:]...)
+			return res, true
 		}
 	}
 	return func(args data.Values) (data.Values, bool) {
