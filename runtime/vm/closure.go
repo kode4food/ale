@@ -308,11 +308,10 @@ opSwitch:
 	case isa.Call:
 		SP1 := SP + 1
 		// prepare args
-		argCount := int(op)
-		args := make(data.Values, argCount)
-		copy(args, STACK[SP1+1:]) // must be a copy
+		args := make(data.Values, op)
+		copy(args, STACK[SP1+1:]) // because stack mutates
 		// call function
-		RES := SP1 + argCount
+		RES := SP1 + int(op)
 		STACK[RES] = STACK[SP1].(data.Function).Call(args...)
 		SP = RES - 1
 		goto nextPC
@@ -320,9 +319,8 @@ opSwitch:
 	case isa.TailCall:
 		SP1 := SP + 1
 		// prepare args
-		argCount := int(op)
-		args = make(data.Values, argCount)
-		copy(args, STACK[SP1+1:]) // must be a copy
+		args = make(data.Values, op)
+		copy(args, STACK[SP1+1:]) // because stack mutates
 		// call function
 		val := STACK[SP1]
 		if vc, ok := val.(*closure); ok {
