@@ -313,5 +313,5 @@ func toOperand(val data.Value) (isa.Operand, error) {
 }
 
 func isValidOperand(i data.Integer) bool {
-	return i >= 0 && i <= 0xFFFFFF
+	return i >= 0 && i <= isa.OperandMask
 }

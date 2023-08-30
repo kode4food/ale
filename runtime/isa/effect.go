@@ -3,7 +3,7 @@ package isa
 import "fmt"
 
 type (
-	// Effect captures how an instruction impacts the state of the machine
+	// Effect captures how an Instruction impacts the state of the machine
 	Effect struct {
 		Operand ActOn // Describe elements the operands act on
 
@@ -12,7 +12,7 @@ type (
 
 		DPop   bool // Dynamic number of items to be popped (in operand)
 		Ignore bool // Skip this instruction (ex: Labels and NoOps)
-		Exit   bool // Results in a termination of the VM
+		Exit   bool // Results in a termination of the abstract machine
 	}
 
 	ActOn int

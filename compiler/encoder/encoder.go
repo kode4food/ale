@@ -79,7 +79,7 @@ func (e *encoder) Emit(oc isa.Opcode, args ...isa.Operand) {
 	e.code = append(e.code, isa.New(oc, args...))
 }
 
-// Code returns the encoder's resulting VM instructions
+// Code returns the encoder's resulting abstract machine Instructions
 func (e *encoder) Code() isa.Instructions {
 	code := e.code
 	analysis.Verify(code)

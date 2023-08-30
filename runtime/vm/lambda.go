@@ -9,7 +9,7 @@ import (
 	"github.com/kode4food/ale/types"
 )
 
-// Lambda encapsulates the initial environment of a virtual machine
+// Lambda encapsulates the initial environment of an abstract machine
 type Lambda struct {
 	Globals      env.Namespace
 	Constants    data.Values
@@ -19,8 +19,8 @@ type Lambda struct {
 	ArityChecker data.ArityChecker
 }
 
-// LambdaFromEncoder instantiates a VM Lambda from the provided Encoder's
-// intermediate representation
+// LambdaFromEncoder instantiates an abstract machine Lambda from the provided
+// Encoder's intermediate representation
 func LambdaFromEncoder(e encoder.Encoder) *Lambda {
 	code := e.Code()
 	optimized := optimize.Instructions(code)
@@ -38,9 +38,8 @@ func NoArityChecker(int) error {
 	return nil
 }
 
-// Call allows a VM Lambda to be called for the purpose
-// of instantiating a closure. This calling interface is used
-// only by the compiler.
+// Call allows an abstract machine Lambda to be called for the purpose of
+// instantiating a closure. Only the compiler invokes this calling interface.
 func (l *Lambda) Call(values ...data.Value) data.Value {
 	return newClosure(l, values)
 }

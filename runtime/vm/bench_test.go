@@ -78,13 +78,13 @@ var bCode = makeCode([]isa.Coder{
 	isa.Return,
 })
 
-func BenchmarkVMCalls(b *testing.B) {
+func BenchmarkCalls(b *testing.B) {
 	for n := 0; n < b.N; n++ {
 		_ = bCode.Call()
 	}
 }
 
-func BenchmarkVMTailCalls(b *testing.B) {
+func BenchmarkTailCalls(b *testing.B) {
 	env := bootstrap.DevNullEnvironment()
 	ns := env.GetAnonymous()
 	_ = eval.String(ns, `
