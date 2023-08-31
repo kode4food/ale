@@ -31,7 +31,8 @@ const MaxWord = math.MaxUint32
 
 // Error messages
 const (
-	ErrBadInstruction = "instruction operand mismatch: %s"
+	ErrBadInstruction  = "instruction operand mismatch: %s"
+	ErrExpectedOperand = "expected unsigned operand: %d"
 )
 
 // New creates a new Instruction instance
@@ -39,6 +40,9 @@ func New(oc Opcode, args ...Operand) Instruction {
 	effect := MustGetEffect(oc)
 	switch {
 	case effect.Operand != Nothing && len(args) == 1:
+		if !IsValidOperand(int(args[0])) {
+			panic(fmt.Errorf(ErrExpectedOperand, args[0]))
+		}
 		return Instruction(Opcode(args[0]<<OpcodeSize) | oc)
 	case effect.Operand == Nothing && len(args) == 0:
 		return Instruction(oc)
@@ -77,4 +81,9 @@ func (i Instruction) String() string {
 		return fmt.Sprintf("%s(%d)", oc.String(), operand)
 	}
 	return fmt.Sprintf("%s()", oc.String())
+}
+
+// IsValidOperand returns true if the int falls within the operand range
+func IsValidOperand(i int) bool {
+	return i >= 0 && i <= OperandMask
 }

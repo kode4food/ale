@@ -36,7 +36,6 @@ const (
 	ErrUnknownLocalType      = "unknown local type: %s"
 	ErrUnexpectedName        = "unexpected local name: %s"
 	ErrUnexpectedLabel       = "unexpected label: %s"
-	ErrExpectedOperand       = "expected unsigned word: %s"
 )
 
 const (
@@ -305,13 +304,9 @@ func wrapToOperandError(toOperand toOperandFunc, errStr string) toOperandFunc {
 
 func toOperand(val data.Value) (isa.Operand, error) {
 	if val, ok := val.(data.Integer); ok {
-		if isValidOperand(val) {
+		if isa.IsValidOperand(int(val)) {
 			return isa.Operand(val), nil
 		}
 	}
-	return 0, fmt.Errorf(ErrExpectedOperand, val)
-}
-
-func isValidOperand(i data.Integer) bool {
-	return i >= 0 && i <= isa.OperandMask
+	return 0, fmt.Errorf(isa.ErrExpectedOperand, val)
 }

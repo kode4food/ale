@@ -177,3 +177,16 @@ func TestAsmMakeRestEncoder(t *testing.T) {
 		(test 1 2 3 4)
 	`, V(I(2), I(3), I(4)))
 }
+
+func TestAsmOperandSizeError(t *testing.T) {
+	as := assert.New(t)
+	as.EvalTo(
+		fmt.Sprintf("(asm* pos-int %d)", isa.OperandMask),
+		I(isa.OperandMask),
+	)
+
+	defer as.ExpectPanic(
+		fmt.Sprintf(isa.ErrExpectedOperand, isa.OperandMask+1),
+	)
+	as.Eval(fmt.Sprintf("(asm* pos-int %d)", isa.OperandMask+1))
+}
