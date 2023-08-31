@@ -35,7 +35,8 @@ type (
 
 // Sorted returns a sorted set of Pairs
 func (p Pairs) Sorted() Pairs {
-	res := p[:]
+	res := make(Pairs, len(p))
+	copy(res, p)
 	slices.SortFunc(res, func(l, r Pair) int {
 		return cmp.Compare(l.Car().String(), r.Car().String())
 	})

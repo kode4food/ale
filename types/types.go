@@ -25,7 +25,8 @@ type (
 )
 
 func (t typeList) sorted() typeList {
-	res := t[:]
+	res := make(typeList, len(t))
+	copy(res, t)
 	slices.SortFunc(res, func(l, r Type) int {
 		return cmp.Compare(l.Name(), r.Name())
 	})

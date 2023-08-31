@@ -88,7 +88,8 @@ var (
 
 // Sorted returns a sorted set of Names
 func (n Names) Sorted() Names {
-	res := n[:]
+	res := make(Names, len(n))
+	copy(res, n)
 	slices.Sort(res)
 	return res
 }

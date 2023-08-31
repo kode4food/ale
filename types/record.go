@@ -77,7 +77,8 @@ func (f fields) toMap() map[string]Type {
 }
 
 func (f fields) sorted() fields {
-	res := f[:]
+	res := make(fields, len(f))
+	copy(res, f)
 	slices.SortFunc(res, func(l, r Field) int {
 		return cmp.Compare(l.Name, r.Name)
 	})
