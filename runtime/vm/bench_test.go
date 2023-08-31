@@ -4,9 +4,8 @@ import (
 	"testing"
 
 	"github.com/kode4food/ale/core/bootstrap"
-	"github.com/kode4food/ale/eval"
-
 	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/eval"
 	. "github.com/kode4food/ale/internal/assert/helpers"
 	"github.com/kode4food/ale/runtime/isa"
 )
@@ -71,7 +70,7 @@ var bCode = makeCode([]isa.Coder{
 	isa.New(isa.Const, 0), // the extra stack item is intentional
 	isa.New(isa.Const, 0),
 	isa.New(isa.Const, 1),
-	isa.One,
+	isa.New(isa.PosInt, 1),
 	isa.New(isa.Const, 3),
 	isa.New(isa.Call, 3),
 	isa.Add,

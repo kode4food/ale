@@ -17,7 +17,7 @@ func TestVerifyGoodStack(t *testing.T) {
 	e := assert.GetTestEncoder()
 	generate.Branch(e,
 		func(encoder.Encoder) { e.Emit(isa.True) },
-		func(encoder.Encoder) { e.Emit(isa.One) },
+		func(encoder.Encoder) { e.Emit(isa.PosInt, 1) },
 		func(encoder.Encoder) { e.Emit(isa.Zero) },
 	)
 	e.Emit(isa.Return)
@@ -33,8 +33,8 @@ func TestVerifyBadBranchStack(t *testing.T) {
 	generate.Branch(e,
 		func(encoder.Encoder) { e.Emit(isa.True) },
 		func(encoder.Encoder) {
-			e.Emit(isa.One)
-			e.Emit(isa.Two)
+			e.Emit(isa.PosInt, 1)
+			e.Emit(isa.PosInt, 2)
 		},
 		func(encoder.Encoder) { e.Emit(isa.Zero) },
 	)

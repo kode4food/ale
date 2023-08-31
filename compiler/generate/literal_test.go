@@ -32,14 +32,14 @@ func TestLiteral(t *testing.T) {
 	as.Instructions(
 		isa.Instructions{
 			isa.New(isa.Zero),
-			isa.New(isa.One),
-			isa.New(isa.Two),
-			isa.New(isa.Const, 0),
-			isa.New(isa.NegOne),
+			isa.New(isa.PosInt, 1),
+			isa.New(isa.PosInt, 2),
+			isa.New(isa.PosInt, 3),
+			isa.New(isa.NegInt, 1),
 			isa.New(isa.True),
 			isa.New(isa.False),
 			isa.New(isa.Nil),
-			isa.New(isa.Const, 1),
+			isa.New(isa.Const, 0),
 			isa.New(isa.Pop),
 			isa.New(isa.Pop),
 			isa.New(isa.Pop),
@@ -54,6 +54,5 @@ func TestLiteral(t *testing.T) {
 	)
 
 	c := e.Constants()
-	as.Equal(I(3), c[0])
-	as.Equal(S("hello there!"), c[1])
+	as.Equal(S("hello there!"), c[0])
 }

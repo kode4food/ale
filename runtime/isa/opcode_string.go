@@ -37,16 +37,16 @@ func _() {
 	_ = x[Mul-25]
 	_ = x[Neg-26]
 	_ = x[NegInf-27]
-	_ = x[NegOne-28]
+	_ = x[NegInt-28]
 	_ = x[Neq-29]
 	_ = x[NewRef-30]
 	_ = x[NoOp-31]
 	_ = x[Not-32]
 	_ = x[Nil-33]
-	_ = x[One-34]
-	_ = x[Panic-35]
-	_ = x[Pop-36]
-	_ = x[PosInf-37]
+	_ = x[Panic-34]
+	_ = x[Pop-35]
+	_ = x[PosInf-36]
+	_ = x[PosInt-37]
 	_ = x[Private-38]
 	_ = x[Resolve-39]
 	_ = x[RestArg-40]
@@ -59,22 +59,21 @@ func _() {
 	_ = x[Sub-47]
 	_ = x[TailCall-48]
 	_ = x[True-49]
-	_ = x[Two-50]
-	_ = x[Zero-51]
+	_ = x[Zero-50]
 }
 
 const (
-	_Opcode_name_0 = "AddArgArgLenBindBindRefCallCall0Call1ClosureCondJumpConstDeclareDerefDivDupEqFalseGtGteJumpLoadLtLteMakeTruthyModMulNegNegInfNegOneNeqNewRefNoOpNotNilOnePanicPopPosInfPrivateResolveRestArgRetFalseRetNilRetTrueReturnSelfStoreSubTailCallTrueTwoZero"
+	_Opcode_name_0 = "AddArgArgLenBindBindRefCallCall0Call1ClosureCondJumpConstDeclareDerefDivDupEqFalseGtGteJumpLoadLtLteMakeTruthyModMulNegNegInfNegIntNeqNewRefNoOpNotNilPanicPopPosInfPosIntPrivateResolveRestArgRetFalseRetNilRetTrueReturnSelfStoreSubTailCallTrueZero"
 	_Opcode_name_1 = "Label"
 )
 
 var (
-	_Opcode_index_0 = [...]uint8{0, 3, 6, 12, 16, 23, 27, 32, 37, 44, 52, 57, 64, 69, 72, 75, 77, 82, 84, 87, 91, 95, 97, 100, 110, 113, 116, 119, 125, 131, 134, 140, 144, 147, 150, 153, 158, 161, 167, 174, 181, 188, 196, 202, 209, 215, 219, 224, 227, 235, 239, 242, 246}
+	_Opcode_index_0 = [...]uint8{0, 3, 6, 12, 16, 23, 27, 32, 37, 44, 52, 57, 64, 69, 72, 75, 77, 82, 84, 87, 91, 95, 97, 100, 110, 113, 116, 119, 125, 131, 134, 140, 144, 147, 150, 155, 158, 164, 170, 177, 184, 191, 199, 205, 212, 218, 222, 227, 230, 238, 242, 246}
 )
 
 func (i Opcode) String() string {
 	switch {
-	case i <= 51:
+	case i <= 50:
 		return _Opcode_name_0[_Opcode_index_0[i]:_Opcode_index_0[i+1]]
 	case i == 63:
 		return _Opcode_name_1

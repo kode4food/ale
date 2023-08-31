@@ -58,18 +58,13 @@ opSwitch:
 		SP--
 		goto nextPC
 
-	case isa.One:
-		STACK[SP] = data.Integer(1)
+	case isa.PosInt:
+		STACK[SP] = data.Integer(op)
 		SP--
 		goto nextPC
 
-	case isa.NegOne:
-		STACK[SP] = data.Integer(-1)
-		SP--
-		goto nextPC
-
-	case isa.Two:
-		STACK[SP] = data.Integer(2)
+	case isa.NegInt:
+		STACK[SP] = -data.Integer(op)
 		SP--
 		goto nextPC
 

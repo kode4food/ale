@@ -18,8 +18,8 @@ func TestTailCalls(t *testing.T) {
 	e1.Emit(isa.Return)
 
 	as.Instructions(isa.Instructions{
-		isa.New(isa.Two),
-		isa.New(isa.One),
+		isa.New(isa.PosInt, 2),
+		isa.New(isa.PosInt, 1),
 		isa.New(isa.Const, 0),
 		isa.New(isa.TailCall, 2),
 	}, optimize.Instructions(e1.Code()))

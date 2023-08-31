@@ -81,25 +81,42 @@ func TestSimple(t *testing.T) {
 }
 
 func TestPopAndDup(t *testing.T) {
-	testResult(t, I(4), []isa.Coder{isa.Two, isa.Dup, isa.Add, isa.Return})
+	testResult(t, I(4), []isa.Coder{
+		isa.New(isa.PosInt, 2),
+		isa.Dup,
+		isa.Add,
+		isa.Return,
+	})
 
 	testResult(t, I(2), []isa.Coder{
-		isa.One, isa.One, isa.Two, isa.Two,
-		isa.Pop, isa.Pop,
+		isa.New(isa.PosInt, 1),
+		isa.New(isa.PosInt, 1),
+		isa.New(isa.PosInt, 2),
+		isa.New(isa.PosInt, 2),
+		isa.Pop,
+		isa.Pop,
 		isa.Add,
 		isa.Return,
 	})
 
 	testResult(t, I(6), []isa.Coder{
-		isa.One, isa.Two, isa.Add,
-		isa.Two, isa.Dup, isa.Pop, isa.Mul,
+		isa.New(isa.PosInt, 1),
+		isa.New(isa.PosInt, 2),
+		isa.Add,
+		isa.New(isa.PosInt, 2),
+		isa.Dup,
+		isa.Pop,
+		isa.Mul,
 		isa.Return,
 	})
 }
 
 func TestReturns(t *testing.T) {
 	testResult(t, data.Nil, []isa.Coder{isa.Nil, isa.Return})
-	testResult(t, I(2), []isa.Coder{isa.Two, isa.Return})
+	testResult(t, I(2), []isa.Coder{
+		isa.New(isa.PosInt, 2), isa.Return,
+	})
+
 	testResult(t, data.True, []isa.Coder{isa.True, isa.Return})
 	testResult(t, data.False, []isa.Coder{isa.False, isa.Return})
 
@@ -109,7 +126,12 @@ func TestReturns(t *testing.T) {
 }
 
 func TestUnary(t *testing.T) {
-	testResult(t, I(-1), []isa.Coder{isa.One, isa.Neg, isa.Return})
+	testResult(t, I(-1), []isa.Coder{
+		isa.New(isa.PosInt, 1),
+		isa.Neg,
+		isa.Return,
+	})
+
 	testResult(t, data.False, []isa.Coder{isa.True, isa.Not, isa.Return})
 }
 
@@ -144,7 +166,7 @@ func TestCalls(t *testing.T) {
 		isa.New(isa.Const, 0),
 		isa.New(isa.Const, 0),
 		isa.New(isa.Const, 1),
-		isa.One,
+		isa.New(isa.PosInt, 1),
 		isa.New(isa.Const, 3),
 		isa.New(isa.Call, 3),
 		isa.Add,
@@ -166,43 +188,134 @@ func TestCalls(t *testing.T) {
 }
 
 func TestMaths(t *testing.T) {
-	testResult(t, I(3), []isa.Coder{isa.One, isa.Two, isa.Add, isa.Return})
-	testResult(t, I(4), []isa.Coder{isa.Two, isa.Two, isa.Mul, isa.Return})
-	testResult(t, I(-2), []isa.Coder{isa.Two, isa.NegOne, isa.Mul, isa.Return})
-	testResult(t, I(-1), []isa.Coder{isa.One, isa.Two, isa.Sub, isa.Return})
-	testResult(t, R(1, 2), []isa.Coder{isa.One, isa.Two, isa.Div, isa.Return})
+	testResult(t, I(3), []isa.Coder{
+		isa.New(isa.PosInt, 1),
+		isa.New(isa.PosInt, 2),
+		isa.Add, isa.Return,
+	})
+
+	testResult(t, I(4), []isa.Coder{
+		isa.New(isa.PosInt, 2),
+		isa.New(isa.PosInt, 2),
+		isa.Mul, isa.Return,
+	})
+
+	testResult(t, I(-2), []isa.Coder{
+		isa.New(isa.PosInt, 2),
+		isa.New(isa.NegInt, 1),
+		isa.Mul, isa.Return,
+	})
+
+	testResult(t, I(-1), []isa.Coder{
+		isa.New(isa.PosInt, 1),
+		isa.New(isa.PosInt, 2),
+		isa.Sub, isa.Return,
+	})
+
+	testResult(t, R(1, 2), []isa.Coder{
+		isa.New(isa.PosInt, 1),
+		isa.New(isa.PosInt, 2),
+		isa.Div, isa.Return,
+	})
 
 	testResult(t, I(1), []isa.Coder{
-		isa.Two, isa.Two, isa.Mul,
-		isa.Two, isa.Mul,
-		isa.One, isa.Add,
-		isa.Two, isa.Mod,
+		isa.New(isa.PosInt, 2), isa.New(isa.PosInt, 2), isa.Mul,
+		isa.New(isa.PosInt, 2), isa.Mul,
+		isa.New(isa.PosInt, 1), isa.Add,
+		isa.New(isa.PosInt, 2), isa.Mod,
 		isa.Return,
 	})
 }
 
 func TestRelational(t *testing.T) {
-	testResult(t, data.True, []isa.Coder{isa.One, isa.One, isa.Eq, isa.Return})
-	testResult(t, data.False, []isa.Coder{isa.One, isa.Two, isa.Eq, isa.Return})
-	testResult(t, data.True, []isa.Coder{isa.Two, isa.One, isa.Neq, isa.Return})
-	testResult(t, data.False, []isa.Coder{isa.One, isa.One, isa.Neq, isa.Return})
+	testResult(t, data.True, []isa.Coder{
+		isa.New(isa.PosInt, 1),
+		isa.New(isa.PosInt, 1),
+		isa.Eq, isa.Return,
+	})
 
-	testResult(t, data.True, []isa.Coder{isa.One, isa.Two, isa.Lt, isa.Return})
-	testResult(t, data.False, []isa.Coder{isa.Two, isa.One, isa.Lt, isa.Return})
-	testResult(t, data.True, []isa.Coder{isa.One, isa.Two, isa.Lte, isa.Return})
-	testResult(t, data.True, []isa.Coder{isa.Two, isa.Two, isa.Lte, isa.Return})
-	testResult(t, data.False, []isa.Coder{isa.Two, isa.One, isa.Lte, isa.Return})
+	testResult(t, data.False, []isa.Coder{
+		isa.New(isa.PosInt, 1),
+		isa.New(isa.PosInt, 2),
+		isa.Eq, isa.Return,
+	})
 
-	testResult(t, data.True, []isa.Coder{isa.Two, isa.One, isa.Gt, isa.Return})
-	testResult(t, data.False, []isa.Coder{isa.One, isa.Two, isa.Gt, isa.Return})
-	testResult(t, data.True, []isa.Coder{isa.Two, isa.One, isa.Gte, isa.Return})
-	testResult(t, data.True, []isa.Coder{isa.Two, isa.Two, isa.Gte, isa.Return})
-	testResult(t, data.False, []isa.Coder{isa.One, isa.Two, isa.Gte, isa.Return})
+	testResult(t, data.True, []isa.Coder{
+		isa.New(isa.PosInt, 2),
+		isa.New(isa.PosInt, 1),
+		isa.Neq, isa.Return,
+	})
+
+	testResult(t, data.False, []isa.Coder{
+		isa.New(isa.PosInt, 1),
+		isa.New(isa.PosInt, 1),
+		isa.Neq, isa.Return,
+	})
+
+	testResult(t, data.True, []isa.Coder{
+		isa.New(isa.PosInt, 1),
+		isa.New(isa.PosInt, 2),
+		isa.Lt, isa.Return,
+	})
+
+	testResult(t, data.False, []isa.Coder{
+		isa.New(isa.PosInt, 2),
+		isa.New(isa.PosInt, 1),
+		isa.Lt, isa.Return,
+	})
+
+	testResult(t, data.True, []isa.Coder{
+		isa.New(isa.PosInt, 1),
+		isa.New(isa.PosInt, 2),
+		isa.Lte, isa.Return,
+	})
+
+	testResult(t, data.True, []isa.Coder{
+		isa.New(isa.PosInt, 2),
+		isa.New(isa.PosInt, 2),
+		isa.Lte, isa.Return,
+	})
+
+	testResult(t, data.False, []isa.Coder{
+		isa.New(isa.PosInt, 2),
+		isa.New(isa.PosInt, 1),
+		isa.Lte, isa.Return,
+	})
+
+	testResult(t, data.True, []isa.Coder{
+		isa.New(isa.PosInt, 2),
+		isa.New(isa.PosInt, 1),
+		isa.Gt, isa.Return,
+	})
+
+	testResult(t, data.False, []isa.Coder{
+		isa.New(isa.PosInt, 1),
+		isa.New(isa.PosInt, 2),
+		isa.Gt, isa.Return,
+	})
+
+	testResult(t, data.True, []isa.Coder{
+		isa.New(isa.PosInt, 2),
+		isa.New(isa.PosInt, 1),
+		isa.Gte, isa.Return,
+	})
+
+	testResult(t, data.True, []isa.Coder{
+		isa.New(isa.PosInt, 2),
+		isa.New(isa.PosInt, 2),
+		isa.Gte, isa.Return,
+	})
+
+	testResult(t, data.False, []isa.Coder{
+		isa.New(isa.PosInt, 1),
+		isa.New(isa.PosInt, 2),
+		isa.Gte, isa.Return,
+	})
 }
 
 func TestLoadStore(t *testing.T) {
 	testResult(t, I(4), []isa.Coder{
-		isa.Two,
+		isa.New(isa.PosInt, 2),
 		isa.New(isa.Store, 0),
 		isa.New(isa.Load, 0),
 		isa.New(isa.Load, 0),
@@ -213,14 +326,14 @@ func TestLoadStore(t *testing.T) {
 
 func TestRefs(t *testing.T) {
 	testResult(t, I(-1), []isa.Coder{
-		isa.Two,
+		isa.New(isa.PosInt, 2),
 		isa.New(isa.Store, 1),
 		isa.NewRef,
 		isa.New(isa.Store, 2),
 		isa.New(isa.Load, 1),
 		isa.New(isa.Load, 2),
 		isa.BindRef,
-		isa.One,
+		isa.New(isa.PosInt, 1),
 		isa.New(isa.Load, 2),
 		isa.Deref,
 		isa.Sub,
@@ -232,10 +345,10 @@ func TestGlobals(t *testing.T) {
 	testResult(t, I(3), []isa.Coder{
 		isa.New(isa.Const, 4),
 		isa.Declare,
-		isa.Two,
+		isa.New(isa.PosInt, 2),
 		isa.New(isa.Const, 4),
 		isa.Bind,
-		isa.One,
+		isa.New(isa.PosInt, 1),
 		isa.New(isa.Const, 5),
 		isa.Resolve,
 		isa.Add,
@@ -245,34 +358,34 @@ func TestGlobals(t *testing.T) {
 
 func TestJumps(t *testing.T) {
 	testResult(t, I(4), []isa.Coder{
-		isa.Two,
+		isa.New(isa.PosInt, 2),
 		isa.New(isa.Jump, 3),
-		isa.One,
-		isa.Two,
+		isa.New(isa.PosInt, 1),
+		isa.New(isa.PosInt, 2),
 		isa.Add,
 		isa.Return,
 	})
 
 	testResult(t, I(4), []isa.Coder{
-		isa.Two,
+		isa.New(isa.PosInt, 2),
 		isa.True,
 		isa.New(isa.CondJump, 6),
-		isa.One,
+		isa.New(isa.PosInt, 1),
 		isa.Add,
 		isa.New(isa.Jump, 8),
-		isa.Two,
+		isa.New(isa.PosInt, 2),
 		isa.Add,
 		isa.Return,
 	})
 
 	testResult(t, I(3), []isa.Coder{
-		isa.Two,
+		isa.New(isa.PosInt, 2),
 		isa.False,
 		isa.New(isa.CondJump, 6),
-		isa.One,
+		isa.New(isa.PosInt, 1),
 		isa.Add,
 		isa.New(isa.Jump, 8),
-		isa.Two,
+		isa.New(isa.PosInt, 2),
 		isa.Add,
 		isa.Return,
 	})

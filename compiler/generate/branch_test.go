@@ -15,7 +15,7 @@ func TestBranch(t *testing.T) {
 	e := assert.GetTestEncoder()
 	generate.Branch(e,
 		func(encoder.Encoder) { e.Emit(isa.True) },
-		func(encoder.Encoder) { e.Emit(isa.One) },
+		func(encoder.Encoder) { e.Emit(isa.PosInt, 1) },
 		func(encoder.Encoder) { e.Emit(isa.Zero) },
 	)
 	e.Emit(isa.Return)
@@ -27,7 +27,7 @@ func TestBranch(t *testing.T) {
 			isa.New(isa.Zero),
 			isa.New(isa.Jump, 1),
 			isa.New(isa.Label, 0),
-			isa.New(isa.One),
+			isa.New(isa.PosInt, 1),
 			isa.New(isa.Label, 1),
 			isa.New(isa.Return),
 		},

@@ -15,10 +15,10 @@ func TestBranch(t *testing.T) {
 	as := assert.New(t)
 
 	e1 := assert.GetTestEncoder()
-	e1.Emit(isa.NegOne)
+	e1.Emit(isa.NegInt, 1)
 	generate.Branch(e1,
 		func(encoder.Encoder) { e1.Emit(isa.True) },
-		func(encoder.Encoder) { e1.Emit(isa.One) },
+		func(encoder.Encoder) { e1.Emit(isa.PosInt, 1) },
 		func(encoder.Encoder) { e1.Emit(isa.Zero) },
 	)
 	e1.Emit(isa.Pop)
@@ -27,13 +27,13 @@ func TestBranch(t *testing.T) {
 	b := visitor.Branch(e1.Code()).(visitor.Branches)
 
 	as.Instructions(isa.Instructions{
-		isa.New(isa.NegOne),
+		isa.New(isa.NegInt, 1),
 		isa.New(isa.True),
 		isa.New(isa.CondJump, 0),
 	}, b.Prologue().Code())
 
 	as.Instructions(isa.Instructions{
-		isa.New(isa.One),
+		isa.New(isa.PosInt, 1),
 	}, b.ThenBranch().Code())
 
 	as.Instructions(isa.Instructions{
@@ -46,7 +46,7 @@ func TestBranch(t *testing.T) {
 	}, b.Epilogue().Code())
 
 	as.Equal(
-		"NegOne()\nTrue()\nCondJump(0)\n  One()\nelse:\n  Zero()\nPop()\nReturn()\n",
+		"NegInt(1)\nTrue()\nCondJump(0)\n  PosInt(1)\nelse:\n  Zero()\nPop()\nReturn()\n",
 		b.(fmt.Stringer).String(),
 	)
 

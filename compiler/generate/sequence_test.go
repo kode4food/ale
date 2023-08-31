@@ -29,8 +29,8 @@ func TestBlock(t *testing.T) {
 	e2.Emit(isa.Return)
 
 	as.Instructions(isa.Instructions{
-		isa.New(isa.Two),
-		isa.New(isa.One),
+		isa.New(isa.PosInt, 2),
+		isa.New(isa.PosInt, 1),
 		isa.New(isa.Const, 0),
 		isa.New(isa.Call, 2),
 		isa.New(isa.Pop),

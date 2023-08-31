@@ -44,16 +44,16 @@ const (
 	Mul                      // Multiplication
 	Neg                      // Negation
 	NegInf                   // Push Negative Infinity
-	NegOne                   // Push Negative One
+	NegInt                   // Push Negative Integer (in Operand)
 	Neq                      // Numeric Inequality
 	NewRef                   // New Reference
 	NoOp                     // Non-Operator
 	Not                      // Boolean Negation
 	Nil                      // Push Nil
-	One                      // Push One
 	Panic                    // Abnormally Halt
 	Pop                      // Discard Value
 	PosInf                   // Positive Infinity
+	PosInt                   // Push Positive Integer (in Operand)
 	Private                  // Declare a private Namespace entry
 	Resolve                  // Resolve Global Symbol
 	RestArg                  // Retrieve Arguments Tail
@@ -66,7 +66,6 @@ const (
 	Sub                      // Subtraction
 	TailCall                 // Tail Call
 	True                     // Push True
-	Two                      // Push Two
 	Zero                     // Push Zero
 )
 

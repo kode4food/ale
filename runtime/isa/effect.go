@@ -20,10 +20,11 @@ type (
 
 const (
 	Nothing ActOn = iota
-	Locals
-	Constants
-	Labels
 	Arguments
+	Constants
+	Integer
+	Labels
+	Locals
 	Stack
 	Values
 )
@@ -63,16 +64,16 @@ var Effects = map[Opcode]*Effect{
 	Mul:        {Pop: 2, Push: 1},
 	Neg:        {Pop: 1, Push: 1},
 	NegInf:     {Push: 1},
-	NegOne:     {Push: 1},
+	NegInt:     {Push: 1, Operand: Integer},
 	Neq:        {Pop: 2, Push: 1},
 	NewRef:     {Push: 1},
 	NoOp:       {Ignore: true},
 	Not:        {Pop: 1, Push: 1},
 	Nil:        {Push: 1},
-	One:        {Push: 1},
 	Panic:      {Pop: 1, Exit: true},
 	Pop:        {Pop: 1},
 	PosInf:     {Push: 1},
+	PosInt:     {Push: 1, Operand: Integer},
 	Declare:    {Pop: 1},
 	Private:    {Pop: 1},
 	Resolve:    {Pop: 1, Push: 1},
@@ -86,7 +87,6 @@ var Effects = map[Opcode]*Effect{
 	Sub:        {Pop: 2, Push: 1},
 	TailCall:   {Pop: 1, DPop: true, Operand: Stack},
 	True:       {Push: 1},
-	Two:        {Push: 1},
 	Zero:       {Push: 1},
 }
 

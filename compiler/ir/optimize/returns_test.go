@@ -16,7 +16,7 @@ func TestSplitReturns(t *testing.T) {
 	e1 := assert.GetTestEncoder()
 	generate.Branch(e1,
 		func(encoder.Encoder) { e1.Emit(isa.True) },
-		func(encoder.Encoder) { e1.Emit(isa.One) },
+		func(encoder.Encoder) { e1.Emit(isa.PosInt, 1) },
 		func(encoder.Encoder) { e1.Emit(isa.Zero) },
 	)
 	e1.Emit(isa.Return)
@@ -28,7 +28,7 @@ func TestSplitReturns(t *testing.T) {
 		isa.New(isa.Return),
 		isa.New(isa.Jump, 1),
 		isa.New(isa.Label, 0),
-		isa.New(isa.One),
+		isa.New(isa.PosInt, 1),
 		isa.New(isa.Return),
 		isa.New(isa.Label, 1),
 	}, optimize.Instructions(e1.Code()))

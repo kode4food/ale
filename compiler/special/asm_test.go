@@ -15,7 +15,7 @@ func TestAsmAddition(t *testing.T) {
 	as := assert.New(t)
 	as.EvalTo(`
 		(define* test
-			(lambda () (asm* one two add)))
+			(lambda () (asm* pos-int 1 pos-int 2 add)))
 		(test)
 	`, I(3))
 }
@@ -44,10 +44,10 @@ func TestAsmJump(t *testing.T) {
 					store some-value
 					load some-value
 					cond-jump :first
-					zero
+					pos-int 0
 					jump :second
 				:first
-					one
+					pos-int 1
 				:second)))
 		(test)
     `, I(1))
@@ -117,8 +117,8 @@ func TestAsmValue(t *testing.T) {
 	as := assert.New(t)
 	as.EvalTo(`(asm* .value (+ 1 2))`, I(3))
 	as.EncodesAs(isa.Instructions{
-		isa.New(isa.Two),
-		isa.New(isa.One),
+		isa.New(isa.PosInt, 2),
+		isa.New(isa.PosInt, 1),
 		isa.New(isa.Const, 0),
 		isa.New(isa.Call, 2),
 		isa.New(isa.Return),
