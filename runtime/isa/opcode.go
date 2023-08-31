@@ -1,7 +1,5 @@
 package isa
 
-import "fmt"
-
 // Opcode represents an Instruction's operation
 type Opcode Word
 
@@ -69,10 +67,6 @@ const (
 	Zero                     // Push Zero
 )
 
-func (oc Opcode) Instruction() Instruction {
-	if f, ok := Effects[oc]; ok && f.Operand == Nothing {
-		return Instruction(oc)
-	}
-	// Programmer error
-	panic(fmt.Sprintf("opcode can't be encoded as instruction: %s", oc))
+func (o Opcode) New(ops ...Operand) Instruction {
+	return New(o, ops...)
 }

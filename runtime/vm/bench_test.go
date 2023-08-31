@@ -66,15 +66,15 @@ func BenchmarkNumberLoop(b *testing.B) {
 	}
 }
 
-var bCode = makeCode([]isa.Coder{
-	isa.New(isa.Const, 0), // the extra stack item is intentional
-	isa.New(isa.Const, 0),
-	isa.New(isa.Const, 1),
-	isa.New(isa.PosInt, 1),
-	isa.New(isa.Const, 3),
-	isa.New(isa.Call, 3),
-	isa.Add,
-	isa.Return,
+var bCode = makeFunc(isa.Instructions{
+	isa.Const.New(0), // the extra stack item is intentional
+	isa.Const.New(0),
+	isa.Const.New(1),
+	isa.PosInt.New(1),
+	isa.Const.New(3),
+	isa.Call.New(3),
+	isa.Add.New(),
+	isa.Return.New(),
 })
 
 func BenchmarkCalls(b *testing.B) {

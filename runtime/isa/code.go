@@ -15,10 +15,6 @@ type (
 	// Instruction represents a single instruction and its operand
 	Instruction Word
 
-	Coder interface {
-		Instruction() Instruction
-	}
-
 	// Operand parameterizes an Instruction
 	Operand Word
 
@@ -49,10 +45,6 @@ func New(oc Opcode, args ...Operand) Instruction {
 	default:
 		panic(fmt.Errorf(ErrBadInstruction, oc.String()))
 	}
-}
-
-func (i Instruction) Instruction() Instruction {
-	return i
 }
 
 func (i Instructions) String() string {

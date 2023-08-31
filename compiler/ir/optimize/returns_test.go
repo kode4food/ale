@@ -22,14 +22,14 @@ func TestSplitReturns(t *testing.T) {
 	e1.Emit(isa.Return)
 
 	as.Instructions(isa.Instructions{
-		isa.New(isa.True),
-		isa.New(isa.CondJump, 0),
-		isa.New(isa.Zero),
-		isa.New(isa.Return),
-		isa.New(isa.Jump, 1),
-		isa.New(isa.Label, 0),
-		isa.New(isa.PosInt, 1),
-		isa.New(isa.Return),
-		isa.New(isa.Label, 1),
+		isa.True.New(),
+		isa.CondJump.New(0),
+		isa.Zero.New(),
+		isa.Return.New(),
+		isa.Jump.New(1),
+		isa.Label.New(0),
+		isa.PosInt.New(1),
+		isa.Return.New(),
+		isa.Label.New(1),
 	}, optimize.Instructions(e1.Code()))
 }

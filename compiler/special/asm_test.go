@@ -70,12 +70,12 @@ func TestAsmLabelNumbering(t *testing.T) {
 	as := assert.New(t)
 
 	as.EncodesAs(isa.Instructions{
-		isa.New(isa.Jump, 0),
-		isa.New(isa.NoOp),
-		isa.New(isa.Jump, 1),
-		isa.New(isa.Label, 0),
-		isa.New(isa.NoOp),
-		isa.New(isa.Label, 1),
+		isa.Jump.New(0),
+		isa.NoOp.New(),
+		isa.Jump.New(1),
+		isa.Label.New(0),
+		isa.NoOp.New(),
+		isa.Label.New(1),
 	}, `
 		(asm*
 			jump :second
@@ -117,11 +117,11 @@ func TestAsmValue(t *testing.T) {
 	as := assert.New(t)
 	as.EvalTo(`(asm* .value (+ 1 2))`, I(3))
 	as.EncodesAs(isa.Instructions{
-		isa.New(isa.PosInt, 2),
-		isa.New(isa.PosInt, 1),
-		isa.New(isa.Const, 0),
-		isa.New(isa.Call, 2),
-		isa.New(isa.Return),
+		isa.PosInt.New(2),
+		isa.PosInt.New(1),
+		isa.Const.New(0),
+		isa.Call.New(2),
+		isa.Return.New(),
 	}, `
 	(asm*
 		.value (+ 1 2)

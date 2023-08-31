@@ -11,13 +11,13 @@ func TestFlattenJump(t *testing.T) {
 	as := assert.New(t)
 
 	i1 := isa.Flatten(isa.Instructions{
-		isa.New(isa.NoOp),
-		isa.New(isa.Label, 0),
-		isa.New(isa.Jump, 0),
+		isa.NoOp.New(),
+		isa.Label.New(0),
+		isa.Jump.New(0),
 	})
 
 	as.Equal(isa.Instructions{
-		isa.Instruction(isa.Jump),
+		isa.Jump.New(0),
 	}, i1)
 }
 
@@ -25,18 +25,18 @@ func TestFlattenCondJump(t *testing.T) {
 	as := assert.New(t)
 
 	i1 := isa.Flatten(isa.Instructions{
-		isa.New(isa.NoOp),
-		isa.New(isa.Label, 0),
-		isa.New(isa.NoOp),
-		isa.New(isa.False),
-		isa.New(isa.NoOp),
-		isa.New(isa.CondJump, 0),
-		isa.New(isa.NoOp),
+		isa.NoOp.New(),
+		isa.Label.New(0),
+		isa.NoOp.New(),
+		isa.False.New(),
+		isa.NoOp.New(),
+		isa.CondJump.New(0),
+		isa.NoOp.New(),
 	})
 
 	as.Equal(isa.Instructions{
-		isa.Instruction(isa.False),
-		isa.Instruction(isa.CondJump),
+		isa.False.New(),
+		isa.CondJump.New(0),
 	}, i1)
 }
 
@@ -44,19 +44,19 @@ func TestForwardJump(t *testing.T) {
 	as := assert.New(t)
 
 	i1 := isa.Flatten(isa.Instructions{
-		isa.New(isa.NoOp),
-		isa.New(isa.Label, 0),
-		isa.New(isa.NoOp),
-		isa.New(isa.Jump, 1),
-		isa.New(isa.NoOp),
-		isa.New(isa.Label, 1),
-		isa.New(isa.NoOp),
-		isa.New(isa.Jump, 0),
+		isa.NoOp.New(),
+		isa.Label.New(0),
+		isa.NoOp.New(),
+		isa.Jump.New(1),
+		isa.NoOp.New(),
+		isa.Label.New(1),
+		isa.NoOp.New(),
+		isa.Jump.New(0),
 	})
 
 	as.Equal(isa.Instructions{
-		isa.New(isa.Jump, 1),
-		isa.New(isa.Jump, 0),
+		isa.Jump.New(1),
+		isa.Jump.New(0),
 	}, i1)
 }
 
@@ -66,7 +66,7 @@ func TestDoubleAnchor(t *testing.T) {
 	defer as.ExpectPanic(isa.ErrLabelAlreadyAnchored)
 
 	isa.Flatten(isa.Instructions{
-		isa.New(isa.Label, 0),
-		isa.New(isa.Label, 0),
+		isa.Label.New(0),
+		isa.Label.New(0),
 	})
 }

@@ -23,12 +23,12 @@ func TestLabels(t *testing.T) {
 	e.Emit(isa.Label, l1)
 
 	as.Instructions(isa.Instructions{
-		isa.New(isa.Jump, 1),
-		isa.New(isa.NoOp),
-		isa.New(isa.Jump, 0),
-		isa.New(isa.Label, 1),
-		isa.New(isa.NoOp),
-		isa.New(isa.Label, 0),
+		isa.Jump.New(1),
+		isa.NoOp.New(),
+		isa.Jump.New(0),
+		isa.Label.New(1),
+		isa.NoOp.New(),
+		isa.Label.New(0),
 	}, e.Code())
 }
 

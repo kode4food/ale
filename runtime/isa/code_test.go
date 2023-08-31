@@ -12,7 +12,7 @@ import (
 func TestInstructions(t *testing.T) {
 	as := assert.New(t)
 
-	i1 := isa.New(isa.CondJump, 27)
+	i1 := isa.CondJump.New(27)
 	as.String("CondJump(27)", i1)
 
 	defer func() {
@@ -24,21 +24,21 @@ func TestInstructions(t *testing.T) {
 		}
 	}()
 
-	isa.New(isa.CondJump, 12, 32)
+	isa.CondJump.New(12, 32)
 }
 
 func TestInstructionString(t *testing.T) {
 	as := assert.New(t)
-	inst := isa.New(isa.Const, 0)
+	inst := isa.Const.New(0)
 	as.String(`Const(0)`, inst.String())
 }
 
 func TestInstructionEquality(t *testing.T) {
 	as := assert.New(t)
-	i1 := isa.New(isa.Const, 0)
-	i2 := isa.New(isa.Const, 0) // Some content
-	i3 := isa.New(isa.Const, 1) // Different Arg
-	i4 := isa.New(isa.Load, 0)  // Different Opcode
+	i1 := isa.Const.New(0)
+	i2 := isa.Const.New(0) // Some content
+	i3 := isa.Const.New(1) // Different Arg
+	i4 := isa.Load.New(0)  // Different Opcode
 
 	as.True(i1.Equal(i1))
 	as.True(i1.Equal(i2))
@@ -49,8 +49,16 @@ func TestInstructionEquality(t *testing.T) {
 
 func TestInstructionSplit(t *testing.T) {
 	as := assert.New(t)
-	cj := isa.New(isa.CondJump, 37)
+	cj := isa.CondJump.New(37)
 	oc, op := cj.Split()
 	as.Equal(isa.CondJump, oc)
 	as.Equal(isa.Operand(37), op)
+}
+
+func TestInstructionOperandSizeError(t *testing.T) {
+	as := assert.New(t)
+	defer as.ExpectPanic(
+		fmt.Sprintf(isa.ErrExpectedOperand, isa.OperandMask+1),
+	)
+	isa.PosInt.New(isa.OperandMask + 1)
 }

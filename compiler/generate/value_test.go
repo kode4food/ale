@@ -18,11 +18,11 @@ func TestPair(t *testing.T) {
 	e1.Emit(isa.Return)
 
 	as.Instructions(isa.Instructions{
-		isa.New(isa.Const, 0),
-		isa.New(isa.Const, 1),
-		isa.New(isa.Const, 2),
-		isa.New(isa.Call, 2),
-		isa.New(isa.Return),
+		isa.Const.New(0),
+		isa.Const.New(1),
+		isa.Const.New(2),
+		isa.Call.New(2),
+		isa.Return.New(),
 	}, e1.Code())
 
 	c := e1.Constants()

@@ -76,7 +76,7 @@ func (e *encoder) Child() Encoder {
 
 // Emit adds instructions to the Type's eventual output
 func (e *encoder) Emit(oc isa.Opcode, args ...isa.Operand) {
-	e.code = append(e.code, isa.New(oc, args...))
+	e.code = append(e.code, oc.New(args...))
 }
 
 // Code returns the encoder's resulting abstract machine Instructions

@@ -17,8 +17,8 @@ func TestBlock(t *testing.T) {
 	e1.Emit(isa.Return)
 
 	as.Instructions(isa.Instructions{
-		isa.New(isa.Nil),
-		isa.New(isa.Return),
+		isa.Nil.New(),
+		isa.Return.New(),
 	}, e1.Code())
 
 	e2 := assert.GetTestEncoder()
@@ -29,13 +29,13 @@ func TestBlock(t *testing.T) {
 	e2.Emit(isa.Return)
 
 	as.Instructions(isa.Instructions{
-		isa.New(isa.PosInt, 2),
-		isa.New(isa.PosInt, 1),
-		isa.New(isa.Const, 0),
-		isa.New(isa.Call, 2),
-		isa.New(isa.Pop),
-		isa.New(isa.True),
-		isa.New(isa.Return),
+		isa.PosInt.New(2),
+		isa.PosInt.New(1),
+		isa.Const.New(0),
+		isa.Call.New(2),
+		isa.Pop.New(),
+		isa.True.New(),
+		isa.Return.New(),
 	}, e2.Code())
 
 	c := e2.Constants()

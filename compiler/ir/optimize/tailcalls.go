@@ -25,6 +25,6 @@ func tailCallMapper(i isa.Instructions) isa.Instructions {
 		argCount = op
 	}
 	return isa.Instructions{
-		isa.New(isa.TailCall, argCount),
+		isa.TailCall.New(argCount),
 	}
 }

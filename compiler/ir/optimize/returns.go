@@ -62,6 +62,6 @@ func addReturnToEpilogue(n visitor.Node) bool {
 
 func addReturnToInstructions(i visitor.Instructions) {
 	code := i.Code()
-	code = append(code, isa.New(isa.Return))
+	code = append(code, isa.Return.New())
 	i.Set(code)
 }

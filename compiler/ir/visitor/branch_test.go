@@ -27,22 +27,22 @@ func TestBranch(t *testing.T) {
 	b := visitor.Branch(e1.Code()).(visitor.Branches)
 
 	as.Instructions(isa.Instructions{
-		isa.New(isa.NegInt, 1),
-		isa.New(isa.True),
-		isa.New(isa.CondJump, 0),
+		isa.NegInt.New(1),
+		isa.True.New(),
+		isa.CondJump.New(0),
 	}, b.Prologue().Code())
 
 	as.Instructions(isa.Instructions{
-		isa.New(isa.PosInt, 1),
+		isa.PosInt.New(1),
 	}, b.ThenBranch().Code())
 
 	as.Instructions(isa.Instructions{
-		isa.New(isa.Zero),
+		isa.Zero.New(),
 	}, b.ElseBranch().Code())
 
 	as.Instructions(isa.Instructions{
-		isa.New(isa.Pop),
-		isa.New(isa.Return),
+		isa.Pop.New(),
+		isa.Return.New(),
 	}, b.Epilogue().Code())
 
 	as.Equal(

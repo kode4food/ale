@@ -30,15 +30,15 @@ func testMacroExpandWith(t *testing.T, enc testEncoder) {
 	e1.Emit(isa.Return)
 
 	as.Instructions(isa.Instructions{
-		isa.New(isa.PosInt, 2),
-		isa.New(isa.PosInt, 1),
-		isa.New(isa.Const, 0),
-		isa.New(isa.Call, 2),
-		isa.New(isa.Const, 1),
-		isa.New(isa.Call1),
-		isa.New(isa.Const, 2),
-		isa.New(isa.Call1),
-		isa.New(isa.Return),
+		isa.PosInt.New(2),
+		isa.PosInt.New(1),
+		isa.Const.New(0),
+		isa.Call.New(2),
+		isa.Const.New(1),
+		isa.Call1.New(),
+		isa.Const.New(2),
+		isa.Call1.New(),
+		isa.Return.New(),
 	}, e1.Code())
 
 	c := e1.Constants()

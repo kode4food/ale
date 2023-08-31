@@ -16,6 +16,6 @@ func TestLiterals(t *testing.T) {
 	e1.Emit(isa.Return)
 
 	as.Instructions(isa.Instructions{
-		isa.New(isa.RetNil),
+		isa.RetNil.New(),
 	}, optimize.Instructions(e1.Code()))
 }
