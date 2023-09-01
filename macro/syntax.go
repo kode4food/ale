@@ -147,14 +147,14 @@ func (se *syntaxEnv) qualifySymbol(s data.Symbol) data.Value {
 
 func isWrapperCall(s data.Symbol, v data.Value) (data.Value, bool) {
 	if l, ok := isBuiltInCall(s, v); ok {
-		return l.Rest().First(), true
+		return l.Cdr().(data.Pair).Car(), true
 	}
 	return data.Nil, false
 }
 
 func isBuiltInCall(s data.Symbol, v data.Value) (data.List, bool) {
 	if l, ok := v.(data.List); ok && l.Count() > 0 {
-		if call, ok := l.First().(data.Symbol); ok {
+		if call, ok := l.Car().(data.Symbol); ok {
 			return l, call == s
 		}
 	}

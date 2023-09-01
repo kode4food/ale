@@ -24,7 +24,7 @@ const (
 )
 
 func parseParamCases(s data.Sequence) paramCases {
-	f := s.First()
+	f := s.Car()
 	switch f.(type) {
 	case data.List, data.Cons, data.LocalSymbol:
 		c := parseParamCase(s)

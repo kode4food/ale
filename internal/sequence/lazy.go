@@ -44,25 +44,17 @@ func (l *lazySequence) IsEmpty() bool {
 	return !l.resolve().ok
 }
 
-func (l *lazySequence) First() data.Value {
-	return l.resolve().result
-}
-
-func (l *lazySequence) Rest() data.Sequence {
-	return l.resolve().rest
-}
-
-func (l *lazySequence) Split() (data.Value, data.Sequence, bool) {
-	r := l.resolve()
-	return r.result, r.rest, l.ok
-}
-
 func (l *lazySequence) Car() data.Value {
 	return l.resolve().result
 }
 
 func (l *lazySequence) Cdr() data.Value {
 	return l.resolve().rest
+}
+
+func (l *lazySequence) Split() (data.Value, data.Sequence, bool) {
+	r := l.resolve()
+	return r.result, r.rest, l.ok
 }
 
 func (l *lazySequence) Prepend(v data.Value) data.Sequence {

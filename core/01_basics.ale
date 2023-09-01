@@ -6,6 +6,8 @@
 (define* true #t)
 (define* false #f)
 (define* nil '())
+(define* first car)
+(define* rest cdr)
 
 (define* if
   (asm* !make-encoder

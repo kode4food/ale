@@ -27,11 +27,11 @@ var (
 func (*nilValue) null() {}
 func (*nilValue) list() {}
 
-func (*nilValue) First() Value {
+func (*nilValue) Car() Value {
 	return Nil
 }
 
-func (*nilValue) Rest() Sequence {
+func (*nilValue) Cdr() Value {
 	return EmptyList
 }
 

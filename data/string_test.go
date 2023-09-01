@@ -20,8 +20,8 @@ func TestStr(t *testing.T) {
 
 	s1 := S("hello")
 	as.Number(5, s1.Count())
-	as.String("h", s1.First())
-	as.String("ello", s1.Rest())
+	as.String("h", s1.Car())
+	as.String("ello", s1.Cdr())
 
 	as.False(s1.IsEmpty())
 	as.True(S("").IsEmpty())
@@ -48,15 +48,15 @@ func TestStr(t *testing.T) {
 
 	s4 := S("再见!")
 	as.Number(3, s4.Count())
-	as.String("再", s4.First())
-	as.String("见!", s4.Rest())
+	as.String("再", s4.Car())
+	as.String("见!", s4.Cdr())
 }
 
 func TestEmptyStr(t *testing.T) {
 	as := assert.New(t)
 
-	as.Nil(S("").First())
-	as.String("", S("").Rest())
+	as.Nil(S("").Car())
+	as.String("", S("").Cdr())
 
 	c, ok := S("").ElementAt(-1)
 	as.False(ok)

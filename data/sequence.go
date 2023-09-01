@@ -5,9 +5,7 @@ import "bytes"
 type (
 	// Sequence interfaces expose a lazily resolved sequence
 	Sequence interface {
-		Value
-		First() Value
-		Rest() Sequence
+		Pair
 		Split() (Value, Sequence, bool)
 		IsEmpty() bool
 	}

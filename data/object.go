@@ -56,8 +56,7 @@ var (
 // Array Mapped Trie data structure, though not as space efficient. More
 // information on HAMT's can be found at:
 //
-//    http://lampwww.epfl.ch/papers/idealhashtrees.pdf
-//
+//	http://lampwww.epfl.ch/papers/idealhashtrees.pdf
 func NewObject(pairs ...Pair) Object {
 	var res Object = EmptyObject
 	for _, p := range pairs {
@@ -161,12 +160,12 @@ func (o *object) promote() *object {
 	return nil
 }
 
-func (o *object) First() Value {
+func (o *object) Car() Value {
 	f, _, _ := o.Split()
 	return f
 }
 
-func (o *object) Rest() Sequence {
+func (o *object) Cdr() Value {
 	_, r, _ := o.Split()
 	return r
 }
@@ -302,11 +301,11 @@ func (*emptyObject) Split() (Value, Sequence, bool) {
 	return Nil, EmptyObject, false
 }
 
-func (*emptyObject) First() Value {
+func (*emptyObject) Car() Value {
 	return Nil
 }
 
-func (*emptyObject) Rest() Sequence {
+func (*emptyObject) Cdr() Value {
 	return EmptyObject
 }
 

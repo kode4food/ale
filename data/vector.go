@@ -53,22 +53,22 @@ func (v vector) ElementAt(index int) (Value, bool) {
 	return Nil, false
 }
 
-func (v vector) First() Value {
+func (v vector) IsEmpty() bool {
+	return len(v) == 0
+}
+
+func (v vector) Car() Value {
 	if len(v) > 0 {
 		return v[0]
 	}
 	return Nil
 }
 
-func (v vector) Rest() Sequence {
+func (v vector) Cdr() Value {
 	if len(v) > 1 {
 		return v[1:]
 	}
 	return EmptyVector
-}
-
-func (v vector) IsEmpty() bool {
-	return len(v) == 0
 }
 
 func (v vector) Split() (Value, Sequence, bool) {
@@ -79,14 +79,6 @@ func (v vector) Split() (Value, Sequence, bool) {
 		return v[0], EmptyVector, true
 	}
 	return Nil, EmptyVector, false
-}
-
-func (v vector) Car() Value {
-	return v.First()
-}
-
-func (v vector) Cdr() Value {
-	return v.Rest()
 }
 
 func (v vector) Prepend(e Value) Sequence {

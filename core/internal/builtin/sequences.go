@@ -12,16 +12,6 @@ const (
 	ErrPutRequiresPair  = "put requires a key/value combination or a pair"
 )
 
-// First returns the first value in the sequence
-var First = data.Applicative(func(args ...data.Value) data.Value {
-	return args[0].(data.Sequence).First()
-}, 1)
-
-// Rest returns the sequence elements after the first value
-var Rest = data.Applicative(func(args ...data.Value) data.Value {
-	return args[0].(data.Sequence).Rest()
-}, 1)
-
 // Append adds a value to the end of the provided Appender
 var Append = data.Applicative(func(args ...data.Value) data.Value {
 	a := args[0].(data.Appender)

@@ -25,8 +25,8 @@ func TestLazySeq(t *testing.T) {
 
 	l := sequence.NewLazy(inc).(data.Prepender).Prepend(F(0))
 	as.False(l.IsEmpty())
-	as.Number(0, l.First())
-	as.Number(1, l.Rest().First())
-	as.Number(2, l.Rest().Rest().First())
+	as.Number(0, l.Car())
+	as.Number(1, l.Cdr().(data.Pair).Car())
+	as.Number(2, l.Cdr().(data.Pair).Cdr().(data.Pair).Car())
 	as.Contains(":type lazy-sequence", l)
 }

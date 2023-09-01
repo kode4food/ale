@@ -22,8 +22,9 @@ func Expand1(ns env.Namespace, v data.Value) data.Value {
 
 func expand1(ns env.Namespace, v data.Value) (data.Value, bool) {
 	if l, ok := v.(data.List); ok {
-		if s, ok := l.First().(data.Symbol); ok {
-			args := sequence.ToValues(l.Rest())
+		f, r, _ := l.Split()
+		if s, ok := f.(data.Symbol); ok {
+			args := sequence.ToValues(r)
 			if v, ok := env.ResolveValue(ns, s); ok {
 				if m, ok := v.(Call); ok {
 					return m(ns, args...), true

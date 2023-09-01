@@ -130,6 +130,16 @@ opSwitch:
 		*SP1 = (*SP1).(*Ref).Value
 		goto nextPC
 
+	case isa.Car:
+		SP1 := &STACK[SP+1]
+		*SP1 = (*SP1).(data.Pair).Car()
+		goto nextPC
+
+	case isa.Cdr:
+		SP1 := &STACK[SP+1]
+		*SP1 = (*SP1).(data.Pair).Cdr()
+		goto nextPC
+
 	case isa.Declare:
 		SP++
 		c.Lambda.Globals.Declare(
@@ -176,12 +186,22 @@ opSwitch:
 		)
 		goto nextPC
 
+	case isa.Inc:
+		SP1 := &STACK[SP+1]
+		*SP1 = (*SP1).(data.Integer) + data.Integer(op)
+		goto nextPC
+
 	case isa.Sub:
 		SP++
 		SP1 := &STACK[SP+1]
 		*SP1 = (*SP1).(data.Number).Sub(
 			STACK[SP].(data.Number),
 		)
+		goto nextPC
+
+	case isa.Dec:
+		SP1 := &STACK[SP+1]
+		*SP1 = (*SP1).(data.Integer) - data.Integer(op)
 		goto nextPC
 
 	case isa.Mul:

@@ -23,16 +23,16 @@ var unescapeTable = map[string]string{
 	"\"": "\\\"",
 }
 
-// First returns the first character of the String
-func (s String) First() Value {
+// Car returns the first character of the String
+func (s String) Car() Value {
 	if r, w := utf8.DecodeRuneInString(string(s)); w > 0 {
 		return String(r)
 	}
 	return Nil
 }
 
-// Rest returns a String of all characters after the first
-func (s String) Rest() Sequence {
+// Cdr returns a String of all characters after the first
+func (s String) Cdr() Value {
 	if _, w := utf8.DecodeRuneInString(string(s)); w > 0 {
 		return s[w:]
 	}

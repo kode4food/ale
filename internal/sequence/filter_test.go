@@ -19,20 +19,20 @@ func TestFilter(t *testing.T) {
 	l := L(S("first"), S("filtered out"), S("last"))
 	w := sequence.Filter(l, filterTest)
 
-	v1 := w.First()
+	v1 := w.Car()
 	as.String("first", v1)
 
-	v2 := w.Rest().First()
+	v2 := w.Cdr().(data.Pair).Car()
 	as.String("last", v2)
 
-	r1 := w.Rest().Rest()
-	as.True(r1.IsEmpty())
+	r1 := w.Cdr().(data.Pair).Cdr()
+	as.True(r1.(data.Sequence).IsEmpty())
 
 	p := w.(data.Prepender).Prepend(S("filtered out"))
-	v4 := p.First()
-	r2 := p.Rest()
+	v4 := p.Car()
+	r2 := p.Cdr()
 	as.String("filtered out", v4)
-	as.Equal(w.First(), r2.First())
+	as.Equal(w.Car(), r2.(data.Pair).Car())
 }
 
 func TestFiltered(t *testing.T) {
@@ -43,12 +43,12 @@ func TestFiltered(t *testing.T) {
 		return B(string(args[0].(data.String)) != "middle")
 	}, 1)
 	w1 := sequence.Filter(l, fn1)
-	v1 := w1.First()
+	v1 := w1.Car()
 	as.String("first", v1)
 
-	v2 := w1.Rest().First()
+	v2 := w1.Cdr().(data.Pair).Car()
 	as.String("last", v2)
 
-	r1 := w1.Rest().Rest()
-	as.True(r1.IsEmpty())
+	r1 := w1.Cdr().(data.Pair).Cdr()
+	as.True(r1.(data.Sequence).IsEmpty())
 }

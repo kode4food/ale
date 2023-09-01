@@ -39,14 +39,19 @@ func TestChannel(t *testing.T) {
 		as.Number(1, f)
 		as.True(ok)
 
-		as.Number(1, seq.First())
-		as.Number(2, seq.Rest().First())
-		as.Number(3, seq.Rest().Rest().First())
-		as.False(seq.Rest().Rest().Rest().IsEmpty())
-		as.String("foo", seq.Rest().Rest().Rest().First())
-		as.False(seq.Rest().Rest().Rest().Rest().IsEmpty())
-		as.String("bar", seq.Rest().Rest().Rest().Rest().First())
-		as.True(seq.Rest().Rest().Rest().Rest().Rest().IsEmpty())
+		as.Number(1, seq.Car())
+		as.Number(2, seq.Cdr().(data.Pair).Car())
+		as.Number(3, seq.Cdr().(data.Pair).Cdr().(data.Pair).Car())
+		as.False(seq.Cdr().(data.Pair).Cdr().(data.Pair).Cdr().(data.Sequence).
+			IsEmpty())
+		as.String("foo", seq.Cdr().(data.Pair).Cdr().(data.Pair).
+			Cdr().(data.Pair).Car())
+		as.False(seq.Cdr().(data.Pair).Cdr().(data.Pair).Cdr().(data.Pair).
+			Cdr().(data.Sequence).IsEmpty())
+		as.String("bar", seq.Cdr().(data.Pair).Cdr().(data.Pair).
+			Cdr().(data.Pair).Cdr().(data.Pair).Car())
+		as.True(seq.Cdr().(data.Pair).Cdr().(data.Pair).Cdr().(data.Pair).
+			Cdr().(data.Pair).Cdr().(data.Sequence).IsEmpty())
 		wg.Done()
 	}
 
@@ -71,5 +76,5 @@ func TestChannelError(t *testing.T) {
 	as.NotNil(r)
 
 	defer as.ExpectPanic("boom")
-	_ = r.First()
+	_ = r.Car()
 }

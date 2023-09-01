@@ -22,7 +22,7 @@ func TestReadList(t *testing.T) {
 	as := assert.New(t)
 	l := read.Scan(`(99 "hello" 55.12)`)
 	tr := read.FromScanner(l)
-	v := tr.First()
+	v := tr.Car()
 	list, ok := v.(data.List)
 	as.True(ok)
 
@@ -46,7 +46,7 @@ func TestReadVector(t *testing.T) {
 	as := assert.New(t)
 	l := read.Scan(`[99 "hello" 55.12]`)
 	tr := read.FromScanner(l)
-	v := tr.First()
+	v := tr.Car()
 	vector, ok := v.(data.Vector)
 	as.True(ok)
 
@@ -67,7 +67,7 @@ func TestReadMap(t *testing.T) {
 	as := assert.New(t)
 	l := read.Scan(`{:name "blah" :age 99}`)
 	tr := read.FromScanner(l)
-	v := tr.First()
+	v := tr.Car()
 	m, ok := v.(data.Object)
 	as.True(ok)
 	as.Number(2, m.Count())
@@ -77,7 +77,7 @@ func TestReadNestedList(t *testing.T) {
 	as := assert.New(t)
 	l := read.Scan(`(99 ("hello" "there") 55.12)`)
 	tr := read.FromScanner(l)
-	v := tr.First()
+	v := tr.Car()
 	list, ok := v.(data.List)
 	as.True(ok)
 

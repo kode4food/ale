@@ -23,8 +23,8 @@ func Call(e encoder.Encoder, l data.List) {
 		Literal(e, data.EmptyList)
 		return
 	}
-	f := l.First()
-	args := sequence.ToValues(l.Rest())
+	f, r, _ := l.Split()
+	args := sequence.ToValues(r)
 	callValue(e, f, args)
 }
 

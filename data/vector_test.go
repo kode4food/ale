@@ -13,8 +13,8 @@ func TestVector(t *testing.T) {
 
 	v1 := data.NewVector(S("hello"), S("how"), S("are"), S("you?"))
 	as.Number(4, v1.Count())
-	as.String("hello", v1.First())
-	as.Number(3, v1.Rest().(data.Counted).Count())
+	as.String("hello", v1.Car())
+	as.Number(3, v1.Cdr().(data.Counted).Count())
 
 	r, ok := v1.ElementAt(2)
 	as.True(ok)
@@ -51,9 +51,9 @@ func TestEmptyVector(t *testing.T) {
 	as := assert.New(t)
 
 	v := data.EmptyVector
-	as.Nil(v.First())
+	as.Nil(v.Car())
 	as.String("[]", v)
-	as.String("[]", v.Rest())
+	as.String("[]", v.Cdr())
 }
 
 func TestVectorAsFunction(t *testing.T) {

@@ -12,8 +12,8 @@ func TestSimpleList(t *testing.T) {
 	as := assert.New(t)
 	n := F(12)
 	l := L(n)
-	as.Equal(n, l.First())
-	as.Equal(data.EmptyList, l.Rest())
+	as.Equal(n, l.Car())
+	as.Equal(data.EmptyList, l.Cdr())
 }
 
 func TestList(t *testing.T) {
@@ -21,17 +21,17 @@ func TestList(t *testing.T) {
 	n1 := I(12)
 	l1 := data.NewList(n1)
 
-	as.Equal(n1, l1.First())
-	as.Equal(data.EmptyList, l1.Rest())
-	as.True(l1.Rest().IsEmpty())
+	as.Equal(n1, l1.Car())
+	as.Equal(data.EmptyList, l1.Cdr())
+	as.True(l1.Cdr().(data.Sequence).IsEmpty())
 
 	n2 := F(20.5)
 	l2 := l1.Prepend(n2).(data.List)
 
 	as.String("()", data.EmptyList)
 	as.String("(20.5 12)", l2)
-	as.Equal(n2, l2.First())
-	as.Identical(l1, l2.Rest())
+	as.Equal(n2, l2.Car())
+	as.Identical(l1, l2.Cdr())
 	as.Number(2, l2.Count())
 
 	r, ok := l2.ElementAt(1)

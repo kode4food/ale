@@ -35,20 +35,8 @@ func NewList(v ...Value) List {
 
 func (*list) list() {}
 
-func (l *list) First() Value {
-	return l.first
-}
-
-func (l *list) Rest() Sequence {
-	return l.rest
-}
-
 func (l *list) IsEmpty() bool {
 	return false
-}
-
-func (l *list) Split() (Value, Sequence, bool) {
-	return l.first, l.rest, true
 }
 
 func (l *list) Car() Value {
@@ -57,6 +45,10 @@ func (l *list) Car() Value {
 
 func (l *list) Cdr() Value {
 	return l.rest
+}
+
+func (l *list) Split() (Value, Sequence, bool) {
+	return l.first, l.rest, true
 }
 
 func (l *list) Prepend(v Value) Sequence {
@@ -74,9 +66,9 @@ func (l *list) Reverse() Sequence {
 
 	var res List = EmptyList
 	var e List = l
-	for d, u := e.Count(), 1; d > 0; e, d, u = e.Rest().(List), d-1, u+1 {
+	for d, u := e.Count(), 1; d > 0; e, d, u = e.Cdr().(List), d-1, u+1 {
 		res = &list{
-			first: e.First(),
+			first: e.Car(),
 			rest:  res,
 			count: u,
 		}
@@ -95,9 +87,9 @@ func (l *list) ElementAt(index int) (Value, bool) {
 
 	var e List = l
 	for i := 0; i < index; i++ {
-		e = e.Rest().(List)
+		e = e.Cdr().(List)
 	}
-	return e.First(), true
+	return e.Car(), true
 }
 
 func (l *list) Call(args ...Value) Value {

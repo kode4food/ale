@@ -126,11 +126,11 @@ func (c *channelSequence) IsEmpty() bool {
 	return !c.resolve().ok
 }
 
-func (c *channelSequence) First() data.Value {
+func (c *channelSequence) Car() data.Value {
 	return c.resolve().result.value
 }
 
-func (c *channelSequence) Rest() data.Sequence {
+func (c *channelSequence) Cdr() data.Value {
 	return c.resolve().rest
 }
 
