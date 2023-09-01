@@ -31,7 +31,6 @@
 (def-builtin nth)
 (def-builtin object)
 (def-builtin promise*)
-(def-builtin raise)
 (def-builtin read)
 (def-builtin recover)
 (def-builtin reverse)

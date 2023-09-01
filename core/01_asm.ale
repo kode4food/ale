@@ -28,10 +28,17 @@
   ; block evaluator will pop this
   nil)
 
+(define* quote (asm* !make-encoder (value) .const value))
+
 (define* car (lambda (cons) (asm* .resolve cons car)))
 (define* cdr (lambda (cons) (asm* .resolve cons cdr)))
 
-(define* quote (asm* !make-encoder (value) .const value))
+(define* raise
+  (lambda (err)
+    (asm*
+      .resolve err
+      panic
+      nil)))
 
 (define* if
   (asm* !make-encoder

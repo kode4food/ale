@@ -115,7 +115,6 @@ func (b *bootstrap) availableFunctions() {
 		"mod":          builtin.Mod,
 		"nth":          builtin.Nth,
 		"object":       builtin.Object,
-		"raise":        builtin.Raise,
 		"read":         builtin.Read,
 		"recover":      builtin.Recover,
 		"reverse":      builtin.Reverse,

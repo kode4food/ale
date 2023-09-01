@@ -7,11 +7,6 @@ import (
 	"github.com/kode4food/ale/runtime"
 )
 
-// Raise will cause a panic
-var Raise = data.Applicative(func(args ...data.Value) data.Value {
-	panic(args[0])
-}, 1)
-
 // Recover invokes a function and runs a recovery function if Go panics
 var Recover = data.Applicative(func(args ...data.Value) (res data.Value) {
 	body := args[0].(data.Function)

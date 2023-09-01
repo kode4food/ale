@@ -29,27 +29,12 @@ func TestEmptyRead(t *testing.T) {
 	as.Nil(r1)
 }
 
-func TestRaise(t *testing.T) {
-	as := assert.New(t)
-
-	defer func() {
-		if rec := recover(); rec != nil {
-			as.String("blowed up!", rec)
-			return
-		}
-		as.Fail("proper error not raised")
-	}()
-
-	builtin.Raise.Call(S("blowed up!"))
-}
-
 func TestRecover(t *testing.T) {
 	as := assert.New(t)
 	var triggered = false
 	builtin.Recover.Call(
 		data.Applicative(func(...data.Value) data.Value {
-			builtin.Raise.Call(S("blowed up!"))
-			return S("wrong")
+			panic(S("blowed up!"))
 		}, 0),
 		data.Applicative(func(args ...data.Value) data.Value {
 			as.String("blowed up!", args[0])
@@ -71,8 +56,7 @@ func TestDefer(t *testing.T) {
 
 	builtin.Defer.Call(
 		data.Applicative(func(...data.Value) data.Value {
-			builtin.Raise.Call(S("blowed up!"))
-			return S("wrong")
+			panic(S("blowed up!"))
 		}, 0),
 		data.Applicative(func(...data.Value) data.Value {
 			triggered = true
