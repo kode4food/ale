@@ -25,11 +25,13 @@
           .eval value
           bind)
   bind
-
+  ; block evaluator will pop this
   nil)
 
 (define* car (lambda (cons) (asm* .resolve cons car)))
 (define* cdr (lambda (cons) (asm* .resolve cons cdr)))
+
+(define* quote (asm* !make-encoder (value) .const value))
 
 (define* if
   (asm* !make-encoder

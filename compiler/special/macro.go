@@ -9,12 +9,6 @@ import (
 	"github.com/kode4food/ale/runtime/isa"
 )
 
-// Quote converts its argument into a literal value
-func Quote(e encoder.Encoder, args ...data.Value) {
-	data.AssertFixed(1, len(args))
-	generate.Literal(e, args[0])
-}
-
 // MacroExpand performs macro expansion of a form until it can no longer
 func MacroExpand(e encoder.Encoder, args ...data.Value) {
 	data.AssertFixed(1, len(args))

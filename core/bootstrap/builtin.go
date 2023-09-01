@@ -79,7 +79,6 @@ func (b *bootstrap) specialForms() {
 		"macroexpand-1": special.MacroExpand1,
 		"macroexpand":   special.MacroExpand,
 		"pattern":       special.Pattern,
-		"quote":         special.Quote,
 	})
 }
 
