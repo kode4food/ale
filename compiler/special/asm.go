@@ -242,6 +242,12 @@ func getEncoderCalls() callMap {
 		},
 		Const: {
 			Call: func(e encoder.Encoder, args ...data.Value) {
+				if arg, ok := args[0].(data.LocalSymbol); ok {
+					if v, ok := e.(*asmEncoder).args[arg.Name()]; ok {
+						generate.Literal(e, v)
+						return
+					}
+				}
 				index := e.AddConstant(args[0])
 				e.Emit(isa.Const, index)
 			},

@@ -7,30 +7,6 @@
 (define* false #f)
 (define* nil '())
 
-(define* if
-  (asm* !make-encoder
-    [(predicate consequent alternative)
-         .eval predicate
-          make-truthy
-          cond-jump :consequent
-          .eval alternative
-          jump :end
-      :consequent
-          .eval consequent
-      :end]
-    [(predicate consequent)
-          .eval predicate
-          make-truthy
-          cond-jump :consequent
-          nil
-          jump :end
-      :consequent
-          .eval consequent
-      :end]))
-
-(define* car (lambda (cons) (asm* .resolve cons car)))
-(define* cdr (lambda (cons) (asm* .resolve cons cdr)))
-
 (define* first car)
 (define* rest cdr)
 

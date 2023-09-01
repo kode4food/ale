@@ -1,0 +1,53 @@
+;;;; ale core: assembler bootstrapping
+
+(asm*
+  .const declare*
+  .eval (asm*
+          !make-encoder (name)
+          .const name
+          dup
+          declare)
+  bind
+
+  .const private*
+  .eval (asm*
+          !make-encoder (name)
+          .const name
+          dup
+          private)
+  bind
+
+  .const define*
+  .eval (asm*
+          !make-encoder (name value)
+          .const name
+          dup
+          .eval value
+          bind)
+  bind
+
+  nil)
+
+(define* car (lambda (cons) (asm* .resolve cons car)))
+(define* cdr (lambda (cons) (asm* .resolve cons cdr)))
+
+(define* if
+  (asm* !make-encoder
+    [(predicate consequent alternative)
+         .eval predicate
+          make-truthy
+          cond-jump :consequent
+          .eval alternative
+          jump :end
+      :consequent
+          .eval consequent
+      :end]
+    [(predicate consequent)
+          .eval predicate
+          make-truthy
+          cond-jump :consequent
+          nil
+          jump :end
+      :consequent
+          .eval consequent
+      :end]))

@@ -72,8 +72,6 @@ func (b *bootstrap) specialForms() {
 	b.specials(map[data.Name]encoder.Call{
 		"asm*":          special.Asm,
 		"begin":         special.Begin,
-		"declare*":      special.Declare,
-		"define*":       special.Define,
 		"eval":          special.Eval,
 		"lambda":        special.Lambda,
 		"let":           special.Let,
@@ -81,7 +79,6 @@ func (b *bootstrap) specialForms() {
 		"macroexpand-1": special.MacroExpand1,
 		"macroexpand":   special.MacroExpand,
 		"pattern":       special.Pattern,
-		"private*":      special.Private,
 		"quote":         special.Quote,
 	})
 }

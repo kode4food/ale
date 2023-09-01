@@ -75,8 +75,6 @@
 
 (def-special asm*)
 (def-special begin)
-(def-special declare*)
-(def-special define*)
 (def-special eval)
 (def-special lambda)
 (def-special let)
@@ -85,4 +83,3 @@
 (def-special macroexpand)
 (def-special quote)
 (def-special pattern)
-(def-special private*)
