@@ -186,22 +186,12 @@ opSwitch:
 		)
 		goto nextPC
 
-	case isa.Inc:
-		SP1 := &STACK[SP+1]
-		*SP1 = (*SP1).(data.Integer) + data.Integer(op)
-		goto nextPC
-
 	case isa.Sub:
 		SP++
 		SP1 := &STACK[SP+1]
 		*SP1 = (*SP1).(data.Number).Sub(
 			STACK[SP].(data.Number),
 		)
-		goto nextPC
-
-	case isa.Dec:
-		SP1 := &STACK[SP+1]
-		*SP1 = (*SP1).(data.Integer) - data.Integer(op)
 		goto nextPC
 
 	case isa.Mul:

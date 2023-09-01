@@ -27,7 +27,6 @@ const (
 	Closure                  // Retrieve Closure Value
 	CondJump                 // Conditional Jump
 	Const                    // Retrieve Constant
-	Dec                      // Decrement an Integer value
 	Declare                  // Declare a public Namespace entry
 	Deref                    // Pointer Dereference
 	Div                      // Division
@@ -36,7 +35,6 @@ const (
 	False                    // Push False
 	Gt                       // Greater Than
 	Gte                      // Greater or Equal To
-	Inc                      // Increment an Integer value
 	Jump                     // Absolute Jump
 	Load                     // Retrieve Local Value
 	Lt                       // Less Than Comparison
