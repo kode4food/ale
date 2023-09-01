@@ -40,7 +40,8 @@ const (
 
 const (
 	MakeEncoder = data.Name("!make-encoder")
-	Value       = data.Name(".value")
+	Resolve     = data.Name(".resolve")
+	EvalValue   = data.Name(".eval")
 	Const       = data.Name(".const")
 	Local       = data.Name(".local")
 	PushLocals  = data.Name(".push-locals")
@@ -221,7 +222,13 @@ func makeEmitCall(oc isa.Opcode, actOn isa.ActOn) *call {
 
 func getEncoderCalls() callMap {
 	return callMap{
-		Value: {
+		Resolve: {
+			Call: func(e encoder.Encoder, args ...data.Value) {
+				generate.Symbol(e, args[0].(data.Symbol))
+			},
+			argCount: 1,
+		},
+		EvalValue: {
 			Call: func(e encoder.Encoder, args ...data.Value) {
 				if arg, ok := args[0].(data.LocalSymbol); ok {
 					if v, ok := e.(*asmEncoder).args[arg.Name()]; ok {

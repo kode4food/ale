@@ -6,29 +6,33 @@
 (define* true #t)
 (define* false #f)
 (define* nil '())
-(define* first car)
-(define* rest cdr)
 
 (define* if
   (asm* !make-encoder
     [(predicate consequent alternative)
-         .value predicate
+         .eval predicate
           make-truthy
           cond-jump :consequent
-          .value alternative
+          .eval alternative
           jump :end
       :consequent
-          .value consequent
+          .eval consequent
       :end]
     [(predicate consequent)
-          .value predicate
+          .eval predicate
           make-truthy
           cond-jump :consequent
           nil
           jump :end
       :consequent
-          .value consequent
+          .eval consequent
       :end]))
+
+(define* car (lambda (cons) (asm* .resolve cons car)))
+(define* cdr (lambda (cons) (asm* .resolve cons cdr)))
+
+(define* first car)
+(define* rest cdr)
 
 ;; syntax-quoting requires it
 (define* concat!

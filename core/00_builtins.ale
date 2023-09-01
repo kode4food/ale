@@ -14,8 +14,6 @@
 (def-builtin append)
 (def-builtin apply)
 (def-builtin assoc)
-(def-builtin car)
-(def-builtin cdr)
 (def-builtin chan)
 (def-builtin cons)
 (def-builtin current-time)

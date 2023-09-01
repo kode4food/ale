@@ -115,7 +115,7 @@ func TestAsmLocalScopeError(t *testing.T) {
 
 func TestAsmValue(t *testing.T) {
 	as := assert.New(t)
-	as.EvalTo(`(asm* .value (+ 1 2))`, I(3))
+	as.EvalTo(`(asm* .eval (+ 1 2))`, I(3))
 	as.EncodesAs(isa.Instructions{
 		isa.PosInt.New(2),
 		isa.PosInt.New(1),
@@ -124,7 +124,7 @@ func TestAsmValue(t *testing.T) {
 		isa.Return.New(),
 	}, `
 	(asm*
-		.value (+ 1 2)
+		.eval (+ 1 2)
 		return)
 	`)
 }
@@ -136,22 +136,22 @@ func TestAsmMakeEncoder(t *testing.T) {
 		(define* if'
 			(asm* !make-encoder
 				[(predicate consequent alternative)
-					.value predicate
+					.eval predicate
 					make-truthy
 					cond-jump :consequent
-					.value alternative
+					.eval alternative
 					jump :end
 				:consequent
-					.value consequent
+					.eval consequent
 				:end]
 				[(predicate consequent)
-					.value predicate
+					.eval predicate
 					make-truthy
 					cond-jump :consequent
 					nil
 					jump :end
 				:consequent
-					.value consequent
+					.eval consequent
 				:end]))
 
 		(if' true "yep" "nope")
@@ -165,7 +165,7 @@ func TestAsmMakeRestEncoder(t *testing.T) {
 		(define* test
 			(asm* !make-encoder
 				[(head . rest)
-					.value head]))
+					.eval head]))
 		(test 1 2 3 4)
 	`, I(1))
 
@@ -173,7 +173,7 @@ func TestAsmMakeRestEncoder(t *testing.T) {
 		(define* test
 			(asm* !make-encoder
 				[(head . rest)
-					.value rest]))
+					.eval rest]))
 		(test 1 2 3 4)
 	`, V(I(2), I(3), I(4)))
 }

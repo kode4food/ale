@@ -12,16 +12,6 @@ var Cons = data.Applicative(func(args ...data.Value) data.Value {
 	return data.NewCons(car, cdr)
 }, 2)
 
-// Car returns the first element of the provided Pair
-var Car = data.Applicative(func(args ...data.Value) data.Value {
-	return args[0].(data.Pair).Car()
-}, 1)
-
-// Cdr returns the first element of the provided Pair
-var Cdr = data.Applicative(func(args ...data.Value) data.Value {
-	return args[0].(data.Pair).Cdr()
-}, 1)
-
 // IsPair returns whether the provided value is a Pair
 var IsPair = data.Applicative(func(args ...data.Value) data.Value {
 	_, ok := args[0].(data.Pair)
