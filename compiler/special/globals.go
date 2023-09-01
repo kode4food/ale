@@ -19,18 +19,16 @@ func Private(e encoder.Encoder, args ...data.Value) {
 
 func declare(e encoder.Encoder, oc isa.Opcode, args ...data.Value) {
 	data.AssertFixed(1, len(args))
-	name := args[0].(data.LocalSymbol).Name()
-	generate.Literal(e, name)
+	generate.Literal(e, args[0].(data.LocalSymbol))
+	e.Emit(isa.Dup)
 	e.Emit(oc)
-	generate.Literal(e, args[0])
 }
 
 // Define encodes a global definition
 func Define(e encoder.Encoder, args ...data.Value) {
 	data.AssertFixed(2, len(args))
-	name := args[0].(data.LocalSymbol).Name()
+	generate.Literal(e, args[0].(data.LocalSymbol))
+	e.Emit(isa.Dup)
 	generate.Value(e, args[1])
-	generate.Literal(e, name)
 	e.Emit(isa.Bind)
-	generate.Literal(e, args[0])
 }

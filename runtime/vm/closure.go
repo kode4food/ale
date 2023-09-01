@@ -143,22 +143,24 @@ opSwitch:
 	case isa.Declare:
 		SP++
 		c.Lambda.Globals.Declare(
-			STACK[SP].(data.Name),
+			STACK[SP].(data.LocalSymbol).Name(),
 		)
 		goto nextPC
 
 	case isa.Private:
 		SP++
 		c.Lambda.Globals.Private(
-			STACK[SP].(data.Name),
+			STACK[SP].(data.LocalSymbol).Name(),
 		)
 		goto nextPC
 
 	case isa.Bind:
 		SP++
-		name := STACK[SP].(data.Name)
+		val := STACK[SP]
 		SP++
-		c.Lambda.Globals.Declare(name).Bind(STACK[SP])
+		c.Lambda.Globals.Declare(
+			STACK[SP].(data.LocalSymbol).Name(),
+		).Bind(val)
 		goto nextPC
 
 	case isa.Resolve:

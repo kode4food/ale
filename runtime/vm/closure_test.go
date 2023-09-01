@@ -17,7 +17,6 @@ var constants = data.Values{
 	I(6),
 	S("a thrown error"),
 	data.Applicative(numLoopSum),
-	N("a-name"),
 	LS("a-name"),
 }
 
@@ -364,12 +363,12 @@ func TestRefs(t *testing.T) {
 func TestGlobals(t *testing.T) {
 	testResult(t, I(3), isa.Instructions{
 		isa.Const.New(4),
+		isa.Dup.New(),
 		isa.Declare.New(),
 		isa.PosInt.New(2),
-		isa.Const.New(4),
 		isa.Bind.New(),
 		isa.PosInt.New(1),
-		isa.Const.New(5),
+		isa.Const.New(4),
 		isa.Resolve.New(),
 		isa.Add.New(),
 		isa.Return.New(),
