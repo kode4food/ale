@@ -120,7 +120,7 @@ func (e *asmEncoder) encode(forms data.Sequence) {
 	for f, r, ok := forms.Split(); ok; f, r, ok = r.Split() {
 		switch v := f.(type) {
 		case data.Keyword:
-			e.Emit(isa.Label, e.getLabelIndex(v))
+			e.Emit(isa.Label, e.getLabelIndex(v.Name()))
 		case data.LocalSymbol:
 			n := v.Name()
 			if d, ok := calls[n]; ok {
@@ -138,13 +138,12 @@ func (e *asmEncoder) encode(forms data.Sequence) {
 	}
 }
 
-func (e *asmEncoder) getLabelIndex(k data.Keyword) isa.Operand {
-	name := k.Name()
-	if idx, ok := e.labels[name]; ok {
+func (e *asmEncoder) getLabelIndex(n data.Name) isa.Operand {
+	if idx, ok := e.labels[n]; ok {
 		return idx
 	}
 	idx := e.NewLabel()
-	e.labels[name] = idx
+	e.labels[n] = idx
 	return idx
 }
 
@@ -177,8 +176,11 @@ func (e *asmEncoder) getToOperandFor(ao isa.ActOn) toOperandFunc {
 
 func (e *asmEncoder) makeLabelToWord() toOperandFunc {
 	return wrapToOperandError(func(val data.Value) (isa.Operand, error) {
+		if v, ok := e.resolveEncoderArg(val); ok {
+			val = v
+		}
 		if val, ok := val.(data.Keyword); ok {
-			return e.getLabelIndex(val), nil
+			return e.getLabelIndex(val.Name()), nil
 		}
 		return toOperand(val)
 	}, ErrUnexpectedLabel)
@@ -186,6 +188,9 @@ func (e *asmEncoder) makeLabelToWord() toOperandFunc {
 
 func (e *asmEncoder) makeNameToWord() toOperandFunc {
 	return wrapToOperandError(func(val data.Value) (isa.Operand, error) {
+		if v, ok := e.resolveEncoderArg(val); ok {
+			val = v
+		}
 		if val, ok := val.(data.LocalSymbol); ok {
 			if cell, ok := e.ResolveLocal(val.Name()); ok {
 				return cell.Index, nil
@@ -194,6 +199,14 @@ func (e *asmEncoder) makeNameToWord() toOperandFunc {
 		}
 		return toOperand(val)
 	}, ErrUnexpectedName)
+}
+
+func (e *asmEncoder) resolveEncoderArg(v data.Value) (data.Value, bool) {
+	if v, ok := v.(data.LocalSymbol); ok {
+		res, ok := e.args[v.Name()]
+		return res, ok
+	}
+	return nil, false
 }
 
 func getInstructionCalls() callMap {
@@ -230,11 +243,9 @@ func getEncoderCalls() callMap {
 		},
 		EvalValue: {
 			Call: func(e encoder.Encoder, args ...data.Value) {
-				if arg, ok := args[0].(data.LocalSymbol); ok {
-					if v, ok := e.(*asmEncoder).args[arg.Name()]; ok {
-						generate.Value(e, v)
-						return
-					}
+				if v, ok := e.(*asmEncoder).resolveEncoderArg(args[0]); ok {
+					generate.Value(e, v)
+					return
 				}
 				generate.Value(e, args[0])
 			},
@@ -242,11 +253,9 @@ func getEncoderCalls() callMap {
 		},
 		Const: {
 			Call: func(e encoder.Encoder, args ...data.Value) {
-				if arg, ok := args[0].(data.LocalSymbol); ok {
-					if v, ok := e.(*asmEncoder).args[arg.Name()]; ok {
-						generate.Literal(e, v)
-						return
-					}
+				if v, ok := e.(*asmEncoder).resolveEncoderArg(args[0]); ok {
+					generate.Literal(e, v)
+					return
 				}
 				index := e.AddConstant(args[0])
 				e.Emit(isa.Const, index)

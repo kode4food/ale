@@ -61,7 +61,7 @@ func TestAsmLabelError(t *testing.T) {
 	as.Eval(`
 		(asm*
 			true
-			cond-jump not-a-label
+			cond-jump "not-a-label"
 		:not-a-label)
     `)
 }
