@@ -10,8 +10,6 @@ import (
 type (
 	// Encoder exposes an interface for stateful compiler encoding
 	Encoder interface {
-		data.Value
-
 		Child() Encoder
 
 		Emit(isa.Opcode, ...isa.Operand)
@@ -103,12 +101,4 @@ func (e *encoder) Globals() env.Namespace {
 		return e.parent.Globals()
 	}
 	return nil
-}
-
-func (e *encoder) Equal(v data.Value) bool {
-	return e == v
-}
-
-func (e *encoder) String() string {
-	return "encoder"
 }
