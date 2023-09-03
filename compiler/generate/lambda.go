@@ -7,11 +7,8 @@ import (
 	"github.com/kode4food/ale/runtime/vm"
 )
 
-const allArgsName = data.Name("*args*")
-
 func Lambda(e encoder.Encoder, build Builder) *vm.Lambda {
 	child := e.Child()
-	child.PushParams(data.Names{allArgsName}, true)
 	build(child)
 	fn := vm.LambdaFromEncoder(child)
 
