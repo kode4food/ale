@@ -3,6 +3,7 @@ package data
 import (
 	"bytes"
 	"fmt"
+	"slices"
 	"strings"
 	"sync"
 
@@ -17,17 +18,21 @@ type (
 		Named
 	}
 
-	// LocalSymbol represents an unqualified symbol that requires resolution
-	LocalSymbol interface {
-		localSymbol() // marker
-		Symbol
+	// LocalSymbols represents a set of LocalSymbol
+	LocalSymbols []LocalSymbol
+
+	// Named is the generic interface for values that are named
+	Named interface {
+		Name() LocalSymbol
 	}
+
+	// LocalSymbol represents an unqualified symbol that requires resolution
+	LocalSymbol string
 
 	// QualifiedSymbol represents a domain-qualified symbol
 	QualifiedSymbol interface {
 		Symbol
-		Domain() Name
-		Qualified() Name
+		Domain() LocalSymbol
 	}
 
 	// SymbolGenerator produces instance-unique local symbols
@@ -37,11 +42,9 @@ type (
 		maxPos int
 	}
 
-	localSymbol Name
-
 	qualifiedSymbol struct {
-		domain Name
-		name   Name
+		domain LocalSymbol
+		name   LocalSymbol
 	}
 )
 
@@ -61,7 +64,7 @@ const (
 var gen = NewSymbolGenerator()
 
 // NewGeneratedSymbol creates a generated Symbol
-func NewGeneratedSymbol(name Name) Symbol {
+func NewGeneratedSymbol(name LocalSymbol) Symbol {
 	return gen.Local(name)
 }
 
@@ -69,11 +72,11 @@ func NewGeneratedSymbol(name Name) Symbol {
 func ParseSymbol(s String) Symbol {
 	n := string(s)
 	if i := strings.IndexRune(n, DomainSeparator); i > 0 {
-		name := Name(n[i+1:])
-		domain := Name(n[:i])
+		name := LocalSymbol(n[i+1:])
+		domain := LocalSymbol(n[:i])
 		return NewQualifiedSymbol(name, domain)
 	}
-	return localSymbol(s)
+	return LocalSymbol(s)
 }
 
 // NewSymbolGenerator creates a new symbol generator. In general, it is safe to
@@ -83,13 +86,13 @@ func NewSymbolGenerator() *SymbolGenerator {
 }
 
 // Local returns a newly generated local symbol
-func (g *SymbolGenerator) Local(name Name) LocalSymbol {
+func (g *SymbolGenerator) Local(name LocalSymbol) LocalSymbol {
 	g.Lock()
 	defer g.Unlock()
 	g.inc(0)
 	idx := g.str()
 	q := fmt.Sprintf(genSymTemplate, name, idx)
-	return localSymbol(q)
+	return LocalSymbol(q)
 }
 
 func (g *SymbolGenerator) inc(pos int) {
@@ -119,39 +122,41 @@ func (g *SymbolGenerator) str() string {
 	return buf.String()
 }
 
-// NewLocalSymbol returns a local symbol
-func NewLocalSymbol(name Name) Symbol {
-	return localSymbol(name)
+func (LocalSymbol) symbol() {}
+
+func (l LocalSymbol) Name() LocalSymbol {
+	return l
 }
 
-func (localSymbol) symbol()      {}
-func (localSymbol) localSymbol() {}
-
-func (l localSymbol) Name() Name {
-	return Name(l)
-}
-
-func (l localSymbol) Equal(v Value) bool {
-	if v, ok := v.(localSymbol); ok {
+func (l LocalSymbol) Equal(v Value) bool {
+	if v, ok := v.(LocalSymbol); ok {
 		return l == v
 	}
 	return false
 }
 
-func (localSymbol) Type() types.Type {
+func (LocalSymbol) Type() types.Type {
 	return types.Symbol
 }
 
-func (l localSymbol) String() string {
+func (l LocalSymbol) String() string {
 	return string(l)
 }
 
-func (l localSymbol) HashCode() uint64 {
+func (l LocalSymbol) HashCode() uint64 {
 	return HashString(string(l))
 }
 
+// Sorted returns a sorted set of LocalSymbols
+func (n LocalSymbols) Sorted() LocalSymbols {
+	res := make(LocalSymbols, len(n))
+	copy(res, n)
+	slices.Sort(res)
+	return res
+}
+
 // NewQualifiedSymbol returns a Qualified Symbol for a specific domain
-func NewQualifiedSymbol(name Name, domain Name) Symbol {
+func NewQualifiedSymbol(name LocalSymbol, domain LocalSymbol) Symbol {
 	return qualifiedSymbol{
 		domain: domain,
 		name:   name,
@@ -160,20 +165,12 @@ func NewQualifiedSymbol(name Name, domain Name) Symbol {
 
 func (qualifiedSymbol) symbol() {}
 
-func (s qualifiedSymbol) Name() Name {
+func (s qualifiedSymbol) Name() LocalSymbol {
 	return s.name
 }
 
-func (s qualifiedSymbol) Domain() Name {
+func (s qualifiedSymbol) Domain() LocalSymbol {
 	return s.domain
-}
-
-func (s qualifiedSymbol) Qualified() Name {
-	var buf bytes.Buffer
-	buf.WriteString(string(s.domain))
-	buf.WriteRune(DomainSeparator)
-	buf.WriteString(string(s.name))
-	return Name(buf.String())
 }
 
 func (s qualifiedSymbol) Equal(v Value) bool {
@@ -188,7 +185,11 @@ func (qualifiedSymbol) Type() types.Type {
 }
 
 func (s qualifiedSymbol) String() string {
-	return string(s.Qualified())
+	var buf bytes.Buffer
+	buf.WriteString(string(s.domain))
+	buf.WriteRune(DomainSeparator)
+	buf.WriteString(string(s.name))
+	return buf.String()
 }
 
 func (s qualifiedSymbol) HashCode() uint64 {

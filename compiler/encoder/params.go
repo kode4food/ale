@@ -7,7 +7,7 @@ import (
 
 type paramStack []IndexedCells
 
-func (e *encoder) PushParams(names data.Names, rest bool) {
+func (e *encoder) PushParams(names data.LocalSymbols, rest bool) {
 	cells := make(IndexedCells, len(names))
 	for i, n := range names {
 		c := newCell(ValueCell, n)
@@ -25,7 +25,7 @@ func (e *encoder) PopParams() {
 	e.params = params[0 : al-1]
 }
 
-func (e *encoder) ResolveParam(n data.Name) (*IndexedCell, bool) {
+func (e *encoder) ResolveParam(n data.LocalSymbol) (*IndexedCell, bool) {
 	params := e.params
 	for i := len(params) - 1; i >= 0; i-- {
 		a := params[i]
@@ -36,7 +36,7 @@ func (e *encoder) ResolveParam(n data.Name) (*IndexedCell, bool) {
 	return nil, false
 }
 
-func resolveParam(cells IndexedCells, lookup data.Name) (*IndexedCell, bool) {
+func resolveParam(cells IndexedCells, lookup data.LocalSymbol) (*IndexedCell, bool) {
 	for _, c := range cells {
 		if c.Name == lookup {
 			return c, true

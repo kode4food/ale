@@ -80,7 +80,7 @@ func (se *syntaxEnv) generateSymbol(s data.Symbol) (data.Symbol, bool) {
 		return r, true
 	}
 
-	r := data.NewGeneratedSymbol(data.Name(n[0 : len(n)-1]))
+	r := data.NewGeneratedSymbol(data.LocalSymbol(n[0 : len(n)-1]))
 	se.genSyms[n] = r
 	return r, true
 }

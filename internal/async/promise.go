@@ -69,7 +69,7 @@ func (p *promise) IsResolved() bool {
 	return p.status != promisePending
 }
 
-func (p *promise) Type() data.Name {
+func (p *promise) Type() data.LocalSymbol {
 	return "promise"
 }
 

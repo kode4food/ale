@@ -23,7 +23,7 @@ func Lambda(e encoder.Encoder, build Builder) *vm.Lambda {
 
 	for i := clen - 1; i >= 0; i-- {
 		name := cells[i].Name
-		Symbol(e, data.NewLocalSymbol(name))
+		Symbol(e, data.LocalSymbol(name))
 	}
 	e.Emit(isa.Const, e.AddConstant(fn))
 	e.Emit(isa.Call, isa.Operand(clen))

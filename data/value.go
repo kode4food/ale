@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"hash/maphash"
 	"math/rand"
-	"slices"
 
 	"github.com/kode4food/ale/types"
 )
@@ -21,17 +20,6 @@ type (
 
 	// Values represent a set of Values
 	Values []Value
-
-	// Name is a Variable name
-	Name string
-
-	// Names represents a set of Names
-	Names []Name
-
-	// Named is the generic interface for values that are named
-	Named interface {
-		Name() Name
-	}
 
 	// Typed is the generic interface for values that are typed
 	Typed interface {
@@ -84,19 +72,6 @@ var (
 	trueHash  = rand.Uint64()
 	falseHash = rand.Uint64()
 )
-
-// Sorted returns a sorted set of Names
-func (n Names) Sorted() Names {
-	res := make(Names, len(n))
-	copy(res, n)
-	slices.Sort(res)
-	return res
-}
-
-// Name makes Name Named
-func (n Name) Name() Name {
-	return n
-}
 
 // Equal compares this Bool to another for equality
 func (b Bool) Equal(v Value) bool {

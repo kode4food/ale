@@ -15,7 +15,7 @@ type (
 		*assert.Wrapper
 	}
 
-	Env map[data.Name]any
+	Env map[data.LocalSymbol]any
 )
 
 var testEnv = bootstrap.DevNullEnvironment()

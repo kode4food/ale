@@ -11,7 +11,7 @@ type (
 	// Environment maintains a mapping of domain names to namespaces
 	Environment struct {
 		sync.Mutex
-		data map[data.Name]Namespace
+		data map[data.LocalSymbol]Namespace
 	}
 
 	// Resolver resolves a namespace instance
@@ -26,21 +26,21 @@ const (
 
 const (
 	// RootDomain stores built-ins
-	RootDomain = data.Name("ale")
+	RootDomain = data.LocalSymbol("ale")
 
 	// AnonymousDomain identifies an anonymous namespace
-	AnonymousDomain = data.Name("*anon*")
+	AnonymousDomain = data.LocalSymbol("*anon*")
 )
 
 // RootSymbol returns a symbol qualified by the root domain
-func RootSymbol(name data.Name) data.Symbol {
+func RootSymbol(name data.LocalSymbol) data.Symbol {
 	return data.NewQualifiedSymbol(name, RootDomain)
 }
 
 // NewEnvironment creates a new synchronous namespace map
 func NewEnvironment() *Environment {
 	return &Environment{
-		data: map[data.Name]Namespace{},
+		data: map[data.LocalSymbol]Namespace{},
 	}
 }
 
@@ -49,7 +49,7 @@ func (e *Environment) Snapshot() (*Environment, error) {
 	defer e.Unlock()
 
 	res := &Environment{
-		data: make(map[data.Name]Namespace, len(e.data)),
+		data: make(map[data.LocalSymbol]Namespace, len(e.data)),
 	}
 	for k, v := range e.data {
 		s, err := v.Snapshot(res)
@@ -62,7 +62,7 @@ func (e *Environment) Snapshot() (*Environment, error) {
 }
 
 // New constructs a new namespace
-func (e *Environment) New(n data.Name) Namespace {
+func (e *Environment) New(n data.LocalSymbol) Namespace {
 	return &namespace{
 		environment: e,
 		entries:     entries{},
@@ -71,7 +71,7 @@ func (e *Environment) New(n data.Name) Namespace {
 }
 
 // Get returns a mapped namespace or instantiates a new one to be cached
-func (e *Environment) Get(domain data.Name, res Resolver) Namespace {
+func (e *Environment) Get(domain data.LocalSymbol, res Resolver) Namespace {
 	e.Lock()
 	defer e.Unlock()
 	if r, ok := e.data[domain]; ok {
@@ -98,7 +98,7 @@ func (e *Environment) GetAnonymous() Namespace {
 }
 
 // GetQualified returns the namespace for the specified domain.
-func (e *Environment) GetQualified(n data.Name) Namespace {
+func (e *Environment) GetQualified(n data.LocalSymbol) Namespace {
 	root := e.GetRoot()
 	if n == RootDomain {
 		return root

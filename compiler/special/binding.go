@@ -9,7 +9,7 @@ import (
 	"github.com/kode4food/ale/data"
 )
 
-type uniqueNames map[data.Name]bool
+type uniqueNames map[data.LocalSymbol]bool
 
 // Error messages
 const (
@@ -74,7 +74,7 @@ func parseLetBinding(b data.Vector) *generate.Binding {
 	}
 }
 
-func (u uniqueNames) see(n data.Name) {
+func (u uniqueNames) see(n data.LocalSymbol) {
 	if _, ok := u[n]; ok {
 		panic(fmt.Errorf(ErrNameAlreadyBound, n))
 	}

@@ -8,7 +8,7 @@ import (
 
 type (
 	paramCase struct {
-		params data.Names
+		params data.LocalSymbols
 		rest   bool
 		body   data.Sequence
 	}
@@ -74,14 +74,14 @@ func parseParamCase(s data.Sequence) *paramCase {
 	}
 }
 
-func (c *paramCase) fixedArgs() data.Names {
+func (c *paramCase) fixedArgs() data.LocalSymbols {
 	if c.rest {
 		return c.params[0 : len(c.params)-1]
 	}
 	return c.params
 }
 
-func (c *paramCase) restArg() (data.Name, bool) {
+func (c *paramCase) restArg() (data.LocalSymbol, bool) {
 	if c.rest {
 		return c.params[len(c.params)-1], true
 	}
@@ -114,10 +114,10 @@ func (c *paramCase) makeFetcher() argFetcher {
 	}
 }
 
-func parseParamNames(v data.Value) (data.Names, bool) {
+func parseParamNames(v data.Value) (data.LocalSymbols, bool) {
 	switch v := v.(type) {
 	case data.LocalSymbol:
-		return data.Names{v.Name()}, true
+		return data.LocalSymbols{v.Name()}, true
 	case data.List:
 		return parseListParamNames(v), false
 	case data.Cons:
@@ -127,8 +127,8 @@ func parseParamNames(v data.Value) (data.Names, bool) {
 	}
 }
 
-func parseListParamNames(l data.List) data.Names {
-	var an data.Names
+func parseListParamNames(l data.List) data.LocalSymbols {
+	var an data.LocalSymbols
 	for f, r, ok := l.Split(); ok; f, r, ok = r.Split() {
 		n := f.(data.LocalSymbol).Name()
 		an = append(an, n)
@@ -136,8 +136,8 @@ func parseListParamNames(l data.List) data.Names {
 	return an
 }
 
-func parseConsParamNames(c data.Cons) data.Names {
-	var an data.Names
+func parseConsParamNames(c data.Cons) data.LocalSymbols {
+	var an data.LocalSymbols
 	next := c
 	for {
 		an = append(an, next.Car().(data.LocalSymbol).Name())

@@ -14,8 +14,8 @@ import (
 type (
 	asmEncoder struct {
 		encoder.Encoder
-		labels map[data.Name]isa.Operand
-		args   map[data.Name]data.Value
+		labels map[data.LocalSymbol]isa.Operand
+		args   map[data.LocalSymbol]data.Value
 	}
 
 	call struct {
@@ -23,7 +23,7 @@ type (
 		argCount int
 	}
 
-	callMap map[data.Name]*call
+	callMap map[data.LocalSymbol]*call
 
 	toOperandFunc func(data.Value) (isa.Operand, error)
 )
@@ -39,13 +39,13 @@ const (
 )
 
 const (
-	MakeEncoder = data.Name("!make-encoder")
-	Resolve     = data.Name(".resolve")
-	EvalValue   = data.Name(".eval")
-	Const       = data.Name(".const")
-	Local       = data.Name(".local")
-	PushLocals  = data.Name(".push-locals")
-	PopLocals   = data.Name(".pop-locals")
+	MakeEncoder = data.LocalSymbol("!make-encoder")
+	Resolve     = data.LocalSymbol(".resolve")
+	EvalValue   = data.LocalSymbol(".eval")
+	Const       = data.LocalSymbol(".const")
+	Local       = data.LocalSymbol(".local")
+	PushLocals  = data.LocalSymbol(".push-locals")
+	PopLocals   = data.LocalSymbol(".pop-locals")
 )
 
 var (
@@ -68,13 +68,13 @@ func Asm(e encoder.Encoder, args ...data.Value) {
 func makeAsmEncoder(e encoder.Encoder) *asmEncoder {
 	return &asmEncoder{
 		Encoder: e,
-		labels:  map[data.Name]isa.Operand{},
-		args:    map[data.Name]data.Value{},
+		labels:  map[data.LocalSymbol]isa.Operand{},
+		args:    map[data.LocalSymbol]data.Value{},
 	}
 }
 
-func (e *asmEncoder) withParams(n data.Names, v data.Values) *asmEncoder {
-	args := make(map[data.Name]data.Value, len(n))
+func (e *asmEncoder) withParams(n data.LocalSymbols, v data.Values) *asmEncoder {
+	args := make(map[data.LocalSymbol]data.Value, len(n))
 	for i, k := range n {
 		args[k] = v[i]
 	}
@@ -138,7 +138,7 @@ func (e *asmEncoder) encode(forms data.Sequence) {
 	}
 }
 
-func (e *asmEncoder) getLabelIndex(n data.Name) isa.Operand {
+func (e *asmEncoder) getLabelIndex(n data.LocalSymbol) isa.Operand {
 	if idx, ok := e.labels[n]; ok {
 		return idx
 	}
@@ -212,7 +212,7 @@ func (e *asmEncoder) resolveEncoderArg(v data.Value) (data.Value, bool) {
 func getInstructionCalls() callMap {
 	res := make(callMap, len(isa.Effects))
 	for oc, effect := range isa.Effects {
-		name := data.Name(strings.CamelToSnake(oc.String()))
+		name := data.LocalSymbol(strings.CamelToSnake(oc.String()))
 		res[name] = func(oc isa.Opcode, ao isa.ActOn) *call {
 			return makeEmitCall(oc, ao)
 		}(oc, effect.Operand)

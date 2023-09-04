@@ -97,9 +97,8 @@ func (t *Token) Equal(v data.Value) bool {
 
 // String converts this Value into a string
 func (t *Token) String() string {
-	n := data.Name(t.typ.String())
-	l := data.NewLocalSymbol(n)
-	return data.NewVector(l, t.value).String()
+	name := data.LocalSymbol(t.typ.String())
+	return data.NewVector(name, t.value).String()
 }
 
 func (t *Token) isNewLine() bool {

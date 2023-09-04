@@ -10,18 +10,18 @@ type (
 	// Namespace represents a namespace
 	Namespace interface {
 		Environment() *Environment
-		Domain() data.Name
-		Declared() data.Names
-		Declare(data.Name) Entry
-		Private(data.Name) Entry
-		Resolve(data.Name) (Entry, bool)
+		Domain() data.LocalSymbol
+		Declared() data.LocalSymbols
+		Declare(data.LocalSymbol) Entry
+		Private(data.LocalSymbol) Entry
+		Resolve(data.LocalSymbol) (Entry, bool)
 		Snapshot(*Environment) (Namespace, error)
 	}
 
 	namespace struct {
 		sync.RWMutex
 		environment *Environment
-		domain      data.Name
+		domain      data.LocalSymbol
 		entries     entries
 	}
 
@@ -41,14 +41,14 @@ func (ns *namespace) Environment() *Environment {
 	return ns.environment
 }
 
-func (ns *namespace) Domain() data.Name {
+func (ns *namespace) Domain() data.LocalSymbol {
 	return ns.domain
 }
 
-func (ns *namespace) Declared() data.Names {
+func (ns *namespace) Declared() data.LocalSymbols {
 	ns.RLock()
 	defer ns.RUnlock()
-	var res data.Names
+	var res data.LocalSymbols
 	for _, e := range ns.entries {
 		if !e.IsPrivate() {
 			res = append(res, e.Name())
@@ -57,17 +57,17 @@ func (ns *namespace) Declared() data.Names {
 	return res.Sorted()
 }
 
-func (ns *namespace) Declare(n data.Name) Entry {
+func (ns *namespace) Declare(n data.LocalSymbol) Entry {
 	return ns.declare(n)
 }
 
-func (ns *namespace) Private(n data.Name) Entry {
+func (ns *namespace) Private(n data.LocalSymbol) Entry {
 	e := ns.declare(n)
 	e.markPrivate()
 	return e
 }
 
-func (ns *namespace) declare(n data.Name) *entry {
+func (ns *namespace) declare(n data.LocalSymbol) *entry {
 	ns.Lock()
 	defer ns.Unlock()
 	if res, ok := ns.entries[n]; ok {
@@ -82,7 +82,7 @@ func (ns *namespace) declare(n data.Name) *entry {
 	return e
 }
 
-func (ns *namespace) Resolve(n data.Name) (Entry, bool) {
+func (ns *namespace) Resolve(n data.LocalSymbol) (Entry, bool) {
 	ns.RLock()
 	defer ns.RUnlock()
 	if e, ok := ns.entries[n]; ok {
@@ -111,7 +111,7 @@ func (ns *namespace) Snapshot(e *Environment) (Namespace, error) {
 	return res, nil
 }
 
-func resolvePublic(from, in Namespace, n data.Name) (Entry, bool) {
+func resolvePublic(from, in Namespace, n data.LocalSymbol) (Entry, bool) {
 	if e, ok := in.Resolve(n); ok && (from == in || !e.IsPrivate()) {
 		return e, ok
 	}

@@ -38,12 +38,12 @@ func L(args ...data.Value) data.List {
 
 // LS constructs a Local Symbol
 func LS(n string) data.Symbol {
-	return data.NewLocalSymbol(N(n))
+	return data.LocalSymbol(n)
 }
 
 // N constructs a Name
-func N(s string) data.Name {
-	return data.Name(s)
+func N(s string) data.LocalSymbol {
+	return data.LocalSymbol(s)
 }
 
 // O constructs an Object from Pairs

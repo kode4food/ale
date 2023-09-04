@@ -44,7 +44,7 @@ const (
 
 const (
 	// UserDomain is the name of the namespace that the REPL starts in
-	UserDomain = data.Name("user")
+	UserDomain = data.LocalSymbol("user")
 
 	domain = console.Domain + "%s" + console.Reset + " "
 	prompt = domain + "[%d]> " + console.Code
@@ -332,7 +332,7 @@ func getBuiltInsNamespace() env.Namespace {
 	return ns.Environment().GetRoot()
 }
 
-func registerBuiltIn(n data.Name, v data.Value) {
+func registerBuiltIn(n data.LocalSymbol, v data.Value) {
 	ns := getBuiltInsNamespace()
 	ns.Declare(n).Bind(v)
 }

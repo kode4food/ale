@@ -7,13 +7,13 @@ import (
 )
 
 // Keyword is a Value that represents a Name that resolves to itself
-type Keyword Name
+type Keyword string
 
 var keywordHash = rand.Uint64()
 
 // Name returns the name of the Keyword
-func (k Keyword) Name() Name {
-	return Name(k)
+func (k Keyword) Name() LocalSymbol {
+	return LocalSymbol(k)
 }
 
 // Call turns Keyword into a Function

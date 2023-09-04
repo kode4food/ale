@@ -13,8 +13,8 @@ func TestArgs(t *testing.T) {
 	as := assert.New(t)
 
 	e := assert.GetTestEncoder()
-	e.PushParams(data.Names{"param0"}, false)
-	e.PushParams(data.Names{"param1", "param2", "param3"}, true)
+	e.PushParams(data.LocalSymbols{"param0"}, false)
+	e.PushParams(data.LocalSymbols{"param1", "param2", "param3"}, true)
 
 	c, ok := e.ResolveParam("param2")
 	as.True(ok)

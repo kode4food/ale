@@ -50,7 +50,7 @@ func TestBuiltinsHaveDocs(t *testing.T) {
 	d := ns.Declared()
 	as.NotEqual(0, len(d))
 
-	var missing data.Names
+	var missing data.LocalSymbols
 	for _, name := range d {
 		_, err := docstring.Get(string(name))
 		if err != nil {
@@ -62,5 +62,5 @@ func TestBuiltinsHaveDocs(t *testing.T) {
 	}
 
 	as.Equal(0, len(missing))
-	as.Equal(data.Names{}, missing)
+	as.Equal(data.LocalSymbols{}, missing)
 }

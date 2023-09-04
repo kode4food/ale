@@ -10,7 +10,7 @@ func (e *encoder) Closure() IndexedCells {
 	return e.closure
 }
 
-func (e *encoder) ResolveClosure(n data.Name) (*IndexedCell, bool) {
+func (e *encoder) ResolveClosure(n data.LocalSymbol) (*IndexedCell, bool) {
 	for _, c := range e.closure {
 		if c.Name == n {
 			return c, true
@@ -19,7 +19,7 @@ func (e *encoder) ResolveClosure(n data.Name) (*IndexedCell, bool) {
 	return e.resolveClosureParent(n)
 }
 
-func (e *encoder) resolveClosureParent(n data.Name) (*IndexedCell, bool) {
+func (e *encoder) resolveClosureParent(n data.LocalSymbol) (*IndexedCell, bool) {
 	parent := e.parent
 	if parent == nil {
 		return nil, false
