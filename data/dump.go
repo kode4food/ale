@@ -14,10 +14,11 @@ func DumpString(v Value) string {
 	p := String(fmt.Sprintf("%p", v))
 	m := dumpStringMap{InstanceKey: p}
 	if n, ok := v.(Named); ok {
-		m[NameKey] = n.Name()
+		m[NameKey] = NewLocalSymbol(n.Name())
 	}
 	if t, ok := v.(Typed); ok {
-		m[TypeKey] = Name(t.Type().Name())
+		n := Name(t.Type().Name())
+		m[TypeKey] = NewLocalSymbol(n)
 	}
 	if c, ok := v.(Counted); ok {
 		m[CountKey] = Integer(c.Count())

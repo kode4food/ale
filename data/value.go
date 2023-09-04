@@ -81,7 +81,6 @@ const (
 var (
 	seed = maphash.MakeSeed()
 
-	nameHash  = rand.Uint64()
 	trueHash  = rand.Uint64()
 	falseHash = rand.Uint64()
 )
@@ -97,24 +96,6 @@ func (n Names) Sorted() Names {
 // Name makes Name Named
 func (n Name) Name() Name {
 	return n
-}
-
-// Equal compares this Name to another for equality
-func (n Name) Equal(v Value) bool {
-	if v, ok := v.(Name); ok {
-		return n == v
-	}
-	return false
-}
-
-// String converts this Value into a string
-func (n Name) String() string {
-	return string(n)
-}
-
-// HashCode returns the hash code for this Name
-func (n Name) HashCode() uint64 {
-	return nameHash * HashString(string(n))
 }
 
 // Equal compares this Bool to another for equality
