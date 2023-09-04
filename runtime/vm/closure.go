@@ -314,39 +314,42 @@ opSwitch:
 
 	case isa.Call:
 		SP1 := SP + 1
+		fn := STACK[SP1].(data.Function)
 		// prepare args
 		args := make(data.Values, op)
 		copy(args, STACK[SP1+1:]) // because stack mutates
 		// call function
 		RES := SP1 + int(op)
-		STACK[RES] = STACK[SP1].(data.Function).Call(args...)
+		STACK[RES] = fn.Call(args...)
 		SP = RES - 1
 		goto nextPC
 
 	case isa.TailCall:
 		SP1 := SP + 1
+		val := STACK[SP1]
 		// prepare args
 		args = make(data.Values, op)
 		copy(args, STACK[SP1+1:]) // because stack mutates
 		// call function
-		val := STACK[SP1]
-		vc, ok := val.(*closure)
+		cl, ok := val.(*closure)
 		if !ok {
 			return val.(data.Function).Call(args...)
 		}
-		if vc == c {
+		if cl == c {
 			goto initState
 		}
-		c = vc // intentional
-		if len(DATA) < c.Lambda.StackSize+c.Lambda.LocalCount {
+		c = cl // intentional
+		ss := c.Lambda.StackSize
+		lc := c.Lambda.LocalCount
+		if len(DATA) < ss+lc {
 			goto initFrame
 		}
 		CODE = c.Lambda.Code
-		if len(STACK) != c.Lambda.StackSize {
-			STACK = DATA[0:c.Lambda.StackSize]
+		if len(STACK) != ss {
+			STACK = DATA[0:ss]
 		}
-		if len(LOCALS) != c.Lambda.LocalCount {
-			LOCALS = DATA[len(DATA)-c.Lambda.LocalCount:]
+		if len(LOCALS) != lc {
+			LOCALS = DATA[len(DATA)-lc:]
 		}
 		goto initState
 
