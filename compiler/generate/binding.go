@@ -8,7 +8,7 @@ import (
 
 type (
 	Binding struct {
-		Name data.LocalSymbol
+		Name data.Local
 		data.Value
 	}
 

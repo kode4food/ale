@@ -7,7 +7,7 @@ type chainedNamespace struct {
 	parent Namespace
 }
 
-func newChild(parent Namespace, n data.LocalSymbol) Namespace {
+func newChild(parent Namespace, n data.Local) Namespace {
 	e := parent.Environment()
 	return chain(parent, e.New(n))
 }
@@ -38,23 +38,23 @@ func (ns *chainedNamespace) Environment() *Environment {
 	return ns.child.Environment()
 }
 
-func (ns *chainedNamespace) Domain() data.LocalSymbol {
+func (ns *chainedNamespace) Domain() data.Local {
 	return ns.child.Domain()
 }
 
-func (ns *chainedNamespace) Declared() data.LocalSymbols {
+func (ns *chainedNamespace) Declared() data.Locals {
 	return ns.child.Declared()
 }
 
-func (ns *chainedNamespace) Declare(n data.LocalSymbol) Entry {
+func (ns *chainedNamespace) Declare(n data.Local) Entry {
 	return ns.child.Declare(n)
 }
 
-func (ns *chainedNamespace) Private(n data.LocalSymbol) Entry {
+func (ns *chainedNamespace) Private(n data.Local) Entry {
 	return ns.child.Private(n)
 }
 
-func (ns *chainedNamespace) Resolve(n data.LocalSymbol) (Entry, bool) {
+func (ns *chainedNamespace) Resolve(n data.Local) (Entry, bool) {
 	if e, ok := ns.child.Resolve(n); ok {
 		return e, true
 	}

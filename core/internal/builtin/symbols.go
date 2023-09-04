@@ -2,7 +2,7 @@ package builtin
 
 import "github.com/kode4food/ale/data"
 
-const anonName = data.LocalSymbol("anon")
+const anonName = data.Local("anon")
 
 // Sym instantiates a new symbol
 var Sym = data.Applicative(func(args ...data.Value) data.Value {
@@ -19,7 +19,7 @@ var GenSym = data.Applicative(func(args ...data.Value) data.Value {
 		return data.NewGeneratedSymbol(anonName)
 	}
 	s := args[0].(data.String)
-	return data.NewGeneratedSymbol(data.LocalSymbol(s))
+	return data.NewGeneratedSymbol(data.Local(s))
 }, 0, 1)
 
 // IsSymbol returns whether the provided value is a symbol
@@ -30,12 +30,12 @@ var IsSymbol = data.Applicative(func(args ...data.Value) data.Value {
 
 // IsLocal returns whether the provided value is an unqualified symbol
 var IsLocal = data.Applicative(func(args ...data.Value) data.Value {
-	_, ok := args[0].(data.LocalSymbol)
+	_, ok := args[0].(data.Local)
 	return data.Bool(ok)
 }, 1)
 
 // IsQualified returns whether the provided value is a qualified symbol
 var IsQualified = data.Applicative(func(args ...data.Value) data.Value {
-	_, ok := args[0].(data.QualifiedSymbol)
+	_, ok := args[0].(data.Qualified)
 	return data.Bool(ok)
 }, 1)

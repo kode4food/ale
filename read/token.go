@@ -97,7 +97,7 @@ func (t *Token) Equal(v data.Value) bool {
 
 // String converts this Value into a string
 func (t *Token) String() string {
-	name := data.LocalSymbol(t.typ.String())
+	name := data.Local(t.typ.String())
 	return data.NewVector(name, t.value).String()
 }
 

@@ -34,7 +34,7 @@ func (b *bootstrap) initialFunctions() {
 
 	defBuiltIn := data.Normal(func(args ...data.Value) data.Value {
 		ns := e.GetRoot()
-		n := args[0].(data.LocalSymbol).Name()
+		n := args[0].(data.Local)
 		if nf, ok := b.funcMap[n]; ok {
 			ns.Declare(n).Bind(nf)
 			return args[0]
@@ -44,7 +44,7 @@ func (b *bootstrap) initialFunctions() {
 
 	defSpecial := data.Normal(func(args ...data.Value) data.Value {
 		ns := e.GetRoot()
-		n := args[0].(data.LocalSymbol).Name()
+		n := args[0].(data.Local)
 		if sf, ok := b.specialMap[n]; ok {
 			ns.Declare(n).Bind(sf)
 			return args[0]
@@ -54,7 +54,7 @@ func (b *bootstrap) initialFunctions() {
 
 	defMacro := data.Normal(func(args ...data.Value) data.Value {
 		ns := e.GetRoot()
-		n := args[0].(data.LocalSymbol).Name()
+		n := args[0].(data.Local)
 		if sf, ok := b.macroMap[n]; ok {
 			ns.Declare(n).Bind(sf)
 			return args[0]
@@ -69,7 +69,7 @@ func (b *bootstrap) initialFunctions() {
 }
 
 func (b *bootstrap) specialForms() {
-	b.specials(map[data.LocalSymbol]encoder.Call{
+	b.specials(map[data.Local]encoder.Call{
 		"asm*":          special.Asm,
 		"begin":         special.Begin,
 		"eval":          special.Eval,
@@ -83,7 +83,7 @@ func (b *bootstrap) specialForms() {
 }
 
 func (b *bootstrap) availableFunctions() {
-	b.functions(map[data.LocalSymbol]data.Function{
+	b.functions(map[data.Local]data.Function{
 		"-":  builtin.Sub,
 		"!=": builtin.Neq,
 		"*":  builtin.Mul,
@@ -153,36 +153,36 @@ func (b *bootstrap) availableFunctions() {
 		"is-vector":     builtin.IsVector,
 	})
 
-	b.macros(map[data.LocalSymbol]macro.Call{
+	b.macros(map[data.Local]macro.Call{
 		"syntax-quote": macro.SyntaxQuote,
 	})
 }
 
-func (b *bootstrap) functions(f map[data.LocalSymbol]data.Function) {
+func (b *bootstrap) functions(f map[data.Local]data.Function) {
 	for k, v := range f {
 		b.function(k, v)
 	}
 }
 
-func (b *bootstrap) function(name data.LocalSymbol, call data.Function) {
+func (b *bootstrap) function(name data.Local, call data.Function) {
 	b.funcMap[name] = call
 }
 
-func (b *bootstrap) macros(m map[data.LocalSymbol]macro.Call) {
+func (b *bootstrap) macros(m map[data.Local]macro.Call) {
 	for k, v := range m {
 		b.macro(k, v)
 	}
 }
-func (b *bootstrap) macro(name data.LocalSymbol, call macro.Call) {
+func (b *bootstrap) macro(name data.Local, call macro.Call) {
 	b.macroMap[name] = call
 }
 
-func (b *bootstrap) specials(s map[data.LocalSymbol]encoder.Call) {
+func (b *bootstrap) specials(s map[data.Local]encoder.Call) {
 	for k, v := range s {
 		b.special(k, v)
 	}
 }
 
-func (b *bootstrap) special(name data.LocalSymbol, call encoder.Call) {
+func (b *bootstrap) special(name data.Local, call encoder.Call) {
 	b.specialMap[name] = call
 }

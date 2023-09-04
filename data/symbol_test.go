@@ -39,20 +39,20 @@ func TestQualifiedSymbolEquality(t *testing.T) {
 func TestSymbolParsing(t *testing.T) {
 	as := assert.New(t)
 
-	s1 := data.ParseSymbol("domain/name1").(data.QualifiedSymbol)
+	s1 := data.ParseSymbol("domain/name1").(data.Qualified)
 	as.String("domain", s1.Domain())
 	as.String("name1", s1.Name())
 	as.String("domain/name1", s1)
 
 	s2 := data.ParseSymbol("/name2")
-	if _, ok := s2.(data.QualifiedSymbol); ok {
+	if _, ok := s2.(data.Qualified); ok {
 		as.Fail("symbol should not be qualified")
 	}
 
 	s3 := data.ParseSymbol("name3")
 	as.String("name3", s3.Name())
 
-	s4 := data.ParseSymbol("one/too/").(data.QualifiedSymbol)
+	s4 := data.ParseSymbol("one/too/").(data.Qualified)
 	as.String("one", s4.Domain())
 	as.String("too/", s4.Name())
 }

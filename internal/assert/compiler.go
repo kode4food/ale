@@ -28,7 +28,7 @@ func (w *Wrapper) Instructions(expected, actual isa.Instructions) {
 
 // GetRootSymbol is a test helper that retrieves the value for a named symbol
 // from the Encoder's global environment or dies trying
-func GetRootSymbol(e encoder.Encoder, n data.LocalSymbol) data.Value {
+func GetRootSymbol(e encoder.Encoder, n data.Local) data.Value {
 	s := env.RootSymbol(n)
 	ge := e.Globals().Environment()
 	root := ge.GetRoot()

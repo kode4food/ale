@@ -38,7 +38,7 @@ func (w *Wrapper) String(expect string, expr any) {
 	switch s := expr.(type) {
 	case string:
 		w.Assertions.Equal(expect, s)
-	case data.LocalSymbol:
+	case data.Local:
 		w.Assertions.Equal(expect, string(s))
 	case data.Value:
 		w.Assertions.Equal(expect, s.String())

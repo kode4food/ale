@@ -11,8 +11,8 @@ import (
 func TestNames(t *testing.T) {
 	as := assert.New(t)
 
-	n := N("hello")
-	as.Equal(N("hello"), n.Name())
+	n := LS("hello")
+	as.Equal(LS("hello"), n)
 }
 
 func TestTruthy(t *testing.T) {

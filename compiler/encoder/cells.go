@@ -11,7 +11,7 @@ type (
 
 	// Cell attaches a name to a type/disposition
 	Cell struct {
-		Name data.LocalSymbol
+		Name data.Local
 		Type CellType
 	}
 
@@ -38,7 +38,7 @@ const (
 	RestCell
 )
 
-func newCell(t CellType, n data.LocalSymbol) *Cell {
+func newCell(t CellType, n data.Local) *Cell {
 	return &Cell{
 		Name: n,
 		Type: t,

@@ -20,9 +20,9 @@ type (
 		funcMap     funcMap
 	}
 
-	macroMap   map[data.LocalSymbol]macro.Call
-	specialMap map[data.LocalSymbol]encoder.Call
-	funcMap    map[data.LocalSymbol]data.Function
+	macroMap   map[data.Local]macro.Call
+	specialMap map[data.Local]encoder.Call
+	funcMap    map[data.Local]data.Function
 )
 
 var (

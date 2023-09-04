@@ -17,7 +17,7 @@ func DumpString(v Value) string {
 		m[NameKey] = n.Name()
 	}
 	if t, ok := v.(Typed); ok {
-		m[TypeKey] = LocalSymbol(t.Type().Name())
+		m[TypeKey] = Local(t.Type().Name())
 	}
 	if c, ok := v.(Counted); ok {
 		m[CountKey] = Integer(c.Count())

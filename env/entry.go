@@ -11,7 +11,7 @@ type (
 	// Entry represents a namespace entry
 	Entry interface {
 		Owner() Namespace
-		Name() data.LocalSymbol
+		Name() data.Local
 		Value() data.Value
 		Bind(data.Value)
 		IsBound() bool
@@ -21,12 +21,12 @@ type (
 	entry struct {
 		sync.RWMutex
 		owner Namespace
-		name  data.LocalSymbol
+		name  data.Local
 		value data.Value
 		flags entryFlags
 	}
 
-	entries map[data.LocalSymbol]*entry
+	entries map[data.Local]*entry
 
 	entryFlags uint32
 )
@@ -67,7 +67,7 @@ func (e *entry) Owner() Namespace {
 	return e.owner
 }
 
-func (e *entry) Name() data.LocalSymbol {
+func (e *entry) Name() data.Local {
 	return e.name
 }
 

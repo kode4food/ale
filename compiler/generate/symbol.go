@@ -9,7 +9,7 @@ import (
 
 // Symbol encodes a symbol retrieval
 func Symbol(e encoder.Encoder, s data.Symbol) {
-	if l, ok := s.(data.LocalSymbol); ok {
+	if l, ok := s.(data.Local); ok {
 		resolveLocal(e, l)
 		return
 	}
@@ -18,7 +18,7 @@ func Symbol(e encoder.Encoder, s data.Symbol) {
 
 // ReferenceSymbol encodes a potential symbol retrieval and dereference
 func ReferenceSymbol(e encoder.Encoder, s data.Symbol) {
-	if l, ok := s.(data.LocalSymbol); ok {
+	if l, ok := s.(data.Local); ok {
 		c := resolveLocal(e, l)
 		if c != nil && c.Type == encoder.ReferenceCell {
 			e.Emit(isa.Deref)
@@ -28,22 +28,21 @@ func ReferenceSymbol(e encoder.Encoder, s data.Symbol) {
 	resolveGlobal(e, s)
 }
 
-func resolveLocal(e encoder.Encoder, l data.LocalSymbol) *encoder.ScopedCell {
-	n := l.Name()
-	if s, ok := e.ResolveScoped(n); ok {
+func resolveLocal(e encoder.Encoder, l data.Local) *encoder.ScopedCell {
+	if s, ok := e.ResolveScoped(l); ok {
 		switch s.Scope {
 		case encoder.LocalScope:
-			c, _ := e.ResolveLocal(n)
+			c, _ := e.ResolveLocal(l)
 			e.Emit(isa.Load, c.Index)
 		case encoder.ArgScope:
-			c, _ := e.ResolveParam(n)
+			c, _ := e.ResolveParam(l)
 			if c.Type == encoder.RestCell {
 				e.Emit(isa.RestArg, c.Index)
 			} else {
 				e.Emit(isa.Arg, c.Index)
 			}
 		case encoder.ClosureScope:
-			c, _ := e.ResolveClosure(n)
+			c, _ := e.ResolveClosure(l)
 			e.Emit(isa.Closure, c.Index)
 		default:
 			// Programmer error

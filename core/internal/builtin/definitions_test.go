@@ -24,10 +24,10 @@ func TestFunctionEval(t *testing.T) {
 }
 
 func TestBadFunctionEval(t *testing.T) {
-	symErr := unexpectedTypeError("integer", "local symbol")
+	symErr := unexpectedTypeError("integer", "local")
 	numErr := fmt.Errorf(special.ErrUnexpectedCaseSyntax, "99")
 	vecErr := unexpectedTypeError("integer", "vector")
-	listErr := unexpectedTypeError("integer", "local symbol")
+	listErr := unexpectedTypeError("integer", "local")
 
 	as := assert.New(t)
 	as.PanicWith(`(define-lambda blah (name 99 bad) (name))`, symErr)

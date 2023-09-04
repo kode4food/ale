@@ -12,8 +12,8 @@ type Keyword string
 var keywordHash = rand.Uint64()
 
 // Name returns the name of the Keyword
-func (k Keyword) Name() LocalSymbol {
-	return LocalSymbol(k)
+func (k Keyword) Name() Local {
+	return Local(k)
 }
 
 // Call turns Keyword into a Function

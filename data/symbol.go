@@ -18,21 +18,21 @@ type (
 		Named
 	}
 
-	// LocalSymbols represents a set of LocalSymbol
-	LocalSymbols []LocalSymbol
+	// Locals represents a set of Local
+	Locals []Local
 
 	// Named is the generic interface for values that are named
 	Named interface {
-		Name() LocalSymbol
+		Name() Local
 	}
 
-	// LocalSymbol represents an unqualified symbol that requires resolution
-	LocalSymbol string
+	// Local represents an unqualified symbol that requires resolution
+	Local string
 
-	// QualifiedSymbol represents a domain-qualified symbol
-	QualifiedSymbol interface {
+	// Qualified represents a domain-qualified symbol
+	Qualified interface {
 		Symbol
-		Domain() LocalSymbol
+		Domain() Local
 	}
 
 	// SymbolGenerator produces instance-unique local symbols
@@ -43,8 +43,8 @@ type (
 	}
 
 	qualifiedSymbol struct {
-		domain LocalSymbol
-		name   LocalSymbol
+		domain Local
+		name   Local
 	}
 )
 
@@ -64,7 +64,7 @@ const (
 var gen = NewSymbolGenerator()
 
 // NewGeneratedSymbol creates a generated Symbol
-func NewGeneratedSymbol(name LocalSymbol) Symbol {
+func NewGeneratedSymbol(name Local) Symbol {
 	return gen.Local(name)
 }
 
@@ -72,11 +72,11 @@ func NewGeneratedSymbol(name LocalSymbol) Symbol {
 func ParseSymbol(s String) Symbol {
 	n := string(s)
 	if i := strings.IndexRune(n, DomainSeparator); i > 0 {
-		name := LocalSymbol(n[i+1:])
-		domain := LocalSymbol(n[:i])
+		name := Local(n[i+1:])
+		domain := Local(n[:i])
 		return NewQualifiedSymbol(name, domain)
 	}
-	return LocalSymbol(s)
+	return Local(s)
 }
 
 // NewSymbolGenerator creates a new symbol generator. In general, it is safe to
@@ -86,13 +86,13 @@ func NewSymbolGenerator() *SymbolGenerator {
 }
 
 // Local returns a newly generated local symbol
-func (g *SymbolGenerator) Local(name LocalSymbol) LocalSymbol {
+func (g *SymbolGenerator) Local(name Local) Local {
 	g.Lock()
 	defer g.Unlock()
 	g.inc(0)
 	idx := g.str()
 	q := fmt.Sprintf(genSymTemplate, name, idx)
-	return LocalSymbol(q)
+	return Local(q)
 }
 
 func (g *SymbolGenerator) inc(pos int) {
@@ -122,41 +122,41 @@ func (g *SymbolGenerator) str() string {
 	return buf.String()
 }
 
-func (LocalSymbol) symbol() {}
+func (Local) symbol() {}
 
-func (l LocalSymbol) Name() LocalSymbol {
+func (l Local) Name() Local {
 	return l
 }
 
-func (l LocalSymbol) Equal(v Value) bool {
-	if v, ok := v.(LocalSymbol); ok {
+func (l Local) Equal(v Value) bool {
+	if v, ok := v.(Local); ok {
 		return l == v
 	}
 	return false
 }
 
-func (LocalSymbol) Type() types.Type {
+func (Local) Type() types.Type {
 	return types.Symbol
 }
 
-func (l LocalSymbol) String() string {
+func (l Local) String() string {
 	return string(l)
 }
 
-func (l LocalSymbol) HashCode() uint64 {
+func (l Local) HashCode() uint64 {
 	return HashString(string(l))
 }
 
-// Sorted returns a sorted set of LocalSymbols
-func (n LocalSymbols) Sorted() LocalSymbols {
-	res := make(LocalSymbols, len(n))
+// Sorted returns a sorted set of Locals
+func (n Locals) Sorted() Locals {
+	res := make(Locals, len(n))
 	copy(res, n)
 	slices.Sort(res)
 	return res
 }
 
 // NewQualifiedSymbol returns a Qualified Symbol for a specific domain
-func NewQualifiedSymbol(name LocalSymbol, domain LocalSymbol) Symbol {
+func NewQualifiedSymbol(name Local, domain Local) Symbol {
 	return qualifiedSymbol{
 		domain: domain,
 		name:   name,
@@ -165,11 +165,11 @@ func NewQualifiedSymbol(name LocalSymbol, domain LocalSymbol) Symbol {
 
 func (qualifiedSymbol) symbol() {}
 
-func (s qualifiedSymbol) Name() LocalSymbol {
+func (s qualifiedSymbol) Name() Local {
 	return s.name
 }
 
-func (s qualifiedSymbol) Domain() LocalSymbol {
+func (s qualifiedSymbol) Domain() Local {
 	return s.domain
 }
 

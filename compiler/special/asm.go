@@ -14,8 +14,8 @@ import (
 type (
 	asmEncoder struct {
 		encoder.Encoder
-		labels map[data.LocalSymbol]isa.Operand
-		args   map[data.LocalSymbol]data.Value
+		labels map[data.Local]isa.Operand
+		args   map[data.Local]data.Value
 	}
 
 	call struct {
@@ -23,7 +23,7 @@ type (
 		argCount int
 	}
 
-	callMap map[data.LocalSymbol]*call
+	callMap map[data.Local]*call
 
 	toOperandFunc func(data.Value) (isa.Operand, error)
 )
@@ -39,13 +39,13 @@ const (
 )
 
 const (
-	MakeEncoder = data.LocalSymbol("!make-encoder")
-	Resolve     = data.LocalSymbol(".resolve")
-	EvalValue   = data.LocalSymbol(".eval")
-	Const       = data.LocalSymbol(".const")
-	Local       = data.LocalSymbol(".local")
-	PushLocals  = data.LocalSymbol(".push-locals")
-	PopLocals   = data.LocalSymbol(".pop-locals")
+	MakeEncoder = data.Local("!make-encoder")
+	Resolve     = data.Local(".resolve")
+	EvalValue   = data.Local(".eval")
+	Const       = data.Local(".const")
+	Local       = data.Local(".local")
+	PushLocals  = data.Local(".push-locals")
+	PopLocals   = data.Local(".pop-locals")
 )
 
 var (
@@ -68,13 +68,13 @@ func Asm(e encoder.Encoder, args ...data.Value) {
 func makeAsmEncoder(e encoder.Encoder) *asmEncoder {
 	return &asmEncoder{
 		Encoder: e,
-		labels:  map[data.LocalSymbol]isa.Operand{},
-		args:    map[data.LocalSymbol]data.Value{},
+		labels:  map[data.Local]isa.Operand{},
+		args:    map[data.Local]data.Value{},
 	}
 }
 
-func (e *asmEncoder) withParams(n data.LocalSymbols, v data.Values) *asmEncoder {
-	args := make(map[data.LocalSymbol]data.Value, len(n))
+func (e *asmEncoder) withParams(n data.Locals, v data.Values) *asmEncoder {
+	args := make(map[data.Local]data.Value, len(n))
 	for i, k := range n {
 		args[k] = v[i]
 	}
@@ -85,8 +85,8 @@ func (e *asmEncoder) withParams(n data.LocalSymbols, v data.Values) *asmEncoder 
 
 func (e *asmEncoder) process(forms data.Sequence) {
 	if f, r, ok := forms.Split(); ok {
-		if l, ok := f.(data.LocalSymbol); ok {
-			switch l.Name() {
+		if l, ok := f.(data.Local); ok {
+			switch l {
 			case MakeEncoder:
 				e.makeEncoderCall(r)
 				return
@@ -118,27 +118,26 @@ func (e *asmEncoder) makeEncoderCall(forms data.Sequence) {
 
 func (e *asmEncoder) encode(forms data.Sequence) {
 	for f, r, ok := forms.Split(); ok; f, r, ok = r.Split() {
-		switch v := f.(type) {
+		switch name := f.(type) {
 		case data.Keyword:
-			e.Emit(isa.Label, e.getLabelIndex(v.Name()))
-		case data.LocalSymbol:
-			n := v.Name()
-			if d, ok := calls[n]; ok {
+			e.Emit(isa.Label, e.getLabelIndex(name.Name()))
+		case data.Local:
+			if d, ok := calls[name]; ok {
 				if args, rest, ok := take(r, d.argCount); ok {
 					d.Call(e, args...)
 					r = rest
 					continue
 				}
-				panic(fmt.Errorf(ErrIncompleteInstruction, n))
+				panic(fmt.Errorf(ErrIncompleteInstruction, name))
 			}
-			panic(fmt.Errorf(ErrUnknownDirective, n))
+			panic(fmt.Errorf(ErrUnknownDirective, name))
 		default:
 			panic(fmt.Errorf(ErrUnexpectedForm, f.String()))
 		}
 	}
 }
 
-func (e *asmEncoder) getLabelIndex(n data.LocalSymbol) isa.Operand {
+func (e *asmEncoder) getLabelIndex(n data.Local) isa.Operand {
 	if idx, ok := e.labels[n]; ok {
 		return idx
 	}
@@ -191,8 +190,8 @@ func (e *asmEncoder) makeNameToWord() toOperandFunc {
 		if v, ok := e.resolveEncoderArg(val); ok {
 			val = v
 		}
-		if val, ok := val.(data.LocalSymbol); ok {
-			if cell, ok := e.ResolveLocal(val.Name()); ok {
+		if val, ok := val.(data.Local); ok {
+			if cell, ok := e.ResolveLocal(val); ok {
 				return cell.Index, nil
 			}
 			return 0, fmt.Errorf(ErrUnexpectedName, val)
@@ -202,8 +201,8 @@ func (e *asmEncoder) makeNameToWord() toOperandFunc {
 }
 
 func (e *asmEncoder) resolveEncoderArg(v data.Value) (data.Value, bool) {
-	if v, ok := v.(data.LocalSymbol); ok {
-		res, ok := e.args[v.Name()]
+	if v, ok := v.(data.Local); ok {
+		res, ok := e.args[v]
 		return res, ok
 	}
 	return nil, false
@@ -212,7 +211,7 @@ func (e *asmEncoder) resolveEncoderArg(v data.Value) (data.Value, bool) {
 func getInstructionCalls() callMap {
 	res := make(callMap, len(isa.Effects))
 	for oc, effect := range isa.Effects {
-		name := data.LocalSymbol(strings.CamelToSnake(oc.String()))
+		name := data.Local(strings.CamelToSnake(oc.String()))
 		res[name] = func(oc isa.Opcode, ao isa.ActOn) *call {
 			return makeEmitCall(oc, ao)
 		}(oc, effect.Operand)
@@ -264,7 +263,7 @@ func getEncoderCalls() callMap {
 		},
 		Local: {
 			Call: func(e encoder.Encoder, args ...data.Value) {
-				name := args[0].(data.LocalSymbol).Name()
+				name := args[0].(data.Local)
 				kwd := args[1].(data.Keyword)
 				cellType, ok := cellTypes[kwd]
 				if !ok {

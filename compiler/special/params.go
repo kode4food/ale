@@ -8,7 +8,7 @@ import (
 
 type (
 	paramCase struct {
-		params data.LocalSymbols
+		params data.Locals
 		rest   bool
 		body   data.Sequence
 	}
@@ -26,7 +26,7 @@ const (
 func parseParamCases(s data.Sequence) paramCases {
 	f := s.Car()
 	switch f.(type) {
-	case data.List, data.Cons, data.LocalSymbol:
+	case data.List, data.Cons, data.Local:
 		c := parseParamCase(s)
 		return paramCases{c}
 	case data.Vector:
@@ -74,14 +74,14 @@ func parseParamCase(s data.Sequence) *paramCase {
 	}
 }
 
-func (c *paramCase) fixedArgs() data.LocalSymbols {
+func (c *paramCase) fixedArgs() data.Locals {
 	if c.rest {
 		return c.params[0 : len(c.params)-1]
 	}
 	return c.params
 }
 
-func (c *paramCase) restArg() (data.LocalSymbol, bool) {
+func (c *paramCase) restArg() (data.Local, bool) {
 	if c.rest {
 		return c.params[len(c.params)-1], true
 	}
@@ -114,10 +114,10 @@ func (c *paramCase) makeFetcher() argFetcher {
 	}
 }
 
-func parseParamNames(v data.Value) (data.LocalSymbols, bool) {
+func parseParamNames(v data.Value) (data.Locals, bool) {
 	switch v := v.(type) {
-	case data.LocalSymbol:
-		return data.LocalSymbols{v.Name()}, true
+	case data.Local:
+		return data.Locals{v}, true
 	case data.List:
 		return parseListParamNames(v), false
 	case data.Cons:
@@ -127,20 +127,20 @@ func parseParamNames(v data.Value) (data.LocalSymbols, bool) {
 	}
 }
 
-func parseListParamNames(l data.List) data.LocalSymbols {
-	var an data.LocalSymbols
+func parseListParamNames(l data.List) data.Locals {
+	var an data.Locals
 	for f, r, ok := l.Split(); ok; f, r, ok = r.Split() {
-		n := f.(data.LocalSymbol).Name()
+		n := f.(data.Local)
 		an = append(an, n)
 	}
 	return an
 }
 
-func parseConsParamNames(c data.Cons) data.LocalSymbols {
-	var an data.LocalSymbols
+func parseConsParamNames(c data.Cons) data.Locals {
+	var an data.Locals
 	next := c
 	for {
-		an = append(an, next.Car().(data.LocalSymbol).Name())
+		an = append(an, next.Car().(data.Local))
 
 		cdr := next.Cdr()
 		if nc, ok := cdr.(data.Cons); ok {
@@ -148,7 +148,7 @@ func parseConsParamNames(c data.Cons) data.LocalSymbols {
 			continue
 		}
 
-		an = append(an, cdr.(data.LocalSymbol).Name())
+		an = append(an, cdr.(data.Local))
 		return an
 	}
 }

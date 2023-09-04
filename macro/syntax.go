@@ -67,7 +67,7 @@ func (se *syntaxEnv) quoteSymbol(s data.Symbol) data.Value {
 }
 
 func (se *syntaxEnv) generateSymbol(s data.Symbol) (data.Symbol, bool) {
-	if _, ok := s.(data.QualifiedSymbol); ok {
+	if _, ok := s.(data.Qualified); ok {
 		return nil, false
 	}
 
@@ -80,7 +80,7 @@ func (se *syntaxEnv) generateSymbol(s data.Symbol) (data.Symbol, bool) {
 		return r, true
 	}
 
-	r := data.NewGeneratedSymbol(data.LocalSymbol(n[0 : len(n)-1]))
+	r := data.NewGeneratedSymbol(data.Local(n[0 : len(n)-1]))
 	se.genSyms[n] = r
 	return r, true
 }
@@ -135,7 +135,7 @@ func (se *syntaxEnv) quoteElements(s data.Sequence) data.Value {
 }
 
 func (se *syntaxEnv) qualifySymbol(s data.Symbol) data.Value {
-	if q, ok := s.(data.QualifiedSymbol); ok {
+	if q, ok := s.(data.Qualified); ok {
 		return q
 	}
 	name := s.Name()

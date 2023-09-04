@@ -32,7 +32,7 @@ func TestResolveSymbol(t *testing.T) {
 	as.True(ok)
 
 	ls := LS("private-parent")
-	defer as.ExpectPanic(fmt.Sprintf(env.ErrSymbolNotDeclared, ls.Name()))
+	defer as.ExpectPanic(fmt.Sprintf(env.ErrSymbolNotDeclared, ls))
 	env.MustResolveSymbol(ns, ls)
 }
 
@@ -59,6 +59,6 @@ func TestResolveValue(t *testing.T) {
 	as.True(ok)
 
 	ls := LS("private-parent")
-	defer as.ExpectPanic(fmt.Sprintf(env.ErrSymbolNotBound, ls.Name()))
+	defer as.ExpectPanic(fmt.Sprintf(env.ErrSymbolNotBound, ls))
 	env.MustResolveValue(ns, ls)
 }

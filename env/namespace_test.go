@@ -24,8 +24,8 @@ func TestDeclarations(t *testing.T) {
 
 	n := root.Declared()
 	as.Equal(2, len(n))
-	as.Equal(N("public1"), n[0])
-	as.Equal(N("public2"), n[1])
+	as.Equal(LS("public1"), n[0])
+	as.Equal(LS("public2"), n[1])
 
 	e1, ok := root.Resolve(n[0])
 	as.NotNil(e1)

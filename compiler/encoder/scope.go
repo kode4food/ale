@@ -12,7 +12,7 @@ const (
 	ClosureScope
 )
 
-func (e *encoder) ResolveScoped(n data.LocalSymbol) (*ScopedCell, bool) {
+func (e *encoder) ResolveScoped(n data.Local) (*ScopedCell, bool) {
 	if i, ok := e.ResolveLocal(n); ok {
 		return newScopedCell(LocalScope, i.Cell), true
 	}

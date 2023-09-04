@@ -9,7 +9,7 @@ import (
 )
 
 // Locals track local variable assignments
-type Locals map[data.LocalSymbol]*IndexedCell
+type Locals map[data.Local]*IndexedCell
 
 // Error messages
 const (
@@ -50,7 +50,7 @@ func (e *encoder) allocLocal() isa.Operand {
 	return idx
 }
 
-func (e *encoder) AddLocal(n data.LocalSymbol, t CellType) *IndexedCell {
+func (e *encoder) AddLocal(n data.Local, t CellType) *IndexedCell {
 	scope := e.peekLocals()
 	if _, ok := scope[n]; ok {
 		panic(fmt.Errorf(ErrDuplicateName, n))
@@ -61,7 +61,7 @@ func (e *encoder) AddLocal(n data.LocalSymbol, t CellType) *IndexedCell {
 	return res
 }
 
-func (e *encoder) ResolveLocal(n data.LocalSymbol) (*IndexedCell, bool) {
+func (e *encoder) ResolveLocal(n data.Local) (*IndexedCell, bool) {
 	scopes := e.locals
 	for i := len(scopes) - 1; i >= 0; i-- {
 		scope := scopes[i]

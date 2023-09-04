@@ -44,7 +44,7 @@ const (
 
 const (
 	// UserDomain is the name of the namespace that the REPL starts in
-	UserDomain = data.LocalSymbol("user")
+	UserDomain = data.Local("user")
 
 	domain = console.Domain + "%s" + console.Reset + " "
 	prompt = domain + "[%d]> " + console.Code
@@ -222,7 +222,7 @@ func isRecoverable(err error) bool {
 
 func use(args ...data.Value) data.Value {
 	data.AssertFixed(1, len(args))
-	n := args[0].(data.LocalSymbol).Name()
+	n := args[0].(data.Local)
 	old := ns
 	ns = ns.Environment().GetQualified(n)
 	if old != ns {
@@ -290,7 +290,7 @@ var docTemplate = strings.Join([]string{
 
 func doc(args ...data.Value) data.Value {
 	if len(args) != 0 {
-		docSymbol(args[0].(data.LocalSymbol))
+		docSymbol(args[0].(data.Local))
 		return nothing
 	}
 	docSymbolList()
@@ -332,7 +332,7 @@ func getBuiltInsNamespace() env.Namespace {
 	return ns.Environment().GetRoot()
 }
 
-func registerBuiltIn(n data.LocalSymbol, v data.Value) {
+func registerBuiltIn(n data.Local, v data.Value) {
 	ns := getBuiltInsNamespace()
 	ns.Declare(n).Bind(v)
 }

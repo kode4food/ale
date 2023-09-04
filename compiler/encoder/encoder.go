@@ -23,19 +23,19 @@ type (
 		AddConstant(data.Value) isa.Operand
 
 		Closure() IndexedCells
-		ResolveClosure(data.LocalSymbol) (*IndexedCell, bool)
+		ResolveClosure(data.Local) (*IndexedCell, bool)
 
-		PushParams(data.LocalSymbols, bool)
+		PushParams(data.Locals, bool)
 		PopParams()
-		ResolveParam(data.LocalSymbol) (*IndexedCell, bool)
+		ResolveParam(data.Local) (*IndexedCell, bool)
 
 		LocalCount() isa.Operand
 		PushLocals()
 		PopLocals()
-		AddLocal(data.LocalSymbol, CellType) *IndexedCell
-		ResolveLocal(data.LocalSymbol) (*IndexedCell, bool)
+		AddLocal(data.Local, CellType) *IndexedCell
+		ResolveLocal(data.Local) (*IndexedCell, bool)
 
-		ResolveScoped(data.LocalSymbol) (*ScopedCell, bool)
+		ResolveScoped(data.Local) (*ScopedCell, bool)
 	}
 
 	encoder struct {
