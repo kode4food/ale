@@ -156,23 +156,29 @@ func (r *REPL) evalBuffer() (completed bool) {
 		}
 	}()
 
-	res := eval.String(ns, data.String(r.buf.String()))
+	res := evalBlock(ns, data.String(r.buf.String()))
 	r.outputResult(res)
 	return true
 }
 
-func (r *REPL) outputResult(v any) {
-	if v == nothing {
-		return
+func evalBlock(ns env.Namespace, src data.String) data.Values {
+	s := read.FromString(src)
+	res := data.Values{}
+	for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {
+		res = append(res, eval.Value(ns, f))
 	}
-	var sv any
-	if s, ok := v.(data.Value); ok {
-		sv = data.MaybeQuoteString(s)
-	} else {
-		sv = v
+	return res
+}
+
+func (r *REPL) outputResult(res data.Values) {
+	for _, v := range res {
+		if v == nothing {
+			continue
+		}
+		sv := data.MaybeQuoteString(v)
+		res := fmt.Sprintf(good, r.nsSpace(), r.idx, sv)
+		fmt.Println(res)
 	}
-	res := fmt.Sprintf(good, r.nsSpace(), r.idx, sv)
-	fmt.Println(res)
 }
 
 func (r *REPL) outputError(err error) {
