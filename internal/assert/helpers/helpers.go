@@ -12,7 +12,7 @@ func B(value bool) data.Bool {
 }
 
 // C constructs a Cons
-func C(k, v data.Value) data.Cons {
+func C(k, v data.Value) *data.Cons {
 	return data.NewCons(k, v)
 }
 

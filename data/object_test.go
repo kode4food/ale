@@ -94,14 +94,14 @@ func TestObjectIterate(t *testing.T) {
 
 	f1, r1, ok := o1.Split()
 	as.True(ok)
-	as.Equal(K("first"), f1.(data.Cons).Car())
-	as.Equal(S("first value"), f1.(data.Cons).Cdr())
+	as.Equal(K("first"), f1.(*data.Cons).Car())
+	as.Equal(S("first value"), f1.(*data.Cons).Cdr())
 	as.Equal(1, r1.(data.Object).Count())
 
 	f2, r2, ok := r1.Split()
 	as.True(ok)
-	as.Equal(K("second"), f2.(data.Cons).Car())
-	as.Equal(S("second value"), f2.(data.Cons).Cdr())
+	as.Equal(K("second"), f2.(*data.Cons).Car())
+	as.Equal(S("second value"), f2.(*data.Cons).Cdr())
 
 	_, _, ok = r2.Split()
 	as.False(ok)

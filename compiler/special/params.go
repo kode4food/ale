@@ -26,7 +26,7 @@ const (
 func parseParamCases(s data.Sequence) paramCases {
 	f := s.Car()
 	switch f.(type) {
-	case data.List, data.Cons, data.Local:
+	case data.List, *data.Cons, data.Local:
 		c := parseParamCase(s)
 		return paramCases{c}
 	case data.Vector:
@@ -120,7 +120,7 @@ func parseParamNames(v data.Value) (data.Locals, bool) {
 		return data.Locals{v}, true
 	case data.List:
 		return parseListParamNames(v), false
-	case data.Cons:
+	case *data.Cons:
 		return parseConsParamNames(v), true
 	default:
 		panic(fmt.Errorf(ErrUnexpectedParamSyntax, v))
@@ -136,14 +136,14 @@ func parseListParamNames(l data.List) data.Locals {
 	return an
 }
 
-func parseConsParamNames(c data.Cons) data.Locals {
+func parseConsParamNames(c *data.Cons) data.Locals {
 	var an data.Locals
 	next := c
 	for {
 		an = append(an, next.Car().(data.Local))
 
 		cdr := next.Cdr()
-		if nc, ok := cdr.(data.Cons); ok {
+		if nc, ok := cdr.(*data.Cons); ok {
 			next = nc
 			continue
 		}

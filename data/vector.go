@@ -7,71 +7,55 @@ import (
 	"github.com/kode4food/ale/types"
 )
 
-type (
-	// Vector is a fixed-length array of Values
-	Vector interface {
-		vector() // marker
-		Sequence
-		ValuerSequence
-		Prepender
-		Appender
-		Reverser
-		RandomAccess
-		Caller
-		Valuer
-	}
-
-	vector Values
-)
+// Vector is a fixed-length array of Values
+type Vector Values
 
 // EmptyVector represents an empty Vector
 var (
-	EmptyVector = vector{}
+	EmptyVector = Vector{}
 
 	vectorHash = rand.Uint64()
 )
 
 // NewVector creates a new Vector instance
 func NewVector(v ...Value) Vector {
-	return vector(v)
+	return Vector(v)
 }
 
-func (vector) vector() {}
-
-func (v vector) Values() Values {
+func (v Vector) Values() Values {
 	return Values(v)
 }
 
-func (v vector) Count() int {
+func (v Vector) Count() int {
 	return len(v)
 }
 
-func (v vector) ElementAt(index int) (Value, bool) {
+func (v Vector) ElementAt(index int) (Value, bool) {
 	if index >= 0 && index < len(v) {
 		return v[index], true
 	}
 	return Nil, false
 }
 
-func (v vector) IsEmpty() bool {
+func (v Vector) IsEmpty() bool {
 	return len(v) == 0
 }
 
-func (v vector) Car() Value {
+func (v Vector) Car() Value {
 	if len(v) > 0 {
 		return v[0]
 	}
 	return Nil
 }
 
-func (v vector) Cdr() Value {
+func (v Vector) Cdr() Value {
 	if len(v) > 1 {
 		return v[1:]
 	}
 	return EmptyVector
 }
 
-func (v vector) Split() (Value, Sequence, bool) {
+func (v Vector) Split() (Value, Sequence, bool) {
 	lv := len(v)
 	if lv > 1 {
 		return v[0], v[1:], true
@@ -81,40 +65,40 @@ func (v vector) Split() (Value, Sequence, bool) {
 	return Nil, EmptyVector, false
 }
 
-func (v vector) Prepend(e Value) Sequence {
-	return append(vector{e}, v...)
+func (v Vector) Prepend(e Value) Sequence {
+	return append(Vector{e}, v...)
 }
 
-func (v vector) Append(e Value) Sequence {
+func (v Vector) Append(e Value) Sequence {
 	return append(v, e)
 }
 
-func (v vector) Reverse() Sequence {
+func (v Vector) Reverse() Sequence {
 	vl := len(v)
 	if vl <= 1 {
 		return v
 	}
-	res := make(vector, vl)
+	res := make(Vector, vl)
 	for i, j := 0, vl-1; j >= 0; i, j = i+1, j-1 {
 		res[i] = v[j]
 	}
 	return res
 }
 
-func (v vector) Call(args ...Value) Value {
+func (v Vector) Call(args ...Value) Value {
 	return indexedCall(v, args)
 }
 
-func (v vector) Convention() Convention {
+func (v Vector) Convention() Convention {
 	return ApplicativeCall
 }
 
-func (v vector) CheckArity(argCount int) error {
+func (v Vector) CheckArity(argCount int) error {
 	return checkRangedArity(1, 2, argCount)
 }
 
-func (v vector) Equal(r Value) bool {
-	if r, ok := r.(vector); ok {
+func (v Vector) Equal(r Value) bool {
+	if r, ok := r.(Vector); ok {
 		if len(v) != len(r) {
 			return false
 		}
@@ -128,7 +112,7 @@ func (v vector) Equal(r Value) bool {
 	return false
 }
 
-func (v vector) String() string {
+func (v Vector) String() string {
 	var b bytes.Buffer
 	b.WriteString("[")
 	for i, e := range v {
@@ -141,11 +125,11 @@ func (v vector) String() string {
 	return b.String()
 }
 
-func (vector) Type() types.Type {
+func (Vector) Type() types.Type {
 	return types.AnyVector
 }
 
-func (v vector) HashCode() uint64 {
+func (v Vector) HashCode() uint64 {
 	h := vectorHash
 	for _, e := range v {
 		h *= HashCode(e)

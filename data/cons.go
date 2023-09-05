@@ -16,18 +16,12 @@ type (
 		Cdr() Value
 	}
 
-	// Cons represents the most basic implementation of a Pair
-	Cons interface {
-		cons() // marker
-		Pair
-	}
-
 	// Pairs represents multiple pairs
 	Pairs []Pair
 
 	// Cons cells are the standard implementation of a Pair. Unlike
 	// other Pairs (ex: List, Vector), it is not treated as a Sequence
-	cons struct {
+	Cons struct {
 		car Value
 		cdr Value
 	}
@@ -44,37 +38,35 @@ func (p Pairs) Sorted() Pairs {
 }
 
 // NewCons returns a new Cons cell instance
-func NewCons(car, cdr Value) Cons {
-	return &cons{
+func NewCons(car, cdr Value) *Cons {
+	return &Cons{
 		car: car,
 		cdr: cdr,
 	}
 }
 
-func (*cons) cons() {}
-
 // Car returns the first element of a Pair
-func (c *cons) Car() Value {
+func (c *Cons) Car() Value {
 	return c.car
 }
 
 // Cdr returns the second element of a Pair
-func (c *cons) Cdr() Value {
+func (c *Cons) Cdr() Value {
 	return c.cdr
 }
 
 // Equal compares this Cons to another for equality
-func (c *cons) Equal(v Value) bool {
+func (c *Cons) Equal(v Value) bool {
 	if c == v {
 		return true
 	}
-	if v, ok := v.(*cons); ok {
+	if v, ok := v.(*Cons); ok {
 		return c.car.Equal(v.car) && c.cdr.Equal(v.cdr)
 	}
 	return false
 }
 
-func (c *cons) String() string {
+func (c *Cons) String() string {
 	var buf bytes.Buffer
 	buf.WriteByte('(')
 	var next Pair = c
@@ -98,11 +90,11 @@ func (c *cons) String() string {
 	return buf.String()
 }
 
-func (*cons) Type() types.Type {
+func (*Cons) Type() types.Type {
 	return types.AnyCons
 }
 
 // HashCode returns the hash code for this Cons
-func (c *cons) HashCode() uint64 {
+func (c *Cons) HashCode() uint64 {
 	return HashCode(c.car) * HashCode(c.cdr)
 }

@@ -20,6 +20,6 @@ var IsPair = data.Applicative(func(args ...data.Value) data.Value {
 
 // IsCons returns whether the provided value is a Cons cell
 var IsCons = data.Applicative(func(args ...data.Value) data.Value {
-	_, ok := args[0].(data.Cons)
+	_, ok := args[0].(*data.Cons)
 	return data.Bool(ok)
 }, 1)

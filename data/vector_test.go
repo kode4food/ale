@@ -59,7 +59,7 @@ func TestEmptyVector(t *testing.T) {
 func TestVectorAsFunction(t *testing.T) {
 	as := assert.New(t)
 
-	v1 := data.NewVector(S("hello"), S("how"), S("are"), S("you?")).(data.Function)
+	v1 := data.NewVector(S("hello"), S("how"), S("are"), S("you?"))
 	as.String("hello", v1.Call(I(0)))
 	as.String("how", v1.Call(I(1)))
 	as.Nil(v1.Call(I(4)))

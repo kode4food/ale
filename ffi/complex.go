@@ -44,7 +44,7 @@ func (complex128Wrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
 }
 
 func (complex128Wrapper) Unwrap(v data.Value) (reflect.Value, error) {
-	if c, ok := v.(data.Cons); ok {
+	if c, ok := v.(*data.Cons); ok {
 		r, rok := makeFloat64(c.Car())
 		i, iok := makeFloat64(c.Cdr())
 		if rok && iok {
@@ -64,7 +64,7 @@ func (complex64Wrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
 }
 
 func (complex64Wrapper) Unwrap(v data.Value) (reflect.Value, error) {
-	if c, ok := v.(data.Cons); ok {
+	if c, ok := v.(*data.Cons); ok {
 		r, rok := c.Car().(data.Float)
 		i, iok := c.Cdr().(data.Float)
 		if rok && iok {
