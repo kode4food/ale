@@ -123,3 +123,15 @@ func TestVectorAsKey(t *testing.T) {
 	as.True(ok)
 	as.Equal(I(42), v)
 }
+
+func TestVectorAppendIsolation(t *testing.T) {
+	as := assert.New(t)
+
+	v1 := data.NewVector(I(1), I(2), I(3))
+	v2 := v1.Append(I(4)).(data.Vector).Append(I(5))
+	v3 := v1.Append(I(6)).(data.Vector).Append(I(7))
+
+	as.String("[1 2 3]", v1)
+	as.String("[1 2 3 4 5]", v2)
+	as.String("[1 2 3 6 7]", v3)
+}
