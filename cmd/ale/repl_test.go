@@ -29,7 +29,8 @@ func asCaller(t *testing.T, v data.Value) data.Function {
 func TestBuiltInUse(t *testing.T) {
 	as := assert.New(t)
 
-	ns1 := main.GetNS()
+	repl := main.NewREPL()
+	ns1 := repl.GetNS()
 	e, ok := ns1.Resolve("use")
 	as.True(ok && e.IsBound())
 	as.NotNil(e.Value())
@@ -39,7 +40,7 @@ func TestBuiltInUse(t *testing.T) {
 	nothing := use.Call(nsName)
 	as.NotNil(nothing)
 
-	ns2 := main.GetNS()
+	ns2 := repl.GetNS()
 	as.NotNil(ns2)
 	as.String("test-ns", ns2.Domain())
 }

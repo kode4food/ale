@@ -14,18 +14,16 @@ import (
 	"strings"
 	"time"
 
-	"github.com/kode4food/ale/eval"
-
-	"github.com/kode4food/ale/internal/sequence"
-
 	"github.com/chzyer/readline"
 	"github.com/kode4food/ale"
 	"github.com/kode4food/ale/core/bootstrap"
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/docstring"
 	"github.com/kode4food/ale/env"
+	"github.com/kode4food/ale/eval"
 	"github.com/kode4food/ale/internal/console"
 	"github.com/kode4food/ale/internal/markdown"
+	"github.com/kode4food/ale/internal/sequence"
 	"github.com/kode4food/ale/read"
 )
 
@@ -36,6 +34,7 @@ type (
 	REPL struct {
 		buf bytes.Buffer
 		rl  *readline.Instance
+		ns  env.Namespace
 		idx int
 	}
 )
@@ -62,13 +61,14 @@ var (
 	anyChar   = regexp.MustCompile(".")
 	notPaired = fmt.Sprintf(read.ErrPrefixedNotPaired, "")
 	nothing   = new(sentinel)
-
-	ns = bootstrap.TopLevelEnvironment().GetQualified(UserDomain)
 )
 
 // NewREPL instantiates a new REPL instance
 func NewREPL() *REPL {
-	repl := new(REPL)
+	repl := &REPL{
+		ns: makeUserNamespace(),
+	}
+	repl.registerBuiltIns()
 
 	rl, err := readline.NewEx(&readline.Config{
 		HistoryFile: getHistoryFile(),
@@ -130,7 +130,7 @@ func (r *REPL) reset() {
 }
 
 func (r *REPL) setInitialPrompt() {
-	name := ns.Domain()
+	name := r.ns.Domain()
 	r.setPrompt(fmt.Sprintf(prompt, name, r.idx))
 }
 
@@ -143,7 +143,7 @@ func (r *REPL) setPrompt(s string) {
 }
 
 func (r *REPL) nsSpace() string {
-	ns := string(ns.Domain())
+	ns := string(r.ns.Domain())
 	return anyChar.ReplaceAllString(ns, " ")
 }
 
@@ -159,7 +159,7 @@ func (r *REPL) evalBuffer() (completed bool) {
 		}
 	}()
 
-	r.evalBlock(ns, data.String(r.buf.String()))
+	r.evalBlock(r.ns, data.String(r.buf.String()))
 	return true
 }
 
@@ -237,15 +237,17 @@ func isRecoverable(err error) bool {
 		strings.HasPrefix(msg, notPaired)
 }
 
-func use(args ...data.Value) data.Value {
-	data.AssertFixed(1, len(args))
-	n := args[0].(data.Local)
-	old := ns
-	ns = ns.Environment().GetQualified(n)
-	if old != ns {
-		fmt.Println()
+func (r *REPL) makeUse() func(...data.Value) data.Value {
+	return func(args ...data.Value) data.Value {
+		data.AssertFixed(1, len(args))
+		n := args[0].(data.Local)
+		old := r.ns
+		r.ns = r.ns.Environment().GetQualified(n)
+		if old != r.ns {
+			fmt.Println()
+		}
+		return nothing
 	}
-	return nothing
 }
 
 func shutdown(...data.Value) data.Value {
@@ -345,27 +347,31 @@ func escapeNames(names []string) {
 	}
 }
 
-func getBuiltInsNamespace() env.Namespace {
-	return ns.Environment().GetRoot()
+func (r *REPL) getBuiltInsNamespace() env.Namespace {
+	return r.ns.Environment().GetRoot()
 }
 
-func registerBuiltIn(n data.Local, v data.Value) {
-	ns := getBuiltInsNamespace()
+func (r *REPL) registerBuiltIn(n data.Local, v data.Value) {
+	ns := r.getBuiltInsNamespace()
 	ns.Declare(n).Bind(v)
 }
 
 // GetNS allows the tests to get at the namespace
-func GetNS() env.Namespace {
-	return ns
+func (r *REPL) GetNS() env.Namespace {
+	return r.ns
 }
 
-func registerREPLBuiltIns() {
-	registerBuiltIn("quit", data.Applicative(shutdown, 0))
-	registerBuiltIn("debug", data.Applicative(debugInfo, 0))
-	registerBuiltIn("cls", data.Applicative(cls, 0))
-	registerBuiltIn("help", data.Applicative(help, 0))
-	registerBuiltIn("use", data.Normal(use, 1))
-	registerBuiltIn("doc", data.Normal(doc, 0, 1))
+func (r *REPL) registerBuiltIns() {
+	r.registerBuiltIn("quit", data.Applicative(shutdown, 0))
+	r.registerBuiltIn("debug", data.Applicative(debugInfo, 0))
+	r.registerBuiltIn("cls", data.Applicative(cls, 0))
+	r.registerBuiltIn("help", data.Applicative(help, 0))
+	r.registerBuiltIn("use", data.Normal(r.makeUse(), 1))
+	r.registerBuiltIn("doc", data.Normal(doc, 0, 1))
+}
+
+func makeUserNamespace() env.Namespace {
+	return bootstrap.TopLevelEnvironment().GetQualified(UserDomain)
 }
 
 func getHistoryFile() string {
@@ -373,8 +379,4 @@ func getHistoryFile() string {
 		return path.Join(usr.HomeDir, ".ale-history")
 	}
 	return ""
-}
-
-func init() {
-	registerREPLBuiltIns()
 }

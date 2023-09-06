@@ -6,7 +6,6 @@ import (
 	"os"
 
 	"github.com/kode4food/ale/data"
-	"github.com/kode4food/ale/env"
 	"github.com/kode4food/ale/eval"
 	"github.com/kode4food/ale/read"
 )
@@ -21,7 +20,7 @@ func EvaluateStdIn() {
 	defer exitWithError()
 
 	buffer, _ := io.ReadAll(os.Stdin)
-	evalBuffer(ns, buffer)
+	evalBuffer(buffer)
 }
 
 // EvaluateFile reads the specific source file and evaluates it
@@ -34,10 +33,11 @@ func EvaluateFile() {
 		fmt.Println(fmt.Errorf(ErrFileNotFound, filename))
 		os.Exit(-1)
 	}
-	evalBuffer(ns, buffer)
+	evalBuffer(buffer)
 }
 
-func evalBuffer(ns env.Namespace, src []byte) data.Value {
+func evalBuffer(src []byte) data.Value {
+	ns := makeUserNamespace()
 	r := read.FromString(data.String(src))
 	return eval.Block(ns, r)
 }
