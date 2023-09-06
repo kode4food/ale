@@ -14,13 +14,16 @@ import (
 	"strings"
 	"time"
 
+	"github.com/kode4food/ale/eval"
+
+	"github.com/kode4food/ale/internal/sequence"
+
 	"github.com/chzyer/readline"
 	"github.com/kode4food/ale"
 	"github.com/kode4food/ale/core/bootstrap"
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/docstring"
 	"github.com/kode4food/ale/env"
-	"github.com/kode4food/ale/eval"
 	"github.com/kode4food/ale/internal/console"
 	"github.com/kode4food/ale/internal/markdown"
 	"github.com/kode4food/ale/read"
@@ -156,29 +159,37 @@ func (r *REPL) evalBuffer() (completed bool) {
 		}
 	}()
 
-	res := evalBlock(ns, data.String(r.buf.String()))
-	r.outputResult(res)
+	r.evalBlock(ns, data.String(r.buf.String()))
 	return true
 }
 
-func evalBlock(ns env.Namespace, src data.String) data.Values {
-	s := read.FromString(src)
-	res := data.Values{}
-	for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {
-		res = append(res, eval.Value(ns, f))
+func (r *REPL) evalBlock(ns env.Namespace, src data.String) data.Values {
+	s := sequence.ToVector(read.FromString(src))
+	res := make(data.Values, len(s))
+	for _, f := range s {
+		r.evalForm(ns, f)
 	}
 	return res
 }
 
-func (r *REPL) outputResult(res data.Values) {
-	for _, v := range res {
-		if v == nothing {
-			continue
+func (r *REPL) evalForm(ns env.Namespace, f data.Value) {
+	defer func() {
+		if err := toError(recover()); err != nil {
+			r.outputError(err)
 		}
-		sv := data.MaybeQuoteString(v)
-		res := fmt.Sprintf(good, r.nsSpace(), r.idx, sv)
-		fmt.Println(res)
+	}()
+
+	res := eval.Value(ns, f)
+	r.outputResult(res)
+}
+
+func (r *REPL) outputResult(v data.Value) {
+	if v == nothing {
+		return
 	}
+	sv := data.MaybeQuoteString(v)
+	res := fmt.Sprintf(good, r.nsSpace(), r.idx, sv)
+	fmt.Println(res)
 }
 
 func (r *REPL) outputError(err error) {
