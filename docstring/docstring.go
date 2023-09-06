@@ -29,6 +29,15 @@ func Get(n string) (string, error) {
 	return "", fmt.Errorf(ErrDocNotFound, n)
 }
 
+// MustGet resolves a registered docstring entry by name or explodes
+func MustGet(n string) string {
+	res, err := Get(n)
+	if err != nil {
+		panic(err)
+	}
+	return res
+}
+
 // Names returns the registered names of available docstring entries
 func Names() []string {
 	ensureDocStringCache()

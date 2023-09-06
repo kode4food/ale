@@ -28,6 +28,7 @@ func TestDocString(t *testing.T) {
 func TestDocumentedBuiltinsExist(t *testing.T) {
 	as := assert.New(t)
 	ns := assert.GetTestNamespace()
+	ns.Declare("doc").Bind(data.Nil) // special case for REPL
 
 	for _, name := range docstring.Names() {
 		d, _ := docstring.Get(name)

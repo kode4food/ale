@@ -58,9 +58,10 @@ const (
 )
 
 var (
-	anyChar   = regexp.MustCompile(".")
-	notPaired = fmt.Sprintf(read.ErrPrefixedNotPaired, "")
-	nothing   = new(sentinel)
+	anyChar     = regexp.MustCompile(".")
+	notPaired   = fmt.Sprintf(read.ErrPrefixedNotPaired, "")
+	docTemplate = docstring.MustGet("doc")
+	nothing     = new(sentinel)
 )
 
 // NewREPL instantiates a new REPL instance
@@ -320,16 +321,6 @@ func help(...data.Value) data.Value {
 	return nothing
 }
 
-var docTemplate = strings.Join([]string{
-	"---",
-	`description: "display documentation of a form"`,
-	`usage: "(doc form)"`,
-	"---",
-	"Where `form` is any of the core language symbols:",
-	"",
-	"%s",
-}, "\n")
-
 func doc(args ...data.Value) data.Value {
 	if len(args) != 0 {
 		docSymbol(args[0].(data.Local))
@@ -341,13 +332,13 @@ func doc(args ...data.Value) data.Value {
 
 func docSymbol(sym data.Symbol) {
 	name := string(sym.Name())
+	if name == "doc" {
+		docSymbolList()
+		return
+	}
 	if docStr, err := docstring.Get(name); err == nil {
 		f := formatForREPL(docStr)
 		fmt.Println(f)
-		return
-	}
-	if name == "doc" {
-		docSymbolList()
 		return
 	}
 	panic(fmt.Errorf(ErrSymbolNotDocumented, sym))
