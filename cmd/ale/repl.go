@@ -237,6 +237,29 @@ func isRecoverable(err error) bool {
 		strings.HasPrefix(msg, notPaired)
 }
 
+// GetNS allows the tests to get at the namespace
+func (r *REPL) GetNS() env.Namespace {
+	return r.ns
+}
+
+func (r *REPL) getBuiltInsNamespace() env.Namespace {
+	return r.ns.Environment().GetRoot()
+}
+
+func (r *REPL) registerBuiltIns() {
+	r.registerBuiltIn("cls", data.Applicative(cls, 0))
+	r.registerBuiltIn("doc", data.Normal(doc, 0, 1))
+	r.registerBuiltIn("debug", data.Applicative(debugInfo, 0))
+	r.registerBuiltIn("help", data.Applicative(help, 0))
+	r.registerBuiltIn("quit", data.Applicative(shutdown, 0))
+	r.registerBuiltIn("use", data.Normal(r.makeUse(), 1))
+}
+
+func (r *REPL) registerBuiltIn(n data.Local, v data.Value) {
+	ns := r.getBuiltInsNamespace()
+	ns.Declare(n).Bind(v)
+}
+
 func (r *REPL) makeUse() func(...data.Value) data.Value {
 	return func(args ...data.Value) data.Value {
 		data.AssertFixed(1, len(args))
@@ -345,29 +368,6 @@ func escapeNames(names []string) {
 			names[i] = "\\" + n
 		}
 	}
-}
-
-func (r *REPL) getBuiltInsNamespace() env.Namespace {
-	return r.ns.Environment().GetRoot()
-}
-
-func (r *REPL) registerBuiltIn(n data.Local, v data.Value) {
-	ns := r.getBuiltInsNamespace()
-	ns.Declare(n).Bind(v)
-}
-
-// GetNS allows the tests to get at the namespace
-func (r *REPL) GetNS() env.Namespace {
-	return r.ns
-}
-
-func (r *REPL) registerBuiltIns() {
-	r.registerBuiltIn("quit", data.Applicative(shutdown, 0))
-	r.registerBuiltIn("debug", data.Applicative(debugInfo, 0))
-	r.registerBuiltIn("cls", data.Applicative(cls, 0))
-	r.registerBuiltIn("help", data.Applicative(help, 0))
-	r.registerBuiltIn("use", data.Normal(r.makeUse(), 1))
-	r.registerBuiltIn("doc", data.Normal(doc, 0, 1))
 }
 
 func makeUserNamespace() env.Namespace {
