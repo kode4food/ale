@@ -1,6 +1,7 @@
 package special
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
 
@@ -33,19 +34,20 @@ const (
 	ErrUnknownDirective      = "unknown directive: %s"
 	ErrUnexpectedForm        = "unexpected form: %s"
 	ErrIncompleteInstruction = "incomplete instruction: %s"
-	ErrUnknownLocalType      = "unknown local type: %s"
+	ErrUnknownLocalType      = "unexpected local type: %s, expected: %s"
 	ErrUnexpectedName        = "unexpected local name: %s"
 	ErrUnexpectedLabel       = "unexpected label: %s"
 )
 
 const (
-	MakeEncoder = data.Local("!make-encoder")
-	Resolve     = data.Local(".resolve")
-	EvalValue   = data.Local(".eval")
-	Const       = data.Local(".const")
-	Local       = data.Local(".local")
-	PushLocals  = data.Local(".push-locals")
-	PopLocals   = data.Local(".pop-locals")
+	MakeEncoder  = data.Local("!make-encoder")
+	MakeDetached = data.Local("!make-detached")
+	Resolve      = data.Local(".resolve")
+	EvalValue    = data.Local(".eval")
+	Const        = data.Local(".const")
+	Local        = data.Local(".local")
+	PushLocals   = data.Local(".push-locals")
+	PopLocals    = data.Local(".pop-locals")
 )
 
 var (
@@ -58,6 +60,8 @@ var (
 		data.Keyword("ref"):  encoder.ReferenceCell,
 		data.Keyword("rest"): encoder.RestCell,
 	}
+
+	cellTypeNames = makeCellTypeNames()
 )
 
 // Asm provides indirect access to the Encoder's methods and generators
@@ -90,10 +94,20 @@ func (e *asmEncoder) process(forms data.Sequence) {
 			case MakeEncoder:
 				e.makeEncoderCall(r)
 				return
+			case MakeDetached:
+				e.makeDetachedEncoder(r)
+				return
 			}
 		}
 	}
 	e.encode(forms)
+}
+
+func (e *asmEncoder) makeDetachedEncoder(forms data.Sequence) {
+	ae := makeAsmEncoder(
+		encoder.NewEncoder(e.Globals()),
+	)
+	ae.makeEncoderCall(forms)
 }
 
 func (e *asmEncoder) makeEncoderCall(forms data.Sequence) {
@@ -267,7 +281,7 @@ func getEncoderCalls() callMap {
 				kwd := args[1].(data.Keyword)
 				cellType, ok := cellTypes[kwd]
 				if !ok {
-					panic(fmt.Errorf(ErrUnknownLocalType, kwd))
+					panic(fmt.Errorf(ErrUnknownLocalType, kwd, cellTypeNames))
 				}
 				e.AddLocal(name, cellType)
 			},
@@ -330,4 +344,27 @@ func toOperand(val data.Value) (isa.Operand, error) {
 		}
 	}
 	return 0, fmt.Errorf(isa.ErrExpectedOperand, val)
+}
+
+func makeCellTypeNames() string {
+	res := mapKeys(cellTypes)
+	var buf bytes.Buffer
+	for i, s := range res {
+		switch {
+		case i == len(res)-1:
+			buf.WriteString(" or ")
+		case i != 0:
+			buf.WriteString(" ")
+		}
+		buf.WriteString(s.String())
+	}
+	return buf.String()
+}
+
+func mapKeys[K comparable, V any](m map[K]V) []K {
+	res := make([]K, 0, len(m))
+	for k := range m {
+		res = append(res, k)
+	}
+	return res
 }
