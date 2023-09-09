@@ -3,12 +3,11 @@ package bootstrap
 import (
 	"fmt"
 
-	"github.com/kode4food/ale/env"
-
 	"github.com/kode4food/ale/compiler/encoder"
 	"github.com/kode4food/ale/compiler/special"
 	"github.com/kode4food/ale/core/internal/builtin"
 	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/env"
 	"github.com/kode4food/ale/macro"
 )
 
