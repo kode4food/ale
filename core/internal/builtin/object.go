@@ -43,15 +43,3 @@ var Dissoc = data.Applicative(func(args ...data.Value) data.Value {
 	}
 	return s
 }, 2)
-
-// IsObject returns whether a value is an object
-var IsObject = data.Applicative(func(args ...data.Value) data.Value {
-	_, ok := args[0].(data.Object)
-	return data.Bool(ok)
-}, 1)
-
-// IsMapped returns whether a value is a mapped sequence
-var IsMapped = data.Applicative(func(args ...data.Value) data.Value {
-	_, ok := args[0].(data.Mapper)
-	return data.Bool(ok)
-}, 1)

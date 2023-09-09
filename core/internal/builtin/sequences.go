@@ -12,6 +12,14 @@ const (
 	ErrPutRequiresPair  = "put requires a key/value combination or a pair"
 )
 
+var (
+	// List constructs a new list
+	List = makeConstructor(data.NewList)
+
+	// Vector creates a new vector
+	Vector = makeConstructor(data.NewVector)
+)
+
 // Append adds a value to the end of the provided Appender
 var Append = data.Applicative(func(args ...data.Value) data.Value {
 	a := args[0].(data.Appender)
@@ -45,32 +53,14 @@ var Nth = data.Applicative(func(args ...data.Value) data.Value {
 	panic(errors.New(ErrIndexOutOfBounds))
 }, 2, 3)
 
-// IsSeq returns whether the provided value is a sequence
-var IsSeq = data.Applicative(func(args ...data.Value) data.Value {
-	_, ok := args[0].(data.Sequence)
-	return data.Bool(ok)
-}, 1)
-
 // IsEmpty returns whether the provided sequence is empty
 var IsEmpty = data.Applicative(func(args ...data.Value) data.Value {
 	s := args[0].(data.Sequence)
 	return data.Bool(s.IsEmpty())
 }, 1)
 
-// IsCounted returns whether the provided value is a counted sequence
-var IsCounted = data.Applicative(func(args ...data.Value) data.Value {
-	_, ok := args[0].(data.Counted)
-	return data.Bool(ok)
-}, 1)
-
-// IsIndexed returns whether the provided value is an indexed sequence
-var IsIndexed = data.Applicative(func(args ...data.Value) data.Value {
-	_, ok := args[0].(data.Indexed)
-	return data.Bool(ok)
-}, 1)
-
-// IsReverser returns whether the value is a reversible sequence
-var IsReverser = data.Applicative(func(args ...data.Value) data.Value {
-	_, ok := args[0].(data.Reverser)
-	return data.Bool(ok)
-}, 1)
+func makeConstructor[T data.Value](orig func(...data.Value) T) data.Function {
+	return data.Applicative(func(args ...data.Value) data.Value {
+		return orig(args...)
+	})
+}

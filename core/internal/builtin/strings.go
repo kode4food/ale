@@ -29,9 +29,3 @@ var ReaderStr = data.Applicative(func(args ...data.Value) data.Value {
 	}
 	return data.String(b.String())
 })
-
-// IsString returns whether the provided value is a string
-var IsString = data.Applicative(func(args ...data.Value) data.Value {
-	_, ok := args[0].(data.String)
-	return data.Bool(ok)
-}, 1)

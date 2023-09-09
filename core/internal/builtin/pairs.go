@@ -11,15 +11,3 @@ var Cons = data.Applicative(func(args ...data.Value) data.Value {
 	}
 	return data.NewCons(car, cdr)
 }, 2)
-
-// IsPair returns whether the provided value is a Pair
-var IsPair = data.Applicative(func(args ...data.Value) data.Value {
-	_, ok := args[0].(data.Pair)
-	return data.Bool(ok)
-}, 1)
-
-// IsCons returns whether the provided value is a Cons cell
-var IsCons = data.Applicative(func(args ...data.Value) data.Value {
-	_, ok := args[0].(*data.Cons)
-	return data.Bool(ok)
-}, 1)

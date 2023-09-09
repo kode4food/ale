@@ -39,12 +39,6 @@ var Promise = data.Applicative(func(args ...data.Value) data.Value {
 	return async.NewPromise(resolver)
 }, 1)
 
-// IsPromise returns whether the specified value is a promise
-var IsPromise = data.Applicative(func(args ...data.Value) data.Value {
-	_, ok := args[0].(async.Promise)
-	return data.Bool(ok)
-}, 1)
-
 // IsResolved returns whether the specified promise has been resolved
 var IsResolved = data.Applicative(func(args ...data.Value) data.Value {
 	p := args[0].(async.Promise)

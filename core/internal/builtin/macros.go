@@ -28,9 +28,3 @@ var Macro = data.Applicative(func(args ...data.Value) data.Value {
 		panic(fmt.Errorf(ErrFunctionRequired, args[0]))
 	}
 }, 1)
-
-// IsMacro returns whether the argument is a macro
-var IsMacro = data.Applicative(func(args ...data.Value) data.Value {
-	_, ok := args[0].(macro.Call)
-	return data.Bool(ok)
-}, 1)

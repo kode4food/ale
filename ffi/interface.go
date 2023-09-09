@@ -116,72 +116,37 @@ func (w *methodWrapper) wrapMethod(v reflect.Value) data.Function {
 }
 
 func (w *methodWrapper) wrapVoidMethod(v reflect.Value) data.Function {
-	inLen := len(w.in)
 	fn := v.MethodByName(w.name)
 
-	return data.Applicative(func(in ...data.Value) data.Value {
-		wIn := make([]reflect.Value, inLen)
-		for i := 0; i < inLen; i++ {
-			u, err := w.in[i].Unwrap(in[i])
-			if err != nil {
-				panic(err)
-			}
-			wIn[i] = u
-		}
-		fn.Call(wIn)
+	return data.Applicative(func(args ...data.Value) data.Value {
+		fn.Call(w.in.unwrap(args))
 		return data.Nil
-	}, inLen)
+	}, len(w.in))
 }
 
 func (w *methodWrapper) wrapValueMethod(v reflect.Value) data.Function {
-	inLen := len(w.in)
 	fn := v.MethodByName(w.name)
 
-	return data.Applicative(func(in ...data.Value) data.Value {
-		c := new(Context)
-		wIn := make([]reflect.Value, inLen)
-		for i := 0; i < inLen; i++ {
-			arg, err := w.in[i].Unwrap(in[i])
-			if err != nil {
-				panic(err)
-			}
-			wIn[i] = arg
-		}
-		wOut := fn.Call(wIn)
-		res, err := w.out[0].Wrap(c, wOut[0])
+	return data.Applicative(func(args ...data.Value) data.Value {
+		in := w.in.unwrap(args)
+		out := fn.Call(in)
+		res, err := w.out[0].Wrap(new(Context), out[0])
 		if err != nil {
 			panic(err)
 		}
 		return res
-	}, inLen)
+	}, len(w.in))
 }
 
 func (w *methodWrapper) wrapVectorMethod(v reflect.Value) data.Function {
-	inLen := len(w.in)
-	outLen := len(w.out)
 	fn := v.MethodByName(w.name)
 
-	return data.Applicative(func(in ...data.Value) data.Value {
-		c := new(Context)
-		wIn := make([]reflect.Value, inLen)
-		for i := 0; i < inLen; i++ {
-			arg, err := w.in[i].Unwrap(in[i])
-			if err != nil {
-				panic(err)
-			}
-			wIn[i] = arg
-		}
-		wOut := fn.Call(wIn)
-		out := make(data.Values, outLen)
-		for i := 0; i < outLen; i++ {
-			res, err := w.out[i].Wrap(c, wOut[i])
-			if err != nil {
-				panic(err)
-			}
-			out[i] = res
-		}
+	return data.Applicative(func(args ...data.Value) data.Value {
+		in := w.in.unwrap(args)
+		res := fn.Call(in)
+		out := w.out.wrap(res)
 		return data.NewVector(out...)
-	}, inLen)
+	}, len(w.in))
 }
 
 func (w *intfWrapper) Unwrap(v data.Value) (reflect.Value, error) {

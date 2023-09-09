@@ -15,9 +15,6 @@ type (
 		Unwrap(data.Value) (reflect.Value, error)
 	}
 
-	// Wrappers is a set of Wrapper
-	Wrappers []Wrapper
-
 	typeCache struct {
 		sync.RWMutex
 		entries map[reflect.Type]Wrapper
@@ -82,9 +79,9 @@ func wrapType(t reflect.Type) (Wrapper, error) {
 }
 
 /*
-	Unsupported Kinds:
-	  * Uintptr
-	  * UnsafePointer
+Unsupported Kinds:
+  - Uintptr
+  - UnsafePointer
 */
 func makeWrappedType(t reflect.Type) (Wrapper, error) {
 	switch t.Kind() {
