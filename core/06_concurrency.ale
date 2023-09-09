@@ -35,9 +35,9 @@
   `(delay (force! (begin ,@body))))
 
 (define-macro (generate . body)
-  `(let* ([chan#  (chan)        ]
+  `(let* ([chan#  (chan)]
           [close# (:close chan#)]
-          [emit   (:emit chan#) ])
+          [emit   (:emit chan#)])
      (go
        (let [result# (begin ,@body)]
          (close#)
@@ -55,7 +55,7 @@
      (spawn func mbox-size no-op)]
   [(func mbox-size monitor)
      (let* ([channel (chan mbox-size)]
-            [mailbox (:seq channel)  ]
-            [sender  (:emit channel) ])
+            [mailbox (:seq channel)]
+            [sender  (:emit channel)])
        (go-with-monitor monitor (func mailbox))
        sender)])

@@ -3,9 +3,9 @@
 (declare *env* *args*)
 
 (define-macro (time . forms)
-  `(let* ([start#  (current-time) ]
+  `(let* ([start#  (current-time)]
           [result# (begin ,@forms)]
-          [end#    (current-time) ]
+          [end#    (current-time)]
           [dur#    (- end# start#)])
      (if (< dur# 1000)
          (println dur# "ns")

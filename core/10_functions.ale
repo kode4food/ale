@@ -3,10 +3,10 @@
 (define-macro (letfn bindings . body)
   ((lambda-rec parse-bindings (out in)
       (if (seq in)
-        (let* ([fnList (first in)           ]
-               [fnSym  (first fnList)       ]
+        (let* ([fnList (first in)]
+               [fnSym  (first fnList)]
                [fnName (first (rest fnList))]
-               [fnRest (rest (rest fnList)) ])
+               [fnRest (rest (rest fnList))])
           (assert-args
             (and (list? fnList)
                  (or (eq fnSym 'lambda-rec)
@@ -29,10 +29,10 @@
   [() identity]
   [(func) func]
   [(func . funcs)
-     (let* ([args        (gensym "args")        ]
+     (let* ([args        (gensym "args")]
             [inner       (list 'apply func args)]
-            [first-outer (first funcs)          ]
-            [rest-outer  (rest funcs)           ])
+            [first-outer (first funcs)]
+            [rest-outer  (rest funcs)])
        (letfn [(lambda-rec outer (func args rest-funcs)
                   (if (seq rest-funcs)
                       (outer (first rest-funcs)

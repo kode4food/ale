@@ -18,7 +18,7 @@
                 (if (is-empty colls)
                   (apply list head)
                   (let ([f (first colls)]
-                        [r (rest colls) ])
+                        [r (rest colls)])
                     (if (is-empty f)
                       (concat-inner r head)
                       (concat-inner (cons (rest f) r)
