@@ -23,14 +23,16 @@
       (value)
       value))
 
+(define (force! value)
+  (if (promise? value)
+      (force! (value))
+      value))
+
+(define-macro (delay-force . body)
+  `(delay (force (begin ,@body))))
+
 (define-macro (lazy . body)
-  `(delay
-    (let [body-result# (begin ,@body)]
-      ((lambda-rec resolve (result)
-         (if (promise? result)
-             (resolve (result))
-             result))
-       body-result#))))
+  `(delay (force! (begin ,@body))))
 
 (define-macro (generate . body)
   `(let* ([chan#  (chan)        ]

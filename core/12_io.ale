@@ -1,7 +1,7 @@
 ;;;; ale core: i/o
 
 (declare *in* *out* *err*)
-(private pr-map-with-null)
+(private pr-map-with-null with-open-close)
 
 (define *space*   "\s")
 (define *newline* "\n")
