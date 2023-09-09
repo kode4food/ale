@@ -3,6 +3,8 @@ package bootstrap
 import (
 	"fmt"
 
+	"github.com/kode4food/ale/env"
+
 	"github.com/kode4food/ale/compiler/encoder"
 	"github.com/kode4food/ale/compiler/special"
 	"github.com/kode4food/ale/core/internal/builtin"
@@ -30,42 +32,17 @@ func (b *bootstrap) builtIns() {
 }
 
 func (b *bootstrap) initialFunctions() {
-	e := b.environment
-
-	defBuiltIn := data.Normal(func(args ...data.Value) data.Value {
-		ns := e.GetRoot()
-		n := args[0].(data.Local)
-		if nf, ok := b.funcMap[n]; ok {
-			ns.Declare(n).Bind(nf)
-			return args[0]
-		}
-		panic(fmt.Errorf(ErrBuiltInNotFound, n))
-	}, 1)
-
-	defSpecial := data.Normal(func(args ...data.Value) data.Value {
-		ns := e.GetRoot()
-		n := args[0].(data.Local)
-		if sf, ok := b.specialMap[n]; ok {
-			ns.Declare(n).Bind(sf)
-			return args[0]
-		}
-		panic(fmt.Errorf(ErrSpecialNotFound, n))
-	}, 1)
-
-	defMacro := data.Normal(func(args ...data.Value) data.Value {
-		ns := e.GetRoot()
-		n := args[0].(data.Local)
-		if sf, ok := b.macroMap[n]; ok {
-			ns.Declare(n).Bind(sf)
-			return args[0]
-		}
-		panic(fmt.Errorf(ErrMacroNotFound, n))
-	}, 1)
-
 	ns := b.environment.GetRoot()
-	ns.Private(defBuiltInName).Bind(defBuiltIn)
-	ns.Private(defSpecialName).Bind(defSpecial)
-	ns.Private(defMacroName).Bind(defMacro)
+
+	ns.Private(defBuiltInName).Bind(
+		makeDefiner(ns, b.funcMap, ErrBuiltInNotFound),
+	)
+	ns.Private(defSpecialName).Bind(
+		makeDefiner(ns, b.specialMap, ErrSpecialNotFound),
+	)
+	ns.Private(defMacroName).Bind(
+		makeDefiner(ns, b.macroMap, ErrMacroNotFound),
+	)
 }
 
 func (b *bootstrap) specialForms() {
@@ -185,4 +162,17 @@ func (b *bootstrap) specials(s map[data.Local]encoder.Call) {
 
 func (b *bootstrap) special(name data.Local, call encoder.Call) {
 	b.specialMap[name] = call
+}
+
+func makeDefiner[T data.Value](
+	ns env.Namespace, m map[data.Local]T, err string,
+) data.Function {
+	return data.Normal(func(args ...data.Value) data.Value {
+		n := args[0].(data.Local)
+		if sf, ok := m[n]; ok {
+			ns.Declare(n).Bind(sf)
+			return args[0]
+		}
+		panic(fmt.Errorf(err, n))
+	}, 1)
 }
