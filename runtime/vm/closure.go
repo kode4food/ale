@@ -156,11 +156,9 @@ opSwitch:
 
 	case isa.Bind:
 		SP++
-		val := STACK[SP]
+		name := STACK[SP].(data.Local)
 		SP++
-		c.Lambda.Globals.Declare(
-			STACK[SP].(data.Local),
-		).Bind(val)
+		c.Lambda.Globals.Declare(name).Bind(STACK[SP])
 		goto nextPC
 
 	case isa.Resolve:
