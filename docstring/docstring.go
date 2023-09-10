@@ -9,7 +9,7 @@ import (
 
 // Error messages
 const (
-	ErrDocNotFound = "could not find doc: %s"
+	ErrSymbolNotDocumented = "symbol not documented: %s"
 )
 
 const extension = ".md"
@@ -26,7 +26,7 @@ func Get(n string) (string, error) {
 	if ok {
 		return string(res), nil
 	}
-	return "", fmt.Errorf(ErrDocNotFound, n)
+	return "", fmt.Errorf(ErrSymbolNotDocumented, n)
 }
 
 // MustGet resolves a registered docstring entry by name or explodes

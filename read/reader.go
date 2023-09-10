@@ -63,15 +63,16 @@ func (r *reader) nextValue() (data.Value, bool) {
 }
 
 func (r *reader) nextToken() *Token {
-	if token, seq, ok := r.seq.Split(); ok {
-		r.token = token.(*Token)
-		r.seq = seq
-		if r.token.Type() == Error {
-			panic(r.error(r.token.Value().String()))
-		}
-		return r.token
+	token, seq, ok := r.seq.Split()
+	if !ok {
+		return nil
 	}
-	return nil
+	r.token = token.(*Token)
+	r.seq = seq
+	if r.token.Type() == Error {
+		panic(r.error(r.token.Value().String()))
+	}
+	return r.token
 }
 
 func (r *reader) value(t *Token) data.Value {

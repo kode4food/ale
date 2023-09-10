@@ -108,14 +108,18 @@ func NewChannelSequence(ch <-chan channelResult) data.Sequence {
 
 func (c *channelSequence) resolve() *channelSequence {
 	c.once(func() {
-		if result, ok := <-c.ch; ok {
-			c.ok = ok
-			c.result = result
-			if c.result.error == nil {
-				c.rest = NewChannelSequence(c.ch)
-			}
+		result, ok := <-c.ch
+		if !ok {
+			return
+		}
+
+		c.ok = ok
+		c.result = result
+		if c.result.error == nil {
+			c.rest = NewChannelSequence(c.ch)
 		}
 	})
+
 	if e := c.result.error; e != nil {
 		panic(e)
 	}

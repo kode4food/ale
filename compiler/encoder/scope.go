@@ -19,10 +19,11 @@ func (e *encoder) ResolveScoped(n data.Local) (*ScopedCell, bool) {
 	if _, ok := e.ResolveParam(n); ok {
 		return newScopedCell(ArgScope, newCell(ValueCell, n)), true
 	}
-	if e.parent != nil {
-		if s, ok := e.parent.ResolveScoped(n); ok {
-			return newScopedCell(ClosureScope, s.Cell), true
-		}
+	if e.parent == nil {
+		return nil, false
+	}
+	if s, ok := e.parent.ResolveScoped(n); ok {
+		return newScopedCell(ClosureScope, s.Cell), true
 	}
 	return nil, false
 }

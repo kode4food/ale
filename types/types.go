@@ -14,7 +14,7 @@ type (
 
 		IsA(BasicType) bool
 
-		// Accepts determined if this Type will accept the provided Type for
+		// Accepts determines if this Type will accept the provided Type for
 		// binding. This will generally mean that the provided Type satisfies
 		// the contract of the receiver. A Checker is provided that tracks
 		// the state of the Type checking
@@ -80,13 +80,14 @@ func (t typeList) hasAny() bool {
 }
 
 func (t typeList) basicType() (BasicType, bool) {
-	if f, ok := t[0].(BasicType); ok {
-		for _, n := range t[1:] {
-			if !n.IsA(f) {
-				return nil, false
-			}
-		}
-		return f, true
+	f, ok := t[0].(BasicType)
+	if !ok {
+		return nil, false
 	}
-	return nil, false
+	for _, n := range t[1:] {
+		if !n.IsA(f) {
+			return nil, false
+		}
+	}
+	return f, true
 }

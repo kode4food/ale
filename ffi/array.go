@@ -45,17 +45,18 @@ func (w *arrayWrapper) Wrap(c *Context, v reflect.Value) (data.Value, error) {
 }
 
 func (w *arrayWrapper) Unwrap(v data.Value) (reflect.Value, error) {
-	if s, ok := v.(data.Sequence); ok {
-		in := sequence.ToValues(s)
-		out := reflect.New(w.typ).Elem()
-		for i, e := range in {
-			v, err := w.elem.Unwrap(e)
-			if err != nil {
-				return _emptyValue, err
-			}
-			out.Index(i).Set(v)
-		}
-		return out, nil
+	s, ok := v.(data.Sequence)
+	if !ok {
+		return _emptyValue, errors.New(ErrValueMustBeSequence)
 	}
-	return _emptyValue, errors.New(ErrValueMustBeSequence)
+	in := sequence.ToValues(s)
+	out := reflect.New(w.typ).Elem()
+	for i, e := range in {
+		v, err := w.elem.Unwrap(e)
+		if err != nil {
+			return _emptyValue, err
+		}
+		out.Index(i).Set(v)
+	}
+	return out, nil
 }

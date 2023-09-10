@@ -19,8 +19,8 @@ func TestDefinitionsEval(t *testing.T) {
 	`, S("bar"))
 
 	as.EvalTo(`
-		(define return-local (lambda ()
-			(let [foo "local"] foo)))
+		(define return-local
+			(thunk (let [foo "local"] foo)))
 		(return-local)
 	`, S("local"))
 }

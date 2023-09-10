@@ -18,14 +18,15 @@ func Symbol(e encoder.Encoder, s data.Symbol) {
 
 // ReferenceSymbol encodes a potential symbol retrieval and dereference
 func ReferenceSymbol(e encoder.Encoder, s data.Symbol) {
-	if l, ok := s.(data.Local); ok {
-		c := resolveLocal(e, l)
+	switch s := s.(type) {
+	case data.Local:
+		c := resolveLocal(e, s)
 		if c != nil && c.Type == encoder.ReferenceCell {
 			e.Emit(isa.Deref)
 		}
-		return
+	default:
+		resolveGlobal(e, s)
 	}
-	resolveGlobal(e, s)
 }
 
 func resolveLocal(e encoder.Encoder, l data.Local) *encoder.ScopedCell {

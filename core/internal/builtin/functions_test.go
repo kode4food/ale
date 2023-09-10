@@ -75,7 +75,7 @@ func TestLambdaEval(t *testing.T) {
 	as.EvalTo(`
 		(define call (lambda (func) (func)))
 		(let [greeting "hello"]
-			(let [foo (lambda () greeting)]
+			(let [foo (thunk greeting)]
 				(call foo)))
 	`, S("hello"))
 }

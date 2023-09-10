@@ -19,7 +19,7 @@ var (
 
 // NewVector creates a new Vector instance
 func NewVector(v ...Value) Vector {
-	return Vector(v)
+	return v
 }
 
 func (v Vector) Values() Values {
@@ -56,13 +56,14 @@ func (v Vector) Cdr() Value {
 }
 
 func (v Vector) Split() (Value, Sequence, bool) {
-	lv := len(v)
-	if lv > 1 {
-		return v[0], v[1:], true
-	} else if lv == 1 {
+	switch len(v) {
+	case 0:
+		return Nil, EmptyVector, false
+	case 1:
 		return v[0], EmptyVector, true
+	default:
+		return v[0], v[1:], true
 	}
-	return Nil, EmptyVector, false
 }
 
 func (v Vector) Prepend(e Value) Sequence {

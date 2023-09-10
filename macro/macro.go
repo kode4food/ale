@@ -21,16 +21,27 @@ func Expand1(ns env.Namespace, v data.Value) data.Value {
 }
 
 func expand1(ns env.Namespace, v data.Value) (data.Value, bool) {
-	if l, ok := v.(data.List); ok {
-		f, r, _ := l.Split()
-		if s, ok := f.(data.Symbol); ok {
-			args := sequence.ToValues(r)
-			if v, ok := env.ResolveValue(ns, s); ok {
-				if m, ok := v.(Call); ok {
-					return m(ns, args...), true
-				}
-			}
-		}
+	l, ok := v.(data.List) // it's got to be a list
+	if !ok {
+		return v, false
 	}
-	return v, false
+
+	f, r, _ := l.Split() // starting with a symbol
+	s, ok := f.(data.Symbol)
+	if !ok {
+		return v, false
+	}
+
+	args := sequence.ToValues(r)
+	rv, ok := env.ResolveValue(ns, s) // that actually resolves
+	if !ok {
+		return v, false
+	}
+
+	m, ok := rv.(Call) // to a macro call
+	if !ok {
+		return v, false
+	}
+
+	return m(ns, args...), true
 }

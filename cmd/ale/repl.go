@@ -39,11 +39,6 @@ type (
 	}
 )
 
-// Error messages
-const (
-	ErrSymbolNotDocumented = "symbol not documented: %s"
-)
-
 const (
 	// UserDomain is the name of the namespace that the REPL starts in
 	UserDomain = data.Local("user")
@@ -336,12 +331,9 @@ func docSymbol(sym data.Symbol) {
 		docSymbolList()
 		return
 	}
-	if docStr, err := docstring.Get(name); err == nil {
-		f := formatForREPL(docStr)
-		fmt.Println(f)
-		return
-	}
-	panic(fmt.Errorf(ErrSymbolNotDocumented, sym))
+	docStr := docstring.MustGet(name)
+	f := formatForREPL(docStr)
+	fmt.Println(f)
 }
 
 func docSymbolList() {

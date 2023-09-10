@@ -24,12 +24,13 @@ func (e *encoder) resolveClosureParent(n data.Local) (*IndexedCell, bool) {
 	if parent == nil {
 		return nil, false
 	}
-	if s, ok := parent.ResolveScoped(n); ok {
-		closure := e.closure
-		idx := isa.Operand(len(closure))
-		res := newIndexedCell(idx, s.Cell)
-		e.closure = append(closure, res)
-		return res, true
+	s, ok := parent.ResolveScoped(n)
+	if !ok {
+		return nil, false
 	}
-	return nil, false
+	closure := e.closure
+	idx := isa.Operand(len(closure))
+	res := newIndexedCell(idx, s.Cell)
+	e.closure = append(closure, res)
+	return res, true
 }

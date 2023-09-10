@@ -42,18 +42,19 @@ func (w *sliceWrapper) Wrap(c *Context, v reflect.Value) (data.Value, error) {
 }
 
 func (w *sliceWrapper) Unwrap(v data.Value) (reflect.Value, error) {
-	if s, ok := v.(data.Sequence); ok {
-		in := sequence.ToValues(s)
-		inLen := len(in)
-		out := reflect.MakeSlice(w.typ, inLen, inLen)
-		for i, e := range in {
-			v, err := w.elem.Unwrap(e)
-			if err != nil {
-				return _emptyValue, err
-			}
-			out.Index(i).Set(v)
-		}
-		return out, nil
+	s, ok := v.(data.Sequence)
+	if !ok {
+		return _emptyValue, errors.New(ErrValueMustBeSequence)
 	}
-	return _emptyValue, errors.New(ErrValueMustBeSequence)
+	in := sequence.ToValues(s)
+	inLen := len(in)
+	out := reflect.MakeSlice(w.typ, inLen, inLen)
+	for i, e := range in {
+		v, err := w.elem.Unwrap(e)
+		if err != nil {
+			return _emptyValue, err
+		}
+		out.Index(i).Set(v)
+	}
+	return out, nil
 }
