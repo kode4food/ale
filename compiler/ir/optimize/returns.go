@@ -19,15 +19,17 @@ func (*returnSplitter) EnterBranches(visitor.Branches)    {}
 func (*returnSplitter) Instructions(visitor.Instructions) {}
 
 func (*returnSplitter) ExitBranches(b visitor.Branches) {
-	if i, ok := b.Epilogue().(visitor.Instructions); ok {
-		code := i.Code()
-		if len(code) != 1 {
-			return
-		}
-		if oc, _ := code[0].Split(); oc == isa.Return {
-			i.Set(isa.Instructions{})
-			addReturnToBranches(b)
-		}
+	i, ok := b.Epilogue().(visitor.Instructions)
+	if !ok {
+		return
+	}
+	code := i.Code()
+	if len(code) != 1 {
+		return
+	}
+	if oc, _ := code[0].Split(); oc == isa.Return {
+		i.Set(isa.Instructions{})
+		addReturnToBranches(b)
 	}
 }
 

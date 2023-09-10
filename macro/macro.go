@@ -25,23 +25,19 @@ func expand1(ns env.Namespace, v data.Value) (data.Value, bool) {
 	if !ok {
 		return v, false
 	}
-
 	f, r, _ := l.Split() // starting with a symbol
 	s, ok := f.(data.Symbol)
 	if !ok {
 		return v, false
 	}
-
 	args := sequence.ToValues(r)
 	rv, ok := env.ResolveValue(ns, s) // that actually resolves
 	if !ok {
 		return v, false
 	}
-
 	m, ok := rv.(Call) // to a macro call
 	if !ok {
 		return v, false
 	}
-
 	return m(ns, args...), true
 }

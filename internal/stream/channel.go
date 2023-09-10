@@ -112,7 +112,6 @@ func (c *channelSequence) resolve() *channelSequence {
 		if !ok {
 			return
 		}
-
 		c.ok = ok
 		c.result = result
 		if c.result.error == nil {

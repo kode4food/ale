@@ -68,7 +68,6 @@ func MakeSequenceStr(s Sequence) string {
 	if !ok {
 		return "()"
 	}
-
 	var b bytes.Buffer
 	b.WriteString("(")
 	b.WriteString(MaybeQuoteString(f))
