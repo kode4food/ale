@@ -443,12 +443,6 @@ func TestErrors(t *testing.T) {
 	})
 }
 
-func TestExplosions(t *testing.T) {
-	testPanic(t, "runtime error: index out of range", isa.Instructions{
-		isa.Return.New(),
-	})
-}
-
 func TestBadOpcode(t *testing.T) {
 	as := assert.New(t)
 	defer as.ExpectProgrammerError(

@@ -24,22 +24,22 @@ func newClosure(lambda *Lambda, values data.Values) *closure {
 // Call turns closure into a Function, and serves as the virtual machine
 func (c *closure) Call(args ...data.Value) data.Value {
 	var (
-		DATA   data.Values
-		CODE   isa.Instructions
-		STACK  data.Values
-		LOCALS data.Values
-		SP     int
-		PC     int
+		MEM  data.Values
+		CODE isa.Instructions
+		LP   int
+		SP   int
+		PC   int
 	)
 
-initFrame:
+initMem:
+	MEM = make(data.Values, c.Lambda.StackSize+c.Lambda.LocalCount)
+
+initCode:
 	CODE = c.Lambda.Code
-	DATA = make(data.Values, c.Lambda.StackSize+c.Lambda.LocalCount)
-	STACK = DATA[0:c.Lambda.StackSize]
-	LOCALS = DATA[c.Lambda.StackSize:]
+	LP = c.Lambda.StackSize
 
 initState:
-	SP = len(STACK) - 1
+	SP = LP - 1
 	PC = -1 // cheaper than a goto
 
 nextPC:
@@ -49,120 +49,120 @@ opSwitch:
 	oc, op := CODE[PC].Split()
 	switch oc {
 	case isa.Nil:
-		STACK[SP] = data.Nil
+		MEM[SP] = data.Nil
 		SP--
 		goto nextPC
 
 	case isa.Zero:
-		STACK[SP] = data.Integer(0)
+		MEM[SP] = data.Integer(0)
 		SP--
 		goto nextPC
 
 	case isa.PosInt:
-		STACK[SP] = data.Integer(op)
+		MEM[SP] = data.Integer(op)
 		SP--
 		goto nextPC
 
 	case isa.NegInt:
-		STACK[SP] = -data.Integer(op)
+		MEM[SP] = -data.Integer(op)
 		SP--
 		goto nextPC
 
 	case isa.True:
-		STACK[SP] = data.True
+		MEM[SP] = data.True
 		SP--
 		goto nextPC
 
 	case isa.False:
-		STACK[SP] = data.False
+		MEM[SP] = data.False
 		SP--
 		goto nextPC
 
 	case isa.Const:
-		STACK[SP] = c.Lambda.Constants[op]
+		MEM[SP] = c.Lambda.Constants[op]
 		SP--
 		goto nextPC
 
 	case isa.Arg:
-		STACK[SP] = args[op]
+		MEM[SP] = args[op]
 		SP--
 		goto nextPC
 
 	case isa.RestArg:
-		STACK[SP] = data.NewVector(args[op:]...)
+		MEM[SP] = data.NewVector(args[op:]...)
 		SP--
 		goto nextPC
 
 	case isa.ArgLen:
-		STACK[SP] = data.Integer(len(args))
+		MEM[SP] = data.Integer(len(args))
 		SP--
 		goto nextPC
 
 	case isa.Closure:
-		STACK[SP] = c.values[op]
+		MEM[SP] = c.values[op]
 		SP--
 		goto nextPC
 
 	case isa.Load:
-		STACK[SP] = LOCALS[op]
+		MEM[SP] = MEM[LP+int(op)]
 		SP--
 		goto nextPC
 
 	case isa.Store:
 		SP++
-		LOCALS[op] = STACK[SP]
+		MEM[LP+int(op)] = MEM[SP]
 		goto nextPC
 
 	case isa.NewRef:
-		STACK[SP] = new(Ref)
+		MEM[SP] = new(Ref)
 		SP--
 		goto nextPC
 
 	case isa.BindRef:
 		SP++
-		ref := STACK[SP].(*Ref)
+		ref := MEM[SP].(*Ref)
 		SP++
-		ref.Value = STACK[SP]
+		ref.Value = MEM[SP]
 		goto nextPC
 
 	case isa.Deref:
-		SP1 := &STACK[SP+1]
+		SP1 := &MEM[SP+1]
 		*SP1 = (*SP1).(*Ref).Value
 		goto nextPC
 
 	case isa.Car:
-		SP1 := &STACK[SP+1]
+		SP1 := &MEM[SP+1]
 		*SP1 = (*SP1).(data.Pair).Car()
 		goto nextPC
 
 	case isa.Cdr:
-		SP1 := &STACK[SP+1]
+		SP1 := &MEM[SP+1]
 		*SP1 = (*SP1).(data.Pair).Cdr()
 		goto nextPC
 
 	case isa.Declare:
 		SP++
 		c.Lambda.Globals.Declare(
-			STACK[SP].(data.Local),
+			MEM[SP].(data.Local),
 		)
 		goto nextPC
 
 	case isa.Private:
 		SP++
 		c.Lambda.Globals.Private(
-			STACK[SP].(data.Local),
+			MEM[SP].(data.Local),
 		)
 		goto nextPC
 
 	case isa.Bind:
 		SP++
-		name := STACK[SP].(data.Local)
+		name := MEM[SP].(data.Local)
 		SP++
-		c.Lambda.Globals.Declare(name).Bind(STACK[SP])
+		c.Lambda.Globals.Declare(name).Bind(MEM[SP])
 		goto nextPC
 
 	case isa.Resolve:
-		SP1 := &STACK[SP+1]
+		SP1 := &MEM[SP+1]
 		*SP1 = env.MustResolveValue(
 			c.Lambda.Globals,
 			(*SP1).(data.Symbol),
@@ -170,7 +170,7 @@ opSwitch:
 		goto nextPC
 
 	case isa.Dup:
-		STACK[SP] = STACK[SP+1]
+		MEM[SP] = MEM[SP+1]
 		SP--
 		goto nextPC
 
@@ -180,79 +180,79 @@ opSwitch:
 
 	case isa.Add:
 		SP++
-		SP1 := &STACK[SP+1]
+		SP1 := &MEM[SP+1]
 		*SP1 = (*SP1).(data.Number).Add(
-			STACK[SP].(data.Number),
+			MEM[SP].(data.Number),
 		)
 		goto nextPC
 
 	case isa.Sub:
 		SP++
-		SP1 := &STACK[SP+1]
+		SP1 := &MEM[SP+1]
 		*SP1 = (*SP1).(data.Number).Sub(
-			STACK[SP].(data.Number),
+			MEM[SP].(data.Number),
 		)
 		goto nextPC
 
 	case isa.Mul:
 		SP++
-		SP1 := &STACK[SP+1]
+		SP1 := &MEM[SP+1]
 		*SP1 = (*SP1).(data.Number).Mul(
-			STACK[SP].(data.Number),
+			MEM[SP].(data.Number),
 		)
 		goto nextPC
 
 	case isa.Div:
 		SP++
-		SP1 := &STACK[SP+1]
+		SP1 := &MEM[SP+1]
 		*SP1 = (*SP1).(data.Number).Div(
-			STACK[SP].(data.Number),
+			MEM[SP].(data.Number),
 		)
 		goto nextPC
 
 	case isa.Mod:
 		SP++
 		SP1 := SP + 1
-		STACK[SP1] = STACK[SP1].(data.Number).Mod(
-			STACK[SP].(data.Number),
+		MEM[SP1] = MEM[SP1].(data.Number).Mod(
+			MEM[SP].(data.Number),
 		)
 		goto nextPC
 
 	case isa.Eq:
 		SP++
-		SP1 := &STACK[SP+1]
+		SP1 := &MEM[SP+1]
 		*SP1 = data.Bool(
 			data.EqualTo == (*SP1).(data.Number).Cmp(
-				STACK[SP].(data.Number),
+				MEM[SP].(data.Number),
 			),
 		)
 		goto nextPC
 
 	case isa.Neq:
 		SP++
-		SP1 := &STACK[SP+1]
+		SP1 := &MEM[SP+1]
 		*SP1 = data.Bool(
 			data.EqualTo != (*SP1).(data.Number).Cmp(
-				STACK[SP].(data.Number),
+				MEM[SP].(data.Number),
 			),
 		)
 		goto nextPC
 
 	case isa.Lt:
 		SP++
-		SP1 := &STACK[SP+1]
+		SP1 := &MEM[SP+1]
 		*SP1 = data.Bool(
 			data.LessThan == (*SP1).(data.Number).Cmp(
-				STACK[SP].(data.Number),
+				MEM[SP].(data.Number),
 			),
 		)
 		goto nextPC
 
 	case isa.Lte:
 		SP++
-		SP1 := &STACK[SP+1]
+		SP1 := &MEM[SP+1]
 		cmp := (*SP1).(data.Number).Cmp(
-			STACK[SP].(data.Number),
+			MEM[SP].(data.Number),
 		)
 		*SP1 = data.Bool(
 			cmp == data.LessThan || cmp == data.EqualTo,
@@ -261,19 +261,19 @@ opSwitch:
 
 	case isa.Gt:
 		SP++
-		SP1 := &STACK[SP+1]
+		SP1 := &MEM[SP+1]
 		*SP1 = data.Bool(
 			data.GreaterThan == (*SP1).(data.Number).Cmp(
-				STACK[SP].(data.Number),
+				MEM[SP].(data.Number),
 			),
 		)
 		goto nextPC
 
 	case isa.Gte:
 		SP++
-		SP1 := &STACK[SP+1]
+		SP1 := &MEM[SP+1]
 		cmp := (*SP1).(data.Number).Cmp(
-			STACK[SP].(data.Number),
+			MEM[SP].(data.Number),
 		)
 		*SP1 = data.Bool(
 			cmp == data.GreaterThan || cmp == data.EqualTo,
@@ -281,53 +281,53 @@ opSwitch:
 		goto nextPC
 
 	case isa.Neg:
-		SP1 := &STACK[SP+1]
+		SP1 := &MEM[SP+1]
 		*SP1 = data.Integer(0).Sub(
 			(*SP1).(data.Number),
 		)
 		goto nextPC
 
 	case isa.Not:
-		SP1 := &STACK[SP+1]
+		SP1 := &MEM[SP+1]
 		*SP1 = !(*SP1).(data.Bool)
 		goto nextPC
 
 	case isa.MakeTruthy:
-		SP1 := &STACK[SP+1]
+		SP1 := &MEM[SP+1]
 		*SP1 = data.Bool(
 			data.Truthy(*SP1),
 		)
 		goto nextPC
 
 	case isa.Call0:
-		SP1 := &STACK[SP+1]
+		SP1 := &MEM[SP+1]
 		*SP1 = (*SP1).(data.Function).Call()
 		goto nextPC
 
 	case isa.Call1:
 		SP++
-		SP1 := &STACK[SP+1]
-		*SP1 = STACK[SP].(data.Function).Call(*SP1)
+		SP1 := &MEM[SP+1]
+		*SP1 = MEM[SP].(data.Function).Call(*SP1)
 		goto nextPC
 
 	case isa.Call:
 		SP1 := SP + 1
-		fn := STACK[SP1].(data.Function)
+		fn := MEM[SP1].(data.Function)
 		// prepare args
 		args := make(data.Values, op)
-		copy(args, STACK[SP1+1:]) // because stack mutates
+		copy(args, MEM[SP1+1:LP]) // because stack mutates
 		// call function
 		RES := SP1 + int(op)
-		STACK[RES] = fn.Call(args...)
+		MEM[RES] = fn.Call(args...)
 		SP = RES - 1
 		goto nextPC
 
 	case isa.TailCall:
 		SP1 := SP + 1
-		val := STACK[SP1]
+		val := MEM[SP1]
 		// prepare args
 		args = make(data.Values, op)
-		copy(args, STACK[SP1+1:]) // because stack mutates
+		copy(args, MEM[SP1+1:LP]) // because stack mutates
 		// call function
 		cl, ok := val.(*closure)
 		if !ok {
@@ -339,17 +339,10 @@ opSwitch:
 		c = cl // intentional
 		ss := c.Lambda.StackSize
 		lc := c.Lambda.LocalCount
-		if len(DATA) < ss+lc {
-			goto initFrame
+		if len(MEM) < ss+lc {
+			goto initMem
 		}
-		CODE = c.Lambda.Code
-		if len(STACK) != ss {
-			STACK = DATA[0:ss]
-		}
-		if len(LOCALS) != lc {
-			LOCALS = DATA[len(DATA)-lc:]
-		}
-		goto initState
+		goto initCode
 
 	case isa.Jump:
 		PC = int(op)
@@ -357,17 +350,17 @@ opSwitch:
 
 	case isa.CondJump:
 		SP++
-		if STACK[SP].(data.Bool) {
+		if MEM[SP].(data.Bool) {
 			PC = int(op)
 			goto opSwitch
 		}
 		goto nextPC
 
 	case isa.Panic:
-		panic(errors.New(STACK[SP+1].String()))
+		panic(errors.New(MEM[SP+1].String()))
 
 	case isa.Return:
-		return STACK[SP+1]
+		return MEM[SP+1]
 
 	case isa.RetNil:
 		return data.Nil
