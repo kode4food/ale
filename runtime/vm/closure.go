@@ -24,8 +24,8 @@ func newClosure(lambda *Lambda, values data.Values) *closure {
 // Call turns closure into a Function, and serves as the virtual machine
 func (c *closure) Call(args ...data.Value) data.Value {
 	var (
-		MEM  data.Values
 		CODE isa.Instructions
+		MEM  data.Values
 		LP   int
 		SP   int
 		PC   int
@@ -212,8 +212,8 @@ opSwitch:
 
 	case isa.Mod:
 		SP++
-		SP1 := SP + 1
-		MEM[SP1] = MEM[SP1].(data.Number).Mod(
+		SP1 := &MEM[SP+1]
+		*SP1 = (*SP1).(data.Number).Mod(
 			MEM[SP].(data.Number),
 		)
 		goto nextPC
