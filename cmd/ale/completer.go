@@ -11,16 +11,17 @@ var emptyStrings []string
 
 func (r *REPL) Do(line []rune, pos int) ([][]rune, int) {
 	pfx := string(line[:pos])
-	res, _ := r.autoCompleter(pfx)
+	buf := r.buf.String() + pfx
+	res, off := r.autoComplete(buf)
 	out := make([][]rune, len(res))
 	for i, s := range res {
-		out[i] = []rune(s)
+		out[i] = []rune(s[off:] + " ")
 	}
 	return out, 0
 }
 
-func (r *REPL) autoCompleter(line string) ([]string, int) {
-	src := data.String(r.buf.String() + line)
+func (r *REPL) autoComplete(buf string) ([]string, int) {
+	src := data.String(buf)
 	seq := read.Tokens(src)
 	if l, ok := data.Last(seq); ok {
 		if l := l.(*read.Token); ok && l.Type() == read.Identifier {
@@ -32,18 +33,21 @@ func (r *REPL) autoCompleter(line string) ([]string, int) {
 }
 
 func (r *REPL) prefixedSymbols(pfx string) []string {
-	root := r.ns.Environment().GetRoot().Declared()
-	names := r.ns.Declared()
-	res := make([]string, 0, len(root)+len(names))
-	res = addPrefixed(res, pfx, root)
-	res = addPrefixed(res, pfx, names)
+	var res []string
+	root := r.ns.Environment().GetRoot()
+	current := r.ns
+	res = addPrefixed(res, pfx, root.Declared())
+	if current != root {
+		res = addPrefixed(res, pfx, current.Declared())
+	}
 	return res
 }
 
 func addPrefixed(res []string, pfx string, names data.Locals) []string {
 	for _, n := range names {
-		if strings.HasPrefix(n.String(), pfx) {
-			res = append(res, n.String()[len(pfx):])
+		str := n.String()
+		if strings.HasPrefix(str, pfx) {
+			res = append(res, str)
 		}
 	}
 	return res
