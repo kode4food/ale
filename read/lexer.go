@@ -78,8 +78,8 @@ var (
 	}
 )
 
-// Scan creates a new lexer Sequence
-func Scan(src data.String) data.Sequence {
+// Tokens creates a new Lexer Sequence of raw Tokens
+func Tokens(src data.String) data.Sequence {
 	var resolver sequence.LazyResolver
 	var line, column int
 	input := string(src)
@@ -100,15 +100,8 @@ func Scan(src data.String) data.Sequence {
 		}
 		return data.Nil, data.EmptyList, false
 	}
-
-	res := sequence.NewLazy(resolver)
-	return sequence.Filter(res, notWhitespace)
+	return sequence.NewLazy(resolver)
 }
-
-var notWhitespace = data.Applicative(func(args ...data.Value) data.Value {
-	t := args[0].(*Token)
-	return data.Bool(!t.isWhitespace())
-}, 1)
 
 func pattern(p string, s tokenizer) matchEntry {
 	return matchEntry{

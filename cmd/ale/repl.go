@@ -67,8 +67,10 @@ func NewREPL() *REPL {
 	repl.registerBuiltIns()
 
 	rl, err := readline.NewEx(&readline.Config{
-		HistoryFile: getHistoryFile(),
-		Painter:     console.Painter(),
+		HistoryFile:            getHistoryFile(),
+		Painter:                console.Painter(),
+		DisableAutoSaveHistory: true,
+		AutoComplete:           repl,
 	})
 
 	if err != nil {
@@ -114,6 +116,7 @@ func (r *REPL) Run() {
 			continue
 		}
 
+		r.saveHistory()
 		r.reset()
 	}
 	shutdown()
@@ -155,14 +158,20 @@ func (r *REPL) evalBuffer() (completed bool) {
 		}
 	}()
 
-	r.evalBlock(r.ns, data.String(r.buf.String()))
+	seq := r.scanBuffer()
+	r.evalBlock(r.ns, seq)
 	return true
 }
 
-func (r *REPL) evalBlock(ns env.Namespace, src data.String) data.Values {
-	s := sequence.ToVector(read.FromString(src))
-	res := make(data.Values, len(s))
-	for _, f := range s {
+func (r *REPL) scanBuffer() data.Sequence {
+	src := data.String(r.buf.String())
+	return read.FromString(src)
+}
+
+func (r *REPL) evalBlock(ns env.Namespace, seq data.Sequence) data.Values {
+	v := sequence.ToVector(seq)
+	res := make(data.Values, len(v))
+	for _, f := range v {
 		r.evalForm(ns, f)
 	}
 	return res
@@ -192,6 +201,12 @@ func (r *REPL) outputError(err error) {
 	msg := err.Error()
 	res := fmt.Sprintf(bad, r.nsSpace(), r.idx, msg)
 	fmt.Println(res)
+}
+
+func (r *REPL) saveHistory() {
+	seq := r.scanBuffer()
+	hist := string(sequence.ToStr(seq))
+	_ = r.rl.SaveHistory(hist)
 }
 
 func (*sentinel) Equal(data.Value) bool {

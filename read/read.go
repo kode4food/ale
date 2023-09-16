@@ -25,3 +25,13 @@ func FromScanner(lexer data.Sequence) data.Sequence {
 
 	return sequence.NewLazy(res)
 }
+
+// Scan creates a filtered Lexer Sequence for the Read function
+func Scan(src data.String) data.Sequence {
+	return sequence.Filter(Tokens(src), noWhitespace)
+}
+
+var noWhitespace = data.Applicative(func(args ...data.Value) data.Value {
+	t := args[0].(*Token)
+	return data.Bool(!t.isWhitespace())
+})
