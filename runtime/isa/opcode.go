@@ -4,9 +4,14 @@ package isa
 type Opcode Word
 
 const (
-	OpcodeMask  = 0x3F      // 6 bit mask
-	OpcodeSize  = 6         // number of bits to shift
-	OperandMask = 0x3FFFFFF // 26 bit mask
+	// OpcodeSize are the number of bits required for an Opcode value
+	OpcodeSize = 6
+
+	// OpcodeMask masks the bits for encoding an Opcode into an Instruction
+	OpcodeMask = Opcode(1<<OpcodeSize - 1)
+
+	// OperandMask masks the bits for encoding an Operand into an Instruction
+	OperandMask = ^Operand(OpcodeMask) >> OpcodeSize
 
 	// Label is an internal Opcode
 	Label Opcode = Opcode(OpcodeMask)

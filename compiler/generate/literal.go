@@ -33,10 +33,10 @@ func Number(e encoder.Encoder, n data.Value) {
 		case n == 0:
 			e.Emit(isa.Zero)
 			return
-		case n >= 0 && n <= isa.OperandMask:
+		case n >= 0 && isa.Operand(n) <= isa.OperandMask:
 			e.Emit(isa.PosInt, isa.Operand(n))
 			return
-		case n < 0 && -n <= isa.OperandMask:
+		case n < 0 && isa.Operand(-n) <= isa.OperandMask:
 			e.Emit(isa.NegInt, isa.Operand(-n))
 			return
 		}

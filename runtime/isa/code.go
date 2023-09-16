@@ -2,7 +2,6 @@ package isa
 
 import (
 	"fmt"
-	"math"
 	"strings"
 
 	"github.com/kode4food/ale/data"
@@ -10,7 +9,7 @@ import (
 
 type (
 	// Word represents the atomic unit of the ISA's code stream
-	Word uint32
+	Word uintptr
 
 	// Instruction represents a single instruction and its operand
 	Instruction Word
@@ -21,9 +20,6 @@ type (
 	// Instructions represent a set of Instructions
 	Instructions []Instruction
 )
-
-// MaxWord is the highest value of an Instruction Word
-const MaxWord = math.MaxUint32
 
 // Error messages
 const (
@@ -56,7 +52,7 @@ func (i Instructions) String() string {
 }
 
 func (i Instruction) Split() (Opcode, Operand) {
-	return Opcode(i & OpcodeMask), Operand(i >> OpcodeSize & OperandMask)
+	return Opcode(i) & OpcodeMask, Operand(i) >> OpcodeSize & OperandMask
 }
 
 // Equal compares this Instruction to another for equality
@@ -77,5 +73,5 @@ func (i Instruction) String() string {
 
 // IsValidOperand returns true if the int falls within the operand range
 func IsValidOperand(i int) bool {
-	return i >= 0 && i <= OperandMask
+	return i >= 0 && Operand(i) <= OperandMask
 }

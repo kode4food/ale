@@ -182,7 +182,7 @@ func TestAsmOperandSizeError(t *testing.T) {
 	as := assert.New(t)
 	as.EvalTo(
 		fmt.Sprintf("(asm* pos-int %d)", isa.OperandMask),
-		I(isa.OperandMask),
+		I(int64(isa.OperandMask)),
 	)
 
 	defer as.ExpectPanic(
