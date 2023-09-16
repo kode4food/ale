@@ -39,7 +39,7 @@ func TestGenerated(t *testing.T) {
 	as.False(builtin.IsQualified.Call(s1))
 	as.Contains("x-anon-gensym-", s1)
 
-	s2 := builtin.GenSym.Call(S("blah"))
+	s2 := builtin.GenSym.Call(LS("blah"))
 	as.Contains("x-blah-gensym-", s2)
 }
 

@@ -18,6 +18,6 @@ var GenSym = data.Applicative(func(args ...data.Value) data.Value {
 	if len(args) == 0 {
 		return data.NewGeneratedSymbol(anonName)
 	}
-	s := args[0].(data.String)
-	return data.NewGeneratedSymbol(data.Local(s))
+	s := args[0].(data.Local)
+	return data.NewGeneratedSymbol(s)
 }, 0, 1)
