@@ -8,14 +8,13 @@ import (
 )
 
 type (
-	// Word represents the atomic unit of the ISA's code stream
+	// Word represents the atomic unit of the ISA's Instruction stream. We've
+	// chosen a size that best aligns to the host architecture's standard word
+	// size for alignment reasons
 	Word uintptr
 
 	// Instruction represents a single instruction and its operand
 	Instruction Word
-
-	// Operand parameterizes an Instruction
-	Operand Word
 
 	// Instructions represent a set of Instructions
 	Instructions []Instruction

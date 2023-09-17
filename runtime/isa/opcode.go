@@ -1,7 +1,12 @@
 package isa
 
-// Opcode represents an Instruction's operation
-type Opcode Word
+type (
+	// Opcode represents an Instruction's operation
+	Opcode Word
+
+	// Operand allows an Instruction to be parameterized
+	Operand Word
+)
 
 const (
 	// OpcodeSize are the number of bits required for an Opcode value
@@ -14,7 +19,7 @@ const (
 	OperandMask = ^Operand(OpcodeMask) >> OpcodeSize
 
 	// Label is an internal Opcode
-	Label Opcode = Opcode(OpcodeMask)
+	Label = OpcodeMask
 )
 
 //go:generate go run golang.org/x/tools/cmd/stringer -type=Opcode

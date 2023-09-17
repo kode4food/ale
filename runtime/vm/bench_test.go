@@ -87,6 +87,7 @@ func BenchmarkTailCalls(b *testing.B) {
 	env := bootstrap.DevNullEnvironment()
 	ns := env.GetAnonymous()
 	_ = eval.String(ns, `
+		(define (println . body)) ; bypass the OS
 		(define (bottles n)
 		  (str
 		    (cond [ (= n 0) "No more bottles"]
@@ -104,6 +105,6 @@ func BenchmarkTailCalls(b *testing.B) {
 	entry, _ := ns.Resolve("beer")
 	beer := entry.Value().(data.Function)
 	for n := 0; n < b.N; n++ {
-		_ = beer.Call(data.Integer(9999))
+		_ = beer.Call(data.Integer(99))
 	}
 }
