@@ -17,7 +17,6 @@ func MakeWriter(w io.Writer, o stream.OutputFunc) data.Object {
 	wrapped := stream.NewWriter(w, o)
 
 	pairs := data.Pairs{
-		data.NewCons(stream.WriterKey, wrapped),
 		data.NewCons(stream.WriteKey, bindWriter(wrapped)),
 	}
 

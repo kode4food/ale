@@ -124,10 +124,6 @@ func TestRestFunctionsEval(t *testing.T) {
 }
 
 func TestTailCallEval(t *testing.T) {
-	if testing.Short() {
-		t.Skip("skipping tail call tests")
-		return
-	}
 	as := assert.New(t)
 	as.EvalTo(`
 		(define-lambda to-zero (x)

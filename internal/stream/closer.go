@@ -7,7 +7,5 @@ type Closer interface {
 	Close()
 }
 
-const (
-	// CloseKey is the key used to close a file
-	CloseKey = data.Keyword("close")
-)
+// CloseKey is the key used to close a file
+const CloseKey = data.Keyword("close")

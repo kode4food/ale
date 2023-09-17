@@ -33,7 +33,6 @@ func testOutput(t *testing.T, src, expected string) {
 	e := env.NewEnvironment()
 	ns := e.GetRoot()
 	ns.Declare(stdoutName).Bind(O(
-		C(stream.WriterKey, w),
 		C(stream.WriteKey, bindWrite(w)),
 	))
 	bootstrap.Into(e)

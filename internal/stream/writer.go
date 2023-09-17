@@ -29,13 +29,8 @@ type (
 	}
 )
 
-const (
-	// WriterKey is the key used to wrap a Writer
-	WriterKey = data.Keyword("writer")
-
-	// WriteKey is key used to write to a Writer
-	WriteKey = data.Keyword("write")
-)
+// WriteKey is key used to write to a Writer
+const WriteKey = data.Keyword("write")
 
 var writerType = types.Basic("writer")
 

@@ -2,7 +2,6 @@ package docstring_test
 
 import (
 	"fmt"
-	"regexp"
 	"strings"
 	"testing"
 
@@ -42,9 +41,6 @@ func TestDocumentedBuiltinsExist(t *testing.T) {
 func TestBuiltinsHaveDocs(t *testing.T) {
 	t.Skip("initially to drive back-filling of documentation")
 
-	// starts with ^ or ends (but does not start) with *
-	ignorable := regexp.MustCompile(`^(\^.*|[^*]+\*)$`)
-
 	as := assert.New(t)
 	ns := assert.GetTestEnvironment().GetRoot()
 
@@ -55,9 +51,6 @@ func TestBuiltinsHaveDocs(t *testing.T) {
 	for _, name := range d {
 		_, err := docstring.Get(string(name))
 		if err != nil {
-			if ignorable.MatchString(string(name)) {
-				continue
-			}
 			missing = append(missing, name)
 		}
 	}
