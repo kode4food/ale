@@ -168,13 +168,11 @@ func (r *REPL) scanBuffer() data.Sequence {
 	return read.FromString(src)
 }
 
-func (r *REPL) evalBlock(ns env.Namespace, seq data.Sequence) data.Values {
-	v := sequence.ToVector(seq)
-	res := make(data.Values, len(v))
+func (r *REPL) evalBlock(ns env.Namespace, seq data.Sequence) {
+	v := sequence.ToVector(seq) // will trigger early reader error
 	for _, f := range v {
 		r.evalForm(ns, f)
 	}
-	return res
 }
 
 func (r *REPL) evalForm(ns env.Namespace, f data.Value) {
@@ -204,6 +202,7 @@ func (r *REPL) outputError(err error) {
 }
 
 func (r *REPL) saveHistory() {
+	defer func() { recover() }()
 	seq := r.scanBuffer()
 	hist := string(sequence.ToStr(seq))
 	_ = r.rl.SaveHistory(hist)

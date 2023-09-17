@@ -1,6 +1,7 @@
 package data_test
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/kode4food/ale/data"
@@ -39,20 +40,33 @@ func TestQualifiedSymbolEquality(t *testing.T) {
 func TestSymbolParsing(t *testing.T) {
 	as := assert.New(t)
 
-	s1 := data.ParseSymbol("domain/name1").(data.Qualified)
+	s1, err := data.ParseSymbol("domain/name1")
+	as.Nil(err)
+	as.String("domain", s1.(data.Qualified).Domain())
+	as.String("name1", s1.(data.Qualified).Name())
+
+	s1, err = data.ParseSymbol("domain/")
+	as.Nil(s1)
+	as.EqualError(err, fmt.Sprintf(data.ErrInvalidSymbol, "domain/"))
+}
+
+func TestMustSymbolParsing(t *testing.T) {
+	as := assert.New(t)
+
+	s1 := data.MustParseSymbol("domain/name1").(data.Qualified)
 	as.String("domain", s1.Domain())
 	as.String("name1", s1.Name())
 	as.String("domain/name1", s1)
 
-	s2 := data.ParseSymbol("/name2")
+	s2 := data.MustParseSymbol("/name2")
 	if _, ok := s2.(data.Qualified); ok {
 		as.Fail("symbol should not be qualified")
 	}
 
-	s3 := data.ParseSymbol("name3")
+	s3 := data.MustParseSymbol("name3")
 	as.String("name3", s3.Name())
 
-	s4 := data.ParseSymbol("one/too/").(data.Qualified)
+	s4 := data.MustParseSymbol("one/too/").(data.Qualified)
 	as.String("one", s4.Domain())
 	as.String("too/", s4.Name())
 }

@@ -94,7 +94,7 @@ func (r *reader) value(t *Token) data.Value {
 	case ObjectStart:
 		return r.object()
 	case Identifier:
-		return readIdentifier(t)
+		return r.identifier()
 	case ListEnd:
 		panic(r.error(ErrUnmatchedListEnd))
 	case VectorEnd:
@@ -137,15 +137,6 @@ func (r *reader) list() data.Value {
 		}
 	}
 	panic(r.error(ErrListNotClosed))
-}
-
-func makeDottedList(v ...data.Value) data.Value {
-	l := len(v)
-	var res = data.NewCons(v[l-2], v[l-1])
-	for i := l - 3; i >= 0; i-- {
-		res = data.NewCons(v[i], res)
-	}
-	return res
 }
 
 func (r *reader) vector() data.Value {
@@ -193,8 +184,8 @@ func (r *reader) errorf(text string, a ...any) error {
 	return r.maybeWrap(fmt.Errorf(text, a...))
 }
 
-func readIdentifier(t *Token) data.Value {
-	n := t.Value().(data.String)
+func (r *reader) identifier() data.Value {
+	n := r.token.Value().(data.String)
 	if v, ok := specialNames[n]; ok {
 		return v
 	}
@@ -203,5 +194,19 @@ func readIdentifier(t *Token) data.Value {
 	if keywordIdentifier.MatchString(s) {
 		return data.Keyword(n[1:])
 	}
-	return data.ParseSymbol(n)
+
+	sym, err := data.ParseSymbol(n)
+	if err != nil {
+		panic(r.maybeWrap(err))
+	}
+	return sym
+}
+
+func makeDottedList(v ...data.Value) data.Value {
+	l := len(v)
+	var res = data.NewCons(v[l-2], v[l-1])
+	for i := l - 3; i >= 0; i-- {
+		res = data.NewCons(v[i], res)
+	}
+	return res
 }

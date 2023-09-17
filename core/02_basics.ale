@@ -103,7 +103,7 @@
     (assert-args
       (or (is-local value)
           (is-cons-or-list value))
-      (str "invalid define: " body))
+      (str "invalid define: " value))
     (if (is-local value)
       `(define* ,@body)
       `(define-lambda ,@body))))

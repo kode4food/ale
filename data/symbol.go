@@ -61,6 +61,11 @@ const (
 	genSymOverflow = uint8(len(base64Digits))
 )
 
+// Error messages
+const (
+	ErrInvalidSymbol = "invalid symbol: %s"
+)
+
 var gen = NewSymbolGenerator()
 
 // NewGeneratedSymbol creates a generated Symbol
@@ -69,14 +74,26 @@ func NewGeneratedSymbol(name Local) Symbol {
 }
 
 // ParseSymbol parses a qualified Name and produces a Symbol
-func ParseSymbol(s String) Symbol {
+func ParseSymbol(s String) (Symbol, error) {
 	n := string(s)
 	if i := strings.IndexRune(n, DomainSeparator); i > 0 {
 		name := Local(n[i+1:])
 		domain := Local(n[:i])
-		return NewQualifiedSymbol(name, domain)
+		if len(domain) == 0 || len(name) == 0 {
+			return nil, fmt.Errorf(ErrInvalidSymbol, n)
+		}
+		return NewQualifiedSymbol(name, domain), nil
 	}
-	return Local(s)
+	return Local(s), nil
+}
+
+// MustParseSymbol parses a qualified Name and produces a Symbol or explodes
+func MustParseSymbol(s String) Symbol {
+	sym, err := ParseSymbol(s)
+	if err != nil {
+		panic(err)
+	}
+	return sym
 }
 
 // NewSymbolGenerator creates a new symbol generator. In general, it is safe to

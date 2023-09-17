@@ -10,7 +10,7 @@ var Sym = data.Applicative(func(args ...data.Value) data.Value {
 		return s
 	}
 	s := args[0].(data.String)
-	return data.ParseSymbol(s)
+	return data.MustParseSymbol(s)
 }, 1)
 
 // GenSym generates a unique symbol
