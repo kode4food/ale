@@ -33,12 +33,43 @@ func (r *REPL) autoComplete(buf string) ([]string, int) {
 }
 
 func (r *REPL) prefixedSymbols(pfx string) []string {
-	var res []string
+	s, err := data.ParseSymbol(data.String(pfx))
+	if err != nil {
+		return emptyStrings
+	}
+	switch s := s.(type) {
+	case data.Local:
+		return r.prefixedLocals(s)
+	case data.Qualified:
+		return r.prefixedQualified(s)
+	}
+	return emptyStrings
+}
+
+func (r *REPL) prefixedLocals(s data.Local) []string {
+	name := s.String()
 	root := r.ns.Environment().GetRoot()
 	current := r.ns
-	res = addPrefixed(res, pfx, root.Declared())
+
+	var res []string
+	res = addPrefixed(res, name, root.Declared())
 	if current != root {
-		res = addPrefixed(res, pfx, current.Declared())
+		res = addPrefixed(res, name, current.Declared())
+	}
+	return res
+}
+
+func (r *REPL) prefixedQualified(s data.Qualified) []string {
+	domain := s.Domain()
+	name := s.Name().String()
+	ns := r.ns.Environment().GetQualified(s.Domain())
+	var res []string
+	for _, n := range ns.Declared() {
+		str := n.String()
+		if strings.HasPrefix(str, name) {
+			qs := data.NewQualifiedSymbol(data.Local(str), domain)
+			res = append(res, qs.String())
+		}
 	}
 	return res
 }
