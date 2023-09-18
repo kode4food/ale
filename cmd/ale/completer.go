@@ -15,7 +15,7 @@ func (r *REPL) Do(line []rune, pos int) ([][]rune, int) {
 	res, off := r.autoComplete(buf)
 	out := make([][]rune, len(res))
 	for i, s := range res {
-		out[i] = []rune(s[off:] + " ")
+		out[i] = []rune(s[off:])
 	}
 	return out, 0
 }
@@ -52,9 +52,21 @@ func (r *REPL) prefixedLocals(s data.Local) []string {
 	current := r.ns
 
 	var res []string
+	res = r.prefixedDomains(res, s)
 	res = addPrefixed(res, name, root.Declared())
 	if current != root {
 		res = addPrefixed(res, name, current.Declared())
+	}
+	return res
+}
+
+func (r *REPL) prefixedDomains(res []string, s data.Local) []string {
+	name := s.String()
+	for _, d := range r.ns.Environment().Domains() {
+		domain := d.String()
+		if strings.HasPrefix(domain, name) {
+			res = append(res, domain+"/")
+		}
 	}
 	return res
 }
@@ -68,7 +80,7 @@ func (r *REPL) prefixedQualified(s data.Qualified) []string {
 		str := n.String()
 		if strings.HasPrefix(str, name) {
 			qs := data.NewQualifiedSymbol(data.Local(str), domain)
-			res = append(res, qs.String())
+			res = append(res, qs.String()+" ")
 		}
 	}
 	return res
@@ -78,7 +90,7 @@ func addPrefixed(res []string, pfx string, names data.Locals) []string {
 	for _, n := range names {
 		str := n.String()
 		if strings.HasPrefix(str, pfx) {
-			res = append(res, str)
+			res = append(res, str+" ")
 		}
 	}
 	return res
