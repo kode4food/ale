@@ -5,6 +5,7 @@ import (
 	"regexp"
 
 	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/internal/lang"
 	"github.com/kode4food/ale/internal/sequence"
 )
 
@@ -25,15 +26,6 @@ const (
 	ErrUnexpectedCharacter = "unexpected character: %s"
 )
 
-const (
-	structure  = `(){}\[\]\s\"`
-	prefixChar = "`,~@"
-	idStart    = "[^" + structure + prefixChar + "]"
-	idCont     = "[^" + structure + "]"
-	id         = idStart + idCont + "*"
-	numTail    = idStart + "*"
-)
-
 var (
 	escaped    = regexp.MustCompile(`\\\\|\\"|\\[^\\"]`)
 	escapedMap = map[string]string{
@@ -45,36 +37,35 @@ var (
 		`\r`: "\r",
 	}
 
+	dotRegex = regexp.MustCompile(`^` + lang.Dot + `$`)
+
 	matchers = matchEntries{
 		pattern(`$`, endState(endOfFile)),
-		pattern(`;[^\n]*([\n]|$)`, tokenState(Comment)),
-		pattern(`(\r\n|[\n\r])`, tokenState(NewLine)),
-		pattern(`[\t\f ]+`, tokenState(Whitespace)),
-		pattern(`\(`, tokenState(ListStart)),
-		pattern(`\[`, tokenState(VectorStart)),
-		pattern(`{`, tokenState(ObjectStart)),
-		pattern(`\)`, tokenState(ListEnd)),
-		pattern(`]`, tokenState(VectorEnd)),
-		pattern(`}`, tokenState(ObjectEnd)),
-		pattern(`'`, tokenState(QuoteMarker)),
-		pattern("`", tokenState(SyntaxMarker)),
-		pattern(`,@`, tokenState(SpliceMarker)),
-		pattern(`,`, tokenState(UnquoteMarker)),
-		pattern(`~`, tokenState(PatternMarker)),
+		pattern(lang.Comment, tokenState(Comment)),
+		pattern(lang.NewLine, tokenState(NewLine)),
+		pattern(lang.Whitespace, tokenState(Whitespace)),
+		pattern(lang.ListStart, tokenState(ListStart)),
+		pattern(lang.VectorStart, tokenState(VectorStart)),
+		pattern(lang.ObjectStart, tokenState(ObjectStart)),
+		pattern(lang.ListEnd, tokenState(ListEnd)),
+		pattern(lang.VectorEnd, tokenState(VectorEnd)),
+		pattern(lang.ObjectEnd, tokenState(ObjectEnd)),
+		pattern(lang.Quote, tokenState(QuoteMarker)),
+		pattern(lang.SyntaxQuote, tokenState(SyntaxMarker)),
+		pattern(lang.Splice, tokenState(SpliceMarker)),
+		pattern(lang.Unquote, tokenState(UnquoteMarker)),
+		pattern(lang.Pattern, tokenState(PatternMarker)),
 
-		pattern(`(")(?P<s>(\\\\|\\"|\\[^\\"]|[^"\\])*)("?)`, stringState),
+		pattern(lang.String, stringState),
 
-		pattern(`[+-]?(0|[1-9]\d*)/[1-9]\d*`+numTail, ratioState),
-		pattern(`[+-]?(0|[1-9]\d*)\.\d+([eE][+-]?\d+)?`+numTail, floatState),
-		pattern(`[+-]?(0|[1-9]\d*)(\.\d+)?[eE][+-]?\d+`+numTail, floatState),
-		pattern(`[+-]?0[bB]\d+`+numTail, integerState),
-		pattern(`[+-]?0[xX][\dA-Fa-f]+`+numTail, integerState),
-		pattern(`[+-]?0\d*`+numTail, integerState),
-		pattern(`[+-]?[1-9]\d*`+numTail, integerState),
+		pattern(lang.Ratio, ratioState),
+		pattern(lang.Float, floatState),
+		pattern(lang.Integer, integerState),
 
-		pattern(id, identifierState),
+		pattern(lang.Keyword, tokenState(Keyword)),
+		pattern(lang.ID, identifierState),
 
-		pattern(`.`, errorState),
+		pattern(lang.AnyChar, errorState),
 	}
 )
 
@@ -171,7 +162,7 @@ func tokenizeNumber(res data.Number, err error) *Token {
 
 func identifierState(sm []string) *Token {
 	s := data.String(sm[0])
-	if s == "." {
+	if dotRegex.MatchString(string(s)) {
 		return MakeToken(Dot, s)
 	}
 	return MakeToken(Identifier, s)

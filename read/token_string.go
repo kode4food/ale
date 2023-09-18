@@ -9,30 +9,31 @@ func _() {
 	// Re-run the stringer command to generate them again.
 	var x [1]struct{}
 	_ = x[Error-0]
-	_ = x[Identifier-1]
-	_ = x[Dot-2]
-	_ = x[String-3]
-	_ = x[Number-4]
-	_ = x[ListStart-5]
-	_ = x[ListEnd-6]
-	_ = x[VectorStart-7]
-	_ = x[VectorEnd-8]
-	_ = x[ObjectStart-9]
-	_ = x[ObjectEnd-10]
-	_ = x[QuoteMarker-11]
-	_ = x[SyntaxMarker-12]
-	_ = x[UnquoteMarker-13]
-	_ = x[SpliceMarker-14]
-	_ = x[PatternMarker-15]
-	_ = x[Whitespace-16]
-	_ = x[NewLine-17]
-	_ = x[Comment-18]
-	_ = x[endOfFile-19]
+	_ = x[Keyword-1]
+	_ = x[Identifier-2]
+	_ = x[Dot-3]
+	_ = x[String-4]
+	_ = x[Number-5]
+	_ = x[ListStart-6]
+	_ = x[ListEnd-7]
+	_ = x[VectorStart-8]
+	_ = x[VectorEnd-9]
+	_ = x[ObjectStart-10]
+	_ = x[ObjectEnd-11]
+	_ = x[QuoteMarker-12]
+	_ = x[SyntaxMarker-13]
+	_ = x[UnquoteMarker-14]
+	_ = x[SpliceMarker-15]
+	_ = x[PatternMarker-16]
+	_ = x[Whitespace-17]
+	_ = x[NewLine-18]
+	_ = x[Comment-19]
+	_ = x[endOfFile-20]
 }
 
-const _TokenType_name = "ErrorIdentifierDotStringNumberListStartListEndVectorStartVectorEndObjectStartObjectEndQuoteMarkerSyntaxMarkerUnquoteMarkerSpliceMarkerPatternMarkerWhitespaceNewLineCommentendOfFile"
+const _TokenType_name = "ErrorKeywordIdentifierDotStringNumberListStartListEndVectorStartVectorEndObjectStartObjectEndQuoteMarkerSyntaxMarkerUnquoteMarkerSpliceMarkerPatternMarkerWhitespaceNewLineCommentendOfFile"
 
-var _TokenType_index = [...]uint8{0, 5, 15, 18, 24, 30, 39, 46, 57, 66, 77, 86, 97, 109, 122, 134, 147, 157, 164, 171, 180}
+var _TokenType_index = [...]uint8{0, 5, 12, 22, 25, 31, 37, 46, 53, 64, 73, 84, 93, 104, 116, 129, 141, 154, 164, 171, 178, 187}
 
 func (i TokenType) String() string {
 	if i < 0 || i >= TokenType(len(_TokenType_index)-1) {

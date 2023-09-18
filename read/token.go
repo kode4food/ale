@@ -22,6 +22,7 @@ type (
 //go:generate go run golang.org/x/tools/cmd/stringer -output token_string.go -type TokenType
 const (
 	Error TokenType = iota
+	Keyword
 	Identifier
 	Dot
 	String

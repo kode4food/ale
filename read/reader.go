@@ -3,7 +3,6 @@ package read
 import (
 	"errors"
 	"fmt"
-	"regexp"
 
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/env"
@@ -30,8 +29,6 @@ const (
 )
 
 var (
-	keywordIdentifier = regexp.MustCompile(`^:[^(){}\[\]\s,]+`)
-
 	quoteSym    = env.RootSymbol("quote")
 	syntaxSym   = env.RootSymbol("syntax-quote")
 	unquoteSym  = env.RootSymbol("unquote")
@@ -93,6 +90,8 @@ func (r *reader) value(t *Token) data.Value {
 		return r.vector()
 	case ObjectStart:
 		return r.object()
+	case Keyword:
+		return r.keyword()
 	case Identifier:
 		return r.identifier()
 	case ListEnd:
@@ -184,15 +183,15 @@ func (r *reader) errorf(text string, a ...any) error {
 	return r.maybeWrap(fmt.Errorf(text, a...))
 }
 
+func (r *reader) keyword() data.Value {
+	n := r.token.Value().(data.String)
+	return data.Keyword(n[1:])
+}
+
 func (r *reader) identifier() data.Value {
 	n := r.token.Value().(data.String)
 	if v, ok := specialNames[n]; ok {
 		return v
-	}
-
-	s := string(n)
-	if keywordIdentifier.MatchString(s) {
-		return data.Keyword(n[1:])
 	}
 
 	sym, err := data.ParseSymbol(n)

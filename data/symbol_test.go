@@ -45,9 +45,13 @@ func TestSymbolParsing(t *testing.T) {
 	as.String("domain", s1.(data.Qualified).Domain())
 	as.String("name1", s1.(data.Qualified).Name())
 
+	s1, err = data.ParseSymbol("some space")
+	as.Nil(s1)
+	as.EqualError(err, fmt.Sprintf(data.ErrInvalidSymbol, "some space"))
+
 	s1, err = data.ParseSymbol("domain/")
 	as.Nil(s1)
-	as.EqualError(err, fmt.Sprintf(data.ErrInvalidSymbol, "domain/"))
+	as.EqualError(err, fmt.Sprintf(data.ErrInvalidQualifiedSymbol, "domain/"))
 }
 
 func TestMustSymbolParsing(t *testing.T) {
