@@ -1,7 +1,6 @@
 package read_test
 
 import (
-	"errors"
 	"fmt"
 	"testing"
 
@@ -112,10 +111,10 @@ func TestReadNestedList(t *testing.T) {
 	as.False(ok)
 }
 
-func testReaderError(t *testing.T, src string, err error) {
+func testReaderError(t *testing.T, src, err string, args ...any) {
 	as := assert.New(t)
 
-	defer as.ExpectPanic(err.Error())
+	defer as.ExpectPanic(fmt.Errorf(err, args...))
 
 	l := read.Scan(S(src))
 	tr := read.FromScanner(l)
@@ -123,22 +122,28 @@ func testReaderError(t *testing.T, src string, err error) {
 }
 
 func TestReaderErrors(t *testing.T) {
-	testReaderError(t, "(99 100 ", errors.New(read.ErrListNotClosed))
-	testReaderError(t, "[99 100 ", errors.New(read.ErrVectorNotClosed))
-	testReaderError(t, "{:key 99", errors.New(read.ErrMapNotClosed))
+	testReaderError(t, "(99 100 ", read.ErrListNotClosed)
+	testReaderError(t, "[99 100 ", read.ErrVectorNotClosed)
+	testReaderError(t, "{:key 99", read.ErrMapNotClosed)
 
-	testReaderError(t, "99 100)", errors.New(read.ErrUnmatchedListEnd))
-	testReaderError(t, "99 100]", errors.New(read.ErrUnmatchedVectorEnd))
-	testReaderError(t, "99}", errors.New(read.ErrUnmatchedMapEnd))
-	testReaderError(t, "{99}", errors.New(data.ErrMapNotPaired))
+	testReaderError(t, "99 100)", read.ErrUnmatchedListEnd)
+	testReaderError(t, "99 100]", read.ErrUnmatchedVectorEnd)
+	testReaderError(t, "99}", read.ErrUnmatchedMapEnd)
+	testReaderError(t, "{99}", data.ErrMapNotPaired)
 
-	testReaderError(t, "(1 2 . 3 4)", errors.New(read.ErrInvalidListSyntax))
-	testReaderError(t, "(.)", errors.New(read.ErrInvalidListSyntax))
-	testReaderError(t, ".", errors.New(read.ErrUnexpectedDot))
+	testReaderError(t, "(1 2 . 3 4)", read.ErrInvalidListSyntax)
+	testReaderError(t, "(.)", read.ErrInvalidListSyntax)
+	testReaderError(t, ".", read.ErrUnexpectedDot)
 
-	testReaderError(t, "(", errors.New(read.ErrListNotClosed))
-	testReaderError(t, "'", fmt.Errorf(read.ErrPrefixedNotPaired, "ale/quote"))
-	testReaderError(t, ",@", fmt.Errorf(read.ErrPrefixedNotPaired, "ale/unquote-splicing"))
-	testReaderError(t, ",", fmt.Errorf(read.ErrPrefixedNotPaired, "ale/unquote"))
-	testReaderError(t, "~", fmt.Errorf(read.ErrPrefixedNotPaired, "ale/pattern"))
+	testReaderError(t, "(", read.ErrListNotClosed)
+	testReaderError(t, "'", read.ErrPrefixedNotPaired, "ale/quote")
+	testReaderError(t, ",@", read.ErrPrefixedNotPaired, "ale/unquote-splicing")
+	testReaderError(t, ",", read.ErrPrefixedNotPaired, "ale/unquote")
+	testReaderError(t, "~", read.ErrPrefixedNotPaired, "ale/pattern")
+
+	testReaderError(t, "//", data.ErrInvalidSymbol, "//")
+	testReaderError(t, "/bad", data.ErrInvalidSymbol, "/bad")
+	testReaderError(t, "bad/", data.ErrInvalidSymbol, "bad/")
+	testReaderError(t, "bad///", data.ErrInvalidSymbol, "bad///")
+	testReaderError(t, "ale/er/ror", data.ErrInvalidSymbol, "ale/er/ror")
 }
