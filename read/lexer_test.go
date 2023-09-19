@@ -110,10 +110,14 @@ func TestComments(t *testing.T) {
 }
 
 func TestIdentifiers(t *testing.T) {
-	l := read.Scan(`hello th,@re`)
+	l := read.Scan(`hello th,@re ale/test / ale// /ale/er/ror`)
 	assertTokenSequence(t, l, []*read.Token{
 		T(read.Identifier, S("hello")),
 		T(read.Identifier, S("th,@re")),
+		T(read.Identifier, S("ale/test")),
+		T(read.Identifier, S("/")),
+		T(read.Identifier, S("ale//")),
+		T(read.Identifier, S("/ale/er/ror")),
 	})
 }
 

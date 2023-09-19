@@ -65,14 +65,14 @@ const (
 
 // Error messages
 const (
-	ErrInvalidSymbol          = "invalid symbol: %s"
-	ErrInvalidQualifiedSymbol = "invalid qualified symbol: %s"
+	ErrInvalidSymbol = "invalid symbol: %s"
 )
 
 var (
 	gen = NewSymbolGenerator()
 
-	symbolRegex = regexp.MustCompile("^" + lang.ID + "$")
+	qualifiedRegex = regexp.MustCompile("^" + lang.Qualified + "$")
+	localRegex     = regexp.MustCompile("^" + lang.Local + "$")
 )
 
 // NewGeneratedSymbol creates a generated Symbol
@@ -83,18 +83,17 @@ func NewGeneratedSymbol(name Local) Symbol {
 // ParseSymbol parses a qualified Name and produces a Symbol
 func ParseSymbol(s String) (Symbol, error) {
 	n := string(s)
-	if !symbolRegex.MatchString(n) {
-		return nil, fmt.Errorf(ErrInvalidSymbol, n)
-	}
-	if i := strings.IndexRune(n, DomainSeparator); i > 0 {
+	if qualifiedRegex.MatchString(n) {
+		i := strings.IndexRune(n, DomainSeparator)
 		name := Local(n[i+1:])
 		domain := Local(n[:i])
-		if len(domain) == 0 || len(name) == 0 {
-			return nil, fmt.Errorf(ErrInvalidQualifiedSymbol, n)
-		}
-		return NewQualifiedSymbol(name, domain), nil
+		res := NewQualifiedSymbol(name, domain)
+		return res, nil
 	}
-	return Local(s), nil
+	if localRegex.MatchString(n) {
+		return Local(s), nil
+	}
+	return nil, fmt.Errorf(ErrInvalidSymbol, n)
 }
 
 // MustParseSymbol parses a qualified Name and produces a Symbol or explodes

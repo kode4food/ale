@@ -3,13 +3,17 @@ package lang
 const (
 	structure    = `(){}\[\]\s\"`
 	prefixChar   = "`,~@"
-	nonStructure = `[^` + structure + `]`
-	idStart      = `[^` + structure + prefixChar + `]`
-	idCont       = nonStructure + `*`
-	numTail      = idStart + `*`
+	structPfx    = structure + prefixChar
+	notStruct    = `[^` + structure + `]`
+	notStructPfx = `[^` + structPfx + `]`
 
-	Keyword = `:` + nonStructure + `+`
-	ID      = idStart + idCont
+	Keyword    = `:` + notStruct + `+`
+	Identifier = notStructPfx + notStruct + `*`
+
+	localStart = `[^` + structPfx + `/]`
+	localCont  = `[^` + structure + `/]*`
+	Local      = `(/|(` + localStart + localCont + `))`
+	Qualified  = `(` + localStart + localCont + `/` + Local + `)`
 
 	Comment     = `;[^\n]*([\n]|$)`
 	NewLine     = `(\r\n|[\n\r])`
@@ -28,6 +32,8 @@ const (
 	Dot         = `\.`
 
 	String = `(")(?P<s>(\\\\|\\"|\\[^\\"]|[^"\\])*)("?)`
+
+	numTail = localStart + `*`
 
 	Ratio = `[+-]?(0|[1-9]\d*)/[1-9]\d*` + numTail
 

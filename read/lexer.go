@@ -63,7 +63,7 @@ var (
 		pattern(lang.Integer, integerState),
 
 		pattern(lang.Keyword, tokenState(Keyword)),
-		pattern(lang.ID, identifierState),
+		pattern(lang.Identifier, identifierState),
 
 		pattern(lang.AnyChar, errorState),
 	}
