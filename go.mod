@@ -6,9 +6,9 @@ require (
 	github.com/chzyer/readline v1.5.1
 	github.com/google/uuid v1.3.1
 	github.com/stretchr/testify v1.8.4
-	golang.org/x/tools v0.12.0
+	golang.org/x/tools v0.12.1-0.20230825192346-2191a27a6dc5
 	gopkg.in/yaml.v3 v3.0.1
-	honnef.co/go/tools v0.4.5
+	honnef.co/go/tools v0.4.6
 )
 
 require (
