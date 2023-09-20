@@ -3,6 +3,7 @@ package vm
 import (
 	"errors"
 	"fmt"
+	un "unsafe"
 
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/env"
@@ -26,9 +27,9 @@ func (c *closure) Call(args ...data.Value) data.Value {
 	var (
 		CODE isa.Instructions
 		MEM  data.Values
+		PC   un.Pointer
 		LP   int
 		SP   int
-		PC   int
 	)
 
 initMem:
@@ -40,13 +41,14 @@ initCode:
 
 initState:
 	SP = LP - 1
-	PC = -1 // cheaper than a goto
+	// cheaper than a goto
+	PC = un.Add(un.Pointer(&CODE[0]), -int(un.Sizeof(CODE[0])))
 
 nextPC:
-	PC++
+	PC = un.Add(PC, un.Sizeof(CODE[0]))
 
 opSwitch:
-	oc, op := CODE[PC].Split()
+	oc, op := (*(*isa.Instruction)(PC)).Split()
 	switch oc {
 	case isa.Nil:
 		MEM[SP] = data.Nil
@@ -345,13 +347,13 @@ opSwitch:
 		goto initCode
 
 	case isa.Jump:
-		PC = int(op)
+		PC = un.Pointer(&CODE[int(op)])
 		goto opSwitch
 
 	case isa.CondJump:
 		SP++
 		if MEM[SP].(data.Bool) {
-			PC = int(op)
+			PC = un.Pointer(&CODE[int(op)])
 			goto opSwitch
 		}
 		goto nextPC
