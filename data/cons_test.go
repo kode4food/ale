@@ -32,10 +32,14 @@ func TestConsStringify(t *testing.T) {
 	c2 := data.NewCons(I(1), L(I(2), I(3), I(4)))
 	c3 := data.NewCons(I(1), I(2))
 	c4 := data.NewCons(I(1), data.EmptyList)
+	c5 := data.NewCons(I(1), S("hello"))
+	c6 := data.NewCons(data.NewCons(I(1), S("hello")), S("howdy"))
 	as.String("(1 2 3 4)", c1)
 	as.String("(1 2 3 4)", c2)
 	as.String("(1 . 2)", c3)
 	as.String("(1)", c4)
+	as.String(`(1 . "hello")`, c5)
+	as.String(`((1 . "hello") . "howdy")`, c6)
 }
 
 func TestConsAsKey(t *testing.T) {

@@ -7,12 +7,10 @@ import (
 	"github.com/kode4food/ale/runtime/isa"
 )
 
-type (
-	lambdaEncoder struct {
-		encoder.Encoder
-		cases paramCases
-	}
-)
+type lambdaEncoder struct {
+	encoder.Encoder
+	cases paramCases
+}
 
 // Error messages
 const (
