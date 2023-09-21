@@ -29,10 +29,8 @@ const (
 	ErrInterfaceCoercionNotSupported = "value cannot be coerced into interface"
 )
 
-const (
-	// ReceiverKey is the key used to store an interface receiver
-	ReceiverKey = data.Keyword("receiver")
-)
+// ReceiverKey is the key used to store an interface receiver
+const ReceiverKey = data.Keyword("receiver")
 
 var receiverType = types.Basic("receiver")
 

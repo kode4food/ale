@@ -11,12 +11,13 @@ import (
 type (
 	structWrapper struct {
 		typ    reflect.Type
-		fields map[string]*fieldWrapper
+		fields []*fieldWrapper
 	}
 
 	fieldWrapper struct {
 		Wrapper
 		data.Keyword
+		idx int
 	}
 )
 
@@ -26,7 +27,7 @@ const AleTag = "ale"
 
 func makeWrappedStruct(t reflect.Type) (Wrapper, error) {
 	fLen := t.NumField()
-	fields := make(map[string]*fieldWrapper, fLen)
+	var fields []*fieldWrapper
 	for i := 0; i < fLen; i++ {
 		f := t.Field(i)
 		if f.PkgPath != "" { // Not exported
@@ -37,10 +38,11 @@ func makeWrappedStruct(t reflect.Type) (Wrapper, error) {
 		if err != nil {
 			return nil, err
 		}
-		fields[f.Name] = &fieldWrapper{
+		fields = append(fields, &fieldWrapper{
 			Wrapper: w,
 			Keyword: k,
-		}
+			idx:     i,
+		})
 	}
 	return &structWrapper{
 		typ:    t,
@@ -61,8 +63,8 @@ func (w *structWrapper) Wrap(c *Context, v reflect.Value) (data.Value, error) {
 		return data.Nil, nil
 	}
 	out := make(data.Pairs, 0, len(w.fields))
-	for k, w := range w.fields {
-		v, err := w.Wrap(c, v.FieldByName(k))
+	for _, w := range w.fields {
+		v, err := w.Wrap(c, v.Field(w.idx))
 		if err != nil {
 			return data.Nil, err
 		}
@@ -78,13 +80,13 @@ func (w *structWrapper) Unwrap(v data.Value) (reflect.Value, error) {
 			return _emptyValue, err
 		}
 		out := reflect.New(w.typ).Elem()
-		for k, w := range w.fields {
+		for _, w := range w.fields {
 			if v, ok := in.Get(w.Keyword); ok {
 				v, err := w.Unwrap(v)
 				if err != nil {
 					return _emptyValue, err
 				}
-				out.FieldByName(k).Set(v)
+				out.Field(w.idx).Set(v)
 			}
 		}
 		return out, nil

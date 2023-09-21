@@ -42,7 +42,7 @@ func MustWrap(i any) data.Value {
 }
 
 // Wrap takes a native Go value, potentially builds a Wrapper for its type, and
-// returns a marshalled data.Value from the Wrapper
+// returns a marshaled data.Value from the Wrapper
 func Wrap(i any) (data.Value, error) {
 	if i == nil {
 		return data.Nil, nil

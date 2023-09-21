@@ -17,3 +17,4 @@ func isStdInPiped() bool {
 	s, _ := os.Stdin.Stat()
 	return (s.Mode() & os.ModeCharDevice) == 0
 }
+

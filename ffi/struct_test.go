@@ -55,3 +55,16 @@ func TestStructUnwrap(t *testing.T) {
 	as.Equal(S("California"), r[0])
 	as.Equal(I(40), r[1])
 }
+
+func BenchmarkStructWrapper(b *testing.B) {
+	f := ffi.MustWrap(func(i *stateInfo) (string, int) {
+		return i.Name, i.Population
+	}).(data.Function)
+	for n := 0; n < b.N; n++ {
+		si := testStructStateInfo()
+		r := f.Call(ffi.MustWrap(si)).(data.Vector).Values()
+		if S("California") != r[0] || I(40) != r[1] {
+			b.Fail()
+		}
+	}
+}
