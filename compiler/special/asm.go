@@ -136,15 +136,16 @@ func (e *asmEncoder) encode(forms data.Sequence) {
 		case data.Keyword:
 			e.Emit(isa.Label, e.getLabelIndex(name.Name()))
 		case data.Local:
-			if d, ok := calls[name]; ok {
-				if args, rest, ok := take(r, d.argCount); ok {
-					d.Call(e, args...)
-					r = rest
-					continue
-				}
+			d, ok := calls[name]
+			if !ok {
+				panic(fmt.Errorf(ErrUnknownDirective, name))
+			}
+			args, rest, ok := take(r, d.argCount)
+			if !ok {
 				panic(fmt.Errorf(ErrIncompleteInstruction, name))
 			}
-			panic(fmt.Errorf(ErrUnknownDirective, name))
+			d.Call(e, args...)
+			r = rest
 		default:
 			panic(fmt.Errorf(ErrUnexpectedForm, f.String()))
 		}

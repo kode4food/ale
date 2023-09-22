@@ -54,27 +54,28 @@ func (w *mapWrapper) Wrap(c *Context, v reflect.Value) (data.Value, error) {
 }
 
 func (w *mapWrapper) Unwrap(v data.Value) (reflect.Value, error) {
-	if s, ok := v.(data.Sequence); ok {
-		in, err := sequence.ToObject(s)
+	s, ok := v.(data.Sequence)
+	if !ok {
+		return _emptyValue, errors.New(ErrValueMustBeSequence)
+	}
+	in, err := sequence.ToObject(s)
+	if err != nil {
+		return _emptyValue, err
+	}
+	out := reflect.MakeMapWithSize(w.typ, in.Count())
+	for f, r, ok := in.Split(); ok; f, r, ok = r.Split() {
+		p := f.(data.Pair)
+		k := p.Car()
+		v := p.Cdr()
+		uk, err := w.key.Unwrap(k)
 		if err != nil {
 			return _emptyValue, err
 		}
-		out := reflect.MakeMapWithSize(w.typ, in.Count())
-		for f, r, ok := in.Split(); ok; f, r, ok = r.Split() {
-			p := f.(data.Pair)
-			k := p.Car()
-			v := p.Cdr()
-			uk, err := w.key.Unwrap(k)
-			if err != nil {
-				return _emptyValue, err
-			}
-			uv, err := w.value.Unwrap(v)
-			if err != nil {
-				return _emptyValue, err
-			}
-			out.SetMapIndex(uk, uv)
+		uv, err := w.value.Unwrap(v)
+		if err != nil {
+			return _emptyValue, err
 		}
-		return out, nil
+		out.SetMapIndex(uk, uv)
 	}
-	return _emptyValue, errors.New(ErrValueMustBeSequence)
+	return out, nil
 }

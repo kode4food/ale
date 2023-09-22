@@ -74,22 +74,23 @@ func (w *structWrapper) Wrap(c *Context, v reflect.Value) (data.Value, error) {
 }
 
 func (w *structWrapper) Unwrap(v data.Value) (reflect.Value, error) {
-	if s, ok := v.(data.Sequence); ok {
-		in, err := sequence.ToObject(s)
-		if err != nil {
-			return _emptyValue, err
-		}
-		out := reflect.New(w.typ).Elem()
-		for _, w := range w.fields {
-			if v, ok := in.Get(w.Keyword); ok {
-				v, err := w.Unwrap(v)
-				if err != nil {
-					return _emptyValue, err
-				}
-				out.Field(w.idx).Set(v)
-			}
-		}
-		return out, nil
+	s, ok := v.(data.Sequence)
+	if !ok {
+		return _emptyValue, errors.New(ErrValueMustBeSequence)
 	}
-	return _emptyValue, errors.New(ErrValueMustBeSequence)
+	in, err := sequence.ToObject(s)
+	if err != nil {
+		return _emptyValue, err
+	}
+	out := reflect.New(w.typ).Elem()
+	for _, w := range w.fields {
+		if v, ok := in.Get(w.Keyword); ok {
+			v, err := w.Unwrap(v)
+			if err != nil {
+				return _emptyValue, err
+			}
+			out.Field(w.idx).Set(v)
+		}
+	}
+	return out, nil
 }
