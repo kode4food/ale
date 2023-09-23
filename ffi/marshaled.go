@@ -18,11 +18,11 @@ var (
 )
 
 func isMarshaledByteArray(t reflect.Type) bool {
+	if t.Kind() != reflect.Array || t.Elem().Kind() != reflect.Uint8 {
+		return false
+	}
 	p := reflect.PtrTo(t)
-	return t.Kind() == reflect.Array &&
-		t.Elem().Kind() == reflect.Uint8 &&
-		p.Implements(textUnmarshaler) &&
-		p.Implements(textMarshaler)
+	return p.Implements(textUnmarshaler) && p.Implements(textMarshaler)
 }
 
 func wrapMarshaledByteArray(t reflect.Type) (Wrapper, error) {
