@@ -20,7 +20,7 @@ const (
 )
 
 func makeWrappedChannel(t reflect.Type) (Wrapper, error) {
-	w, err := wrapType(t.Elem())
+	w, err := WrapType(t.Elem())
 	if err != nil {
 		return nil, err
 	}

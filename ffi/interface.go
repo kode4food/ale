@@ -59,7 +59,7 @@ func makeWrappedMethod(m reflect.Method) (*methodWrapper, error) {
 	cIn := t.NumIn()
 	in := make(Wrappers, cIn)
 	for i := 0; i < cIn; i++ {
-		w, err := wrapType(t.In(i))
+		w, err := WrapType(t.In(i))
 		if err != nil {
 			return nil, err
 		}
@@ -68,7 +68,7 @@ func makeWrappedMethod(m reflect.Method) (*methodWrapper, error) {
 	cOut := t.NumOut()
 	out := make(Wrappers, cOut)
 	for i := 0; i < cOut; i++ {
-		w, err := wrapType(t.Out(i))
+		w, err := WrapType(t.Out(i))
 		if err != nil {
 			return nil, err
 		}

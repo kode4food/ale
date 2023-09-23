@@ -34,7 +34,7 @@ func makeWrappedStruct(t reflect.Type) (Wrapper, error) {
 			continue
 		}
 		k := getFieldKeyword(f)
-		w, err := wrapType(f.Type)
+		w, err := WrapType(f.Type)
 		if err != nil {
 			return nil, err
 		}

@@ -15,11 +15,11 @@ type mapWrapper struct {
 }
 
 func makeWrappedMap(t reflect.Type) (Wrapper, error) {
-	kw, err := wrapType(t.Key())
+	kw, err := WrapType(t.Key())
 	if err != nil {
 		return nil, err
 	}
-	vw, err := wrapType(t.Elem())
+	vw, err := WrapType(t.Elem())
 	if err != nil {
 		return nil, err
 	}

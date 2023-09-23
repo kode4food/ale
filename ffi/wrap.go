@@ -51,14 +51,15 @@ func Wrap(i any) (data.Value, error) {
 		return d, nil
 	}
 	v := reflect.ValueOf(i)
-	w, err := wrapType(v.Type())
+	w, err := WrapType(v.Type())
 	if err != nil {
 		return data.Nil, err
 	}
 	return w.Wrap(new(Context), v)
 }
 
-func wrapType(t reflect.Type) (Wrapper, error) {
+// WrapType potentially builds a Wrapper for the provided reflected Type
+func WrapType(t reflect.Type) (Wrapper, error) {
 	if w, ok := cache.get(t); ok {
 		return w, nil
 	}

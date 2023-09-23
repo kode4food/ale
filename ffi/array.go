@@ -20,7 +20,10 @@ const (
 )
 
 func makeWrappedArray(t reflect.Type) (Wrapper, error) {
-	w, err := wrapType(t.Elem())
+	if isMarshaledByteArray(t) {
+		return wrapMarshaledByteArray(t)
+	}
+	w, err := WrapType(t.Elem())
 	if err != nil {
 		return nil, err
 	}
