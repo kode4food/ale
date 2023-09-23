@@ -85,6 +85,9 @@ Unsupported Kinds:
   - UnsafePointer
 */
 func makeWrappedType(t reflect.Type) (Wrapper, error) {
+	if t.Implements(dataValue) {
+		return wrapDataValue(t)
+	}
 	switch t.Kind() {
 	case reflect.Array:
 		return makeWrappedArray(t)
