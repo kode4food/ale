@@ -44,12 +44,6 @@ func MustWrap(i any) data.Value {
 // Wrap takes a native Go value, potentially builds a Wrapper for its type, and
 // returns a marshaled data.Value from the Wrapper
 func Wrap(i any) (data.Value, error) {
-	if i == nil {
-		return data.Nil, nil
-	}
-	if d, ok := i.(data.Value); ok {
-		return d, nil
-	}
 	v := reflect.ValueOf(i)
 	w, err := WrapType(v.Type())
 	if err != nil {
