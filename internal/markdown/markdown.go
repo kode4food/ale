@@ -60,7 +60,7 @@ func parseDocument(doc string) (*Header, []string) {
 }
 
 func parseHeader(b string) *Header {
-	m := &Header{}
+	m := new(Header)
 	if err := yaml.Unmarshal([]byte(b), &m); err != nil {
 		panic(err)
 	}

@@ -27,9 +27,9 @@ type (
 )
 
 const (
-	bucketMask = 0x1f
 	bucketBits = 5
-	bucketSize = 32
+	bucketSize = 1 << bucketBits
+	bucketMask = bucketSize - 1
 )
 
 // Standard Keys
@@ -161,13 +161,17 @@ func (o *object) promote() *object {
 }
 
 func (o *object) Car() Value {
-	f, _, _ := o.Split()
-	return f
+	if f := o.pair; f != nil {
+		return f
+	}
+	return Nil
 }
 
 func (o *object) Cdr() Value {
-	_, r, _ := o.Split()
-	return r
+	if r := o.promote(); r != nil {
+		return r
+	}
+	return EmptyObject
 }
 
 func (o *object) Split() (Value, Sequence, bool) {
