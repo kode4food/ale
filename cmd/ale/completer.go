@@ -14,8 +14,14 @@ func (r *REPL) Do(line []rune, pos int) ([][]rune, int) {
 	buf := r.buf.String() + pfx
 	res, off := r.autoComplete(buf)
 	out := make([][]rune, len(res))
+	needSpace := pos == len(line) || line[pos] != ' '
 	for i, s := range res {
-		out[i] = []rune(s[off:])
+		elem := []rune(s[off:])
+		last := len(elem) - 1
+		if !needSpace && elem[last] == ' ' {
+			elem = elem[:last]
+		}
+		out[i] = elem
 	}
 	return out, 0
 }
