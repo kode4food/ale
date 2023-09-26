@@ -30,7 +30,7 @@
             (cond ,@(rest clauses)))))])
 
 (define-macro (case expr . cases)
-  (let-rec ([val       (gensym "val")]
+  (let-rec ([val       (gensym 'val)]
             [pred-list (lambda (l) `(or ,@(map! pred l)))]
             [pred      (lambda (x) `(eq ,val ,x))]
             [case*

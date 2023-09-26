@@ -72,7 +72,7 @@
            `(thunk [false (begin ,@clauses)]))
 
         (lambda-rec try-catch (clauses)
-           (let [err (gensym "err")]
+           (let [err (gensym 'err)]
              `(lambda (,err)
                 (cond
                   ,@(apply list (try-catch-clauses clauses err))

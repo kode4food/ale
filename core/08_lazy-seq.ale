@@ -121,7 +121,7 @@
           `(mapcat (lambda (,sym) (for ,next ,@body)) (seq! ,expr))))))
 
 (define-macro (cartesian-product . colls)
-  (let* ([sym-gen  (lambda (x) (gensym (str "cp" x)))]
+  (let* ([sym-gen  (lambda (x) (gensym (sym (str "cp" x))))]
          [let-syms (take (length colls) (map sym-gen (range)))]
          [let-vals (map seq->vector (zip let-syms colls))]
          [let-bind (seq->list let-vals)]

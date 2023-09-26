@@ -29,7 +29,7 @@
   [() identity]
   [(func) func]
   [(func . funcs)
-     (let* ([args        (gensym "args")]
+     (let* ([args        (gensym 'args)]
             [inner       (list 'apply func args)]
             [first-outer (first funcs)]
             [rest-outer  (rest funcs)])
@@ -43,6 +43,6 @@
             ,(outer first-outer inner rest-outer))))])
 
 (define-macro (juxt . funcs)
-  (let [args (gensym "args")]
+  (let [args (gensym 'args)]
     `(lambda ,args
        [,@(map (lambda (f) (list 'apply f args)) funcs)])))
