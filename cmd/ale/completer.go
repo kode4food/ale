@@ -49,7 +49,8 @@ func (r *REPL) prefixedSymbols(pfx string) []string {
 	case data.Qualified:
 		return r.prefixedQualified(s)
 	}
-	return emptyStrings
+	// Programmer error
+	panic("unexpected symbol parsing result")
 }
 
 func (r *REPL) prefixedLocals(s data.Local) []string {
