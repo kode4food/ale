@@ -6,7 +6,7 @@ usage: "(null? form+) (!null? form+) (is-null form)"
 tags: ["predicate"]
 ---
 
-If all forms evaluate to null (empty list), then this function will return _#t_ (true). The first non-null will result in the function returning _#f_ (false).
+If all forms evaluate to nil (empty list), then this function will return _#t_ (true). The first non-nil will result in the function returning _#f_ (false).
 
 #### An Example
 
