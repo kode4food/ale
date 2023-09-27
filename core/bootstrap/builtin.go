@@ -54,7 +54,6 @@ func (b *bootstrap) specialForms() {
 		"let-rec":       special.LetMutual,
 		"macroexpand-1": special.MacroExpand1,
 		"macroexpand":   special.MacroExpand,
-		"pattern":       special.Pattern,
 	})
 }
 

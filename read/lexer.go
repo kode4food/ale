@@ -54,7 +54,6 @@ var (
 		pattern(lang.SyntaxQuote, tokenState(SyntaxMarker)),
 		pattern(lang.Splice, tokenState(SpliceMarker)),
 		pattern(lang.Unquote, tokenState(UnquoteMarker)),
-		pattern(lang.Pattern, tokenState(PatternMarker)),
 
 		pattern(lang.String, stringState),
 

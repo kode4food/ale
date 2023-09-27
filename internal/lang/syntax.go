@@ -2,7 +2,7 @@ package lang
 
 const (
 	structure    = `(){}\[\]\s\"`
-	prefixChar   = "`,~@"
+	prefixChar   = "`,@"
 	structPfx    = structure + prefixChar
 	notStruct    = `[^` + structure + `]`
 	notStructPfx = `[^` + structPfx + `]`
@@ -28,7 +28,6 @@ const (
 	SyntaxQuote = "`"
 	Splice      = `,@`
 	Unquote     = `,`
-	Pattern     = `~`
 	Dot         = `\.`
 
 	String = `(")(?P<s>(\\\\|\\"|\\[^\\"]|[^"\\])*)("?)`

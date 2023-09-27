@@ -139,7 +139,6 @@ func TestReaderErrors(t *testing.T) {
 	testReaderError(t, "'", read.ErrPrefixedNotPaired, "ale/quote")
 	testReaderError(t, ",@", read.ErrPrefixedNotPaired, "ale/unquote-splicing")
 	testReaderError(t, ",", read.ErrPrefixedNotPaired, "ale/unquote")
-	testReaderError(t, "~", read.ErrPrefixedNotPaired, "ale/pattern")
 
 	testReaderError(t, "//", data.ErrInvalidSymbol, "//")
 	testReaderError(t, "/bad", data.ErrInvalidSymbol, "/bad")
