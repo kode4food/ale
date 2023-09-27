@@ -1,6 +1,6 @@
 ;;;; ale core: threading
 
-(private make-cond-clause)
+(private thread-seq->list make-cond-clause)
 
 (define (thread-seq->list target)
   (unless (list? target)
