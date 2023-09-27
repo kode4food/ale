@@ -6,7 +6,7 @@ usage: "(partial func arg+)"
 tags: ["function"]
 ---
 
-Returns a new Function whose initial arguments are pre-bound to those provided. When that Function is invoked, any provided arguments will simply be appended to the pre-bound arguments before calling the original Function.
+Returns a new function whose initial arguments are pre-bound to those provided. When that function is invoked, any provided arguments will simply be appended to the pre-bound arguments before calling the original function.
 
 #### An Example
 
