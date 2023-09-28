@@ -14,6 +14,7 @@ const (
 	Header1 = ""
 	Header2 = ""
 	Domain  = ""
+	Comment = ""
 	Code    = ""
 	Result  = ""
 	Error   = ""
