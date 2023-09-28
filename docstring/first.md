@@ -1,18 +1,19 @@
 ---
-title: "first"
-description: "returns the first element of the sequence"
-names: ["first"]
-usage: "(first seq)"
+title: "car"
+description: "returns the first element of a pair or sequence"
+names: ["car", "first"]
+usage: "(car form)"
 tags: ["sequence"]
 ---
 
-This function will return the first element of the specified sequence, or the empty list if the sequence is empty.
+This function will return the first element of the specified pair or sequence, or the empty list if the sequence is empty.
 
 #### An Example
 
 ```scheme
 (define x '(99 64 32 48))
-(first x)
-```
+(car x)  ;; will return 99
 
-This example will return _99_.
+(define y (100 . 200))
+(car y)  ;; will return 100
+```

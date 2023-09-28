@@ -144,10 +144,10 @@
   (= (mod value 2) 1))
 
 (define (is-true value)
-  (eq value true))
+  (eq true value))
 
 (define (is-false value)
-  (eq value false))
+  (eq false value))
 
 (define (not value)
   (if value false true))
