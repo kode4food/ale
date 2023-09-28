@@ -42,7 +42,7 @@ var (
 	}
 
 	docFormatters = []*patternFormatter{
-		{comment, trimmedFormatter("", console.Comment)},
+		{comment, formatComment},
 		{ticks, trimmedFormatter("`", console.Code)},
 		{ticks, trimmedFormatter("`", console.Code)},
 		{double, trimmedFormatter(`**`, console.Bold)},
@@ -230,6 +230,10 @@ func formatHeader2(s string) string {
 
 func formatIndent(s string) string {
 	return console.Code + s + console.Reset
+}
+
+func formatComment(s string) string {
+	return console.Comment + s + console.Reset
 }
 
 func stripHashes(s string) string {
