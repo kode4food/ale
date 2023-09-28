@@ -27,12 +27,13 @@ const blockPrefix = "```"
 var (
 	header = regexp.MustCompile(`^#+\s(.*)$`)
 
-	indent = regexp.MustCompile(`^#+ |^\s\s+`)
-	hashes = regexp.MustCompile(`^#+ `)
-	ticks  = regexp.MustCompile("`[^`]*`")
-	unders = regexp.MustCompile(`_[^_]*_`)
-	double = regexp.MustCompile(`[*][*][^*]*[*][*]`)
-	stars  = regexp.MustCompile(`[*][^*]*[*]`)
+	indent  = regexp.MustCompile(`^#+ |^\s\s+`)
+	comment = regexp.MustCompile(`;.*(\n|$)`)
+	hashes  = regexp.MustCompile(`^#+ `)
+	ticks   = regexp.MustCompile("`[^`]*`")
+	unders  = regexp.MustCompile(`_[^_]*_`)
+	double  = regexp.MustCompile(`[*][*][^*]*[*][*]`)
+	stars   = regexp.MustCompile(`[*][^*]*[*]`)
 
 	lineFormatters = map[*regexp.Regexp]formatter{
 		regexp.MustCompile(`^#\s.*$`):   formatHeader1,
@@ -41,6 +42,8 @@ var (
 	}
 
 	docFormatters = []*patternFormatter{
+		{comment, trimmedFormatter("", console.Comment)},
+		{ticks, trimmedFormatter("`", console.Code)},
 		{ticks, trimmedFormatter("`", console.Code)},
 		{double, trimmedFormatter(`**`, console.Bold)},
 		{stars, trimmedFormatter(`*`, console.Italic)},

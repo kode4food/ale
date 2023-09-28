@@ -16,6 +16,7 @@ const (
 	Header1 = esc + "35m" + Bold // Light Magenta
 	Header2 = esc + "33m"        // Yellow
 	Domain  = esc + "36m"        // Cyan
+	Comment = esc + "90m"        // Comment
 	Code    = esc + "94m"        // Light Blue
 	Result  = esc + "32m"        // Green
 	Error   = esc + "31m"        // Red
