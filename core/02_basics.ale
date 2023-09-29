@@ -27,8 +27,19 @@
 
 ;; bootstrap the basic lambda, macro, and definition facilities
 
+(define* and
+  (macro*
+    (lambda
+      [() true]
+      [(clause) clause]
+      [clauses
+        `(let [and# ,(clauses 0)]
+           (if and#
+             (and ,@(rest clauses))
+             and#))])))
+
 (define* label
-  (macro
+  (macro*
     (lambda (name form)
       `(let-rec [,name ,form] ,name))))
 
@@ -39,40 +50,45 @@
       true
       (is-list value))))
 
-(private* make-macro)
-(define* make-macro
-  (lambda (quoter)
-    (macro
-      (lambda forms
-        (let ([f (car forms)]
-              [r (cdr forms)])
-          (if (is-cons-or-list f)
-            (quoter (car f) (cons (cdr f) r))
-            (quoter f r)))))))
+(private* parse-define)
+(define* parse-define
+  (lambda (body)
+    (let ([f (car body)] [r (cdr body)])
+      (if ({:private #t :macro #t} f)
+        (assoc (parse-define r) f #t)
+        (if (and (is-cons-or-list f) (is-local (car f)))
+          {:name (car f) :lambda #t :body `(lambda ,(cdr f) ,@r)}
+          (if (is-local f)
+            {:name f :body (car r)}
+            (raise (str "invalid define: " body))))))))
 
-(define* define-lambda
-  (make-macro
-    (lambda (name body)
-      `(define* ,name
-         (label ,name (lambda ,@body))))))
+(define* define
+  (macro*
+    (lambda body
+      ; we're so early days that let* hasn't been defined yet
+      (let [parsed (parse-define body)]
+        (let [name (:name parsed)]
+          (let [body (:body parsed)]
+            (let [value (if (:macro parsed) `(macro* ,body) body)]
+              (let [labeled (if (:lambda parsed) `(label ,name ,value) value)]
+                (if (:private parsed)
+                  `(begin (private* ,name) (define* ,name ,labeled))
+                  `(define* ,name ,labeled))))))))))
 
-(define* define-macro
-  (make-macro
-    (lambda (name body)
-      `(define* ,name
-         (label ,name (macro (lambda ,@body)))))))
+(define :macro (define-macro . forms)
+  (let [name (car forms)]
+    (if (is-local name)
+      `(define* ,name (label ,name (macro* (lambda ,@(cdr forms)))))
+      `(define :macro ,@forms))))
+
+(define-macro (define-lambda . forms)
+  (let [name (car forms)]
+    (if (is-local name)
+      `(define* ,name (label ,name (lambda ,@(cdr forms))))
+      `(define ,@forms))))
 
 (define-macro (!eq value . comps)
   `(not (eq ,value ,@comps)))
-
-(define-macro and
-  [() true]
-  [(clause) clause]
-  [clauses
-    `(let [and# ,(clauses 0)]
-       (if and#
-              (and ,@(rest clauses))
-              and#))])
 
 (define-macro (!and . clauses)
   `(not (and ,@clauses)))
@@ -89,25 +105,6 @@
 (define-macro (!or . clauses)
   `(not (or ,@clauses)))
 
-(define-macro assert-args
-  [() nil]
-  [(clause)
-    (raise "assert-args clauses must be paired")]
-  [clauses
-    `(if ,(clauses 0)
-       (assert-args ,@(rest (rest clauses)))
-       (raise ,(clauses 1)))])
-
-(define-macro (define . body)
-  (let [value (first body)]
-    (assert-args
-      (or (is-local value)
-          (is-cons-or-list value))
-      (str "invalid define: " value))
-    (if (is-local value)
-      `(define* ,@body)
-      `(define-lambda ,@body))))
-
 (define-macro (lambda-rec name . forms)
   (if (is-local name)
     `(label ,name (lambda ,@forms))
@@ -117,7 +114,7 @@
   `(lambda () ,@forms))
 
 ;; case and some macros require it
-(define-lambda map! (func coll)
+(define (map! func coll)
    (if (is-empty coll)
      '()
      (cons (func (first coll))

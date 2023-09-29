@@ -27,12 +27,12 @@ func TestBadFunctionEval(t *testing.T) {
 	symErr := unexpectedTypeError("integer", "local")
 	numErr := fmt.Errorf(special.ErrUnexpectedCaseSyntax, "99")
 	vecErr := unexpectedTypeError("integer", "vector")
-	listErr := unexpectedTypeError("integer", "local")
+	invalidErr := fmt.Errorf("invalid define: [99 (x y) (+ x y)]")
 
 	as := assert.New(t)
 	as.PanicWith(`(define-lambda blah (name 99 bad) (name))`, symErr)
 	as.PanicWith(`(define-lambda blah 99 (name))`, numErr)
-	as.PanicWith(`(define-lambda 99 (x y) (+ x y))`, symErr)
-	as.PanicWith(`(define-lambda blah (99 "hello"))`, listErr)
+	as.PanicWith(`(define-lambda 99 (x y) (+ x y))`, invalidErr)
+	as.PanicWith(`(define-lambda blah (99 "hello"))`, symErr)
 	as.PanicWith(`(define-lambda blah [(x) "hello"] 99)`, vecErr)
 }

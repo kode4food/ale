@@ -86,7 +86,7 @@ func (b *bootstrap) availableFunctions() {
 		"lazy-seq*":    builtin.LazySequence,
 		"length":       builtin.Length,
 		"list":         builtin.List,
-		"macro":        builtin.Macro,
+		"macro*":       builtin.Macro,
 		"mod":          builtin.Mod,
 		"nth":          builtin.Nth,
 		"object":       builtin.Object,

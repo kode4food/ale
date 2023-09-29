@@ -1,8 +1,6 @@
 ;;;; ale core: threading
 
-(private thread-seq->list make-cond-clause)
-
-(define (thread-seq->list target)
+(define :private (thread-seq->list target)
   (unless (list? target)
           (list target)
           target))
@@ -56,7 +54,7 @@
         `(let [,name ,value]
            (let-> [,name ,step] ,@next)))))
 
-(define (make-cond-clause threader)
+(define :private (make-cond-clause threader)
   (lambda (clause)
     (assert-args
       (vector? clause)      "clause must be a vector"

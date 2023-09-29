@@ -1,25 +1,23 @@
 ;;;; ale core: predicates
 
-(private pred-apply define-pos define-neg define-predicate)
-
-(define (pred-apply func args)
+(define :private (pred-apply func args)
   (if (is-empty args)
     true
     (unless (func (first args)) false
             (pred-apply func (rest args)))))
 
-(define (define-pos func name)
+(define :private (define-pos func name)
   (let [func-name (sym (str name "?"))]
     `(define ,func-name (lambda (f# . r#)
        (,pred-apply ,func (cons f# r#))))))
 
-(define (define-neg func name)
+(define :private (define-neg func name)
   (let [func-name (sym (str "!" name "?"))]
     `(define ,func-name (lambda (f# . r#)
        (,pred-apply (lambda (value) (not (,func value)))
                     (cons f# r#))))))
 
-(define-macro (define-predicate func name)
+(define :private :macro (define-predicate func name)
   `(begin ,(define-pos func name)
           ,(define-neg func name)))
 
