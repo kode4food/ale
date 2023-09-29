@@ -99,8 +99,8 @@
   [clauses
     `(let [or# ,(clauses 0)]
        (if or#
-             or#
-             (or ,@(rest clauses))))])
+         or#
+         (or ,@(rest clauses))))])
 
 (define-macro (!or . clauses)
   `(not (or ,@clauses)))
