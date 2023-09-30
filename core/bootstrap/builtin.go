@@ -72,7 +72,6 @@ func (b *bootstrap) availableFunctions() {
 
 		"append":       builtin.Append,
 		"assoc":        builtin.Assoc,
-		"call*":        builtin.Call,
 		"chan":         builtin.Chan,
 		"cons":         builtin.Cons,
 		"current-time": builtin.CurrentTime,

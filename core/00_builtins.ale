@@ -13,7 +13,6 @@
 
 (def-builtin append)
 (def-builtin assoc)
-(def-builtin call*)
 (def-builtin chan)
 (def-builtin cons)
 (def-builtin current-time)

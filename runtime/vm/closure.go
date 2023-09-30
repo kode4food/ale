@@ -5,6 +5,8 @@ import (
 	"fmt"
 	un "unsafe"
 
+	"github.com/kode4food/ale/internal/sequence"
+
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/env"
 	"github.com/kode4food/ale/runtime/isa"
@@ -322,6 +324,14 @@ opSwitch:
 		RES := SP1 + int(op)
 		MEM[RES] = fn.Call(args...)
 		SP = RES - 1
+		goto nextPC
+
+	case isa.CallWith:
+		SP++
+		SP1 := &MEM[SP+1]
+		*SP1 = MEM[SP].(data.Function).Call(
+			sequence.ToValues((*SP1).(data.Sequence))...,
+		)
 		goto nextPC
 
 	case isa.TailCall:

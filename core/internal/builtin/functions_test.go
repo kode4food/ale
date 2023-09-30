@@ -19,18 +19,17 @@ func unexpectedTypeError(got, expected string) error {
 	return fmt.Errorf(runtime.ErrUnexpectedType, got, expected)
 }
 
-func TestCall(t *testing.T) {
+func TestApply(t *testing.T) {
 	as := assert.New(t)
 
 	as.True(builtin.IsApply.Call(builtin.Vector))
 	as.False(builtin.IsApply.Call(S("55")))
 
-	v1 := builtin.Vector.Call(S("1"), S("2"), S("3"))
-	v2 := builtin.Call.Call(builtin.Vector, L(S("1"), S("2"), S("3")))
+	as.EvalTo(`
+		(apply + '(1 2 3))`, I(6))
 
-	as.String(`["1" "2" "3"]`, v1)
-	as.String(`["1" "2" "3"]`, v2)
-	as.Equal(v1, v2)
+	as.EvalTo(`
+		(apply + 9 8 7 '(1 2 3))`, I(30))
 }
 
 func TestPartialEval(t *testing.T) {

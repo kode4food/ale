@@ -44,6 +44,7 @@ var Effects = map[Opcode]*Effect{
 	Call:       {Pop: 1, Push: 1, DPop: true, Operand: Stack},
 	Call0:      {Pop: 1, Push: 1},
 	Call1:      {Pop: 2, Push: 1},
+	CallWith:   {Pop: 2, Push: 1},
 	Car:        {Pop: 1, Push: 1},
 	Cdr:        {Pop: 1, Push: 1},
 	Closure:    {Push: 1, Operand: Values},

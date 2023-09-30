@@ -16,7 +16,11 @@
 (declare* apply)
 (define* apply
   (lambda
-    [(fn args) (call* fn args)]
+    [(fn args)
+       (asm*
+           .resolve args
+           .resolve fn
+           call-with)]
     [(fn f . r)
        (let-rec
          [prepend-args
@@ -26,7 +30,10 @@
                 result))]
          (let [idx (dec (length r))]
            (let [args (prepend-args r (r idx) (dec idx))]
-             (call* fn (cons f args)))))]))
+             (asm*
+                 .eval (cons f args)
+                 .resolve fn
+                 call-with))))]))
 
 ;; syntax-quoting requires it
 (define* concat!
