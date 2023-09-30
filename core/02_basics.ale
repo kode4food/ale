@@ -51,8 +51,6 @@
                                  (append head (first f)))))))]
       (concat-inner colls []))))
 
-;; bootstrap the basic lambda, macro, and definition facilities
-
 (define* and
   (macro*
     (lambda
@@ -79,6 +77,8 @@
   (macro*
     (lambda (name form)
       `(let-rec [,name ,form] ,name))))
+
+;; bootstrap the basic lambda, macro, and definition facilities
 
 (private* is-cons-or-list)
 (define* is-cons-or-list
