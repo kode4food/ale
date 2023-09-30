@@ -32,7 +32,7 @@ const (
 	Call                     // Call Lambda
 	Call0                    // Zero-Arg Call
 	Call1                    // One-Arg Call
-	CallWith                 // Call with the provided Sequence as args
+	CallWith                 // Call with the provided Sequence as Arguments
 	Car                      // Contents of the Address part of the Register
 	Cdr                      // Contents of the Decrement part of the Register
 	Closure                  // Retrieve Closure Value
