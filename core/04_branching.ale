@@ -18,38 +18,39 @@
 (define-macro cond
   [() nil]
   [clauses
-   (let [clause (first clauses)]
-     (assert-args
-       (and (is-vector clause)
-            (= 2 (length clause)))
-       (str "invalid cond clause: " clause))
-     (let ([test   (clause 0)]
-           [branch (clause 1)])
-       `(if ,test
-            ,branch
-            (cond ,@(rest clauses)))))])
+     (let [clause (first clauses)]
+       (assert-args
+         (and (is-vector clause)
+              (= 2 (length clause)))
+         (str "invalid cond clause: " clause))
+       (let ([test   (clause 0)]
+             [branch (clause 1)])
+         `(if ,test
+              ,branch
+              (cond ,@(rest clauses)))))])
 
 (define-macro (case expr . cases)
-  (let-rec ([val       (gensym 'val)]
-            [pred-list (lambda (l) `(or ,@(map! pred l)))]
-            [pred      (lambda (x) `(eq ,val ,x))]
-            [case*
-             (lambda
-               [() '(raise "no cases could be matched")]
-               [clauses
-                  (let [clause (first clauses)]
-                    (assert-args
-                      (and (is-vector clause)
-                           (= 2 (length clause)))
-                      (str "invalid case clause: " clause))
-                    (let ([test   (clause 0)]
-                          [branch (clause 1)]
-                          [next   (rest clauses)])
-                      `(if ,(if (is-list test)
-                                (pred-list test)
-                                (pred test))
-                           ,branch
-                           ,(apply case* next))))])])
+  (let-rec
+    ([val       (gensym 'val)]
+     [pred-list (lambda (l) `(or ,@(map! pred l)))]
+     [pred      (lambda (x) `(eq ,val ,x))]
+     [case*
+      (lambda
+        [() '(raise "no cases could be matched")]
+        [clauses
+           (let [clause (first clauses)]
+             (assert-args
+               (and (is-vector clause)
+                    (= 2 (length clause)))
+               (str "invalid case clause: " clause))
+             (let ([test   (clause 0)]
+                   [branch (clause 1)]
+                   [next   (rest clauses)])
+               `(if ,(if (is-list test)
+                         (pred-list test)
+                         (pred test))
+                     ,branch
+                     ,(apply case* next))))])])
     `(let [,val ,expr]
        ,(apply case* cases))))
 
@@ -64,7 +65,7 @@
      (let ([sym  (binding 0)]
            [test (binding 1)])
        `(let [,sym ,test]
-           (if ,sym ,then ,else)))])
+          (if ,sym ,then ,else)))])
 
 (define-macro when-let
   [(binding form)

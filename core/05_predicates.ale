@@ -2,9 +2,10 @@
 
 (define :private (pred-apply func args)
   (if (is-empty args)
-    true
-    (unless (func (first args)) false
-            (pred-apply func (rest args)))))
+      true
+      (unless (func (first args))
+              false
+              (pred-apply func (rest args)))))
 
 (define :private (define-pos func name)
   (let [func-name (sym (str name "?"))]
