@@ -13,16 +13,17 @@
 ;; syntax-quoting requires it
 (define* concat!
   (lambda colls
-    (let-rec [concat-inner
-              (lambda (colls head)
-                (if (is-empty colls)
-                    (apply list head)
-                    (let ([f (first colls)]
-                          [r (rest colls)])
-                      (if (is-empty f)
-                          (concat-inner r head)
-                          (concat-inner (cons (rest f) r)
-                                        (append head (first f)))))))]
+    (let-rec
+      [concat-inner
+       (lambda (colls head)
+         (if (is-empty colls)
+             (apply list head)
+             (let ([f (first colls)]
+                   [r (rest colls)])
+               (if (is-empty f)
+                   (concat-inner r head)
+                   (concat-inner (cons (rest f) r)
+                                 (append head (first f)))))))]
       (concat-inner colls []))))
 
 ;; bootstrap the basic lambda, macro, and definition facilities

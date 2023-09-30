@@ -6,7 +6,6 @@ require (
 	github.com/chzyer/readline v1.5.1
 	github.com/google/uuid v1.3.1
 	github.com/stretchr/testify v1.8.4
-	golang.org/x/exp v0.0.0-20230905200255-921286631fa9
 	golang.org/x/tools v0.13.0
 	gopkg.in/yaml.v3 v3.0.1
 	honnef.co/go/tools v0.4.6
