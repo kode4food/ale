@@ -12,8 +12,8 @@
 (def-builtin >=)
 
 (def-builtin append)
-(def-builtin apply)
 (def-builtin assoc)
+(def-builtin call*)
 (def-builtin chan)
 (def-builtin cons)
 (def-builtin current-time)

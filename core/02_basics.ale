@@ -10,6 +10,24 @@
 (define* first car)
 (define* rest cdr)
 
+(define* inc (lambda (value) (+ value 1)))
+(define* dec (lambda (value) (- value 1)))
+
+(declare* apply)
+(define* apply
+  (lambda
+    [(fn args) (call* fn args)]
+    [(fn f . r)
+       (let-rec
+         [prepend-args
+          (lambda (args result idx)
+            (if (>= idx 0)
+                (prepend-args args (cons (args idx) result) (dec idx))
+                result))]
+         (let [idx (dec (length r))]
+           (let [args (prepend-args r (r idx) (dec idx))]
+             (call* fn (cons f args)))))]))
+
 ;; syntax-quoting requires it
 (define* concat!
   (lambda colls
@@ -153,12 +171,6 @@
   (if value false true))
 
 ;; some conveniences
-
-(define (inc value)
-  (+ value 1))
-
-(define (dec value)
-  (- value 1))
 
 (define (no-op . _))
 
