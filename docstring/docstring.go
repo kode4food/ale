@@ -2,8 +2,8 @@ package docstring
 
 import (
 	"fmt"
-	"sync"
 
+	"github.com/kode4food/ale/internal/do"
 	"github.com/kode4food/ale/internal/markdown"
 )
 
@@ -16,7 +16,7 @@ const extension = ".md"
 
 var (
 	docStringCache     = map[string][]byte{}
-	docStringCacheOnce sync.Once
+	docStringCacheOnce = do.Once()
 )
 
 // Get resolves a registered docstring entry by name
@@ -49,7 +49,7 @@ func Names() []string {
 }
 
 func ensureDocStringCache() {
-	docStringCacheOnce.Do(func() {
+	docStringCacheOnce(func() {
 		for _, filename := range assetNames() {
 			doc, _ := getAsset(filename)
 			meta := markdown.ParseHeader(string(doc))

@@ -2,12 +2,12 @@ package bootstrap
 
 import (
 	"os"
-	"sync"
 
 	"github.com/kode4food/ale/compiler/encoder"
 	"github.com/kode4food/ale/core/internal/builtin"
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/env"
+	"github.com/kode4food/ale/internal/do"
 	"github.com/kode4food/ale/internal/stream"
 	"github.com/kode4food/ale/macro"
 )
@@ -26,9 +26,9 @@ type (
 )
 
 var (
-	topLevelOnce sync.Once
+	topLevelOnce = do.Once()
 	topLevel     *env.Environment
-	devNullOnce  sync.Once
+	devNullOnce  = do.Once()
 	devNull      *env.Environment
 )
 
@@ -81,7 +81,7 @@ func DevNull(e *env.Environment) {
 // top-level of the system, such as the REPL. It has access to the *env*,
 // *args*, and operating system's standard in/out/err file streams.
 func TopLevelEnvironment() *env.Environment {
-	topLevelOnce.Do(func() {
+	topLevelOnce(func() {
 		topLevel = env.NewEnvironment()
 		ProcessEnv(topLevel)
 		ProcessArgs(topLevel)
@@ -99,7 +99,7 @@ func TopLevelEnvironment() *env.Environment {
 // isolated from the top-level of the system. All I/O is rerouted to and from
 // the operating system's bit bucket device (usually /dev/null)
 func DevNullEnvironment() *env.Environment {
-	devNullOnce.Do(func() {
+	devNullOnce(func() {
 		devNull = env.NewEnvironment()
 		DevNull(devNull)
 		Into(devNull)

@@ -1,6 +1,9 @@
 package do
 
-import "sync"
+import (
+	"sync"
+	"sync/atomic"
+)
 
 // Action is a callback interface for eventually triggering some action
 type Action func(func())
@@ -15,15 +18,19 @@ func Once() Action {
 	var state = doneNever
 	var mutex sync.Mutex
 
-	return func(f func()) {
+	execLocked := func(f func()) {
 		mutex.Lock()
 		defer mutex.Unlock()
 
 		if state == doneNever {
-			defer func() {
-				state = doneOnce
-			}()
+			defer atomic.StoreUint32(&state, doneOnce)
 			f()
+		}
+	}
+
+	return func(f func()) {
+		if atomic.LoadUint32(&state) == doneNever {
+			execLocked(f)
 		}
 	}
 }
