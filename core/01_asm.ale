@@ -28,17 +28,35 @@
   ; block evaluator will pop this
   nil)
 
-(define* cons (lambda (car cdr) (asm* .resolve cdr .resolve car cons)))
-(define* car (lambda (cons) (asm* .resolve cons car)))
-(define* cdr (lambda (cons) (asm* .resolve cons cdr)))
-(define* quote (asm* !make-encoder (form) .const form))
+(define* cons
+  (lambda (car cdr)
+    (asm*
+      .resolve cdr
+      .resolve car
+      cons)))
+
+(define* car
+  (lambda (cons)
+    (asm*
+      .resolve cons
+      car)))
+
+(define* cdr
+  (lambda (cons)
+    (asm*
+      .resolve cons cdr)))
+
+(define* quote
+  (asm*
+    !make-encoder (form)
+    .const form))
 
 (define* raise
   (lambda (err)
     (asm*
-      .resolve err
-      panic
-      nil)))
+        .resolve err
+        panic
+        nil)))
 
 (define* if
   (asm* !make-encoder
