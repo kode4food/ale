@@ -17,10 +17,8 @@ func TestLazySequence(t *testing.T) {
 
 	fn = data.Applicative(func(...data.Value) data.Value {
 		if i < 10 {
-			res := builtin.Cons.Call(
-				data.Integer(i),
-				builtin.LazySequence.Call(fn),
-			)
+			p := builtin.LazySequence.Call(fn).(data.Prepender)
+			res := p.Prepend(data.Integer(i))
 			i++
 			return res
 		}

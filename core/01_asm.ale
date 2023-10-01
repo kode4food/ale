@@ -28,6 +28,7 @@
   ; block evaluator will pop this
   nil)
 
+(define* cons (lambda (car cdr) (asm* .resolve cdr .resolve car cons)))
 (define* car (lambda (cons) (asm* .resolve cons car)))
 (define* cdr (lambda (cons) (asm* .resolve cons cdr)))
 (define* quote (asm* !make-encoder (form) .const form))

@@ -49,6 +49,7 @@ var Effects = map[Opcode]*Effect{
 	Cdr:        {Pop: 1, Push: 1},
 	Closure:    {Push: 1, Operand: Values},
 	CondJump:   {Pop: 1, Operand: Labels},
+	Cons:       {Pop: 2, Push: 1},
 	Const:      {Push: 1, Operand: Constants},
 	Declare:    {Pop: 1},
 	Deref:      {Pop: 1, Push: 1},

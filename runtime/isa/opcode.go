@@ -37,6 +37,7 @@ const (
 	Cdr                      // Contents of the Decrement part of the Register
 	Closure                  // Retrieve Closure Value
 	CondJump                 // Conditional Jump
+	Cons                     // Form a new Cons Cell (or Prepend)
 	Const                    // Retrieve Constant
 	Declare                  // Declare a public Namespace entry
 	Deref                    // Pointer Dereference

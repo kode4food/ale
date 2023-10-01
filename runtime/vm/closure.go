@@ -144,6 +144,16 @@ opSwitch:
 		*SP1 = (*SP1).(data.Pair).Cdr()
 		goto nextPC
 
+	case isa.Cons:
+		SP++
+		SP1 := &MEM[SP+1]
+		if p, ok := (*SP1).(data.Prepender); ok {
+			*SP1 = p.Prepend(MEM[SP])
+			goto nextPC
+		}
+		*SP1 = data.NewCons(MEM[SP], *SP1)
+		goto nextPC
+
 	case isa.Declare:
 		SP++
 		c.Lambda.Globals.Declare(
