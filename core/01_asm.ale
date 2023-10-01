@@ -2,27 +2,27 @@
 
 (asm*
   .eval (asm*
-          !make-encoder (name)
-          .const name
-          dup
-          declare)
+      !make-encoder (name)
+      .const name
+      dup
+      declare)
   .const declare*
   bind
 
   .eval (asm*
-          !make-encoder (name)
-          .const name
-          dup
-          private)
+      !make-encoder (name)
+      .const name
+      dup
+      private)
   .const private*
   bind
 
   .eval (asm*
-          !make-encoder (name value)
-          .eval value
-          dup
-          .const name
-          bind)
+      !make-encoder (name value)
+      .eval value
+      dup
+      .const name
+      bind)
   .const define*
   bind
   ; block evaluator will pop this
@@ -31,25 +31,25 @@
 (define* cons
   (lambda (car cdr)
     (asm*
-      .resolve cdr
-      .resolve car
-      cons)))
+        .resolve cdr
+        .resolve car
+        cons)))
 
 (define* car
   (lambda (cons)
     (asm*
-      .resolve cons
-      car)))
+        .resolve cons
+        car)))
 
 (define* cdr
   (lambda (cons)
     (asm*
-      .resolve cons cdr)))
+        .resolve cons cdr)))
 
 (define* quote
   (asm*
-    !make-encoder (form)
-    .const form))
+      !make-encoder (form)
+      .const form))
 
 (define* raise
   (lambda (err)
