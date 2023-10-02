@@ -1,6 +1,6 @@
 ;;;; ale core: numerics
 
-(define* +
+(define +
   (lambda args
     (asm*
         .local sum :val
@@ -25,7 +25,7 @@
     :end
         load sum)))
 
-(define* *
+(define *
   (lambda args
     (asm*
         .local prod :val
@@ -57,5 +57,5 @@
 (define (inc value) (+ value 1))
 (define (dec value) (- value 1))
 
-(define* *pos-inf* (/ 1.0 0.0))
-(define* *neg-inf* (/ -1.0 0.0))
+(define *pos-inf* (/ 1.0 0.0))
+(define *neg-inf* (/ -1.0 0.0))

@@ -35,13 +35,13 @@
 (define :macro (define-macro . forms)
   (let [name (car forms)]
     (if (is-local name)
-        `(define* ,name (label ,name (macro* (lambda ,@(cdr forms)))))
+        `(define ,name (label ,name (macro* (lambda ,@(cdr forms)))))
         `(define :macro ,@forms))))
 
 (define-macro (define-lambda . forms)
   (let [name (car forms)]
     (if (is-local name)
-        `(define* ,name (label ,name (lambda ,@(cdr forms))))
+        `(define ,name (label ,name (lambda ,@(cdr forms))))
         `(define ,@forms))))
 
 (define-macro (!eq value . comps)
