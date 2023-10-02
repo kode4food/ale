@@ -44,19 +44,14 @@
 (define* cdr
   (lambda (cons)
     (asm*
-        .resolve cons cdr)))
+        .resolve cons
+        cdr)))
 
-(define* quote
-  (asm*
-      !make-encoder (form)
-      .const form))
-
-(define* raise
-  (lambda (err)
+(define* is-empty
+  (lambda (seq)
     (asm*
-        .resolve err
-        panic
-        nil)))
+        .resolve seq
+        empty)))
 
 (define* if
   (asm* !make-encoder
@@ -78,3 +73,4 @@
       :consequent
           .eval consequent
       :end]))
+

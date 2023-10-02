@@ -43,25 +43,27 @@ const (
 	Deref                    // Pointer Dereference
 	Div                      // Division
 	Dup                      // Duplicate Value
-	Eq                       // Numeric Equality
+	Empty                    // Tests Empty Sequence
+	Eq                       // Value Equality
 	False                    // Push False
-	Gt                       // Greater Than
-	Gte                      // Greater or Equal To
 	Jump                     // Absolute Jump
 	Load                     // Retrieve Local Value
-	Lt                       // Less Than Comparison
-	Lte                      // Less or Equal To
 	MakeTruthy               // Make Value Boolean
 	Mod                      // Remainder
 	Mul                      // Multiplication
 	Neg                      // Negation
 	NegInf                   // Push Negative Infinity
 	NegInt                   // Push Negative Integer (in Operand)
-	Neq                      // Numeric Inequality
 	NewRef                   // New Reference
 	NoOp                     // Non-Operator
 	Not                      // Boolean Negation
 	Nil                      // Push Nil
+	NumEq                    // Numeric Equality
+	NumGt                    // Greater Than
+	NumGte                   // Greater or Equal To
+	NumLt                    // Less Than Comparison
+	NumLte                   // Less or Equal To
+	NumNeq                   // Numeric Inequality
 	Panic                    // Abnormally Halt
 	Pop                      // Discard Value
 	PosInf                   // Positive Infinity

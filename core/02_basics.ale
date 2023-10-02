@@ -1,19 +1,17 @@
 ;;;; ale core: basics
 
-(define* *pos-inf* (/ 1.0 0.0))
-(define* *neg-inf* (/ -1.0 0.0))
+(define* quote
+  (asm*
+      !make-encoder (form)
+      .const form))
 
+(define* nil '())
 (define* true #t)
 (define* false #f)
-(define* nil '())
 
 (define* first car)
 (define* rest cdr)
 
-(define* inc (lambda (value) (+ value 1)))
-(define* dec (lambda (value) (- value 1)))
-
-(declare* apply)
 (define* apply
   (lambda
     [(fn args)
@@ -25,11 +23,15 @@
        (let-rec
          [prepend-args
           (lambda (args result idx)
-            (if (>= idx 0)
-                (prepend-args args (cons (args idx) result) (dec idx))
+            (if (asm* .resolve idx zero num-gte)
+                (prepend-args args
+                              (cons (args idx) result)
+                              (asm* .resolve idx .const 1 sub))
                 result))]
-         (let [idx (dec (length r))]
-           (let [args (prepend-args r (r idx) (dec idx))]
+         (let [idx (asm* .eval (length r) .const 1 sub)]
+           (let [args (prepend-args r
+                                    (r idx)
+                                    (asm* .resolve idx .const 1 sub))]
              (asm*
                  .eval (cons f args)
                  .resolve fn
@@ -43,13 +45,27 @@
        (lambda (colls head)
          (if (is-empty colls)
              (apply list head)
-             (let ([f (first colls)]
-                   [r (rest colls)])
+             (let ([f (car colls)]
+                   [r (cdr colls)])
                (if (is-empty f)
                    (concat-inner r head)
-                   (concat-inner (cons (rest f) r)
-                                 (append head (first f)))))))]
+                   (concat-inner (cons (cdr f) r)
+                                 (append head (car f)))))))]
       (concat-inner colls []))))
+
+(define* label
+  (macro*
+    (lambda (name form)
+      `(let-rec [,name ,form] ,name))))
+
+;; case and some macros require it
+(define* map!
+  (label map!
+    (lambda (func coll)
+      (if (is-empty coll)
+        '()
+        (cons (func (first coll))
+              (map! func (rest coll)))))))
 
 (define* and
   (macro*
@@ -73,118 +89,9 @@
                 or#
                 (or ,@(rest clauses))))])))
 
-(define* label
-  (macro*
-    (lambda (name form)
-      `(let-rec [,name ,form] ,name))))
-
-;; bootstrap the basic lambda, macro, and definition facilities
-
-(private* is-cons-or-list)
-(define* is-cons-or-list
-  (lambda (value)
-    (or (is-cons value)
-        (is-list value))))
-
-(private* parse-define)
-(define* parse-define
-  (lambda (body)
-    (let ([f (car body)]
-          [r (cdr body)])
-      (if ({:private #t :macro #t} f)
-          (assoc (parse-define r) f #t)
-          (if (and (is-cons-or-list f) (is-local (car f)))
-              {:name (car f) :lambda #t :body `(lambda ,(cdr f) ,@r)}
-              (if (is-local f)
-                  {:name f :body (car r)}
-                  (raise (str "invalid define: " body))))))))
-
-(define* define
-  (macro*
-    (lambda body
-      ; we're so early days that let* hasn't been defined yet
-      (let [parsed (parse-define body)]
-        (let ([name (:name parsed)]
-              [body (:body parsed)])
-          (let [value (if (:macro parsed) `(macro* ,body) body)]
-            (let [labeled (if (:lambda parsed) `(label ,name ,value) value)]
-              (if (:private parsed)
-                  `(begin (private* ,name) (define* ,name ,labeled))
-                  `(define* ,name ,labeled)))))))))
-
-(define :macro (define-macro . forms)
-  (let [name (car forms)]
-    (if (is-local name)
-        `(define* ,name (label ,name (macro* (lambda ,@(cdr forms)))))
-        `(define :macro ,@forms))))
-
-(define-macro (define-lambda . forms)
-  (let [name (car forms)]
-    (if (is-local name)
-        `(define* ,name (label ,name (lambda ,@(cdr forms))))
-        `(define ,@forms))))
-
-(define-macro (!eq value . comps)
-  `(not (eq ,value ,@comps)))
-
-(define-macro (!and . clauses)
-  `(not (and ,@clauses)))
-
-(define-macro (!or . clauses)
-  `(not (or ,@clauses)))
-
-(define-macro (lambda-rec name . forms)
-  (if (is-local name)
-      `(label ,name (lambda ,@forms))
-      `(lambda ,name ,@forms)))
-
-(define-macro (thunk . forms)
-  `(lambda () ,@forms))
-
-;; case and some macros require it
-(define (map! func coll)
-   (if (is-empty coll)
-       '()
-       (cons (func (first coll))
-             (map! func (rest coll)))))
-
-(define-macro (declare . names)
-  `(begin ,@(map! (lambda (n) (list 'ale/declare* n)) names)))
-
-(define-macro (private . names)
-  `(begin ,@(map! (lambda (n) (list 'ale/private* n)) names)))
-
-;; some basic predicates
-
-(define (is-null value)
-  (eq value nil))
-
-(define (is-zero value)
-  (= value 0))
-
-(define (is-even value)
-  (= (mod value 2) 0))
-
-(define (is-odd value)
-  (= (mod value 2) 1))
-
-(define (is-true value)
-  (eq true value))
-
-(define (is-false value)
-  (eq false value))
-
-(define (not value)
-  (if value false true))
-
-;; some conveniences
-
-(define (no-op . _))
-
-(define (identity value) value)
-
-(define (constantly value)
-  (lambda _ value))
-
-(define-macro (: target method . args)
-  `((get ,target ,method) ,@args))
+(define* raise
+  (lambda (err)
+    (asm*
+        .resolve err
+        panic
+        nil)))

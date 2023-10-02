@@ -1,0 +1,61 @@
+;;;; ale core: numerics
+
+(define* +
+  (lambda args
+    (asm*
+        .local sum :val
+        .const 0
+        store sum
+        .local rest :val
+        .resolve args
+        store rest
+    :loop
+        load rest
+        empty
+        cond-jump :end
+        load sum
+        load rest
+        car
+        add
+        store sum
+        load rest
+        cdr
+        store rest
+        jump :loop
+    :end
+        load sum)))
+
+(define* *
+  (lambda args
+    (asm*
+        .local prod :val
+        .const 1
+        store prod
+        .local rest :val
+        .resolve args
+        store rest
+    :loop
+        load rest
+        empty
+        cond-jump :end
+        load prod
+        load rest
+        car
+        mul
+        store prod
+        load rest
+        cdr
+        store rest
+        jump :loop
+    :end
+        load prod)))
+
+(define (is-zero value) (= value 0))
+(define (is-even value) (= (mod value 2) 0))
+(define (is-odd value) (= (mod value 2) 1))
+
+(define (inc value) (+ value 1))
+(define (dec value) (- value 1))
+
+(define* *pos-inf* (/ 1.0 0.0))
+(define* *neg-inf* (/ -1.0 0.0))

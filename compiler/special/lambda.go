@@ -46,18 +46,25 @@ func (le *lambdaEncoder) encode() {
 }
 
 func (le *lambdaEncoder) encodeCases(cases paramCases) {
-	if len(cases) == 0 {
+	switch len(cases) {
+	case 0:
 		generate.Literal(le, data.String(ErrNoMatchingParamPattern))
 		le.Emit(isa.Panic)
 		return
+	case 1:
+		if c := cases[0]; c.rest && len(c.params) == 1 {
+			le.consequent(c)
+			return
+		}
+		fallthrough
+	default:
+		c := cases[0]
+		generate.Branch(le,
+			func(encoder.Encoder) { le.predicate(c) },
+			func(encoder.Encoder) { le.consequent(c) },
+			func(encoder.Encoder) { le.encodeCases(cases[1:]) },
+		)
 	}
-
-	c := cases[0]
-	generate.Branch(le,
-		func(encoder.Encoder) { le.predicate(c) },
-		func(encoder.Encoder) { le.consequent(c) },
-		func(encoder.Encoder) { le.encodeCases(cases[1:]) },
-	)
 }
 
 func (le *lambdaEncoder) predicate(c *paramCase) {
@@ -65,11 +72,11 @@ func (le *lambdaEncoder) predicate(c *paramCase) {
 	al := len(c.params)
 	if c.rest {
 		generate.Literal(le, data.Integer(al-1))
-		le.Emit(isa.Gte)
+		le.Emit(isa.NumGte)
 		return
 	}
 	generate.Literal(le, data.Integer(al))
-	le.Emit(isa.Eq)
+	le.Emit(isa.NumEq)
 }
 
 func (le *lambdaEncoder) consequent(c *paramCase) {

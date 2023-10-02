@@ -1,6 +1,8 @@
 package isa
 
-import "errors"
+import (
+	"errors"
+)
 
 type (
 	flattener struct {
@@ -78,12 +80,13 @@ func (f *flattener) addLabelBackRef(l *label) {
 }
 
 func (f *flattener) handleJump(inst Instruction) {
-	_, op := inst.Split()
+	oc, op := inst.Split()
 	l := f.getLabel(op)
 	if !l.anchored {
 		f.addLabelBackRef(l)
 	}
-	f.output = append(f.output, inst)
+	ni := New(oc, l.offset)
+	f.output = append(f.output, ni)
 }
 
 func (f *flattener) handleLabel(inst Instruction) {

@@ -74,12 +74,15 @@ func splitCondJump(code isa.Instructions, condJumpIdx int) *branches {
 
 	elseJumpIdx := thenIdx - 1
 	elseJump := rest[elseJumpIdx]
-	if oc, _ := elseJump.Split(); oc != isa.Jump {
-		return nil // not created with build.Cond
+	oc, idx := elseJump.Split()
+	if oc != isa.Jump { // jump expected for generated branches
+		return nil
 	}
 
-	_, idx = elseJump.Split()
 	joinIdx, joinLabel := findLabel(rest, idx)
+	if joinIdx <= thenIdx { // forward jump expected in generated branches
+		return nil
+	}
 
 	return &branches{
 		prologue:   prologue,

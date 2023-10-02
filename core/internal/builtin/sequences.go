@@ -53,12 +53,6 @@ var Nth = data.Applicative(func(args ...data.Value) data.Value {
 	panic(errors.New(ErrIndexOutOfBounds))
 }, 2, 3)
 
-// IsEmpty returns whether the provided sequence is empty
-var IsEmpty = data.Applicative(func(args ...data.Value) data.Value {
-	s := args[0].(data.Sequence)
-	return data.Bool(s.IsEmpty())
-}, 1)
-
 func makeConstructor[T data.Value](orig func(...data.Value) T) data.Function {
 	return data.Applicative(func(args ...data.Value) data.Value {
 		return orig(args...)

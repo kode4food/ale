@@ -1,0 +1,94 @@
+;;;; ale core: define facilities
+
+(private* is-cons-or-list)
+(define* is-cons-or-list
+  (lambda (value)
+    (or (is-cons value)
+        (is-list value))))
+
+(private* parse-define)
+(define* parse-define
+  (lambda (body)
+    (let ([f (car body)]
+          [r (cdr body)])
+      (if ({:private #t :macro #t} f)
+          (assoc (parse-define r) f #t)
+          (if (and (is-cons-or-list f) (is-local (car f)))
+              {:name (car f) :lambda #t :body `(lambda ,(cdr f) ,@r)}
+              (if (is-local f)
+                  {:name f :body (car r)}
+                  (raise (str "invalid define: " body))))))))
+
+(define* define
+  (macro*
+    (lambda body
+      ; we're so early days that let* hasn't been defined yet
+      (let [parsed (parse-define body)]
+        (let ([name (:name parsed)]
+              [body (:body parsed)])
+          (let [value (if (:macro parsed) `(macro* ,body) body)]
+            (let [labeled (if (:lambda parsed) `(label ,name ,value) value)]
+              (if (:private parsed)
+                  `(begin (private* ,name) (define* ,name ,labeled))
+                  `(define* ,name ,labeled)))))))))
+
+(define :macro (define-macro . forms)
+  (let [name (car forms)]
+    (if (is-local name)
+        `(define* ,name (label ,name (macro* (lambda ,@(cdr forms)))))
+        `(define :macro ,@forms))))
+
+(define-macro (define-lambda . forms)
+  (let [name (car forms)]
+    (if (is-local name)
+        `(define* ,name (label ,name (lambda ,@(cdr forms))))
+        `(define ,@forms))))
+
+(define-macro (!eq value . comps)
+  `(not (eq ,value ,@comps)))
+
+(define-macro (!and . clauses)
+  `(not (and ,@clauses)))
+
+(define-macro (!or . clauses)
+  `(not (or ,@clauses)))
+
+(define-macro (lambda-rec name . forms)
+  (if (is-local name)
+      `(label ,name (lambda ,@forms))
+      `(lambda ,name ,@forms)))
+
+(define-macro (thunk . forms)
+  `(lambda () ,@forms))
+
+(define-macro (declare . names)
+  `(begin ,@(map! (lambda (n) (list 'ale/declare* n)) names)))
+
+(define-macro (private . names)
+  `(begin ,@(map! (lambda (n) (list 'ale/private* n)) names)))
+
+;; some basic predicates
+
+(define (is-null value)
+  (eq value nil))
+
+(define (is-true value)
+  (eq true value))
+
+(define (is-false value)
+  (eq false value))
+
+(define (not value)
+  (if value false true))
+
+;; some conveniences
+
+(define (no-op . _))
+
+(define (identity value) value)
+
+(define (constantly value)
+  (lambda _ value))
+
+(define-macro (: target method . args)
+  `((get ,target ,method) ,@args))

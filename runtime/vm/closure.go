@@ -5,10 +5,9 @@ import (
 	"fmt"
 	un "unsafe"
 
-	"github.com/kode4food/ale/internal/sequence"
-
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/env"
+	"github.com/kode4food/ale/internal/sequence"
 	"github.com/kode4food/ale/runtime/isa"
 )
 
@@ -154,6 +153,29 @@ opSwitch:
 		*SP1 = data.NewCons(MEM[SP], *SP1)
 		goto nextPC
 
+	case isa.Empty:
+		SP1 := &MEM[SP+1]
+		*SP1 = data.Bool((*SP1).(data.Sequence).IsEmpty())
+		goto nextPC
+
+	case isa.Eq:
+		SP++
+		SP1 := &MEM[SP+1]
+		*SP1 = data.Bool((*SP1).Equal(MEM[SP]))
+		goto nextPC
+
+	case isa.Not:
+		SP1 := &MEM[SP+1]
+		*SP1 = !(*SP1).(data.Bool)
+		goto nextPC
+
+	case isa.MakeTruthy:
+		SP1 := &MEM[SP+1]
+		*SP1 = data.Bool(
+			data.Truthy(*SP1),
+		)
+		goto nextPC
+
 	case isa.Declare:
 		SP++
 		c.Lambda.Globals.Declare(
@@ -232,7 +254,7 @@ opSwitch:
 		)
 		goto nextPC
 
-	case isa.Eq:
+	case isa.NumEq:
 		SP++
 		SP1 := &MEM[SP+1]
 		*SP1 = data.Bool(
@@ -242,7 +264,7 @@ opSwitch:
 		)
 		goto nextPC
 
-	case isa.Neq:
+	case isa.NumNeq:
 		SP++
 		SP1 := &MEM[SP+1]
 		*SP1 = data.Bool(
@@ -252,7 +274,7 @@ opSwitch:
 		)
 		goto nextPC
 
-	case isa.Lt:
+	case isa.NumLt:
 		SP++
 		SP1 := &MEM[SP+1]
 		*SP1 = data.Bool(
@@ -262,7 +284,7 @@ opSwitch:
 		)
 		goto nextPC
 
-	case isa.Lte:
+	case isa.NumLte:
 		SP++
 		SP1 := &MEM[SP+1]
 		cmp := (*SP1).(data.Number).Cmp(
@@ -273,7 +295,7 @@ opSwitch:
 		)
 		goto nextPC
 
-	case isa.Gt:
+	case isa.NumGt:
 		SP++
 		SP1 := &MEM[SP+1]
 		*SP1 = data.Bool(
@@ -283,7 +305,7 @@ opSwitch:
 		)
 		goto nextPC
 
-	case isa.Gte:
+	case isa.NumGte:
 		SP++
 		SP1 := &MEM[SP+1]
 		cmp := (*SP1).(data.Number).Cmp(
@@ -298,18 +320,6 @@ opSwitch:
 		SP1 := &MEM[SP+1]
 		*SP1 = data.Integer(0).Sub(
 			(*SP1).(data.Number),
-		)
-		goto nextPC
-
-	case isa.Not:
-		SP1 := &MEM[SP+1]
-		*SP1 = !(*SP1).(data.Bool)
-		goto nextPC
-
-	case isa.MakeTruthy:
-		SP1 := &MEM[SP+1]
-		*SP1 = data.Bool(
-			data.Truthy(*SP1),
 		)
 		goto nextPC
 

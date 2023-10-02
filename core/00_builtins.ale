@@ -2,9 +2,7 @@
 
 (def-builtin -)
 (def-builtin !=)
-(def-builtin *)
 (def-builtin /)
-(def-builtin +)
 (def-builtin <)
 (def-builtin <=)
 (def-builtin =)
@@ -51,7 +49,6 @@
 (def-builtin is-atom)
 (def-builtin is-cons)
 (def-builtin is-counted)
-(def-builtin is-empty)
 (def-builtin is-indexed)
 (def-builtin is-keyword)
 (def-builtin is-local)

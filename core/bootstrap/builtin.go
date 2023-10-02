@@ -61,9 +61,7 @@ func (b *bootstrap) availableFunctions() {
 	b.functions(map[data.Local]data.Function{
 		"-":  builtin.Sub,
 		"!=": builtin.Neq,
-		"*":  builtin.Mul,
 		"/":  builtin.Div,
-		"+":  builtin.Add,
 		"<":  builtin.Lt,
 		"<=": builtin.Lte,
 		"=":  builtin.Eq,
@@ -102,7 +100,6 @@ func (b *bootstrap) availableFunctions() {
 		"is-boolean":    builtin.IsBoolean,
 		"is-cons":       builtin.IsCons,
 		"is-counted":    builtin.IsCounted,
-		"is-empty":      builtin.IsEmpty,
 		"is-indexed":    builtin.IsIndexed,
 		"is-keyword":    builtin.IsKeyword,
 		"is-list":       builtin.IsList,

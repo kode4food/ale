@@ -28,56 +28,58 @@ func _() {
 	_ = x[Deref-16]
 	_ = x[Div-17]
 	_ = x[Dup-18]
-	_ = x[Eq-19]
-	_ = x[False-20]
-	_ = x[Gt-21]
-	_ = x[Gte-22]
-	_ = x[Jump-23]
-	_ = x[Load-24]
-	_ = x[Lt-25]
-	_ = x[Lte-26]
-	_ = x[MakeTruthy-27]
-	_ = x[Mod-28]
-	_ = x[Mul-29]
-	_ = x[Neg-30]
-	_ = x[NegInf-31]
-	_ = x[NegInt-32]
-	_ = x[Neq-33]
-	_ = x[NewRef-34]
-	_ = x[NoOp-35]
-	_ = x[Not-36]
-	_ = x[Nil-37]
-	_ = x[Panic-38]
-	_ = x[Pop-39]
-	_ = x[PosInf-40]
-	_ = x[PosInt-41]
-	_ = x[Private-42]
-	_ = x[Resolve-43]
-	_ = x[RestArg-44]
-	_ = x[RetFalse-45]
-	_ = x[RetNil-46]
-	_ = x[RetTrue-47]
-	_ = x[Return-48]
-	_ = x[Self-49]
-	_ = x[Store-50]
-	_ = x[Sub-51]
-	_ = x[TailCall-52]
-	_ = x[True-53]
-	_ = x[Zero-54]
+	_ = x[Empty-19]
+	_ = x[Eq-20]
+	_ = x[False-21]
+	_ = x[Jump-22]
+	_ = x[Load-23]
+	_ = x[MakeTruthy-24]
+	_ = x[Mod-25]
+	_ = x[Mul-26]
+	_ = x[Neg-27]
+	_ = x[NegInf-28]
+	_ = x[NegInt-29]
+	_ = x[NewRef-30]
+	_ = x[NoOp-31]
+	_ = x[Not-32]
+	_ = x[Nil-33]
+	_ = x[NumEq-34]
+	_ = x[NumGt-35]
+	_ = x[NumGte-36]
+	_ = x[NumLt-37]
+	_ = x[NumLte-38]
+	_ = x[NumNeq-39]
+	_ = x[Panic-40]
+	_ = x[Pop-41]
+	_ = x[PosInf-42]
+	_ = x[PosInt-43]
+	_ = x[Private-44]
+	_ = x[Resolve-45]
+	_ = x[RestArg-46]
+	_ = x[RetFalse-47]
+	_ = x[RetNil-48]
+	_ = x[RetTrue-49]
+	_ = x[Return-50]
+	_ = x[Self-51]
+	_ = x[Store-52]
+	_ = x[Sub-53]
+	_ = x[TailCall-54]
+	_ = x[True-55]
+	_ = x[Zero-56]
 }
 
 const (
-	_Opcode_name_0 = "AddArgArgLenBindBindRefCallCall0Call1CallWithCarCdrClosureCondJumpConsConstDeclareDerefDivDupEqFalseGtGteJumpLoadLtLteMakeTruthyModMulNegNegInfNegIntNeqNewRefNoOpNotNilPanicPopPosInfPosIntPrivateResolveRestArgRetFalseRetNilRetTrueReturnSelfStoreSubTailCallTrueZero"
+	_Opcode_name_0 = "AddArgArgLenBindBindRefCallCall0Call1CallWithCarCdrClosureCondJumpConsConstDeclareDerefDivDupEmptyEqFalseJumpLoadMakeTruthyModMulNegNegInfNegIntNewRefNoOpNotNilNumEqNumGtNumGteNumLtNumLteNumNeqPanicPopPosInfPosIntPrivateResolveRestArgRetFalseRetNilRetTrueReturnSelfStoreSubTailCallTrueZero"
 	_Opcode_name_1 = "OpcodeMask"
 )
 
 var (
-	_Opcode_index_0 = [...]uint16{0, 3, 6, 12, 16, 23, 27, 32, 37, 45, 48, 51, 58, 66, 70, 75, 82, 87, 90, 93, 95, 100, 102, 105, 109, 113, 115, 118, 128, 131, 134, 137, 143, 149, 152, 158, 162, 165, 168, 173, 176, 182, 188, 195, 202, 209, 217, 223, 230, 236, 240, 245, 248, 256, 260, 264}
+	_Opcode_index_0 = [...]uint16{0, 3, 6, 12, 16, 23, 27, 32, 37, 45, 48, 51, 58, 66, 70, 75, 82, 87, 90, 93, 98, 100, 105, 109, 113, 123, 126, 129, 132, 138, 144, 150, 154, 157, 160, 165, 170, 176, 181, 187, 193, 198, 201, 207, 213, 220, 227, 234, 242, 248, 255, 261, 265, 270, 273, 281, 285, 289}
 )
 
 func (i Opcode) String() string {
 	switch {
-	case i <= 54:
+	case i <= 56:
 		return _Opcode_name_0[_Opcode_index_0[i]:_Opcode_index_0[i+1]]
 	case i == 63:
 		return _Opcode_name_1

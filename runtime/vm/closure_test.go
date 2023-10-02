@@ -250,85 +250,85 @@ func TestRelational(t *testing.T) {
 	testResult(t, data.True, isa.Instructions{
 		isa.PosInt.New(1),
 		isa.PosInt.New(1),
-		isa.Eq.New(), isa.Return.New(),
+		isa.NumEq.New(), isa.Return.New(),
 	})
 
 	testResult(t, data.False, isa.Instructions{
 		isa.PosInt.New(1),
 		isa.PosInt.New(2),
-		isa.Eq.New(), isa.Return.New(),
+		isa.NumEq.New(), isa.Return.New(),
 	})
 
 	testResult(t, data.True, isa.Instructions{
 		isa.PosInt.New(2),
 		isa.PosInt.New(1),
-		isa.Neq.New(), isa.Return.New(),
+		isa.NumNeq.New(), isa.Return.New(),
 	})
 
 	testResult(t, data.False, isa.Instructions{
 		isa.PosInt.New(1),
 		isa.PosInt.New(1),
-		isa.Neq.New(), isa.Return.New(),
+		isa.NumNeq.New(), isa.Return.New(),
 	})
 
 	testResult(t, data.True, isa.Instructions{
 		isa.PosInt.New(1),
 		isa.PosInt.New(2),
-		isa.Lt.New(), isa.Return.New(),
+		isa.NumLt.New(), isa.Return.New(),
 	})
 
 	testResult(t, data.False, isa.Instructions{
 		isa.PosInt.New(2),
 		isa.PosInt.New(1),
-		isa.Lt.New(), isa.Return.New(),
+		isa.NumLt.New(), isa.Return.New(),
 	})
 
 	testResult(t, data.True, isa.Instructions{
 		isa.PosInt.New(1),
 		isa.PosInt.New(2),
-		isa.Lte.New(), isa.Return.New(),
+		isa.NumLte.New(), isa.Return.New(),
 	})
 
 	testResult(t, data.True, isa.Instructions{
 		isa.PosInt.New(2),
 		isa.PosInt.New(2),
-		isa.Lte.New(), isa.Return.New(),
+		isa.NumLte.New(), isa.Return.New(),
 	})
 
 	testResult(t, data.False, isa.Instructions{
 		isa.PosInt.New(2),
 		isa.PosInt.New(1),
-		isa.Lte.New(), isa.Return.New(),
+		isa.NumLte.New(), isa.Return.New(),
 	})
 
 	testResult(t, data.True, isa.Instructions{
 		isa.PosInt.New(2),
 		isa.PosInt.New(1),
-		isa.Gt.New(), isa.Return.New(),
+		isa.NumGt.New(), isa.Return.New(),
 	})
 
 	testResult(t, data.False, isa.Instructions{
 		isa.PosInt.New(1),
 		isa.PosInt.New(2),
-		isa.Gt.New(), isa.Return.New(),
+		isa.NumGt.New(), isa.Return.New(),
 	})
 
 	testResult(t, data.True, isa.Instructions{
 		isa.PosInt.New(2),
 		isa.PosInt.New(1),
-		isa.Gte.New(), isa.Return.New(),
+		isa.NumGte.New(), isa.Return.New(),
 	})
 
 	testResult(t, data.True, isa.Instructions{
 		isa.PosInt.New(2),
 		isa.PosInt.New(2),
-		isa.Gte.New(), isa.Return.New(),
+		isa.NumGte.New(), isa.Return.New(),
 	})
 
 	testResult(t, data.False, isa.Instructions{
 		isa.PosInt.New(1),
 		isa.PosInt.New(2),
-		isa.Gte.New(), isa.Return.New(),
+		isa.NumGte.New(), isa.Return.New(),
 	})
 }
 

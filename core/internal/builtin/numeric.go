@@ -2,18 +2,6 @@ package builtin
 
 import "github.com/kode4food/ale/data"
 
-// Add returns the sum of the provided numbers
-var Add = data.Applicative(func(args ...data.Value) data.Value {
-	if len(args) == 0 {
-		return data.Integer(0)
-	}
-	var res = args[0].(data.Number)
-	for _, n := range args[1:] {
-		res = res.Add(n.(data.Number))
-	}
-	return res
-})
-
 // Sub will subtract one number from the previous, in turn
 var Sub = data.Applicative(func(args ...data.Value) data.Value {
 	if len(args) == 1 {
@@ -26,15 +14,6 @@ var Sub = data.Applicative(func(args ...data.Value) data.Value {
 	}
 	return res
 }, 1, data.OrMore)
-
-// Mul will generate the product of all the provided numbers
-var Mul = data.Applicative(func(args ...data.Value) data.Value {
-	var res data.Number = data.Integer(1)
-	for _, n := range args {
-		res = res.Mul(n.(data.Number))
-	}
-	return res
-})
 
 // Div will divide one number by the next, in turn
 var Div = data.Applicative(func(args ...data.Value) data.Value {
