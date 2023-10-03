@@ -16,15 +16,6 @@
 (define-macro (!or . clauses)
 `(not (or ,@clauses)))
 
-(define (is-null value)
-  (eq value nil))
-
-(define (is-true value)
-  (eq true value))
-
-(define (is-false value)
-  (eq false value))
-
 (define (not value)
   (if value false true))
 
