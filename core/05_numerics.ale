@@ -1,52 +1,33 @@
 ;;;; ale core: numerics
 
-(define (+ . args)
-  (asm*
-      .local sum :val
-      .const 0
-      store sum
-      .local rest :val
-      .resolve args
-      store rest
-  :loop
-      load rest
-      empty
-      cond-jump :end
-      load sum
-      load rest
-      car
-      add
-      store sum
-      load rest
-      cdr
-      store rest
-      jump :loop
-  :end
-      load sum))
+(define :private :macro (reduce-inst init inst)
+  `(lambda args
+     ,(apply list (concat!
+         '(ale/asm*
+              .local accum :val
+              .const) (list init) '(
+              store accum
+              .local rest :val
+              .resolve args
+              store rest
+          :loop
+              load rest
+              empty
+              cond-jump :end
+              load accum
+              load rest
+              car)
+              (list inst) '(
+              store accum
+              load rest
+              cdr
+              store rest
+              jump :loop
+          :end
+              load accum)))))
 
-(define (* . args)
-  (asm*
-      .local prod :val
-      .const 1
-      store prod
-      .local rest :val
-      .resolve args
-      store rest
-  :loop
-      load rest
-      empty
-      cond-jump :end
-      load prod
-      load rest
-      car
-      mul
-      store prod
-      load rest
-      cdr
-      store rest
-      jump :loop
-  :end
-      load prod))
+(define + (reduce-inst 0 add))
+(define * (reduce-inst 1 mul))
 
 (define (is-zero value) (= value 0))
 (define (is-even value) (= (mod value 2) 0))
