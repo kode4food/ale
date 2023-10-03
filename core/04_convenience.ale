@@ -1,0 +1,39 @@
+;;;; ale core: some conveniences
+
+(define* nil '())
+(define* true #t)
+(define* false #f)
+
+(define* first car)
+(define* rest cdr)
+
+(define-macro (!eq value . comps)
+`(not (eq ,value ,@comps)))
+
+(define-macro (!and . clauses)
+  `(not (and ,@clauses)))
+
+(define-macro (!or . clauses)
+`(not (or ,@clauses)))
+
+(define (is-null value)
+  (eq value nil))
+
+(define (is-true value)
+  (eq true value))
+
+(define (is-false value)
+  (eq false value))
+
+(define (not value)
+  (if value false true))
+
+(define (no-op . _))
+
+(define (identity value) value)
+
+(define (constantly value)
+  (lambda _ value))
+
+(define-macro (: target method . args)
+  `((get ,target ,method) ,@args))

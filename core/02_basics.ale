@@ -5,12 +5,13 @@
       !make-encoder (form)
       .const form))
 
-(define* nil '())
-(define* true #t)
-(define* false #f)
-
-(define* first car)
-(define* rest cdr)
+(private* dec*)
+(define* dec*
+  (asm*
+      !make-encoder (value)
+      .eval value
+      .const 1
+      sub))
 
 (define* apply
   (lambda
@@ -24,14 +25,10 @@
          [prepend-args
           (lambda (args result idx)
             (if (asm* .resolve idx zero num-gte)
-                (prepend-args args
-                              (cons (args idx) result)
-                              (asm* .resolve idx .const 1 sub))
+                (prepend-args args (cons (args idx) result) (dec* idx))
                 result))]
-         (let [idx (asm* .eval (length r) .const 1 sub)]
-           (let [args (prepend-args r
-                                    (r idx)
-                                    (asm* .resolve idx .const 1 sub))]
+         (let [idx (dec* (length r))]
+           (let [args (prepend-args r (r idx) (dec* idx))]
              (asm*
                  .eval (cons f args)
                  .resolve fn
@@ -64,30 +61,30 @@
     (lambda (func coll)
       (if (is-empty coll)
         '()
-        (cons (func (first coll))
-              (map! func (rest coll)))))))
+        (cons (func (car coll))
+              (map! func (cdr coll)))))))
 
 (define* and
   (macro*
     (lambda
-      [() true]
+      [() #t]
       [(clause) clause]
       [clauses
          `(let [and# ,(clauses 0)]
             (if and#
-                (and ,@(rest clauses))
+                (and ,@(cdr clauses))
                 and#))])))
 
 (define* or
   (macro*
     (lambda
-      [() nil]
+      [() '()]
       [(clause) clause]
       [clauses
          `(let [or# ,(clauses 0)]
             (if or#
                 or#
-                (or ,@(rest clauses))))])))
+                (or ,@(cdr clauses))))])))
 
 (define* raise
   (lambda (err)

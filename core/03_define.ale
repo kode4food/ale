@@ -1,4 +1,4 @@
-;;;; ale core: define facilities
+;;;; ale core: definition facilities
 
 (private* is-cons-or-list)
 (define* is-cons-or-list
@@ -44,19 +44,10 @@
         `(define ,name (label ,name (lambda ,@(cdr forms))))
         `(define ,@forms))))
 
-(define-macro (!eq value . comps)
-  `(not (eq ,value ,@comps)))
-
-(define-macro (!and . clauses)
-  `(not (and ,@clauses)))
-
-(define-macro (!or . clauses)
-  `(not (or ,@clauses)))
-
 (define-macro (lambda-rec name . forms)
   (if (is-local name)
-      `(label ,name (lambda ,@forms))
-      `(lambda ,name ,@forms)))
+    `(label ,name (lambda ,@forms))
+    `(lambda ,name ,@forms)))
 
 (define-macro (thunk . forms)
   `(lambda () ,@forms))
@@ -66,29 +57,3 @@
 
 (define-macro (private . names)
   `(begin ,@(map! (lambda (n) (list 'ale/private* n)) names)))
-
-;; some basic predicates
-
-(define (is-null value)
-  (eq value nil))
-
-(define (is-true value)
-  (eq true value))
-
-(define (is-false value)
-  (eq false value))
-
-(define (not value)
-  (if value false true))
-
-;; some conveniences
-
-(define (no-op . _))
-
-(define (identity value) value)
-
-(define (constantly value)
-  (lambda _ value))
-
-(define-macro (: target method . args)
-  `((get ,target ,method) ,@args))
