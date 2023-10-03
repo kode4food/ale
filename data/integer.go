@@ -130,7 +130,6 @@ func (l Integer) Mod(r Number) Number {
 	if ri == 0 {
 		panic(errors.New(ErrDivideByZero))
 	}
-
 	res := l % ri
 	if (res < 0 && ri > 0) || (res > 0 && ri < 0) {
 		return res + ri
