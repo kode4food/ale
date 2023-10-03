@@ -130,7 +130,12 @@ func (l Integer) Mod(r Number) Number {
 	if ri == 0 {
 		panic(errors.New(ErrDivideByZero))
 	}
-	return l % ri
+
+	res := l % ri
+	if (res < 0 && ri > 0) || (res > 0 && ri < 0) {
+		return res + ri
+	}
+	return res
 }
 
 // IsNaN tells you that this Integer is, in fact, a Number

@@ -1,8 +1,6 @@
 ;;;; ale core: builtin
 
-(def-builtin -)
 (def-builtin !=)
-(def-builtin /)
 (def-builtin <)
 (def-builtin <=)
 (def-builtin =)
@@ -23,7 +21,6 @@
 (def-builtin length)
 (def-builtin list)
 (def-builtin macro*)
-(def-builtin mod)
 (def-builtin nth)
 (def-builtin object)
 (def-builtin promise*)

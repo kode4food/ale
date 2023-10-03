@@ -2,37 +2,6 @@ package builtin
 
 import "github.com/kode4food/ale/data"
 
-// Sub will subtract one number from the previous, in turn
-var Sub = data.Applicative(func(args ...data.Value) data.Value {
-	if len(args) == 1 {
-		return data.Integer(-1).Mul(args[0].(data.Number))
-	}
-	var res = args[0].(data.Number)
-	var rest = args[1:]
-	for _, n := range rest {
-		res = res.Sub(n.(data.Number))
-	}
-	return res
-}, 1, data.OrMore)
-
-// Div will divide one number by the next, in turn
-var Div = data.Applicative(func(args ...data.Value) data.Value {
-	var res = args[0].(data.Number)
-	for _, n := range args[1:] {
-		res = res.Div(n.(data.Number))
-	}
-	return res
-}, 1, data.OrMore)
-
-// Mod will produce the remainder of dividing one number by the next, in turn
-var Mod = data.Applicative(func(args ...data.Value) data.Value {
-	var res = args[0].(data.Number)
-	for _, n := range args[1:] {
-		res = res.Mod(n.(data.Number))
-	}
-	return res
-}, 1, data.OrMore)
-
 // Eq returns whether the provided numbers are equal
 var Eq = data.Applicative(func(args ...data.Value) data.Value {
 	var res = args[0].(data.Number)

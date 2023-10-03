@@ -59,9 +59,7 @@ func (b *bootstrap) specialForms() {
 
 func (b *bootstrap) availableFunctions() {
 	b.functions(map[data.Local]data.Function{
-		"-":  builtin.Sub,
 		"!=": builtin.Neq,
-		"/":  builtin.Div,
 		"<":  builtin.Lt,
 		"<=": builtin.Lte,
 		"=":  builtin.Eq,
@@ -83,7 +81,6 @@ func (b *bootstrap) availableFunctions() {
 		"length":       builtin.Length,
 		"list":         builtin.List,
 		"macro*":       builtin.Macro,
-		"mod":          builtin.Mod,
 		"nth":          builtin.Nth,
 		"object":       builtin.Object,
 		"read":         builtin.Read,

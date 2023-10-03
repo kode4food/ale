@@ -103,7 +103,11 @@ func (l Float) Div(r Number) Number {
 // Mod calculates the remainder of dividing this Float by another Number
 func (l Float) Mod(r Number) Number {
 	if rf, ok := r.(Float); ok {
-		return Float(math.Mod(float64(l), float64(rf)))
+		res := Float(math.Mod(float64(l), float64(rf)))
+		if (res < 0 && rf > 0) || (res > 0 && rf < 0) {
+			return res + rf
+		}
+		return res
 	}
 	pl, pr := purify(l, r)
 	return pl.Mod(pr)

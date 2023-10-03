@@ -169,6 +169,7 @@ func TestRemainder(t *testing.T) {
 	n6 := data.MustParseInteger("1000000000000000000000000000000000000000000")
 	n7 := data.MustParseRatio("15/2")
 	n8 := data.MustParseRatio("7/2")
+	n9 := data.Integer(-20)
 
 	as.Number(2.0, n3.Mod(n2))
 	as.Number(2.0, n4.Mod(n1))
@@ -178,6 +179,8 @@ func TestRemainder(t *testing.T) {
 	as.String("1", n6.Mod(n3))
 	as.String("15/7", n7.Div(n8))
 	as.String("1/2", n7.Mod(n8))
+	as.String("1.0", n9.Mod(n4))
+	as.String("1", n9.Mod(n3))
 }
 
 func TestAddition(t *testing.T) {

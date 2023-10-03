@@ -1,33 +1,49 @@
 ;;;; ale core: numerics
 
-(define :private :macro (reduce-inst init inst)
-  `(lambda args
-     ,(apply list (concat!
-         '(ale/asm*
-              .local accum :val
-              .const) (list init) '(
-              store accum
-              .local rest :val
-              .resolve args
-              store rest
-          :loop
-              load rest
-              empty
-              cond-jump :end
-              load accum
-              load rest
-              car)
-              (list inst) '(
-              store accum
-              load rest
-              cdr
-              store rest
-              jump :loop
-          :end
-              load accum)))))
+(define :private :macro (reduce-inst args init inst)
+  (apply list (concat!
+    '(ale/asm*
+        .local accum :val
+        .eval) [init] '(
+        store accum
+        .local rest :val
+        .resolve) [args] '(
+        store rest
+    :loop
+        load rest
+        empty
+        cond-jump :end
+        load accum
+        load rest
+        car)
+        [inst] '(
+        store accum
+        load rest
+        cdr
+        store rest
+        jump :loop
+    :end
+        load accum))))
 
-(define + (reduce-inst 0 add))
-(define * (reduce-inst 1 mul))
+(define (+ . args) (reduce-inst args 0 add))
+(define (* . args) (reduce-inst args 1 mul))
+
+(define (mod num den . more)
+  (reduce-inst more
+               (asm* .resolve num
+                     .resolve den
+                     mod)
+               mod))
+
+(define-lambda /
+  [(x) (asm* .const 1 .resolve x div)]
+  [(f . r) (reduce-inst r f div)])
+
+(define-lambda -
+  [(x) (asm* zero .resolve x sub)]
+  [(f . r) (reduce-inst r f sub)])
+
+(define modulo mod)
 
 (define (is-zero value) (= value 0))
 (define (is-even value) (= (mod value 2) 0))
