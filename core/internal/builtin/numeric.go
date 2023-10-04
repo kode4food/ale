@@ -2,23 +2,15 @@ package builtin
 
 import "github.com/kode4food/ale/data"
 
-// Eq returns whether the provided numbers are equal
-var Eq = data.Applicative(func(args ...data.Value) data.Value {
+// Neq returns true if any of the numbers is not equal to the others
+var Neq = data.Applicative(func(args ...data.Value) data.Value {
 	var res = args[0].(data.Number)
 	for _, n := range args[1:] {
 		if res.Cmp(n.(data.Number)) != data.EqualTo {
-			return data.False
+			return data.True
 		}
 	}
-	return data.True
-}, 1, data.OrMore)
-
-// Neq returns true if any of the numbers is not equal to the others
-var Neq = data.Applicative(func(args ...data.Value) data.Value {
-	if Eq.Call(args...) == data.True {
-		return data.False
-	}
-	return data.True
+	return data.False
 }, 1, data.OrMore)
 
 // Gt returns true if each number is greater than the previous

@@ -62,7 +62,6 @@ func (b *bootstrap) availableFunctions() {
 		"!=": builtin.Neq,
 		"<":  builtin.Lt,
 		"<=": builtin.Lte,
-		"=":  builtin.Eq,
 		">":  builtin.Gt,
 		">=": builtin.Gte,
 

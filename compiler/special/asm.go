@@ -40,14 +40,13 @@ const (
 )
 
 const (
-	MakeEncoder  = data.Local("!make-encoder")
-	MakeDetached = data.Local("!make-detached")
-	Resolve      = data.Local(".resolve")
-	EvalValue    = data.Local(".eval")
-	Const        = data.Local(".const")
-	Local        = data.Local(".local")
-	PushLocals   = data.Local(".push-locals")
-	PopLocals    = data.Local(".pop-locals")
+	MakeEncoder = data.Local("!make-encoder")
+	Resolve     = data.Local(".resolve")
+	EvalValue   = data.Local(".eval")
+	Const       = data.Local(".const")
+	Local       = data.Local(".local")
+	PushLocals  = data.Local(".push-locals")
+	PopLocals   = data.Local(".pop-locals")
 )
 
 var (
@@ -94,20 +93,10 @@ func (e *asmEncoder) process(forms data.Sequence) {
 			case MakeEncoder:
 				e.makeEncoderCall(r)
 				return
-			case MakeDetached:
-				e.makeDetachedEncoder(r)
-				return
 			}
 		}
 	}
 	e.encode(forms)
-}
-
-func (e *asmEncoder) makeDetachedEncoder(forms data.Sequence) {
-	ae := makeAsmEncoder(
-		encoder.NewEncoder(e.Globals()),
-	)
-	ae.makeEncoderCall(forms)
 }
 
 func (e *asmEncoder) makeEncoderCall(forms data.Sequence) {
