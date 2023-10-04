@@ -1,62 +1,5 @@
 ;;;; ale core: numerics
 
-(define :private :macro (reduce-inst args init inst)
-  (apply list (concat!
-    '(ale/asm*
-        .local accum :val
-        .eval) [init] '(
-        store accum
-        .local rest :val
-        .resolve) [args] '(
-        store rest
-    :loop
-        load rest
-        empty
-        cond-jump :end
-        load accum
-        load rest
-        car)
-        [inst] '(
-        store accum
-        load rest
-        cdr
-        store rest
-        jump :loop
-    :end
-        load accum))))
-
-(define :private :macro (predicate-inst f r inst)
-  (apply list (concat!
-    '(ale/asm*
-         .local prev :val
-         .resolve) [f] '(
-         store prev
-         .local rest :val
-         .resolve) [r] '(
-         store rest
-     :loop
-         load rest
-         empty
-         cond-jump :success
-         load prev
-         load rest
-         car
-         ) [inst] '(
-         cond-jump :next
-         false
-         jump :end
-     :next
-         load rest
-         dup
-         car
-         store prev
-         cdr
-         store rest
-         jump :loop
-     :success
-         true
-     :end))))
-
 (define (+ . args) (reduce-inst args 0 add))
 (define (* . args) (reduce-inst args 1 mul))
 
@@ -96,3 +39,6 @@
 
 (define (is-pos-inf value) (= value *pos-inf*))
 (define (is-neg-inf value) (= value *neg-inf*))
+
+(define +inf *pos-inf*)
+(define -inf *neg-inf*)

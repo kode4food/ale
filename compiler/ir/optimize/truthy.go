@@ -6,7 +6,7 @@ import (
 )
 
 var stripTruthyPattern = visitor.Pattern{
-	{isa.True, isa.False, isa.NumEq, isa.NumNeq, isa.NumGt, isa.NumGte,
+	{isa.True, isa.False, isa.Eq, isa.Empty, isa.NumEq, isa.NumGt, isa.NumGte,
 		isa.NumLt, isa.NumLte, isa.Not},
 	{isa.MakeTruthy},
 }

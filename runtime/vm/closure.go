@@ -3,7 +3,7 @@ package vm
 import (
 	"errors"
 	"fmt"
-	un "unsafe"
+	"unsafe"
 
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/env"
@@ -28,7 +28,7 @@ func (c *closure) Call(args ...data.Value) data.Value {
 	var (
 		CODE isa.Instructions
 		MEM  data.Values
-		PC   un.Pointer
+		PC   unsafe.Pointer
 		LP   int
 		SP   int
 	)
@@ -43,10 +43,10 @@ initCode:
 initState:
 	SP = LP - 1
 	// cheaper than a goto
-	PC = un.Add(un.Pointer(&CODE[0]), -int(un.Sizeof(CODE[0])))
+	PC = unsafe.Add(unsafe.Pointer(&CODE[0]), -int(unsafe.Sizeof(CODE[0])))
 
 nextPC:
-	PC = un.Add(PC, un.Sizeof(CODE[0]))
+	PC = unsafe.Add(PC, unsafe.Sizeof(CODE[0]))
 
 opSwitch:
 	oc, op := (*(*isa.Instruction)(PC)).Split()
@@ -264,16 +264,6 @@ opSwitch:
 		)
 		goto nextPC
 
-	case isa.NumNeq:
-		SP++
-		SP1 := &MEM[SP+1]
-		*SP1 = data.Bool(
-			data.EqualTo != (*SP1).(data.Number).Cmp(
-				MEM[SP].(data.Number),
-			),
-		)
-		goto nextPC
-
 	case isa.NumLt:
 		SP++
 		SP1 := &MEM[SP+1]
@@ -377,15 +367,18 @@ opSwitch:
 		goto initCode
 
 	case isa.Jump:
-		PC = un.Pointer(&CODE[int(op)])
+		PC = unsafe.Pointer(&CODE[int(op)])
 		goto opSwitch
 
 	case isa.CondJump:
 		SP++
 		if MEM[SP].(data.Bool) {
-			PC = un.Pointer(&CODE[int(op)])
+			PC = unsafe.Pointer(&CODE[int(op)])
 			goto opSwitch
 		}
+		goto nextPC
+
+	case isa.NoOp:
 		goto nextPC
 
 	case isa.Panic:

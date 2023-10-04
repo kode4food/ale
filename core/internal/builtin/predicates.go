@@ -77,17 +77,6 @@ var (
 	IsMapped = makePredicate[data.Mapper]()
 )
 
-// IsIdentical returns whether the values represent the same object
-var IsIdentical = data.Applicative(func(args ...data.Value) data.Value {
-	l := args[0]
-	for _, f := range args[1:] {
-		if !l.Equal(f) {
-			return data.False
-		}
-	}
-	return data.True
-}, 1, data.OrMore)
-
 // IsAtom returns whether the provided value is atomic
 var IsAtom = data.Applicative(func(args ...data.Value) data.Value {
 	return data.Bool(!compiler.IsEvaluable(args[0]))

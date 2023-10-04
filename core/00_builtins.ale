@@ -6,7 +6,6 @@
 (def-builtin current-time)
 (def-builtin defer*)
 (def-builtin dissoc)
-(def-builtin eq)
 (def-builtin gensym)
 (def-builtin get)
 (def-builtin go*)

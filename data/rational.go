@@ -7,6 +7,7 @@ import (
 	"math/big"
 	"math/rand"
 	"strconv"
+	"strings"
 
 	"github.com/kode4food/ale/types"
 )
@@ -142,7 +143,7 @@ func (l Float) String() string {
 	if Float(i) == l {
 		return fmt.Sprintf("%d.0", i)
 	}
-	return fmt.Sprintf("%g", l)
+	return strings.ToLower(fmt.Sprintf("%g", l))
 }
 
 // Type returns the Type for this Float Value

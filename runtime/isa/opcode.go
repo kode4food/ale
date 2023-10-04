@@ -52,7 +52,6 @@ const (
 	Mod                      // Remainder
 	Mul                      // Multiplication
 	Neg                      // Negation
-	NegInf                   // Push Negative Infinity
 	NegInt                   // Push Negative Integer (in Operand)
 	NewRef                   // New Reference
 	NoOp                     // Non-Operator
@@ -63,10 +62,8 @@ const (
 	NumGte                   // Greater or Equal To
 	NumLt                    // Less Than Comparison
 	NumLte                   // Less or Equal To
-	NumNeq                   // Numeric Inequality
 	Panic                    // Abnormally Halt
 	Pop                      // Discard Value
-	PosInf                   // Positive Infinity
 	PosInt                   // Push Positive Integer (in Operand)
 	Private                  // Declare a private Namespace entry
 	Resolve                  // Resolve Global Symbol
@@ -75,7 +72,6 @@ const (
 	RetNil                   // Return Nil (Empty List)
 	RetTrue                  // Return True
 	Return                   // Return Value
-	Self                     // Push Current Lambda
 	Store                    // Store Local
 	Sub                      // Subtraction
 	TailCall                 // Tail Call

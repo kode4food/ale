@@ -66,7 +66,6 @@ func (b *bootstrap) availableFunctions() {
 		"defer*":       builtin.Defer,
 		"dissoc":       builtin.Dissoc,
 		"promise*":     builtin.Promise,
-		"eq":           builtin.IsIdentical,
 		"gensym":       builtin.GenSym,
 		"get":          builtin.Get,
 		"go*":          builtin.Go,

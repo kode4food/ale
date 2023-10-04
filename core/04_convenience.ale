@@ -7,8 +7,8 @@
 (define* first car)
 (define* rest cdr)
 
-(define-macro (!eq value . comps)
-`(not (eq ,value ,@comps)))
+(define (eq f . r) (predicate-inst f r eq))
+(define (!eq f . r) (asm* .eval (predicate-inst f r eq) not))
 
 (define-macro (!and . clauses)
   `(not (and ,@clauses)))

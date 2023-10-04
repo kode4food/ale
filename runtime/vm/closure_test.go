@@ -260,18 +260,6 @@ func TestRelational(t *testing.T) {
 	})
 
 	testResult(t, data.True, isa.Instructions{
-		isa.PosInt.New(2),
-		isa.PosInt.New(1),
-		isa.NumNeq.New(), isa.Return.New(),
-	})
-
-	testResult(t, data.False, isa.Instructions{
-		isa.PosInt.New(1),
-		isa.PosInt.New(1),
-		isa.NumNeq.New(), isa.Return.New(),
-	})
-
-	testResult(t, data.True, isa.Instructions{
 		isa.PosInt.New(1),
 		isa.PosInt.New(2),
 		isa.NumLt.New(), isa.Return.New(),
@@ -441,6 +429,31 @@ func TestErrors(t *testing.T) {
 		isa.Const.New(2),
 		isa.Panic.New(),
 	})
+}
+
+func TestForUnimplementedOpcodes(t *testing.T) {
+	as := assert.New(t)
+	for oc, effect := range isa.Effects {
+		(func(oc isa.Opcode, effect *isa.Effect) {
+			defer func() {
+				if rec := recover(); rec != nil {
+					switch oc {
+					case isa.Label:
+						// continue
+					default:
+						as.NotEqual(
+							rec, fmt.Sprintf("unknown opcode: %s", oc),
+						)
+					}
+				}
+			}()
+			if effect.Operand == isa.Nothing {
+				runCode(isa.Instructions{oc.New()})
+				return
+			}
+			runCode(isa.Instructions{oc.New(isa.OperandMask)})
+		})(oc, effect)
+	}
 }
 
 func TestBadOpcode(t *testing.T) {

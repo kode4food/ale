@@ -52,8 +52,10 @@
 (define-macro (thunk . forms)
   `(lambda () ,@forms))
 
-(define-macro (declare . names)
-  `(begin ,@(map! (lambda (n) (list 'ale/declare* n)) names)))
+(define-macro declare
+  [(name) `(declare* ,name)]
+  [names `(begin ,@(map! (lambda (n) (list 'ale/declare* n)) names))])
 
-(define-macro (private . names)
-  `(begin ,@(map! (lambda (n) (list 'ale/private* n)) names)))
+(define-macro private
+  [(name) `(private* ,name)]
+  [names `(begin ,@(map! (lambda (n) (list 'ale/private* n)) names))])
