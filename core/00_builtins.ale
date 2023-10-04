@@ -1,11 +1,5 @@
 ;;;; ale core: builtin
 
-(def-builtin !=)
-(def-builtin <)
-(def-builtin <=)
-(def-builtin >)
-(def-builtin >=)
-
 (def-builtin append)
 (def-builtin assoc)
 (def-builtin chan)
@@ -51,9 +45,7 @@
 (def-builtin is-macro)
 (def-builtin is-mapped)
 (def-builtin is-nan)
-(def-builtin is-neg-inf)
 (def-builtin is-object)
-(def-builtin is-pos-inf)
 (def-builtin is-promise)
 (def-builtin is-qualified)
 (def-builtin is-resolved)

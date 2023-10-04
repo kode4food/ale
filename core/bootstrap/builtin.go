@@ -59,12 +59,6 @@ func (b *bootstrap) specialForms() {
 
 func (b *bootstrap) availableFunctions() {
 	b.functions(map[data.Local]data.Function{
-		"!=": builtin.Neq,
-		"<":  builtin.Lt,
-		"<=": builtin.Lte,
-		">":  builtin.Gt,
-		">=": builtin.Gte,
-
 		"append":       builtin.Append,
 		"assoc":        builtin.Assoc,
 		"chan":         builtin.Chan,
@@ -103,11 +97,9 @@ func (b *bootstrap) availableFunctions() {
 		"is-macro":      builtin.IsMacro,
 		"is-mapped":     builtin.IsMapped,
 		"is-nan":        builtin.IsNaN,
-		"is-neg-inf":    builtin.IsNegInf,
 		"is-number":     builtin.IsNumber,
 		"is-object":     builtin.IsObject,
 		"is-pair":       builtin.IsPair,
-		"is-pos-inf":    builtin.IsPosInf,
 		"is-promise":    builtin.IsPromise,
 		"is-qualified":  builtin.IsQualified,
 		"is-resolved":   builtin.IsResolved,

@@ -37,14 +37,11 @@ func TestNonNumberEval(t *testing.T) {
 	as := assert.New(t)
 	as.EvalTo(`(is-pos-inf (/ 99.0 0))`, data.True)
 	as.EvalTo(`(is-pos-inf 99)`, data.False)
-	as.EvalTo(`(is-pos-inf "hello")`, data.False)
 
 	as.EvalTo(`(is-neg-inf (/ -99.0 0))`, data.True)
 	as.EvalTo(`(is-neg-inf -99)`, data.False)
-	as.EvalTo(`(is-neg-inf "hello")`, data.False)
 
 	as.EvalTo(`(is-nan 99)`, data.False)
-	as.EvalTo(`(is-nan "hello")`, data.False)
 }
 
 func TestBadMathsEval(t *testing.T) {

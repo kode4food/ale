@@ -25,36 +25,37 @@
     :end
         load accum))))
 
-(define (= f . r)
-  (ale/asm*
-      .local prev :val
-      .resolve f
-      store prev
-      .local rest :val
-      .resolve r
-      store rest
-  :loop
-      load rest
-      empty
-      cond-jump :success
-      load rest
-      car
-      load prev
-      num-eq
-      cond-jump :next
-      false
-      jump :end
-  :next
-      load rest
-      dup
-      car
-      store prev
-      cdr
-      store rest
-      jump :loop
-  :success
-      true
-  :end))
+(define :private :macro (predicate-inst f r inst)
+  (apply list (concat!
+    '(ale/asm*
+         .local prev :val
+         .resolve) [f] '(
+         store prev
+         .local rest :val
+         .resolve) [r] '(
+         store rest
+     :loop
+         load rest
+         empty
+         cond-jump :success
+         load prev
+         load rest
+         car
+         ) [inst] '(
+         cond-jump :next
+         false
+         jump :end
+     :next
+         load rest
+         dup
+         car
+         store prev
+         cdr
+         store rest
+         jump :loop
+     :success
+         true
+     :end))))
 
 (define (+ . args) (reduce-inst args 0 add))
 (define (* . args) (reduce-inst args 1 mul))
@@ -76,6 +77,13 @@
 
 (define modulo mod)
 
+(define (= f . r) (predicate-inst f r num-eq))
+(define (!= f . r) (asm* .eval (predicate-inst f r num-eq) not))
+(define (< f . r) (predicate-inst f r num-lt))
+(define (<= f . r) (predicate-inst f r num-lte))
+(define (> f . r) (predicate-inst f r num-gt))
+(define (>= f . r) (predicate-inst f r num-gte))
+
 (define (is-zero value) (= value 0))
 (define (is-even value) (= (mod value 2) 0))
 (define (is-odd value) (= (mod value 2) 1))
@@ -85,3 +93,6 @@
 
 (define *pos-inf* (/ 1.0 0.0))
 (define *neg-inf* (/ -1.0 0.0))
+
+(define (is-pos-inf value) (= value *pos-inf*))
+(define (is-neg-inf value) (= value *neg-inf*))
