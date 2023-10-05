@@ -80,7 +80,6 @@ func (e *encoder) Emit(oc isa.Opcode, args ...isa.Operand) {
 // Code returns the encoder's resulting abstract machine Instructions
 func (e *encoder) Code() isa.Instructions {
 	code := e.code
-	analysis.Verify(code)
 	res := make(isa.Instructions, len(code))
 	copy(res, code)
 	return res

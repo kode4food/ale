@@ -1,11 +1,11 @@
 ;;;; ale core: some conveniences
 
-(define* nil '())
-(define* true #t)
-(define* false #f)
+(define nil '())
+(define true #t)
+(define false #f)
 
-(define* first car)
-(define* rest cdr)
+(define first car)
+(define rest cdr)
 
 (define (eq f . r) (predicate-inst f r eq))
 (define (!eq f . r) (asm* .eval (predicate-inst f r eq) not))

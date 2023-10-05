@@ -7,6 +7,7 @@ import (
 
 	"github.com/kode4food/ale/compiler/encoder"
 	"github.com/kode4food/ale/compiler/generate"
+	"github.com/kode4food/ale/compiler/ir/analysis"
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/strings"
 	"github.com/kode4food/ale/runtime/isa"
@@ -15,8 +16,9 @@ import (
 type (
 	asmEncoder struct {
 		encoder.Encoder
-		labels map[data.Local]isa.Operand
-		args   map[data.Local]data.Value
+		labels   map[data.Local]isa.Operand
+		args     map[data.Local]data.Value
+		noVerify bool
 	}
 
 	call struct {
@@ -41,6 +43,7 @@ const (
 
 const (
 	MakeEncoder = data.Local("!make-encoder")
+	NoVerify    = data.Local("!no-verify")
 	Resolve     = data.Local(".resolve")
 	EvalValue   = data.Local(".eval")
 	Const       = data.Local(".const")
@@ -76,6 +79,16 @@ func makeAsmEncoder(e encoder.Encoder) *asmEncoder {
 	}
 }
 
+// Code returns the encoder's resulting abstract machine Instructions
+func (e *asmEncoder) Code() isa.Instructions {
+	code := e.Encoder.Code()
+	if e.noVerify {
+		return code
+	}
+	analysis.Verify(code)
+	return code
+}
+
 func (e *asmEncoder) withParams(n data.Locals, v data.Values) *asmEncoder {
 	args := make(map[data.Local]data.Value, len(n))
 	for i, k := range n {
@@ -92,6 +105,10 @@ func (e *asmEncoder) process(forms data.Sequence) {
 			switch l {
 			case MakeEncoder:
 				e.makeEncoderCall(r)
+				return
+			case NoVerify:
+				e.noVerify = true
+				e.process(r)
 				return
 			}
 		}

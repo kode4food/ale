@@ -447,11 +447,14 @@ func TestForUnimplementedOpcodes(t *testing.T) {
 					}
 				}
 			}()
-			if effect.Operand == isa.Nothing {
-				runCode(isa.Instructions{oc.New()})
+			switch {
+			case effect.Ignore:
 				return
+			case effect.Operand == isa.Nothing:
+				runCode(isa.Instructions{oc.New()})
+			default:
+				runCode(isa.Instructions{oc.New(isa.OperandMask)})
 			}
-			runCode(isa.Instructions{oc.New(isa.OperandMask)})
 		})(oc, effect)
 	}
 }
