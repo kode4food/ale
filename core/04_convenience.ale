@@ -10,14 +10,14 @@
 (define (eq f . r) (predicate-inst f r eq))
 (define (!eq f . r) (asm* .eval (predicate-inst f r eq) not))
 
+(define (not value)
+  (if value false true))
+
 (define-macro (!and . clauses)
   `(not (and ,@clauses)))
 
 (define-macro (!or . clauses)
-`(not (or ,@clauses)))
-
-(define (not value)
-  (if value false true))
+  `(not (or ,@clauses)))
 
 (define (no-op . _))
 
