@@ -45,11 +45,11 @@ func NewEnvironment() *Environment {
 }
 
 func (e *Environment) Domains() data.Locals {
-  res := make(data.Locals, 0, len(e.data))
-  for k := range e.data {
-    res = append(res, k)
-  }
-  return res.Sorted()
+	res := make(data.Locals, 0, len(e.data))
+	for k := range e.data {
+		res = append(res, k)
+	}
+	return res.Sorted()
 }
 
 func (e *Environment) Snapshot() (*Environment, error) {
