@@ -59,10 +59,10 @@ func TestPromise(t *testing.T) {
 	as := assert.New(t)
 
 	p1 := builtin.Promise.Call(makeWrapperFunc(S("with initial")))
-	as.True(getPredicate("promise").Call(p1))
-	as.False(getPredicate("resolved").Call(p1))
+	as.True(getPredicate(builtin.PromiseKey).Call(p1))
+	as.False(getPredicate(builtin.ResolvedKey).Call(p1))
 	res := p1.(data.Function).Call()
-	as.True(getPredicate("resolved").Call(p1))
+	as.True(getPredicate(builtin.ResolvedKey).Call(p1))
 	as.String("with initial", res)
 }
 

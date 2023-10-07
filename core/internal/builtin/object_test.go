@@ -19,11 +19,11 @@ func TestObject(t *testing.T) {
 	as.True(ok)
 	as.String("foo", v1)
 
-	as.True(getPredicate("object").Call(a1))
-	as.False(getPredicate("object").Call(I(99)))
+	as.True(getPredicate(builtin.ObjectKey).Call(a1))
+	as.False(getPredicate(builtin.ObjectKey).Call(I(99)))
 
-	as.True(getPredicate("mapped").Call(a1))
-	as.False(getPredicate("mapped").Call(I(99)))
+	as.True(getPredicate(builtin.MappedKey).Call(a1))
+	as.False(getPredicate(builtin.MappedKey).Call(I(99)))
 }
 
 func TestObjectEval(t *testing.T) {

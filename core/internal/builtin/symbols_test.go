@@ -15,9 +15,9 @@ func TestSymbols(t *testing.T) {
 	as := assert.New(t)
 
 	s1 := data.NewQualifiedSymbol("hello", "ale")
-	as.True(builtin.IsA.Call(K("symbol"), s1))
-	as.False(builtin.IsA.Call(K("local"), s1))
-	as.True(builtin.IsA.Call(K("qualified"), s1))
+	as.True(builtin.IsA.Call(builtin.SymbolKey, s1))
+	as.False(builtin.IsA.Call(builtin.LocalKey, s1))
+	as.True(builtin.IsA.Call(builtin.QualifiedKey, s1))
 
 	s2 := builtin.Sym.Call(s1)
 	as.Identical(s1, s2)
@@ -26,17 +26,17 @@ func TestSymbols(t *testing.T) {
 	as.Equal(s1, s3)
 
 	s4 := builtin.Sym.Call(S("howdy"))
-	as.True(getPredicate("local").Call(s4))
-	as.False(getPredicate("qualified").Call(s4))
+	as.True(getPredicate(builtin.LocalKey).Call(s4))
+	as.False(getPredicate(builtin.QualifiedKey).Call(s4))
 }
 
 func TestGenerated(t *testing.T) {
 	as := assert.New(t)
 
 	s1 := builtin.GenSym.Call()
-	as.True(getPredicate("symbol").Call(s1))
-	as.True(getPredicate("local").Call(s1))
-	as.False(getPredicate("qualified").Call(s1))
+	as.True(getPredicate(builtin.SymbolKey).Call(s1))
+	as.True(getPredicate(builtin.LocalKey).Call(s1))
+	as.False(getPredicate(builtin.QualifiedKey).Call(s1))
 	as.Contains("x-anon-gensym-", s1)
 
 	s2 := builtin.GenSym.Call(LS("blah"))

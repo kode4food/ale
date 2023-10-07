@@ -16,32 +16,60 @@ const (
 	ErrUnknownPredicate = "unknown predicate: %s"
 )
 
+const (
+	AtomKey      = data.Keyword("atom")
+	AppenderKey  = data.Keyword("appender")
+	BooleanKey   = data.Keyword("boolean")
+	ConsKey      = data.Keyword("cons")
+	CountedKey   = data.Keyword("counted")
+	FuncKey      = data.Keyword("func")
+	IndexedKey   = data.Keyword("indexed")
+	KeywordKey   = data.Keyword("keyword")
+	ListKey      = data.Keyword("list")
+	LocalKey     = data.Keyword("local")
+	MacroKey     = data.Keyword("macro")
+	MappedKey    = data.Keyword("mapped")
+	NaNKey       = data.Keyword("nan")
+	NumberKey    = data.Keyword("number")
+	ObjectKey    = data.Keyword("object")
+	PairKey      = data.Keyword("pair")
+	PromiseKey   = data.Keyword("promise")
+	QualifiedKey = data.Keyword("qualified")
+	ResolvedKey  = data.Keyword("resolved")
+	ReverserKey  = data.Keyword("reverser")
+	SeqKey       = data.Keyword("seq")
+	SpecialKey   = data.Keyword("special")
+	StringKey    = data.Keyword("string")
+	SymbolKey    = data.Keyword("symbol")
+	VectorKey    = data.Keyword("vector")
+)
+
 var predicates = map[data.Keyword]predicate{
-	"atom":      isAtom,
-	"appender":  makeGoTypePredicate[data.Appender](),
-	"boolean":   makeGoTypePredicate[data.Bool](),
-	"cons":      makeGoTypePredicate[*data.Cons](),
-	"counted":   makeGoTypePredicate[data.Counted](),
-	"func":      makeGoTypePredicate[data.Function](),
-	"indexed":   makeGoTypePredicate[data.Indexed](),
-	"keyword":   makeGoTypePredicate[data.Keyword](),
-	"list":      makeGoTypePredicate[data.List](),
-	"local":     makeGoTypePredicate[data.Local](),
-	"macro":     makeGoTypePredicate[macro.Call](),
-	"mapped":    makeGoTypePredicate[data.Mapper](),
-	"nan":       isNaN,
-	"number":    makeGoTypePredicate[data.Number](),
-	"object":    makeGoTypePredicate[data.Object](),
-	"pair":      makeGoTypePredicate[data.Pair](),
-	"promise":   makeGoTypePredicate[async.Promise](),
-	"qualified": makeGoTypePredicate[data.Qualified](),
-	"resolved":  isResolved,
-	"reverser":  makeGoTypePredicate[data.Reverser](),
-	"seq":       makeGoTypePredicate[data.Sequence](),
-	"special":   makeGoTypePredicate[encoder.Call](),
-	"string":    makeGoTypePredicate[data.String](),
-	"symbol":    makeGoTypePredicate[data.Symbol](),
-	"vector":    makeGoTypePredicate[data.Vector](),
+	AtomKey:      isAtom,
+	AppenderKey:  makeGoTypePredicate[data.Appender](),
+	BooleanKey:   makeGoTypePredicate[data.Bool](),
+	ConsKey:      makeGoTypePredicate[*data.Cons](),
+	CountedKey:   makeGoTypePredicate[data.Counted](),
+	FuncKey:      makeGoTypePredicate[data.Function](),
+	IndexedKey:   makeGoTypePredicate[data.Indexed](),
+	KeywordKey:   makeGoTypePredicate[data.Keyword](),
+	ListKey:      makeGoTypePredicate[data.List](),
+	LocalKey:     makeGoTypePredicate[data.Local](),
+	MacroKey:     makeGoTypePredicate[macro.Call](),
+	MappedKey:    makeGoTypePredicate[data.Mapper](),
+	NaNKey:       isNaN,
+	NumberKey:    makeGoTypePredicate[data.Number](),
+	ObjectKey:    makeGoTypePredicate[data.Object](),
+	PairKey:      makeGoTypePredicate[data.Pair](),
+	PromiseKey:   makeGoTypePredicate[async.Promise](),
+	QualifiedKey: makeGoTypePredicate[data.Qualified](),
+	ResolvedKey:  isResolved,
+	ReverserKey:  makeGoTypePredicate[data.Reverser](),
+	SeqKey:       makeGoTypePredicate[data.Sequence](),
+	SpecialKey:   makeGoTypePredicate[encoder.Call](),
+	StringKey:    makeGoTypePredicate[data.String](),
+	SymbolKey:    makeGoTypePredicate[data.Symbol](),
+	VectorKey:    makeGoTypePredicate[data.Vector](),
 }
 
 // IsA will allow for a little more flexibility in type checking

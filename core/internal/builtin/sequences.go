@@ -20,7 +20,7 @@ var (
 	Vector = makeConstructor(data.NewVector)
 )
 
-// Append adds a value to the end of the provided Appender
+// Append adds a value to the end of the provided AppenderKey
 var Append = data.Applicative(func(args ...data.Value) data.Value {
 	a := args[0].(data.Appender)
 	s := args[1]
@@ -33,7 +33,7 @@ var Reverse = data.Applicative(func(args ...data.Value) data.Value {
 	return r.Reverse()
 }, 1)
 
-// Length returns the element count of the provided Counted
+// Length returns the element count of the provided CountedKey
 var Length = data.Applicative(func(args ...data.Value) data.Value {
 	s := args[0].(data.Counted)
 	l := s.Count()
