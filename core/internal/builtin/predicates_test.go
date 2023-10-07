@@ -4,9 +4,14 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/kode4food/ale/core/internal/builtin"
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/assert"
 )
+
+func getPredicate(kwd data.Keyword) data.Function {
+	return builtin.IsA.Call(kwd).(data.Function)
+}
 
 func TestPredicatesEval(t *testing.T) {
 	as := assert.New(t)

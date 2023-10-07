@@ -5,9 +5,10 @@
 
 (define (mod num den . more)
   (reduce-inst more
-               (asm* .resolve num
-                     .resolve den
-                     mod)
+               (asm*
+                   .resolve num
+                   .resolve den
+                   mod)
                mod))
 
 (define-lambda /
@@ -21,11 +22,13 @@
 (define modulo mod)
 
 (define (= f . r) (predicate-inst f r num-eq))
-(define (!= f . r) (asm* .eval (predicate-inst f r num-eq) not))
 (define (< f . r) (predicate-inst f r num-lt))
 (define (<= f . r) (predicate-inst f r num-lte))
 (define (> f . r) (predicate-inst f r num-gt))
 (define (>= f . r) (predicate-inst f r num-gte))
+
+(define (!= f . r)
+  (asm* .eval (predicate-inst f r num-eq) not))
 
 (define (is-zero value) (= value 0))
 (define (is-even value) (= (mod value 2) 0))

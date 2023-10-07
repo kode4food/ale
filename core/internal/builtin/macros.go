@@ -3,6 +3,8 @@ package builtin
 import (
 	"fmt"
 
+	"github.com/kode4food/ale/compiler"
+
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/env"
 	"github.com/kode4food/ale/macro"
@@ -28,3 +30,7 @@ var Macro = data.Applicative(func(args ...data.Value) data.Value {
 		panic(fmt.Errorf(ErrFunctionRequired, args[0]))
 	}
 }, 1)
+
+func isAtom(v data.Value) bool {
+	return !compiler.IsEvaluable(v)
+}

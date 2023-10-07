@@ -1,5 +1,32 @@
 ;;;; ale core: basics
 
+;; basic predicates
+(define* is-apply (is-a :func))
+(define* is-atom (is-a :atom))
+(define* is-appender (is-a :appender))
+(define* is-boolean (is-a :boolean))
+(define* is-cons (is-a :cons))
+(define* is-counted (is-a :counted))
+(define* is-indexed (is-a :indexed))
+(define* is-keyword (is-a :keyword))
+(define* is-list (is-a :list))
+(define* is-local (is-a :local))
+(define* is-macro (is-a :macro))
+(define* is-mapped (is-a :mapped))
+(define* is-nan (is-a :nan))
+(define* is-number (is-a :number))
+(define* is-object (is-a :object))
+(define* is-pair (is-a :pair))
+(define* is-promise (is-a :promise))
+(define* is-qualified (is-a :qualified))
+(define* is-resolved (is-a :resolved))
+(define* is-reversible (is-a :reverser))
+(define* is-seq (is-a :seq))
+(define* is-special (is-a :special))
+(define* is-string (is-a :string))
+(define* is-symbol (is-a :symbol))
+(define* is-vector (is-a :vector))
+
 (define* quote
   (asm*
       !make-encoder (form)

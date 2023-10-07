@@ -22,8 +22,8 @@ func unexpectedTypeError(got, expected string) error {
 func TestApply(t *testing.T) {
 	as := assert.New(t)
 
-	as.True(builtin.IsApply.Call(builtin.Vector))
-	as.False(builtin.IsApply.Call(S("55")))
+	as.True(getPredicate("func").Call(builtin.Vector))
+	as.False(getPredicate("func").Call(S("55")))
 
 	as.EvalTo(`
 		(apply + '(1 2 3))`, I(6))
@@ -49,13 +49,13 @@ func TestFunctionPredicates(t *testing.T) {
 
 	e := bootstrap.DevNullEnvironment()
 
-	as.False(builtin.IsSpecial.Call(builtin.Str))
-	as.True(builtin.IsApply.Call(builtin.Str))
+	as.False(getPredicate("special").Call(builtin.Str))
+	as.True(getPredicate("func").Call(builtin.Str))
 
 	i, ok := e.GetRoot().Resolve("if")
 	as.True(ok && i.IsBound())
-	as.True(builtin.IsSpecial.Call(i.Value()))
-	as.False(builtin.IsApply.Call(i.Value()))
+	as.True(getPredicate("special").Call(i.Value()))
+	as.False(getPredicate("func").Call(i.Value()))
 }
 
 func TestFunctionPredicatesEval(t *testing.T) {

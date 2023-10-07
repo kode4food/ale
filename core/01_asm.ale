@@ -1,32 +1,32 @@
 ;;;; ale core: assembler bootstrapping
 
 (asm*
-  .eval (asm*
-      !make-encoder (name)
-      .const name
-      dup
-      declare)
-  .const declare*
-  bind
+    .eval (asm*
+        !make-encoder (name)
+        .const name
+        dup
+        declare)
+    .const declare*
+    bind
 
-  .eval (asm*
-      !make-encoder (name)
-      .const name
-      dup
-      private)
-  .const private*
-  bind
+    .eval (asm*
+        !make-encoder (name)
+        .const name
+        dup
+        private)
+    .const private*
+    bind
 
-  .eval (asm*
-      !make-encoder (name value)
-      .eval value
-      dup
-      .const name
-      bind)
-  .const define*
-  bind
-  ; block evaluator will pop this
-  nil)
+    .eval (asm*
+        !make-encoder (name value)
+        .eval value
+        dup
+        .const name
+        bind)
+    .const define*
+    bind
+    ; block evaluator will pop this
+    nil)
 
 (define* cons
   (lambda (car cdr)
