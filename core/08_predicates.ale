@@ -26,7 +26,7 @@
   `(begin ,(define-pos func name)
           ,(define-neg func name)))
 
-(define-predicate is-appender "append")
+(define-predicate is-appendable "appendable")
 (define-predicate is-apply "apply")
 (define-predicate is-atom "atom")
 (define-predicate is-boolean "boolean")

@@ -3,7 +3,7 @@
 ;; basic predicates
 (define* is-apply (is-a :func))
 (define* is-atom (is-a :atom))
-(define* is-appender (is-a :appender))
+(define* is-appendable (is-a :appender))
 (define* is-boolean (is-a :boolean))
 (define* is-cons (is-a :cons))
 (define* is-counted (is-a :counted))
