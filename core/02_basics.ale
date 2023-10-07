@@ -1,7 +1,7 @@
 ;;;; ale core: basics
 
 ;; basic predicates
-(define* is-apply (is-a :func))
+(define* is-apply (is-a :function))
 (define* is-atom (is-a :atom))
 (define* is-appendable (is-a :appender))
 (define* is-boolean (is-a :boolean))
@@ -21,7 +21,7 @@
 (define* is-qualified (is-a :qualified))
 (define* is-resolved (is-a :resolved))
 (define* is-reversible (is-a :reverser))
-(define* is-seq (is-a :seq))
+(define* is-seq (is-a :sequence))
 (define* is-special (is-a :special))
 (define* is-string (is-a :string))
 (define* is-symbol (is-a :symbol))

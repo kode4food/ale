@@ -22,7 +22,7 @@ const (
 	BooleanKey   = data.Keyword("boolean")
 	ConsKey      = data.Keyword("cons")
 	CountedKey   = data.Keyword("counted")
-	FuncKey      = data.Keyword("func")
+	FunctionKey  = data.Keyword("function")
 	IndexedKey   = data.Keyword("indexed")
 	KeywordKey   = data.Keyword("keyword")
 	ListKey      = data.Keyword("list")
@@ -37,7 +37,7 @@ const (
 	QualifiedKey = data.Keyword("qualified")
 	ResolvedKey  = data.Keyword("resolved")
 	ReverserKey  = data.Keyword("reverser")
-	SeqKey       = data.Keyword("seq")
+	SequenceKey  = data.Keyword("sequence")
 	SpecialKey   = data.Keyword("special")
 	StringKey    = data.Keyword("string")
 	SymbolKey    = data.Keyword("symbol")
@@ -50,7 +50,7 @@ var predicates = map[data.Keyword]predicate{
 	BooleanKey:   makeGoTypePredicate[data.Bool](),
 	ConsKey:      makeGoTypePredicate[*data.Cons](),
 	CountedKey:   makeGoTypePredicate[data.Counted](),
-	FuncKey:      makeGoTypePredicate[data.Function](),
+	FunctionKey:  makeGoTypePredicate[data.Function](),
 	IndexedKey:   makeGoTypePredicate[data.Indexed](),
 	KeywordKey:   makeGoTypePredicate[data.Keyword](),
 	ListKey:      makeGoTypePredicate[data.List](),
@@ -65,7 +65,7 @@ var predicates = map[data.Keyword]predicate{
 	QualifiedKey: makeGoTypePredicate[data.Qualified](),
 	ResolvedKey:  isResolved,
 	ReverserKey:  makeGoTypePredicate[data.Reverser](),
-	SeqKey:       makeGoTypePredicate[data.Sequence](),
+	SequenceKey:  makeGoTypePredicate[data.Sequence](),
 	SpecialKey:   makeGoTypePredicate[encoder.Call](),
 	StringKey:    makeGoTypePredicate[data.String](),
 	SymbolKey:    makeGoTypePredicate[data.Symbol](),
