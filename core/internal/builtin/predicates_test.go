@@ -44,4 +44,8 @@ func TestPredicatesEval(t *testing.T) {
 	)
 
 	as.PanicWith(`(null?)`, fmt.Errorf(data.ErrMinimumArity, 1, 0))
+
+	as.PanicWith(`(is-a :dog "woof!")`,
+		fmt.Errorf(builtin.ErrUnknownPredicate, data.Keyword("dog")),
+	)
 }

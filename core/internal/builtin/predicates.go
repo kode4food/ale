@@ -77,7 +77,7 @@ var IsA = data.Applicative(func(args ...data.Value) data.Value {
 	kwd := args[0].(data.Keyword)
 	p, ok := predicates[kwd]
 	if !ok {
-		panic(fmt.Sprintf(ErrUnknownPredicate, kwd))
+		panic(fmt.Errorf(ErrUnknownPredicate, kwd))
 	}
 	if len(args) == 2 {
 		return data.Bool(p(args[1]))
