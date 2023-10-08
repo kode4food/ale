@@ -7,6 +7,7 @@ import (
 	"github.com/kode4food/ale/core/internal/builtin"
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/assert"
+	. "github.com/kode4food/ale/internal/assert/helpers"
 )
 
 func getPredicate(kwd data.Keyword) data.Function {
@@ -48,4 +49,17 @@ func TestPredicatesEval(t *testing.T) {
 	as.PanicWith(`(is-a* :dog "woof!")`,
 		fmt.Errorf(builtin.ErrUnknownPredicate, data.Keyword("dog")),
 	)
+}
+
+func TestTypeOf(t *testing.T) {
+	as := assert.New(t)
+	as.EvalTo(`
+		(define l-pred (type-of* '(1 2 3)))
+		[(l-pred '(9 8 7))
+         (l-pred '())
+         (l-pred [1 2 3])
+         (eq l-pred (type-of* '(9 8 7)))
+		 (eq l-pred (type-of* []))
+         (eq l-pred (type-of* '()))]
+	`, V(data.True, data.False, data.False, data.True, data.False, data.False))
 }

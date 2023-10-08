@@ -72,6 +72,11 @@ var predicates = map[data.Keyword]predicate{
 	VectorKey:    makeGoTypePredicate[data.Vector](),
 }
 
+// TypeOf returns a Type Predicate for the type of the given Value
+var TypeOf = data.Applicative(func(args ...data.Value) data.Value {
+	return data.TypeOf(args[0])
+}, 1)
+
 // IsA will allow for a little more flexibility in type checking
 var IsA = data.Applicative(func(args ...data.Value) data.Value {
 	kwd := args[0].(data.Keyword)

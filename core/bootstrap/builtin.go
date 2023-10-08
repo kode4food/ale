@@ -82,6 +82,7 @@ func (b *bootstrap) availableFunctions() {
 		"str!":         builtin.ReaderStr,
 		"str":          builtin.Str,
 		"sym":          builtin.Sym,
+		"type-of*":     builtin.TypeOf,
 		"vector":       builtin.Vector,
 	})
 

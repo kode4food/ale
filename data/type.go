@@ -3,23 +3,32 @@ package data
 import "github.com/kode4food/ale/internal/types"
 
 type Type struct {
-	types.Type
+	typ types.Type
 }
 
-func TypeOf(v Value) types.Type {
-	if v, ok := v.(Typed); ok {
-		return v.Type()
-	}
-	return types.BasicAny
+var typePredicateType = types.MakeBasic("type-predicate")
+
+// MakeType returns a type Predicate for the given Type
+func MakeType(t types.Type) *Type {
+	return &Type{typ: t}
+}
+
+// TypeOf returns a type Predicate for matching the type of the given Value
+func TypeOf(v Value) *Type {
+	return MakeType(typeOf(v))
+}
+
+func (t *Type) Type() types.Type {
+	return typePredicateType
 }
 
 func (t *Type) Name() Local {
-	return Local(t.Type.Name())
+	return Local(t.typ.Name())
 }
 
 func (t *Type) Call(args ...Value) Value {
-	other := TypeOf(args[0])
-	return Bool(types.Accepts(t.Type, other))
+	other := typeOf(args[0])
+	return Bool(types.Accepts(t.typ, other))
 }
 
 func (t *Type) Convention() Convention {
@@ -32,14 +41,21 @@ func (t *Type) CheckArity(argCount int) error {
 
 func (t *Type) Equal(other Value) bool {
 	if other, ok := other.(*Type); ok {
-		if t == other || t.Type == other.Type {
+		if t == other || t.typ == other.typ {
 			return true
 		}
-		return t.Type.Equal(other.Type)
+		return t.typ.Equal(other.typ)
 	}
 	return false
 }
 
 func (t *Type) String() string {
-	return t.Type.Name()
+	return DumpString(t)
+}
+
+func typeOf(v Value) types.Type {
+	if v, ok := v.(Typed); ok {
+		return v.Type()
+	}
+	return types.BasicAny
 }

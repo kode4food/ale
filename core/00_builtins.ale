@@ -23,6 +23,7 @@
 (def-builtin str!)
 (def-builtin str)
 (def-builtin sym)
+(def-builtin type-of*)
 (def-builtin vector)
 
 ;; base types
