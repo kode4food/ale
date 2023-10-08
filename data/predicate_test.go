@@ -8,7 +8,7 @@ import (
 	. "github.com/kode4food/ale/internal/assert/helpers"
 )
 
-func TestTypeCall(t *testing.T) {
+func TestTypePredicateCall(t *testing.T) {
 	as := assert.New(t)
 	l1 := data.NewList(I(1), I(2), I(3))
 	pred := data.TypeOf(l1)
@@ -21,7 +21,7 @@ func TestTypeCall(t *testing.T) {
 	as.False(pred.Call(v1))
 }
 
-func TestTypeEqual(t *testing.T) {
+func TestTypePredicateEqual(t *testing.T) {
 	as := assert.New(t)
 	l1 := data.NewList(I(1), I(2), I(3))
 	l2 := data.NewList(I(9))

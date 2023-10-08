@@ -2,45 +2,45 @@ package data
 
 import "github.com/kode4food/ale/internal/types"
 
-type Type struct {
+type TypePredicate struct {
 	typ types.Type
 }
 
 var typePredicateType = types.MakeBasic("type-predicate")
 
 // MakeType returns a type Predicate for the given Type
-func MakeType(t types.Type) *Type {
-	return &Type{typ: t}
+func MakeType(t types.Type) *TypePredicate {
+	return &TypePredicate{typ: t}
 }
 
-// TypeOf returns a type Predicate for matching the type of the given Value
-func TypeOf(v Value) *Type {
+// TypeOf returns a TypePredicate for matching the type of the given Value
+func TypeOf(v Value) *TypePredicate {
 	return MakeType(typeOf(v))
 }
 
-func (t *Type) Type() types.Type {
+func (t *TypePredicate) Type() types.Type {
 	return typePredicateType
 }
 
-func (t *Type) Name() Local {
+func (t *TypePredicate) Name() Local {
 	return Local(t.typ.Name())
 }
 
-func (t *Type) Call(args ...Value) Value {
+func (t *TypePredicate) Call(args ...Value) Value {
 	other := typeOf(args[0])
 	return Bool(types.Accepts(t.typ, other))
 }
 
-func (t *Type) Convention() Convention {
+func (t *TypePredicate) Convention() Convention {
 	return ApplicativeCall
 }
 
-func (t *Type) CheckArity(argCount int) error {
+func (t *TypePredicate) CheckArity(argCount int) error {
 	return MakeFixedChecker(1)(argCount)
 }
 
-func (t *Type) Equal(other Value) bool {
-	if other, ok := other.(*Type); ok {
+func (t *TypePredicate) Equal(other Value) bool {
+	if other, ok := other.(*TypePredicate); ok {
 		if t == other || t.typ == other.typ {
 			return true
 		}
@@ -49,7 +49,7 @@ func (t *Type) Equal(other Value) bool {
 	return false
 }
 
-func (t *Type) String() string {
+func (t *TypePredicate) String() string {
 	return DumpString(t)
 }
 
