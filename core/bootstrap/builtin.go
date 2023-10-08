@@ -69,7 +69,7 @@ func (b *bootstrap) availableFunctions() {
 		"gensym":       builtin.GenSym,
 		"get":          builtin.Get,
 		"go*":          builtin.Go,
-		"is-a":         builtin.IsA,
+		"is-a*":        builtin.IsA,
 		"lazy-seq*":    builtin.LazySequence,
 		"length":       builtin.Length,
 		"list":         builtin.List,

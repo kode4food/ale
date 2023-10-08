@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/kode4food/ale/compiler"
-
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/env"
 	"github.com/kode4food/ale/macro"

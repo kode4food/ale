@@ -9,7 +9,7 @@
 (def-builtin gensym)
 (def-builtin get)
 (def-builtin go*)
-(def-builtin is-a)
+(def-builtin is-a*)
 (def-builtin lazy-seq*)
 (def-builtin length)
 (def-builtin list)

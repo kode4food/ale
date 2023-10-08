@@ -16,8 +16,8 @@ type (
 
 		// Accepts determines if this Type will accept the provided Type for
 		// binding. This will generally mean that the provided Type satisfies
-		// the contract of the receiver. A Checker is provided that tracks
-		// the state of the Type checking
+		// the contract of the receiver. A Checker is provided to track the
+		// state of the Type checking
 		Accepts(*Checker, Type) bool
 	}
 

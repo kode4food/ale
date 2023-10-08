@@ -29,5 +29,8 @@
 (define (constantly value)
   (lambda _ value))
 
+(define (is-a type value)
+  (is-a* type value))
+
 (define-macro (: target method . args)
   `((get ,target ,method) ,@args))
