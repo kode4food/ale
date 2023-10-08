@@ -3,7 +3,7 @@ package data
 import (
 	"math/rand"
 
-	"github.com/kode4food/ale/types"
+	"github.com/kode4food/ale/internal/types"
 )
 
 // Keyword is a Value that represents a Name that resolves to itself
@@ -51,7 +51,7 @@ func (k Keyword) String() string {
 
 // Type returns the Type for this Keyword Value
 func (Keyword) Type() types.Type {
-	return types.Keyword
+	return types.BasicKeyword
 }
 
 // HashCode returns the hash code for this Keyword

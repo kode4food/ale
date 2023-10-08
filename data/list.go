@@ -1,6 +1,6 @@
 package data
 
-import "github.com/kode4food/ale/types"
+import "github.com/kode4food/ale/internal/types"
 
 type (
 	// List represents a singly-linked List
@@ -122,7 +122,7 @@ func (l *list) String() string {
 }
 
 func (*list) Type() types.Type {
-	return types.AnyList
+	return types.BasicList
 }
 
 func (l *list) HashCode() uint64 {

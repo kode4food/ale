@@ -12,13 +12,14 @@ type (
 		// Name identifies this Type
 		Name() string
 
-		IsA(BasicType) bool
-
 		// Accepts determines if this Type will accept the provided Type for
 		// binding. This will generally mean that the provided Type satisfies
 		// the contract of the receiver. A Checker is provided to track the
 		// state of the Type checking
 		Accepts(*Checker, Type) bool
+
+		// Equal determines if the provided Type is an equivalent definition
+		Equal(Type) bool
 	}
 
 	typeList []Type
@@ -61,7 +62,7 @@ func (t typeList) names() []string {
 func (t typeList) flatten() typeList {
 	var res typeList
 	for _, o := range t {
-		if o, ok := o.(UnionType); ok {
+		if o, ok := o.(*Union); ok {
 			res = append(res, o.Options()...)
 			continue
 		}
@@ -72,22 +73,37 @@ func (t typeList) flatten() typeList {
 
 func (t typeList) hasAny() bool {
 	for _, t := range t {
-		if _, ok := t.(*anyType); ok {
+		if _, ok := t.(*Any); ok {
 			return true
 		}
 	}
 	return false
 }
 
-func (t typeList) basicType() (BasicType, bool) {
-	f, ok := t[0].(BasicType)
+func (t typeList) basicType() (basic, bool) {
+	f, ok := t[0].(basic)
 	if !ok {
 		return nil, false
 	}
 	for _, n := range t[1:] {
-		if !n.IsA(f) {
-			return nil, false
+		if n, ok := n.(basic); ok && f.Kind() == n.Kind() {
+			continue
 		}
+		return nil, false
 	}
 	return f, true
+}
+
+func (t typeList) equal(other typeList) bool {
+	td := t.flatten()
+	od := other.flatten()
+	if len(td) != len(od) {
+		return false
+	}
+	for i, l := range td {
+		if !l.Equal(od[i]) {
+			return false
+		}
+	}
+	return true
 }

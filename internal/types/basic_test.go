@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/kode4food/ale/data"
-	"github.com/kode4food/ale/types"
+	"github.com/kode4food/ale/internal/types"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -21,6 +21,6 @@ func TestBasic(t *testing.T) {
 	as.False(types.Accepts(i99, bTrue))
 
 	as.True(types.Accepts(i99, i99))
-	as.False(types.Accepts(i99, types.Any))
-	as.False(types.Accepts(i99, types.Union(types.Symbol, types.AnyCons)))
+	as.False(types.Accepts(i99, types.BasicAny))
+	as.False(types.Accepts(i99, types.MakeUnion(types.BasicSymbol, types.BasicCons)))
 }

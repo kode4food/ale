@@ -1,6 +1,6 @@
 package data
 
-import "github.com/kode4food/ale/types"
+import "github.com/kode4food/ale/internal/types"
 
 type (
 	// ArityChecker is the interface for arity checks
@@ -94,7 +94,7 @@ func (f *function) Convention() Convention {
 }
 
 func (f *function) Type() types.Type {
-	return types.Lambda
+	return types.BasicLambda
 }
 
 func (f *function) Equal(v Value) bool {

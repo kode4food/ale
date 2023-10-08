@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"math/rand"
 
-	"github.com/kode4food/ale/types"
+	"github.com/kode4food/ale/internal/types"
 )
 
 // Vector is a fixed-length array of Values
@@ -127,7 +127,7 @@ func (v Vector) String() string {
 }
 
 func (Vector) Type() types.Type {
-	return types.AnyVector
+	return types.BasicVector
 }
 
 func (v Vector) HashCode() uint64 {

@@ -9,12 +9,11 @@ import (
 )
 
 type (
-	// RecordType describes an Object that allows a fixed set of fields,
+	// Record describes an Object that allows a fixed set of fields,
 	// each of which has a keyword
-	RecordType interface {
-		Type
-		record() // marker
-		Fields() []Field
+	Record struct {
+		basic
+		fields
 	}
 
 	// Field describes one of the fields of a RecordType
@@ -24,34 +23,30 @@ type (
 	}
 
 	fields []Field
-
-	record struct {
-		BasicType
-		fields
-	}
 )
 
-// Record declares a new RecordType that only allows a fixed set of Field
-// entries, each being identified by a Keyword and having a specified Type
-func Record(fields ...Field) RecordType {
-	return &record{
-		BasicType: AnyObject,
-		fields:    fields,
+// MakeRecord declares a new RecordType that only allows a fixed set of Field
+// entries, each being identified by a BasicKeyword and having a specified Type
+func MakeRecord(fields ...Field) *Record {
+	return &Record{
+		basic:  BasicObject,
+		fields: fields,
 	}
 }
 
-func (*record) record() {}
-
-func (r *record) Fields() []Field {
+func (r *Record) Fields() []Field {
 	return r.fields
 }
 
-func (r *record) Name() string {
+func (r *Record) Name() string {
 	return fmt.Sprintf("record(%s)", r.fields.name())
 }
 
-func (r *record) Accepts(c *Checker, other Type) bool {
-	if other, ok := other.(RecordType); ok {
+func (r *Record) Accepts(c *Checker, other Type) bool {
+	if r == other {
+		return true
+	}
+	if other, ok := other.(*Record); ok {
 		rf := r.fields
 		of := other.Fields()
 		if len(rf) > len(of) {
@@ -64,6 +59,16 @@ func (r *record) Accepts(c *Checker, other Type) bool {
 			}
 		}
 		return true
+	}
+	return false
+}
+
+func (r *Record) Equal(other Type) bool {
+	if r == other {
+		return true
+	}
+	if other, ok := other.(*Record); ok {
+		return r.basic.Equal(other.basic) && r.fields.equal(other.fields)
 	}
 	return false
 }
@@ -97,4 +102,19 @@ func (f fields) name() string {
 		buf.WriteString(elem.Value.Name())
 	}
 	return buf.String()
+}
+
+func (f fields) equal(other fields) bool {
+	if len(f) != len(other) {
+		return false
+	}
+	fs := f.sorted()
+	os := other.sorted()
+	for i, l := range fs {
+		r := os[i]
+		if l.Name != r.Name || !l.Value.Equal(r.Value) {
+			return false
+		}
+	}
+	return true
 }

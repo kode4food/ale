@@ -5,7 +5,7 @@ import (
 	"errors"
 	"math/rand"
 
-	"github.com/kode4food/ale/types"
+	"github.com/kode4food/ale/internal/types"
 )
 
 type (
@@ -231,7 +231,7 @@ func (o *object) Equal(v Value) bool {
 }
 
 func (*object) Type() types.Type {
-	return types.AnyObject
+	return types.BasicObject
 }
 
 func (o *object) HashCode() uint64 {

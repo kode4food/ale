@@ -5,7 +5,7 @@ import (
 	"cmp"
 	"slices"
 
-	"github.com/kode4food/ale/types"
+	"github.com/kode4food/ale/internal/types"
 )
 
 type (
@@ -95,7 +95,7 @@ func (c *Cons) String() string {
 }
 
 func (*Cons) Type() types.Type {
-	return types.AnyCons
+	return types.BasicCons
 }
 
 // HashCode returns the hash code for this Cons

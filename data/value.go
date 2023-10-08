@@ -5,7 +5,7 @@ import (
 	"hash/maphash"
 	"math/rand"
 
-	"github.com/kode4food/ale/types"
+	"github.com/kode4food/ale/internal/types"
 )
 
 type (
@@ -91,7 +91,7 @@ func (b Bool) String() string {
 
 // Type returns the Type for this Bool Value
 func (Bool) Type() types.Type {
-	return types.Bool
+	return types.BasicBoolean
 }
 
 // HashCode returns the hash code for this Bool

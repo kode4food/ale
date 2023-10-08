@@ -5,7 +5,7 @@ import (
 
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/do"
-	"github.com/kode4food/ale/types"
+	"github.com/kode4food/ale/internal/types"
 )
 
 type (
@@ -46,8 +46,8 @@ const (
 var (
 	emptyResult = channelResult{value: data.Nil, error: nil}
 
-	channelEmitterType  = types.Basic("channel-emitter")
-	channelSequenceType = types.Basic("channel-sequence")
+	channelEmitterType  = types.MakeBasic("channel-emitter")
+	channelSequenceType = types.MakeBasic("channel-sequence")
 )
 
 // NewChannel produces an Emitter and Sequence pair

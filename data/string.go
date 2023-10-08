@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"unicode/utf8"
 
-	"github.com/kode4food/ale/types"
+	"github.com/kode4food/ale/internal/types"
 )
 
 // String is the Sequence-compatible representation of string values
@@ -92,7 +92,7 @@ func (s String) String() string {
 
 // Type returns the Type for this String Value
 func (String) Type() types.Type {
-	return types.String
+	return types.BasicString
 }
 
 // HashCode returns a hash code for the String

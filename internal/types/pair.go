@@ -1,0 +1,57 @@
+package types
+
+// Pair describes a pair of typed Values
+type Pair struct {
+	basic
+	name string
+	car  Type
+	cdr  Type
+}
+
+// MakeCons declares a new PairType that will only allow a MakeListOf with elements of
+// the provided elem Type
+func MakeCons(left, right Type) Type {
+	return &Pair{
+		basic: BasicCons,
+		name:  BasicCons.Name(),
+		car:   left,
+		cdr:   right,
+	}
+}
+
+func (p *Pair) Car() Type {
+	return p.car
+}
+
+func (p *Pair) Cdr() Type {
+	return p.cdr
+}
+
+func (p *Pair) Name() string {
+	return p.name
+}
+
+func (p *Pair) Accepts(c *Checker, other Type) bool {
+	if p == other {
+		return true
+	}
+	if other, ok := other.(*Pair); ok {
+		return p.basic.Accepts(c, other) &&
+			c.AcceptsChild(p.car, other.Car()) &&
+			c.AcceptsChild(p.cdr, other.Cdr())
+	}
+	return false
+}
+
+func (p *Pair) Equal(other Type) bool {
+	if p == other {
+		return true
+	}
+	if other, ok := other.(*Pair); ok {
+		return p.name == other.name &&
+			p.basic.Equal(other.basic) &&
+			p.car.Equal(other.car) &&
+			p.cdr.Equal(other.cdr)
+	}
+	return false
+}

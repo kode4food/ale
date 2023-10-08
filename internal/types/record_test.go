@@ -3,47 +3,47 @@ package types_test
 import (
 	"testing"
 
-	"github.com/kode4food/ale/types"
+	"github.com/kode4food/ale/internal/types"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestRecord(t *testing.T) {
 	as := assert.New(t)
 
-	r1 := types.Record(
+	r1 := types.MakeRecord(
 		types.Field{
 			Name:  "first",
-			Value: types.String,
+			Value: types.BasicString,
 		},
 		types.Field{
 			Name:  "last",
-			Value: types.String,
+			Value: types.BasicString,
 		},
 	)
 
-	r2 := types.Record(
+	r2 := types.MakeRecord(
 		types.Field{
 			Name:  "age",
-			Value: types.Number,
+			Value: types.BasicNumber,
 		},
 		types.Field{
 			Name:  "first",
-			Value: types.String,
+			Value: types.BasicString,
 		},
 		types.Field{
 			Name:  "last",
-			Value: types.String,
+			Value: types.BasicString,
 		},
 	)
 
-	r3 := types.Record(
+	r3 := types.MakeRecord(
 		types.Field{
 			Name:  "first",
-			Value: types.String,
+			Value: types.BasicString,
 		},
 		types.Field{
 			Name:  "last",
-			Value: types.Keyword,
+			Value: types.BasicKeyword,
 		},
 	)
 
@@ -55,17 +55,17 @@ func TestRecord(t *testing.T) {
 	as.False(types.Accepts(r1, r3))
 	as.False(types.Accepts(r3, r1))
 
-	as.False(types.Accepts(r1, types.AnyObject))
-	as.True(types.Accepts(types.AnyObject, r1))
+	as.False(types.Accepts(r1, types.BasicObject))
+	as.True(types.Accepts(types.BasicObject, r1))
 }
 
 func TestRecordNameEscape(t *testing.T) {
 	as := assert.New(t)
 
-	r1 := types.Record(
+	r1 := types.MakeRecord(
 		types.Field{
 			Name:  `I am "quoted"`,
-			Value: types.String,
+			Value: types.BasicString,
 		},
 	)
 
