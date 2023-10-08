@@ -330,6 +330,10 @@ func (*emptyObject) Equal(v Value) bool {
 	return ok
 }
 
+func (*emptyObject) Type() types.Type {
+	return types.BasicObject
+}
+
 func (*emptyObject) String() string {
 	return "{}"
 }

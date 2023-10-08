@@ -15,9 +15,9 @@ func TestSymbols(t *testing.T) {
 	as := assert.New(t)
 
 	s1 := data.NewQualifiedSymbol("hello", "ale")
-	as.True(builtin.IsA.Call(builtin.SymbolKey, s1))
-	as.False(builtin.IsA.Call(builtin.LocalKey, s1))
-	as.True(builtin.IsA.Call(builtin.QualifiedKey, s1))
+	as.True(getPredicate(builtin.SymbolKey).Call(s1))
+	as.False(getPredicate(builtin.LocalKey).Call(s1))
+	as.True(getPredicate(builtin.QualifiedKey).Call(s1))
 
 	s2 := builtin.Sym.Call(s1)
 	as.Identical(s1, s2)

@@ -72,23 +72,21 @@ var predicates = map[data.Keyword]predicate{
 	VectorKey:    makeGoTypePredicate[data.Vector](),
 }
 
-// TypeOf returns a Type Predicate for the type of the given Value
+// TypeOf returns a Type Predicate for the Types of the given Values. If more
+// than one Value is provided, the Union of their Types will be returned
 var TypeOf = data.Applicative(func(args ...data.Value) data.Value {
-	return data.TypeOf(args[0])
-}, 1)
+	return data.TypeOf(args[0], args[1:]...)
+}, 1, data.OrMore)
 
-// IsA will allow for a little more flexibility in type checking
+// IsA returns a Predicate from the set of builtin named Predicates
 var IsA = data.Applicative(func(args ...data.Value) data.Value {
 	kwd := args[0].(data.Keyword)
 	p, ok := predicates[kwd]
 	if !ok {
 		panic(fmt.Errorf(ErrUnknownPredicate, kwd))
 	}
-	if len(args) == 2 {
-		return data.Bool(p(args[1]))
-	}
 	return makePredicate(p)
-}, 1, 2)
+}, 1)
 
 func makeGoTypePredicate[T any]() predicate {
 	return func(v data.Value) bool {

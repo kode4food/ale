@@ -1,6 +1,5 @@
 ;;;; ale core: predicates
 
-(define (is-null value) (eq value nil))
 (define (is-true value) (eq true value))
 (define (is-false value) (eq false value))
 

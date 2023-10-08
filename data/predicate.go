@@ -13,9 +13,17 @@ func MakeType(t types.Type) *TypePredicate {
 	return &TypePredicate{typ: t}
 }
 
-// TypeOf returns a TypePredicate for matching the type of the given Value
-func TypeOf(v Value) *TypePredicate {
-	return MakeType(typeOf(v))
+// TypeOf returns a TypePredicate for the Types of the given Values. If more
+// than one Value is provided, the Union of their Types will be returned
+func TypeOf(f Value, r ...Value) *TypePredicate {
+	if len(r) == 0 {
+		return MakeType(typeOf(f))
+	}
+	t := make([]types.Type, len(r))
+	for i, v := range r {
+		t[i] = typeOf(v)
+	}
+	return MakeType(types.MakeUnion(typeOf(f), t...))
 }
 
 func (t *TypePredicate) Type() types.Type {
