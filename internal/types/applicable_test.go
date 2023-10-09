@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestApplicable(t *testing.T) {
+func TestApplicableAccepts(t *testing.T) {
 	as := assert.New(t)
 
 	a1 := types.MakeApplicable(
@@ -86,6 +86,8 @@ func TestApplicableRest(t *testing.T) {
 			Result:    types.BasicBoolean,
 		},
 	)
+
+	as.Equal(`lambda(number.number->boolean)`, a2.Name())
 
 	as.True(types.Accepts(a1, a1))
 	as.False(types.Accepts(a1, a2))
