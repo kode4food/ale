@@ -4,9 +4,11 @@ import (
 	"fmt"
 
 	"github.com/kode4food/ale/compiler/encoder"
+	"github.com/kode4food/ale/internal/types"
+	"github.com/kode4food/ale/macro"
+
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/async"
-	"github.com/kode4food/ale/macro"
 )
 
 type predicate func(data.Value) bool
@@ -17,6 +19,7 @@ const (
 )
 
 const (
+	AnyKey       = data.Keyword("any")
 	AtomKey      = data.Keyword("atom")
 	AppenderKey  = data.Keyword("appender")
 	BooleanKey   = data.Keyword("boolean")
@@ -30,6 +33,7 @@ const (
 	MacroKey     = data.Keyword("macro")
 	MappedKey    = data.Keyword("mapped")
 	NaNKey       = data.Keyword("nan")
+	NullKey      = data.Keyword("null")
 	NumberKey    = data.Keyword("number")
 	ObjectKey    = data.Keyword("object")
 	PairKey      = data.Keyword("pair")
@@ -44,55 +48,60 @@ const (
 	VectorKey    = data.Keyword("vector")
 )
 
-var predicates = map[data.Keyword]predicate{
-	AtomKey:      isAtom,
+var listType = types.MakeUnion(types.BasicList, types.BasicNull)
+
+var predicates = map[data.Keyword]data.Function{
+	AtomKey:     makePredicate(isAtom),
+	NaNKey:      makePredicate(isNaN),
+	ResolvedKey: makePredicate(isResolved),
+
+	AnyKey:      data.MakeTypePredicate(types.BasicAny),
+	BooleanKey:  data.MakeTypePredicate(types.BasicBoolean),
+	ConsKey:     data.MakeTypePredicate(types.BasicCons),
+	FunctionKey: data.MakeTypePredicate(types.BasicLambda),
+	KeywordKey:  data.MakeTypePredicate(types.BasicKeyword),
+	ListKey:     data.MakeTypePredicate(listType),
+	MacroKey:    data.MakeTypePredicate(macro.Type),
+	NullKey:     data.MakeTypePredicate(types.BasicNull),
+	NumberKey:   data.MakeTypePredicate(types.BasicNumber),
+	ObjectKey:   data.MakeTypePredicate(types.BasicObject),
+	SpecialKey:  data.MakeTypePredicate(encoder.Type),
+	StringKey:   data.MakeTypePredicate(types.BasicString),
+	SymbolKey:   data.MakeTypePredicate(types.BasicSymbol),
+	VectorKey:   data.MakeTypePredicate(types.BasicVector),
+
 	AppenderKey:  makeGoTypePredicate[data.Appender](),
-	BooleanKey:   makeGoTypePredicate[data.Bool](),
-	ConsKey:      makeGoTypePredicate[*data.Cons](),
 	CountedKey:   makeGoTypePredicate[data.Counted](),
-	FunctionKey:  makeGoTypePredicate[data.Function](),
 	IndexedKey:   makeGoTypePredicate[data.Indexed](),
-	KeywordKey:   makeGoTypePredicate[data.Keyword](),
-	ListKey:      makeGoTypePredicate[data.List](),
 	LocalKey:     makeGoTypePredicate[data.Local](),
-	MacroKey:     makeGoTypePredicate[macro.Call](),
 	MappedKey:    makeGoTypePredicate[data.Mapper](),
-	NaNKey:       isNaN,
-	NumberKey:    makeGoTypePredicate[data.Number](),
-	ObjectKey:    makeGoTypePredicate[data.Object](),
 	PairKey:      makeGoTypePredicate[data.Pair](),
 	PromiseKey:   makeGoTypePredicate[async.Promise](),
 	QualifiedKey: makeGoTypePredicate[data.Qualified](),
-	ResolvedKey:  isResolved,
 	ReverserKey:  makeGoTypePredicate[data.Reverser](),
 	SequenceKey:  makeGoTypePredicate[data.Sequence](),
-	SpecialKey:   makeGoTypePredicate[encoder.Call](),
-	StringKey:    makeGoTypePredicate[data.String](),
-	SymbolKey:    makeGoTypePredicate[data.Symbol](),
-	VectorKey:    makeGoTypePredicate[data.Vector](),
 }
 
 // TypeOf returns a Type Predicate for the Types of the given Values. If more
 // than one Value is provided, the Union of their Types will be returned
 var TypeOf = data.Applicative(func(args ...data.Value) data.Value {
-	return data.TypeOf(args[0], args[1:]...)
+	return data.TypePredicateOf(args[0], args[1:]...)
 }, 1, data.OrMore)
 
 // IsA returns a Predicate from the set of builtin named Predicates
 var IsA = data.Applicative(func(args ...data.Value) data.Value {
 	kwd := args[0].(data.Keyword)
-	p, ok := predicates[kwd]
-	if !ok {
-		panic(fmt.Errorf(ErrUnknownPredicate, kwd))
+	if p, ok := predicates[kwd]; ok {
+		return p
 	}
-	return makePredicate(p)
+	panic(fmt.Errorf(ErrUnknownPredicate, kwd))
 }, 1)
 
-func makeGoTypePredicate[T any]() predicate {
-	return func(v data.Value) bool {
-		_, ok := v.(T)
-		return ok
-	}
+func makeGoTypePredicate[T any]() data.Function {
+	return data.Applicative(func(args ...data.Value) data.Value {
+		_, ok := args[0].(T)
+		return data.Bool(ok)
+	}, 1)
 }
 
 func makePredicate(p predicate) data.Function {

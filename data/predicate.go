@@ -8,22 +8,23 @@ type TypePredicate struct {
 
 var typePredicateType = types.MakeBasic("type-predicate")
 
-// MakeType returns a type Predicate for the given Type
-func MakeType(t types.Type) *TypePredicate {
+// MakeTypePredicate returns a TypePredicate for the given Type
+func MakeTypePredicate(t types.Type) *TypePredicate {
 	return &TypePredicate{typ: t}
 }
 
-// TypeOf returns a TypePredicate for the Types of the given Values. If more
-// than one Value is provided, the Union of their Types will be returned
-func TypeOf(f Value, r ...Value) *TypePredicate {
+// TypePredicateOf returns a TypePredicate for the Types of the given Values.
+// If more than one Value is provided, the Union of their Types will be
+// returned
+func TypePredicateOf(f Value, r ...Value) *TypePredicate {
 	if len(r) == 0 {
-		return MakeType(typeOf(f))
+		return MakeTypePredicate(typeOf(f))
 	}
 	t := make([]types.Type, len(r))
 	for i, v := range r {
 		t[i] = typeOf(v)
 	}
-	return MakeType(types.MakeUnion(typeOf(f), t...))
+	return MakeTypePredicate(types.MakeUnion(typeOf(f), t...))
 }
 
 func (t *TypePredicate) Type() types.Type {
