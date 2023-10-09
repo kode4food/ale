@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestUnion(t *testing.T) {
+func TestUnionAccepts(t *testing.T) {
 	as := assert.New(t)
 
 	u1 := types.MakeUnion(types.BasicKeyword, types.BasicNumber)
@@ -50,4 +50,23 @@ func TestUnion(t *testing.T) {
 
 	_, ok := u6.(*types.Any)
 	as.True(ok)
+}
+
+func TestUnionEqual(t *testing.T) {
+	as := assert.New(t)
+
+	u1 := types.MakeUnion(types.BasicKeyword, types.BasicNumber)
+	u2 := types.MakeUnion(types.BasicList, types.BasicVector)
+	u3 := types.MakeUnion(u1, u2)
+	u4 := types.MakeUnion(
+		types.BasicList, types.BasicVector,
+		types.BasicKeyword, types.BasicNumber,
+	)
+	u5 := types.MakeUnion(types.BasicNumber, types.BasicKeyword)
+
+	as.True(u1.Equal(u1))
+	as.False(u1.Equal(types.BasicKeyword))
+	as.True(u1.Equal(u5))
+	as.False(types.BasicNumber.Equal(u1))
+	as.True(u3.Equal(u4))
 }

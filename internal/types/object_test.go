@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestObject(t *testing.T) {
+func TestObjectAccepts(t *testing.T) {
 	as := assert.New(t)
 
 	o1 := types.MakeObject(types.BasicString, types.BasicLambda)
@@ -25,4 +25,20 @@ func TestObject(t *testing.T) {
 	as.True(types.Accepts(types.BasicObject, o1))
 	as.False(types.Accepts(o1, types.BasicObject))
 	as.False(types.Accepts(o1, types.BasicBoolean))
+}
+
+func TestObjectEqual(t *testing.T) {
+	as := assert.New(t)
+
+	o1 := types.MakeObject(types.BasicString, types.BasicLambda)
+	o2 := types.MakeObject(types.BasicNumber, types.BasicKeyword)
+	o3 := types.MakeObject(types.BasicString, types.BasicLambda)
+
+	as.True(o1.Equal(o1))
+	as.False(o1.Equal(o2))
+	as.True(o1.Equal(o3))
+
+	as.False(types.BasicObject.Equal(o1))
+	as.False(o1.Equal(types.BasicObject))
+	as.False(o1.Equal(types.BasicBoolean))
 }

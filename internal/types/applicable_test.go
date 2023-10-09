@@ -87,9 +87,61 @@ func TestApplicableRest(t *testing.T) {
 		},
 	)
 
+	as.True(types.Accepts(a1, a1))
 	as.False(types.Accepts(a1, a2))
 	as.False(types.Accepts(a3, a1))
 	as.False(types.Accepts(a3, a2))
 	as.True(types.Accepts(a1, a3))
 	as.True(types.Accepts(a2, a3))
+}
+
+func TestApplicableEqual(t *testing.T) {
+	as := assert.New(t)
+
+	a1 := types.MakeApplicable(
+		types.Signature{
+			Params: []types.Type{types.BasicNumber, types.BasicNumber},
+			Result: types.BasicBoolean,
+		},
+	)
+	a2 := types.MakeApplicable(
+		types.Signature{
+			Params:    []types.Type{types.BasicNumber, types.BasicNumber},
+			TakesRest: true,
+			Result:    types.BasicBoolean,
+		},
+	)
+	a3 := types.MakeApplicable(
+		types.Signature{
+			Params: []types.Type{types.BasicNumber, types.BasicBoolean},
+			Result: types.BasicBoolean,
+		},
+	)
+	a4 := types.MakeApplicable(
+		types.Signature{
+			Params: []types.Type{types.BasicNumber, types.BasicBoolean},
+			Result: types.BasicBoolean,
+		},
+		types.Signature{
+			Params: []types.Type{types.BasicNumber, types.BasicBoolean},
+			Result: types.BasicBoolean,
+		},
+	)
+	a5 := types.MakeApplicable(
+		types.Signature{
+			Params: []types.Type{
+				types.BasicNumber, types.BasicBoolean, types.BasicList,
+			},
+			Result: types.BasicBoolean,
+		},
+	)
+
+	cpy := *a1
+	as.True(a1.Equal(a1))
+	as.True(a1.Equal(&cpy))
+	as.False(a1.Equal(a2))
+	as.False(a2.Equal(types.BasicList))
+	as.False(a1.Equal(a3))
+	as.False(a3.Equal(a4))
+	as.False(a3.Equal(a5))
 }

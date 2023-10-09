@@ -25,13 +25,10 @@ type (
 //    * all other permutations are false
 
 func Accepts(left, right Type) bool {
-	return Check(left).AcceptsWith(right, accepts)
+	return Check(left).Accepts(right)
 }
 
 func accepts(c *Checker, right Type) bool {
-	if c.Receiver() == right {
-		return true
-	}
 	return c.Receiver().Accepts(c, right)
 }
 

@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestCons(t *testing.T) {
+func TestConsAccepts(t *testing.T) {
 	as := assert.New(t)
 
 	c1 := types.MakeCons(types.BasicNull, types.BasicString)
@@ -17,4 +17,20 @@ func TestCons(t *testing.T) {
 	as.True(types.Accepts(c1, c1))
 	as.False(types.Accepts(c1, c2))
 	as.True(types.Accepts(c1, c3))
+}
+
+func TestConsEqual(t *testing.T) {
+	as := assert.New(t)
+
+	c1 := types.MakeCons(types.BasicNull, types.BasicString)
+	c2 := types.MakeCons(types.BasicNumber, types.BasicString)
+	c3 := types.MakeCons(types.BasicNull, types.BasicString)
+
+	as.True(c1.Equal(c1))
+	as.False(c1.Equal(c2))
+	as.True(c1.Equal(c3))
+
+	as.False(types.BasicObject.Equal(c1))
+	as.False(c1.Equal(types.BasicObject))
+	as.False(c1.Equal(types.BasicBoolean))
 }

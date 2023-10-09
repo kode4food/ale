@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestAny(t *testing.T) {
+func TestAnyAccepts(t *testing.T) {
 	as := assert.New(t)
 
 	a := types.BasicAny
@@ -15,4 +15,12 @@ func TestAny(t *testing.T) {
 	as.True(types.Accepts(a, types.BasicLambda))
 	as.True(types.Accepts(a, types.BasicNumber))
 	as.True(types.Accepts(a, types.BasicAny))
+}
+
+func TestAnyEqual(t *testing.T) {
+	as := assert.New(t)
+
+	as.True(types.BasicAny.Equal(types.BasicAny))
+	as.True(types.BasicAny.Equal(&types.Any{}))
+	as.False(types.BasicAny.Equal(types.BasicBoolean))
 }

@@ -2,14 +2,12 @@ package types
 
 import "fmt"
 
-type (
-	// Object describes a typed set of Key/Value Pairs
-	Object struct {
-		basic
-		key   Type
-		value Type
-	}
-)
+// Object describes a typed set of Key/Value Pairs
+type Object struct {
+	basic
+	key   Type
+	value Type
+}
 
 // MakeObject declares a new ObjectType that will only allow keys and values of
 // the provided types
