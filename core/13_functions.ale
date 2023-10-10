@@ -4,9 +4,9 @@
   ((lambda-rec parse-bindings (out in)
      (if (seq in)
          (let* ([fnList (first in)]
-                 [fnSym  (first fnList)]
-                 [fnName (first (rest fnList))]
-                 [fnRest (rest (rest fnList))])
+                [fnSym  (first fnList)]
+                [fnName (first (rest fnList))]
+                [fnRest (rest (rest fnList))])
            (assert-args
              (and (list? fnList)
                    (or (eq fnSym 'lambda-rec)
