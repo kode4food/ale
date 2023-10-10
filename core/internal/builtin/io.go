@@ -8,7 +8,7 @@ import (
 )
 
 // MakeReader wraps the go Reader with an input function
-func MakeReader(r io.Reader, i stream.InputFunc) stream.Reader {
+func MakeReader(r io.Reader, i stream.InputFunc) data.Sequence {
 	return stream.NewReader(r, i)
 }
 

@@ -7,7 +7,6 @@ import (
 	"github.com/kode4food/ale/core/bootstrap"
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/assert"
-	"github.com/kode4food/ale/internal/stream"
 )
 
 func TestDevNullEnvironment(t *testing.T) {
@@ -24,7 +23,7 @@ func TestDevNullEnvironment(t *testing.T) {
 
 	i, ok := ns.Resolve("*in*")
 	as.True(ok && i.IsBound())
-	r, ok := i.Value().(stream.Reader)
+	r, ok := i.Value().(data.Sequence)
 	as.True(ok)
 	as.True(r.IsEmpty())
 }

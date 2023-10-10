@@ -33,7 +33,6 @@ func TestWriter(t *testing.T) {
 	w.Write(V(S("there"), S("you")))
 	w.(stream.Closer).Close()
 
-	as.Contains(":type writer", w)
 	as.String(`hello["there" "you"]`, buf.String())
 	as.True(c.closed)
 }

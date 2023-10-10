@@ -8,18 +8,11 @@ import (
 	"github.com/kode4food/ale/internal/sequence"
 )
 
-type (
-	// Reader is used to retrieve values from a File
-	Reader interface {
-		data.Sequence
-	}
-
-	// InputFunc is a callback used to unmarshal values from a Reader
-	InputFunc func(*bufio.Reader) (data.Value, bool)
-)
+// InputFunc is a callback used to unmarshal values from a Reader
+type InputFunc func(*bufio.Reader) (data.Value, bool)
 
 // NewReader wraps a Go Reader, coupling it with an input function
-func NewReader(r io.Reader, i InputFunc) Reader {
+func NewReader(r io.Reader, i InputFunc) data.Sequence {
 	var resolver sequence.LazyResolver
 	br := bufio.NewReader(r)
 

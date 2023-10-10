@@ -5,14 +5,17 @@ import (
 	"io"
 
 	"github.com/kode4food/ale/data"
-	"github.com/kode4food/ale/internal/types"
 )
 
 type (
 	// Writer is used to emit values to a File
 	Writer interface {
-		data.Value
 		Write(data.Value)
+	}
+
+	// Closer is used to close a File
+	Closer interface {
+		Close()
 	}
 
 	// OutputFunc is a callback used to marshal values to a Writer
@@ -24,15 +27,18 @@ type (
 	}
 
 	wrappedClosingWriter struct {
-		closer io.Closer
 		*wrappedWriter
+		closer io.Closer
 	}
 )
 
-// WriteKey is key used to write to a Writer
-const WriteKey = data.Keyword("write")
+const (
+	// WriteKey is key used to write to a Writer
+	WriteKey = data.Keyword("write")
 
-var writerType = types.MakeBasic("writer")
+	// CloseKey is the key used to close a file
+	CloseKey = data.Keyword("close")
+)
 
 // NewWriter wraps a Go Writer, coupling it with an output function
 func NewWriter(w io.Writer, o OutputFunc) Writer {
@@ -57,18 +63,6 @@ func (w *wrappedWriter) Write(v data.Value) {
 func (w *wrappedClosingWriter) Close() {
 	_ = w.writer.Flush()
 	_ = w.closer.Close()
-}
-
-func (w *wrappedWriter) Equal(v data.Value) bool {
-	return w == v
-}
-
-func (w *wrappedWriter) String() string {
-	return data.DumpString(w)
-}
-
-func (w *wrappedWriter) Type() types.Type {
-	return writerType
 }
 
 func stringToBytes(s string) []byte {

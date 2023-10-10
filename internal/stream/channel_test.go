@@ -17,7 +17,6 @@ func TestChannel(t *testing.T) {
 
 	e, seq := stream.NewChannel(0)
 	seq = seq.(data.Prepender).Prepend(F(1))
-	as.Contains(":type channel-emitter", e)
 	as.Contains(":type channel-sequence", seq)
 
 	var wg sync.WaitGroup

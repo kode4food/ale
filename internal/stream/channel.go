@@ -46,7 +46,6 @@ const (
 var (
 	emptyResult = channelResult{value: data.Null, error: nil}
 
-	channelEmitterType  = types.MakeBasic("channel-emitter")
 	channelSequenceType = types.MakeBasic("channel-sequence")
 )
 
@@ -82,18 +81,6 @@ func (e *channelEmitter) Error(err any) {
 func (e *channelEmitter) Close() {
 	runtime.SetFinalizer(e, nil)
 	close(e.ch)
-}
-
-func (e *channelEmitter) Type() types.Type {
-	return channelEmitterType
-}
-
-func (e *channelEmitter) Equal(v data.Value) bool {
-	return e == v
-}
-
-func (e *channelEmitter) String() string {
-	return data.DumpString(e)
 }
 
 // NewChannelSequence produces a new Sequence whose values come from a Go chan
