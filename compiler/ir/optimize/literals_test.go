@@ -12,7 +12,7 @@ func TestLiterals(t *testing.T) {
 	as := assert.New(t)
 
 	e1 := assert.GetTestEncoder()
-	e1.Emit(isa.Nil)
+	e1.Emit(isa.Null)
 	e1.Emit(isa.Return)
 
 	as.Instructions(isa.Instructions{

@@ -55,7 +55,7 @@ const (
 	NewRef                 // New Reference
 	NoOp                   // Non-Operator
 	Not                    // Boolean Negation
-	Nil                    // Push Nil
+	Null                   // Push Null
 	NumEq                  // Numeric Equality
 	NumGt                  // Greater Than
 	NumGte                 // Greater or Equal To
@@ -68,7 +68,7 @@ const (
 	Resolve                // Resolve Global Symbol
 	RestArg                // Retrieve Arguments Tail
 	RetFalse               // Return False
-	RetNil                 // Return Nil (Empty List)
+	RetNil                 // Return Null (Empty List)
 	RetTrue                // Return True
 	Return                 // Return Value
 	Store                  // Store Local

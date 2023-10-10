@@ -20,11 +20,11 @@ type (
 	testReceiver bool
 )
 
-func testWrap(as *assert.Wrapper) data.Object {
+func testWrap(as *assert.Wrapper) *data.Object {
 	f := ffi.MustWrap(func() testInterface {
 		return testReceiver(true)
 	}).(data.Function)
-	r := f.Call().(data.Object)
+	r := f.Call().(*data.Object)
 	as.Equal(4, r.Count())
 	return r
 }

@@ -11,7 +11,7 @@ import (
 
 func TestCondEval(t *testing.T) {
 	as := assert.New(t)
-	as.EvalTo(`(cond)`, data.Nil)
+	as.EvalTo(`(cond)`, data.Null)
 
 	as.EvalTo(`
 		(cond
@@ -33,7 +33,7 @@ func TestCondEval(t *testing.T) {
 		(cond
 			[false "goodbye"]
 			['()   "nope"])
-	`, data.Nil)
+	`, data.Null)
 }
 
 func TestBadCond(t *testing.T) {

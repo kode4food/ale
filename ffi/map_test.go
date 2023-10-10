@@ -19,7 +19,7 @@ var stateMap = map[string]int{
 
 func TestMapWrap(t *testing.T) {
 	as := assert.New(t)
-	m := ffi.MustWrap(stateMap).(data.Object)
+	m := ffi.MustWrap(stateMap).(*data.Object)
 	as.NotNil(m)
 	as.Equal(I(40), as.MustGet(m, S("California")))
 	as.Equal(I(7), as.MustGet(m, S("Massachusetts")))
@@ -44,7 +44,7 @@ func TestMapUnwrap(t *testing.T) {
 	f := ffi.MustWrap(func(k string, m map[string]int) int {
 		return m[k]
 	}).(data.Function)
-	m := ffi.MustWrap(stateMap).(data.Object)
+	m := ffi.MustWrap(stateMap).(*data.Object)
 	as.Equal(I(40), f.Call(S("California"), m))
 	as.Equal(I(8), f.Call(S("Virginia"), m))
 }

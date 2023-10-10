@@ -21,7 +21,7 @@ func TestLiteral(t *testing.T) {
 	generate.Literal(e, I(-1))
 	generate.Literal(e, data.True)
 	generate.Literal(e, data.False)
-	generate.Literal(e, data.Nil)
+	generate.Literal(e, data.Null)
 	generate.Literal(e, S("hello there!"))
 
 	// Because the stack size must remain the same in and out
@@ -38,7 +38,7 @@ func TestLiteral(t *testing.T) {
 			isa.NegInt.New(1),
 			isa.True.New(),
 			isa.False.New(),
-			isa.Nil.New(),
+			isa.Null.New(),
 			isa.Const.New(0),
 			isa.Pop.New(),
 			isa.Pop.New(),

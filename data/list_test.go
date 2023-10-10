@@ -13,7 +13,7 @@ func TestSimpleList(t *testing.T) {
 	n := F(12)
 	l := L(n)
 	as.Equal(n, l.Car())
-	as.Equal(data.EmptyList, l.Cdr())
+	as.Equal(data.Null, l.Cdr())
 }
 
 func TestList(t *testing.T) {
@@ -22,13 +22,13 @@ func TestList(t *testing.T) {
 	l1 := data.NewList(n1)
 
 	as.Equal(n1, l1.Car())
-	as.Equal(data.EmptyList, l1.Cdr())
+	as.Equal(data.Null, l1.Cdr())
 	as.True(l1.Cdr().(data.Sequence).IsEmpty())
 
 	n2 := F(20.5)
-	l2 := l1.Prepend(n2).(data.List)
+	l2 := l1.Prepend(n2).(*data.List)
 
-	as.String("()", data.EmptyList)
+	as.String("()", data.Null)
 	as.String("(20.5 12)", l2)
 	as.Equal(n2, l2.Car())
 	as.Identical(l1, l2.Cdr())
@@ -39,16 +39,16 @@ func TestList(t *testing.T) {
 	as.Equal(I(12), r)
 	as.Number(2, l2.Count())
 
-	r, ok = data.EmptyList.ElementAt(1)
+	r, ok = data.Null.ElementAt(1)
 	as.False(ok)
-	as.Equal(data.Nil, r)
+	as.Equal(data.Null, r)
 }
 
 func TestListReverse(t *testing.T) {
 	as := assert.New(t)
 
 	l1 := data.NewList(I(1), I(2), I(3), I(4))
-	l2 := l1.Reverse().(data.List)
+	l2 := l1.Reverse().(*data.List)
 
 	as.String("(1 2 3 4)", l1)
 	as.Number(4, l1.Count())
@@ -56,18 +56,17 @@ func TestListReverse(t *testing.T) {
 	as.Number(4, l2.Count())
 
 	as.String(`(2 1)`, data.NewList(I(1), I(2)).Reverse())
-	as.String("()", data.EmptyList.Reverse())
+	as.String("()", data.Null.Reverse())
 }
 
 func TestListCaller(t *testing.T) {
 	as := assert.New(t)
 
 	l1 := data.NewList(I(99), I(37))
-	c1 := l1.(data.Function)
-	as.Number(99, c1.Call(I(0)))
-	as.Number(37, c1.Call(I(1)))
-	as.Nil(c1.Call(I(2)))
-	as.String("defaulted", c1.Call(I(2), S("defaulted")))
+	as.Number(99, l1.Call(I(0)))
+	as.Number(37, l1.Call(I(1)))
+	as.Nil(l1.Call(I(2)))
+	as.String("defaulted", l1.Call(I(2), S("defaulted")))
 }
 
 func TestListEquality(t *testing.T) {

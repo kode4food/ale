@@ -58,3 +58,8 @@ func makeConstructor[T data.Value](orig func(...data.Value) T) data.Function {
 		return orig(args...)
 	})
 }
+
+func isPair(v data.Value) bool {
+	p, ok := v.(data.Pair)
+	return ok && p != data.Null
+}

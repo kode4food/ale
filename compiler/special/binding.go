@@ -45,7 +45,7 @@ func parseLet(args ...data.Value) (generate.Bindings, data.Vector) {
 
 func parseLetBindings(v data.Value) generate.Bindings {
 	switch v := v.(type) {
-	case data.List:
+	case *data.List:
 		names := uniqueNames{}
 		res := generate.Bindings{}
 		for f, r, ok := v.Split(); ok; f, r, ok = r.Split() {

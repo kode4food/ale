@@ -45,5 +45,5 @@ var Read = data.Applicative(func(args ...data.Value) data.Value {
 	if v, ok := data.Last(read.FromString(sequence.ToStr(s))); ok {
 		return v
 	}
-	return data.Nil
+	return data.Null
 }, 1)

@@ -89,13 +89,14 @@ func (se *syntaxEnv) quoteSequence(s data.Sequence) data.Value {
 	switch s := s.(type) {
 	case data.String:
 		return s
-	case data.Null:
-		return s
-	case data.List:
+	case *data.List:
+		if s == data.Null {
+			return s
+		}
 		return data.NewList(applySym, listSym, se.quoteElements(s))
 	case data.Vector:
 		return data.NewList(applySym, vectorSym, se.quoteElements(s))
-	case data.Object:
+	case *data.Object:
 		return se.quoteObject(s)
 	default:
 		panic(fmt.Errorf(ErrUnsupportedSyntaxQuote, s))
@@ -108,7 +109,7 @@ func (se *syntaxEnv) quotePair(c data.Pair) data.Value {
 	return data.NewList(consSym, car, cdr)
 }
 
-func (se *syntaxEnv) quoteObject(as data.Object) data.Value {
+func (se *syntaxEnv) quoteObject(as *data.Object) data.Value {
 	var res data.Values
 	for f, r, ok := as.Split(); ok; f, r, ok = r.Split() {
 		p := f.(data.Pair)
@@ -149,11 +150,11 @@ func isWrapperCall(s data.Symbol, v data.Value) (data.Value, bool) {
 	if l, ok := isBuiltInCall(s, v); ok {
 		return l.Cdr().(data.Pair).Car(), true
 	}
-	return data.Nil, false
+	return data.Null, false
 }
 
-func isBuiltInCall(s data.Symbol, v data.Value) (data.List, bool) {
-	if l, ok := v.(data.List); ok && l.Count() > 0 {
+func isBuiltInCall(s data.Symbol, v data.Value) (*data.List, bool) {
+	if l, ok := v.(*data.List); ok && l.Count() > 0 {
 		if call, ok := l.Car().(data.Symbol); ok {
 			return l, call == s
 		}

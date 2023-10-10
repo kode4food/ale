@@ -66,7 +66,7 @@ var Effects = map[Opcode]*Effect{
 	Neg:      {Pop: 1, Push: 1},
 	NegInt:   {Push: 1, Operand: Integer},
 	NewRef:   {Push: 1},
-	Nil:      {Push: 1},
+	Null:     {Push: 1},
 	NoOp:     {Ignore: true},
 	Not:      {Pop: 1, Push: 1},
 	NumEq:    {Pop: 2, Push: 1},

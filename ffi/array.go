@@ -40,7 +40,7 @@ func (w *arrayWrapper) Wrap(c *Context, v reflect.Value) (data.Value, error) {
 	for i := 0; i < vLen; i++ {
 		elem, err := w.elem.Wrap(c, v.Index(i))
 		if err != nil {
-			return data.Nil, err
+			return data.Null, err
 		}
 		out[i] = elem
 	}

@@ -47,7 +47,7 @@ func Wrap(i any) (data.Value, error) {
 	v := reflect.ValueOf(i)
 	w, err := WrapType(v.Type())
 	if err != nil {
-		return data.Nil, err
+		return data.Null, err
 	}
 	return w.Wrap(new(Context), v)
 }

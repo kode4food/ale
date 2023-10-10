@@ -8,9 +8,11 @@ import (
 
 // Literal encodes a literal (constant) value
 func Literal(e encoder.Encoder, v data.Value) {
+	if v == data.Null {
+		Null(e)
+		return
+	}
 	switch v := v.(type) {
-	case data.Null:
-		Nil(e)
 	case data.Integer, data.Float:
 		Number(e, v)
 	case data.Bool:
@@ -21,9 +23,9 @@ func Literal(e encoder.Encoder, v data.Value) {
 	}
 }
 
-// Nil encodes a Nil
-func Nil(e encoder.Encoder) {
-	e.Emit(isa.Nil)
+// Null encodes a Null
+func Null(e encoder.Encoder) {
+	e.Emit(isa.Null)
 }
 
 // Number encodes an Integer or Float

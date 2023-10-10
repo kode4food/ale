@@ -34,7 +34,7 @@ func (v Vector) ElementAt(index int) (Value, bool) {
 	if index >= 0 && index < len(v) {
 		return v[index], true
 	}
-	return Nil, false
+	return Null, false
 }
 
 func (v Vector) IsEmpty() bool {
@@ -45,7 +45,7 @@ func (v Vector) Car() Value {
 	if len(v) > 0 {
 		return v[0]
 	}
-	return Nil
+	return Null
 }
 
 func (v Vector) Cdr() Value {
@@ -58,7 +58,7 @@ func (v Vector) Cdr() Value {
 func (v Vector) Split() (Value, Sequence, bool) {
 	switch len(v) {
 	case 0:
-		return Nil, EmptyVector, false
+		return Null, EmptyVector, false
 	case 1:
 		return v[0], EmptyVector, true
 	default:

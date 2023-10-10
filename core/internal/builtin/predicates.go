@@ -4,11 +4,10 @@ import (
 	"fmt"
 
 	"github.com/kode4food/ale/compiler/encoder"
-	"github.com/kode4food/ale/internal/types"
-	"github.com/kode4food/ale/macro"
-
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/async"
+	"github.com/kode4food/ale/internal/types"
+	"github.com/kode4food/ale/macro"
 )
 
 type predicate func(data.Value) bool
@@ -53,6 +52,7 @@ var listType = types.MakeUnion(types.BasicList, types.BasicNull)
 var predicates = map[data.Keyword]data.Function{
 	AtomKey:     makePredicate(isAtom),
 	NaNKey:      makePredicate(isNaN),
+	PairKey:     makePredicate(isPair),
 	ResolvedKey: makePredicate(isResolved),
 
 	AnyKey:      data.MakeTypePredicate(types.BasicAny),
@@ -75,8 +75,7 @@ var predicates = map[data.Keyword]data.Function{
 	IndexedKey:   makeGoTypePredicate[data.Indexed](),
 	LocalKey:     makeGoTypePredicate[data.Local](),
 	MappedKey:    makeGoTypePredicate[data.Mapper](),
-	PairKey:      makeGoTypePredicate[data.Pair](),
-	PromiseKey:   makeGoTypePredicate[async.Promise](),
+	PromiseKey:   makeGoTypePredicate[*async.Promise](),
 	QualifiedKey: makeGoTypePredicate[data.Qualified](),
 	ReverserKey:  makeGoTypePredicate[data.Reverser](),
 	SequenceKey:  makeGoTypePredicate[data.Sequence](),

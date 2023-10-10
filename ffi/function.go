@@ -64,7 +64,7 @@ func (w *funcWrapper) wrapVoidFunction(fn reflect.Value) data.Function {
 	return data.Applicative(func(args ...data.Value) data.Value {
 		in := w.in.unwrap(args)
 		fn.Call(in)
-		return data.Nil
+		return data.Null
 	}, len(w.in))
 }
 

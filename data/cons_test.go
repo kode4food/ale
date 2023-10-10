@@ -31,7 +31,7 @@ func TestConsStringify(t *testing.T) {
 	c1 := data.NewCons(I(1), V(I(2), I(3), I(4)))
 	c2 := data.NewCons(I(1), L(I(2), I(3), I(4)))
 	c3 := data.NewCons(I(1), I(2))
-	c4 := data.NewCons(I(1), data.EmptyList)
+	c4 := data.NewCons(I(1), data.Null)
 	c5 := data.NewCons(I(1), S("hello"))
 	c6 := data.NewCons(data.NewCons(I(1), S("hello")), S("howdy"))
 	as.String("(1 2 3 4)", c1)

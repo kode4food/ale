@@ -107,8 +107,8 @@ func TestPopAndDup(t *testing.T) {
 }
 
 func TestReturns(t *testing.T) {
-	testResult(t, data.Nil, isa.Instructions{
-		isa.Nil.New(),
+	testResult(t, data.Null, isa.Instructions{
+		isa.Null.New(),
 		isa.Return.New(),
 	})
 
@@ -135,7 +135,7 @@ func TestReturns(t *testing.T) {
 		isa.RetFalse.New(),
 	})
 
-	testResult(t, data.Nil, isa.Instructions{
+	testResult(t, data.Null, isa.Instructions{
 		isa.RetNil.New(),
 	})
 }

@@ -122,7 +122,7 @@
     (asm*
         .resolve err
         panic
-        nil)))
+        null)))
 
 (private* reduce-inst)
 (define* reduce-inst (macro* (lambda (args init inst)

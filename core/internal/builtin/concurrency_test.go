@@ -20,7 +20,7 @@ func TestGo(t *testing.T) {
 		as.String("helloworld", res)
 		called = true
 		done <- true
-		return data.Nil
+		return data.Null
 	})
 	builtin.Go.Call(fn, S("hello"), S("world"))
 	<-done

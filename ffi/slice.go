@@ -27,14 +27,14 @@ func makeWrappedSlice(t reflect.Type) (Wrapper, error) {
 func (w *sliceWrapper) Wrap(c *Context, v reflect.Value) (data.Value, error) {
 	c, err := c.Push(v)
 	if err != nil {
-		return data.Nil, err
+		return data.Null, err
 	}
 	vLen := v.Len()
 	out := make(data.Values, vLen)
 	for i := 0; i < vLen; i++ {
 		v, err := w.elem.Wrap(c, v.Index(i))
 		if err != nil {
-			return data.Nil, err
+			return data.Null, err
 		}
 		out[i] = v
 	}

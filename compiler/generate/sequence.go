@@ -18,7 +18,7 @@ var (
 func Block(e encoder.Encoder, s data.Sequence) {
 	f, r, ok := s.Split()
 	if !ok {
-		Nil(e)
+		Null(e)
 		return
 	}
 	Value(e, f)
@@ -33,11 +33,11 @@ func Sequence(e encoder.Encoder, s data.Sequence) {
 	switch s := s.(type) {
 	case data.String:
 		Literal(e, s)
-	case data.List:
+	case *data.List:
 		Call(e, s)
 	case data.Vector:
 		Vector(e, s)
-	case data.Object:
+	case *data.Object:
 		Object(e, s)
 	default:
 		// Programmer error
@@ -52,7 +52,7 @@ func Vector(e encoder.Encoder, v data.Vector) {
 }
 
 // Object encodes an object
-func Object(e encoder.Encoder, a data.Object) {
+func Object(e encoder.Encoder, a *data.Object) {
 	args := data.Values{}
 	for f, r, ok := a.Split(); ok; f, r, ok = r.Split() {
 		v := f.(data.Pair)

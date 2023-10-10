@@ -44,7 +44,7 @@ type (
 		maxPos int
 	}
 
-	qualifiedSymbol struct {
+	qualified struct {
 		domain Local
 		name   Local
 	}
@@ -183,34 +183,34 @@ func (n Locals) Sorted() Locals {
 
 // NewQualifiedSymbol returns a Qualified Symbol for a specific domain
 func NewQualifiedSymbol(name Local, domain Local) Symbol {
-	return qualifiedSymbol{
+	return qualified{
 		domain: domain,
 		name:   name,
 	}
 }
 
-func (qualifiedSymbol) symbol() {}
+func (qualified) symbol() {}
 
-func (s qualifiedSymbol) Name() Local {
+func (s qualified) Name() Local {
 	return s.name
 }
 
-func (s qualifiedSymbol) Domain() Local {
+func (s qualified) Domain() Local {
 	return s.domain
 }
 
-func (s qualifiedSymbol) Equal(v Value) bool {
-	if v, ok := v.(qualifiedSymbol); ok {
+func (s qualified) Equal(v Value) bool {
+	if v, ok := v.(qualified); ok {
 		return s == v
 	}
 	return false
 }
 
-func (qualifiedSymbol) Type() types.Type {
+func (qualified) Type() types.Type {
 	return types.BasicSymbol
 }
 
-func (s qualifiedSymbol) String() string {
+func (s qualified) String() string {
 	var buf bytes.Buffer
 	buf.WriteString(string(s.domain))
 	buf.WriteRune(DomainSeparator)
@@ -218,6 +218,6 @@ func (s qualifiedSymbol) String() string {
 	return buf.String()
 }
 
-func (s qualifiedSymbol) HashCode() uint64 {
+func (s qualified) HashCode() uint64 {
 	return HashString(string(s.name)) * HashString(string(s.domain))
 }

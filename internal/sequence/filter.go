@@ -14,7 +14,7 @@ func Filter(s data.Sequence, filter data.Function) data.Sequence {
 				return f, NewLazy(res), true
 			}
 		}
-		return data.Nil, data.EmptyList, false
+		return data.Null, data.Null, false
 	}
 	return NewLazy(res)
 }

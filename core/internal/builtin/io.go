@@ -13,7 +13,7 @@ func MakeReader(r io.Reader, i stream.InputFunc) stream.Reader {
 }
 
 // MakeWriter wraps the go Writer with an output function
-func MakeWriter(w io.Writer, o stream.OutputFunc) data.Object {
+func MakeWriter(w io.Writer, o stream.OutputFunc) *data.Object {
 	wrapped := stream.NewWriter(w, o)
 
 	pairs := data.Pairs{
@@ -32,13 +32,13 @@ func bindWriter(w stream.Writer) data.Function {
 		for _, f := range args {
 			w.Write(f)
 		}
-		return data.Nil
+		return data.Null
 	})
 }
 
 func bindCloser(c stream.Closer) data.Function {
 	return data.Applicative(func(...data.Value) data.Value {
 		c.Close()
-		return data.Nil
+		return data.Null
 	}, 0)
 }

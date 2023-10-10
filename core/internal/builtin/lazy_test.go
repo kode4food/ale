@@ -22,7 +22,7 @@ func TestLazySequence(t *testing.T) {
 			i++
 			return res
 		}
-		return data.Nil
+		return data.Null
 	}, 0)
 
 	s := builtin.LazySequence.Call(fn).(data.Sequence)

@@ -32,21 +32,21 @@ func makeWrappedMap(t reflect.Type) (Wrapper, error) {
 
 func (w *mapWrapper) Wrap(c *Context, v reflect.Value) (data.Value, error) {
 	if !v.IsValid() {
-		return data.Nil, nil
+		return data.Null, nil
 	}
 	c, err := c.Push(v)
 	if err != nil {
-		return data.Nil, err
+		return data.Null, err
 	}
 	out := make(data.Pairs, 0, v.Len())
 	for pairs := v.MapRange(); pairs.Next(); {
 		k, err := w.key.Wrap(c, pairs.Key())
 		if err != nil {
-			return data.Nil, err
+			return data.Null, err
 		}
 		v, err := w.value.Wrap(c, pairs.Value())
 		if err != nil {
-			return data.Nil, err
+			return data.Null, err
 		}
 		out = append(out, data.NewCons(k, v))
 	}

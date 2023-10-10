@@ -1,8 +1,6 @@
 package isa
 
-import (
-	"errors"
-)
+import "errors"
 
 type (
 	flattener struct {

@@ -16,12 +16,12 @@ type (
 
 	fieldWrapper struct {
 		Wrapper
-		data.Keyword
+		kwd data.Keyword
 		idx int
 	}
 )
 
-// AleTag identifies the tag used to specify the Keyword used when wrapping a
+// AleTag identifies the tag used to specify the kwd used when wrapping a
 // struct as an Object
 const AleTag = "ale"
 
@@ -40,7 +40,7 @@ func makeWrappedStruct(t reflect.Type) (Wrapper, error) {
 		}
 		fields = append(fields, &fieldWrapper{
 			Wrapper: w,
-			Keyword: k,
+			kwd:     k,
 			idx:     i,
 		})
 	}
@@ -60,15 +60,15 @@ func getFieldKeyword(f reflect.StructField) data.Keyword {
 
 func (w *structWrapper) Wrap(c *Context, v reflect.Value) (data.Value, error) {
 	if !v.IsValid() {
-		return data.Nil, nil
+		return data.Null, nil
 	}
 	out := make(data.Pairs, 0, len(w.fields))
 	for _, w := range w.fields {
 		v, err := w.Wrap(c, v.Field(w.idx))
 		if err != nil {
-			return data.Nil, err
+			return data.Null, err
 		}
-		out = append(out, data.NewCons(w.Keyword, v))
+		out = append(out, data.NewCons(w.kwd, v))
 	}
 	return data.NewObject(out...), nil
 }
@@ -84,7 +84,7 @@ func (w *structWrapper) Unwrap(v data.Value) (reflect.Value, error) {
 	}
 	out := reflect.New(w.typ).Elem()
 	for _, w := range w.fields {
-		if v, ok := in.Get(w.Keyword); ok {
+		if v, ok := in.Get(w.kwd); ok {
 			v, err := w.Unwrap(v)
 			if err != nil {
 				return _emptyValue, err

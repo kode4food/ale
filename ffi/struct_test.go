@@ -27,7 +27,7 @@ func testStructStateInfo() *stateInfo {
 func TestStructWrap(t *testing.T) {
 	as := assert.New(t)
 	si := testStructStateInfo()
-	m := ffi.MustWrap(si).(data.Object)
+	m := ffi.MustWrap(si).(*data.Object)
 	as.Equal(S("California"), as.MustGet(m, K("Name")))
 	as.Equal(I(40), as.MustGet(m, K("pop")))
 	_, ok := m.Get(K("notExported"))

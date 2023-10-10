@@ -26,13 +26,13 @@ func I(i int64) data.Integer {
 	return data.Integer(i)
 }
 
-// K constructs a Keyword
+// K constructs a kwd
 func K(s string) data.Keyword {
 	return data.Keyword(s)
 }
 
 // L constructs a List
-func L(args ...data.Value) data.List {
+func L(args ...data.Value) *data.List {
 	return data.NewList(args...)
 }
 
@@ -42,7 +42,7 @@ func LS(n string) data.Symbol {
 }
 
 // O constructs an Object from Pairs
-func O(p ...data.Pair) data.Object {
+func O(p ...data.Pair) *data.Object {
 	return data.NewObject(p...)
 }
 

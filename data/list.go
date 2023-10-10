@@ -1,30 +1,30 @@
 package data
 
-import "github.com/kode4food/ale/internal/types"
+import (
+	"math/rand"
 
-type (
-	// List represents a singly-linked List
-	List interface {
-		list() // marker
-		Sequence
-		Prepender
-		Reverser
-		RandomAccess
-		Caller
-	}
+	"github.com/kode4food/ale/internal/types"
+)
 
-	list struct {
-		first Value
-		rest  List
-		count int
-	}
+// List represents a singly-linked List
+type List struct {
+	first Value
+	rest  *List
+	count int
+}
+
+var (
+	// Null represents the absence of a Value (the empty List)
+	Null *List
+
+	nullHash = rand.Uint64()
 )
 
 // NewList creates a new List instance
-func NewList(v ...Value) List {
-	var res List = EmptyList
+func NewList(v ...Value) *List {
+	var res *List
 	for i, u := len(v)-1, 1; i >= 0; i, u = i-1, u+1 {
-		res = &list{
+		res = &List{
 			first: v[i],
 			rest:  res,
 			count: u,
@@ -33,41 +33,52 @@ func NewList(v ...Value) List {
 	return res
 }
 
-func (*list) list() {}
-
-func (l *list) IsEmpty() bool {
-	return false
+func (l *List) IsEmpty() bool {
+	return l == nil
 }
 
-func (l *list) Car() Value {
+func (l *List) Car() Value {
+	if l == nil {
+		return Null
+	}
 	return l.first
 }
 
-func (l *list) Cdr() Value {
+func (l *List) Cdr() Value {
+	if l == nil {
+		return Null
+	}
 	return l.rest
 }
 
-func (l *list) Split() (Value, Sequence, bool) {
+func (l *List) Split() (Value, Sequence, bool) {
+	if l == nil {
+		return Null, Null, false
+	}
 	return l.first, l.rest, true
 }
 
-func (l *list) Prepend(v Value) Sequence {
-	return &list{
+func (l *List) Prepend(v Value) Sequence {
+	c := 1
+	if l != nil {
+		c += l.count
+	}
+	return &List{
 		first: v,
 		rest:  l,
-		count: l.count + 1,
+		count: c,
 	}
 }
 
-func (l *list) Reverse() Sequence {
-	if l.count <= 1 {
+func (l *List) Reverse() Sequence {
+	if l == nil || l.count <= 1 {
 		return l
 	}
 
-	var res List = EmptyList
-	var e List = l
-	for d, u := e.Count(), 1; d > 0; e, d, u = e.Cdr().(List), d-1, u+1 {
-		res = &list{
+	var res *List
+	e := l
+	for d, u := e.count, 1; d > 0; e, d, u = e.rest, d-1, u+1 {
+		res = &List{
 			first: e.Car(),
 			rest:  res,
 			count: u,
@@ -76,59 +87,74 @@ func (l *list) Reverse() Sequence {
 	return res
 }
 
-func (l *list) Count() int {
+func (l *List) Count() int {
+	if l == nil {
+		return 0
+	}
 	return l.count
 }
 
-func (l *list) ElementAt(index int) (Value, bool) {
-	if index > l.count-1 || index < 0 {
-		return Nil, false
+func (l *List) ElementAt(index int) (Value, bool) {
+	if l == nil || index > l.count-1 || index < 0 {
+		return Null, false
 	}
 
-	var e List = l
+	e := l
 	for i := 0; i < index; i++ {
-		e = e.Cdr().(List)
+		e = e.rest
 	}
 	return e.Car(), true
 }
 
-func (l *list) Call(args ...Value) Value {
+func (l *List) Call(args ...Value) Value {
+	if l == nil {
+		return Null
+	}
 	return indexedCall(l, args)
 }
 
-func (l *list) Convention() Convention {
+func (l *List) Convention() Convention {
 	return ApplicativeCall
 }
 
-func (l *list) CheckArity(argCount int) error {
+func (l *List) CheckArity(argCount int) error {
 	return checkRangedArity(1, 2, argCount)
 }
 
-func (l *list) Equal(v Value) bool {
-	if l == v {
-		return true
+func (l *List) Equal(other Value) bool {
+	if l == nil {
+		return l == other
 	}
-	if v, ok := v.(*list); ok {
-		if l.count != v.count || !l.first.Equal(v.first) {
+	r, ok := other.(*List)
+	if !ok || l.count != r.count {
+		return false
+	}
+	for l := l; l != nil; l, r = l.rest, r.rest {
+		if l == r {
+			return true
+		}
+		if !l.first.Equal(r.first) {
 			return false
 		}
-		return l.rest.Equal(v.rest)
 	}
-	return false
+	return true
 }
 
-func (l *list) String() string {
+func (l *List) String() string {
 	return MakeSequenceStr(l)
 }
 
-func (*list) Type() types.Type {
+func (l *List) Type() types.Type {
+	if l == nil {
+		return types.BasicNull
+	}
 	return types.BasicList
 }
 
-func (l *list) HashCode() uint64 {
-	h := nilHash
-	for f, r, ok := l.Split(); ok; f, r, ok = r.Split() {
-		h *= HashCode(f)
+func (l *List) HashCode() uint64 {
+	h := nullHash
+	for l := l; l != nil; l = l.rest {
+		h *= HashCode(l.first)
 	}
 	return h
 }

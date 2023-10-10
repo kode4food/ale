@@ -27,8 +27,8 @@ func NewLazy(r LazyResolver) data.Sequence {
 	return &lazySequence{
 		once:     do.Once(),
 		resolver: r,
-		result:   data.Nil,
-		rest:     data.EmptyList,
+		result:   data.Null,
+		rest:     data.Null,
 	}
 }
 

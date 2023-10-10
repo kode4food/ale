@@ -19,9 +19,9 @@ func TestObject(t *testing.T) {
 
 	o2 := o1.Put(
 		C(K("child"), S("i am the child")),
-	).(data.Object).Put(
+	).(*data.Object).Put(
 		C(K("name"), S("child")),
-	).(data.Object)
+	).(*data.Object)
 
 	as.String("i am the parent", as.MustGet(o2, K("parent")))
 	as.String("child", as.MustGet(o2, K("name")))
@@ -39,11 +39,11 @@ func TestObjectRemoval(t *testing.T) {
 	as := assert.New(t)
 
 	// Load it
-	var o1 data.Object = data.EmptyObject
+	o1 := data.EmptyObject
 	for i := 0; i < 1000; i++ {
 		k := K(fmt.Sprintf("key-%d", i))
 		v := S(fmt.Sprintf("value-%d", i))
-		o1 = o1.Put(C(k, v)).(data.Object)
+		o1 = o1.Put(C(k, v)).(*data.Object)
 	}
 	as.Equal(1000, o1.Count())
 
@@ -51,7 +51,7 @@ func TestObjectRemoval(t *testing.T) {
 	for i := 0; i < 1000; i += 2 {
 		k := K(fmt.Sprintf("key-%d", i))
 		v, r, ok := o1.Remove(k)
-		o1 = r.(data.Object)
+		o1 = r.(*data.Object)
 		as.True(ok)
 		as.String(fmt.Sprintf("value-%d", i), v)
 	}
@@ -62,7 +62,7 @@ func TestObjectRemoval(t *testing.T) {
 	for i := 1; i < 1000; i += 2 {
 		k := K(fmt.Sprintf("key-%d", i))
 		v, r, ok := o1.Remove(k)
-		o1 = r.(data.Object)
+		o1 = r.(*data.Object)
 		as.True(ok)
 		as.String(fmt.Sprintf("value-%d", i), v)
 	}
@@ -76,7 +76,7 @@ func TestObjectCaller(t *testing.T) {
 	o1 := data.NewObject(
 		C(K("parent"), S("i am the parent")),
 		C(K("name"), S("parent")),
-	).(data.Function)
+	)
 
 	as.String("i am the parent", o1.Call(K("parent")))
 	as.Nil(o1.Call(K("missing")))
@@ -96,7 +96,7 @@ func TestObjectIterate(t *testing.T) {
 	as.True(ok)
 	as.Equal(K("first"), f1.(*data.Cons).Car())
 	as.Equal(S("first value"), f1.(*data.Cons).Cdr())
-	as.Equal(1, r1.(data.Object).Count())
+	as.Equal(1, r1.(*data.Object).Count())
 
 	f2, r2, ok := r1.Split()
 	as.True(ok)
@@ -180,8 +180,8 @@ func TestObjectHash(t *testing.T) {
 		C(K("y"), I(99)),
 	)
 	o5 := data.NewObject()
-	as.Equal(o1.(data.Hashed).HashCode(), o2.(data.Hashed).HashCode())
-	as.NotEqual(o1.(data.Hashed).HashCode(), o3.(data.Hashed).HashCode())
-	as.NotEqual(uint64(0), o4.(data.Hashed).HashCode())
-	as.NotEqual(uint64(0), o5.(data.Hashed).HashCode())
+	as.Equal(o1.HashCode(), o2.HashCode())
+	as.NotEqual(o1.HashCode(), o3.HashCode())
+	as.NotEqual(uint64(0), o4.HashCode())
+	as.NotEqual(uint64(0), o5.HashCode())
 }

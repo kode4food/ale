@@ -25,7 +25,7 @@ func TestSequenceConversions(t *testing.T) {
 	as.NotNil(a2)
 	as.Nil(err)
 
-	l4 := L(S("hello"), data.Nil, S("there"), v1)
+	l4 := L(S("hello"), data.Null, S("there"), v1)
 	s1 := sequence.ToStr(l4)
 	s2 := sequence.ToStr(s1)
 
@@ -59,7 +59,7 @@ func TestUncountedConversions(t *testing.T) {
 	as.NotNil(a1)
 	as.Nil(err)
 
-	l4 := sequence.Filter(L(S("hello"), data.Nil, S("there"), v1), alwaysTrue)
+	l4 := sequence.Filter(L(S("hello"), data.Null, S("there"), v1), alwaysTrue)
 	s1 := sequence.ToStr(l4)
 
 	as.String(`["hello" "there"]`, v1)

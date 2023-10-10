@@ -18,9 +18,9 @@ type (
 )
 
 // Call encodes a function call
-func Call(e encoder.Encoder, l data.List) {
+func Call(e encoder.Encoder, l *data.List) {
 	if l.Count() == 0 {
-		Literal(e, data.EmptyList)
+		Literal(e, data.Null)
 		return
 	}
 	f, r, _ := l.Split()

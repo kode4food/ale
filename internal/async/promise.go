@@ -7,19 +7,14 @@ import (
 
 type (
 	// Promise represents a Value that will eventually be resolved
-	Promise interface {
-		data.Function
-		IsResolved() bool
-	}
-
-	promiseStatus int
-
-	promise struct {
+	Promise struct {
 		once     do.Action
 		resolver data.Function
 		result   any
 		status   promiseStatus
 	}
+
+	promiseStatus int
 )
 
 const (
@@ -31,15 +26,15 @@ const (
 var promiseArityChecker = data.MakeFixedChecker(0)
 
 // NewPromise instantiates a new Promise
-func NewPromise(resolver data.Function) Promise {
-	return &promise{
+func NewPromise(resolver data.Function) *Promise {
+	return &Promise{
 		once:     do.Once(),
 		resolver: resolver,
 		status:   promisePending,
 	}
 }
 
-func (p *promise) Call(...data.Value) data.Value {
+func (p *Promise) Call(...data.Value) data.Value {
 	p.once(func() {
 		defer func() {
 			if rec := recover(); rec != nil {
@@ -57,26 +52,26 @@ func (p *promise) Call(...data.Value) data.Value {
 	return p.result.(data.Value)
 }
 
-func (p *promise) Convention() data.Convention {
+func (p *Promise) Convention() data.Convention {
 	return data.ApplicativeCall
 }
 
-func (p *promise) CheckArity(c int) error {
+func (p *Promise) CheckArity(c int) error {
 	return promiseArityChecker(c)
 }
 
-func (p *promise) IsResolved() bool {
+func (p *Promise) IsResolved() bool {
 	return p.status != promisePending
 }
 
-func (p *promise) Type() data.Local {
+func (p *Promise) Type() data.Local {
 	return "promise"
 }
 
-func (p *promise) Equal(v data.Value) bool {
+func (p *Promise) Equal(v data.Value) bool {
 	return p == v
 }
 
-func (p *promise) String() string {
+func (p *Promise) String() string {
 	return data.DumpString(p)
 }

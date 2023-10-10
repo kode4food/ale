@@ -15,12 +15,12 @@ var LazySequence = data.Applicative(func(args ...data.Value) data.Value {
 func makeLazyResolver(f data.Function) sequence.LazyResolver {
 	return func() (data.Value, data.Sequence, bool) {
 		r := f.Call()
-		if r != data.Nil {
+		if r != data.Null {
 			s := r.(data.Sequence)
 			if sf, sr, ok := s.Split(); ok {
 				return sf, sr, true
 			}
 		}
-		return data.Nil, data.EmptyList, false
+		return data.Null, data.Null, false
 	}
 }

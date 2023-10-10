@@ -84,11 +84,11 @@ func makeWrappedMethod(m reflect.Method) (*methodWrapper, error) {
 func (w *intfWrapper) Wrap(c *Context, v reflect.Value) (data.Value, error) {
 	e := v.Elem()
 	if !e.IsValid() {
-		return data.Nil, nil
+		return data.Null, nil
 	}
 	_, err := c.Push(e)
 	if err != nil {
-		return data.Nil, err
+		return data.Null, err
 	}
 
 	res := make(data.Pairs, len(w.methods)+1)
@@ -118,7 +118,7 @@ func (w *methodWrapper) wrapVoidMethod(v reflect.Value) data.Function {
 
 	return data.Applicative(func(args ...data.Value) data.Value {
 		fn.Call(w.in.unwrap(args))
-		return data.Nil
+		return data.Null
 	}, len(w.in))
 }
 
@@ -148,7 +148,7 @@ func (w *methodWrapper) wrapVectorMethod(v reflect.Value) data.Function {
 }
 
 func (w *intfWrapper) Unwrap(v data.Value) (reflect.Value, error) {
-	if v, ok := v.(data.Object); ok {
+	if v, ok := v.(*data.Object); ok {
 		if r, ok := v.Get(ReceiverKey); ok {
 			if r, ok := r.(receiver); ok {
 				res := reflect.Value(r)

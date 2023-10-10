@@ -44,7 +44,7 @@ func TestChannelSequence(t *testing.T) {
 		close(ch)
 	}()
 
-	o := ffi.MustWrap(ch).(data.Object)
+	o := ffi.MustWrap(ch).(*data.Object)
 	s := as.MustGet(o, stream.SequenceKey).(data.Sequence)
 	as.String("(0 1 2 3 4 5 6 7 8 9)", sequence.ToList(s))
 }
@@ -54,7 +54,7 @@ func TestChannelEmit(t *testing.T) {
 
 	ch := make(chan int)
 	go func() {
-		w := ffi.MustWrap(ch).(data.Object)
+		w := ffi.MustWrap(ch).(*data.Object)
 		emitFunc := as.MustGet(w, stream.EmitKey).(data.Function)
 		emitFunc.Call(I(1), I(2))
 		emitFunc.Call(I(3), I(4))

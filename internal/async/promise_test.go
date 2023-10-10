@@ -15,8 +15,7 @@ func TestPromiseCaller(t *testing.T) {
 	p1 := async.NewPromise(data.Applicative(func(...data.Value) data.Value {
 		return S("hello")
 	}, 0))
-	c1 := p1.(data.Function)
-	as.String("hello", c1.Call())
+	as.String("hello", p1.Call())
 }
 
 func TestPromiseFailure(t *testing.T) {
@@ -24,7 +23,6 @@ func TestPromiseFailure(t *testing.T) {
 	p1 := async.NewPromise(data.Applicative(func(...data.Value) data.Value {
 		panic(errors.New("explosion"))
 	}, 0))
-	c1 := p1.(data.Function)
 	defer as.ExpectPanic("explosion")
-	c1.Call()
+	p1.Call()
 }

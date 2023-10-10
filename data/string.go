@@ -28,7 +28,7 @@ func (s String) Car() Value {
 	if r, w := utf8.DecodeRuneInString(string(s)); w > 0 {
 		return String(r)
 	}
-	return Nil
+	return Null
 }
 
 // Cdr returns a String of all characters after the first
@@ -44,7 +44,7 @@ func (s String) Split() (Value, Sequence, bool) {
 	if r, w := utf8.DecodeRuneInString(string(s)); w > 0 {
 		return String(r), s[w:], true
 	}
-	return Nil, Nil, false
+	return Null, Null, false
 }
 
 // IsEmpty returns whether this sequence is empty
@@ -60,21 +60,21 @@ func (s String) Count() int {
 // ElementAt returns the Character at the indexed position in the String
 func (s String) ElementAt(index int) (Value, bool) {
 	if index < 0 {
-		return Nil, false
+		return Null, false
 	}
 	ns := string(s)
 	p := 0
 	for i := 0; i < index; i++ {
 		_, w := utf8.DecodeRuneInString(ns[p:])
 		if w == 0 {
-			return Nil, false
+			return Null, false
 		}
 		p += w
 	}
 	if r, w := utf8.DecodeRuneInString(ns[p:]); w > 0 {
 		return String(r), true
 	}
-	return Nil, false
+	return Null, false
 }
 
 // Equal compares this String to another for equality

@@ -88,7 +88,7 @@ func Tokens(src data.String) data.Sequence {
 			input = rest
 			return t, sequence.NewLazy(resolver), true
 		}
-		return data.Nil, data.EmptyList, false
+		return data.Null, data.Null, false
 	}
 	return sequence.NewLazy(resolver)
 }

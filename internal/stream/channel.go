@@ -44,7 +44,7 @@ const (
 )
 
 var (
-	emptyResult = channelResult{value: data.Nil, error: nil}
+	emptyResult = channelResult{value: data.Null, error: nil}
 
 	channelEmitterType  = types.MakeBasic("channel-emitter")
 	channelSequenceType = types.MakeBasic("channel-sequence")
@@ -75,7 +75,7 @@ func (e *channelEmitter) Write(v data.Value) {
 
 // Error will send an Error to the Go chan
 func (e *channelEmitter) Error(err any) {
-	e.ch <- channelResult{data.Nil, err}
+	e.ch <- channelResult{data.Null, err}
 }
 
 // Close will Close the Go chan
@@ -102,7 +102,7 @@ func NewChannelSequence(ch <-chan channelResult) data.Sequence {
 		once:   do.Once(),
 		ch:     ch,
 		result: emptyResult,
-		rest:   data.EmptyList,
+		rest:   data.Null,
 	}
 }
 

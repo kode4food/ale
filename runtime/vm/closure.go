@@ -51,8 +51,8 @@ nextPC:
 opSwitch:
 	oc, op := (*(*isa.Instruction)(PC)).Split()
 	switch oc {
-	case isa.Nil:
-		MEM[SP] = data.Nil
+	case isa.Null:
+		MEM[SP] = data.Null
 		SP--
 		goto nextPC
 
@@ -365,7 +365,7 @@ opSwitch:
 
 	case isa.CondJump:
 		SP++
-		if val := MEM[SP]; val != data.False && val != data.Nil {
+		if val := MEM[SP]; val != data.False && val != data.Null {
 			PC = unsafe.Pointer(&CODE[int(op)])
 			goto opSwitch
 		}
@@ -381,7 +381,7 @@ opSwitch:
 		return MEM[SP+1]
 
 	case isa.RetNil:
-		return data.Nil
+		return data.Null
 
 	case isa.RetTrue:
 		return data.True

@@ -14,5 +14,5 @@ func TestIfEval(t *testing.T) {
 	as.EvalTo(`(if true 1 0)`, F(1))
 	as.EvalTo(`(if '() 1 0)`, F(0))
 	as.EvalTo(`(if "hello" 1 0)`, F(1))
-	as.EvalTo(`(if false 1)`, data.Nil)
+	as.EvalTo(`(if false 1)`, data.Null)
 }

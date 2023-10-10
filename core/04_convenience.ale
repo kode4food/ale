@@ -1,6 +1,6 @@
 ;;;; ale core: some conveniences
 
-(define nil '())
+(define null '())
 (define true #t)
 (define false #f)
 

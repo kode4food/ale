@@ -3,11 +3,11 @@
 (define (seq value)
   (if (and (seq? value) (!empty? value))
       value
-      nil))
+      null))
 
 (define (seq! value)
   (if (seq? value)
-      (if (!empty? value) value nil)
+      (if (!empty? value) value null)
       (raise (str "value can't act as a sequence: " value))))
 
 (define (seq->object . colls)

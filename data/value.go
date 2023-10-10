@@ -104,7 +104,7 @@ func (b Bool) HashCode() uint64 {
 
 // Truthy evaluates whether a Value is truthy
 func Truthy(v Value) bool {
-	if v == False || v == Nil {
+	if v == False || v == Null {
 		return false
 	}
 	return true

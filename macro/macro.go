@@ -21,7 +21,7 @@ func Expand1(ns env.Namespace, v data.Value) data.Value {
 }
 
 func expand1(ns env.Namespace, v data.Value) (data.Value, bool) {
-	l, ok := v.(data.List) // it's got to be a list
+	l, ok := v.(*data.List) // it's got to be a list
 	if !ok {
 		return v, false
 	}

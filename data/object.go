@@ -8,23 +8,11 @@ import (
 	"github.com/kode4food/ale/internal/types"
 )
 
-type (
-	// Object maps a set of Values, known as keys, to another set of Values
-	Object interface {
-		object() // marker
-		Sequence
-		CountedSequence
-		Mapper
-		Caller
-	}
-
-	object struct {
-		pair     Pair
-		children [bucketSize]*object
-	}
-
-	emptyObject struct{}
-)
+// Object maps a set of Values, known as keys, to another set of Values
+type Object struct {
+	pair     Pair
+	children [bucketSize]*Object
+}
 
 const (
 	bucketBits = 5
@@ -47,7 +35,7 @@ const (
 
 // EmptyObject represents an empty Object
 var (
-	EmptyObject *emptyObject
+	EmptyObject *Object
 
 	objectHash = rand.Uint64()
 )
@@ -57,34 +45,35 @@ var (
 // information on HAMT's can be found at:
 //
 //	http://lampwww.epfl.ch/papers/idealhashtrees.pdf
-func NewObject(pairs ...Pair) Object {
-	var res Object = EmptyObject
+func NewObject(pairs ...Pair) *Object {
+	var res *Object
 	for _, p := range pairs {
-		res = res.Put(p).(Object)
+		res = res.Put(p).(*Object)
 	}
 	return res
 }
 
 // ValuesToObject interprets a set of Values as an Object
-func ValuesToObject(v ...Value) (Object, error) {
+func ValuesToObject(v ...Value) (*Object, error) {
 	if len(v)%2 != 0 {
 		return nil, errors.New(ErrMapNotPaired)
 	}
-	var res Object = EmptyObject
+	var res *Object
 	for i := len(v) - 2; i >= 0; i -= 2 {
-		res = res.Put(NewCons(v[i], v[i+1])).(Object)
+		res = res.Put(NewCons(v[i], v[i+1])).(*Object)
 	}
 	return res, nil
 }
 
-func (*object) object() {}
-
-func (o *object) Get(k Value) (Value, bool) {
+func (o *Object) Get(k Value) (Value, bool) {
+	if o == nil {
+		return Null, false
+	}
 	h := HashCode(k)
 	return o.get(k, h)
 }
 
-func (o *object) get(k Value, hash uint64) (Value, bool) {
+func (o *Object) get(k Value, hash uint64) (Value, bool) {
 	if o.pair.Car().Equal(k) {
 		return o.pair.Cdr(), true
 	}
@@ -92,17 +81,22 @@ func (o *object) get(k Value, hash uint64) (Value, bool) {
 	if bucket != nil {
 		return bucket.get(k, hash>>bucketBits)
 	}
-	return Nil, false
+	return Null, false
 }
 
-func (o *object) Put(p Pair) Sequence {
+func (o *Object) Put(p Pair) Sequence {
+	if o == nil {
+		return &Object{
+			pair: p,
+		}
+	}
 	h := HashCode(p.Car())
 	return o.put(p, h)
 }
 
-func (o *object) put(p Pair, hash uint64) *object {
+func (o *Object) put(p Pair, hash uint64) *Object {
 	if o.pair.Car().Equal(p.Car()) {
-		return &object{
+		return &Object{
 			pair:     p,
 			children: o.children,
 		}
@@ -111,7 +105,7 @@ func (o *object) put(p Pair, hash uint64) *object {
 	idx := hash & bucketMask
 	bucket := o.children[idx]
 	if bucket == nil {
-		bucket = &object{pair: p}
+		bucket = &Object{pair: p}
 	} else {
 		bucket = bucket.put(p, hash>>bucketBits)
 	}
@@ -122,7 +116,10 @@ func (o *object) put(p Pair, hash uint64) *object {
 	return &res
 }
 
-func (o *object) Remove(k Value) (Value, Sequence, bool) {
+func (o *Object) Remove(k Value) (Value, Sequence, bool) {
+	if o == nil {
+		return Null, EmptyObject, false
+	}
 	h := HashCode(k)
 	if v, r, ok := o.remove(k, h); ok {
 		if r != nil {
@@ -130,10 +127,10 @@ func (o *object) Remove(k Value) (Value, Sequence, bool) {
 		}
 		return v, EmptyObject, true
 	}
-	return Nil, o, false
+	return Null, o, false
 }
 
-func (o *object) remove(k Value, hash uint64) (Value, *object, bool) {
+func (o *Object) remove(k Value, hash uint64) (Value, *Object, bool) {
 	if o.pair.Car().Equal(k) {
 		return o.pair.Cdr(), o.promote(), true
 	}
@@ -148,7 +145,7 @@ func (o *object) remove(k Value, hash uint64) (Value, *object, bool) {
 	return nil, nil, false
 }
 
-func (o *object) promote() *object {
+func (o *Object) promote() *Object {
 	for i, c := range o.children {
 		if c != nil {
 			res := *o
@@ -160,31 +157,43 @@ func (o *object) promote() *object {
 	return nil
 }
 
-func (o *object) Car() Value {
+func (o *Object) Car() Value {
+	if o == nil {
+		return Null
+	}
 	if f := o.pair; f != nil {
 		return f
 	}
-	return Nil
+	return Null
 }
 
-func (o *object) Cdr() Value {
+func (o *Object) Cdr() Value {
+	if o == nil {
+		return EmptyObject
+	}
 	if r := o.promote(); r != nil {
 		return r
 	}
 	return EmptyObject
 }
 
-func (o *object) Split() (Value, Sequence, bool) {
+func (o *Object) Split() (Value, Sequence, bool) {
+	if o == nil {
+		return Null, EmptyObject, false
+	}
 	if f := o.pair; f != nil {
 		if r := o.promote(); r != nil {
 			return f, r, true
 		}
 		return f, EmptyObject, true
 	}
-	return Nil, EmptyObject, false
+	return Null, EmptyObject, false
 }
 
-func (o *object) Count() int {
+func (o *Object) Count() int {
+	if o == nil {
+		return 0
+	}
 	res := 1
 	for _, c := range o.children {
 		if c != nil {
@@ -194,51 +203,56 @@ func (o *object) Count() int {
 	return res
 }
 
-func (o *object) IsEmpty() bool {
-	return false
+func (o *Object) IsEmpty() bool {
+	return o != nil
 }
 
-func (o *object) Call(args ...Value) Value {
+func (o *Object) Call(args ...Value) Value {
 	return mappedCall(o, args)
 }
 
-func (o *object) Convention() Convention {
+func (o *Object) Convention() Convention {
 	return ApplicativeCall
 }
 
-func (o *object) CheckArity(argCount int) error {
+func (o *Object) CheckArity(argCount int) error {
 	return checkRangedArity(1, 2, argCount)
 }
 
-func (o *object) Equal(v Value) bool {
-	if o == v {
-		return true
+func (o *Object) Equal(other Value) bool {
+	if o == nil || o == other {
+		return o == other
 	}
-	if v, ok := v.(*object); ok {
-		lp := o.Pairs().Sorted()
-		rp := v.Pairs().Sorted()
-		if len(lp) != len(rp) {
+	r, ok := other.(*Object)
+	if !ok {
+		return false
+	}
+	lp := o.Pairs()
+	rp := r.Pairs()
+	if len(lp) != len(rp) {
+		return false
+	}
+	rs := rp.Sorted()
+	for i, l := range lp.Sorted() {
+		if !l.Equal(rs[i]) {
 			return false
 		}
-		for i, l := range lp {
-			if !l.Equal(rp[i]) {
-				return false
-			}
-		}
-		return true
 	}
-	return false
+	return true
 }
 
-func (*object) Type() types.Type {
+func (*Object) Type() types.Type {
 	return types.BasicObject
 }
 
-func (o *object) HashCode() uint64 {
+func (o *Object) HashCode() uint64 {
+	if o == nil {
+		return objectHash
+	}
 	return o.hashCode(objectHash)
 }
 
-func (o *object) hashCode(acc uint64) uint64 {
+func (o *Object) hashCode(acc uint64) uint64 {
 	h := acc * HashCode(o.pair.Car()) * HashCode(o.pair.Cdr())
 	for _, c := range o.children {
 		if c != nil {
@@ -248,11 +262,11 @@ func (o *object) hashCode(acc uint64) uint64 {
 	return h
 }
 
-func (o *object) Pairs() Pairs {
+func (o *Object) Pairs() Pairs {
 	return o.pairs(Pairs{})
 }
 
-func (o *object) pairs(p Pairs) Pairs {
+func (o *Object) pairs(p Pairs) Pairs {
 	p = append(p, o.pair)
 	for _, c := range o.children {
 		if c != nil {
@@ -262,7 +276,7 @@ func (o *object) pairs(p Pairs) Pairs {
 	return p
 }
 
-func (o *object) String() string {
+func (o *Object) String() string {
 	var buf bytes.Buffer
 	buf.WriteString("{")
 	for i, p := range o.Pairs().Sorted() {
@@ -275,69 +289,4 @@ func (o *object) String() string {
 	}
 	buf.WriteString("}")
 	return buf.String()
-}
-
-func (*emptyObject) object() {}
-
-func (*emptyObject) Get(Value) (Value, bool) {
-	return Nil, false
-}
-
-func (*emptyObject) Put(p Pair) Sequence {
-	return &object{
-		pair: p,
-	}
-}
-
-func (*emptyObject) Remove(Value) (Value, Sequence, bool) {
-	return Nil, EmptyObject, false
-}
-
-func (*emptyObject) IsEmpty() bool {
-	return true
-}
-
-func (*emptyObject) Count() int {
-	return 0
-}
-
-func (*emptyObject) Split() (Value, Sequence, bool) {
-	return Nil, EmptyObject, false
-}
-
-func (*emptyObject) Car() Value {
-	return Nil
-}
-
-func (*emptyObject) Cdr() Value {
-	return EmptyObject
-}
-
-func (*emptyObject) Call(args ...Value) Value {
-	return mappedCall(EmptyObject, args)
-}
-
-func (*emptyObject) Convention() Convention {
-	return ApplicativeCall
-}
-
-func (*emptyObject) CheckArity(argCount int) error {
-	return checkRangedArity(1, 2, argCount)
-}
-
-func (*emptyObject) Equal(v Value) bool {
-	_, ok := v.(*emptyObject)
-	return ok
-}
-
-func (*emptyObject) Type() types.Type {
-	return types.BasicObject
-}
-
-func (*emptyObject) String() string {
-	return "{}"
-}
-
-func (*emptyObject) HashCode() uint64 {
-	return objectHash
 }

@@ -26,7 +26,7 @@ const (
 func parseParamCases(s data.Sequence) paramCases {
 	f := s.Car()
 	switch f.(type) {
-	case data.List, *data.Cons, data.Local:
+	case *data.List, *data.Cons, data.Local:
 		c := parseParamCase(s)
 		return paramCases{c}
 	case data.Vector:
@@ -118,7 +118,7 @@ func parseParamNames(v data.Value) (data.Locals, bool) {
 	switch v := v.(type) {
 	case data.Local:
 		return data.Locals{v}, true
-	case data.List:
+	case *data.List:
 		return parseListParamNames(v), false
 	case *data.Cons:
 		return parseConsParamNames(v), true
@@ -127,7 +127,7 @@ func parseParamNames(v data.Value) (data.Locals, bool) {
 	}
 }
 
-func parseListParamNames(l data.List) data.Locals {
+func parseListParamNames(l *data.List) data.Locals {
 	var an data.Locals
 	for f, r, ok := l.Split(); ok; f, r, ok = r.Split() {
 		n := f.(data.Local)

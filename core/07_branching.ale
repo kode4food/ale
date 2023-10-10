@@ -1,22 +1,22 @@
 ;;;; ale core: branching
 
 (define-macro unless
-  [(test)           nil]
-  [(test then)      `(if ,test nil ,then)]
+  [(test)           null]
+  [(test then)      `(if ,test null ,then)]
   [(test then else) `(if ,test ,else ,then)])
 
 (define-macro when
-  [(test)         nil]
-  [(test form)    `(if ,test ,form nil)]
-  [(test . forms) `(if ,test (begin ,@forms) nil)])
+  [(test)         null]
+  [(test form)    `(if ,test ,form null)]
+  [(test . forms) `(if ,test (begin ,@forms) null)])
 
 (define-macro when-not
-  [(test)         nil]
-  [(test form)    `(if ,test nil ,form)]
-  [(test . forms) `(if ,test nil (begin ,@forms))])
+  [(test)         null]
+  [(test form)    `(if ,test null ,form)]
+  [(test . forms) `(if ,test null (begin ,@forms))])
 
 (define-macro cond
-  [() nil]
+  [() null]
   [clauses
      (let [clause (first clauses)]
        (assert-args
@@ -56,7 +56,7 @@
 
 (define-macro if-let
   [(binding then)
-     `(if-let ,binding ,then nil)]
+     `(if-let ,binding ,then null)]
   [(binding then else)
      (assert-args
        (and (is-vector binding)

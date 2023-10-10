@@ -15,7 +15,7 @@ var Go = data.Applicative(func(args ...data.Value) data.Value {
 		defer runtime.NormalizeGoRuntimeErrors()
 		fn.Call(restArgs...)
 	}()
-	return data.Nil
+	return data.Null
 }, 1)
 
 // Chan instantiates a new go channel
@@ -41,7 +41,7 @@ var Promise = data.Applicative(func(args ...data.Value) data.Value {
 
 // isResolved returns whether the specified promise has been resolved
 func isResolved(v data.Value) bool {
-	if p, ok := v.(async.Promise); ok {
+	if p, ok := v.(*async.Promise); ok {
 		return p.IsResolved()
 	}
 	return false

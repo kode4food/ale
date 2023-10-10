@@ -12,7 +12,7 @@ import (
 func TestLastOfSequence(t *testing.T) {
 	as := assert.New(t)
 
-	v, ok := data.Last(data.EmptyList)
+	v, ok := data.Last(data.Null)
 	as.Nil(v)
 	as.False(ok)
 
@@ -26,7 +26,7 @@ func TestLastOfSequence(t *testing.T) {
 
 	v, ok = data.Last(sequence.NewLazy(
 		func() (data.Value, data.Sequence, bool) {
-			return S("hello"), data.EmptyList, true
+			return S("hello"), data.Null, true
 		},
 	))
 	as.String("hello", v)
@@ -34,7 +34,7 @@ func TestLastOfSequence(t *testing.T) {
 
 	_, ok = data.Last(sequence.NewLazy(
 		func() (data.Value, data.Sequence, bool) {
-			return data.Nil, data.EmptyList, false
+			return data.Null, data.Null, false
 		},
 	))
 	as.False(ok)

@@ -39,7 +39,7 @@
 
 (define-lambda range
   [()
-     (range 0 nil 1)]
+     (range 0 null 1)]
 
   [(last)
      (range 0 last (if (> last 0) 1 -1))]

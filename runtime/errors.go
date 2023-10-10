@@ -11,7 +11,7 @@ import (
 )
 
 type aleRuntimeError struct {
-	data.Object
+	*data.Object
 	message string
 	wrapped error
 }

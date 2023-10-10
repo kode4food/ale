@@ -35,15 +35,15 @@ func (w *channelWrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
 	if w.dir&reflect.RecvDir != 0 {
 		o = o.Put(data.NewCons(
 			stream.SequenceKey, w.makeSequence(v),
-		)).(data.Object)
+		)).(*data.Object)
 	}
 	if w.dir&reflect.SendDir != 0 {
 		o = o.Put(data.NewCons(
 			stream.EmitKey, w.makeEmitter(v),
-		)).(data.Object)
+		)).(*data.Object)
 		o = o.Put(data.NewCons(
 			stream.CloseKey, w.makeClose(v),
-		)).(data.Object)
+		)).(*data.Object)
 	}
 	return o, nil
 }
@@ -51,7 +51,7 @@ func (w *channelWrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
 func (w *channelWrapper) makeClose(v reflect.Value) data.Function {
 	return data.Applicative(func(...data.Value) data.Value {
 		v.Close()
-		return data.Nil
+		return data.Null
 	}, 0)
 }
 
@@ -61,7 +61,7 @@ func (w *channelWrapper) makeSequence(v reflect.Value) data.Sequence {
 	resolver = func() (data.Value, data.Sequence, bool) {
 		in, ok := v.Recv()
 		if !ok {
-			return data.Nil, data.EmptyObject, false
+			return data.Null, data.EmptyObject, false
 		}
 		f, err := w.elem.Wrap(new(Context), in)
 		if err != nil {
@@ -82,7 +82,7 @@ func (w *channelWrapper) makeEmitter(v reflect.Value) data.Function {
 			}
 			v.Send(arg)
 		}
-		return data.Nil
+		return data.Null
 	})
 }
 
