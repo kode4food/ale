@@ -169,13 +169,6 @@ opSwitch:
 		*SP1 = !(*SP1).(data.Bool)
 		goto nextPC
 
-	case isa.MakeTruthy:
-		SP1 := &MEM[SP+1]
-		*SP1 = data.Bool(
-			data.Truthy(*SP1),
-		)
-		goto nextPC
-
 	case isa.Declare:
 		SP++
 		c.Lambda.Globals.Declare(
@@ -372,7 +365,7 @@ opSwitch:
 
 	case isa.CondJump:
 		SP++
-		if MEM[SP].(data.Bool) {
+		if val := MEM[SP]; val != data.False && val != data.Nil {
 			PC = unsafe.Pointer(&CODE[int(op)])
 			goto opSwitch
 		}

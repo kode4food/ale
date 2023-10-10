@@ -137,7 +137,6 @@ func TestAsmMakeEncoder(t *testing.T) {
 			(asm* !make-encoder
 				[(predicate consequent alternative)
 					.eval predicate
-					make-truthy
 					cond-jump :consequent
 					.eval alternative
 					jump :end
@@ -146,7 +145,6 @@ func TestAsmMakeEncoder(t *testing.T) {
 				:end]
 				[(predicate consequent)
 					.eval predicate
-					make-truthy
 					cond-jump :consequent
 					nil
 					jump :end

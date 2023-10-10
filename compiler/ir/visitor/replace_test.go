@@ -13,7 +13,6 @@ func TestReplace(t *testing.T) {
 
 	e1 := assert.GetTestEncoder()
 	e1.Emit(isa.False)
-	e1.Emit(isa.MakeTruthy)
 	e1.Emit(isa.Return)
 
 	as.Instructions(isa.Instructions{

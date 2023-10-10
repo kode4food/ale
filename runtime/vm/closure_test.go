@@ -154,32 +154,6 @@ func TestUnary(t *testing.T) {
 	})
 }
 
-func TestMakeTruthy(t *testing.T) {
-	testResult(t, data.True, isa.Instructions{
-		isa.Const.New(3),
-		isa.MakeTruthy.New(),
-		isa.Return.New(),
-	})
-
-	testResult(t, data.True, isa.Instructions{
-		isa.True.New(),
-		isa.MakeTruthy.New(),
-		isa.Return.New(),
-	})
-
-	testResult(t, data.False, isa.Instructions{
-		isa.False.New(),
-		isa.MakeTruthy.New(),
-		isa.Return.New(),
-	})
-
-	testResult(t, data.False, isa.Instructions{
-		isa.Nil.New(),
-		isa.MakeTruthy.New(),
-		isa.Return.New(),
-	})
-}
-
 func TestCalls(t *testing.T) {
 	testResult(t, I(17), isa.Instructions{
 		isa.Const.New(0),
