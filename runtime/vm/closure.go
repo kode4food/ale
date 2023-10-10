@@ -365,7 +365,7 @@ opSwitch:
 
 	case isa.CondJump:
 		SP++
-		if val := MEM[SP]; val != data.False && val != data.Null {
+		if MEM[SP] != data.False {
 			PC = unsafe.Pointer(&CODE[int(op)])
 			goto opSwitch
 		}

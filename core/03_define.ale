@@ -11,7 +11,7 @@
   (lambda (body)
     (let ([f (car body)]
           [r (cdr body)])
-      (if ({:private #t :macro #t} f)
+      (if ({:private #t :macro #t} f #f)
           (assoc (parse-define r) f #t)
           (if (and (is-cons-or-list f) (is-local (car f)))
               {:name (car f) :lambda #t :body `(lambda ,(cdr f) ,@r)}
@@ -26,9 +26,9 @@
       (let [parsed (parse-define body)]
         (let ([name (:name parsed)]
               [body (:body parsed)])
-          (let [value (if (:macro parsed) `(macro* ,body) body)]
-            (let [labeled (if (:lambda parsed) `(label ,name ,value) value)]
-              (if (:private parsed)
+          (let [value (if (:macro parsed #f) `(macro* ,body) body)]
+            (let [labeled (if (:lambda parsed #f) `(label ,name ,value) value)]
+              (if (:private parsed #f)
                   `(begin (private* ,name) (define* ,name ,labeled))
                   `(define* ,name ,labeled)))))))))
 
