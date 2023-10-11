@@ -1,5 +1,6 @@
 ;;;; ale core: builtin
 
+;; lambdas
 (def-builtin append)
 (def-builtin assoc)
 (def-builtin chan)
@@ -26,9 +27,10 @@
 (def-builtin type-of*)
 (def-builtin vector)
 
-;; base types
+;; macros
 (def-macro syntax-quote)
 
+;; encoders
 (def-special asm*)
 (def-special begin)
 (def-special eval)

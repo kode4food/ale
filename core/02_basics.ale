@@ -11,7 +11,6 @@
 (define* is-boolean (is-a* :boolean))
 (define* is-cons    (is-a* :cons))
 (define* is-keyword (is-a* :keyword))
-(define* is-list    (is-a* :list))
 (define* is-macro   (is-a* :macro))
 (define* is-null    (is-a* :null))
 (define* is-number  (is-a* :number))
@@ -26,6 +25,7 @@
 (define* is-appendable (is-a* :appender))
 (define* is-counted    (is-a* :counted))
 (define* is-indexed    (is-a* :indexed))
+(define* is-list       (is-a* :list))
 (define* is-local      (is-a* :local))
 (define* is-mapped     (is-a* :mapped))
 (define* is-nan        (is-a* :nan))
@@ -101,7 +101,7 @@
       [() #t]
       [(clause) clause]
       [clauses
-         `(let [and# ,(clauses 0)]
+         `(let [and# ,(car clauses)]
             (if and#
                 (and ,@(cdr clauses))
                 and#))])))
@@ -109,10 +109,10 @@
 (define* or
   (macro*
     (lambda
-      [() '()]
+      [() #f]
       [(clause) clause]
       [clauses
-         `(let [or# ,(clauses 0)]
+         `(let [or# ,(car clauses)]
             (if or#
                 or#
                 (or ,@(cdr clauses))))])))
