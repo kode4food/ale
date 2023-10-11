@@ -5,6 +5,7 @@ import (
 	"io"
 	"testing"
 
+	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
 	"github.com/kode4food/ale/internal/stream"
@@ -29,9 +30,18 @@ func TestWriter(t *testing.T) {
 	}
 
 	w := stream.NewWriter(c, stream.StrOutput)
-	w.Write(S("hello"))
-	w.Write(V(S("there"), S("you")))
-	w.(stream.Closer).Close()
+
+	var write data.Function
+	v, _ := w.Get(stream.WriteKey)
+	write = v.(data.Function)
+
+	var cl data.Function
+	v, _ = w.Get(stream.CloseKey)
+	cl = v.(data.Function)
+
+	write.Call(S("hello"))
+	write.Call(V(S("there"), S("you")))
+	cl.Call()
 
 	as.String(`hello["there" "you"]`, buf.String())
 	as.True(c.closed)

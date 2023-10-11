@@ -24,10 +24,6 @@ type (
 	wrappedWriter struct {
 		writer *bufio.Writer
 		output OutputFunc
-	}
-
-	wrappedClosingWriter struct {
-		*wrappedWriter
 		closer io.Closer
 	}
 )
@@ -41,18 +37,23 @@ const (
 )
 
 // NewWriter wraps a Go Writer, coupling it with an output function
-func NewWriter(w io.Writer, o OutputFunc) Writer {
+func NewWriter(w io.Writer, o OutputFunc) *data.Object {
 	wrapped := &wrappedWriter{
 		writer: bufio.NewWriter(w),
 		output: o,
 	}
-	if c, ok := w.(io.Closer); ok {
-		return &wrappedClosingWriter{
-			wrappedWriter: wrapped,
-			closer:        c,
-		}
+
+	pairs := data.Pairs{
+		data.NewCons(WriteKey, bindWriter(wrapped)),
 	}
-	return wrapped
+
+	if c, ok := w.(io.Closer); ok {
+		wrapped.closer = c
+		pairs = append(pairs,
+			data.NewCons(CloseKey, bindCloser(wrapped)),
+		)
+	}
+	return data.NewObject(pairs...)
 }
 
 func (w *wrappedWriter) Write(v data.Value) {
@@ -60,7 +61,7 @@ func (w *wrappedWriter) Write(v data.Value) {
 	_ = w.writer.Flush()
 }
 
-func (w *wrappedClosingWriter) Close() {
+func (w *wrappedWriter) Close() {
 	_ = w.writer.Flush()
 	_ = w.closer.Close()
 }
@@ -72,4 +73,20 @@ func stringToBytes(s string) []byte {
 // StrOutput is the standard string-based output function
 func StrOutput(w *bufio.Writer, v data.Value) {
 	_, _ = w.Write(stringToBytes(v.String()))
+}
+
+func bindWriter(w Writer) data.Function {
+	return data.Applicative(func(args ...data.Value) data.Value {
+		for _, f := range args {
+			w.Write(f)
+		}
+		return data.Null
+	})
+}
+
+func bindCloser(c Closer) data.Function {
+	return data.Applicative(func(...data.Value) data.Value {
+		c.Close()
+		return data.Null
+	}, 0)
 }

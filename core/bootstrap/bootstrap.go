@@ -62,9 +62,9 @@ func ProcessArgs(e *env.Environment) {
 // input and output facilities
 func StandardIO(e *env.Environment) {
 	ns := e.GetRoot()
-	ns.Declare("*in*").Bind(builtin.MakeReader(os.Stdin, stream.LineInput))
-	ns.Declare("*out*").Bind(builtin.MakeWriter(os.Stdout, stream.StrOutput))
-	ns.Declare("*err*").Bind(builtin.MakeWriter(os.Stderr, stream.StrOutput))
+	ns.Declare("*in*").Bind(stream.NewReader(os.Stdin, stream.LineInput))
+	ns.Declare("*out*").Bind(stream.NewWriter(os.Stdout, stream.StrOutput))
+	ns.Declare("*err*").Bind(stream.NewWriter(os.Stderr, stream.StrOutput))
 }
 
 // DevNull binds *in*, *out*, and *err* to the operating system's bit bucket
@@ -72,9 +72,9 @@ func StandardIO(e *env.Environment) {
 func DevNull(e *env.Environment) {
 	ns := e.GetRoot()
 	devNull, _ := os.OpenFile(os.DevNull, os.O_RDWR, 0666)
-	ns.Declare("*in*").Bind(builtin.MakeReader(devNull, stream.LineInput))
-	ns.Declare("*out*").Bind(builtin.MakeWriter(devNull, stream.StrOutput))
-	ns.Declare("*err*").Bind(builtin.MakeWriter(devNull, stream.StrOutput))
+	ns.Declare("*in*").Bind(stream.NewReader(devNull, stream.LineInput))
+	ns.Declare("*out*").Bind(stream.NewWriter(devNull, stream.StrOutput))
+	ns.Declare("*err*").Bind(stream.NewWriter(devNull, stream.StrOutput))
 }
 
 // TopLevelEnvironment configures an environment that could be used at the

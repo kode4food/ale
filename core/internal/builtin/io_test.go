@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/kode4food/ale/core/bootstrap"
-	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/env"
 	"github.com/kode4food/ale/eval"
 	"github.com/kode4food/ale/internal/assert"
@@ -15,25 +14,16 @@ import (
 
 const stdoutName = "*out*"
 
-func bindWrite(w stream.Writer) data.Function {
-	return data.Applicative(func(args ...data.Value) data.Value {
-		for _, af := range args {
-			w.Write(af)
-		}
-		return nil
-	})
-}
-
 func testOutput(t *testing.T, src, expected string) {
 	as := assert.New(t)
 
 	buf := bytes.NewBufferString("")
-	w := stream.NewWriter(buf, stream.StrOutput)
+	w, _ := stream.NewWriter(buf, stream.StrOutput).Get(stream.WriteKey)
 
 	e := env.NewEnvironment()
 	ns := e.GetRoot()
 	ns.Declare(stdoutName).Bind(O(
-		C(stream.WriteKey, bindWrite(w)),
+		C(stream.WriteKey, w),
 	))
 	bootstrap.Into(e)
 

@@ -13,23 +13,17 @@ type (
 	Emitter interface {
 		Writer
 		Closer
-		Error(any)
-	}
-
-	channelResult struct {
-		value data.Value
-		error any
 	}
 
 	channelEmitter struct {
-		ch chan<- channelResult
+		ch chan<- data.Value
 	}
 
 	channelSequence struct {
 		once do.Action
-		ch   <-chan channelResult
+		ch   <-chan data.Value
 
-		result channelResult
+		result data.Value
 		rest   data.Sequence
 		ok     bool
 	}
@@ -44,19 +38,25 @@ const (
 )
 
 var (
-	emptyResult = channelResult{value: data.Null, error: nil}
+	emptyResult = data.Null
 
 	channelSequenceType = types.MakeBasic("channel-sequence")
 )
 
 // NewChannel produces an Emitter and Sequence pair
-func NewChannel(size int) (Emitter, data.Sequence) {
-	ch := make(chan channelResult, size)
-	return NewChannelEmitter(ch), NewChannelSequence(ch)
+func NewChannel(size int) *data.Object {
+	ch := make(chan data.Value, size)
+	e := NewChannelEmitter(ch)
+	s := NewChannelSequence(ch)
+	return data.NewObject(
+		data.NewCons(EmitKey, bindWriter(e)),
+		data.NewCons(CloseKey, bindCloser(e)),
+		data.NewCons(SequenceKey, s),
+	)
 }
 
 // NewChannelEmitter produces an Emitter for sending values to a Go chan
-func NewChannelEmitter(ch chan<- channelResult) Emitter {
+func NewChannelEmitter(ch chan<- data.Value) Emitter {
 	r := &channelEmitter{
 		ch: ch,
 	}
@@ -69,12 +69,7 @@ func NewChannelEmitter(ch chan<- channelResult) Emitter {
 
 // Write will send a Value to the Go chan
 func (e *channelEmitter) Write(v data.Value) {
-	e.ch <- channelResult{v, nil}
-}
-
-// Error will send an Error to the Go chan
-func (e *channelEmitter) Error(err any) {
-	e.ch <- channelResult{data.Null, err}
+	e.ch <- v
 }
 
 // Close will Close the Go chan
@@ -84,7 +79,7 @@ func (e *channelEmitter) Close() {
 }
 
 // NewChannelSequence produces a new Sequence whose values come from a Go chan
-func NewChannelSequence(ch <-chan channelResult) data.Sequence {
+func NewChannelSequence(ch <-chan data.Value) data.Sequence {
 	return &channelSequence{
 		once:   do.Once(),
 		ch:     ch,
@@ -101,14 +96,9 @@ func (c *channelSequence) resolve() *channelSequence {
 		}
 		c.ok = ok
 		c.result = result
-		if c.result.error == nil {
-			c.rest = NewChannelSequence(c.ch)
-		}
+		c.rest = NewChannelSequence(c.ch)
 	})
 
-	if e := c.result.error; e != nil {
-		panic(e)
-	}
 	return c
 }
 
@@ -117,7 +107,7 @@ func (c *channelSequence) IsEmpty() bool {
 }
 
 func (c *channelSequence) Car() data.Value {
-	return c.resolve().result.value
+	return c.resolve().result
 }
 
 func (c *channelSequence) Cdr() data.Value {
@@ -126,14 +116,14 @@ func (c *channelSequence) Cdr() data.Value {
 
 func (c *channelSequence) Split() (data.Value, data.Sequence, bool) {
 	r := c.resolve()
-	return r.result.value, r.rest, r.ok
+	return r.result, r.rest, r.ok
 }
 
 func (c *channelSequence) Prepend(v data.Value) data.Sequence {
 	return &channelSequence{
 		once:   do.Never(),
 		ok:     true,
-		result: channelResult{value: v, error: nil},
+		result: v,
 		rest:   c,
 	}
 }

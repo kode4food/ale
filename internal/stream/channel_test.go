@@ -1,7 +1,6 @@
 package stream_test
 
 import (
-	"fmt"
 	"sync"
 	"testing"
 	"time"
@@ -15,21 +14,32 @@ import (
 func TestChannel(t *testing.T) {
 	as := assert.New(t)
 
-	e, seq := stream.NewChannel(0)
-	seq = seq.(data.Prepender).Prepend(F(1))
+	ch := stream.NewChannel(0)
+
+	var emit data.Function
+	v, _ := ch.Get(stream.EmitKey)
+	emit = v.(data.Function)
+
+	var cl data.Function
+	v, _ = ch.Get(stream.CloseKey)
+	cl = v.(data.Function)
+
+	var seq data.Sequence
+	v, _ = ch.Get(stream.SequenceKey)
+	seq = v.(data.Prepender).Prepend(F(1))
 	as.Contains(":type channel-sequence", seq)
 
 	var wg sync.WaitGroup
 
 	gen := func() {
-		e.Write(F(2))
+		emit.Call(F(2))
 		time.Sleep(time.Millisecond * 50)
-		e.Write(F(3))
+		emit.Call(F(3))
 		time.Sleep(time.Millisecond * 30)
-		e.Write(S("foo"))
+		emit.Call(S("foo"))
 		time.Sleep(time.Millisecond * 10)
-		e.Write(S("bar"))
-		e.Close()
+		emit.Call(S("bar"))
+		cl.Call()
 		wg.Done()
 	}
 
@@ -60,20 +70,4 @@ func TestChannel(t *testing.T) {
 	go gen()
 	go check()
 	wg.Wait()
-}
-
-func TestChannelError(t *testing.T) {
-	as := assert.New(t)
-
-	e, seq := stream.NewChannel(2)
-	e.Write(S("hello"))
-	e.Error(fmt.Errorf("boom"))
-
-	f, r, ok := seq.Split()
-	as.True(ok)
-	as.Equal(S("hello"), f)
-	as.NotNil(r)
-
-	defer as.ExpectPanic("boom")
-	_ = r.Car()
 }

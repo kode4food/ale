@@ -24,13 +24,8 @@ var Chan = data.Applicative(func(args ...data.Value) data.Value {
 	if len(args) != 0 {
 		size = int(args[0].(data.Integer))
 	}
-	e, s := stream.NewChannel(size)
+	return stream.NewChannel(size)
 
-	return data.NewObject(
-		data.NewCons(stream.EmitKey, bindWriter(e)),
-		data.NewCons(stream.CloseKey, bindCloser(e)),
-		data.NewCons(stream.SequenceKey, s),
-	)
 }, 0, 1)
 
 // Promise instantiates a new eventually-fulfilled promise
