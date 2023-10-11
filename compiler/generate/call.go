@@ -19,11 +19,11 @@ type (
 
 // Call encodes a function call
 func Call(e encoder.Encoder, l *data.List) {
-	if l.Count() == 0 {
+	f, r, ok := l.Split()
+	if !ok {
 		Literal(e, data.Null)
 		return
 	}
-	f, r, _ := l.Split()
 	args := sequence.ToValues(r)
 	callValue(e, f, args)
 }

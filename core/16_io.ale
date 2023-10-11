@@ -33,7 +33,7 @@
   (apply print forms)
   (: *out* :write *newline*))
 
-(define (paired-vector? value)
+(define :private (paired-vector? value)
   (and (vector? value)
        (pair? value)))
 

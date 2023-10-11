@@ -9,17 +9,11 @@ import (
 )
 
 type (
-	// Emitter is an interface that is used to emit values to a Channel
-	Emitter interface {
-		Writer
-		Closer
-	}
-
-	channelEmitter struct {
+	chanEmitter struct {
 		ch chan<- data.Value
 	}
 
-	channelSequence struct {
+	chanSequence struct {
 		once do.Action
 		ch   <-chan data.Value
 
@@ -29,38 +23,25 @@ type (
 	}
 )
 
-const (
-	// EmitKey is the key used to emit to a Channel
-	EmitKey = data.Keyword("emit")
-
-	// SequenceKey is the key used to retrieve the Sequence from a Channel
-	SequenceKey = data.Keyword("seq")
-)
-
-var (
-	emptyResult = data.Null
-
-	channelSequenceType = types.MakeBasic("channel-sequence")
-)
+var chanSequenceType = types.MakeBasic("channel-sequence")
 
 // NewChannel produces an Emitter and Sequence pair
 func NewChannel(size int) *data.Object {
 	ch := make(chan data.Value, size)
-	e := NewChannelEmitter(ch)
+	e := newEmitter(ch)
 	s := NewChannelSequence(ch)
+
 	return data.NewObject(
-		data.NewCons(EmitKey, bindWriter(e)),
+		data.NewCons(EmitKey, bindWriter(e.Write)),
 		data.NewCons(CloseKey, bindCloser(e)),
 		data.NewCons(SequenceKey, s),
 	)
 }
 
-// NewChannelEmitter produces an Emitter for sending values to a Go chan
-func NewChannelEmitter(ch chan<- data.Value) Emitter {
-	r := &channelEmitter{
-		ch: ch,
-	}
-	runtime.SetFinalizer(r, func(e *channelEmitter) {
+// newEmitter produces an Emitter for sending values to a Go chan
+func newEmitter(ch chan<- data.Value) *chanEmitter {
+	r := &chanEmitter{ch: ch}
+	runtime.SetFinalizer(r, func(e *chanEmitter) {
 		defer func() { recover() }()
 		close(ch)
 	})
@@ -68,27 +49,28 @@ func NewChannelEmitter(ch chan<- data.Value) Emitter {
 }
 
 // Write will send a Value to the Go chan
-func (e *channelEmitter) Write(v data.Value) {
+func (e *chanEmitter) Write(v data.Value) {
 	e.ch <- v
 }
 
 // Close will Close the Go chan
-func (e *channelEmitter) Close() {
+func (e *chanEmitter) Close() error {
 	runtime.SetFinalizer(e, nil)
 	close(e.ch)
+	return nil
 }
 
 // NewChannelSequence produces a new Sequence whose values come from a Go chan
 func NewChannelSequence(ch <-chan data.Value) data.Sequence {
-	return &channelSequence{
+	return &chanSequence{
 		once:   do.Once(),
 		ch:     ch,
-		result: emptyResult,
+		result: data.Null,
 		rest:   data.Null,
 	}
 }
 
-func (c *channelSequence) resolve() *channelSequence {
+func (c *chanSequence) resolve() *chanSequence {
 	c.once(func() {
 		result, ok := <-c.ch
 		if !ok {
@@ -102,25 +84,25 @@ func (c *channelSequence) resolve() *channelSequence {
 	return c
 }
 
-func (c *channelSequence) IsEmpty() bool {
+func (c *chanSequence) IsEmpty() bool {
 	return !c.resolve().ok
 }
 
-func (c *channelSequence) Car() data.Value {
+func (c *chanSequence) Car() data.Value {
 	return c.resolve().result
 }
 
-func (c *channelSequence) Cdr() data.Value {
+func (c *chanSequence) Cdr() data.Value {
 	return c.resolve().rest
 }
 
-func (c *channelSequence) Split() (data.Value, data.Sequence, bool) {
+func (c *chanSequence) Split() (data.Value, data.Sequence, bool) {
 	r := c.resolve()
 	return r.result, r.rest, r.ok
 }
 
-func (c *channelSequence) Prepend(v data.Value) data.Sequence {
-	return &channelSequence{
+func (c *chanSequence) Prepend(v data.Value) data.Sequence {
+	return &chanSequence{
 		once:   do.Never(),
 		ok:     true,
 		result: v,
@@ -128,14 +110,14 @@ func (c *channelSequence) Prepend(v data.Value) data.Sequence {
 	}
 }
 
-func (c *channelSequence) Type() types.Type {
-	return channelSequenceType
+func (c *chanSequence) Type() types.Type {
+	return chanSequenceType
 }
 
-func (c *channelSequence) Equal(v data.Value) bool {
+func (c *chanSequence) Equal(v data.Value) bool {
 	return c == v
 }
 
-func (c *channelSequence) String() string {
+func (c *chanSequence) String() string {
 	return data.DumpString(c)
 }
