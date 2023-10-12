@@ -129,3 +129,24 @@
          [for-vals (map seq->vector (zip for-syms let-syms))]
          [for-bind (seq->list for-vals)])
     `(let ,let-bind (for ,for-bind (list ,@for-syms)))))
+
+;; define the various cadr permutations
+(define :private cadr-perms
+  (apply concat!
+    (map (lambda (x) (eval
+           `(cartesian-product
+              ,@(take x (map (lambda (_) ["a" "d"]) (range))))))
+         (range 2 5))))
+
+(private make-cadr-body)
+(define-lambda make-cadr-body
+  [() 'val]
+  [(f . r)
+     (let [fn (if (eq f "a") 'ale/car 'ale/cdr)]
+       (list fn (apply make-cadr-body r)))])
+
+(map! (lambda (p)
+        (let ([name (sym (apply str (concat "c" p "r")))]
+              [body (apply make-cadr-body p)])
+          (eval (list 'ale/define (list name 'val) body))))
+      cadr-perms)
