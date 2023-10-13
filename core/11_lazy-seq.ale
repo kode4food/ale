@@ -135,7 +135,7 @@
   (apply concat!
     (map (lambda (x) (eval
            `(cartesian-product
-              ,@(take x (map (lambda (_) ["a" "d"]) (range))))))
+              ,@(take x (map (lambda (_) "ad") (range))))))
          (range 2 5))))
 
 (private make-cadr-body)

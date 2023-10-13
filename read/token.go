@@ -37,7 +37,6 @@ const (
 	SyntaxMarker
 	UnquoteMarker
 	SpliceMarker
-	PatternMarker
 	Whitespace
 	NewLine
 	Comment

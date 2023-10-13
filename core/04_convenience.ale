@@ -3,6 +3,7 @@
 (define null '())
 (define true #t)
 (define false #f)
+(define λ lambda)
 
 (define first car)
 (define rest cdr)

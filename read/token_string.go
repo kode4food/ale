@@ -24,16 +24,15 @@ func _() {
 	_ = x[SyntaxMarker-13]
 	_ = x[UnquoteMarker-14]
 	_ = x[SpliceMarker-15]
-	_ = x[PatternMarker-16]
-	_ = x[Whitespace-17]
-	_ = x[NewLine-18]
-	_ = x[Comment-19]
-	_ = x[endOfFile-20]
+	_ = x[Whitespace-16]
+	_ = x[NewLine-17]
+	_ = x[Comment-18]
+	_ = x[endOfFile-19]
 }
 
-const _TokenType_name = "ErrorKeywordIdentifierDotStringNumberListStartListEndVectorStartVectorEndObjectStartObjectEndQuoteMarkerSyntaxMarkerUnquoteMarkerSpliceMarkerPatternMarkerWhitespaceNewLineCommentendOfFile"
+const _TokenType_name = "ErrorKeywordIdentifierDotStringNumberListStartListEndVectorStartVectorEndObjectStartObjectEndQuoteMarkerSyntaxMarkerUnquoteMarkerSpliceMarkerWhitespaceNewLineCommentendOfFile"
 
-var _TokenType_index = [...]uint8{0, 5, 12, 22, 25, 31, 37, 46, 53, 64, 73, 84, 93, 104, 116, 129, 141, 154, 164, 171, 178, 187}
+var _TokenType_index = [...]uint8{0, 5, 12, 22, 25, 31, 37, 46, 53, 64, 73, 84, 93, 104, 116, 129, 141, 151, 158, 165, 174}
 
 func (i TokenType) String() string {
 	if i < 0 || i >= TokenType(len(_TokenType_index)-1) {
