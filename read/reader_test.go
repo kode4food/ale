@@ -41,6 +41,21 @@ func TestReadList(t *testing.T) {
 	as.False(ok)
 }
 
+func TestReadDotted(t *testing.T) {
+	as := assert.New(t)
+
+	l := read.Scan(`(99 . 100)`)
+	c1 := read.FromScanner(l).Car().(*data.Cons)
+	as.Number(99, c1.Car())
+	as.Number(100, c1.Cdr())
+
+	l = read.Scan(`(99 . (100 101))`)
+	l1 := read.FromScanner(l).Car().(*data.List)
+	as.Number(99, l1.Car())
+	as.Number(100, l1.Cdr().(data.Pair).Car())
+	as.Number(101, l1.Cdr().(data.Pair).Cdr().(data.Pair).Car())
+}
+
 func TestReadVector(t *testing.T) {
 	as := assert.New(t)
 	l := read.Scan(`[99 "hello" 55.12]`)
