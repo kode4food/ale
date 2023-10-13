@@ -46,12 +46,12 @@
 
 (define* apply
   (lambda
-    [(fn args)
+    [(func args)
        (asm*
            .resolve args
-           .resolve fn
+           .resolve func
            call-with)]
-    [(fn f . r)
+    [(func f . r)
        (let-rec
          [prepend-args
           (lambda (args result idx)
@@ -62,7 +62,7 @@
            (let [args (prepend-args r (r idx) (dec* idx))]
              (asm*
                  .eval (cons f args)
-                 .resolve fn
+                 .resolve func
                  call-with))))]))
 
 ;; syntax-quoting requires it

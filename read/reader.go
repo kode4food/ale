@@ -203,6 +203,12 @@ func (r *reader) identifier() data.Value {
 
 func makeDottedList(v ...data.Value) data.Value {
 	l := len(v)
+	if res, ok := v[l-1].(*data.List); ok {
+		for i := l - 2; i >= 0; i-- {
+			res = res.Prepend(v[i]).(*data.List)
+		}
+		return res
+	}
 	var res = data.NewCons(v[l-2], v[l-1])
 	for i := l - 3; i >= 0; i-- {
 		res = data.NewCons(v[i], res)

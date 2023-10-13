@@ -142,8 +142,8 @@
 (define-lambda make-cadr-body
   [() 'val]
   [(f . r)
-     (let [fn (if (eq f "a") 'ale/car 'ale/cdr)]
-       (list fn (apply make-cadr-body r)))])
+     (let [func (if (eq f "a") 'ale/car 'ale/cdr)]
+       (list func (apply make-cadr-body r)))])
 
 (map! (lambda (p)
         (let ([name (sym (apply str (concat "c" p "r")))]
