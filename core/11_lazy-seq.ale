@@ -120,22 +120,19 @@
           `(map (lambda (,sym) ,@body) (seq! ,expr))
           `(mapcat (lambda (,sym) (for ,next ,@body)) (seq! ,expr))))))
 
-(define-macro (cartesian-product . colls)
-  (let* ([sym-gen  (lambda (x) (gensym (sym (str "cp" x))))]
-         [let-syms (take (length colls) (map sym-gen (range)))]
-         [let-vals (map seq->vector (zip let-syms colls))]
-         [let-bind (seq->list let-vals)]
-         [for-syms (take (length colls) (map sym-gen (range)))]
-         [for-vals (map seq->vector (zip for-syms let-syms))]
-         [for-bind (seq->list for-vals)])
-    `(let ,let-bind (for ,for-bind (list ,@for-syms)))))
+(define-lambda cartesian-product
+  [(f) (map list f)]
+  [(f . r)
+     (for ([left f]
+           [right (apply cartesian-product r)])
+       (cons left right))])
 
 ;; define the various cadr permutations
 (define :private cadr-perms
   (apply concat!
-    (map (lambda (x) (eval
-           `(cartesian-product
-              ,@(take x (map (lambda (_) "ad") (range))))))
+    (map (lambda (x)
+           (apply cartesian-product
+             (take x (map (lambda (_) "ad") (range)))))
          (range 2 5))))
 
 (private make-cadr-body)
