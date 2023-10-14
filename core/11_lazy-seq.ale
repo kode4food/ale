@@ -129,11 +129,10 @@
 
 ;; define the various cadr permutations
 (define :private cadr-perms
-  (apply concat!
-    (map (lambda (x)
-           (apply cartesian-product
-             (take x (map (lambda (_) "ad") (range)))))
-         (range 2 5))))
+  (mapcat (lambda (x)
+            (apply cartesian-product
+              (take x (map (lambda (_) "ad") (range)))))
+          (range 2 5)))
 
 (private make-cadr-body)
 (define-lambda make-cadr-body
