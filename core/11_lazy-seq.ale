@@ -138,7 +138,7 @@
 (define-lambda make-cadr-body
   [() 'val]
   [(f . r)
-     (let [func (if (eq f "a") 'ale/car 'ale/cdr)]
+     (let [func (if (eq f "a") car cdr)]
        (list func (apply make-cadr-body r)))])
 
 (map! (lambda (p)
