@@ -13,37 +13,29 @@ import (
 type evalFunc func(env.Namespace, data.Value) data.Value
 
 // Eval encodes an immediate evaluation
-func Eval(e encoder.Encoder, args ...data.Value) {
-	data.AssertFixed(1, len(args))
-	generate.Value(e, args[0])
-	generate.Literal(e, makeEvaluator(e.Globals(), eval.Value))
-	e.Emit(isa.Call1)
-}
+var Eval = makeEvaluator(eval.Value)
 
 // MacroExpand performs macro expansion of a form until it can no longer
-func MacroExpand(e encoder.Encoder, args ...data.Value) {
-	data.AssertFixed(1, len(args))
-	generate.Value(e, args[0])
-	generate.Literal(e, makeEvaluator(e.Globals(), macro.Expand))
-	e.Emit(isa.Call1)
-}
+var MacroExpand = makeEvaluator(macro.Expand)
 
 // MacroExpand1 performs a single-step macro expansion of a form
-func MacroExpand1(e encoder.Encoder, args ...data.Value) {
-	data.AssertFixed(1, len(args))
-	generate.Value(e, args[0])
-	generate.Literal(e, makeEvaluator(e.Globals(), macro.Expand1))
-	e.Emit(isa.Call1)
+var MacroExpand1 = makeEvaluator(macro.Expand1)
+
+func makeEvaluator(eval evalFunc) func(encoder.Encoder, ...data.Value) {
+	return func(e encoder.Encoder, args ...data.Value) {
+		data.AssertFixed(1, len(args))
+		generate.Value(e, args[0])
+		ns := e.Globals()
+		fn := data.Applicative(func(args ...data.Value) data.Value {
+			return eval(ns, args[0])
+		}, 1)
+		generate.Literal(e, fn)
+		e.Emit(isa.Call1)
+	}
 }
 
 // Begin encodes a set of expressions, returning only the final evaluation
 func Begin(e encoder.Encoder, args ...data.Value) {
 	v := data.NewVector(args...)
 	generate.Block(e, v)
-}
-
-func makeEvaluator(ns env.Namespace, eval evalFunc) data.Function {
-	return data.Applicative(func(args ...data.Value) data.Value {
-		return eval(ns, args[0])
-	}, 1)
 }
