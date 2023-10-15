@@ -8,10 +8,14 @@ import (
 )
 
 type (
-	funcWrapper struct {
-		typ reflect.Type
+	inOutWrappers struct {
 		in  Wrappers
 		out Wrappers
+	}
+
+	funcWrapper struct {
+		*inOutWrappers
+		typ reflect.Type
 	}
 
 	// the type accepted by reflect.MakeFunc
@@ -44,8 +48,10 @@ func makeWrappedFunc(t reflect.Type) (Wrapper, error) {
 	}
 	return &funcWrapper{
 		typ: t,
-		in:  in,
-		out: out,
+		inOutWrappers: &inOutWrappers{
+			in:  in,
+			out: out,
+		},
 	}, nil
 }
 
@@ -69,15 +75,7 @@ func (w *funcWrapper) wrapVoidFunction(fn reflect.Value) data.Function {
 }
 
 func (w *funcWrapper) wrapValueFunction(fn reflect.Value) data.Function {
-	return data.Applicative(func(args ...data.Value) data.Value {
-		in := w.in.unwrap(args)
-		out := fn.Call(in)
-		res, err := w.out[0].Wrap(new(Context), out[0])
-		if err != nil {
-			panic(err)
-		}
-		return res
-	}, len(w.in))
+	return w.wrapFunction(fn)
 }
 
 func (w *funcWrapper) wrapVectorFunction(fn reflect.Value) data.Function {
@@ -134,4 +132,16 @@ func (w *funcWrapper) unwrapVectorCall(c data.Function) makeFuncType {
 		res := c.Call(in...).(data.Vector).Values()
 		return w.out.unwrap(res)
 	}
+}
+
+func (w *inOutWrappers) wrapFunction(fn reflect.Value) data.Function {
+	return data.Applicative(func(args ...data.Value) data.Value {
+		in := w.in.unwrap(args)
+		out := fn.Call(in)
+		res, err := w.out[0].Wrap(new(Context), out[0])
+		if err != nil {
+			panic(err)
+		}
+		return res
+	}, len(w.in))
 }

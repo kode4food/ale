@@ -17,9 +17,8 @@ type (
 	receiver reflect.Value
 
 	methodWrapper struct {
+		*inOutWrappers
 		name string
-		in   Wrappers
-		out  Wrappers
 	}
 )
 
@@ -76,8 +75,10 @@ func makeWrappedMethod(m reflect.Method) (*methodWrapper, error) {
 	}
 	return &methodWrapper{
 		name: m.Name,
-		in:   in,
-		out:  out,
+		inOutWrappers: &inOutWrappers{
+			in:  in,
+			out: out,
+		},
 	}, nil
 }
 
@@ -124,16 +125,7 @@ func (w *methodWrapper) wrapVoidMethod(v reflect.Value) data.Function {
 
 func (w *methodWrapper) wrapValueMethod(v reflect.Value) data.Function {
 	fn := v.MethodByName(w.name)
-
-	return data.Applicative(func(args ...data.Value) data.Value {
-		in := w.in.unwrap(args)
-		out := fn.Call(in)
-		res, err := w.out[0].Wrap(new(Context), out[0])
-		if err != nil {
-			panic(err)
-		}
-		return res
-	}, len(w.in))
+	return w.wrapFunction(fn)
 }
 
 func (w *methodWrapper) wrapVectorMethod(v reflect.Value) data.Function {
