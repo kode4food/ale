@@ -8,7 +8,7 @@ tags: ["sequence"]
 
 When `cdr` is an ordered sequence, such as a list or vector, the result is a new list or vector with the `car` value prepended to the original. With an unordered sequence, such as an object array, there is no guarantee regarding position. If `cdr` is not a sequence, then a new cons cell will be constructed.
 
-The name _cons_ is a vestige of when Lisp implementations **cons**tructed new lists or cells by pairing a _car_ (**c**ontents of the **a**ddress part of **r**egister) with a _cdr_ (**c**ontents of the **d**ecrement part of **r**egister).
+The name _cons_ is a vestige of when Lisp implementations constructed new lists or cells by pairing a _car_ (contents of the address part of register) with a _cdr_ (contents of the decrement part of register).
 
 #### An Example
 

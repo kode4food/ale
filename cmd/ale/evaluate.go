@@ -46,8 +46,6 @@ func exitWithError() {
 	if rec := recover(); rec != nil {
 		if ev, ok := rec.(error); ok {
 			fmt.Println(ev.Error())
-		} else {
-			fmt.Println(rec)
 		}
 		os.Exit(-2)
 	}

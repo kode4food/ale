@@ -6,7 +6,7 @@ usage: "(delay expr*)"
 tags: ["concurrency"]
 ---
 
-Returns a promise that, when forced, evaluates the exprs, returning the final evaluated result. The result is then cached, so further uses of force return the cached value immediately.
+Returns a promise that, when forced, evaluates the expressions, returning the final evaluated result. The result is then cached, so further uses of force return the cached value immediately.
 
 #### An Example
 

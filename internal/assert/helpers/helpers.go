@@ -21,7 +21,7 @@ func F(f float64) data.Float {
 	return data.Float(f)
 }
 
-// I constructs an Integer
+// I will construct an Integer
 func I(i int64) data.Integer {
 	return data.Integer(i)
 }

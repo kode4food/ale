@@ -16,7 +16,7 @@ type Header struct {
 	Tags        []string `yaml:"tags"`
 }
 
-// Parse parses the kind of markdown document that might be processed by a
+// Parse parses the kind of Markdown document that might be processed by a
 // static site generator. It will parse any prologue parameters into the
 // resulting object and return the remaining content as individual lines
 func Parse(doc string) (*Header, []string) {
@@ -24,7 +24,7 @@ func Parse(doc string) (*Header, []string) {
 	return obj, skipEmptyLines(rest)
 }
 
-// ParseHeader parses the header of a markdown document that might be processed
+// ParseHeader parses the header of a Markdown document that might be processed
 // by a static site generator, returning the prologue parameters as a Header
 func ParseHeader(doc string) *Header {
 	res, _ := parseDocument(doc)

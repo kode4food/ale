@@ -68,7 +68,7 @@ func (complex64Wrapper) Unwrap(v data.Value) (reflect.Value, error) {
 		r, rok := c.Car().(data.Float)
 		i, iok := c.Cdr().(data.Float)
 		if rok && iok {
-			out := (complex64)(complex(float64(r), float64(i)))
+			out := (complex64)(complex(r, i))
 			return reflect.ValueOf(out), nil
 		}
 		return complex64zero, errors.New(ErrConsMustContainFloat)
