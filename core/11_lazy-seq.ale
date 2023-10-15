@@ -131,7 +131,7 @@
 (define :private (cadr-perms)
   (mapcat (lambda (x)
             (apply cartesian-product
-              (take x (map (lambda (_) "ad") (range)))))
+              (take x (map (constantly "ad") (range)))))
           (range 2 5)))
 
 (private make-cadr-body)
