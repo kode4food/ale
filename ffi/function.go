@@ -34,14 +34,7 @@ func makeWrappedFunc(t reflect.Type) (Wrapper, error) {
 }
 
 func (w *funcWrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
-	switch len(w.out) {
-	case 0:
-		return w.wrapVoidFunction(v), nil
-	case 1:
-		return w.wrapValueFunction(v), nil
-	default:
-		return w.wrapVectorFunction(v), nil
-	}
+	return w.wrapFunction(v), nil
 }
 
 func (w *funcWrapper) Unwrap(v data.Value) (reflect.Value, error) {

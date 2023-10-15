@@ -86,29 +86,8 @@ func (w *intfWrapper) Wrap(c *Context, v reflect.Value) (data.Value, error) {
 }
 
 func (w *methodWrapper) wrapMethod(v reflect.Value) data.Function {
-	switch len(w.out) {
-	case 0:
-		return w.wrapVoidMethod(v)
-	case 1:
-		return w.wrapValueMethod(v)
-	default:
-		return w.wrapVectorMethod(v)
-	}
-}
-
-func (w *methodWrapper) wrapVoidMethod(v reflect.Value) data.Function {
 	fn := v.MethodByName(w.name)
-	return w.wrapVoidFunction(fn)
-}
-
-func (w *methodWrapper) wrapValueMethod(v reflect.Value) data.Function {
-	fn := v.MethodByName(w.name)
-	return w.wrapValueFunction(fn)
-}
-
-func (w *methodWrapper) wrapVectorMethod(v reflect.Value) data.Function {
-	fn := v.MethodByName(w.name)
-	return w.wrapVectorFunction(fn)
+	return w.wrapFunction(fn)
 }
 
 func (w *intfWrapper) Unwrap(v data.Value) (reflect.Value, error) {

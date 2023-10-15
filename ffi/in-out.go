@@ -36,6 +36,17 @@ func makeInOutWrappers(t reflect.Type) (*inOutWrappers, error) {
 	}, nil
 }
 
+func (w *inOutWrappers) wrapFunction(fn reflect.Value) data.Function {
+	switch len(w.out) {
+	case 0:
+		return w.wrapVoidFunction(fn)
+	case 1:
+		return w.wrapValueFunction(fn)
+	default:
+		return w.wrapVectorFunction(fn)
+	}
+}
+
 func (w *inOutWrappers) wrapValueFunction(fn reflect.Value) data.Function {
 	return data.Applicative(func(args ...data.Value) data.Value {
 		in := w.in.unwrap(args)
