@@ -28,30 +28,13 @@ const (
 )
 
 func makeWrappedFunc(t reflect.Type) (Wrapper, error) {
-	cIn := t.NumIn()
-	in := make(Wrappers, cIn)
-	for i := 0; i < cIn; i++ {
-		w, err := WrapType(t.In(i))
-		if err != nil {
-			return nil, err
-		}
-		in[i] = w
-	}
-	cOut := t.NumOut()
-	out := make(Wrappers, cOut)
-	for i := 0; i < cOut; i++ {
-		w, err := WrapType(t.Out(i))
-		if err != nil {
-			return nil, err
-		}
-		out[i] = w
+	io, err := makeInOutWrappers(t)
+	if err != nil {
+		return nil, err
 	}
 	return &funcWrapper{
-		typ: t,
-		inOutWrappers: &inOutWrappers{
-			in:  in,
-			out: out,
-		},
+		typ:           t,
+		inOutWrappers: io,
 	}, nil
 }
 
@@ -64,27 +47,6 @@ func (w *funcWrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
 	default:
 		return w.wrapVectorFunction(v), nil
 	}
-}
-
-func (w *funcWrapper) wrapVoidFunction(fn reflect.Value) data.Function {
-	return data.Applicative(func(args ...data.Value) data.Value {
-		in := w.in.unwrap(args)
-		fn.Call(in)
-		return data.Null
-	}, len(w.in))
-}
-
-func (w *funcWrapper) wrapValueFunction(fn reflect.Value) data.Function {
-	return w.wrapFunction(fn)
-}
-
-func (w *funcWrapper) wrapVectorFunction(fn reflect.Value) data.Function {
-	return data.Applicative(func(args ...data.Value) data.Value {
-		in := w.in.unwrap(args)
-		res := fn.Call(in)
-		out := w.out.wrap(res)
-		return data.NewVector(out...)
-	}, len(w.in))
 }
 
 func (w *funcWrapper) Unwrap(v data.Value) (reflect.Value, error) {
@@ -134,7 +96,32 @@ func (w *funcWrapper) unwrapVectorCall(c data.Function) makeFuncType {
 	}
 }
 
-func (w *inOutWrappers) wrapFunction(fn reflect.Value) data.Function {
+func makeInOutWrappers(t reflect.Type) (*inOutWrappers, error) {
+	cIn := t.NumIn()
+	in := make(Wrappers, cIn)
+	for i := 0; i < cIn; i++ {
+		w, err := WrapType(t.In(i))
+		if err != nil {
+			return nil, err
+		}
+		in[i] = w
+	}
+	cOut := t.NumOut()
+	out := make(Wrappers, cOut)
+	for i := 0; i < cOut; i++ {
+		w, err := WrapType(t.Out(i))
+		if err != nil {
+			return nil, err
+		}
+		out[i] = w
+	}
+	return &inOutWrappers{
+		in:  in,
+		out: out,
+	}, nil
+}
+
+func (w *inOutWrappers) wrapValueFunction(fn reflect.Value) data.Function {
 	return data.Applicative(func(args ...data.Value) data.Value {
 		in := w.in.unwrap(args)
 		out := fn.Call(in)
@@ -143,5 +130,22 @@ func (w *inOutWrappers) wrapFunction(fn reflect.Value) data.Function {
 			panic(err)
 		}
 		return res
+	}, len(w.in))
+}
+
+func (w *inOutWrappers) wrapVoidFunction(fn reflect.Value) data.Function {
+	return data.Applicative(func(args ...data.Value) data.Value {
+		in := w.in.unwrap(args)
+		fn.Call(in)
+		return data.Null
+	}, len(w.in))
+}
+
+func (w *inOutWrappers) wrapVectorFunction(fn reflect.Value) data.Function {
+	return data.Applicative(func(args ...data.Value) data.Value {
+		in := w.in.unwrap(args)
+		res := fn.Call(in)
+		out := w.out.wrap(res)
+		return data.NewVector(out...)
 	}, len(w.in))
 }

@@ -54,31 +54,13 @@ func makeWrappedInterface(t reflect.Type) (Wrapper, error) {
 }
 
 func makeWrappedMethod(m reflect.Method) (*methodWrapper, error) {
-	t := m.Type
-	cIn := t.NumIn()
-	in := make(Wrappers, cIn)
-	for i := 0; i < cIn; i++ {
-		w, err := WrapType(t.In(i))
-		if err != nil {
-			return nil, err
-		}
-		in[i] = w
-	}
-	cOut := t.NumOut()
-	out := make(Wrappers, cOut)
-	for i := 0; i < cOut; i++ {
-		w, err := WrapType(t.Out(i))
-		if err != nil {
-			return nil, err
-		}
-		out[i] = w
+	io, err := makeInOutWrappers(m.Type)
+	if err != nil {
+		return nil, err
 	}
 	return &methodWrapper{
-		name: m.Name,
-		inOutWrappers: &inOutWrappers{
-			in:  in,
-			out: out,
-		},
+		name:          m.Name,
+		inOutWrappers: io,
 	}, nil
 }
 
@@ -116,27 +98,17 @@ func (w *methodWrapper) wrapMethod(v reflect.Value) data.Function {
 
 func (w *methodWrapper) wrapVoidMethod(v reflect.Value) data.Function {
 	fn := v.MethodByName(w.name)
-
-	return data.Applicative(func(args ...data.Value) data.Value {
-		fn.Call(w.in.unwrap(args))
-		return data.Null
-	}, len(w.in))
+	return w.wrapVoidFunction(fn)
 }
 
 func (w *methodWrapper) wrapValueMethod(v reflect.Value) data.Function {
 	fn := v.MethodByName(w.name)
-	return w.wrapFunction(fn)
+	return w.wrapValueFunction(fn)
 }
 
 func (w *methodWrapper) wrapVectorMethod(v reflect.Value) data.Function {
 	fn := v.MethodByName(w.name)
-
-	return data.Applicative(func(args ...data.Value) data.Value {
-		in := w.in.unwrap(args)
-		res := fn.Call(in)
-		out := w.out.wrap(res)
-		return data.NewVector(out...)
-	}, len(w.in))
+	return w.wrapVectorFunction(fn)
 }
 
 func (w *intfWrapper) Unwrap(v data.Value) (reflect.Value, error) {
