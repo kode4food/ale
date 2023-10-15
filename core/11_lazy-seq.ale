@@ -128,7 +128,7 @@
        (cons left right))])
 
 ;; define the various cadr permutations
-(define :private cadr-perms
+(define :private (cadr-perms)
   (mapcat (lambda (x)
             (apply cartesian-product
               (take x (map (lambda (_) "ad") (range)))))
@@ -145,4 +145,4 @@
         (let ([name (sym (apply str (concat "c" p "r")))]
               [body (apply make-cadr-body p)])
           (eval (list 'ale/define (list name 'val) body))))
-      cadr-perms)
+      (cadr-perms))
