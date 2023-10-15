@@ -42,7 +42,9 @@
          `(lambda ,args
             ,(outer first-outer inner rest-outer))))])
 
-(define-macro (juxt . funcs)
-  (let [args (gensym 'args)]
-    `(lambda ,args
-       [,@(map (lambda (f) (list 'apply f args)) funcs)])))
+(define (juxt f . r)
+  (let [funcs (cons f r)]
+    (lambda x
+      (seq->vector
+        (map! (lambda (func) (apply func x))
+              funcs)))))
