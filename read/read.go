@@ -31,7 +31,6 @@ func Scan(src data.String) data.Sequence {
 	return sequence.Filter(Tokens(src), noWhitespace)
 }
 
-var noWhitespace = data.Applicative(func(args ...data.Value) data.Value {
-	t := args[0].(*Token)
-	return data.Bool(!t.isWhitespace())
-})
+func noWhitespace(v data.Value) bool {
+	return !v.(*Token).isWhitespace()
+}

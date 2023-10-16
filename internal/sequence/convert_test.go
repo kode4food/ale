@@ -39,9 +39,9 @@ func TestSequenceConversions(t *testing.T) {
 	as.Identical(s1, s2)
 }
 
-var alwaysTrue = data.Applicative(func(...data.Value) data.Value {
-	return data.True
-}, 1)
+func alwaysTrue(data.Value) bool {
+	return true
+}
 
 func TestUncountedConversions(t *testing.T) {
 	as := assert.New(t)

@@ -92,12 +92,6 @@ func (w *Wrapper) True(expr any) {
 	w.Assertions.True(expr.(bool))
 }
 
-// Truthy tests a Value for system-specific Truthy
-func (w *Wrapper) Truthy(expr data.Value) {
-	w.Helper()
-	w.Assertions.True(data.Truthy(expr))
-}
-
 // False tests a Value for boolean false
 func (w *Wrapper) False(expr any) {
 	w.Helper()
@@ -106,12 +100,6 @@ func (w *Wrapper) False(expr any) {
 		return
 	}
 	w.Assertions.False(expr.(bool))
-}
-
-// Falsey tests a Value for system-specific Falsey
-func (w *Wrapper) Falsey(expr data.Value) {
-	w.Helper()
-	w.Assertions.False(data.Truthy(expr))
 }
 
 // Contains check if the expected string is in the provided Value

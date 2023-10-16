@@ -102,11 +102,6 @@ func (b Bool) HashCode() uint64 {
 	return falseHash
 }
 
-// Truthy evaluates whether a Value is truthy
-func Truthy(v Value) bool {
-	return v != False
-}
-
 // HashCode returns a hash code for the provided Value. If the Value implements
 // the Hashed interface, it will call us the HashCode() method. Otherwise, it
 // will create a hash code from the stringified form of the Value
