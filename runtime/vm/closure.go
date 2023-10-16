@@ -380,7 +380,7 @@ opSwitch:
 	case isa.Return:
 		return MEM[SP+1]
 
-	case isa.RetNil:
+	case isa.RetNull:
 		return data.Null
 
 	case isa.RetTrue:

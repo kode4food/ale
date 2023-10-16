@@ -81,7 +81,7 @@ var Effects = map[Opcode]*Effect{
 	Resolve:  {Pop: 1, Push: 1},
 	RestArg:  {Push: 1, Operand: Arguments},
 	RetFalse: {Exit: true},
-	RetNil:   {Exit: true},
+	RetNull:  {Exit: true},
 	RetTrue:  {Exit: true},
 	Return:   {Pop: 1, Exit: true},
 	Store:    {Pop: 1, Operand: Locals},

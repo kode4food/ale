@@ -136,7 +136,7 @@ func TestReturns(t *testing.T) {
 	})
 
 	testResult(t, data.Null, isa.Instructions{
-		isa.RetNil.New(),
+		isa.RetNull.New(),
 	})
 }
 

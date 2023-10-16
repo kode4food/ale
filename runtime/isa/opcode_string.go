@@ -53,7 +53,7 @@ func _() {
 	_ = x[Resolve-41]
 	_ = x[RestArg-42]
 	_ = x[RetFalse-43]
-	_ = x[RetNil-44]
+	_ = x[RetNull-44]
 	_ = x[RetTrue-45]
 	_ = x[Return-46]
 	_ = x[Store-47]
@@ -64,12 +64,12 @@ func _() {
 }
 
 const (
-	_Opcode_name_0 = "AddArgArgLenBindBindRefCallCall0Call1CallWithCarCdrClosureCondJumpConsConstDeclareDerefDivDupEmptyEqFalseJumpLoadModMulNegNegIntNewRefNoOpNotNullNumEqNumGtNumGteNumLtNumLtePanicPopPosIntPrivateResolveRestArgRetFalseRetNilRetTrueReturnStoreSubTailCallTrueZero"
+	_Opcode_name_0 = "AddArgArgLenBindBindRefCallCall0Call1CallWithCarCdrClosureCondJumpConsConstDeclareDerefDivDupEmptyEqFalseJumpLoadModMulNegNegIntNewRefNoOpNotNullNumEqNumGtNumGteNumLtNumLtePanicPopPosIntPrivateResolveRestArgRetFalseRetNullRetTrueReturnStoreSubTailCallTrueZero"
 	_Opcode_name_1 = "OpcodeMask"
 )
 
 var (
-	_Opcode_index_0 = [...]uint16{0, 3, 6, 12, 16, 23, 27, 32, 37, 45, 48, 51, 58, 66, 70, 75, 82, 87, 90, 93, 98, 100, 105, 109, 113, 116, 119, 122, 128, 134, 138, 141, 145, 150, 155, 161, 166, 172, 177, 180, 186, 193, 200, 207, 215, 221, 228, 234, 239, 242, 250, 254, 258}
+	_Opcode_index_0 = [...]uint16{0, 3, 6, 12, 16, 23, 27, 32, 37, 45, 48, 51, 58, 66, 70, 75, 82, 87, 90, 93, 98, 100, 105, 109, 113, 116, 119, 122, 128, 134, 138, 141, 145, 150, 155, 161, 166, 172, 177, 180, 186, 193, 200, 207, 215, 222, 229, 235, 240, 243, 251, 255, 259}
 )
 
 func (i Opcode) String() string {

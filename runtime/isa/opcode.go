@@ -68,7 +68,7 @@ const (
 	Resolve                // Resolve Global Symbol
 	RestArg                // Retrieve Arguments Tail
 	RetFalse               // Return False
-	RetNil                 // Return Null (Empty List)
+	RetNull                // Return Null (Empty List)
 	RetTrue                // Return True
 	Return                 // Return Value
 	Store                  // Store Local

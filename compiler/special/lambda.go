@@ -39,7 +39,7 @@ func makeLambda(e encoder.Encoder, v paramCases) *lambdaEncoder {
 
 func (le *lambdaEncoder) encode() {
 	if len(le.cases) == 0 {
-		le.Emit(isa.RetNil)
+		le.Emit(isa.RetNull)
 		return
 	}
 	le.encodeCases(le.cases)
@@ -82,7 +82,7 @@ func (le *lambdaEncoder) predicate(c *paramCase) {
 func (le *lambdaEncoder) consequent(c *paramCase) {
 	body := c.body
 	if body.IsEmpty() {
-		le.Emit(isa.RetNil)
+		le.Emit(isa.RetNull)
 		return
 	}
 
