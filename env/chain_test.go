@@ -40,6 +40,6 @@ func TestSnapshot(t *testing.T) {
 	as.True(ok)
 	as.Equal(data.True, e.Value())
 
-	e, ok = ns1.Resolve("second-child")
+	_, ok = ns1.Resolve("second-child")
 	as.False(ok)
 }
