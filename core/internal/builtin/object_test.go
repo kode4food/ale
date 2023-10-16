@@ -54,6 +54,31 @@ func TestObjectEval(t *testing.T) {
 	`, errors.New(data.ErrMapNotPaired))
 }
 
+func TestObjectAssoc(t *testing.T) {
+	as := assert.New(t)
+
+	as.EvalTo(`
+		(define o1 {:first "first" :second "second"})
+		(define o2 (assoc o1 :first "first-replaced"))
+		(define o3 (assoc o1 (:first . "also-replaced")))
+		(define o4 (dissoc o1 :first))
+		(define o5 (dissoc {} :first))
+		[(:first o1) (:second o1)
+         (:first o2) (:second o2)
+         (:first o3) (:second o3)
+         (:first o4) (:second o4)
+		 (:first o5) (:second o5)]
+	`,
+		V(
+			S("first"), S("second"),
+			S("first-replaced"), S("second"),
+			S("also-replaced"), S("second"),
+			data.Null, S("second"),
+			data.Null, data.Null,
+		),
+	)
+}
+
 func TestMappedEval(t *testing.T) {
 	as := assert.New(t)
 	as.EvalTo(`(mapped? {:name "Ale" :age 45})`, data.True)

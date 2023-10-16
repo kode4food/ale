@@ -14,6 +14,8 @@ func TestMacroPredicatesEval(t *testing.T) {
 	as.EvalTo(`(!macro? cond)`, data.False)
 	as.EvalTo(`(macro? if)`, data.False)
 	as.EvalTo(`(!macro? if)`, data.True)
+	as.EvalTo(`(atom? "hello")`, data.True)
+	as.EvalTo(`(!atom? '(1 2 3))`, data.True)
 }
 
 func TestMacroReplaceEval(t *testing.T) {
