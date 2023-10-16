@@ -41,6 +41,11 @@ func LS(n string) data.Symbol {
 	return data.Local(n)
 }
 
+// QS constructs a Qualified Symbol
+func QS(d, l string) data.Symbol {
+	return data.NewQualifiedSymbol(data.Local(l), data.Local(d))
+}
+
 // O constructs an Object from Pairs
 func O(p ...data.Pair) *data.Object {
 	return data.NewObject(p...)
