@@ -3,6 +3,7 @@ package async
 import (
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/do"
+	"github.com/kode4food/ale/internal/types"
 )
 
 type (
@@ -23,7 +24,11 @@ const (
 	promiseFailed
 )
 
-var promiseArityChecker = data.MakeFixedChecker(0)
+var (
+	PromiseType = types.MakeBasic("promise")
+
+	promiseArityChecker = data.MakeFixedChecker(0)
+)
 
 // NewPromise instantiates a new Promise
 func NewPromise(resolver data.Function) *Promise {
@@ -64,8 +69,8 @@ func (p *Promise) IsResolved() bool {
 	return p.status != promisePending
 }
 
-func (p *Promise) Type() data.Local {
-	return "promise"
+func (p *Promise) Type() types.Type {
+	return PromiseType
 }
 
 func (p *Promise) Equal(v data.Value) bool {

@@ -26,3 +26,16 @@ func TestPromiseFailure(t *testing.T) {
 	defer as.ExpectPanic("explosion")
 	p1.Call()
 }
+
+func TestPromiseEval(t *testing.T) {
+	as := assert.New(t)
+
+	as.EvalTo(`
+		(define p (delay "hello"))
+		(let* ([p?  (promise? p)]
+			   [r1? (resolved? p)]
+ 			   [f   (p)]
+  			   [r2? (resolved? p)])
+		  [p? r1? f r2?])
+	`, V(data.True, data.False, S("hello"), data.True))
+}

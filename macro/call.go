@@ -9,11 +9,11 @@ import (
 // Call represents a macro's calling signature
 type Call func(env.Namespace, ...data.Value) data.Value
 
-var Type = types.MakeBasic("macro")
+var CallType = types.MakeBasic("macro")
 
-// Type makes Call a typed value
+// CallType makes Call a typed value
 func (Call) Type() types.Type {
-	return Type
+	return CallType
 }
 
 // Equal compares this Call to another for equality

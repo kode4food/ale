@@ -8,11 +8,11 @@ import (
 // Call represents a code-generating function for the compiler
 type Call func(Encoder, ...data.Value)
 
-var Type = types.MakeBasic("encoder")
+var CallType = types.MakeBasic("encoder")
 
-// Type makes Call a typed value
+// CallType makes Call a typed value
 func (Call) Type() types.Type {
-	return Type
+	return CallType
 }
 
 // Equal makes Call a typed Value

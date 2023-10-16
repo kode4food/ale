@@ -67,12 +67,12 @@ func (e *encoder) child() *encoder {
 	}
 }
 
-// Child creates a child Type
+// Child creates a child CallType
 func (e *encoder) Child() Encoder {
 	return e.child()
 }
 
-// Emit adds instructions to the Type's eventual output
+// Emit adds instructions to the CallType's eventual output
 func (e *encoder) Emit(oc isa.Opcode, args ...isa.Operand) {
 	e.code = append(e.code, oc.New(args...))
 }

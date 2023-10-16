@@ -61,11 +61,12 @@ var predicates = map[data.Keyword]data.Function{
 	FunctionKey: data.MakeTypePredicate(types.BasicLambda),
 	KeywordKey:  data.MakeTypePredicate(types.BasicKeyword),
 	ListKey:     data.MakeTypePredicate(listType),
-	MacroKey:    data.MakeTypePredicate(macro.Type),
+	MacroKey:    data.MakeTypePredicate(macro.CallType),
 	NullKey:     data.MakeTypePredicate(types.BasicNull),
 	NumberKey:   data.MakeTypePredicate(types.BasicNumber),
 	ObjectKey:   data.MakeTypePredicate(types.BasicObject),
-	SpecialKey:  data.MakeTypePredicate(encoder.Type),
+	PromiseKey:  data.MakeTypePredicate(async.PromiseType),
+	SpecialKey:  data.MakeTypePredicate(encoder.CallType),
 	StringKey:   data.MakeTypePredicate(types.BasicString),
 	SymbolKey:   data.MakeTypePredicate(types.BasicSymbol),
 	VectorKey:   data.MakeTypePredicate(types.BasicVector),
@@ -75,13 +76,12 @@ var predicates = map[data.Keyword]data.Function{
 	IndexedKey:   makeGoTypePredicate[data.Indexed](),
 	LocalKey:     makeGoTypePredicate[data.Local](),
 	MappedKey:    makeGoTypePredicate[data.Mapper](),
-	PromiseKey:   makeGoTypePredicate[*async.Promise](),
 	QualifiedKey: makeGoTypePredicate[data.Qualified](),
 	ReverserKey:  makeGoTypePredicate[data.Reverser](),
 	SequenceKey:  makeGoTypePredicate[data.Sequence](),
 }
 
-// TypeOf returns a Type Predicate for the Types of the given Values. If more
+// TypeOf returns a CallType Predicate for the Types of the given Values. If more
 // than one Value is provided, the Union of their Types will be returned
 var TypeOf = data.Applicative(func(args ...data.Value) data.Value {
 	return data.TypePredicateOf(args[0], args[1:]...)
