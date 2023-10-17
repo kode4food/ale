@@ -30,12 +30,8 @@ func LambdaFromEncoder(e encoder.Encoder) *Lambda {
 		StackSize:    int(e.StackSize()),
 		LocalCount:   int(e.LocalCount()),
 		Code:         isa.Flatten(optimized),
-		ArityChecker: NoArityChecker,
+		ArityChecker: data.AnyArityChecker,
 	}
-}
-
-func NoArityChecker(int) error {
-	return nil
 }
 
 // Call allows an abstract machine Lambda to be called for the purpose of

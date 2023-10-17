@@ -31,8 +31,53 @@ func TestObject(t *testing.T) {
 	as.Contains(`:child "i am the child"`, o2)
 	as.Contains(`:parent "i am the parent"`, o2)
 
+	v, r, ok := o2.Remove(K("not-found"))
+	as.False(ok)
+	as.Nil(v)
+	as.Equal(o2, r)
+
 	defer as.ExpectPanic(fmt.Sprintf(assert.ErrValueNotFound, ":missing"))
 	as.MustGet(o2, K("missing"))
+}
+
+func TestEmptyObject(t *testing.T) {
+	as := assert.New(t)
+
+	o := data.EmptyObject
+	as.True(o.IsEmpty())
+
+	v, ok := o.Get(K("word"))
+	as.Nil(v)
+	as.False(ok)
+
+	v, r, ok := o.Remove(K("nothing"))
+	as.Nil(v)
+	as.Equal(r, o)
+	as.False(ok)
+
+	as.Nil(o.Car())
+	as.Nil(o.Cdr())
+}
+
+func TestValuesToObject(t *testing.T) {
+	as := assert.New(t)
+
+	o, err := data.ValuesToObject()
+	as.Nil(o)
+	as.Nil(err)
+	as.Number(0, o.Count())
+	as.True(o.IsEmpty())
+
+	o, err = data.ValuesToObject(K("kwd"), S("value"))
+	as.NotNil(o)
+	as.Nil(err)
+	as.Number(1, o.Count())
+	as.False(o.IsEmpty())
+
+	o, err = data.ValuesToObject(K("kwd"))
+	as.Nil(o)
+	as.NotNil(err)
+	as.EqualError(err, data.ErrMapNotPaired)
 }
 
 func TestObjectRemoval(t *testing.T) {
@@ -81,6 +126,10 @@ func TestObjectCaller(t *testing.T) {
 	as.String("i am the parent", o1.Call(K("parent")))
 	as.Nil(o1.Call(K("missing")))
 	as.String("defaulted", o1.Call(K("missing"), S("defaulted")))
+
+	as.EvalTo(`({:first 1} :first)`, I(1))
+	as.EvalTo(`({:first 1} :second)`, data.Null)
+	as.EvalTo(`({:first 1} :second 2)`, I(2))
 }
 
 func TestObjectIterate(t *testing.T) {
@@ -122,6 +171,24 @@ func TestObjectSplitDeterminism(t *testing.T) {
 		as.True(ok)
 		as.Equal(f1, f2)
 		as.Equal(r1Str, r2.String())
+	}
+}
+
+func TestObjectCarCdr(t *testing.T) {
+	as := assert.New(t)
+	o := data.NewObject(
+		C(K("z"), I(1024)),
+		C(K("x"), I(5)),
+		C(K("y"), I(99)),
+	)
+	a1 := o.Car()
+	d1 := o.Cdr()
+	dStr := d1.String()
+	for i := 0; i < 50; i++ {
+		a2 := o.Car()
+		d2 := o.Cdr()
+		as.Equal(a1, a2)
+		as.Equal(dStr, d2.String())
 	}
 }
 

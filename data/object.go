@@ -204,7 +204,7 @@ func (o *Object) Count() int {
 }
 
 func (o *Object) IsEmpty() bool {
-	return o != nil
+	return o == nil
 }
 
 func (o *Object) Call(args ...Value) Value {

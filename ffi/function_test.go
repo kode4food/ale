@@ -1,7 +1,6 @@
 package ffi_test
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/kode4food/ale/data"
@@ -44,7 +43,7 @@ func TestVectorResult(t *testing.T) {
 	as.Equal(S("hello-modified"), r[1])
 }
 
-func TestFuncUnwrap(t *testing.T) {
+func TestVoidFuncUnwrap(t *testing.T) {
 	as := assert.New(t)
 	var set bool
 	mark := func() {
@@ -58,6 +57,33 @@ func TestFuncUnwrap(t *testing.T) {
 	inFunc := ffi.MustWrap(mark)
 	res := f.Call(inFunc)
 	as.NotNil(res)
-	fmt.Println(res)
 	as.Contains(":type lambda", res)
+}
+
+func TestValueFuncUnwrap(t *testing.T) {
+	as := assert.New(t)
+	fourTwo := func() int {
+		return 42
+	}
+	f := ffi.MustWrap(func(f func() int) func() int {
+		as.Number(42, f())
+		return f
+	}).(data.Function)
+	inFunc := ffi.MustWrap(fourTwo)
+	as.NotNil(f.Call(inFunc))
+}
+
+func TestVectorFuncUnwrap(t *testing.T) {
+	as := assert.New(t)
+	hello := func() (int, string) {
+		return 42, "hello"
+	}
+	f := ffi.MustWrap(func(f func() (int, string)) func() (int, string) {
+		n, s := f()
+		as.Number(42, n)
+		as.String("hello", s)
+		return f
+	}).(data.Function)
+	inFunc := ffi.MustWrap(hello)
+	as.NotNil(f.Call(inFunc))
 }

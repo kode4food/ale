@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/kode4food/ale/data"
+	str "github.com/kode4food/ale/internal/strings"
 )
 
 type (
@@ -64,10 +65,11 @@ func (i Instruction) Equal(v data.Value) bool {
 
 func (i Instruction) String() string {
 	oc, operand := i.Split()
+	s := str.CamelToSnake(oc.String())
 	if Effects[oc].Operand != Nothing {
-		return fmt.Sprintf("%s(%d)", oc.String(), operand)
+		return fmt.Sprintf("%s %d", s, operand)
 	}
-	return fmt.Sprintf("%s()", oc.String())
+	return s
 }
 
 // IsValidOperand returns true if the int falls within the operand range

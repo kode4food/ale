@@ -11,7 +11,9 @@ before_script:
 
 script:
   - make test
-  - go test -coverprofile c.out ./...
+  - go test -coverprofile c.tmp ./...
+  - grep -v "_string.go" c.tmp > c.out
+  - rm c.tmp
 
 after_script:
   - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT

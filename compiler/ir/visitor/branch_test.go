@@ -46,9 +46,9 @@ func TestBranch(t *testing.T) {
 	}, b.Epilogue().Code())
 
 	as.Equal(
-		"NegInt(1)\nTrue()\nCondJump(0)\n  PosInt(1)\nelse:\n  Zero()\nPop()\nReturn()\n",
+		"neg-int 1\ntrue\ncond-jump 0\n  pos-int 1\nelse:\n  zero\npop\nreturn\n",
 		b.(fmt.Stringer).String(),
 	)
 
-	as.Equal("Pop()\nReturn()\n", b.Epilogue().(fmt.Stringer).String())
+	as.Equal("pop\nreturn\n", b.Epilogue().(fmt.Stringer).String())
 }

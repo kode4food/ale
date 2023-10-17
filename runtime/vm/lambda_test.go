@@ -25,4 +25,5 @@ func TestLambdaFromEncoder(t *testing.T) {
 	as.NotNil(c)
 
 	as.Equal(I(4), c.Call(S("one"), S("two"), S("three"), S("four")))
+	as.Contains(":type lambda", c)
 }

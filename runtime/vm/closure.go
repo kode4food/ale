@@ -408,7 +408,3 @@ func (c *closure) Convention() data.Convention {
 func (c *closure) Equal(v data.Value) bool {
 	return c == v
 }
-
-func (c *closure) String() string {
-	return data.DumpString(c)
-}

@@ -22,7 +22,7 @@ func MakeChecker(arity ...int) ArityChecker {
 	al := len(arity)
 	switch {
 	case al == 0:
-		return nil
+		return AnyArityChecker
 	case al > 2:
 		panic(errors.New(ErrTooManyArguments))
 	case al == 1 || arity[0] == arity[1]:
@@ -40,6 +40,11 @@ func AssertFixed(fixed, count int) int {
 		panic(err)
 	}
 	return count
+}
+
+// AnyArityChecker allows for any number of arguments
+func AnyArityChecker(int) error {
+	return nil
 }
 
 // MakeFixedChecker generates a fixed arity checker

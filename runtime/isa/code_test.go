@@ -13,7 +13,7 @@ func TestInstructions(t *testing.T) {
 	as := assert.New(t)
 
 	i1 := isa.CondJump.New(27)
-	as.String("CondJump(27)", i1)
+	as.String("cond-jump 27", i1)
 
 	defer func() {
 		if rec := recover(); rec != nil {
@@ -27,10 +27,14 @@ func TestInstructions(t *testing.T) {
 	isa.CondJump.New(12, 32)
 }
 
-func TestInstructionString(t *testing.T) {
+func TestInstructionsString(t *testing.T) {
 	as := assert.New(t)
-	inst := isa.Const.New(0)
-	as.String(`Const(0)`, inst.String())
+	inst := isa.Instructions{
+		isa.Const.New(0),
+		isa.CondJump.New(2),
+		isa.Return.New(),
+	}
+	as.String("const 0\ncond-jump 2\nreturn", inst.String())
 }
 
 func TestInstructionEquality(t *testing.T) {

@@ -7,7 +7,16 @@ import (
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
+	"github.com/kode4food/ale/internal/types"
 )
+
+func TestSymbolType(t *testing.T) {
+	as := assert.New(t)
+
+	as.True(types.BasicSymbol.Equal(LS("hello").Type()))
+	as.True(types.BasicSymbol.Equal(QS("ale", "hello").Type()))
+	as.False(types.BasicBoolean.Equal(QS("ale", "hello").Type()))
+}
 
 func TestLocalSymbolEquality(t *testing.T) {
 	as := assert.New(t)
@@ -79,4 +88,28 @@ func TestSymbolGeneration(t *testing.T) {
 
 	s1 := data.NewGeneratedSymbol("hello")
 	as.Contains("x-hello-gensym-", s1)
+}
+
+func TestLocalsSorted(t *testing.T) {
+	as := assert.New(t)
+
+	l := data.Locals{"hello", "another", "test", "not", "sorted"}
+	s := l.Sorted()
+	as.NotIdentical(l, s)
+	as.NotEqual(l, s)
+	as.Equal(data.Locals{"another", "hello", "not", "sorted", "test"}, s)
+}
+
+func TestSymbolHashing(t *testing.T) {
+	as := assert.New(t)
+
+	obj := O(
+		C(LS("first"), I(1)),
+		C(LS("second"), I(2)),
+		C(QS("ale", "third"), I(3)),
+	)
+
+	as.Number(1, as.MustGet(obj, LS("first")))
+	as.Number(2, as.MustGet(obj, LS("second")))
+	as.Number(3, as.MustGet(obj, QS("ale", "third")))
 }

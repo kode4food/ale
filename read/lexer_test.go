@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/kode4food/ale/internal/sequence"
+
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
@@ -91,15 +93,22 @@ func TestStrings(t *testing.T) {
 }
 
 func TestMultiLine(t *testing.T) {
-	l := read.Scan(` "hello there"
-  				"how's life?"
-				99`)
+	as := assert.New(t)
 
+	l := read.Scan("   \"hello there\"\n\"how's life?\"\n\n  99")
 	assertTokenSequence(t, l, []*read.Token{
 		T(read.String, S(`hello there`)),
 		T(read.String, S(`how's life?`)),
 		T(read.Number, F(99)),
 	})
+
+	v := sequence.ToValues(l)
+	as.Equal(0, v[0].(*read.Token).Line())
+	as.Equal(3, v[0].(*read.Token).Column())
+	as.Equal(1, v[1].(*read.Token).Line())
+	as.Equal(0, v[1].(*read.Token).Column())
+	as.Equal(3, v[2].(*read.Token).Line())
+	as.Equal(2, v[2].(*read.Token).Column())
 }
 
 func TestComments(t *testing.T) {

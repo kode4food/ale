@@ -21,6 +21,29 @@ func TestTypePredicateCall(t *testing.T) {
 	as.False(pred.Call(v1))
 }
 
+func TestPredicateOf(t *testing.T) {
+	as := assert.New(t)
+
+	l := L(I(0))
+	o := O()
+
+	list := data.TypePredicateOf(l)
+	obj := data.TypePredicateOf(o)
+	union := data.TypePredicateOf(l, o)
+
+	as.Equal(LS("list"), list.Name())
+	as.Equal(LS("object"), obj.Name())
+	as.Equal(LS("union(list,object)"), union.Name())
+
+	as.True(list.Call(l))
+	as.False(obj.Call(l))
+	as.True(obj.Call(o))
+	as.False(obj.Call(l))
+	as.True(union.Call(l))
+	as.True(union.Call(o))
+	as.False(union.Call(data.True))
+}
+
 func TestTypePredicateEqual(t *testing.T) {
 	as := assert.New(t)
 	l1 := data.NewList(I(1), I(2), I(3))

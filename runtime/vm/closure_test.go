@@ -79,6 +79,7 @@ func TestPopAndDup(t *testing.T) {
 	testResult(t, I(4), isa.Instructions{
 		isa.PosInt.New(2),
 		isa.Dup.New(),
+		isa.NoOp.New(),
 		isa.Add.New(),
 		isa.Return.New(),
 	})
@@ -143,6 +144,7 @@ func TestReturns(t *testing.T) {
 func TestUnary(t *testing.T) {
 	testResult(t, I(-1), isa.Instructions{
 		isa.PosInt.New(1),
+		isa.NoOp.New(),
 		isa.Neg.New(),
 		isa.Return.New(),
 	})

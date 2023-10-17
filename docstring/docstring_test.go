@@ -58,3 +58,15 @@ func TestBuiltinsHaveDocs(t *testing.T) {
 	as.Equal(0, len(missing))
 	as.Equal(data.Locals{}, missing)
 }
+
+func TestMustGet(t *testing.T) {
+	as := assert.New(t)
+
+	d := docstring.MustGet("doc")
+	as.NotNil(d)
+
+	defer as.ExpectPanic(
+		fmt.Errorf(docstring.ErrSymbolNotDocumented, "blah"),
+	)
+	_ = docstring.MustGet("blah")
+}

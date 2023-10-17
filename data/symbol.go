@@ -16,6 +16,7 @@ type (
 	// Symbol is an identifier that can be resolved
 	Symbol interface {
 		symbol() // marker
+		Typed
 		Value
 		Named
 	}
