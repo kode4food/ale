@@ -56,7 +56,7 @@ func (w *Wrapper) Number(expect float64, expr any) {
 	case int:
 		w.Assertions.Equal(int64(expect), int64(n))
 	case data.Number:
-		w.Assertions.Equal(data.EqualTo, data.Float(expect).Cmp(n))
+		w.Compare(data.EqualTo, data.Float(expect), n)
 	default:
 		panic(fmt.Errorf(ErrInvalidTestExpression, expr))
 	}
@@ -119,13 +119,17 @@ func (w *Wrapper) NotContains(expect string, expr data.Value) {
 // Identical tests that two values are referentially identical
 func (w *Wrapper) Identical(expect any, expr any) {
 	w.Helper()
-	w.Assertions.Equal(expect, expr)
+	p1 := fmt.Sprintf("%p", expect)
+	p2 := fmt.Sprintf("%p", expr)
+	w.Assertions.True(p1 == p2)
 }
 
 // NotIdentical tests that two values are not referentially identical
 func (w *Wrapper) NotIdentical(expect any, expr any) {
 	w.Helper()
-	w.Assertions.NotEqual(expect, expr)
+	p1 := fmt.Sprintf("%p", expect)
+	p2 := fmt.Sprintf("%p", expr)
+	w.Assertions.False(p1 == p2)
 }
 
 // Compare tests if the Comparison of two Numbers is correct
@@ -176,14 +180,10 @@ func (w *Wrapper) MustGet(m data.Mapped, k data.Value) data.Value {
 
 func (w *Wrapper) makeString(val any) string {
 	switch val := val.(type) {
-	case data.String:
-		return string(val)
 	case string:
 		return val
 	case error:
 		return val.Error()
-	case data.Value:
-		return val.String()
 	case fmt.Stringer:
 		return val.String()
 	default:
