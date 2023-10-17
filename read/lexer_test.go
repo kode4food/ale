@@ -4,11 +4,10 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/kode4food/ale/internal/sequence"
-
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
+	"github.com/kode4food/ale/internal/sequence"
 	"github.com/kode4food/ale/read"
 )
 
@@ -156,4 +155,11 @@ func TestTokenEquality(t *testing.T) {
 	as.False(t1.Equal(t5))
 	as.False(t4.Equal(t5))
 	as.False(t1.Equal(I(37)))
+}
+
+func TestStrangeToken(t *testing.T) {
+	as := assert.New(t)
+
+	tkn := read.MakeToken(read.TokenType(99), S("hello"))
+	as.String(`[TokenType(99) "hello"]`, tkn)
 }

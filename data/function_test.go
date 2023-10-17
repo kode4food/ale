@@ -18,6 +18,7 @@ func TestApplicativeFunction(t *testing.T) {
 
 	as.True(data.IsApplicative(f1))
 	as.False(data.IsNormal(f1))
+	as.String("applicative", f1.Convention().String())
 	as.Contains(":type lambda", f1)
 
 	as.Nil(f1.CheckArity(99))
@@ -32,6 +33,7 @@ func TestNormalFunction(t *testing.T) {
 
 	as.True(data.IsNormal(f1))
 	as.False(data.IsApplicative(f1))
+	as.String("normal", f1.Convention().String())
 	as.Contains(":type lambda", f1)
 
 	as.Nil(f1.CheckArity(0))
@@ -46,4 +48,11 @@ func TestFunctionEquality(t *testing.T) {
 	as.True(f1.Equal(f1))
 	as.False(f1.Equal(f2))
 	as.False(f1.Equal(I(42)))
+}
+
+func TestStrangeConvention(t *testing.T) {
+	as := assert.New(t)
+
+	as.String("Convention(99)", data.Convention(99).String())
+	as.String("Convention(101)", data.Convention(101).String())
 }
