@@ -187,7 +187,6 @@ func (w *Wrapper) makeString(val any) string {
 	case fmt.Stringer:
 		return val.String()
 	default:
-		w.Fail(ErrCannotMakeString)
+		panic(ErrCannotMakeString)
 	}
-	return ""
 }

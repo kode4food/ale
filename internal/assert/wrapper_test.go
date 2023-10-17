@@ -92,3 +92,9 @@ func TestMustGetNonExplosion(t *testing.T) {
 	defer as.ExpectNoPanic()
 	as.MustGet(O(C(K("hello"), S("world"))), K("hello"))
 }
+
+func TestExpectProgrammerError(t *testing.T) {
+	as := assert.New(t)
+	defer as.ExpectProgrammerError("just a string")
+	panic("just a string")
+}
