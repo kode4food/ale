@@ -9,7 +9,7 @@ func main() {
 	case len(os.Args) < 2:
 		NewREPL().Run()
 	default:
-		EvaluateFile()
+		EvaluateFile(os.Args[1])
 	}
 }
 

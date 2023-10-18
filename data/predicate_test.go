@@ -42,6 +42,10 @@ func TestPredicateOf(t *testing.T) {
 	as.True(union.Call(l))
 	as.True(union.Call(o))
 	as.False(union.Call(data.True))
+
+	as.String("type-predicate", list.Type().Name())
+	as.True(list.Type().Equal(obj.Type()))
+	as.Contains(":type type-predicate", list)
 }
 
 func TestTypePredicateEqual(t *testing.T) {

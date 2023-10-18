@@ -62,3 +62,17 @@ func TestResolveValue(t *testing.T) {
 	defer as.ExpectPanic(fmt.Sprintf(env.ErrSymbolNotBound, ls))
 	env.MustResolveValue(ns, ls)
 }
+
+func TestDomains(t *testing.T) {
+	as := assert.New(t)
+
+	e := env.NewEnvironment()
+	ns1 := e.GetQualified("domain1")
+	ns2 := e.GetQualified("domain2")
+
+	as.Equal(data.Locals{
+		e.GetRoot().Domain(),
+		ns1.Domain(),
+		ns2.Domain(),
+	}, e.Domains().Sorted())
+}

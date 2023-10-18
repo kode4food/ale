@@ -1,6 +1,7 @@
 package env_test
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/kode4food/ale/data"
@@ -42,4 +43,34 @@ func TestSnapshot(t *testing.T) {
 
 	_, ok = ns1.Resolve("second-child")
 	as.False(ok)
+}
+
+func TestChainedSnapshotErrors(t *testing.T) {
+	as := assert.New(t)
+
+	e1 := env.NewEnvironment()
+	root := e1.GetRoot()
+	ns1 := e1.GetQualified("some-ns")
+
+	sym1 := data.Local("was-unbound-but-resolved")
+	ns1.Declare(sym1)
+	e, ok := ns1.Resolve(sym1)
+	as.True(ok)
+
+	e2, err := e1.Snapshot()
+	as.Nil(e2)
+	as.EqualError(err, fmt.Sprintf(env.ErrSnapshotIncomplete, sym1))
+
+	e.Bind(data.True)
+	e2, err = e1.Snapshot()
+	as.NotNil(e2)
+	as.Nil(err)
+
+	sym2 := data.Local("also-unbound-but-resolved")
+	root.Declare(sym2)
+	_, ok = root.Resolve(sym2)
+	as.True(ok)
+
+	_, err = ns1.Snapshot(env.NewEnvironment())
+	as.EqualError(err, fmt.Sprintf(env.ErrSnapshotIncomplete, sym2))
 }

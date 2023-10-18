@@ -56,7 +56,7 @@ func TestEmptyVector(t *testing.T) {
 	as.String("[]", v.Cdr())
 }
 
-func TestVectorAsFunction(t *testing.T) {
+func TestVectorCall(t *testing.T) {
 	as := assert.New(t)
 
 	v1 := data.NewVector(S("hello"), S("how"), S("are"), S("you?"))
@@ -64,6 +64,8 @@ func TestVectorAsFunction(t *testing.T) {
 	as.String("how", v1.Call(I(1)))
 	as.Nil(v1.Call(I(4)))
 	as.String("defaulted", v1.Call(I(4), S("defaulted")))
+
+	testSequenceCallInterface(as, v1)
 }
 
 func TestVectorEquality(t *testing.T) {

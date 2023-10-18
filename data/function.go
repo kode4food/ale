@@ -79,10 +79,7 @@ func IsNormal(f Function) bool {
 }
 
 func (f *function) CheckArity(argCount int) error {
-	if a := f.arity; a != nil {
-		return a(argCount)
-	}
-	return nil
+	return f.arity(argCount)
 }
 
 func (f *function) Call(args ...Value) Value {

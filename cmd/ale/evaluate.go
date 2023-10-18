@@ -24,10 +24,9 @@ func EvaluateStdIn() {
 }
 
 // EvaluateFile reads the specific source file and evaluates it
-func EvaluateFile() {
+func EvaluateFile(filename string) {
 	defer exitWithError()
 
-	filename := os.Args[1]
 	buffer, err := os.ReadFile(filename)
 	if err != nil {
 		fmt.Println(fmt.Errorf(ErrFileNotFound, filename))

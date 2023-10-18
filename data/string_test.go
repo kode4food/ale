@@ -3,6 +3,8 @@ package data_test
 import (
 	"testing"
 
+	"github.com/kode4food/ale/internal/types"
+
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
@@ -50,6 +52,8 @@ func TestStr(t *testing.T) {
 	as.Number(3, s4.Count())
 	as.String("再", s4.Car())
 	as.String("见!", s4.Cdr())
+
+	as.True(types.BasicString.Equal(s4.Type()))
 }
 
 func TestEmptyStr(t *testing.T) {

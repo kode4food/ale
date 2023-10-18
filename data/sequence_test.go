@@ -39,3 +39,11 @@ func TestLastOfSequence(t *testing.T) {
 	))
 	as.False(ok)
 }
+
+func testSequenceCallInterface(as *assert.Wrapper, s data.Function) {
+	as.Equal(data.ApplicativeCall, s.Convention())
+	as.NotNil(s.CheckArity(0))
+	as.Nil(s.CheckArity(1))
+	as.Nil(s.CheckArity(2))
+	as.NotNil(s.CheckArity(3))
+}

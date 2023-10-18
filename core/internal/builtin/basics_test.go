@@ -1,6 +1,7 @@
 package builtin_test
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/kode4food/ale/core/internal/builtin"
@@ -29,20 +30,30 @@ func TestEmptyRead(t *testing.T) {
 	as.Nil(r1)
 }
 
-func TestRecover(t *testing.T) {
-	as := assert.New(t)
+func testRecover(as *assert.Wrapper, err any, errStr string) {
 	var triggered = false
 	builtin.Recover.Call(
 		data.Applicative(func(...data.Value) data.Value {
-			panic(S("blowed up!"))
+			panic(err)
 		}, 0),
 		data.Applicative(func(args ...data.Value) data.Value {
-			as.String("blowed up!", args[0])
+			as.String(errStr, args[0])
 			triggered = true
 			return data.Null
 		}, 1),
 	)
 	as.True(triggered)
+}
+
+func TestRecover(t *testing.T) {
+	as := assert.New(t)
+
+	errStr := "blew up"
+	testRecover(as, S(errStr), errStr)
+	testRecover(as, fmt.Errorf(errStr), errStr)
+
+	defer as.ExpectProgrammerError("recover returned an invalid result")
+	testRecover(as, &struct{}{}, "won't be needed")
 }
 
 func TestDefer(t *testing.T) {

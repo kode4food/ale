@@ -115,7 +115,7 @@ func TestObjectRemoval(t *testing.T) {
 	as.Equal(0, o1.Count())
 }
 
-func TestObjectCaller(t *testing.T) {
+func TestObjectCall(t *testing.T) {
 	as := assert.New(t)
 
 	o1 := data.NewObject(
@@ -130,6 +130,8 @@ func TestObjectCaller(t *testing.T) {
 	as.EvalTo(`({:first 1} :first)`, I(1))
 	as.EvalTo(`({:first 1} :second)`, data.Null)
 	as.EvalTo(`({:first 1} :second 2)`, I(2))
+
+	testSequenceCallInterface(as, o1)
 }
 
 func TestObjectIterate(t *testing.T) {

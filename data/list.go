@@ -107,9 +107,6 @@ func (l *List) ElementAt(index int) (Value, bool) {
 }
 
 func (l *List) Call(args ...Value) Value {
-	if l == nil {
-		return Null
-	}
 	return indexedCall(l, args)
 }
 

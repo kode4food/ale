@@ -3,6 +3,8 @@ package data_test
 import (
 	"testing"
 
+	"github.com/kode4food/ale/internal/types"
+
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
@@ -14,6 +16,8 @@ func TestKeyword(t *testing.T) {
 	k1 := data.Keyword("hello")
 	as.String("hello", k1.Name())
 	as.String(":hello", k1)
+
+	as.True(types.BasicKeyword.Equal(k1.Type()))
 }
 
 func TestKeywordCaller(t *testing.T) {

@@ -3,6 +3,8 @@ package data_test
 import (
 	"testing"
 
+	"github.com/kode4food/ale/internal/types"
+
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
@@ -103,4 +105,37 @@ func TestListAsKey(t *testing.T) {
 	v, ok = o1.Get(L(S("hello"), S("there")))
 	as.True(ok)
 	as.Equal(I(42), v)
+}
+
+func TestEmptyList(t *testing.T) {
+	as := assert.New(t)
+
+	l := data.NewList()
+	as.Equal(data.Null, l)
+
+	as.Nil(l.Car())
+	as.Nil(l.Cdr())
+
+	f, r, ok := l.Split()
+	as.Nil(f)
+	as.Nil(r)
+	as.False(ok)
+
+	as.True(types.BasicNull.Equal(l.Type()))
+}
+
+func TestListCall(t *testing.T) {
+	as := assert.New(t)
+
+	l1 := data.NewList(I(1), I(2), I(3), I(99))
+	l2 := data.Null
+
+	as.Number(2, l1.Call(I(1)))
+	as.Nil(l2.Call(I(1)))
+
+	as.String("hello", l1.Call(I(99), S("hello")))
+	as.String("hello", l2.Call(I(99), S("hello")))
+
+	testSequenceCallInterface(as, l1)
+	testSequenceCallInterface(as, l2)
 }
