@@ -139,6 +139,13 @@ func TestUnexpectedChars(t *testing.T) {
 	})
 }
 
+func TestUnterminatedString(t *testing.T) {
+	l := read.Scan(`"unterminated `)
+	assertTokenSequence(t, l, []*read.Token{
+		T(read.Error, S(read.ErrStringNotTerminated)),
+	})
+}
+
 func TestTokenEquality(t *testing.T) {
 	as := assert.New(t)
 

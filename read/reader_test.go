@@ -160,4 +160,6 @@ func TestReaderErrors(t *testing.T) {
 	testReaderError(t, "bad/", data.ErrInvalidSymbol, "bad/")
 	testReaderError(t, "bad///", data.ErrInvalidSymbol, "bad///")
 	testReaderError(t, "ale/er/ror", data.ErrInvalidSymbol, "ale/er/ror")
+
+	testReaderError(t, `"unterminated`, read.ErrStringNotTerminated)
 }
