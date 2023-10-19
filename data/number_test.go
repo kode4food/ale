@@ -5,6 +5,8 @@ import (
 	"math"
 	"testing"
 
+	"github.com/kode4food/ale/internal/types"
+
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
@@ -59,9 +61,11 @@ func TestEqualTo(t *testing.T) {
 	as.Compare(data.EqualTo, n2, n1)
 	as.Compare(data.EqualTo, n2, n4)
 	as.Compare(data.EqualTo, n1, n4)
+
+	as.Compare(data.EqualTo, n5, data.MustParseRatio("5/2"))
 }
 
-func TestIdentityEqual(t *testing.T) {
+func TestNumberEqual(t *testing.T) {
 	as := assert.New(t)
 	n1 := data.Integer(20)
 	n2 := data.Float(20.0)
@@ -74,11 +78,13 @@ func TestIdentityEqual(t *testing.T) {
 	as.True(n1.Equal(n4))
 	as.True(n3.Equal(n3))
 	as.True(n5.Equal(n5))
+	as.True(n5.Equal(data.MustParseRatio("5/2")))
 	as.True(n6.Equal(n6))
 
 	as.False(n1.Equal(n2))
 	as.False(n2.Equal(n1))
 	as.False(n2.Equal(n4))
+	as.False(n6.Equal(n1))
 }
 
 func TestLessThan(t *testing.T) {
@@ -218,6 +224,7 @@ func TestSubtraction(t *testing.T) {
 	as.Number(15.0, n2.Sub(n3))
 	as.Number(2.25, n5.Sub(n6))
 	as.Number(15, n1.Sub(n3))
+	as.Number(-9.05, n9.Sub(n5))
 	as.String("2.0", n7.Sub(n4))
 	as.String("34/5", n7.Sub(n9))
 	as.String("999999999999999999999999999999999999999980", n8.Sub(n1))
@@ -252,10 +259,7 @@ func TestNonNumbers(t *testing.T) {
 	as := assert.New(t)
 
 	nan := data.Float(math.Log(-1.0))
-
 	as.True(nan.IsNaN())
-	as.False(data.Float(35.5).IsNaN())
-	as.False(data.Integer(35).IsNaN())
 
 	as.Compare(data.Incomparable, data.Float(1), nan)
 	as.Compare(data.Incomparable, nan, data.Float(1))
@@ -348,4 +352,57 @@ func TestIntegerDemotion(t *testing.T) {
 	r4, ok := r3.Add(data.Integer(1)).(data.Integer)
 	as.True(ok)
 	as.String("-9223372036854775808", r4)
+}
+
+func TestNumberHashing(t *testing.T) {
+	as := assert.New(t)
+
+	n1 := data.MustParseFloat("0.5")
+	n2 := data.MustParseInteger("99999999999999999999999999999999999999999")
+	n3 := data.MustParseInteger("1")
+	n4 := data.MustParseRatio("1/2")
+
+	o := O(
+		C(n1, data.True),
+		C(n2, data.True),
+		C(n3, data.True),
+		C(n4, data.True),
+	)
+
+	v, ok := o.Get(n1)
+	as.True(ok)
+	as.True(v)
+
+	v, ok = o.Get(n2)
+	as.True(ok)
+	as.True(v)
+
+	v, ok = o.Get(n3)
+	as.True(ok)
+	as.True(v)
+
+	v, ok = o.Get(n4)
+	as.True(ok)
+	as.True(v)
+}
+
+func testNumberChecks(as *assert.Wrapper, n data.Number) {
+	as.False(n.IsNaN())
+	as.False(n.IsPosInf())
+	as.False(n.IsNegInf())
+	as.True(types.BasicNumber.Equal(n.Type()))
+}
+
+func TestNumberChecks(t *testing.T) {
+	as := assert.New(t)
+
+	n1 := data.MustParseFloat("0.5")
+	n2 := data.MustParseInteger("99999999999999999999999999999999999999999")
+	n3 := data.MustParseInteger("1")
+	n4 := data.MustParseRatio("1/2")
+
+	testNumberChecks(as, n1)
+	testNumberChecks(as, n2)
+	testNumberChecks(as, n3)
+	testNumberChecks(as, n4)
 }

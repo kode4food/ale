@@ -5,6 +5,7 @@ import "fmt"
 // Number describes a numeric value of some kind
 type Number interface {
 	Value
+	Typed
 	Cmp(Number) Comparison
 	Add(Number) Number
 	Sub(Number) Number
