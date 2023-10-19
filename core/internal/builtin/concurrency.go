@@ -39,5 +39,5 @@ func isResolved(v data.Value) bool {
 	if p, ok := v.(*async.Promise); ok {
 		return p.IsResolved()
 	}
-	return false
+	return true
 }

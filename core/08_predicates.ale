@@ -60,3 +60,6 @@
 (define-predicate is-true "true")
 (define-predicate is-vector "vector")
 (define-predicate is-zero "zero")
+
+(define promise-forced? resolved?)
+(define !promise-forced? !resolved?)

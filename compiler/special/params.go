@@ -24,6 +24,9 @@ const (
 )
 
 func parseParamCases(s data.Sequence) paramCases {
+	if s.IsEmpty() {
+		return paramCases{}
+	}
 	f := s.Car()
 	switch f.(type) {
 	case *data.List, *data.Cons, data.Local:
@@ -42,6 +45,9 @@ func parseParamCases(s data.Sequence) paramCases {
 }
 
 func (lc paramCases) makeArityChecker() data.ArityChecker {
+	if len(lc) == 0 {
+		return data.MakeChecker(0)
+	}
 	v0 := lc[0]
 	lower, upper := v0.arityRange()
 	for _, s := range lc[1:] {

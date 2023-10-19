@@ -1,8 +1,10 @@
 package builtin_test
 
 import (
+	"fmt"
 	"testing"
 
+	"github.com/kode4food/ale/core/internal/builtin"
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
@@ -46,4 +48,12 @@ func TestMacroExpandEval(t *testing.T) {
 
 		(macroexpand '(foo2 1 2 3))
 	`, S("hello123"))
+}
+
+func TestBadMacro(t *testing.T) {
+	as := assert.New(t)
+
+	str := "not a function"
+	defer as.ExpectPanic(fmt.Errorf(builtin.ErrFunctionRequired, str))
+	_ = builtin.Macro.Call(S(str))
 }

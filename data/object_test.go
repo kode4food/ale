@@ -36,7 +36,7 @@ func TestObject(t *testing.T) {
 	as.Nil(v)
 	as.Equal(o2, r)
 
-	defer as.ExpectPanic(fmt.Sprintf(assert.ErrValueNotFound, ":missing"))
+	defer as.ExpectPanic(fmt.Errorf(assert.ErrValueNotFound, ":missing"))
 	as.MustGet(o2, K("missing"))
 }
 

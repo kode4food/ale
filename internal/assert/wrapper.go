@@ -144,7 +144,11 @@ func (w *Wrapper) ExpectPanic(err any) {
 	if rec := recover(); rec != nil {
 		errStr := w.makeString(rec)
 		pfx := w.makeString(err)
-		w.True(strings.HasPrefix(errStr, pfx))
+		hasPfx := strings.HasPrefix(errStr, pfx)
+		w.True(hasPfx)
+		if rec, ok := rec.(error); ok && !hasPfx {
+			w.EqualError(rec, pfx)
+		}
 		return
 	}
 	panic(ErrProperErrorNotRaised)

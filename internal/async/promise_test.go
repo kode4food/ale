@@ -23,7 +23,7 @@ func TestPromiseFailure(t *testing.T) {
 	p1 := async.NewPromise(data.Applicative(func(...data.Value) data.Value {
 		panic(errors.New("explosion"))
 	}, 0))
-	defer as.ExpectPanic("explosion")
+	defer as.ExpectPanic(errors.New("explosion"))
 	p1.Call()
 }
 

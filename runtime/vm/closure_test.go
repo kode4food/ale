@@ -1,6 +1,7 @@
 package vm_test
 
 import (
+	"errors"
 	"fmt"
 	"testing"
 
@@ -45,7 +46,7 @@ func testResult(t *testing.T, res data.Value, code isa.Instructions) {
 
 func testPanic(t *testing.T, errStr string, code isa.Instructions) {
 	as := assert.New(t)
-	defer as.ExpectPanic(errStr)
+	defer as.ExpectPanic(errors.New(errStr))
 	runCode(code)
 }
 
@@ -438,9 +439,7 @@ func TestForUnimplementedOpcodes(t *testing.T) {
 func TestBadOpcode(t *testing.T) {
 	as := assert.New(t)
 	defer as.ExpectProgrammerError(
-		fmt.Sprintf(
-			"unknown opcode: %s", isa.Label,
-		),
+		fmt.Sprintf("unknown opcode: %s", isa.Label),
 	)
 	runCode(isa.Instructions{isa.Instruction(isa.Label)})
 }

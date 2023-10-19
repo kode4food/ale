@@ -1,6 +1,7 @@
 package analysis_test
 
 import (
+	"errors"
 	"fmt"
 	"testing"
 
@@ -40,7 +41,7 @@ func TestVerifyBadBranchStack(t *testing.T) {
 	)
 	e.Emit(isa.Return)
 
-	defer as.ExpectPanic(analysis.ErrBadBranchTermination)
+	defer as.ExpectPanic(errors.New(analysis.ErrBadBranchTermination))
 	analysis.Verify(e.Code())
 }
 
@@ -50,7 +51,7 @@ func TestVerifyBadEndStack(t *testing.T) {
 	e := assert.GetTestEncoder()
 	e.Emit(isa.True)
 
-	defer as.ExpectPanic(fmt.Sprintf(analysis.ErrBadStackTermination, 1))
+	defer as.ExpectPanic(fmt.Errorf(analysis.ErrBadStackTermination, 1))
 	analysis.Verify(e.Code())
 }
 
@@ -77,6 +78,6 @@ func TestVerifyBadJump(t *testing.T) {
 	e.Emit(isa.Pop)
 	e.Emit(isa.Jump, lbl)
 
-	defer as.ExpectPanic(fmt.Sprintf(analysis.ErrLabelNotAnchored, 0))
+	defer as.ExpectPanic(fmt.Errorf(analysis.ErrLabelNotAnchored, 0))
 	analysis.Verify(e.Code())
 }

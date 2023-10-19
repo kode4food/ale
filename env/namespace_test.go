@@ -92,14 +92,14 @@ func TestBinding(t *testing.T) {
 	d := root.Declare("some-name")
 
 	func() {
-		defer as.ExpectPanic(fmt.Sprintf(env.ErrNameNotBound, d.Name()))
+		defer as.ExpectPanic(fmt.Errorf(env.ErrNameNotBound, d.Name()))
 		d.Value()
 	}()
 
 	d.Bind(S("some-value"))
 
 	func() {
-		defer as.ExpectPanic(fmt.Sprintf(env.ErrNameAlreadyBound, d.Name()))
+		defer as.ExpectPanic(fmt.Errorf(env.ErrNameAlreadyBound, d.Name()))
 		d.Bind(S("some-other-value"))
 	}()
 

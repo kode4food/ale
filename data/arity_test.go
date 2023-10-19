@@ -1,6 +1,7 @@
 package data_test
 
 import (
+	"errors"
 	"fmt"
 	"testing"
 
@@ -11,21 +12,21 @@ import (
 func TestFixedAsserts(t *testing.T) {
 	as := assert.New(t)
 	as.Equal(10, data.AssertFixed(10, 10))
-	defer as.ExpectPanic(fmt.Sprintf(data.ErrFixedArity, 9, 10))
+	defer as.ExpectPanic(fmt.Errorf(data.ErrFixedArity, 9, 10))
 	data.AssertFixed(9, 10)
 }
 
 func TestMinimumAsserts(t *testing.T) {
 	as := assert.New(t)
 	as.Equal(5, data.AssertMinimum(5, 5))
-	defer as.ExpectPanic(fmt.Sprintf(data.ErrMinimumArity, 10, 9))
+	defer as.ExpectPanic(fmt.Errorf(data.ErrMinimumArity, 10, 9))
 	data.AssertMinimum(10, 9)
 }
 
 func TestRangedAsserts(t *testing.T) {
 	as := assert.New(t)
 	as.Equal(5, data.AssertRanged(3, 7, 5))
-	defer as.ExpectPanic(fmt.Sprintf(data.ErrRangedArity, 3, 7, 2))
+	defer as.ExpectPanic(fmt.Errorf(data.ErrRangedArity, 3, 7, 2))
 	data.AssertRanged(3, 7, 2)
 }
 
@@ -48,6 +49,6 @@ func TestMakeChecker(t *testing.T) {
 	as.Nil(fn4(4))
 	as.EqualError(fn4(8), fmt.Sprintf(data.ErrRangedArity, 2, 7, 8))
 
-	defer as.ExpectPanic(data.ErrTooManyArguments)
+	defer as.ExpectPanic(errors.New(data.ErrTooManyArguments))
 	data.MakeChecker(1, 2, 3)
 }

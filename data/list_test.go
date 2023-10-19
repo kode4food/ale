@@ -3,11 +3,10 @@ package data_test
 import (
 	"testing"
 
-	"github.com/kode4food/ale/internal/types"
-
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
+	"github.com/kode4food/ale/internal/types"
 )
 
 func TestSimpleList(t *testing.T) {

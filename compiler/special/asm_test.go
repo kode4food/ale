@@ -1,6 +1,7 @@
 package special_test
 
 import (
+	"errors"
 	"fmt"
 	"testing"
 
@@ -55,15 +56,13 @@ func TestAsmJump(t *testing.T) {
 
 func TestAsmLabelError(t *testing.T) {
 	as := assert.New(t)
-	defer as.ExpectPanic(
-		fmt.Sprintf(special.ErrUnexpectedLabel, "not-a-label"),
-	)
-	as.Eval(`
+
+	as.PanicWith(`
 		(asm*
 			true
 			cond-jump "not-a-label"
 		:not-a-label)
-    `)
+    `, fmt.Errorf(special.ErrUnexpectedLabel, "not-a-label"))
 }
 
 func TestAsmLabelNumbering(t *testing.T) {
@@ -89,10 +88,7 @@ func TestAsmLabelNumbering(t *testing.T) {
 
 func TestAsmOutOfScopeError(t *testing.T) {
 	as := assert.New(t)
-	defer as.ExpectPanic(
-		fmt.Sprintf(special.ErrUnexpectedName, "wont-be-found"),
-	)
-	as.Eval(`
+	as.PanicWith(`
 		(asm*
 			.push-locals
 			.local wont-be-found :val
@@ -100,17 +96,16 @@ func TestAsmOutOfScopeError(t *testing.T) {
 			store wont-be-found
 			.pop-locals
 			load wont-be-found)
-    `)
+    `, fmt.Errorf(special.ErrUnexpectedName, "wont-be-found"))
 }
 
 func TestAsmLocalScopeError(t *testing.T) {
 	as := assert.New(t)
-	defer as.ExpectPanic(encoder.ErrNoLocalScope)
-	as.Eval(`
+	as.PanicWith(`
 		(asm*
 			.pop-locals
 			.local hello :val)
-	`)
+	`, errors.New(encoder.ErrNoLocalScope))
 }
 
 func TestAsmValue(t *testing.T) {
@@ -183,8 +178,8 @@ func TestAsmOperandSizeError(t *testing.T) {
 		I(int64(isa.OperandMask)),
 	)
 
-	defer as.ExpectPanic(
-		fmt.Sprintf(isa.ErrExpectedOperand, isa.OperandMask+1),
+	as.PanicWith(
+		fmt.Sprintf("(asm* pos-int %d)", isa.OperandMask+1),
+		fmt.Errorf(isa.ErrExpectedOperand, isa.OperandMask+1),
 	)
-	as.Eval(fmt.Sprintf("(asm* pos-int %d)", isa.OperandMask+1))
 }

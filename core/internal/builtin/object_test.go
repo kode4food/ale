@@ -77,6 +77,11 @@ func TestObjectAssoc(t *testing.T) {
 			data.Null, data.Null,
 		),
 	)
+
+	as.PanicWith(`
+		(assoc {} :not-a-pair)
+	`, errors.New(builtin.ErrPutRequiresPair))
+
 }
 
 func TestMappedEval(t *testing.T) {

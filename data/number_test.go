@@ -5,11 +5,10 @@ import (
 	"math"
 	"testing"
 
-	"github.com/kode4food/ale/internal/types"
-
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
+	"github.com/kode4food/ale/internal/types"
 )
 
 func TestParseFloat(t *testing.T) {
@@ -19,7 +18,7 @@ func TestParseFloat(t *testing.T) {
 	n2 := data.Float(12.8)
 	as.Equal(n1, n2)
 
-	defer as.ExpectPanic(fmt.Sprintf(data.ErrExpectedFloat, S(`'splosion!`)))
+	defer as.ExpectPanic(fmt.Errorf(data.ErrExpectedFloat, S(`'splosion!`)))
 	data.MustParseFloat("'splosion!")
 }
 
@@ -30,7 +29,7 @@ func TestParseInteger(t *testing.T) {
 	n2 := data.Integer(37)
 	as.Equal(n1, n2)
 
-	defer as.ExpectPanic(fmt.Sprintf(data.ErrExpectedInteger, S(`'splosion!`)))
+	defer as.ExpectPanic(fmt.Errorf(data.ErrExpectedInteger, S(`'splosion!`)))
 	data.MustParseInteger("'splosion!")
 }
 
@@ -41,7 +40,7 @@ func TestParseRatio(t *testing.T) {
 	n2 := data.MustParseFloat("0.5")
 	as.True(n1.Cmp(n2) == data.EqualTo)
 
-	defer as.ExpectPanic(fmt.Sprintf(data.ErrExpectedRatio, S(`'splosion!`)))
+	defer as.ExpectPanic(fmt.Errorf(data.ErrExpectedRatio, S(`'splosion!`)))
 	data.MustParseRatio("'splosion!")
 }
 

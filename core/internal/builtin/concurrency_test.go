@@ -87,6 +87,12 @@ func TestDelayEval(t *testing.T) {
 		(define p2 (delay "hello"))
 		(p2)
 	`, S("hello"))
+
+	as.EvalTo(`
+		(define p3 (delay "nope"))
+		[(promise-forced? p3)
+         (promise-forced? "string")]
+	`, V(data.False, data.True))
 }
 
 func TestFutureEval(t *testing.T) {
