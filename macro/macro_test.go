@@ -4,8 +4,8 @@ import (
 	"testing"
 
 	"github.com/kode4food/ale/internal/assert"
-	. "github.com/kode4food/ale/internal/assert/helpers"
 	"github.com/kode4food/ale/macro"
+	"github.com/kode4food/ale/read"
 )
 
 func TestMacroCall(t *testing.T) {
@@ -25,18 +25,19 @@ func TestExpand(t *testing.T) {
 
 	as.EvalTo(
 		`(macroexpand '(define (name . _) "hello"))`,
-		L(
-			QS("ale", "define*"),
-			LS("name"),
-			L(
-				QS("ale", "label"),
-				LS("name"),
-				L(
-					QS("ale", "lambda"),
-					LS("_"),
-					S("hello"),
-				),
-			),
-		),
+		read.FromString(
+			`(ale/define* name (ale/label name (ale/lambda _ "hello")))`,
+		).Car(),
+	)
+}
+
+func TestExpand1(t *testing.T) {
+	as := assert.New(t)
+
+	as.EvalTo(
+		`(macroexpand-1 '(define (name . _) (or false true)))`,
+		read.FromString(
+			`(ale/define* name (ale/label name (ale/lambda _ (or false true))))`,
+		).Car(),
 	)
 }
