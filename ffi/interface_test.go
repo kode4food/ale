@@ -60,6 +60,16 @@ func TestInterfaceReceiver(t *testing.T) {
 	as.True(b[0])
 }
 
+func TestInterfaceReceiverType(t *testing.T) {
+	as := assert.New(t)
+	r := as.MustGet(testWrap(as), ffi.ReceiverKey)
+	typ, ok := r.(data.Typed)
+	as.True(ok)
+	as.Equal("receiver", typ.Type().Name())
+	as.Contains(":type receiver", r)
+	as.False(r.Equal(as.MustGet(testWrap(as), ffi.ReceiverKey)))
+}
+
 func TestValueInterface(t *testing.T) {
 	as := assert.New(t)
 	r := testWrap(as)
