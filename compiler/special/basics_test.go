@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/kode4food/ale/compiler/encoder"
-
 	"github.com/kode4food/ale/compiler/special"
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/assert"
