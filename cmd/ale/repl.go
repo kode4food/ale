@@ -26,12 +26,14 @@ import (
 	"github.com/kode4food/ale/internal/markdown"
 	"github.com/kode4food/ale/internal/sequence"
 	"github.com/kode4food/ale/read"
+	"github.com/kode4food/ale/read/lex"
+	"github.com/kode4food/ale/read/parse"
 )
 
 type (
 	sentinel struct{}
 
-	// REPL manages a FromScanner-Eval-Print Loop
+	// REPL manages a FromLexer-Eval-Print Loop
 	REPL struct {
 		buf bytes.Buffer
 		rl  *readline.Instance
@@ -55,7 +57,7 @@ const (
 
 var (
 	anyChar     = regexp.MustCompile(lang.AnyChar)
-	notPaired   = fmt.Sprintf(read.ErrPrefixedNotPaired, "")
+	notPaired   = fmt.Sprintf(parse.ErrPrefixedNotPaired, "")
 	docTemplate = docstring.MustGet("doc")
 	nothing     = new(sentinel)
 )
@@ -241,10 +243,10 @@ func isRecoverable(err error) bool {
 		err = e
 	}
 	msg := err.Error()
-	return msg == read.ErrListNotClosed ||
-		msg == read.ErrVectorNotClosed ||
-		msg == read.ErrMapNotClosed ||
-		msg == read.ErrStringNotTerminated ||
+	return msg == parse.ErrListNotClosed ||
+		msg == parse.ErrVectorNotClosed ||
+		msg == parse.ErrMapNotClosed ||
+		msg == lex.ErrStringNotTerminated ||
 		strings.HasPrefix(msg, notPaired)
 }
 

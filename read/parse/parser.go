@@ -1,4 +1,4 @@
-package read
+package parse
 
 import (
 	"errors"
@@ -6,13 +6,14 @@ import (
 
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/env"
+	"github.com/kode4food/ale/read/lex"
 )
 
-// reader is a stateful iteration interface for a Token stream that is piloted
-// by the FromScanner function and exposed as a LazySequence
-type reader struct {
+// parser is a stateful iteration interface for a Token stream that is piloted
+// by the FromLexer function and exposed as a LazySequence
+type parser struct {
 	seq   data.Sequence
-	token *Token
+	token *lex.Token
 }
 
 // Error messages
@@ -39,89 +40,89 @@ var (
 		data.FalseLiteral: data.False,
 	}
 
-	collectionErrors = map[TokenType]string{
-		VectorEnd: ErrVectorNotClosed,
-		ObjectEnd: ErrMapNotClosed,
+	collectionErrors = map[lex.TokenType]string{
+		lex.VectorEnd: ErrVectorNotClosed,
+		lex.ObjectEnd: ErrMapNotClosed,
 	}
 )
 
-func newReader(lexer data.Sequence) *reader {
-	return &reader{
+func newParser(lexer data.Sequence) *parser {
+	return &parser{
 		seq: lexer,
 	}
 }
 
-func (r *reader) nextValue() (data.Value, bool) {
+func (r *parser) nextValue() (data.Value, bool) {
 	if t := r.nextToken(); t != nil {
 		return r.value(t), true
 	}
 	return nil, false
 }
 
-func (r *reader) nextToken() *Token {
+func (r *parser) nextToken() *lex.Token {
 	token, seq, ok := r.seq.Split()
 	if !ok {
 		return nil
 	}
-	r.token = token.(*Token)
+	r.token = token.(*lex.Token)
 	r.seq = seq
-	if r.token.Type() == Error {
+	if r.token.Type() == lex.Error {
 		panic(r.error(r.token.Value().String()))
 	}
 	return r.token
 }
 
-func (r *reader) value(t *Token) data.Value {
+func (r *parser) value(t *lex.Token) data.Value {
 	switch t.Type() {
-	case QuoteMarker:
+	case lex.QuoteMarker:
 		return r.prefixed(quoteSym)
-	case SyntaxMarker:
+	case lex.SyntaxMarker:
 		return r.prefixed(syntaxSym)
-	case UnquoteMarker:
+	case lex.UnquoteMarker:
 		return r.prefixed(unquoteSym)
-	case SpliceMarker:
+	case lex.SpliceMarker:
 		return r.prefixed(splicingSym)
-	case ListStart:
+	case lex.ListStart:
 		return r.list()
-	case VectorStart:
+	case lex.VectorStart:
 		return r.vector()
-	case ObjectStart:
+	case lex.ObjectStart:
 		return r.object()
-	case Keyword:
+	case lex.Keyword:
 		return r.keyword()
-	case Identifier:
+	case lex.Identifier:
 		return r.identifier()
-	case ListEnd:
+	case lex.ListEnd:
 		panic(r.error(ErrUnmatchedListEnd))
-	case VectorEnd:
+	case lex.VectorEnd:
 		panic(r.error(ErrUnmatchedVectorEnd))
-	case ObjectEnd:
+	case lex.ObjectEnd:
 		panic(r.error(ErrUnmatchedMapEnd))
-	case Dot:
+	case lex.Dot:
 		panic(r.error(ErrUnexpectedDot))
 	default:
 		return t.Value()
 	}
 }
 
-func (r *reader) prefixed(s data.Symbol) data.Value {
+func (r *parser) prefixed(s data.Symbol) data.Value {
 	if v, ok := r.nextValue(); ok {
 		return data.NewList(s, v)
 	}
 	panic(r.errorf(ErrPrefixedNotPaired, s))
 }
 
-func (r *reader) list() data.Value {
+func (r *parser) list() data.Value {
 	res := data.Values{}
 	var sawDotAt = -1
 	for t, i := r.nextToken(), 0; t != nil; t, i = r.nextToken(), i+1 {
 		switch t.Type() {
-		case Dot:
+		case lex.Dot:
 			if i == 0 || sawDotAt != -1 {
 				panic(r.error(ErrInvalidListSyntax))
 			}
 			sawDotAt = i
-		case ListEnd:
+		case lex.ListEnd:
 			if sawDotAt == -1 {
 				return data.NewList(res...)
 			} else if sawDotAt != len(res)-1 {
@@ -135,13 +136,13 @@ func (r *reader) list() data.Value {
 	panic(r.error(ErrListNotClosed))
 }
 
-func (r *reader) vector() data.Value {
-	v := r.readNonDotted(VectorEnd)
+func (r *parser) vector() data.Value {
+	v := r.nonDotted(lex.VectorEnd)
 	return data.NewVector(v...)
 }
 
-func (r *reader) object() data.Value {
-	v := r.readNonDotted(ObjectEnd)
+func (r *parser) object() data.Value {
+	v := r.nonDotted(lex.ObjectEnd)
 	res, err := data.ValuesToObject(v...)
 	if err != nil {
 		panic(r.maybeWrap(err))
@@ -149,7 +150,7 @@ func (r *reader) object() data.Value {
 	return res
 }
 
-func (r *reader) readNonDotted(endToken TokenType) data.Values {
+func (r *parser) nonDotted(endToken lex.TokenType) data.Values {
 	res := data.Values{}
 	for {
 		t := r.nextToken()
@@ -165,27 +166,27 @@ func (r *reader) readNonDotted(endToken TokenType) data.Values {
 	}
 }
 
-func (r *reader) maybeWrap(err error) error {
+func (r *parser) maybeWrap(err error) error {
 	if t := r.token; t != nil {
-		return t.wrapError(err)
+		return t.WrapError(err)
 	}
 	return err
 }
 
-func (r *reader) error(text string) error {
+func (r *parser) error(text string) error {
 	return r.maybeWrap(errors.New(text))
 }
 
-func (r *reader) errorf(text string, a ...any) error {
+func (r *parser) errorf(text string, a ...any) error {
 	return r.maybeWrap(fmt.Errorf(text, a...))
 }
 
-func (r *reader) keyword() data.Value {
+func (r *parser) keyword() data.Value {
 	n := r.token.Value().(data.String)
 	return data.Keyword(n[1:])
 }
 
-func (r *reader) identifier() data.Value {
+func (r *parser) identifier() data.Value {
 	n := r.token.Value().(data.String)
 	if v, ok := specialNames[n]; ok {
 		return v

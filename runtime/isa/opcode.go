@@ -53,7 +53,7 @@ const (
 	Neg                    // Negation
 	NegInt                 // Push Negative Integer (in Operand)
 	NewRef                 // New Reference
-	NoOp                   // Non-Operator
+	NoOp                   // Error-Operator
 	Not                    // Boolean Negation
 	Null                   // Push Null
 	NumEq                  // Numeric Equality

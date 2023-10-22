@@ -1,4 +1,4 @@
-package read
+package lex
 
 import (
 	"fmt"
@@ -12,6 +12,8 @@ import (
 type (
 	tokenizer func([]string) *Token
 
+	Matcher func(src string) (*Token, string)
+
 	matchEntry struct {
 		pattern  *regexp.Regexp
 		function tokenizer
@@ -22,8 +24,8 @@ type (
 
 // Error messages
 const (
-	ErrStringNotTerminated = "string has no closing quote"
-	ErrUnexpectedCharacter = "unexpected character: %s"
+	ErrStringNotTerminated  = "string has no closing quote"
+	ErrUnexpectedCharacters = "unexpected characters: %s"
 )
 
 var (
@@ -39,43 +41,55 @@ var (
 
 	dotRegex = regexp.MustCompile(`^` + lang.Dot + `$`)
 
-	matchers = matchEntries{
-		pattern(`$`, endState(endOfFile)),
+	MatchWhitespace = matchEntries{
 		pattern(lang.Comment, tokenState(Comment)),
 		pattern(lang.NewLine, tokenState(NewLine)),
 		pattern(lang.Whitespace, tokenState(Whitespace)),
+	}
+
+	MatchStructure = matchEntries{
 		pattern(lang.ListStart, tokenState(ListStart)),
 		pattern(lang.VectorStart, tokenState(VectorStart)),
 		pattern(lang.ObjectStart, tokenState(ObjectStart)),
 		pattern(lang.ListEnd, tokenState(ListEnd)),
 		pattern(lang.VectorEnd, tokenState(VectorEnd)),
 		pattern(lang.ObjectEnd, tokenState(ObjectEnd)),
+	}
+
+	MatchQuoting = matchEntries{
 		pattern(lang.Quote, tokenState(QuoteMarker)),
 		pattern(lang.SyntaxQuote, tokenState(SyntaxMarker)),
 		pattern(lang.Splice, tokenState(SpliceMarker)),
 		pattern(lang.Unquote, tokenState(UnquoteMarker)),
+	}
 
+	MatchValues = matchEntries{
 		pattern(lang.String, stringState),
-
 		pattern(lang.Ratio, ratioState),
 		pattern(lang.Float, floatState),
 		pattern(lang.Integer, integerState),
+	}
 
+	MatchSymbols = matchEntries{
 		pattern(lang.Keyword, tokenState(Keyword)),
 		pattern(lang.Identifier, identifierState),
-
-		pattern(lang.AnyChar, errorState),
 	}
 )
 
-// Tokens creates a new Lexer Sequence of raw Tokens
-func Tokens(src data.String) data.Sequence {
+// StripWhitespace filters away all whitespace LangTokens from a Lexer Sequence
+func StripWhitespace(s data.Sequence) data.Sequence {
+	return sequence.Filter(s, func(v data.Value) bool {
+		return !v.(*Token).isWhitespace()
+	})
+}
+
+func Match(src data.String, match Matcher) data.Sequence {
 	var resolver sequence.LazyResolver
 	var line, column int
 	input := string(src)
 
 	resolver = func() (data.Value, data.Sequence, bool) {
-		if t, rest := matchToken(input); t.Type() != endOfFile {
+		if t, rest := match(input); t.Type() != endOfFile {
 			t := t.WithLocation(line, column)
 
 			if t.isNewLine() {
@@ -90,6 +104,7 @@ func Tokens(src data.String) data.Sequence {
 		}
 		return data.Null, data.Null, false
 	}
+
 	return sequence.NewLazy(resolver)
 }
 
@@ -100,14 +115,39 @@ func pattern(p string, s tokenizer) matchEntry {
 	}
 }
 
-func matchToken(src string) (*Token, string) {
-	for _, s := range matchers {
-		if sm := s.pattern.FindStringSubmatch(src); sm != nil {
-			return s.function(sm), src[len(sm[0]):]
+func MakeMatcher(m ...matchEntries) Matcher {
+	entries := concatEntries(m...)
+
+	return func(src string) (*Token, string) {
+		for _, s := range entries {
+			if sm := s.pattern.FindStringSubmatch(src); sm != nil {
+				return s.function(sm), src[len(sm[0]):]
+			}
+		}
+		// Programmer error
+		panic("unmatched lexing state")
+	}
+}
+
+func concatEntries(m ...matchEntries) matchEntries {
+	var entries matchEntries
+	entries = append(entries, pattern(`$`, endState(endOfFile)))
+	for _, e := range m {
+		entries = append(entries, e...)
+	}
+	entries = append(entries, pattern(lang.AnyChar, errorState))
+	return entries
+}
+
+func (m matchEntries) Error() matchEntries {
+	res := make(matchEntries, len(m))
+	for i, e := range m {
+		res[i] = matchEntry{
+			pattern:  e.pattern,
+			function: errorState,
 		}
 	}
-	// Programmer error
-	panic("unmatched lexing state")
+	return res
 }
 
 func tokenState(t TokenType) tokenizer {
@@ -168,6 +208,6 @@ func identifierState(sm []string) *Token {
 }
 
 func errorState(sm []string) *Token {
-	err := fmt.Errorf(ErrUnexpectedCharacter, sm[0])
+	err := fmt.Errorf(ErrUnexpectedCharacters, sm[0])
 	return MakeToken(Error, data.String(err.Error()))
 }

@@ -48,8 +48,6 @@ func TestBuiltIns(t *testing.T) {
 		}, 0),
 	)
 
-	l := read.Scan(`(hello)`)
-	tr := read.FromScanner(l)
-
+	tr := read.FromString(`(hello)`)
 	as.String("there", eval.Block(b, tr))
 }

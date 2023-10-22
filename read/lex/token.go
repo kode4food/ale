@@ -1,4 +1,4 @@
-package read
+package lex
 
 import (
 	"fmt"
@@ -7,7 +7,7 @@ import (
 )
 
 type (
-	// TokenType is an opaque type for lexer tokens
+	// TokenType is an opaque type for lexer Match
 	TokenType int
 
 	// Token is a lexer value
@@ -109,6 +109,6 @@ func (t *Token) isWhitespace() bool {
 	return t.typ == Comment || t.typ == NewLine || t.typ == Whitespace
 }
 
-func (t *Token) wrapError(e error) error {
+func (t *Token) WrapError(e error) error {
 	return fmt.Errorf(errTokenWrapped, e, t.line+1, t.column+1)
 }

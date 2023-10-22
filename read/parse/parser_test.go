@@ -1,4 +1,4 @@
-package read_test
+package parse_test
 
 import (
 	"fmt"
@@ -8,19 +8,13 @@ import (
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
 	"github.com/kode4food/ale/read"
+	"github.com/kode4food/ale/read/lex"
+	"github.com/kode4food/ale/read/parse"
 )
-
-func TestCreateReader(t *testing.T) {
-	as := assert.New(t)
-	l := read.Scan("99")
-	tr := read.FromScanner(l)
-	as.NotNil(tr)
-}
 
 func TestReadList(t *testing.T) {
 	as := assert.New(t)
-	l := read.Scan(`(99 "hello" 55.12)`)
-	tr := read.FromScanner(l)
+	tr := read.FromString(`(99 "hello" 55.12)`)
 	v := tr.Car()
 	list, ok := v.(*data.List)
 	as.True(ok)
@@ -44,13 +38,13 @@ func TestReadList(t *testing.T) {
 func TestReadDotted(t *testing.T) {
 	as := assert.New(t)
 
-	l := read.Scan(`(99 . 100)`)
-	c1 := read.FromScanner(l).Car().(*data.Cons)
+	tr := read.FromString(`(99 . 100)`)
+	c1 := tr.Car().(*data.Cons)
 	as.Number(99, c1.Car())
 	as.Number(100, c1.Cdr())
 
-	l = read.Scan(`(99 . (100 101))`)
-	l1 := read.FromScanner(l).Car().(*data.List)
+	tr = read.FromString(`(99 . (100 101))`)
+	l1 := tr.Car().(*data.List)
 	as.Number(99, l1.Car())
 	as.Number(100, l1.Cdr().(data.Pair).Car())
 	as.Number(101, l1.Cdr().(data.Pair).Cdr().(data.Pair).Car())
@@ -58,8 +52,7 @@ func TestReadDotted(t *testing.T) {
 
 func TestReadVector(t *testing.T) {
 	as := assert.New(t)
-	l := read.Scan(`[99 "hello" 55.12]`)
-	tr := read.FromScanner(l)
+	tr := read.FromString(`[99 "hello" 55.12]`)
 	v := tr.Car()
 	vector, ok := v.(data.Vector)
 	as.True(ok)
@@ -79,8 +72,7 @@ func TestReadVector(t *testing.T) {
 
 func TestReadMap(t *testing.T) {
 	as := assert.New(t)
-	l := read.Scan(`{:name "blah" :age 99}`)
-	tr := read.FromScanner(l)
+	tr := read.FromString(`{:name "blah" :age 99}`)
 	v := tr.Car()
 	m, ok := v.(*data.Object)
 	as.True(ok)
@@ -89,8 +81,7 @@ func TestReadMap(t *testing.T) {
 
 func TestReadNestedList(t *testing.T) {
 	as := assert.New(t)
-	l := read.Scan(`(99 ("hello" "there") 55.12)`)
-	tr := read.FromScanner(l)
+	tr := read.FromString(`(99 ("hello" "there") 55.12)`)
 	v := tr.Car()
 	list, ok := v.(*data.List)
 	as.True(ok)
@@ -131,29 +122,28 @@ func testReaderError(t *testing.T, src, err string, args ...any) {
 
 	defer as.ExpectPanic(fmt.Errorf(err, args...))
 
-	l := read.Scan(S(src))
-	tr := read.FromScanner(l)
+	tr := read.FromString(S(src))
 	data.Last(tr)
 }
 
 func TestReaderErrors(t *testing.T) {
-	testReaderError(t, "(99 100 ", read.ErrListNotClosed)
-	testReaderError(t, "[99 100 ", read.ErrVectorNotClosed)
-	testReaderError(t, "{:key 99", read.ErrMapNotClosed)
+	testReaderError(t, "(99 100 ", parse.ErrListNotClosed)
+	testReaderError(t, "[99 100 ", parse.ErrVectorNotClosed)
+	testReaderError(t, "{:key 99", parse.ErrMapNotClosed)
 
-	testReaderError(t, "99 100)", read.ErrUnmatchedListEnd)
-	testReaderError(t, "99 100]", read.ErrUnmatchedVectorEnd)
-	testReaderError(t, "99}", read.ErrUnmatchedMapEnd)
+	testReaderError(t, "99 100)", parse.ErrUnmatchedListEnd)
+	testReaderError(t, "99 100]", parse.ErrUnmatchedVectorEnd)
+	testReaderError(t, "99}", parse.ErrUnmatchedMapEnd)
 	testReaderError(t, "{99}", data.ErrMapNotPaired)
 
-	testReaderError(t, "(1 2 . 3 4)", read.ErrInvalidListSyntax)
-	testReaderError(t, "(.)", read.ErrInvalidListSyntax)
-	testReaderError(t, ".", read.ErrUnexpectedDot)
+	testReaderError(t, "(1 2 . 3 4)", parse.ErrInvalidListSyntax)
+	testReaderError(t, "(.)", parse.ErrInvalidListSyntax)
+	testReaderError(t, ".", parse.ErrUnexpectedDot)
 
-	testReaderError(t, "(", read.ErrListNotClosed)
-	testReaderError(t, "'", read.ErrPrefixedNotPaired, "ale/quote")
-	testReaderError(t, ",@", read.ErrPrefixedNotPaired, "ale/unquote-splicing")
-	testReaderError(t, ",", read.ErrPrefixedNotPaired, "ale/unquote")
+	testReaderError(t, "(", parse.ErrListNotClosed)
+	testReaderError(t, "'", parse.ErrPrefixedNotPaired, "ale/quote")
+	testReaderError(t, ",@", parse.ErrPrefixedNotPaired, "ale/unquote-splicing")
+	testReaderError(t, ",", parse.ErrPrefixedNotPaired, "ale/unquote")
 
 	testReaderError(t, "//", data.ErrInvalidSymbol, "//")
 	testReaderError(t, "/bad", data.ErrInvalidSymbol, "/bad")
@@ -161,5 +151,5 @@ func TestReaderErrors(t *testing.T) {
 	testReaderError(t, "bad///", data.ErrInvalidSymbol, "bad///")
 	testReaderError(t, "ale/er/ror", data.ErrInvalidSymbol, "ale/er/ror")
 
-	testReaderError(t, `"unterminated`, read.ErrStringNotTerminated)
+	testReaderError(t, `"unterminated`, lex.ErrStringNotTerminated)
 }

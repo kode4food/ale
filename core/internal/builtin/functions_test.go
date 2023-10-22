@@ -11,7 +11,7 @@ import (
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
-	"github.com/kode4food/ale/read"
+	"github.com/kode4food/ale/read/parse"
 	"github.com/kode4food/ale/runtime"
 )
 
@@ -110,15 +110,15 @@ func TestRestFunctionsEval(t *testing.T) {
 
 	as.PanicWith(`
 		(lambda (x y .) "explode")
-	`, errors.New(read.ErrInvalidListSyntax))
+	`, errors.New(parse.ErrInvalidListSyntax))
 
 	as.PanicWith(`
 		(lambda (x y . z g) "explode")
-	`, errors.New(read.ErrInvalidListSyntax))
+	`, errors.New(parse.ErrInvalidListSyntax))
 
 	as.PanicWith(`
 		(lambda (x y . . z) "explode")
-	`, errors.New(read.ErrInvalidListSyntax))
+	`, errors.New(parse.ErrInvalidListSyntax))
 }
 
 func TestTailCallEval(t *testing.T) {

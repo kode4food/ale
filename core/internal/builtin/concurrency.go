@@ -28,7 +28,7 @@ var Chan = data.Applicative(func(args ...data.Value) data.Value {
 
 }, 0, 1)
 
-// Promise instantiates a new eventually-fulfilled promise
+// Promise instantiates a new eventually fulfilled promise
 var Promise = data.Applicative(func(args ...data.Value) data.Value {
 	resolver := args[0].(data.Function)
 	return async.NewPromise(resolver)

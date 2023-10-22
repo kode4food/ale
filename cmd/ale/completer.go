@@ -5,6 +5,7 @@ import (
 
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/read"
+	"github.com/kode4food/ale/read/lex"
 )
 
 var emptyStrings []string
@@ -30,7 +31,7 @@ func (r *REPL) autoComplete(buf string) ([]string, int) {
 	src := data.String(buf)
 	seq := read.Tokens(src)
 	if l, ok := data.Last(seq); ok {
-		if l := l.(*read.Token); ok && l.Type() == read.Identifier {
+		if l := l.(*lex.Token); ok && l.Type() == lex.Identifier {
 			pfx := string(l.Value().(data.String))
 			return r.prefixedSymbols(pfx), len(pfx)
 		}
