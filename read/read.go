@@ -6,7 +6,7 @@ import (
 	"github.com/kode4food/ale/read/parse"
 )
 
-var langMatcher = lex.MakeMatcher(
+var matcher = lex.MakeMatcher(
 	lex.Ignorable,
 	lex.Structure,
 	lex.Quoting,
@@ -22,5 +22,5 @@ func FromString(src data.String) data.Sequence {
 // Tokens creates a new Lexer Sequence of raw Tokens encompassing the entire
 // set of those supported by the language
 func Tokens(src data.String) data.Sequence {
-	return lex.Match(src, langMatcher)
+	return lex.Match(src, matcher)
 }

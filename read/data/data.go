@@ -6,7 +6,7 @@ import (
 	"github.com/kode4food/ale/read/parse"
 )
 
-var dataMatcher = lex.MakeMatcher(
+var matcher = lex.MakeMatcher(
 	lex.Ignorable,
 	lex.Structure,
 	lex.Quoting.Error(),
@@ -23,5 +23,5 @@ func FromString(src data.String) data.Sequence {
 // Tokens creates a new Lexer Sequence of raw Tokens encompassing the subset of
 // those required for data representation
 func Tokens(src data.String) data.Sequence {
-	return lex.Match(src, dataMatcher)
+	return lex.Match(src, matcher)
 }
