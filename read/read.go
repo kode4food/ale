@@ -7,11 +7,11 @@ import (
 )
 
 var langMatcher = lex.MakeMatcher(
-	lex.MatchWhitespace,
-	lex.MatchStructure,
-	lex.MatchQuoting,
-	lex.MatchValues,
-	lex.MatchSymbols,
+	lex.Ignorable,
+	lex.Structure,
+	lex.Quoting,
+	lex.Values,
+	lex.Symbols,
 )
 
 // FromString converts the raw source into unexpanded data structures

@@ -7,11 +7,11 @@ import (
 )
 
 var dataMatcher = lex.MakeMatcher(
-	lex.MatchWhitespace,
-	lex.MatchStructure,
-	lex.MatchQuoting.Error(),
-	lex.MatchValues,
-	lex.MatchSymbols,
+	lex.Ignorable,
+	lex.Structure,
+	lex.Quoting.Error(),
+	lex.Values,
+	lex.Symbols,
 )
 
 // FromString converts the source into a pure data representation. This

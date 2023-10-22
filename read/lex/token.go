@@ -56,8 +56,8 @@ func MakeToken(t TokenType, v data.Value) *Token {
 	}
 }
 
-// WithLocation returns a copy of the Token with location information
-func (t *Token) WithLocation(line, column int) *Token {
+// withLocation returns a copy of the Token with location information
+func (t *Token) withLocation(line, column int) *Token {
 	res := *t
 	res.line = line
 	res.column = column

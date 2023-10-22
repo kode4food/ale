@@ -10,9 +10,9 @@ import (
 )
 
 type (
-	tokenizer func([]string) *Token
-
 	Matcher func(src string) (*Token, string)
+
+	tokenizer func([]string) *Token
 
 	matchEntry struct {
 		pattern  *regexp.Regexp
@@ -41,13 +41,13 @@ var (
 
 	dotRegex = regexp.MustCompile(`^` + lang.Dot + `$`)
 
-	MatchWhitespace = matchEntries{
+	Ignorable = matchEntries{
 		pattern(lang.Comment, tokenState(Comment)),
 		pattern(lang.NewLine, tokenState(NewLine)),
 		pattern(lang.Whitespace, tokenState(Whitespace)),
 	}
 
-	MatchStructure = matchEntries{
+	Structure = matchEntries{
 		pattern(lang.ListStart, tokenState(ListStart)),
 		pattern(lang.VectorStart, tokenState(VectorStart)),
 		pattern(lang.ObjectStart, tokenState(ObjectStart)),
@@ -56,33 +56,27 @@ var (
 		pattern(lang.ObjectEnd, tokenState(ObjectEnd)),
 	}
 
-	MatchQuoting = matchEntries{
+	Quoting = matchEntries{
 		pattern(lang.Quote, tokenState(QuoteMarker)),
 		pattern(lang.SyntaxQuote, tokenState(SyntaxMarker)),
 		pattern(lang.Splice, tokenState(SpliceMarker)),
 		pattern(lang.Unquote, tokenState(UnquoteMarker)),
 	}
 
-	MatchValues = matchEntries{
+	Values = matchEntries{
 		pattern(lang.String, stringState),
 		pattern(lang.Ratio, ratioState),
 		pattern(lang.Float, floatState),
 		pattern(lang.Integer, integerState),
 	}
 
-	MatchSymbols = matchEntries{
+	Symbols = matchEntries{
 		pattern(lang.Keyword, tokenState(Keyword)),
 		pattern(lang.Identifier, identifierState),
 	}
 )
 
-// StripWhitespace filters away all whitespace LangTokens from a Lexer Sequence
-func StripWhitespace(s data.Sequence) data.Sequence {
-	return sequence.Filter(s, func(v data.Value) bool {
-		return !v.(*Token).isWhitespace()
-	})
-}
-
+// Match tokenizes a String using the provided Matcher
 func Match(src data.String, match Matcher) data.Sequence {
 	var resolver sequence.LazyResolver
 	var line, column int
@@ -90,7 +84,7 @@ func Match(src data.String, match Matcher) data.Sequence {
 
 	resolver = func() (data.Value, data.Sequence, bool) {
 		if t, rest := match(input); t.Type() != endOfFile {
-			t := t.WithLocation(line, column)
+			t := t.withLocation(line, column)
 
 			if t.isNewLine() {
 				line++
@@ -108,11 +102,11 @@ func Match(src data.String, match Matcher) data.Sequence {
 	return sequence.NewLazy(resolver)
 }
 
-func pattern(p string, s tokenizer) matchEntry {
-	return matchEntry{
-		pattern:  regexp.MustCompile("^" + p),
-		function: s,
-	}
+// StripWhitespace filters away all whitespace LangTokens from a Lexer Sequence
+func StripWhitespace(s data.Sequence) data.Sequence {
+	return sequence.Filter(s, func(v data.Value) bool {
+		return !v.(*Token).isWhitespace()
+	})
 }
 
 func MakeMatcher(m ...matchEntries) Matcher {
@@ -126,6 +120,13 @@ func MakeMatcher(m ...matchEntries) Matcher {
 		}
 		// Programmer error
 		panic("unmatched lexing state")
+	}
+}
+
+func pattern(p string, s tokenizer) matchEntry {
+	return matchEntry{
+		pattern:  regexp.MustCompile("^" + p),
+		function: s,
 	}
 }
 
