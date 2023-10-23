@@ -110,7 +110,7 @@ func StripWhitespace(s data.Sequence) data.Sequence {
 }
 
 func MakeMatcher(m ...matchEntries) Matcher {
-	entries := concatEntries(m...)
+	entries := makeMatchEntries(m...)
 
 	return func(src string) (*Token, string) {
 		for _, s := range entries {
@@ -123,14 +123,7 @@ func MakeMatcher(m ...matchEntries) Matcher {
 	}
 }
 
-func pattern(p string, s tokenizer) matchEntry {
-	return matchEntry{
-		pattern:  regexp.MustCompile("^" + p),
-		function: s,
-	}
-}
-
-func concatEntries(m ...matchEntries) matchEntries {
+func makeMatchEntries(m ...matchEntries) matchEntries {
 	var entries matchEntries
 	entries = append(entries, pattern(`$`, endState(endOfFile)))
 	for _, e := range m {
@@ -149,6 +142,13 @@ func (m matchEntries) Error() matchEntries {
 		}
 	}
 	return res
+}
+
+func pattern(p string, s tokenizer) matchEntry {
+	return matchEntry{
+		pattern:  regexp.MustCompile("^" + p),
+		function: s,
+	}
 }
 
 func tokenState(t TokenType) tokenizer {

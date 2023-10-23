@@ -14,8 +14,8 @@ var matcher = lex.MakeMatcher(
 	lex.Symbols,
 )
 
-// FromString converts the source into a pure data representation. This
-// means no quoting, eval, or macro capabilities will be possible
+// FromString converts the source into a pure data representation. This means
+// no quoting, eval, or macro capabilities will be possible
 func FromString(src data.String) data.Sequence {
 	return parse.FromLexer(Tokens(src))
 }
