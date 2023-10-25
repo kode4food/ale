@@ -3,6 +3,7 @@ package data
 import (
 	"bytes"
 	"math/rand"
+	"slices"
 
 	"github.com/kode4food/ale/internal/types"
 )
@@ -98,17 +99,9 @@ func (v Vector) CheckArity(argCount int) error {
 	return checkRangedArity(1, 2, argCount)
 }
 
-func (v Vector) Equal(r Value) bool {
-	if r, ok := r.(Vector); ok {
-		if len(v) != len(r) {
-			return false
-		}
-		for i, elem := range r {
-			if !v[i].Equal(elem) {
-				return false
-			}
-		}
-		return true
+func (v Vector) Equal(other Value) bool {
+	if o, ok := other.(Vector); ok {
+		return slices.EqualFunc(v, o, Equal)
 	}
 	return false
 }

@@ -1,6 +1,8 @@
 package encoder
 
 import (
+	"slices"
+
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/runtime/isa"
 )
@@ -24,10 +26,6 @@ func (e *encoder) AddConstant(val data.Value) isa.Operand {
 }
 
 func (e *encoder) findConstant(val data.Value) (int, bool) {
-	for i, c := range e.constants {
-		if c.Equal(val) {
-			return i, true
-		}
-	}
-	return -1, false
+	i := slices.IndexFunc(e.constants, val.Equal)
+	return i, i != -1
 }

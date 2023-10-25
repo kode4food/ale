@@ -73,6 +73,10 @@ var (
 	falseHash = rand.Uint64()
 )
 
+func Equal(l, r Value) bool {
+	return l.Equal(r)
+}
+
 // Equal compares this Bool to another for equality
 func (b Bool) Equal(v Value) bool {
 	if v, ok := v.(Bool); ok {

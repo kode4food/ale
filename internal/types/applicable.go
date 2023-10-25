@@ -2,6 +2,7 @@ package types
 
 import (
 	"fmt"
+	"slices"
 	"strings"
 )
 
@@ -116,28 +117,13 @@ func (s Signature) equal(other Signature) bool {
 	if s.TakesRest != other.TakesRest || !s.Result.Equal(other.Result) {
 		return false
 	}
-	if len(s.Params) != len(other.Params) {
-		return false
-	}
-	for i, l := range s.Params {
-		if !l.Equal(other.Params[i]) {
-			return false
-		}
-	}
-	return true
+	return slices.EqualFunc(s.Params, other.Params, Equal)
 }
 
 func (s signatures) equal(other signatures) bool {
-	if len(s) != len(other) {
-		return false
-	}
-	for i, l := range s {
-		r := other[i]
-		if !l.equal(r) {
-			return false
-		}
-	}
-	return true
+	return slices.EqualFunc(s, other, func(l, r Signature) bool {
+		return l.equal(r)
+	})
 }
 
 func (s signatures) name() string {

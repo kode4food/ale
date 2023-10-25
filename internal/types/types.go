@@ -25,6 +25,10 @@ type (
 	typeList []Type
 )
 
+func Equal(l, r Type) bool {
+	return l.Equal(r)
+}
+
 func (t typeList) sorted() typeList {
 	res := make(typeList, len(t))
 	copy(res, t)
@@ -95,15 +99,9 @@ func (t typeList) basicType() (basic, bool) {
 }
 
 func (t typeList) equal(other typeList) bool {
-	td := t.flatten()
-	od := other.flatten()
-	if len(td) != len(od) {
-		return false
-	}
-	for i, l := range td {
-		if !l.Equal(od[i]) {
-			return false
-		}
-	}
-	return true
+	tf := t.flatten()
+	of := other.flatten()
+	return slices.EqualFunc(tf, of, func(l, r Type) bool {
+		return l.Equal(r)
+	})
 }
