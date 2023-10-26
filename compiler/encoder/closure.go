@@ -2,6 +2,7 @@ package encoder
 
 import (
 	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/internal/slices"
 	"github.com/kode4food/ale/runtime/isa"
 )
 
@@ -11,10 +12,11 @@ func (e *encoder) Closure() IndexedCells {
 }
 
 func (e *encoder) ResolveClosure(n data.Local) (*IndexedCell, bool) {
-	for _, c := range e.closure {
-		if c.Name == n {
-			return c, true
-		}
+	c, ok := slices.Find(e.closure, func(c *IndexedCell) bool {
+		return c.Name == n
+	})
+	if ok {
+		return c, ok
 	}
 	return e.resolveClosureParent(n)
 }

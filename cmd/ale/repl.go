@@ -25,6 +25,7 @@ import (
 	"github.com/kode4food/ale/internal/lang"
 	"github.com/kode4food/ale/internal/markdown"
 	"github.com/kode4food/ale/internal/sequence"
+	sl "github.com/kode4food/ale/internal/slices"
 	"github.com/kode4food/ale/read"
 	"github.com/kode4food/ale/read/lex"
 	"github.com/kode4food/ale/read/parse"
@@ -356,18 +357,20 @@ func docSymbol(sym data.Symbol) {
 func docSymbolList() {
 	names := docstring.Names()
 	slices.Sort(names)
-	escapeNames(names)
+	names = escapeNames(names)
 	joined := strings.Join(names, ", ")
 	f := formatForREPL(fmt.Sprintf(docTemplate, joined))
 	fmt.Println(f)
 }
 
-func escapeNames(names []string) {
-	for i, n := range names {
-		if strings.Contains("`*_", n[0:1]) {
-			names[i] = "\\" + n
-		}
-	}
+func escapeNames(names []string) []string {
+	return sl.Map(
+		sl.Filter(names, func(n string) bool {
+			return strings.Contains("`*_", n[0:1])
+		}), func(n string) string {
+			return "\\" + n
+		},
+	)
 }
 
 func makeUserNamespace() env.Namespace {

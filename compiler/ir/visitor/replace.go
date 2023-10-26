@@ -1,6 +1,10 @@
 package visitor
 
-import "github.com/kode4food/ale/runtime/isa"
+import (
+	"slices"
+
+	"github.com/kode4food/ale/runtime/isa"
+)
 
 type (
 	// Pattern is a replacement pattern for the visitor. The
@@ -59,11 +63,5 @@ func (r *replace) Instructions(i Instructions) {
 }
 
 func (p Pattern) matchesState(opcode isa.Opcode, state int) bool {
-	set := p[state]
-	for _, elem := range set {
-		if elem == opcode {
-			return true
-		}
-	}
-	return false
+	return slices.Contains(p[state], opcode)
 }

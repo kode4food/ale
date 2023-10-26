@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/internal/slices"
 	"github.com/kode4food/ale/read"
 	"github.com/kode4food/ale/read/lex"
 )
@@ -14,17 +15,15 @@ func (r *REPL) Do(line []rune, pos int) ([][]rune, int) {
 	pfx := string(line[:pos])
 	buf := r.buf.String() + pfx
 	res, off := r.autoComplete(buf)
-	out := make([][]rune, len(res))
 	needSpace := pos == len(line) || line[pos] != ' '
-	for i, s := range res {
+	return slices.Map(res, func(s string) []rune {
 		elem := []rune(s[off:])
 		last := len(elem) - 1
 		if !needSpace && elem[last] == ' ' {
 			elem = elem[:last]
 		}
-		out[i] = elem
-	}
-	return out, 0
+		return elem
+	}), 0
 }
 
 func (r *REPL) autoComplete(buf string) ([]string, int) {
@@ -70,36 +69,41 @@ func (r *REPL) prefixedLocals(s data.Local) []string {
 
 func (r *REPL) prefixedDomains(res []string, s data.Local) []string {
 	name := s.String()
-	for _, d := range r.ns.Environment().Domains() {
-		domain := d.String()
-		if strings.HasPrefix(domain, name) {
-			res = append(res, domain+"/")
-		}
-	}
-	return res
+	return append(res, slices.Map(
+		slices.Filter(r.ns.Environment().Domains(),
+			func(d data.Local) bool {
+				return strings.HasPrefix(string(d), name)
+			},
+		),
+		func(d data.Local) string {
+			return string(d) + "/"
+		},
+	)...)
 }
 
 func (r *REPL) prefixedQualified(s data.Qualified) []string {
 	domain := s.Domain()
 	name := s.Name().String()
 	ns := r.ns.Environment().GetQualified(s.Domain())
-	var res []string
-	for _, n := range ns.Declared() {
-		str := n.String()
-		if strings.HasPrefix(str, name) {
-			qs := data.NewQualifiedSymbol(data.Local(str), domain)
-			res = append(res, qs.String()+" ")
-		}
-	}
-	return res
+	return slices.Map(
+		slices.Filter(ns.Declared(),
+			func(n data.Local) bool {
+				return strings.HasPrefix(string(n), name)
+			},
+		),
+		func(n data.Local) string {
+			qs := data.NewQualifiedSymbol(n, domain)
+			return qs.String() + " "
+		},
+	)
 }
 
 func addPrefixed(res []string, pfx string, names data.Locals) []string {
-	for _, n := range names {
-		str := n.String()
-		if strings.HasPrefix(str, pfx) {
-			res = append(res, str+" ")
-		}
-	}
-	return res
+	return append(res, slices.Map(
+		slices.Filter(names, func(n data.Local) bool {
+			return strings.HasPrefix(string(n), pfx)
+		}), func(n data.Local) string {
+			return string(n) + " "
+		},
+	)...)
 }

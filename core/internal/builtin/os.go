@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/internal/slices"
 )
 
 var envPairRegex = regexp.MustCompile("^(?P<Key>[^=]+)=(?P<Value>.*)$")
@@ -23,11 +24,9 @@ func Env() data.Value {
 
 // Args returns a vector containing the args passed to this program
 func Args() data.Value {
-	var r data.Values
-	for _, v := range os.Args {
-		r = append(r, data.String(v))
-	}
-	return data.NewVector(r...)
+	return data.NewVector(slices.Map(os.Args, func(v string) data.Value {
+		return data.String(v)
+	})...)
 }
 
 // CurrentTime returns the current system time in nanoseconds

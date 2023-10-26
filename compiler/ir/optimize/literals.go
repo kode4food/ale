@@ -2,6 +2,7 @@ package optimize
 
 import (
 	"github.com/kode4food/ale/compiler/ir/visitor"
+	"github.com/kode4food/ale/internal/maps"
 	"github.com/kode4food/ale/runtime/isa"
 )
 
@@ -12,21 +13,13 @@ var (
 		isa.True:  isa.RetTrue,
 	}
 
-	literalKeys = _makeLiteralKeys()
+	literalKeys = maps.Keys(literalReturnMap)
 
 	literalReturnPatterns = visitor.Pattern{
 		literalKeys,
 		{isa.Return},
 	}
 )
-
-func _makeLiteralKeys() []isa.Opcode {
-	var res []isa.Opcode
-	for k := range literalReturnMap {
-		res = append(res, k)
-	}
-	return res
-}
 
 func literalReturns(root visitor.Node) visitor.Node {
 	visitor.Replace(root, literalReturnPatterns, literalReturnMapper)

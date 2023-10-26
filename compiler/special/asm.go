@@ -8,6 +8,8 @@ import (
 	"github.com/kode4food/ale/compiler/encoder"
 	"github.com/kode4food/ale/compiler/generate"
 	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/internal/maps"
+	"github.com/kode4food/ale/internal/slices"
 	"github.com/kode4food/ale/internal/strings"
 	"github.com/kode4food/ale/runtime/isa"
 )
@@ -153,17 +155,15 @@ func (e *asmEncoder) getLabelIndex(n data.Local) isa.Operand {
 func (e *asmEncoder) toOperands(
 	oc isa.Opcode, args data.Values,
 ) []isa.Operand {
-	res := make([]isa.Operand, len(args))
-	for i, a := range args {
+	return slices.Map(args, func(a data.Value) isa.Operand {
 		ao := isa.Effects[oc].Operand
 		toOperand := e.getToOperandFor(ao)
 		r, err := toOperand(a)
 		if err != nil {
 			panic(err)
 		}
-		res[i] = r
-	}
-	return res
+		return r
+	})
 }
 
 func (e *asmEncoder) getToOperandFor(ao isa.ActOn) toOperandFunc {
@@ -337,7 +337,7 @@ func toOperand(val data.Value) (isa.Operand, error) {
 }
 
 func makeCellTypeNames() string {
-	res := mapKeys(cellTypes)
+	res := maps.Keys(cellTypes)
 	var buf bytes.Buffer
 	for i, s := range res {
 		switch {
@@ -349,12 +349,4 @@ func makeCellTypeNames() string {
 		buf.WriteString(s.String())
 	}
 	return buf.String()
-}
-
-func mapKeys[K comparable, V any](m map[K]V) []K {
-	res := make([]K, 0, len(m))
-	for k := range m {
-		res = append(res, k)
-	}
-	return res
 }

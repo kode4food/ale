@@ -1,6 +1,9 @@
 package types
 
-import "fmt"
+import (
+	"fmt"
+	"slices"
+)
 
 // Union describes a Type that can accept any of a set of Types
 type Union struct {
@@ -69,10 +72,7 @@ func (u *Union) acceptsUnion(c *Checker, other *Union) bool {
 }
 
 func (u *Union) acceptsType(c *Checker, other Type) bool {
-	for _, t := range u.options {
-		if c.AcceptsChild(t, other) {
-			return true
-		}
-	}
-	return false
+	return slices.ContainsFunc(u.options, func(t Type) bool {
+		return c.AcceptsChild(t, other)
+	})
 }

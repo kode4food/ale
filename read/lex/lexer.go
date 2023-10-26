@@ -7,6 +7,7 @@ import (
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/lang"
 	"github.com/kode4food/ale/internal/sequence"
+	"github.com/kode4food/ale/internal/slices"
 )
 
 type (
@@ -134,14 +135,12 @@ func makeMatchEntries(m ...matchEntries) matchEntries {
 }
 
 func (m matchEntries) Error() matchEntries {
-	res := make(matchEntries, len(m))
-	for i, e := range m {
-		res[i] = matchEntry{
+	return slices.Map(m, func(e matchEntry) matchEntry {
+		return matchEntry{
 			pattern:  e.pattern,
 			function: errorState,
 		}
-	}
-	return res
+	})
 }
 
 func pattern(p string, s tokenizer) matchEntry {

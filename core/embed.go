@@ -2,7 +2,9 @@ package core
 
 import (
 	"embed"
-	"slices"
+	"io/fs"
+
+	"github.com/kode4food/ale/internal/slices"
 )
 
 //go:embed *.ale
@@ -11,12 +13,9 @@ var assets embed.FS
 // Names returns the names of the embedded core scripts
 func Names() []string {
 	files, _ := assets.ReadDir(".")
-	res := make([]string, 0, len(files))
-	for _, f := range files {
-		res = append(res, f.Name())
-	}
-	slices.Sort(res)
-	return res
+	return slices.SortedMap(files, func(f fs.DirEntry) string {
+		return f.Name()
+	})
 }
 
 // Get exposes the assets FS ReadFile method

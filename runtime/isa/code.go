@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/internal/slices"
 	str "github.com/kode4food/ale/internal/strings"
 )
 
@@ -44,11 +45,12 @@ func New(oc Opcode, args ...Operand) Instruction {
 }
 
 func (i Instructions) String() string {
-	strs := make([]string, len(i))
-	for j, l := range i {
-		strs[j] = l.String()
-	}
-	return strings.Join(strs, "\n")
+	return strings.Join(
+		slices.Map(i, func(in Instruction) string {
+			return in.String()
+		}),
+		"\n",
+	)
 }
 
 func (i Instruction) Split() (Opcode, Operand) {
