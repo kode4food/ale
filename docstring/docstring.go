@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/kode4food/ale/internal/do"
+	"github.com/kode4food/ale/internal/maps"
 	"github.com/kode4food/ale/internal/markdown"
 )
 
@@ -41,11 +42,7 @@ func MustGet(n string) string {
 // Names returns the registered names of available docstring entries
 func Names() []string {
 	ensureDocStringCache()
-	res := make([]string, 0, len(docStringCache))
-	for k := range docStringCache {
-		res = append(res, k)
-	}
-	return res
+	return maps.SortedKeys(docStringCache)
 }
 
 func ensureDocStringCache() {

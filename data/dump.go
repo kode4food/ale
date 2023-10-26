@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"cmp"
 	"fmt"
-	"slices"
 
 	"github.com/kode4food/ale/internal/maps"
 )
@@ -28,13 +27,11 @@ func DumpString(v Value) string {
 }
 
 func (d dumpStringMap) sortedKeys() Values {
-	keys := maps.Keys(d)
-	slices.SortFunc(keys, func(l, r Value) int {
+	return maps.SortedKeysFunc(d, func(l, r Value) int {
 		return cmp.Compare(
 			fmt.Sprintf("%p", l), fmt.Sprintf("%p", r),
 		)
 	})
-	return keys
 }
 
 func (d dumpStringMap) String() string {
