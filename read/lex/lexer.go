@@ -7,7 +7,7 @@ import (
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/lang"
 	"github.com/kode4food/ale/internal/sequence"
-	"github.com/kode4food/ale/internal/slices"
+	"github.com/kode4food/compcomb/slices"
 )
 
 type (

@@ -4,9 +4,9 @@ import (
 	"strings"
 
 	"github.com/kode4food/ale/data"
-	"github.com/kode4food/ale/internal/slices"
 	"github.com/kode4food/ale/read"
 	"github.com/kode4food/ale/read/lex"
+	"github.com/kode4food/compcomb/slices"
 )
 
 var emptyStrings []string

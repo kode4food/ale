@@ -2,8 +2,8 @@ package encoder
 
 import (
 	"github.com/kode4food/ale/data"
-	"github.com/kode4food/ale/internal/slices"
 	"github.com/kode4food/ale/runtime/isa"
+	"github.com/kode4food/compcomb/slices"
 )
 
 type paramStack []IndexedCells

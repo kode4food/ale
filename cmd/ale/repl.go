@@ -24,10 +24,10 @@ import (
 	"github.com/kode4food/ale/internal/lang"
 	"github.com/kode4food/ale/internal/markdown"
 	"github.com/kode4food/ale/internal/sequence"
-	sl "github.com/kode4food/ale/internal/slices"
 	"github.com/kode4food/ale/read"
 	"github.com/kode4food/ale/read/lex"
 	"github.com/kode4food/ale/read/parse"
+	sl "github.com/kode4food/compcomb/slices"
 )
 
 type (

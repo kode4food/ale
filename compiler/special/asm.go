@@ -8,10 +8,10 @@ import (
 	"github.com/kode4food/ale/compiler/encoder"
 	"github.com/kode4food/ale/compiler/generate"
 	"github.com/kode4food/ale/data"
-	"github.com/kode4food/ale/internal/maps"
-	"github.com/kode4food/ale/internal/slices"
 	"github.com/kode4food/ale/internal/strings"
 	"github.com/kode4food/ale/runtime/isa"
+	"github.com/kode4food/compcomb/maps"
+	"github.com/kode4food/compcomb/slices"
 )
 
 type (
