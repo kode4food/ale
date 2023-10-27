@@ -5,7 +5,7 @@ import (
 
 	"github.com/kode4food/ale/internal/do"
 	"github.com/kode4food/ale/internal/markdown"
-	"github.com/kode4food/compcomb/maps"
+	"github.com/kode4food/comb/maps"
 )
 
 // Error messages

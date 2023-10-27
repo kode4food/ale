@@ -5,7 +5,7 @@ import (
 	"cmp"
 	"fmt"
 
-	"github.com/kode4food/compcomb/maps"
+	"github.com/kode4food/comb/maps"
 )
 
 type dumpStringMap map[Value]Value

@@ -6,7 +6,7 @@ import (
 
 	"github.com/kode4food/ale/data"
 	str "github.com/kode4food/ale/internal/strings"
-	"github.com/kode4food/compcomb/slices"
+	"github.com/kode4food/comb/slices"
 )
 
 type (

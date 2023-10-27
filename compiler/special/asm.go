@@ -10,8 +10,8 @@ import (
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/strings"
 	"github.com/kode4food/ale/runtime/isa"
-	"github.com/kode4food/compcomb/maps"
-	"github.com/kode4food/compcomb/slices"
+	"github.com/kode4food/comb/maps"
+	"github.com/kode4food/comb/slices"
 )
 
 type (

@@ -4,7 +4,7 @@ import (
 	"embed"
 	"io/fs"
 
-	"github.com/kode4food/compcomb/slices"
+	"github.com/kode4food/comb/slices"
 )
 
 //go:embed *.ale
