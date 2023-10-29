@@ -10,8 +10,7 @@ import (
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/strings"
 	"github.com/kode4food/ale/runtime/isa"
-	"github.com/kode4food/comb/maps"
-	"github.com/kode4food/comb/slices"
+	"github.com/kode4food/comb/basics"
 )
 
 type (
@@ -155,7 +154,7 @@ func (e *asmEncoder) getLabelIndex(n data.Local) isa.Operand {
 func (e *asmEncoder) toOperands(
 	oc isa.Opcode, args data.Values,
 ) []isa.Operand {
-	return slices.Map(args, func(a data.Value) isa.Operand {
+	return basics.Map(args, func(a data.Value) isa.Operand {
 		ao := isa.Effects[oc].Operand
 		toOperand := e.getToOperandFor(ao)
 		r, err := toOperand(a)
@@ -337,7 +336,7 @@ func toOperand(val data.Value) (isa.Operand, error) {
 }
 
 func makeCellTypeNames() string {
-	res := maps.Keys(cellTypes)
+	res := basics.MapKeys(cellTypes)
 	var buf bytes.Buffer
 	for i, s := range res {
 		switch {

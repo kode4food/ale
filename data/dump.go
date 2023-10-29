@@ -5,7 +5,7 @@ import (
 	"cmp"
 	"fmt"
 
-	"github.com/kode4food/comb/maps"
+	"github.com/kode4food/comb"
 )
 
 type dumpStringMap map[Value]Value
@@ -26,12 +26,14 @@ func DumpString(v Value) string {
 	return m.String()
 }
 
+var valueKeySorter = comb.SortedKeysFunc[Value, Value](func(l, r Value) int {
+	return cmp.Compare(
+		fmt.Sprintf("%p", l), fmt.Sprintf("%p", r),
+	)
+}).Must()
+
 func (d dumpStringMap) sortedKeys() Values {
-	return maps.SortedKeysFunc(d, func(l, r Value) int {
-		return cmp.Compare(
-			fmt.Sprintf("%p", l), fmt.Sprintf("%p", r),
-		)
-	})
+	return valueKeySorter(d)
 }
 
 func (d dumpStringMap) String() string {

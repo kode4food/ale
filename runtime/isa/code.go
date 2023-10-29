@@ -6,7 +6,7 @@ import (
 
 	"github.com/kode4food/ale/data"
 	str "github.com/kode4food/ale/internal/strings"
-	"github.com/kode4food/comb/slices"
+	"github.com/kode4food/comb/basics"
 )
 
 type (
@@ -46,7 +46,7 @@ func New(oc Opcode, args ...Operand) Instruction {
 
 func (i Instructions) String() string {
 	return strings.Join(
-		slices.Map(i, func(in Instruction) string {
+		basics.Map(i, func(in Instruction) string {
 			return in.String()
 		}),
 		"\n",

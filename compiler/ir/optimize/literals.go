@@ -3,7 +3,7 @@ package optimize
 import (
 	"github.com/kode4food/ale/compiler/ir/visitor"
 	"github.com/kode4food/ale/runtime/isa"
-	"github.com/kode4food/comb/maps"
+	"github.com/kode4food/comb/basics"
 )
 
 var (
@@ -13,7 +13,7 @@ var (
 		isa.True:  isa.RetTrue,
 	}
 
-	literalKeys = maps.Keys(literalReturnMap)
+	literalKeys = basics.MapKeys(literalReturnMap)
 
 	literalReturnPatterns = visitor.Pattern{
 		literalKeys,

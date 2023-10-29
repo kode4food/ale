@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/kode4food/ale/data"
-	"github.com/kode4food/comb/slices"
+	"github.com/kode4food/comb/basics"
 )
 
 var envPairRegex = regexp.MustCompile("^(?P<Key>[^=]+)=(?P<Value>.*)$")
@@ -24,7 +24,7 @@ func Env() data.Value {
 
 // Args returns a vector containing the args passed to this program
 func Args() data.Value {
-	return data.NewVector(slices.Map(os.Args, func(v string) data.Value {
+	return data.NewVector(basics.Map(os.Args, func(v string) data.Value {
 		return data.String(v)
 	})...)
 }

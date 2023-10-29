@@ -6,7 +6,7 @@ import (
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/read"
 	"github.com/kode4food/ale/read/lex"
-	"github.com/kode4food/comb/slices"
+	"github.com/kode4food/comb/basics"
 )
 
 var emptyStrings []string
@@ -16,7 +16,7 @@ func (r *REPL) Do(line []rune, pos int) ([][]rune, int) {
 	buf := r.buf.String() + pfx
 	res, off := r.autoComplete(buf)
 	needSpace := pos == len(line) || line[pos] != ' '
-	return slices.Map(res, func(s string) []rune {
+	return basics.Map(res, func(s string) []rune {
 		elem := []rune(s[off:])
 		last := len(elem) - 1
 		if !needSpace && elem[last] == ' ' {
@@ -69,8 +69,8 @@ func (r *REPL) prefixedLocals(s data.Local) []string {
 
 func (r *REPL) prefixedDomains(res []string, s data.Local) []string {
 	name := s.String()
-	return append(res, slices.Map(
-		slices.Filter(r.ns.Environment().Domains(),
+	return append(res, basics.Map(
+		basics.Filter(r.ns.Environment().Domains(),
 			func(d data.Local) bool {
 				return strings.HasPrefix(string(d), name)
 			},
@@ -85,8 +85,8 @@ func (r *REPL) prefixedQualified(s data.Qualified) []string {
 	domain := s.Domain()
 	name := s.Name().String()
 	ns := r.ns.Environment().GetQualified(s.Domain())
-	return slices.Map(
-		slices.Filter(ns.Declared(),
+	return basics.Map(
+		basics.Filter(ns.Declared(),
 			func(n data.Local) bool {
 				return strings.HasPrefix(string(n), name)
 			},
@@ -99,8 +99,8 @@ func (r *REPL) prefixedQualified(s data.Qualified) []string {
 }
 
 func addPrefixed(res []string, pfx string, names data.Locals) []string {
-	return append(res, slices.Map(
-		slices.Filter(names, func(n data.Local) bool {
+	return append(res, basics.Map(
+		basics.Filter(names, func(n data.Local) bool {
 			return strings.HasPrefix(string(n), pfx)
 		}), func(n data.Local) string {
 			return string(n) + " "

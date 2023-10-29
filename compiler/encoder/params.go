@@ -3,13 +3,13 @@ package encoder
 import (
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/runtime/isa"
-	"github.com/kode4food/comb/slices"
+	"github.com/kode4food/comb/basics"
 )
 
 type paramStack []IndexedCells
 
 func (e *encoder) PushParams(names data.Locals, rest bool) {
-	cells := slices.IndexedMap(names, func(n data.Local, i int) *IndexedCell {
+	cells := basics.IndexedMap(names, func(n data.Local, i int) *IndexedCell {
 		c := newCell(ValueCell, n)
 		return newIndexedCell(isa.Operand(i), c)
 	})
@@ -37,7 +37,7 @@ func (e *encoder) ResolveParam(n data.Local) (*IndexedCell, bool) {
 }
 
 func resolveParam(cells IndexedCells, lookup data.Local) (*IndexedCell, bool) {
-	return slices.Find(cells, func(c *IndexedCell) bool {
+	return basics.Find(cells, func(c *IndexedCell) bool {
 		return c.Name == lookup
 	})
 }

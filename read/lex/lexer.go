@@ -7,7 +7,7 @@ import (
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/lang"
 	"github.com/kode4food/ale/internal/sequence"
-	"github.com/kode4food/comb/slices"
+	"github.com/kode4food/comb/basics"
 )
 
 type (
@@ -135,7 +135,7 @@ func makeMatchEntries(m ...matchEntries) matchEntries {
 }
 
 func (m matchEntries) Error() matchEntries {
-	return slices.Map(m, func(e matchEntry) matchEntry {
+	return basics.Map(m, func(e matchEntry) matchEntry {
 		return matchEntry{
 			pattern:  e.pattern,
 			function: errorState,

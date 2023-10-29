@@ -27,7 +27,7 @@ import (
 	"github.com/kode4food/ale/read"
 	"github.com/kode4food/ale/read/lex"
 	"github.com/kode4food/ale/read/parse"
-	sl "github.com/kode4food/comb/slices"
+	"github.com/kode4food/comb"
 )
 
 type (
@@ -361,15 +361,11 @@ func docSymbolList() {
 	fmt.Println(f)
 }
 
-func escapeNames(names []string) []string {
-	return sl.Map(
-		sl.Filter(names, func(n string) bool {
-			return strings.Contains("`*_", n[0:1])
-		}), func(n string) string {
-			return "\\" + n
-		},
-	)
-}
+var escapeNames = comb.Filter(func(n string) bool {
+	return strings.Contains("`*_", n[0:1])
+}).Then(comb.Map(func(n string) string {
+	return "\\" + n
+})).Must()
 
 func makeUserNamespace() env.Namespace {
 	return bootstrap.TopLevelEnvironment().GetQualified(UserDomain)

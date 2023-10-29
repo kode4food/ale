@@ -3,7 +3,7 @@ package encoder
 import (
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/runtime/isa"
-	"github.com/kode4food/comb/slices"
+	"github.com/kode4food/comb/basics"
 )
 
 // Closure calculates the enclosed names for this encoder
@@ -12,7 +12,7 @@ func (e *encoder) Closure() IndexedCells {
 }
 
 func (e *encoder) ResolveClosure(n data.Local) (*IndexedCell, bool) {
-	c, ok := slices.Find(e.closure, func(c *IndexedCell) bool {
+	c, ok := basics.Find(e.closure, func(c *IndexedCell) bool {
 		return c.Name == n
 	})
 	if ok {
