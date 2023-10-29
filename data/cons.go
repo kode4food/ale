@@ -3,9 +3,9 @@ package data
 import (
 	"bytes"
 	"cmp"
-	"slices"
 
 	"github.com/kode4food/ale/internal/types"
+	"github.com/kode4food/comb/basics"
 )
 
 type (
@@ -29,12 +29,9 @@ type (
 
 // Sorted returns a sorted set of Pairs
 func (p Pairs) Sorted() Pairs {
-	res := make(Pairs, len(p))
-	copy(res, p)
-	slices.SortFunc(res, func(l, r Pair) int {
+	return basics.SortFunc(p, func(l, r Pair) int {
 		return cmp.Compare(l.Car().String(), r.Car().String())
 	})
-	return res
 }
 
 // NewCons returns a new Cons cell instance

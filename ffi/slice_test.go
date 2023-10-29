@@ -7,6 +7,7 @@ import (
 	"github.com/kode4food/ale/ffi"
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
+	"github.com/kode4food/comb/basics"
 )
 
 func TestSliceWrap(t *testing.T) {
@@ -22,11 +23,9 @@ func TestSliceWrap(t *testing.T) {
 func TestSliceUnwrap(t *testing.T) {
 	as := assert.New(t)
 	f := ffi.MustWrap(func(a []int) []int {
-		res := make([]int, len(a))
-		for i, v := range a {
-			res[i] = v * 2
-		}
-		return res
+		return basics.Map(a, func(i int) int {
+			return i * 2
+		})
 	}).(data.Function)
 	out := f.Call(data.NewVector(I(1), I(2), I(3))).(data.Vector).Values()
 	as.Equal(3, len(out))

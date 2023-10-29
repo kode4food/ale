@@ -4,12 +4,12 @@ import (
 	"bytes"
 	"fmt"
 	"regexp"
-	"slices"
 	"strings"
 	"sync"
 
 	"github.com/kode4food/ale/internal/lang"
 	"github.com/kode4food/ale/internal/types"
+	"github.com/kode4food/comb/basics"
 )
 
 type (
@@ -176,10 +176,7 @@ func (l Local) HashCode() uint64 {
 
 // Sorted returns a sorted set of Locals
 func (n Locals) Sorted() Locals {
-	res := make(Locals, len(n))
-	copy(res, n)
-	slices.Sort(res)
-	return res
+	return basics.Sort(n)
 }
 
 // NewQualifiedSymbol returns a Qualified Symbol for a specific domain

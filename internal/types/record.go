@@ -4,8 +4,9 @@ import (
 	"bytes"
 	"cmp"
 	"fmt"
-	"slices"
 	"strings"
+
+	"github.com/kode4food/comb/basics"
 )
 
 type (
@@ -82,12 +83,9 @@ func (f fields) toMap() map[string]Type {
 }
 
 func (f fields) sorted() fields {
-	res := make(fields, len(f))
-	copy(res, f)
-	slices.SortFunc(res, func(l, r Field) int {
+	return basics.SortFunc(f, func(l, r Field) int {
 		return cmp.Compare(l.Name, r.Name)
 	})
-	return res
 }
 
 func (f fields) name() string {
