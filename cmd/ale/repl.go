@@ -27,7 +27,7 @@ import (
 	"github.com/kode4food/ale/read"
 	"github.com/kode4food/ale/read/lex"
 	"github.com/kode4food/ale/read/parse"
-	"github.com/kode4food/comb"
+	"github.com/kode4food/comb/slices"
 )
 
 type (
@@ -361,9 +361,9 @@ func docSymbolList() {
 	fmt.Println(f)
 }
 
-var escapeNames = comb.Filter(func(n string) bool {
+var escapeNames = slices.Filter(func(n string) bool {
 	return strings.Contains("`*_", n[0:1])
-}).Then(comb.Map(func(n string) string {
+}).Then(slices.Map(func(n string) string {
 	return "\\" + n
 })).Must()
 

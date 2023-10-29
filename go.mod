@@ -5,7 +5,7 @@ go 1.21.3
 require (
 	github.com/chzyer/readline v1.5.1
 	github.com/google/uuid v1.4.0
-	github.com/kode4food/comb v0.0.0-20231029105227-0cfd6d4b9c04
+	github.com/kode4food/comb v0.0.0-20231029142028-af2d195b806f
 	github.com/stretchr/testify v1.8.4
 	golang.org/x/tools v0.14.0
 	gopkg.in/yaml.v3 v3.0.1

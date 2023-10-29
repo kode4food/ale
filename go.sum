@@ -10,8 +10,8 @@ github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/google/uuid v1.4.0 h1:MtMxsa51/r9yyhkyLsVeVt0B+BGQZzpQiTQ4eHZ8bc4=
 github.com/google/uuid v1.4.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
-github.com/kode4food/comb v0.0.0-20231029105227-0cfd6d4b9c04 h1:wox79ky8FPanh75xfA1LpfiSMKh7IedoKO/4iKitYgk=
-github.com/kode4food/comb v0.0.0-20231029105227-0cfd6d4b9c04/go.mod h1:RBneVoCD4gswA4hUo7hQJQDBSfvpFMyT7IDo89+1hvo=
+github.com/kode4food/comb v0.0.0-20231029142028-af2d195b806f h1:T4sxeUiSp01+I7HReW2RTMeAQuiPN3BKQRDJ1MnyrXU=
+github.com/kode4food/comb v0.0.0-20231029142028-af2d195b806f/go.mod h1:RBneVoCD4gswA4hUo7hQJQDBSfvpFMyT7IDo89+1hvo=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/stretchr/testify v1.8.4 h1:CcVxjf3Q8PM0mHUKJCdn+eZZtm5yQwehR5yeSVQQcUk=

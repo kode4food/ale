@@ -5,7 +5,7 @@ import (
 
 	"github.com/kode4food/ale/internal/do"
 	"github.com/kode4food/ale/internal/markdown"
-	"github.com/kode4food/comb/maps"
+	"github.com/kode4food/comb/basics"
 )
 
 // Error messages
@@ -42,7 +42,7 @@ func MustGet(n string) string {
 // Names returns the registered names of available docstring entries
 func Names() []string {
 	ensureDocStringCache()
-	return maps.SortedKeys(docStringCache)
+	return basics.SortedKeys(docStringCache)
 }
 
 func ensureDocStringCache() {
