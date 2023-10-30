@@ -16,7 +16,7 @@ var optimizers = []optimizer{
 
 // Instructions performs optimizations on the provided instructions
 func Instructions(code isa.Instructions) isa.Instructions {
-	return basics.ReduceFrom(
+	return basics.FoldLeft(
 		optimizers,
 		visitor.Branch(code),
 		func(node visitor.Node, o optimizer) visitor.Node {

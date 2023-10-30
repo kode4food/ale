@@ -1,8 +1,8 @@
 ---
-title: "reduce"
-description: "reduces a sequence"
-names: ["reduce"]
-usage: "(reduce func val? seq)"
+title: "fold-left"
+description: "left folds a sequence"
+names: ["reduce", "fold-left", "foldl"]
+usage: "(fold-left func val? seq)"
 tags: ["sequence", "comprehension"]
 ---
 
@@ -11,7 +11,7 @@ Iterates over a set of sequence, reducing their elements to a single resulting v
 #### An Example
 
 ```scheme
-(reduce + 5 (range 1 11))
+(fold-left + 5 (range 1 11))
 ```
 
 This will return the value _60_.

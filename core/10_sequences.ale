@@ -86,20 +86,33 @@
              prev)))
    coll '()))
 
-(define-lambda reduce
+(define-lambda fold-left
   [(func init coll)
-     ((lambda-rec reduce-inner (init coll)
+     ((lambda-rec fold-inner (acc coll)
         (if (seq coll)
-            (reduce-inner (func init (first coll)) (rest coll))
-            init))
+            (fold-inner (func acc (first coll)) (rest coll))
+            acc))
       init coll)]
-
   [(func coll)
      (if (seq coll)
-         (reduce func (first coll) (rest coll))
+         (fold-left func (first coll) (rest coll))
          (func))])
 
 (define (reverse! coll)
   (if (reversible? coll)
       (reverse coll)
-      (reduce conj '() coll)))
+      (fold-left conj '() coll)))
+
+(define :private (make-fold-right reverser)
+  (lambda
+    [(func init coll)
+       (fold-left (lambda (l r) (func r l)) init (reverser coll))]
+    [(func coll)
+       (fold-left (lambda (l r) (func r l)) (reverser coll))]))
+
+(define fold-right (make-fold-right reverse))
+(define fold-right! (make-fold-right reverse!))
+
+(define foldl fold-left)
+(define foldr fold-right)
+(define reduce fold-left)
