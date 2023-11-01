@@ -11,7 +11,7 @@ type Call func(env.Namespace, ...data.Value) data.Value
 
 var CallType = types.MakeBasic("macro")
 
-// CallType makes Call a typed value
+// Type makes Call a typed value
 func (Call) Type() types.Type {
 	return CallType
 }

@@ -31,13 +31,13 @@ func TestWriter(t *testing.T) {
 
 	w := stream.NewWriter(c, stream.StrOutput)
 
-	var write data.Function
+	var write data.Lambda
 	v, _ := w.Get(stream.WriteKey)
-	write = v.(data.Function)
+	write = v.(data.Lambda)
 
-	var cl data.Function
+	var cl data.Lambda
 	v, _ = w.Get(stream.CloseKey)
-	cl = v.(data.Function)
+	cl = v.(data.Lambda)
 
 	write.Call(S("hello"))
 	write.Call(V(S("there"), S("you")))

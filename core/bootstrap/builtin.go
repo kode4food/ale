@@ -3,9 +3,11 @@ package bootstrap
 import (
 	"fmt"
 
+	builtin2 "github.com/kode4food/ale/core/builtin"
+
 	"github.com/kode4food/ale/compiler/encoder"
+	"github.com/kode4food/ale/compiler/generate"
 	"github.com/kode4food/ale/compiler/special"
-	"github.com/kode4food/ale/core/internal/builtin"
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/env"
 	"github.com/kode4food/ale/macro"
@@ -45,45 +47,45 @@ func (b *bootstrap) initialFunctions() {
 }
 
 func (b *bootstrap) specialForms() {
-	b.specials(map[data.Local]encoder.Call{
-		"asm*":          special.Asm,
-		"begin":         special.Begin,
-		"eval":          special.Eval,
-		"lambda":        special.Lambda,
-		"let":           special.Let,
-		"let-rec":       special.LetMutual,
-		"macroexpand-1": special.MacroExpand1,
-		"macroexpand":   special.MacroExpand,
+	b.specials(map[data.Local]special.Call{
+		"asm*":          builtin2.Asm,
+		"begin":         builtin2.Begin,
+		"eval":          builtin2.Eval,
+		"lambda":        builtin2.Lambda,
+		"let":           builtin2.Let,
+		"let-rec":       builtin2.LetMutual,
+		"macroexpand-1": builtin2.MacroExpand1,
+		"macroexpand":   builtin2.MacroExpand,
 	})
 }
 
 func (b *bootstrap) availableFunctions() {
-	b.functions(map[data.Local]data.Function{
-		"append":       builtin.Append,
-		"assoc":        builtin.Assoc,
-		"chan":         builtin.Chan,
-		"current-time": builtin.CurrentTime,
-		"defer*":       builtin.Defer,
-		"dissoc":       builtin.Dissoc,
-		"promise*":     builtin.Promise,
-		"gensym":       builtin.GenSym,
-		"get":          builtin.Get,
-		"go*":          builtin.Go,
-		"is-a*":        builtin.IsA,
-		"lazy-seq*":    builtin.LazySequence,
-		"length":       builtin.Length,
-		"list":         builtin.List,
-		"macro*":       builtin.Macro,
-		"nth":          builtin.Nth,
-		"object":       builtin.Object,
-		"read":         builtin.Read,
-		"recover":      builtin.Recover,
-		"reverse":      builtin.Reverse,
-		"str!":         builtin.ReaderStr,
-		"str":          builtin.Str,
-		"sym":          builtin.Sym,
-		"type-of*":     builtin.TypeOf,
-		"vector":       builtin.Vector,
+	b.functions(map[data.Local]data.Lambda{
+		"append":       builtin2.Append,
+		"assoc":        builtin2.Assoc,
+		"chan":         builtin2.Chan,
+		"current-time": builtin2.CurrentTime,
+		"defer*":       builtin2.Defer,
+		"dissoc":       builtin2.Dissoc,
+		"promise*":     builtin2.Promise,
+		"gensym":       builtin2.GenSym,
+		"get":          builtin2.Get,
+		"go*":          builtin2.Go,
+		"is-a*":        builtin2.IsA,
+		"lazy-seq*":    builtin2.LazySequence,
+		"length":       builtin2.Length,
+		"list":         builtin2.List,
+		"macro*":       builtin2.Macro,
+		"nth":          builtin2.Nth,
+		"object":       builtin2.Object,
+		"read":         builtin2.Read,
+		"recover":      builtin2.Recover,
+		"reverse":      builtin2.Reverse,
+		"str!":         builtin2.ReaderStr,
+		"str":          builtin2.Str,
+		"sym":          builtin2.Sym,
+		"type-of*":     builtin2.TypeOf,
+		"vector":       builtin2.Vector,
 	})
 
 	b.macros(map[data.Local]macro.Call{
@@ -91,13 +93,13 @@ func (b *bootstrap) availableFunctions() {
 	})
 }
 
-func (b *bootstrap) functions(f map[data.Local]data.Function) {
+func (b *bootstrap) functions(f map[data.Local]data.Lambda) {
 	for k, v := range f {
 		b.function(k, v)
 	}
 }
 
-func (b *bootstrap) function(name data.Local, call data.Function) {
+func (b *bootstrap) function(name data.Local, call data.Lambda) {
 	b.funcMap[name] = call
 }
 
@@ -110,25 +112,27 @@ func (b *bootstrap) macro(name data.Local, call macro.Call) {
 	b.macroMap[name] = call
 }
 
-func (b *bootstrap) specials(s map[data.Local]encoder.Call) {
+func (b *bootstrap) specials(s map[data.Local]special.Call) {
 	for k, v := range s {
 		b.special(k, v)
 	}
 }
 
-func (b *bootstrap) special(name data.Local, call encoder.Call) {
+func (b *bootstrap) special(name data.Local, call special.Call) {
 	b.specialMap[name] = call
 }
 
 func makeDefiner[T data.Value](
 	ns env.Namespace, m map[data.Local]T, err string,
-) data.Function {
-	return data.Normal(func(args ...data.Value) data.Value {
+) special.Call {
+	return func(e encoder.Encoder, args ...data.Value) {
+		data.AssertFixed(1, len(args))
 		n := args[0].(data.Local)
 		if sf, ok := m[n]; ok {
-			ns.Declare(n).Bind(sf)
-			return args[0]
+			e.Globals().Declare(n).Bind(sf)
+			generate.Symbol(e, n)
+			return
 		}
 		panic(fmt.Errorf(err, n))
-	}, 1)
+	}
 }

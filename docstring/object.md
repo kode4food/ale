@@ -6,7 +6,7 @@ usage: "(object <key value>*)"
 tags: ["data"]
 ---
 
-Will create a new object (hash-map) based on the provided key-value pairs, or return an empty object if no forms are provided. This function is no different from the object literal syntax except that it can be treated in a first-class fashion.
+Create a new object (hash-map) based on the provided key-value pairs, or return an empty object if no forms are provided. This function is no different from the object literal syntax except that it can be treated in a first-class fashion.
 
 An object can be iterated over as a sequence. The resulting sequence is guaranteed to have no duplicated keys, but is not guaranteed to return in any particular order.
 

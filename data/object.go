@@ -211,10 +211,6 @@ func (o *Object) Call(args ...Value) Value {
 	return mappedCall(o, args)
 }
 
-func (o *Object) Convention() Convention {
-	return ApplicativeCall
-}
-
 func (o *Object) CheckArity(argCount int) error {
 	return checkRangedArity(1, 2, argCount)
 }

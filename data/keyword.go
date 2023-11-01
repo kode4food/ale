@@ -16,7 +16,7 @@ func (k Keyword) Name() Local {
 	return Local(k)
 }
 
-// Call turns Keyword into a Function
+// Call turns Keyword into a Caller
 func (k Keyword) Call(args ...Value) Value {
 	m := args[0].(Mapped)
 	res, ok := m.Get(k)
@@ -26,12 +26,7 @@ func (k Keyword) Call(args ...Value) Value {
 	return res
 }
 
-// Convention returns the Function's calling convention
-func (k Keyword) Convention() Convention {
-	return ApplicativeCall
-}
-
-// CheckArity performs a compile-time arity check for the Function
+// CheckArity performs a compile-time arity check for the Lambda
 func (k Keyword) CheckArity(argCount int) error {
 	return checkRangedArity(1, 2, argCount)
 }

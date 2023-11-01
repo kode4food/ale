@@ -4,6 +4,8 @@ import (
 	"testing"
 
 	main "github.com/kode4food/ale/cmd/ale"
+	"github.com/kode4food/ale/compiler/encoder"
+	"github.com/kode4food/ale/compiler/special"
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
@@ -16,13 +18,13 @@ func TestREPL(t *testing.T) {
 	as.NotNil(r)
 }
 
-func asCaller(t *testing.T, v data.Value) data.Function {
+func asEncoder(t *testing.T, v data.Value) special.Call {
 	t.Helper()
-	if f, ok := v.(data.Function); ok {
+	if f, ok := v.(special.Call); ok {
 		return f
 	}
 	as := assert.New(t)
-	as.Fail("value is not a function")
+	as.Fail("value is not an encoder")
 	return nil
 }
 
@@ -34,11 +36,9 @@ func TestBuiltInUse(t *testing.T) {
 	e, ok := ns1.Resolve("use")
 	as.True(ok && e.IsBound())
 	as.NotNil(e.Value())
-	use := asCaller(t, e.Value())
-
+	use := asEncoder(t, e.Value())
 	nsName := LS("test-ns")
-	nothing := use.Call(nsName)
-	as.NotNil(nothing)
+	use(encoder.NewEncoder(ns1), nsName)
 
 	ns2 := repl.GetNS()
 	as.NotNil(ns2)

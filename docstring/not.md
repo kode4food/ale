@@ -6,7 +6,7 @@ usage: "(not form)"
 tags: ["logic"]
 ---
 
-Will return _#f_ (false) if the provided _form_ is truthy, otherwise will return _#t_ (true).
+Return _#f_ (false) if the provided _form_ is truthy, otherwise will return _#t_ (true).
 
 #### An Example
 

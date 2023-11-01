@@ -6,7 +6,7 @@ usage: "(seq form)"
 tags: ["sequence", "conversion"]
 ---
 
-Will attempt to convert the provided form to a sequence if it isn't already. If the form cannot be converted, or if the resulting sequence is empty, the empty list will be returned.
+Attempt to convert the provided form to a sequence if it isn't already. If the form cannot be converted, or if the resulting sequence is empty, the empty list will be returned.
 
 #### An Example
 

@@ -14,8 +14,8 @@ func Lambda(e encoder.Encoder, build Builder) *vm.Lambda {
 	cells := child.Closure()
 	clen := len(cells)
 	if clen == 0 {
-		// nothing needed to be captured from local variables,
-		// so just pass the newly instantiated closure through
+		// nothing needed to be captured from local variables, so pass the
+		// newly instantiated closure through
 		Literal(e, fn.Call())
 		return fn
 	}

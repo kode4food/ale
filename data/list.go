@@ -6,7 +6,7 @@ import (
 	"github.com/kode4food/ale/internal/types"
 )
 
-// List represents a singly-linked List
+// A List represents a singly linked List
 type List struct {
 	first Value
 	rest  *List
@@ -108,10 +108,6 @@ func (l *List) ElementAt(index int) (Value, bool) {
 
 func (l *List) Call(args ...Value) Value {
 	return indexedCall(l, args)
-}
-
-func (l *List) Convention() Convention {
-	return ApplicativeCall
 }
 
 func (l *List) CheckArity(argCount int) error {

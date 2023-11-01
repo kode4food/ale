@@ -17,11 +17,11 @@ var constants = data.Values{
 	I(5),
 	I(6),
 	S("a thrown error"),
-	data.Applicative(numLoopSum),
+	data.MakeLambda(numLoopSum),
 	LS("a-name"),
 }
 
-func makeFunc(code isa.Instructions) data.Function {
+func makeLambda(code isa.Instructions) data.Lambda {
 	lambda := &vm.Lambda{
 		Code:       code,
 		Constants:  constants,
@@ -30,11 +30,11 @@ func makeFunc(code isa.Instructions) data.Function {
 		Globals:    env.NewEnvironment().GetAnonymous(),
 	}
 	closure := lambda.Call(S("closure"))
-	return closure.(data.Function)
+	return closure.(data.Lambda)
 }
 
 func runCode(code isa.Instructions) data.Value {
-	fn := makeFunc(code)
+	fn := makeLambda(code)
 	return fn.Call(S("arg"))
 }
 
@@ -379,21 +379,21 @@ func TestArgs(t *testing.T) {
 	as := assert.New(t)
 	args := data.Values{S("arg1"), S("arg2"), S("arg3"), S("arg4")}
 
-	c1 := makeFunc(isa.Instructions{
+	c1 := makeLambda(isa.Instructions{
 		isa.ArgLen.New(),
 		isa.Return.New(),
 	})
 	r1 := c1.Call(args...)
 	as.Equal(I(4), r1)
 
-	c2 := makeFunc(isa.Instructions{
+	c2 := makeLambda(isa.Instructions{
 		isa.Arg.New(1),
 		isa.Return.New(),
 	})
 	r2 := c2.Call(args...)
 	as.Equal(S("arg2"), r2)
 
-	c3 := makeFunc(isa.Instructions{
+	c3 := makeLambda(isa.Instructions{
 		isa.RestArg.New(2),
 		isa.Return.New(),
 	})

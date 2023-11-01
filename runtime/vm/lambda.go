@@ -40,14 +40,9 @@ func (l *Lambda) Call(values ...data.Value) data.Value {
 	return newClosure(l, values)
 }
 
-// CheckArity performs a compile-time arity check for the Function
+// CheckArity performs a compile-time arity check for the Lambda
 func (l *Lambda) CheckArity(int) error {
 	return nil
-}
-
-// Convention returns the Function's calling convention
-func (l *Lambda) Convention() data.Convention {
-	return data.NormalCall
 }
 
 // Type makes Lambda a typed value

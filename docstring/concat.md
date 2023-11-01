@@ -6,7 +6,7 @@ usage: "(concat seq+) (concat! seq+)"
 tags: ["sequence", "comprehension"]
 ---
 
-Creates a lazy sequence whose content is the result of concatenating the elements of each provided sequence. In order to immediately materialize a complete concatenated sequence, use the `concat!` function.
+Creates a lazy sequence whose content is the result of concatenating the elements of each provided sequence. To immediately materialize a complete concatenated sequence, use the `concat!` function.
 
 #### An Example
 

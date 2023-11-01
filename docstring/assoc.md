@@ -6,7 +6,7 @@ usage: "(assoc seq key value) (assoc seq pair)"
 tags: ["sequence"]
 ---
 
-Returns a newly mapped sequence wherein the specified key and value are associated. If the key already exists, the value replaces the one previously stored, otherwise the pair are added to the sequence.
+Returns a newly mapped sequence wherein the specified key and value are associated. If the key already exists, the value replaces the one previously stored; otherwise the pair are added to the sequence.
 
 #### An Example
 

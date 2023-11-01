@@ -21,7 +21,7 @@ func Value(e encoder.Encoder, v data.Value) {
 		Pair(e, expanded)
 	case data.Symbol:
 		ReferenceSymbol(e, expanded)
-	case data.Keyword, data.Number, data.Bool, data.Function:
+	case data.Keyword, data.Number, data.Bool, data.Lambda:
 		Literal(e, expanded)
 	default:
 		// Programmer error
@@ -33,12 +33,12 @@ func Value(e encoder.Encoder, v data.Value) {
 func Pair(e encoder.Encoder, c data.Pair) {
 	f := resolveBuiltIn(e, consSym)
 	args := data.Values{c.Car(), c.Cdr()}
-	callApplicative(e, f, args)
+	callStatic(e, f, args)
 }
 
-func resolveBuiltIn(e encoder.Encoder, sym data.Symbol) data.Function {
+func resolveBuiltIn(e encoder.Encoder, sym data.Symbol) data.Lambda {
 	ge := e.Globals().Environment()
 	root := ge.GetRoot()
 	res := env.MustResolveValue(root, sym)
-	return res.(data.Function)
+	return res.(data.Lambda)
 }

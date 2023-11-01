@@ -19,7 +19,7 @@ func FromString(src data.String) data.Sequence {
 	return parse.FromLexer(Tokens(src))
 }
 
-// Tokens creates a new Lexer Sequence of raw Tokens encompassing the entire
+// Tokens create a new Lexer Sequence of raw Tokens encompassing the entire
 // set of those supported by the language
 func Tokens(src data.String) data.Sequence {
 	return lex.Match(src, matcher)

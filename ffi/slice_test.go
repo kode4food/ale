@@ -26,7 +26,7 @@ func TestSliceUnwrap(t *testing.T) {
 		return basics.Map(a, func(i int) int {
 			return i * 2
 		})
-	}).(data.Function)
+	}).(data.Lambda)
 	out := f.Call(data.NewVector(I(1), I(2), I(3))).(data.Vector).Values()
 	as.Equal(3, len(out))
 	as.Equal(I(2), out[0])

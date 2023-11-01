@@ -6,7 +6,7 @@ usage: "(let ([name expr]*) form*) (let* ([name expr]*) form*)"
 tags: ["binding"]
 ---
 
-Will create a new local scope, evaluate the provided expressions, and then bind the resulting value to their respective names. It will then evaluate the specified forms within that scope and return the result of the last evaluation. The `let` form performs these bindings in parallel, whereas the `let*` form performs them sequentially.
+Create a new local scope, evaluate the provided expressions, and then bind the resulting value to their respective names. It will then evaluate the specified forms within that scope and return the result of the last evaluation. The `let` form performs these bindings in parallel, whereas the `let*` form performs them sequentially.
 
 #### An Example
 

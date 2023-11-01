@@ -6,7 +6,7 @@ usage: "(+ form*)"
 tags: ["math", "number"]
 ---
 
-Takes a set of numbers and calculates their sum.
+Calculates the sum of a set of numbers.
 
 #### An Example
 

@@ -6,7 +6,7 @@ usage: "(lambda (param*) form*) (lambda-rec name (param*) form*)"
 tags: ["function"]
 ---
 
-Will create a lambda function that may be passed around in a first-class manner.
+Creates a lambda function that may be passed around in a first-class manner.
 
 #### An Example
 

@@ -6,7 +6,7 @@ usage: "(seq->object seq+)"
 tags: ["sequence", "conversion"]
 ---
 
-Will concatenate a set of sequences into an object (hash-map). Unlike the standard `concat` function, which is lazily computed, the result of this function will be materialized immediately.
+Concatenate a set of sequences into an object (hash-map). Unlike the standard `concat` function, which is lazily computed, the result of this function will be materialized immediately.
 
 #### An Example
 

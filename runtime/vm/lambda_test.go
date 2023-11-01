@@ -19,13 +19,11 @@ func TestLambdaFromEncoder(t *testing.T) {
 
 	l := vm.LambdaFromEncoder(e1)
 	as.NotNil(l)
-	as.Equal(data.NormalCall, l.Convention())
 	as.Nil(l.CheckArity(-1))
 
-	c, ok := l.Call().(data.Function)
+	c, ok := l.Call().(data.Lambda)
 	as.True(ok)
 	as.NotNil(c)
-	as.Equal(data.ApplicativeCall, c.Convention())
 
 	as.Equal(I(4), c.Call(S("one"), S("two"), S("three"), S("four")))
 	as.Contains(":type lambda", c)

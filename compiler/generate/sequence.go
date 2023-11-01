@@ -48,7 +48,7 @@ func Sequence(e encoder.Encoder, s data.Sequence) {
 // Vector encodes a vector
 func Vector(e encoder.Encoder, v data.Vector) {
 	f := resolveBuiltIn(e, vectorSym)
-	callFunction(e, f, v.Values())
+	callStatic(e, f, v.Values())
 }
 
 // Object encodes an object
@@ -59,5 +59,5 @@ func Object(e encoder.Encoder, a *data.Object) {
 		args = append(args, v.Car(), v.Cdr())
 	}
 	f := resolveBuiltIn(e, objectSym)
-	callApplicative(e, f, args)
+	callStatic(e, f, args)
 }

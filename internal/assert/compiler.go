@@ -17,7 +17,7 @@ func (w *Wrapper) EncodesAs(expected isa.Instructions, src data.String) {
 	w.Instructions(expected, e.Code())
 }
 
-// Instructions tests that two sets of Instructions are identical
+// Instructions test that two sets of Instructions are identical
 func (w *Wrapper) Instructions(expected, actual isa.Instructions) {
 	w.Helper()
 	w.Equal(len(expected), len(actual))

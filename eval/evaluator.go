@@ -37,6 +37,6 @@ func Value(ns env.Namespace, v data.Value) data.Value {
 
 func encodeAndRun(e encoder.Encoder) data.Value {
 	fn := vm.LambdaFromEncoder(e)
-	closure := fn.Call().(data.Function)
+	closure := fn.Call().(data.Lambda)
 	return closure.Call()
 }

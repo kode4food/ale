@@ -8,7 +8,7 @@ tags: ["sequence"]
 
 The `length` function will return the number of elements in a sequence.
 
-If the sequence is lazily computed, asynchronous, or otherwise incapable of returning a count, this function will raise an error. In order to perform a brute-force count of a sequence, use the `length!` function, keeping in mind that it may never return a result.
+If the sequence is lazily computed, asynchronous, or otherwise incapable of returning a count, this function will raise an error. To perform a brute-force count of a sequence, use the `length!` function, keeping in mind that it may never return a result.
 
 #### An Example
 

@@ -91,10 +91,6 @@ func (v Vector) Call(args ...Value) Value {
 	return indexedCall(v, args)
 }
 
-func (v Vector) Convention() Convention {
-	return ApplicativeCall
-}
-
 func (v Vector) CheckArity(argCount int) error {
 	return checkRangedArity(1, 2, argCount)
 }

@@ -6,7 +6,7 @@ usage: "(sym str)"
 tags: ["symbol", "macro"]
 ---
 
-Converts the provided string into a symbol. Both qualified and local symbols are accepted.
+Convert the provided string into a symbol. Both qualified and local symbols are accepted.
 
 #### An Example
 

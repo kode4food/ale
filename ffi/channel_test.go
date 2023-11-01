@@ -55,10 +55,10 @@ func TestChannelEmit(t *testing.T) {
 	ch := make(chan int)
 	go func() {
 		w := ffi.MustWrap(ch).(*data.Object)
-		emitFunc := as.MustGet(w, stream.EmitKey).(data.Function)
+		emitFunc := as.MustGet(w, stream.EmitKey).(data.Lambda)
 		emitFunc.Call(I(1), I(2))
 		emitFunc.Call(I(3), I(4))
-		closeFunc := as.MustGet(w, stream.CloseKey).(data.Function)
+		closeFunc := as.MustGet(w, stream.CloseKey).(data.Lambda)
 		closeFunc.Call()
 	}()
 

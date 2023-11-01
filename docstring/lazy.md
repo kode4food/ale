@@ -6,7 +6,7 @@ usage: "(lazy expr*)"
 tags: ["concurrency"]
 ---
 
-Like `delay`, but if the initial forced result is a promise, it will continue to be forced until a non-promise result is capable of being returned.
+Like `delay`, but if the first forced result is a promise, it will continue to be forced until a non-promise result is capable of being returned.
 
 #### An Example
 

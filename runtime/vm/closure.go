@@ -23,7 +23,7 @@ func newClosure(lambda *Lambda, values data.Values) *closure {
 	}
 }
 
-// Call turns closure into a Function, and serves as the virtual machine
+// Call turns closure into a Lambda, and serves as the virtual machine
 func (c *closure) Call(args ...data.Value) data.Value {
 	var (
 		CODE isa.Instructions
@@ -308,18 +308,18 @@ opSwitch:
 
 	case isa.Call0:
 		SP1 := &MEM[SP+1]
-		*SP1 = (*SP1).(data.Function).Call()
+		*SP1 = (*SP1).(data.Lambda).Call()
 		goto nextPC
 
 	case isa.Call1:
 		SP++
 		SP1 := &MEM[SP+1]
-		*SP1 = MEM[SP].(data.Function).Call(*SP1)
+		*SP1 = MEM[SP].(data.Lambda).Call(*SP1)
 		goto nextPC
 
 	case isa.Call:
 		SP1 := SP + 1
-		fn := MEM[SP1].(data.Function)
+		fn := MEM[SP1].(data.Lambda)
 		// prepare args
 		args := make(data.Values, op)
 		copy(args, MEM[SP1+1:LP]) // because stack mutates
@@ -332,7 +332,7 @@ opSwitch:
 	case isa.CallWith:
 		SP++
 		SP1 := &MEM[SP+1]
-		*SP1 = MEM[SP].(data.Function).Call(
+		*SP1 = MEM[SP].(data.Lambda).Call(
 			sequence.ToValues((*SP1).(data.Sequence))...,
 		)
 		goto nextPC
@@ -346,7 +346,7 @@ opSwitch:
 		// call function
 		cl, ok := val.(*closure)
 		if !ok {
-			return val.(data.Function).Call(args...)
+			return val.(data.Lambda).Call(args...)
 		}
 		if cl == c {
 			goto initState
@@ -398,11 +398,6 @@ opSwitch:
 // CheckArity performs a compile-time arity check for the closure
 func (c *closure) CheckArity(i int) error {
 	return c.ArityChecker(i)
-}
-
-// Convention returns the closure's calling convention
-func (c *closure) Convention() data.Convention {
-	return data.ApplicativeCall
 }
 
 func (c *closure) Equal(v data.Value) bool {

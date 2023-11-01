@@ -96,7 +96,7 @@ func TestReadNestedList(t *testing.T) {
 	list2, ok := f.(*data.List)
 	as.True(ok)
 
-	// iterate over the rest of top-level list
+	// iterate over the rest of the top-level list
 	f, r, ok = r.Split()
 	as.True(ok)
 	as.Number(55.12, f)

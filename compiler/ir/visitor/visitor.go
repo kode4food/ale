@@ -1,6 +1,6 @@
 package visitor
 
-// Visitor is an interface that is called back upon visiting
+// Visitor is an interface called back upon visiting
 type Visitor interface {
 	EnterRoot(Node)
 	ExitRoot(Node)

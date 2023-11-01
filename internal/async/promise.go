@@ -7,10 +7,10 @@ import (
 )
 
 type (
-	// Promise represents a Value that will eventually be resolved
+	// A Promise represents a Value that will eventually be resolved
 	Promise struct {
 		once     do.Action
-		resolver data.Function
+		resolver data.Lambda
 		result   any
 		status   promiseStatus
 	}
@@ -31,7 +31,7 @@ var (
 )
 
 // NewPromise instantiates a new Promise
-func NewPromise(resolver data.Function) *Promise {
+func NewPromise(resolver data.Lambda) *Promise {
 	return &Promise{
 		once:     do.Once(),
 		resolver: resolver,
@@ -55,10 +55,6 @@ func (p *Promise) Call(...data.Value) data.Value {
 		panic(p.result)
 	}
 	return p.result.(data.Value)
-}
-
-func (p *Promise) Convention() data.Convention {
-	return data.ApplicativeCall
 }
 
 func (p *Promise) CheckArity(c int) error {

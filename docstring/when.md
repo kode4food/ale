@@ -18,4 +18,4 @@ If the evaluated predicate is truthy (not _#f_ (false) or the empty list), the f
   (length x))
 ```
 
-If the symbol `when-not` is used instead of `when`, then the predicate is evaluated and the block will be evaluated only if result is not truthy
+If the symbol `when-not` is used instead of `when`, then the predicate is evaluated and the block will be evaluated only if the result is not truthy

@@ -3,8 +3,9 @@ package bootstrap
 import (
 	"os"
 
-	"github.com/kode4food/ale/compiler/encoder"
-	"github.com/kode4food/ale/core/internal/builtin"
+	"github.com/kode4food/ale/core/builtin"
+
+	"github.com/kode4food/ale/compiler/special"
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/env"
 	"github.com/kode4food/ale/internal/do"
@@ -21,8 +22,8 @@ type (
 	}
 
 	macroMap   map[data.Local]macro.Call
-	specialMap map[data.Local]encoder.Call
-	funcMap    map[data.Local]data.Function
+	specialMap map[data.Local]special.Call
+	funcMap    map[data.Local]data.Lambda
 )
 
 var (
@@ -95,9 +96,9 @@ func TopLevelEnvironment() *env.Environment {
 	return res
 }
 
-// DevNullEnvironment configures a bootstrapped environment that is completely
-// isolated from the top-level of the system. All I/O is rerouted to and from
-// the operating system's bit bucket device (usually /dev/null)
+// DevNullEnvironment configures a bootstrapped environment completely isolated
+// from the top-level of the system. All I/O is rerouted to and from the
+// operating system's bit bucket device (usually /dev/null)
 func DevNullEnvironment() *env.Environment {
 	devNullOnce(func() {
 		devNull = env.NewEnvironment()

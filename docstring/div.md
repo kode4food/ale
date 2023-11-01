@@ -6,7 +6,7 @@ usage: "(/ form+)"
 tags: ["math", "number"]
 ---
 
-Takes a set of numbers and calculates their collective quotient.
+Calculates the collective quotient of a set of numbers.
 
 #### An Example
 

@@ -7,7 +7,7 @@ import (
 	"github.com/kode4food/ale/runtime/isa"
 )
 
-// Constants returns the encoder's set of constants
+// Constants return the encoder's set of constants
 func (e *encoder) Constants() data.Values {
 	ec := e.constants
 	res := make(data.Values, len(ec))

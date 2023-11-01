@@ -15,6 +15,9 @@ import (
 
 	"github.com/chzyer/readline"
 	"github.com/kode4food/ale"
+	"github.com/kode4food/ale/compiler/encoder"
+	"github.com/kode4food/ale/compiler/generate"
+	"github.com/kode4food/ale/compiler/special"
 	"github.com/kode4food/ale/core/bootstrap"
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/docstring"
@@ -260,12 +263,12 @@ func (r *REPL) getBuiltInsNamespace() env.Namespace {
 }
 
 func (r *REPL) registerBuiltIns() {
-	r.registerBuiltIn("cls", data.Applicative(cls, 0))
-	r.registerBuiltIn("doc", data.Normal(doc, 0, 1))
-	r.registerBuiltIn("debug", data.Applicative(debugInfo, 0))
-	r.registerBuiltIn("help", data.Applicative(help, 0))
-	r.registerBuiltIn("quit", data.Applicative(shutdown, 0))
-	r.registerBuiltIn("use", data.Normal(r.makeUse(), 1))
+	r.registerBuiltIn("cls", data.MakeLambda(cls, 0))
+	r.registerBuiltIn("doc", doc)
+	r.registerBuiltIn("debug", data.MakeLambda(debugInfo, 0))
+	r.registerBuiltIn("help", data.MakeLambda(help, 0))
+	r.registerBuiltIn("quit", data.MakeLambda(shutdown, 0))
+	r.registerBuiltIn("use", r.makeUse())
 }
 
 func (r *REPL) registerBuiltIn(n data.Local, v data.Value) {
@@ -273,8 +276,8 @@ func (r *REPL) registerBuiltIn(n data.Local, v data.Value) {
 	ns.Declare(n).Bind(v)
 }
 
-func (r *REPL) makeUse() func(...data.Value) data.Value {
-	return func(args ...data.Value) data.Value {
+func (r *REPL) makeUse() data.Value {
+	return special.Call(func(e encoder.Encoder, args ...data.Value) {
 		data.AssertFixed(1, len(args))
 		n := args[0].(data.Local)
 		old := r.ns
@@ -282,8 +285,8 @@ func (r *REPL) makeUse() func(...data.Value) data.Value {
 		if old != r.ns {
 			fmt.Println()
 		}
-		return nothing
-	}
+		generate.Literal(e, nothing)
+	})
 }
 
 func shutdown(...data.Value) data.Value {
@@ -333,14 +336,15 @@ func help(...data.Value) data.Value {
 	return nothing
 }
 
-func doc(args ...data.Value) data.Value {
-	if len(args) != 0 {
+var doc = special.Call(func(e encoder.Encoder, args ...data.Value) {
+	data.AssertRanged(0, 1, len(args))
+	if len(args) == 0 {
+		docSymbolList()
+	} else {
 		docSymbol(args[0].(data.Local))
-		return nothing
 	}
-	docSymbolList()
-	return nothing
-}
+	generate.Literal(e, nothing)
+})
 
 func docSymbol(sym data.Symbol) {
 	name := string(sym.Name())
@@ -361,11 +365,12 @@ func docSymbolList() {
 	fmt.Println(f)
 }
 
-var escapeNames = slices.Filter(func(n string) bool {
-	return strings.Contains("`*_", n[0:1])
-}).Then(slices.Map(func(n string) string {
-	return "\\" + n
-})).Must()
+var escapeNames = slices.Map(func(n string) string {
+	if strings.Contains("`*_", n[0:1]) {
+		return "\\" + n
+	}
+	return n
+}).Must()
 
 func makeUserNamespace() env.Namespace {
 	return bootstrap.TopLevelEnvironment().GetQualified(UserDomain)

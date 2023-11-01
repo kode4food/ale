@@ -6,7 +6,7 @@ usage: "(drop count seq)"
 tags: ["sequence", "comprehension"]
 ---
 
-Will return a lazy sequence that excludes the first _count_ elements of the provided sequence. If the source sequence is shorter than the requested count, an empty list will be returned.
+Return a lazy sequence that excludes the first _count_ elements of the provided sequence. If the source sequence is shorter than the requested count, an empty list will be returned.
 
 #### An Example
 

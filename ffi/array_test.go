@@ -39,7 +39,7 @@ func TestArrayUnwrap(t *testing.T) {
 			res[i] = v * 2
 		}
 		return res
-	}).(data.Function)
+	}).(data.Lambda)
 	out := f.Call(V(I(1), I(2), I(3))).(data.Vector).Values()
 	as.NotNil(out)
 	as.Equal(3, len(out))

@@ -16,13 +16,13 @@ func TestChannel(t *testing.T) {
 
 	ch := stream.NewChannel(0)
 
-	var emit data.Function
+	var emit data.Lambda
 	v, _ := ch.Get(stream.EmitKey)
-	emit = v.(data.Function)
+	emit = v.(data.Lambda)
 
-	var cl data.Function
+	var cl data.Lambda
 	v, _ = ch.Get(stream.CloseKey)
-	cl = v.(data.Function)
+	cl = v.(data.Lambda)
 
 	var seq data.Sequence
 	v, _ = ch.Get(stream.SequenceKey)

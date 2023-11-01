@@ -23,7 +23,7 @@ type (
 func testWrap(as *assert.Wrapper) *data.Object {
 	f := ffi.MustWrap(func() testInterface {
 		return testReceiver(true)
-	}).(data.Function)
+	}).(data.Lambda)
 	r := f.Call().(*data.Object)
 	as.Equal(4, r.Count())
 	return r
@@ -40,7 +40,7 @@ func TestVoidInterface(t *testing.T) {
 	as := assert.New(t)
 	r := testWrap(as)
 	b := []bool{false}
-	m := as.MustGet(r, K("Void")).(data.Function)
+	m := as.MustGet(r, K("Void")).(data.Lambda)
 	m.Call(ffi.MustWrap(func(testInterface) {
 		b[0] = true
 	}))
@@ -51,7 +51,7 @@ func TestInterfaceReceiver(t *testing.T) {
 	as := assert.New(t)
 	r := testWrap(as)
 	b := []bool{false}
-	m := as.MustGet(r, K("Void")).(data.Function)
+	m := as.MustGet(r, K("Void")).(data.Lambda)
 	m.Call(ffi.MustWrap(func(r testInterface) {
 		r, ok := r.(testReceiver)
 		as.True(ok)
@@ -73,7 +73,7 @@ func TestInterfaceReceiverType(t *testing.T) {
 func TestValueInterface(t *testing.T) {
 	as := assert.New(t)
 	r := testWrap(as)
-	m := as.MustGet(r, K("Add")).(data.Function)
+	m := as.MustGet(r, K("Add")).(data.Lambda)
 	s := m.Call(ffi.MustWrap(I(4)), ffi.MustWrap(I(6)))
 	as.Equal(I(10), s)
 }
@@ -81,7 +81,7 @@ func TestValueInterface(t *testing.T) {
 func TestVectorInterface(t *testing.T) {
 	as := assert.New(t)
 	r := testWrap(as)
-	m := as.MustGet(r, K("Double")).(data.Function)
+	m := as.MustGet(r, K("Double")).(data.Lambda)
 	d := m.Call(ffi.MustWrap(I(4)), ffi.MustWrap(I(6))).(data.Vector).Values()
 	as.Equal(2, len(d))
 	as.Equal(I(8), d[0])

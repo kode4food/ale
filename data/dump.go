@@ -10,7 +10,7 @@ import (
 
 type dumpStringMap map[Value]Value
 
-// DumpString takes a Value and attempts to spit out a bunch of info
+// DumpString takes a Value and attempts to dump out a bunch of info
 func DumpString(v Value) string {
 	p := String(fmt.Sprintf("%p", v))
 	m := dumpStringMap{InstanceKey: p}

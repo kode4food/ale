@@ -14,7 +14,7 @@ var optimizers = []optimizer{
 	literalReturns, // convert some literal returns into single instructions
 }
 
-// Instructions performs optimizations on the provided instructions
+// Instructions perform optimizations on the provided instructions
 func Instructions(code isa.Instructions) isa.Instructions {
 	return basics.FoldLeft(
 		optimizers,

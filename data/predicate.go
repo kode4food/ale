@@ -40,10 +40,6 @@ func (t *TypePredicate) Call(args ...Value) Value {
 	return Bool(types.Accepts(t.typ, other))
 }
 
-func (t *TypePredicate) Convention() Convention {
-	return ApplicativeCall
-}
-
 func (t *TypePredicate) CheckArity(argCount int) error {
 	return MakeFixedChecker(1)(argCount)
 }

@@ -7,8 +7,8 @@ type (
 	Effect struct {
 		Operand ActOn // Describe elements the operands act on
 
-		Pop  int // Fixed number of items to be popped from the stack
-		Push int // Fixed number of items to be pushed onto the stack
+		Pop  int // A fixed number of items to be popped from the stack
+		Push int // A fixed number of items to be pushed onto the stack
 
 		DPop   bool // Dynamic number of items to be popped (in operand)
 		Ignore bool // Skip this instruction (ex: Labels and NoOps)

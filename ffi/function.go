@@ -38,37 +38,37 @@ func (w *funcWrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
 }
 
 func (w *funcWrapper) Unwrap(v data.Value) (reflect.Value, error) {
-	if v, ok := v.(data.Function); ok {
+	if v, ok := v.(data.Lambda); ok {
 		return w.unwrapCall(v), nil
 	}
 	return _emptyValue, errors.New(ErrValueMustBeFunction)
 }
 
-func (w *funcWrapper) unwrapCall(c data.Function) reflect.Value {
+func (w *funcWrapper) unwrapCall(l data.Lambda) reflect.Value {
 	var unwrapped makeFuncType
 	switch len(w.out) {
 	case 0:
-		unwrapped = w.unwrapVoidCall(c)
+		unwrapped = w.unwrapVoidCall(l)
 	case 1:
-		unwrapped = w.unwrapValueCall(c)
+		unwrapped = w.unwrapValueCall(l)
 	default:
-		unwrapped = w.unwrapVectorCall(c)
+		unwrapped = w.unwrapVectorCall(l)
 	}
 	return reflect.MakeFunc(w.typ, unwrapped)
 }
 
-func (w *funcWrapper) unwrapVoidCall(c data.Function) makeFuncType {
+func (w *funcWrapper) unwrapVoidCall(l data.Lambda) makeFuncType {
 	return func(args []reflect.Value) []reflect.Value {
 		in := w.in.wrap(args)
-		c.Call(in...)
+		l.Call(in...)
 		return []reflect.Value{}
 	}
 }
 
-func (w *funcWrapper) unwrapValueCall(c data.Function) makeFuncType {
+func (w *funcWrapper) unwrapValueCall(l data.Lambda) makeFuncType {
 	return func(args []reflect.Value) []reflect.Value {
 		in := w.in.wrap(args)
-		res, err := w.out[0].Unwrap(c.Call(in...))
+		res, err := w.out[0].Unwrap(l.Call(in...))
 		if err != nil {
 			panic(err)
 		}
@@ -76,10 +76,10 @@ func (w *funcWrapper) unwrapValueCall(c data.Function) makeFuncType {
 	}
 }
 
-func (w *funcWrapper) unwrapVectorCall(c data.Function) makeFuncType {
+func (w *funcWrapper) unwrapVectorCall(l data.Lambda) makeFuncType {
 	return func(args []reflect.Value) []reflect.Value {
 		in := w.in.wrap(args)
-		res := c.Call(in...).(data.Vector).Values()
+		res := l.Call(in...).(data.Vector).Values()
 		return w.out.unwrap(res)
 	}
 }

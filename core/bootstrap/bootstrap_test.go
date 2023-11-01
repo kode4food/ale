@@ -3,7 +3,7 @@ package bootstrap_test
 import (
 	"testing"
 
-	"github.com/kode4food/ale/compiler/encoder"
+	"github.com/kode4food/ale/compiler/special"
 	"github.com/kode4food/ale/core/bootstrap"
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/assert"
@@ -50,7 +50,7 @@ func TestBootstrapInto(t *testing.T) {
 	d, ok := ns.Resolve("define*")
 	as.True(ok && d.IsBound())
 
-	_, ok = d.Value().(encoder.Call)
+	_, ok = d.Value().(special.Call)
 	as.True(ok)
 }
 

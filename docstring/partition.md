@@ -6,7 +6,7 @@ usage: "(partition count step? seq)"
 tags: ["sequence", "comprehension"]
 ---
 
-Will partition a sequence into groups of _count_ elements, incrementing by the number of elements defined in _step_ (or _count_ if _step_ is not provided).
+Partition a sequence into groups of _count_ elements, incrementing by the number of elements defined in _step_ (or _count_ if _step_ is not provided).
 
 #### An Example
 

@@ -5,7 +5,7 @@ names: ["begin"]
 usage: "(begin form*)"
 ---
 
-Will evaluate each form in turn, returning the final evaluation as its result.
+Evaluate each form in turn, returning the final evaluation as its result.
 
 #### An Example
 

@@ -8,18 +8,18 @@ import (
 )
 
 type (
-	// Node is returned when a Branch analysis is performed
+	// A Node is returned when a Branch analysis is performed
 	Node interface {
 		Code() isa.Instructions
 	}
 
-	// Instructions represents a series of non-branching instructions
+	// Instructions represent a series of non-branching instructions
 	Instructions interface {
 		Node
 		Set(isa.Instructions)
 	}
 
-	// Branches represents a branching junction
+	// Branches represent a branching junction
 	Branches interface {
 		Node
 		Prologue() Instructions

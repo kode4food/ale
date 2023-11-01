@@ -66,7 +66,7 @@ func BenchmarkNumberLoop(b *testing.B) {
 	}
 }
 
-var bCode = makeFunc(isa.Instructions{
+var bCode = makeLambda(isa.Instructions{
 	isa.Const.New(0), // the extra stack item is intentional
 	isa.Const.New(0),
 	isa.Const.New(1),
@@ -103,7 +103,7 @@ func BenchmarkTailCalls(b *testing.B) {
 		    (beer (- n 1))))
 	`)
 	entry, _ := ns.Resolve("beer")
-	beer := entry.Value().(data.Function)
+	beer := entry.Value().(data.Lambda)
 	for n := 0; n < b.N; n++ {
 		_ = beer.Call(data.Integer(99))
 	}

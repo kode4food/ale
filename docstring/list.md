@@ -6,7 +6,7 @@ usage: "(list form*)"
 tags: ["sequence"]
 ---
 
-Will create a new list whose elements are the evaluated forms provided, or return the empty list if no forms are provided.
+Create a new list whose elements are the evaluated forms provided, or return the empty list if no forms are provided.
 
 #### An Example
 

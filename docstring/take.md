@@ -7,7 +7,7 @@ usage: "(take count seq)"
 tags: ["sequence", "comprehension"]
 ---
 
-Will return a lazy sequence of either _count_ or fewer elements from the beginning of the provided sequence. If the source sequence is shorter than the requested count, the resulting sequence will be truncated.
+Return a lazy sequence of either _count_ or fewer elements from the beginning of the provided sequence. If the source sequence is shorter than the requested count, the resulting sequence will be truncated.
 
 #### An Example
 

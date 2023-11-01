@@ -85,7 +85,7 @@ func (w *intfWrapper) Wrap(c *Context, v reflect.Value) (data.Value, error) {
 	return data.NewObject(res...), nil
 }
 
-func (w *methodWrapper) wrapMethod(v reflect.Value) data.Function {
+func (w *methodWrapper) wrapMethod(v reflect.Value) data.Lambda {
 	fn := v.MethodByName(w.name)
 	return w.wrapFunction(fn)
 }

@@ -6,7 +6,7 @@ usage: "(define-lambda name (param*) form*) (define-lambda (name param*) form*)"
 tags: ["function", "binding"]
 ---
 
-Will bind a function by name to the current namespace.
+Bind a function by name to the current namespace.
 
 #### An Example
 

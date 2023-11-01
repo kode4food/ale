@@ -6,7 +6,7 @@ usage: "(indexed? form+) (!indexed? form+) (is-indexed form)"
 tags: ["sequence", "predicate"]
 ---
 
-If all forms evaluate to a valid sequence than can be accessed by index, then this function will return _#t_ (true). The first non-indexed sequence will result in the function returning _#f_ (false).
+If all forms evaluate to a valid sequence that can be accessed by index, then this function will return _#t_ (true). The first non-indexed sequence will result in the function returning _#f_ (false).
 
 #### An Example
 

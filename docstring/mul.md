@@ -6,7 +6,7 @@ usage: "(* form*)"
 tags: ["math", "number"]
 ---
 
-Takes a set of numbers and calculates their product.
+Calculates the product of a set of numbers.
 
 #### An Example
 

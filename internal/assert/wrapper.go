@@ -9,8 +9,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// Wrapper wraps testify assertions in order to perform checking and
-// conversion that is system-specific
+// Wrapper wraps testify assertions to perform checking and conversion that is
+// system-specific
 type Wrapper struct {
 	*testing.T
 	*assert.Assertions
