@@ -103,12 +103,15 @@
       (reverse coll)
       (fold-left conj '() coll)))
 
+(define :private (swap-args func)
+  (lambda (l r) (func r l)))
+
 (define :private (make-fold-right reverser)
   (lambda
     [(func init coll)
-       (fold-left (lambda (l r) (func r l)) init (reverser coll))]
+       (fold-left (swap-args func) init (reverser coll))]
     [(func coll)
-       (fold-left (lambda (l r) (func r l)) (reverser coll))]))
+       (fold-left (swap-args func) (reverser coll))]))
 
 (define fold-right (make-fold-right reverse))
 (define fold-right! (make-fold-right reverse!))
