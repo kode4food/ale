@@ -11,8 +11,8 @@ Returns a new function that represents the juxtaposition of the provided functio
 #### An Example
 
 ```scheme
-(define juxt-math (juxt \* + - /))
+(define juxt-math (juxt * + - /))
 (juxt-math 32 10)
 ```
 
-This example will return _[320 42 22 16/5]_ as though `[(\* 32 10) (+ 32 10) (- 32 10) (/ 32 10)]` were called.
+This example will return _[320 42 22 16/5]_ as though `[(* 32 10) (+ 32 10) (- 32 10) (/ 32 10)]` were called.

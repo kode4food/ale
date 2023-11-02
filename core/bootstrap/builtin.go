@@ -3,11 +3,10 @@ package bootstrap
 import (
 	"fmt"
 
-	builtin2 "github.com/kode4food/ale/core/builtin"
-
 	"github.com/kode4food/ale/compiler/encoder"
 	"github.com/kode4food/ale/compiler/generate"
 	"github.com/kode4food/ale/compiler/special"
+	"github.com/kode4food/ale/core/builtin"
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/env"
 	"github.com/kode4food/ale/macro"
@@ -48,44 +47,44 @@ func (b *bootstrap) initialFunctions() {
 
 func (b *bootstrap) specialForms() {
 	b.specials(map[data.Local]special.Call{
-		"asm*":          builtin2.Asm,
-		"begin":         builtin2.Begin,
-		"eval":          builtin2.Eval,
-		"lambda":        builtin2.Lambda,
-		"let":           builtin2.Let,
-		"let-rec":       builtin2.LetMutual,
-		"macroexpand-1": builtin2.MacroExpand1,
-		"macroexpand":   builtin2.MacroExpand,
+		"asm*":          builtin.Asm,
+		"begin":         builtin.Begin,
+		"eval":          builtin.Eval,
+		"lambda":        builtin.Lambda,
+		"let":           builtin.Let,
+		"let-rec":       builtin.LetMutual,
+		"macroexpand-1": builtin.MacroExpand1,
+		"macroexpand":   builtin.MacroExpand,
 	})
 }
 
 func (b *bootstrap) availableFunctions() {
 	b.functions(map[data.Local]data.Lambda{
-		"append":       builtin2.Append,
-		"assoc":        builtin2.Assoc,
-		"chan":         builtin2.Chan,
-		"current-time": builtin2.CurrentTime,
-		"defer*":       builtin2.Defer,
-		"dissoc":       builtin2.Dissoc,
-		"promise*":     builtin2.Promise,
-		"gensym":       builtin2.GenSym,
-		"get":          builtin2.Get,
-		"go*":          builtin2.Go,
-		"is-a*":        builtin2.IsA,
-		"lazy-seq*":    builtin2.LazySequence,
-		"length":       builtin2.Length,
-		"list":         builtin2.List,
-		"macro*":       builtin2.Macro,
-		"nth":          builtin2.Nth,
-		"object":       builtin2.Object,
-		"read":         builtin2.Read,
-		"recover":      builtin2.Recover,
-		"reverse":      builtin2.Reverse,
-		"str!":         builtin2.ReaderStr,
-		"str":          builtin2.Str,
-		"sym":          builtin2.Sym,
-		"type-of*":     builtin2.TypeOf,
-		"vector":       builtin2.Vector,
+		"append":       builtin.Append,
+		"assoc":        builtin.Assoc,
+		"chan":         builtin.Chan,
+		"current-time": builtin.CurrentTime,
+		"defer*":       builtin.Defer,
+		"dissoc":       builtin.Dissoc,
+		"promise*":     builtin.Promise,
+		"gensym":       builtin.GenSym,
+		"get":          builtin.Get,
+		"go*":          builtin.Go,
+		"is-a*":        builtin.IsA,
+		"lazy-seq*":    builtin.LazySequence,
+		"length":       builtin.Length,
+		"list":         builtin.List,
+		"macro*":       builtin.Macro,
+		"nth":          builtin.Nth,
+		"object":       builtin.Object,
+		"read":         builtin.Read,
+		"recover":      builtin.Recover,
+		"reverse":      builtin.Reverse,
+		"str!":         builtin.ReaderStr,
+		"str":          builtin.Str,
+		"sym":          builtin.Sym,
+		"type-of*":     builtin.TypeOf,
+		"vector":       builtin.Vector,
 	})
 
 	b.macros(map[data.Local]macro.Call{
