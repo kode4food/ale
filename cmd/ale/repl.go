@@ -208,7 +208,7 @@ func (r *REPL) outputError(err error) {
 }
 
 func (r *REPL) saveHistory() {
-	defer func() { recover() }()
+	defer func() { _ = recover() }()
 	seq := r.scanBuffer()
 	hist := string(sequence.ToStr(seq))
 	_ = r.rl.SaveHistory(hist)

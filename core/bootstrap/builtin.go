@@ -47,7 +47,6 @@ func (b *bootstrap) initialFunctions() {
 func (b *bootstrap) specialForms() {
 	b.specials(map[data.Local]special.Call{
 		"asm*":          builtin.Asm,
-		"begin":         builtin.Begin,
 		"eval":          builtin.Eval,
 		"lambda":        builtin.Lambda,
 		"let":           builtin.Let,

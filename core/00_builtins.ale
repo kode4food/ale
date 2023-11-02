@@ -32,7 +32,6 @@
 
 ;; encoders
 (def-special asm*)
-(def-special begin)
 (def-special eval)
 (def-special lambda)
 (def-special let)

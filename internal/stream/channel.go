@@ -42,7 +42,7 @@ func NewChannel(size int) *data.Object {
 func newEmitter(ch chan<- data.Value) *chanEmitter {
 	r := &chanEmitter{ch: ch}
 	runtime.SetFinalizer(r, func(e *chanEmitter) {
-		defer func() { recover() }()
+		defer func() { _ = recover() }()
 		close(ch)
 	})
 	return r

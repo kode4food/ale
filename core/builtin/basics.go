@@ -1,8 +1,6 @@
 package builtin
 
 import (
-	"github.com/kode4food/ale/compiler/encoder"
-	"github.com/kode4food/ale/compiler/generate"
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/sequence"
 	"github.com/kode4food/ale/read"
@@ -49,9 +47,3 @@ var Read = data.MakeLambda(func(args ...data.Value) data.Value {
 	}
 	return data.Null
 }, 1)
-
-// Begin encodes a set of expressions, returning only the final evaluation
-func Begin(e encoder.Encoder, args ...data.Value) {
-	v := data.NewVector(args...)
-	generate.Block(e, v)
-}

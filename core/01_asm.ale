@@ -56,7 +56,7 @@
 (define* if
   (asm* !make-encoder
     [(predicate consequent alternative)
-         .eval predicate
+          .eval predicate
           cond-jump :consequent
           .eval alternative
           jump :end

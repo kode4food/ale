@@ -8,7 +8,6 @@ import (
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
-	"github.com/kode4food/ale/runtime/isa"
 )
 
 func TestRead(t *testing.T) {
@@ -98,28 +97,4 @@ func TestReadEval(t *testing.T) {
 	as.EvalTo(`
 		(eval (read "(str \"hello\" \"you\" \"test\")"))
 	`, S("helloyoutest"))
-}
-
-func TestBegin(t *testing.T) {
-	as := assert.New(t)
-
-	e1 := assert.GetTestEncoder()
-	builtin.Begin(e1,
-		L(LS("+"), I(1), I(2)),
-		B(true),
-	)
-	e1.Emit(isa.Return)
-
-	as.Instructions(isa.Instructions{
-		isa.PosInt.New(2),
-		isa.PosInt.New(1),
-		isa.Const.New(0),
-		isa.Call.New(2),
-		isa.Pop.New(),
-		isa.True.New(),
-		isa.Return.New(),
-	}, e1.Code())
-
-	c := e1.Constants()
-	as.Equal(assert.GetRootSymbol(e1, "+"), c[0])
 }
