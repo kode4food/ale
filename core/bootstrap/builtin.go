@@ -8,7 +8,6 @@ import (
 	"github.com/kode4food/ale/compiler/special"
 	"github.com/kode4food/ale/core/builtin"
 	"github.com/kode4food/ale/data"
-	"github.com/kode4food/ale/env"
 	"github.com/kode4food/ale/macro"
 )
 
@@ -35,13 +34,13 @@ func (b *bootstrap) initialFunctions() {
 	ns := b.environment.GetRoot()
 
 	ns.Private(defBuiltInName).Bind(
-		makeDefiner(ns, b.funcMap, ErrBuiltInNotFound),
+		makeDefiner(b.funcMap, ErrBuiltInNotFound),
 	)
 	ns.Private(defSpecialName).Bind(
-		makeDefiner(ns, b.specialMap, ErrSpecialNotFound),
+		makeDefiner(b.specialMap, ErrSpecialNotFound),
 	)
 	ns.Private(defMacroName).Bind(
-		makeDefiner(ns, b.macroMap, ErrMacroNotFound),
+		makeDefiner(b.macroMap, ErrMacroNotFound),
 	)
 }
 
@@ -121,9 +120,7 @@ func (b *bootstrap) special(name data.Local, call special.Call) {
 	b.specialMap[name] = call
 }
 
-func makeDefiner[T data.Value](
-	ns env.Namespace, m map[data.Local]T, err string,
-) special.Call {
+func makeDefiner[T data.Value](m map[data.Local]T, err string) special.Call {
 	return func(e encoder.Encoder, args ...data.Value) {
 		data.AssertFixed(1, len(args))
 		n := args[0].(data.Local)
