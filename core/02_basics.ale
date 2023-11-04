@@ -128,10 +128,10 @@
 (define* reduce-inst (macro* (lambda (args init inst)
   (apply list (concat!
     '(ale/asm*
-        .local accum :val
+        .private accum :val
         .eval) [init] '(
         store accum
-        .local rest :val
+        .private rest :val
         .resolve) [args] '(
         store rest
     :loop
@@ -154,10 +154,10 @@
 (define* predicate-inst (macro* (lambda (f r inst)
   (apply list (concat!
     '(ale/asm*
-         .local prev :val
+         .private prev :val
          .resolve) [f] '(
          store prev
-         .local rest :val
+         .private rest :val
          .resolve) [r] '(
          store rest
      :loop

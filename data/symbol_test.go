@@ -86,19 +86,15 @@ func TestMustSymbolParsing(t *testing.T) {
 func TestSymbolGeneration(t *testing.T) {
 	as := assert.New(t)
 
-	decimal := "123456789"
-	lower := "abcdefghijklmnopqrstuvwxyz"
-	upper := "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-	base64Digits := decimal + lower + upper + "%#"
-	prefix := "x-hello-gensym-%s"
+	prefix := "x-hello-gensym-%s-%s"
 
 	gen := data.NewSymbolGenerator()
-	for _, sfx := range base64Digits {
+	for _, sfx := range data.SymbolGenDigits {
 		s1 := gen.Local("hello")
-		as.String(fmt.Sprintf(prefix, string(sfx)), s1)
+		as.String(fmt.Sprintf(prefix, gen.Prefix(), string(sfx)), s1)
 	}
 
-	as.String(fmt.Sprintf(prefix, "10"), gen.Local("hello"))
+	as.String(fmt.Sprintf(prefix, gen.Prefix(), "10"), gen.Local("hello"))
 }
 
 func TestLocalsSorted(t *testing.T) {

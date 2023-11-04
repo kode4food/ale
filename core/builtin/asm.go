@@ -17,8 +17,9 @@ import (
 type (
 	asmEncoder struct {
 		encoder.Encoder
-		labels map[data.Local]isa.Operand
-		args   map[data.Local]data.Value
+		labels  map[data.Local]isa.Operand
+		args    map[data.Local]data.Value
+		private map[data.Local]data.Local
 	}
 
 	call struct {
@@ -47,6 +48,7 @@ const (
 	EvalValue   = data.Local(".eval")
 	Const       = data.Local(".const")
 	Local       = data.Local(".local")
+	Private     = data.Local(".private")
 	PushLocals  = data.Local(".push-locals")
 	PopLocals   = data.Local(".pop-locals")
 )
@@ -55,6 +57,8 @@ var (
 	instructionCalls = getInstructionCalls()
 	encoderCalls     = getEncoderCalls()
 	calls            = mergeCalls(instructionCalls, encoderCalls)
+
+	gen = data.NewSymbolGenerator()
 
 	cellTypes = map[data.Keyword]encoder.CellType{
 		data.Keyword("val"):  encoder.ValueCell,
@@ -75,6 +79,7 @@ func makeAsmEncoder(e encoder.Encoder) *asmEncoder {
 		Encoder: e,
 		labels:  map[data.Local]isa.Operand{},
 		args:    map[data.Local]data.Value{},
+		private: map[data.Local]data.Local{},
 	}
 }
 
@@ -212,6 +217,13 @@ func (e *asmEncoder) resolveEncoderArg(v data.Value) (data.Value, bool) {
 	return nil, false
 }
 
+func (e *asmEncoder) ResolveLocal(l data.Local) (*encoder.IndexedCell, bool) {
+	if g, ok := e.private[l]; ok {
+		return e.Encoder.ResolveLocal(g)
+	}
+	return e.Encoder.ResolveLocal(l)
+}
+
 func getInstructionCalls() callMap {
 	res := make(callMap, len(isa.Effects))
 	for oc, effect := range isa.Effects {
@@ -266,15 +278,11 @@ func getEncoderCalls() callMap {
 			argCount: 1,
 		},
 		Local: {
-			Call: func(e encoder.Encoder, args ...data.Value) {
-				name := args[0].(data.Local)
-				kwd := args[1].(data.Keyword)
-				cellType, ok := cellTypes[kwd]
-				if !ok {
-					panic(fmt.Errorf(ErrUnknownLocalType, kwd, cellTypeNames))
-				}
-				e.AddLocal(name, cellType)
-			},
+			Call:     makeLocalEncoder(publicResolver),
+			argCount: 2,
+		},
+		Private: {
+			Call:     makeLocalEncoder(privateResolver),
 			argCount: 2,
 		},
 		PushLocals: {
@@ -287,6 +295,30 @@ func getEncoderCalls() callMap {
 				e.PopLocals()
 			},
 		},
+	}
+}
+
+func privateResolver(e *asmEncoder, l data.Local) data.Local {
+	p := gen.Local(l)
+	e.private[l] = p
+	return p
+}
+
+func publicResolver(_ *asmEncoder, l data.Local) data.Local {
+	return l
+}
+
+func makeLocalEncoder(
+	resolve func(e *asmEncoder, l data.Local) data.Local,
+) special.Call {
+	return func(e encoder.Encoder, args ...data.Value) {
+		name := resolve(e.(*asmEncoder), args[0].(data.Local))
+		kwd := args[1].(data.Keyword)
+		cellType, ok := cellTypes[kwd]
+		if !ok {
+			panic(fmt.Errorf(ErrUnknownLocalType, kwd, cellTypeNames))
+		}
+		e.AddLocal(name, cellType)
 	}
 }
 

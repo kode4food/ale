@@ -3,7 +3,9 @@ package data
 import (
 	"bytes"
 	"fmt"
+	"math/rand"
 	"regexp"
+	"strconv"
 	"strings"
 	"sync"
 
@@ -41,6 +43,7 @@ type (
 	// SymbolGenerator produces instance-unique local symbols
 	SymbolGenerator struct {
 		sync.Mutex
+		prefix string
 		data   [128]uint8
 		maxPos int
 	}
@@ -56,12 +59,13 @@ const (
 	// the local component of a qualified symbol
 	DomainSeparator = '/'
 
-	decimal        = "0123456789"
-	lower          = "abcdefghijklmnopqrstuvwxyz"
-	upper          = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-	base64Digits   = decimal + lower + upper + "%#"
-	genSymTemplate = "x-%s-gensym-%s"
-	genSymOverflow = uint8(len(base64Digits))
+	decimal         = "0123456789"
+	lower           = "abcdefghijklmnopqrstuvwxyz"
+	upper           = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+	SymbolGenDigits = decimal + lower + upper + "-+"
+
+	genSymTemplate = "x-%s-gensym-%s-%s"
+	genSymOverflow = uint8(len(SymbolGenDigits))
 )
 
 // Error messages
@@ -109,16 +113,22 @@ func MustParseSymbol(s String) Symbol {
 // NewSymbolGenerator creates a new symbol generator. In general, it is safe to
 // use the global generator because it only maintains an incrementer
 func NewSymbolGenerator() *SymbolGenerator {
-	return new(SymbolGenerator)
+	return &SymbolGenerator{
+		prefix: strconv.FormatUint(uint64(rand.Uint32()), 36),
+	}
+}
+
+func (g *SymbolGenerator) Prefix() string {
+	return g.prefix
 }
 
 // Local returns a newly generated local symbol
 func (g *SymbolGenerator) Local(name Local) Local {
 	g.Lock()
 	defer g.Unlock()
-	g.inc(0)
 	idx := g.str()
-	q := fmt.Sprintf(genSymTemplate, name, idx)
+	g.inc(0)
+	q := fmt.Sprintf(genSymTemplate, name, g.prefix, idx)
 	return Local(q)
 }
 
@@ -140,13 +150,12 @@ func (g *SymbolGenerator) overflow(pos int) {
 }
 
 func (g *SymbolGenerator) str() string {
-	var buf bytes.Buffer
-	data := g.data
-	for i := g.maxPos; i >= 0; i-- {
-		d := base64Digits[data[i]]
-		buf.WriteByte(d)
+	data, maxPos := g.data, g.maxPos
+	res := make([]byte, maxPos+1)
+	for i := 0; i <= maxPos; i++ {
+		res[i] = SymbolGenDigits[data[maxPos-i]]
 	}
-	return buf.String()
+	return string(res)
 }
 
 func (Local) symbol() {}
