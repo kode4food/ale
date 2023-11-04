@@ -18,12 +18,12 @@ type (
 		environment *env.Environment
 		macroMap    macroMap
 		specialMap  specialMap
-		funcMap     funcMap
+		procMap     procMap
 	}
 
 	macroMap   map[data.Local]macro.Call
 	specialMap map[data.Local]special.Call
-	funcMap    map[data.Local]data.Lambda
+	procMap    map[data.Local]data.Procedure
 )
 
 var (
@@ -41,7 +41,7 @@ func Into(e *env.Environment) {
 		environment: e,
 		macroMap:    macroMap{},
 		specialMap:  specialMap{},
-		funcMap:     funcMap{},
+		procMap:     procMap{},
 	}
 	b.builtIns()
 	b.assets()

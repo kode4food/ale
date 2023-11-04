@@ -33,10 +33,10 @@ func TestEmptyRead(t *testing.T) {
 func testRecover(as *assert.Wrapper, err any, errStr string) {
 	var triggered = false
 	builtin.Recover.Call(
-		data.MakeLambda(func(...data.Value) data.Value {
+		data.MakeProcedure(func(...data.Value) data.Value {
 			panic(err)
 		}, 0),
-		data.MakeLambda(func(args ...data.Value) data.Value {
+		data.MakeProcedure(func(args ...data.Value) data.Value {
 			as.String(errStr, args[0])
 			triggered = true
 			return data.Null
@@ -66,10 +66,10 @@ func TestDefer(t *testing.T) {
 	}()
 
 	builtin.Defer.Call(
-		data.MakeLambda(func(...data.Value) data.Value {
+		data.MakeProcedure(func(...data.Value) data.Value {
 			panic(S("blowed up!"))
 		}, 0),
-		data.MakeLambda(func(...data.Value) data.Value {
+		data.MakeProcedure(func(...data.Value) data.Value {
 			triggered = true
 			return data.Null
 		}, 0),

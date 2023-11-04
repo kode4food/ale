@@ -47,7 +47,7 @@ func callSymbol(e encoder.Encoder, s data.Symbol, args data.Values) {
 		case special.Call:
 			v(e, args...)
 			return
-		case data.Lambda:
+		case data.Procedure:
 			callStatic(e, v, args)
 			return
 		}
@@ -61,14 +61,14 @@ func callNonSymbol(e encoder.Encoder, v data.Value, args data.Values) {
 		return
 	}
 	switch v := v.(type) {
-	case data.Lambda:
+	case data.Procedure:
 		callStatic(e, v, args)
 	default:
 		callDynamic(e, v, args)
 	}
 }
 
-func assertArity(f data.Lambda, args data.Values) {
+func assertArity(f data.Procedure, args data.Values) {
 	al := len(args)
 	if err := f.CheckArity(al); err != nil {
 		panic(err)
@@ -88,7 +88,7 @@ func callWith(e encoder.Encoder, emitFunc funcEmitter, emitArgs argsEmitter) {
 	}
 }
 
-func callStatic(e encoder.Encoder, f data.Lambda, args data.Values) {
+func callStatic(e encoder.Encoder, f data.Procedure, args data.Values) {
 	assertArity(f, args)
 	emitFunc := staticLiteral(e, f)
 	emitArgs := makeArgs(e, args)

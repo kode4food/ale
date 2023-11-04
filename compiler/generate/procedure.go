@@ -6,10 +6,10 @@ import (
 	"github.com/kode4food/ale/runtime/vm"
 )
 
-func Lambda(e encoder.Encoder, build Builder) *vm.Lambda {
+func Procedure(e encoder.Encoder, build Builder) *vm.Procedure {
 	child := e.Child()
 	build(child)
-	fn := vm.LambdaFromEncoder(child)
+	fn := vm.MakeProcedure(child)
 
 	cells := child.Closure()
 	clen := len(cells)

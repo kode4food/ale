@@ -26,7 +26,7 @@ func (k Keyword) Call(args ...Value) Value {
 	return res
 }
 
-// CheckArity performs a compile-time arity check for the Lambda
+// CheckArity performs a compile-time arity check for the Keyword
 func (k Keyword) CheckArity(argCount int) error {
 	return checkRangedArity(1, 2, argCount)
 }

@@ -6,13 +6,13 @@ import (
 )
 
 // LazySequence treats a function as a lazy sequence
-var LazySequence = data.MakeLambda(func(args ...data.Value) data.Value {
-	fn := args[0].(data.Lambda)
+var LazySequence = data.MakeProcedure(func(args ...data.Value) data.Value {
+	fn := args[0].(data.Procedure)
 	resolver := makeLazyResolver(fn)
 	return sequence.NewLazy(resolver)
 }, 1)
 
-func makeLazyResolver(f data.Lambda) sequence.LazyResolver {
+func makeLazyResolver(f data.Procedure) sequence.LazyResolver {
 	return func() (data.Value, data.Sequence, bool) {
 		r := f.Call()
 		if r != data.Null {

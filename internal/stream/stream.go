@@ -23,8 +23,8 @@ const (
 	SequenceKey = data.Keyword("seq")
 )
 
-func bindWriter(w Writer) data.Lambda {
-	return data.MakeLambda(func(args ...data.Value) data.Value {
+func bindWriter(w Writer) data.Procedure {
+	return data.MakeProcedure(func(args ...data.Value) data.Value {
 		for _, f := range args {
 			w(f)
 		}
@@ -32,8 +32,8 @@ func bindWriter(w Writer) data.Lambda {
 	})
 }
 
-func bindCloser(c io.Closer) data.Lambda {
-	return data.MakeLambda(func(...data.Value) data.Value {
+func bindCloser(c io.Closer) data.Procedure {
+	return data.MakeProcedure(func(...data.Value) data.Value {
 		_ = c.Close()
 		return data.Null
 	}, 0)

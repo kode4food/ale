@@ -12,7 +12,7 @@ import (
 
 func TestPromiseCaller(t *testing.T) {
 	as := assert.New(t)
-	p1 := async.NewPromise(data.MakeLambda(func(...data.Value) data.Value {
+	p1 := async.NewPromise(data.MakeProcedure(func(...data.Value) data.Value {
 		return S("hello")
 	}, 0))
 	as.String("hello", p1.Call())
@@ -20,7 +20,7 @@ func TestPromiseCaller(t *testing.T) {
 
 func TestPromiseFailure(t *testing.T) {
 	as := assert.New(t)
-	p1 := async.NewPromise(data.MakeLambda(func(...data.Value) data.Value {
+	p1 := async.NewPromise(data.MakeProcedure(func(...data.Value) data.Value {
 		panic(errors.New("explosion"))
 	}, 0))
 	defer as.ExpectPanic(errors.New("explosion"))

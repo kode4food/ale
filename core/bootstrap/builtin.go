@@ -34,7 +34,7 @@ func (b *bootstrap) initialFunctions() {
 	ns := b.environment.GetRoot()
 
 	ns.Private(defBuiltInName).Bind(
-		makeDefiner(b.funcMap, ErrBuiltInNotFound),
+		makeDefiner(b.procMap, ErrBuiltInNotFound),
 	)
 	ns.Private(defSpecialName).Bind(
 		makeDefiner(b.specialMap, ErrSpecialNotFound),
@@ -57,7 +57,7 @@ func (b *bootstrap) specialForms() {
 }
 
 func (b *bootstrap) availableFunctions() {
-	b.functions(map[data.Local]data.Lambda{
+	b.functions(map[data.Local]data.Procedure{
 		"append":       builtin.Append,
 		"assoc":        builtin.Assoc,
 		"chan":         builtin.Chan,
@@ -90,14 +90,14 @@ func (b *bootstrap) availableFunctions() {
 	})
 }
 
-func (b *bootstrap) functions(f map[data.Local]data.Lambda) {
+func (b *bootstrap) functions(f map[data.Local]data.Procedure) {
 	for k, v := range f {
 		b.function(k, v)
 	}
 }
 
-func (b *bootstrap) function(name data.Local, call data.Lambda) {
-	b.funcMap[name] = call
+func (b *bootstrap) function(name data.Local, call data.Procedure) {
+	b.procMap[name] = call
 }
 
 func (b *bootstrap) macros(m map[data.Local]macro.Call) {

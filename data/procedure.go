@@ -1,0 +1,57 @@
+package data
+
+import "github.com/kode4food/ale/internal/types"
+
+type (
+	// ArityChecker is the interface for arity checks
+	ArityChecker func(int) error
+
+	// Call is the type of function that can be turned into a Procedure
+	Call func(...Value) Value
+
+	// Caller provides the necessary methods for performing a runtime call
+	Caller interface {
+		Call(...Value) Value
+		CheckArity(int) error
+	}
+
+	// Procedure is a Value that provides a Caller interface
+	Procedure interface {
+		Value
+		Caller
+	}
+
+	procedure struct {
+		call  Call
+		arity ArityChecker
+	}
+)
+
+// MakeProcedure constructs a Procedure from a func that matches the standard
+// calling signature
+func MakeProcedure(c Call, arity ...int) Procedure {
+	return &procedure{
+		call:  c,
+		arity: MakeChecker(arity...),
+	}
+}
+
+func (p *procedure) CheckArity(argCount int) error {
+	return p.arity(argCount)
+}
+
+func (p *procedure) Call(args ...Value) Value {
+	return p.call(args...)
+}
+
+func (p *procedure) Type() types.Type {
+	return types.BasicProcedure
+}
+
+func (p *procedure) Equal(v Value) bool {
+	return p == v
+}
+
+func (p *procedure) String() string {
+	return DumpString(p)
+}

@@ -12,7 +12,7 @@ func TestAnyAccepts(t *testing.T) {
 
 	a := types.BasicAny
 	as.Equal("any", a.Name())
-	as.True(types.Accepts(a, types.BasicLambda))
+	as.True(types.Accepts(a, types.BasicProcedure))
 	as.True(types.Accepts(a, types.BasicNumber))
 	as.True(types.Accepts(a, types.BasicAny))
 }

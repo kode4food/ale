@@ -19,7 +19,7 @@ func makeEvaluator(eval evalFunc) func(encoder.Encoder, ...data.Value) {
 		data.AssertFixed(1, len(args))
 		generate.Value(e, args[0])
 		ns := e.Globals()
-		fn := data.MakeLambda(func(args ...data.Value) data.Value {
+		fn := data.MakeProcedure(func(args ...data.Value) data.Value {
 			return eval(ns, args[0])
 		}, 1)
 		generate.Literal(e, fn)

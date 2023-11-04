@@ -36,7 +36,7 @@ func makeInOutWrappers(t reflect.Type) (*inOutWrappers, error) {
 	}, nil
 }
 
-func (w *inOutWrappers) wrapFunction(fn reflect.Value) data.Lambda {
+func (w *inOutWrappers) wrapFunction(fn reflect.Value) data.Procedure {
 	switch len(w.out) {
 	case 0:
 		return w.wrapVoidFunction(fn)
@@ -47,8 +47,8 @@ func (w *inOutWrappers) wrapFunction(fn reflect.Value) data.Lambda {
 	}
 }
 
-func (w *inOutWrappers) wrapValueFunction(fn reflect.Value) data.Lambda {
-	return data.MakeLambda(func(args ...data.Value) data.Value {
+func (w *inOutWrappers) wrapValueFunction(fn reflect.Value) data.Procedure {
+	return data.MakeProcedure(func(args ...data.Value) data.Value {
 		in := w.in.unwrap(args)
 		out := fn.Call(in)
 		res, err := w.out[0].Wrap(new(Context), out[0])
@@ -59,16 +59,16 @@ func (w *inOutWrappers) wrapValueFunction(fn reflect.Value) data.Lambda {
 	}, len(w.in))
 }
 
-func (w *inOutWrappers) wrapVoidFunction(fn reflect.Value) data.Lambda {
-	return data.MakeLambda(func(args ...data.Value) data.Value {
+func (w *inOutWrappers) wrapVoidFunction(fn reflect.Value) data.Procedure {
+	return data.MakeProcedure(func(args ...data.Value) data.Value {
 		in := w.in.unwrap(args)
 		fn.Call(in)
 		return data.Null
 	}, len(w.in))
 }
 
-func (w *inOutWrappers) wrapVectorFunction(fn reflect.Value) data.Lambda {
-	return data.MakeLambda(func(args ...data.Value) data.Value {
+func (w *inOutWrappers) wrapVectorFunction(fn reflect.Value) data.Procedure {
+	return data.MakeProcedure(func(args ...data.Value) data.Value {
 		in := w.in.unwrap(args)
 		res := fn.Call(in)
 		out := w.out.wrap(res)

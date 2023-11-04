@@ -7,7 +7,7 @@ import (
 )
 
 // Object creates a new object instance
-var Object = data.MakeLambda(func(args ...data.Value) data.Value {
+var Object = data.MakeProcedure(func(args ...data.Value) data.Value {
 	res, err := data.ValuesToObject(args...)
 	if err != nil {
 		panic(err)
@@ -16,14 +16,14 @@ var Object = data.MakeLambda(func(args ...data.Value) data.Value {
 })
 
 // Get returns a value by key from the provided Mapper
-var Get = data.MakeLambda(func(args ...data.Value) data.Value {
+var Get = data.MakeProcedure(func(args ...data.Value) data.Value {
 	s := args[0].(data.Mapped)
 	res, _ := s.Get(args[1])
 	return res
 }, 2)
 
 // Assoc returns a new Mapper containing the key/value association
-var Assoc = data.MakeLambda(func(args ...data.Value) data.Value {
+var Assoc = data.MakeProcedure(func(args ...data.Value) data.Value {
 	s := args[0].(data.Mapper)
 	if len(args) == 3 {
 		p := data.NewCons(args[1], args[2])
@@ -36,7 +36,7 @@ var Assoc = data.MakeLambda(func(args ...data.Value) data.Value {
 }, 2, 3)
 
 // Dissoc returns a new Mapper with the key removed
-var Dissoc = data.MakeLambda(func(args ...data.Value) data.Value {
+var Dissoc = data.MakeProcedure(func(args ...data.Value) data.Value {
 	s := args[0].(data.Mapper)
 	if _, r, ok := s.Remove(args[1]); ok {
 		return r

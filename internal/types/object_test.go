@@ -10,13 +10,13 @@ import (
 func TestObjectAccepts(t *testing.T) {
 	as := assert.New(t)
 
-	o1 := types.MakeObject(types.BasicString, types.BasicLambda)
+	o1 := types.MakeObject(types.BasicString, types.BasicProcedure)
 	o2 := types.MakeObject(types.BasicNumber, types.BasicKeyword)
-	o3 := types.MakeObject(types.BasicString, types.BasicLambda)
+	o3 := types.MakeObject(types.BasicString, types.BasicProcedure)
 
-	as.Equal("object(string->lambda)", o1.Name())
+	as.Equal("object(string->procedure)", o1.Name())
 	as.Equal("object(number->keyword)", o2.Name())
-	as.Equal("object(string->lambda)", o3.Name())
+	as.Equal("object(string->procedure)", o3.Name())
 
 	as.True(types.Accepts(o1, o1))
 	as.False(types.Accepts(o1, o2))
@@ -30,9 +30,9 @@ func TestObjectAccepts(t *testing.T) {
 func TestObjectEqual(t *testing.T) {
 	as := assert.New(t)
 
-	o1 := types.MakeObject(types.BasicString, types.BasicLambda)
+	o1 := types.MakeObject(types.BasicString, types.BasicProcedure)
 	o2 := types.MakeObject(types.BasicNumber, types.BasicKeyword)
-	o3 := types.MakeObject(types.BasicString, types.BasicLambda)
+	o3 := types.MakeObject(types.BasicString, types.BasicProcedure)
 
 	as.True(o1.Equal(o1))
 	as.False(o1.Equal(o2))

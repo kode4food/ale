@@ -8,9 +8,9 @@ import (
 )
 
 // Recover invokes a function and runs a recovery function if Go panics
-var Recover = data.MakeLambda(func(args ...data.Value) (res data.Value) {
-	body := args[0].(data.Lambda)
-	rescue := args[1].(data.Lambda)
+var Recover = data.MakeProcedure(func(args ...data.Value) (res data.Value) {
+	body := args[0].(data.Procedure)
+	rescue := args[1].(data.Procedure)
 
 	defer func() {
 		if rec := recover(); rec != nil {
@@ -30,16 +30,16 @@ var Recover = data.MakeLambda(func(args ...data.Value) (res data.Value) {
 }, 2)
 
 // Defer invokes a cleanup function, no matter what has happened
-var Defer = data.MakeLambda(func(args ...data.Value) (res data.Value) {
-	body := args[0].(data.Lambda)
-	cleanup := args[1].(data.Lambda)
+var Defer = data.MakeProcedure(func(args ...data.Value) (res data.Value) {
+	body := args[0].(data.Procedure)
+	cleanup := args[1].(data.Procedure)
 
 	defer cleanup.Call()
 	return body.Call()
 }, 2)
 
 // Read performs the standard LISP read of a string
-var Read = data.MakeLambda(func(args ...data.Value) data.Value {
+var Read = data.MakeProcedure(func(args ...data.Value) data.Value {
 	v := args[0]
 	s := v.(data.Sequence)
 	if v, ok := data.Last(read.FromString(sequence.ToStr(s))); ok {

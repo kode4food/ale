@@ -1,6 +1,6 @@
 ;;;; ale core: builtin
 
-;; lambdas
+;; procedures
 (def-builtin append)
 (def-builtin assoc)
 (def-builtin chan)

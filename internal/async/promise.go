@@ -10,7 +10,7 @@ type (
 	// A Promise represents a Value that will eventually be resolved
 	Promise struct {
 		once     do.Action
-		resolver data.Lambda
+		resolver data.Procedure
 		result   any
 		status   promiseStatus
 	}
@@ -31,7 +31,7 @@ var (
 )
 
 // NewPromise instantiates a new Promise
-func NewPromise(resolver data.Lambda) *Promise {
+func NewPromise(resolver data.Procedure) *Promise {
 	return &Promise{
 		once:     do.Once(),
 		resolver: resolver,

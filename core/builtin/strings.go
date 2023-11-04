@@ -10,13 +10,13 @@ import (
 const emptyString = data.String("")
 
 // Str converts the provided arguments to an undelimited string
-var Str = data.MakeLambda(func(args ...data.Value) data.Value {
+var Str = data.MakeProcedure(func(args ...data.Value) data.Value {
 	v := data.NewVector(args...)
 	return sequence.ToStr(v)
 })
 
 // ReaderStr converts the provided arguments to a delimited string
-var ReaderStr = data.MakeLambda(func(args ...data.Value) data.Value {
+var ReaderStr = data.MakeProcedure(func(args ...data.Value) data.Value {
 	if len(args) == 0 {
 		return emptyString
 	}

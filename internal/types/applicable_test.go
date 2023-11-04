@@ -20,7 +20,7 @@ func TestApplicableAccepts(t *testing.T) {
 			Result: types.BasicBoolean,
 		},
 	)
-	as.Equal(`lambda(number,number->boolean,number->boolean)`, a1.Name())
+	as.Equal(`procedure(number,number->boolean,number->boolean)`, a1.Name())
 
 	a2 := types.MakeApplicable(
 		types.Signature{
@@ -41,7 +41,7 @@ func TestApplicableAccepts(t *testing.T) {
 		},
 	)
 
-	as.Equal(`lambda(symbol,boolean->boolean,->number,number->boolean,number,number->boolean)`, a2.Name())
+	as.Equal(`procedure(symbol,boolean->boolean,->number,number->boolean,number,number->boolean)`, a2.Name())
 
 	as.True(types.Accepts(a1, a1))
 	as.True(types.Accepts(a1, a2))
@@ -49,14 +49,14 @@ func TestApplicableAccepts(t *testing.T) {
 	as.True(types.Accepts(a2, a2))
 
 	as.False(types.Accepts(a1, types.BasicNumber))
-	as.False(types.Accepts(a1, types.BasicLambda))
-	as.True(types.Accepts(types.BasicLambda, a1))
+	as.False(types.Accepts(a1, types.BasicProcedure))
+	as.True(types.Accepts(types.BasicProcedure, a1))
 	as.False(types.Accepts(types.BasicNumber, a1))
 
 	u1 := types.MakeUnion(a1, a2)
 	u2 := types.MakeUnion(types.MakeListOf(types.BasicSymbol), a1)
-	as.True(types.Accepts(types.BasicLambda, u1))
-	as.False(types.Accepts(types.BasicLambda, u2))
+	as.True(types.Accepts(types.BasicProcedure, u1))
+	as.False(types.Accepts(types.BasicProcedure, u2))
 }
 
 func TestApplicableRest(t *testing.T) {
@@ -87,7 +87,7 @@ func TestApplicableRest(t *testing.T) {
 		},
 	)
 
-	as.Equal(`lambda(number.number->boolean)`, a2.Name())
+	as.Equal(`procedure(number.number->boolean)`, a2.Name())
 
 	as.True(types.Accepts(a1, a1))
 	as.False(types.Accepts(a1, a2))

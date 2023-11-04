@@ -49,7 +49,7 @@ const (
 
 var listType = types.MakeUnion(types.BasicList, types.BasicNull)
 
-var predicates = map[data.Keyword]data.Lambda{
+var predicates = map[data.Keyword]data.Procedure{
 	AtomKey:     makePredicate(isAtom),
 	NaNKey:      makePredicate(isNaN),
 	PairKey:     makePredicate(isPair),
@@ -58,7 +58,7 @@ var predicates = map[data.Keyword]data.Lambda{
 	AnyKey:      data.MakeTypePredicate(types.BasicAny),
 	BooleanKey:  data.MakeTypePredicate(types.BasicBoolean),
 	ConsKey:     data.MakeTypePredicate(types.BasicCons),
-	FunctionKey: data.MakeTypePredicate(types.BasicLambda),
+	FunctionKey: data.MakeTypePredicate(types.BasicProcedure),
 	KeywordKey:  data.MakeTypePredicate(types.BasicKeyword),
 	ListKey:     data.MakeTypePredicate(listType),
 	MacroKey:    data.MakeTypePredicate(macro.CallType),
@@ -83,12 +83,12 @@ var predicates = map[data.Keyword]data.Lambda{
 
 // TypeOf returns a CallType Predicate for the Types of the given Values. If
 // more than one Value is provided, the Union of their Types will be returned
-var TypeOf = data.MakeLambda(func(args ...data.Value) data.Value {
+var TypeOf = data.MakeProcedure(func(args ...data.Value) data.Value {
 	return data.TypePredicateOf(args[0], args[1:]...)
 }, 1, data.OrMore)
 
 // IsA returns a Predicate from the set of builtin named Predicates
-var IsA = data.MakeLambda(func(args ...data.Value) data.Value {
+var IsA = data.MakeProcedure(func(args ...data.Value) data.Value {
 	kwd := args[0].(data.Keyword)
 	if p, ok := predicates[kwd]; ok {
 		return p
@@ -96,15 +96,15 @@ var IsA = data.MakeLambda(func(args ...data.Value) data.Value {
 	panic(fmt.Errorf(ErrUnknownPredicate, kwd))
 }, 1)
 
-func makeGoTypePredicate[T any]() data.Lambda {
-	return data.MakeLambda(func(args ...data.Value) data.Value {
+func makeGoTypePredicate[T any]() data.Procedure {
+	return data.MakeProcedure(func(args ...data.Value) data.Value {
 		_, ok := args[0].(T)
 		return data.Bool(ok)
 	}, 1)
 }
 
-func makePredicate(p predicate) data.Lambda {
-	return data.MakeLambda(func(args ...data.Value) data.Value {
+func makePredicate(p predicate) data.Procedure {
+	return data.MakeProcedure(func(args ...data.Value) data.Value {
 		return data.Bool(p(args[0]))
 	}, 1)
 }

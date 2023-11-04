@@ -5,7 +5,7 @@ import "github.com/kode4food/ale/data"
 const anonName = data.Local("anon")
 
 // Sym instantiates a new symbol
-var Sym = data.MakeLambda(func(args ...data.Value) data.Value {
+var Sym = data.MakeProcedure(func(args ...data.Value) data.Value {
 	if s, ok := args[0].(data.Symbol); ok {
 		return s
 	}
@@ -14,7 +14,7 @@ var Sym = data.MakeLambda(func(args ...data.Value) data.Value {
 }, 1)
 
 // GenSym generates a unique symbol
-var GenSym = data.MakeLambda(func(args ...data.Value) data.Value {
+var GenSym = data.MakeProcedure(func(args ...data.Value) data.Value {
 	if len(args) == 0 {
 		return data.NewGeneratedSymbol(anonName)
 	}

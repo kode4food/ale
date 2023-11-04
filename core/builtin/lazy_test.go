@@ -13,9 +13,9 @@ func TestLazySequence(t *testing.T) {
 	as := assert.New(t)
 
 	var i int
-	var fn data.Lambda
+	var fn data.Procedure
 
-	fn = data.MakeLambda(func(...data.Value) data.Value {
+	fn = data.MakeProcedure(func(...data.Value) data.Value {
 		if i < 10 {
 			p := builtin.LazySequence.Call(fn).(data.Prepender)
 			res := p.Prepend(data.Integer(i))

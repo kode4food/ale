@@ -22,7 +22,7 @@ const (
 func Lambda(e encoder.Encoder, args ...data.Value) {
 	var le *lambdaEncoder
 	cases := parseParamCases(data.NewVector(args...))
-	fn := generate.Lambda(e, func(c encoder.Encoder) {
+	fn := generate.Procedure(e, func(c encoder.Encoder) {
 		le = makeLambda(c, cases)
 		le.encode()
 	})

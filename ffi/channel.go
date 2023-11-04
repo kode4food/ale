@@ -48,8 +48,8 @@ func (w *channelWrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
 	return o, nil
 }
 
-func (w *channelWrapper) makeClose(v reflect.Value) data.Lambda {
-	return data.MakeLambda(func(...data.Value) data.Value {
+func (w *channelWrapper) makeClose(v reflect.Value) data.Procedure {
+	return data.MakeProcedure(func(...data.Value) data.Value {
 		v.Close()
 		return data.Null
 	}, 0)
@@ -73,8 +73,8 @@ func (w *channelWrapper) makeSequence(v reflect.Value) data.Sequence {
 	return sequence.NewLazy(resolver)
 }
 
-func (w *channelWrapper) makeEmitter(v reflect.Value) data.Lambda {
-	return data.MakeLambda(func(args ...data.Value) data.Value {
+func (w *channelWrapper) makeEmitter(v reflect.Value) data.Procedure {
+	return data.MakeProcedure(func(args ...data.Value) data.Value {
 		for _, arg := range args {
 			arg, err := w.elem.Unwrap(arg)
 			if err != nil {

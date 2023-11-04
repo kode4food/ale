@@ -80,7 +80,7 @@ func testMacroExpandWith(t *testing.T, enc testEncoder) {
 	s, ok := c[0].(data.Local)
 	as.True(ok)
 	as.Equal("some-sym", s.String())
-	f, ok := c[1].(data.Lambda)
+	f, ok := c[1].(data.Procedure)
 	as.True(ok)
 	as.Equal("(ale/declare* some-sym)", f.Call(neq).String())
 }

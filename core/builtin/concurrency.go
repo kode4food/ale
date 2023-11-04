@@ -8,8 +8,8 @@ import (
 )
 
 // Go runs the provided function asynchronously
-var Go = data.MakeLambda(func(args ...data.Value) data.Value {
-	fn := args[0].(data.Lambda)
+var Go = data.MakeProcedure(func(args ...data.Value) data.Value {
+	fn := args[0].(data.Procedure)
 	restArgs := args[1:]
 	go func() {
 		defer runtime.NormalizeGoRuntimeErrors()
@@ -19,7 +19,7 @@ var Go = data.MakeLambda(func(args ...data.Value) data.Value {
 }, 1)
 
 // Chan instantiates a new go channel
-var Chan = data.MakeLambda(func(args ...data.Value) data.Value {
+var Chan = data.MakeProcedure(func(args ...data.Value) data.Value {
 	var size int
 	if len(args) != 0 {
 		size = int(args[0].(data.Integer))
@@ -29,8 +29,8 @@ var Chan = data.MakeLambda(func(args ...data.Value) data.Value {
 }, 0, 1)
 
 // Promise instantiates a new eventually fulfilled promise
-var Promise = data.MakeLambda(func(args ...data.Value) data.Value {
-	resolver := args[0].(data.Lambda)
+var Promise = data.MakeProcedure(func(args ...data.Value) data.Value {
+	resolver := args[0].(data.Procedure)
 	return async.NewPromise(resolver)
 }, 1)
 

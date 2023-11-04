@@ -21,27 +21,27 @@ var (
 )
 
 // Append adds a value to the end of the provided AppenderKey
-var Append = data.MakeLambda(func(args ...data.Value) data.Value {
+var Append = data.MakeProcedure(func(args ...data.Value) data.Value {
 	a := args[0].(data.Appender)
 	s := args[1]
 	return a.Append(s)
 }, 2)
 
 // Reverse returns a reversed copy of a Sequence
-var Reverse = data.MakeLambda(func(args ...data.Value) data.Value {
+var Reverse = data.MakeProcedure(func(args ...data.Value) data.Value {
 	r := args[0].(data.Reverser)
 	return r.Reverse()
 }, 1)
 
 // Length returns the element count of the provided CountedKey
-var Length = data.MakeLambda(func(args ...data.Value) data.Value {
+var Length = data.MakeProcedure(func(args ...data.Value) data.Value {
 	s := args[0].(data.Counted)
 	l := s.Count()
 	return data.Integer(l)
 }, 1)
 
 // Nth returns the nth element of the provided sequence or a default
-var Nth = data.MakeLambda(func(args ...data.Value) data.Value {
+var Nth = data.MakeProcedure(func(args ...data.Value) data.Value {
 	s := args[0].(data.Indexed)
 	i := int(args[1].(data.Integer))
 	if res, ok := s.ElementAt(i); ok {
@@ -53,8 +53,8 @@ var Nth = data.MakeLambda(func(args ...data.Value) data.Value {
 	panic(errors.New(ErrIndexOutOfBounds))
 }, 2, 3)
 
-func makeConstructor[T data.Value](orig func(...data.Value) T) data.Lambda {
-	return data.MakeLambda(func(args ...data.Value) data.Value {
+func makeConstructor[T data.Value](orig func(...data.Value) T) data.Procedure {
+	return data.MakeProcedure(func(args ...data.Value) data.Value {
 		return orig(args...)
 	})
 }

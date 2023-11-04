@@ -15,7 +15,7 @@ func TestGo(t *testing.T) {
 	done := make(chan bool)
 
 	var called bool
-	fn := data.MakeLambda(func(args ...data.Value) data.Value {
+	fn := data.MakeProcedure(func(args ...data.Value) data.Value {
 		res := builtin.Str.Call(args...)
 		as.String("helloworld", res)
 		called = true
@@ -39,8 +39,8 @@ func TestChan(t *testing.T) {
 	as.True(ok3)
 
 	go func() {
-		emit.(data.Lambda).Call(S("hello"))
-		closeChan.(data.Lambda).Call()
+		emit.(data.Procedure).Call(S("hello"))
+		closeChan.(data.Procedure).Call()
 	}()
 
 	f, r, ok := seq.(data.Sequence).Split()
@@ -49,8 +49,8 @@ func TestChan(t *testing.T) {
 	as.True(ok)
 }
 
-func makeWrapperFunc(v data.Value) data.Lambda {
-	return data.MakeLambda(func(...data.Value) data.Value {
+func makeWrapperFunc(v data.Value) data.Procedure {
+	return data.MakeProcedure(func(...data.Value) data.Value {
 		return v
 	})
 }
@@ -61,7 +61,7 @@ func TestPromise(t *testing.T) {
 	p1 := builtin.Promise.Call(makeWrapperFunc(S("with initial")))
 	as.True(getPredicate(builtin.PromiseKey).Call(p1))
 	as.False(getPredicate(builtin.ResolvedKey).Call(p1))
-	res := p1.(data.Lambda).Call()
+	res := p1.(data.Procedure).Call()
 	as.True(getPredicate(builtin.ResolvedKey).Call(p1))
 	as.String("with initial", res)
 }

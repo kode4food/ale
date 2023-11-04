@@ -12,18 +12,18 @@ import (
 )
 
 type closure struct {
-	*Lambda
+	*Procedure
 	values data.Values
 }
 
-func newClosure(lambda *Lambda, values data.Values) *closure {
+func newClosure(lambda *Procedure, values data.Values) *closure {
 	return &closure{
-		Lambda: lambda,
-		values: values,
+		Procedure: lambda,
+		values:    values,
 	}
 }
 
-// Call turns closure into a Lambda, and serves as the virtual machine
+// Call turns closure into a Procedure, and serves as the virtual machine
 func (c *closure) Call(args ...data.Value) data.Value {
 	var (
 		CODE isa.Instructions
@@ -34,11 +34,11 @@ func (c *closure) Call(args ...data.Value) data.Value {
 	)
 
 initMem:
-	MEM = make(data.Values, c.Lambda.StackSize+c.Lambda.LocalCount)
+	MEM = make(data.Values, c.Procedure.StackSize+c.Procedure.LocalCount)
 
 initCode:
-	CODE = c.Lambda.Code
-	LP = c.Lambda.StackSize
+	CODE = c.Procedure.Code
+	LP = c.Procedure.StackSize
 
 initState:
 	SP = LP - 1
@@ -82,7 +82,7 @@ opSwitch:
 		goto nextPC
 
 	case isa.Const:
-		MEM[SP] = c.Lambda.Constants[op]
+		MEM[SP] = c.Procedure.Constants[op]
 		SP--
 		goto nextPC
 
@@ -171,14 +171,14 @@ opSwitch:
 
 	case isa.Declare:
 		SP++
-		c.Lambda.Globals.Declare(
+		c.Procedure.Globals.Declare(
 			MEM[SP].(data.Local),
 		)
 		goto nextPC
 
 	case isa.Private:
 		SP++
-		c.Lambda.Globals.Private(
+		c.Procedure.Globals.Private(
 			MEM[SP].(data.Local),
 		)
 		goto nextPC
@@ -187,13 +187,13 @@ opSwitch:
 		SP++
 		name := MEM[SP].(data.Local)
 		SP++
-		c.Lambda.Globals.Declare(name).Bind(MEM[SP])
+		c.Procedure.Globals.Declare(name).Bind(MEM[SP])
 		goto nextPC
 
 	case isa.Resolve:
 		SP1 := &MEM[SP+1]
 		*SP1 = env.MustResolveValue(
-			c.Lambda.Globals,
+			c.Procedure.Globals,
 			(*SP1).(data.Symbol),
 		)
 		goto nextPC
@@ -308,18 +308,18 @@ opSwitch:
 
 	case isa.Call0:
 		SP1 := &MEM[SP+1]
-		*SP1 = (*SP1).(data.Lambda).Call()
+		*SP1 = (*SP1).(data.Procedure).Call()
 		goto nextPC
 
 	case isa.Call1:
 		SP++
 		SP1 := &MEM[SP+1]
-		*SP1 = MEM[SP].(data.Lambda).Call(*SP1)
+		*SP1 = MEM[SP].(data.Procedure).Call(*SP1)
 		goto nextPC
 
 	case isa.Call:
 		SP1 := SP + 1
-		fn := MEM[SP1].(data.Lambda)
+		fn := MEM[SP1].(data.Procedure)
 		// prepare args
 		args := make(data.Values, op)
 		copy(args, MEM[SP1+1:LP]) // because stack mutates
@@ -332,7 +332,7 @@ opSwitch:
 	case isa.CallWith:
 		SP++
 		SP1 := &MEM[SP+1]
-		*SP1 = MEM[SP].(data.Lambda).Call(
+		*SP1 = MEM[SP].(data.Procedure).Call(
 			sequence.ToValues((*SP1).(data.Sequence))...,
 		)
 		goto nextPC
@@ -346,14 +346,14 @@ opSwitch:
 		// call function
 		cl, ok := val.(*closure)
 		if !ok {
-			return val.(data.Lambda).Call(args...)
+			return val.(data.Procedure).Call(args...)
 		}
 		if cl == c {
 			goto initState
 		}
 		c = cl // intentional
-		ss := c.Lambda.StackSize
-		lc := c.Lambda.LocalCount
+		ss := c.Procedure.StackSize
+		lc := c.Procedure.LocalCount
 		if len(MEM) < ss+lc {
 			goto initMem
 		}

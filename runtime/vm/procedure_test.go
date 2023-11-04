@@ -17,14 +17,14 @@ func TestLambdaFromEncoder(t *testing.T) {
 	e1.Emit(isa.ArgLen)
 	e1.Emit(isa.Return)
 
-	l := vm.LambdaFromEncoder(e1)
+	l := vm.MakeProcedure(e1)
 	as.NotNil(l)
 	as.Nil(l.CheckArity(-1))
 
-	c, ok := l.Call().(data.Lambda)
+	c, ok := l.Call().(data.Procedure)
 	as.True(ok)
 	as.NotNil(c)
 
 	as.Equal(I(4), c.Call(S("one"), S("two"), S("three"), S("four")))
-	as.Contains(":type lambda", c)
+	as.Contains(":type procedure", c)
 }

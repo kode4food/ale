@@ -12,7 +12,7 @@ func TestBoolWrapper(t *testing.T) {
 	as := assert.New(t)
 	f := ffi.MustWrap(func(b bool) bool {
 		return !b
-	}).(data.Lambda)
+	}).(data.Procedure)
 
 	b := f.Call(data.False)
 	as.True(b)

@@ -29,7 +29,7 @@ const (
 	ArgLen                 // Retrieve Argument Count
 	Bind                   // Bind Global
 	BindRef                // Bind Reference
-	Call                   // Call Lambda
+	Call                   // Call Procedure
 	Call0                  // Zero-Arg Call
 	Call1                  // One-Arg Call
 	CallWith               // Call with the provided Sequence as Arguments

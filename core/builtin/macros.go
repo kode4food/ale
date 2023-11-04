@@ -21,9 +21,9 @@ var MacroExpand = makeEvaluator(macro.Expand)
 var MacroExpand1 = makeEvaluator(macro.Expand1)
 
 // Macro converts a function into a macro
-var Macro = data.MakeLambda(func(args ...data.Value) data.Value {
+var Macro = data.MakeProcedure(func(args ...data.Value) data.Value {
 	switch body := args[0].(type) {
-	case data.Lambda:
+	case data.Procedure:
 		wrapper := func(_ env.Namespace, args ...data.Value) data.Value {
 			if err := body.CheckArity(len(args)); err != nil {
 				panic(err)

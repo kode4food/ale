@@ -9,8 +9,8 @@ import (
 	"github.com/kode4food/ale/runtime/isa"
 )
 
-// Lambda encapsulates the initial environment of an abstract machine
-type Lambda struct {
+// Procedure encapsulates the initial environment of an abstract machine
+type Procedure struct {
 	Globals      env.Namespace
 	Constants    data.Values
 	Code         isa.Instructions
@@ -19,12 +19,12 @@ type Lambda struct {
 	ArityChecker data.ArityChecker
 }
 
-// LambdaFromEncoder instantiates an abstract machine Lambda from the provided
+// MakeProcedure instantiates an abstract machine Procedure from the provided
 // Encoder's intermediate representation
-func LambdaFromEncoder(e encoder.Encoder) *Lambda {
+func MakeProcedure(e encoder.Encoder) *Procedure {
 	code := e.Code()
 	optimized := optimize.Instructions(code)
-	return &Lambda{
+	return &Procedure{
 		Globals:      e.Globals(),
 		Constants:    e.Constants(),
 		StackSize:    int(e.StackSize()),
@@ -34,27 +34,27 @@ func LambdaFromEncoder(e encoder.Encoder) *Lambda {
 	}
 }
 
-// Call allows an abstract machine Lambda to be called for the purpose of
+// Call allows an abstract machine Procedure to be called for the purpose of
 // instantiating a closure. Only the compiler invokes this calling interface.
-func (l *Lambda) Call(values ...data.Value) data.Value {
-	return newClosure(l, values)
+func (p *Procedure) Call(values ...data.Value) data.Value {
+	return newClosure(p, values)
 }
 
-// CheckArity performs a compile-time arity check for the Lambda
-func (l *Lambda) CheckArity(int) error {
+// CheckArity performs a compile-time arity check for the Procedure
+func (p *Procedure) CheckArity(int) error {
 	return nil
 }
 
-// Type makes Lambda a typed value
-func (l *Lambda) Type() types.Type {
-	return types.BasicLambda
+// Type makes Procedure a typed value
+func (p *Procedure) Type() types.Type {
+	return types.BasicProcedure
 }
 
-// Equal compares this Lambda to another for equality
-func (l *Lambda) Equal(v data.Value) bool {
-	return l == v
+// Equal compares this Procedure to another for equality
+func (p *Procedure) Equal(v data.Value) bool {
+	return p == v
 }
 
-func (l *Lambda) String() string {
-	return data.DumpString(l)
+func (p *Procedure) String() string {
+	return data.DumpString(p)
 }

@@ -30,7 +30,7 @@ type (
 func MakeApplicable(first Signature, rest ...Signature) *Applicable {
 	all := append(signatures{first}, rest...)
 	return &Applicable{
-		basic:      BasicLambda,
+		basic:      BasicProcedure,
 		signatures: all,
 	}
 }

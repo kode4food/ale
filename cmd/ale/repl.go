@@ -263,11 +263,11 @@ func (r *REPL) getBuiltInsNamespace() env.Namespace {
 }
 
 func (r *REPL) registerBuiltIns() {
-	r.registerBuiltIn("cls", data.MakeLambda(cls, 0))
+	r.registerBuiltIn("cls", data.MakeProcedure(cls, 0))
 	r.registerBuiltIn("doc", doc)
-	r.registerBuiltIn("debug", data.MakeLambda(debugInfo, 0))
-	r.registerBuiltIn("help", data.MakeLambda(help, 0))
-	r.registerBuiltIn("quit", data.MakeLambda(shutdown, 0))
+	r.registerBuiltIn("debug", data.MakeProcedure(debugInfo, 0))
+	r.registerBuiltIn("help", data.MakeProcedure(help, 0))
+	r.registerBuiltIn("quit", data.MakeProcedure(shutdown, 0))
 	r.registerBuiltIn("use", r.makeUse())
 }
 

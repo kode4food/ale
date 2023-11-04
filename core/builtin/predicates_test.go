@@ -10,8 +10,8 @@ import (
 	. "github.com/kode4food/ale/internal/assert/helpers"
 )
 
-func getPredicate(kwd data.Keyword) data.Lambda {
-	return builtin.IsA.Call(kwd).(data.Lambda)
+func getPredicate(kwd data.Keyword) data.Procedure {
+	return builtin.IsA.Call(kwd).(data.Procedure)
 }
 
 func TestPredicatesEval(t *testing.T) {
