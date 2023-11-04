@@ -200,7 +200,8 @@ func (e *asmEncoder) makeNameToWord() toOperandFunc {
 			val = v
 		}
 		if val, ok := val.(data.Local); ok {
-			if cell, ok := e.ResolveLocal(val); ok {
+			n := e.resolvePrivate(val)
+			if cell, ok := e.ResolveLocal(n); ok {
 				return cell.Index, nil
 			}
 			return 0, fmt.Errorf(ErrUnexpectedName, val)
@@ -217,11 +218,11 @@ func (e *asmEncoder) resolveEncoderArg(v data.Value) (data.Value, bool) {
 	return nil, false
 }
 
-func (e *asmEncoder) ResolveLocal(l data.Local) (*encoder.IndexedCell, bool) {
+func (e *asmEncoder) resolvePrivate(l data.Local) data.Local {
 	if g, ok := e.private[l]; ok {
-		return e.Encoder.ResolveLocal(g)
+		return g
 	}
-	return e.Encoder.ResolveLocal(l)
+	return l
 }
 
 func getInstructionCalls() callMap {
@@ -252,7 +253,12 @@ func getEncoderCalls() callMap {
 	return callMap{
 		Resolve: {
 			Call: func(e encoder.Encoder, args ...data.Value) {
-				generate.Symbol(e, args[0].(data.Symbol))
+				s := args[0].(data.Symbol)
+				if l, ok := s.(data.Local); ok {
+					generate.Symbol(e, e.(*asmEncoder).resolvePrivate(l))
+					return
+				}
+				generate.Symbol(e, s)
 			},
 			argCount: 1,
 		},
@@ -278,11 +284,11 @@ func getEncoderCalls() callMap {
 			argCount: 1,
 		},
 		Local: {
-			Call:     makeLocalEncoder(publicResolver),
+			Call:     makeLocalEncoder(publicNamer),
 			argCount: 2,
 		},
 		Private: {
-			Call:     makeLocalEncoder(privateResolver),
+			Call:     makeLocalEncoder(privateNamer),
 			argCount: 2,
 		},
 		PushLocals: {
@@ -298,21 +304,11 @@ func getEncoderCalls() callMap {
 	}
 }
 
-func privateResolver(e *asmEncoder, l data.Local) data.Local {
-	p := gen.Local(l)
-	e.private[l] = p
-	return p
-}
-
-func publicResolver(_ *asmEncoder, l data.Local) data.Local {
-	return l
-}
-
 func makeLocalEncoder(
-	resolve func(e *asmEncoder, l data.Local) data.Local,
+	namer func(e *asmEncoder, l data.Local) data.Local,
 ) special.Call {
 	return func(e encoder.Encoder, args ...data.Value) {
-		name := resolve(e.(*asmEncoder), args[0].(data.Local))
+		name := namer(e.(*asmEncoder), args[0].(data.Local))
 		kwd := args[1].(data.Keyword)
 		cellType, ok := cellTypes[kwd]
 		if !ok {
@@ -320,6 +316,16 @@ func makeLocalEncoder(
 		}
 		e.AddLocal(name, cellType)
 	}
+}
+
+func publicNamer(_ *asmEncoder, l data.Local) data.Local {
+	return l
+}
+
+func privateNamer(e *asmEncoder, l data.Local) data.Local {
+	p := gen.Local(l)
+	e.private[l] = p
+	return p
 }
 
 func mergeCalls(maps ...callMap) callMap {
