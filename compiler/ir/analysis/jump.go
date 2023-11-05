@@ -6,9 +6,13 @@ import (
 	"github.com/kode4food/ale/runtime/isa"
 )
 
-// Error messages
 const (
-	ErrLabelNotAnchored     = "label not anchored: %d"
+	// ErrLabelNotAnchored is raised when a label hasn't been placed in an
+	// isa.Instructions stream
+	ErrLabelNotAnchored = "label not anchored: %d"
+
+	// ErrLabelMultipleAnchors is raised when a label has been placed more than
+	// once in an isa.Instructions stream
 	ErrLabelMultipleAnchors = "label anchored multiple times: %d"
 )
 

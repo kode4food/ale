@@ -33,15 +33,33 @@ type (
 	toOperandFunc func(data.Value) (isa.Operand, error)
 )
 
-// Error messages
 const (
-	ErrUnknownDirective      = "unknown directive: %s"
-	ErrUnexpectedForm        = "unexpected form: %s"
+	// ErrUnknownDirective is raised when an unknown directive is called
+	ErrUnknownDirective = "unknown directive: %s"
+
+	// ErrUnexpectedForm is raised when an unexpected form is encountered in
+	// the assembler block
+	ErrUnexpectedForm = "unexpected form: %s"
+
+	// ErrIncompleteInstruction is raised when an instruction is encountered in
+	// the assembler block that isn't accompanied by a required operand
 	ErrIncompleteInstruction = "incomplete instruction: %s"
-	ErrUnknownLocalType      = "unexpected local type: %s, expected: %s"
-	ErrUnexpectedArgument    = "unexpected argument name: %s"
-	ErrUnexpectedName        = "unexpected local name: %s"
-	ErrUnexpectedLabel       = "unexpected label: %s"
+
+	// ErrUnknownLocalType is raised when a local or private is declared that
+	// doesn't have a proper disposition (var, ref, rest)
+	ErrUnknownLocalType = "unexpected local type: %s, expected: %s"
+
+	// ErrUnexpectedParameter is raised when an encoder parameter is not found.
+	// These are declared using the !make-special directive
+	ErrUnexpectedParameter = "unexpected parameter name: %s"
+
+	// ErrUnexpectedName is raised when a local name is referenced that hasn't
+	// been declared as part of the assembler encoder's scope
+	ErrUnexpectedName = "unexpected local name: %s"
+
+	// ErrUnexpectedLabel is raised when a jump or cond-jump instruction refers
+	// to a label that hasn't been anchored in the assembler block
+	ErrUnexpectedLabel = "unexpected label: %s"
 )
 
 const (
@@ -287,7 +305,7 @@ func forEachCall(e encoder.Encoder, args ...data.Value) {
 	encode := eval.Value(e.Globals(), args[1]).(special.Call)
 	s, ok := e.(*asmEncoder).resolveEncoderArg(name)
 	if !ok {
-		panic(fmt.Errorf(ErrUnexpectedArgument, name))
+		panic(fmt.Errorf(ErrUnexpectedParameter, name))
 	}
 	seq := s.(data.Sequence)
 	for f, r, ok := seq.Split(); ok; f, r, ok = r.Split() {

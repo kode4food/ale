@@ -13,9 +13,13 @@ type stackSizes struct {
 	endSize int
 }
 
-// Error messages
 const (
-	ErrBadStackTermination  = "invalid stack end-state: %d"
+	// ErrBadStackTermination is raised when the analyzer verifies a branch
+	// that ends in a non-empty state
+	ErrBadStackTermination = "invalid stack end-state: %d"
+
+	// ErrBadBranchTermination is raised when the analyzer verifies parallel
+	// branches that end with a different stack size
 	ErrBadBranchTermination = "branches should end in the same state"
 )
 

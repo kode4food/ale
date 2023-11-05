@@ -11,11 +11,15 @@ import (
 	"github.com/kode4food/ale/macro"
 )
 
-// Error messages
 const (
+	// ErrBuiltInNotFound is raised when a built-in procedure can't be resolved
 	ErrBuiltInNotFound = "built-in not found: %s"
+
+	// ErrSpecialNotFound is raised when a built-in special can't be resolved
 	ErrSpecialNotFound = "special form not found: %s"
-	ErrMacroNotFound   = "macro not found: %s"
+
+	// ErrMacroNotFound is raised when a built-in macro can't be resolved
+	ErrMacroNotFound = "macro not found: %s"
 )
 
 const (

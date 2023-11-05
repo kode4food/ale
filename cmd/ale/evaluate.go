@@ -10,8 +10,8 @@ import (
 	"github.com/kode4food/ale/read"
 )
 
-// Error messages
 const (
+	//ErrFileNotFound is raised when a file is not found
 	ErrFileNotFound = "file not found: %s"
 )
 
