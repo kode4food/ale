@@ -23,9 +23,13 @@ type (
 	matchEntries []matchEntry
 )
 
-// Error messages
 const (
-	ErrStringNotTerminated  = "string has no closing quote"
+	// ErrStringNotTerminated is raised when the lexer reaches the end of its
+	// stream while scanning a string, without an encountering a closing quote
+	ErrStringNotTerminated = "string has no closing quote"
+
+	// ErrUnexpectedCharacters is raised when the lexer encounters a set of
+	// characters that don't match any of the defined scanning patterns
 	ErrUnexpectedCharacters = "unexpected characters: %s"
 )
 

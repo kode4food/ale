@@ -43,10 +43,7 @@ const (
 	endOfFile
 )
 
-// Error messages
-const (
-	errTokenWrapped = "%w (line %d, column %d)"
-)
+const errTokenWrapped = "%w (line %d, column %d)"
 
 // MakeToken constructs a new scanner Token
 func MakeToken(t TokenType, v data.Value) *Token {

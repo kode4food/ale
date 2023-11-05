@@ -29,10 +29,9 @@ const (
 	Values
 )
 
-// Error messages
-const (
-	ErrEffectNotDeclared = "effect not declared for opcode: %s"
-)
+// ErrEffectNotDeclared is raised when an attempt to forcefully retrieve an
+// Effect fails
+const ErrEffectNotDeclared = "effect not declared for opcode: %s"
 
 // Effects is a lookup table of instruction effects
 var Effects = map[Opcode]*Effect{

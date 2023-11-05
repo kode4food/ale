@@ -25,9 +25,13 @@ var (
 	one          = big.NewInt(1)
 )
 
-// Error messages
 const (
+	// ErrExpectedFloat is raised when a call to ParseFloat can't properly
+	// interpret its input as a floating point number
 	ErrExpectedFloat = "value is not a float: %s"
+
+	// ErrExpectedRatio is raised when a call to ParseRatio can't properly
+	// interpret its input as a ratio
 	ErrExpectedRatio = "value is not a ratio: %s"
 )
 

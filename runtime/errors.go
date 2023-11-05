@@ -16,10 +16,9 @@ type aleRuntimeError struct {
 	wrapped error
 }
 
-// Error messages
-const (
-	ErrUnexpectedType = "got %s, expected %s"
-)
+// ErrUnexpectedType maps a Go interface conversion error to something that
+// will make more sense to an Ale program
+const ErrUnexpectedType = "got %s, expected %s"
 
 var interfaceConversion = []*regexp.Regexp{
 	regexp.MustCompile(
