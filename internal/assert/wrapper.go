@@ -16,12 +16,19 @@ type Wrapper struct {
 	*assert.Assertions
 }
 
-// Error messages
 const (
+	// ErrInvalidTestExpression is raised when a check encounters a test value
+	// that is not expected
 	ErrInvalidTestExpression = "invalid test expression: %v"
-	ErrProperErrorNotRaised  = "proper error not raised"
-	ErrCannotMakeString      = "can't convert value to string"
-	ErrValueNotFound         = "value not found in object: %s"
+
+	// ErrProperErrorNotRaised is raised when a panic is expected but not seen
+	ErrProperErrorNotRaised = "proper error not raised"
+
+	// ErrCannotMakeString is raised when a value can't be made into a string
+	ErrCannotMakeString = "can't convert value to string"
+
+	// ErrValueNotFound is raised when a forced retrieval from an Object fails
+	ErrValueNotFound = "value not found in object: %s"
 )
 
 // New instantiates a new Wrapper instance from the specified test
