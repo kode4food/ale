@@ -248,7 +248,7 @@ func isRecoverable(err error) bool {
 	msg := err.Error()
 	return msg == parse.ErrListNotClosed ||
 		msg == parse.ErrVectorNotClosed ||
-		msg == parse.ErrMapNotClosed ||
+		msg == parse.ErrObjectNotClosed ||
 		msg == lex.ErrStringNotTerminated ||
 		strings.HasPrefix(msg, notPaired)
 }

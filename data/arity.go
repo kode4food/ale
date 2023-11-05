@@ -5,11 +5,21 @@ import (
 	"fmt"
 )
 
-// Error messages
 const (
-	ErrFixedArity       = "expected %d arguments, got %d"
-	ErrMinimumArity     = "expected at least %d arguments, got %d"
-	ErrRangedArity      = "expected between %d and %d arguments, got %d"
+	// ErrFixedArity is raised when there are too few or many arguments
+	// provided to a fixed ArityChecker
+	ErrFixedArity = "expected %d arguments, got %d"
+
+	// ErrMinimumArity is raised when there are too few arguments provided to a
+	// minimum ArityChecker
+	ErrMinimumArity = "expected at least %d arguments, got %d"
+
+	// ErrRangedArity is raised when there are too few or many arguments
+	// provided to a ranged ArityChecker
+	ErrRangedArity = "expected between %d and %d arguments, got %d"
+
+	// ErrTooManyArguments is raised when there are too many arguments provided
+	// to a maximum ArityChecker
 	ErrTooManyArguments = "too many arity check arguments"
 )
 

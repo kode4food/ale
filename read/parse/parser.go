@@ -16,17 +16,42 @@ type parser struct {
 	token *lex.Token
 }
 
-// Error messages
 const (
-	ErrPrefixedNotPaired  = "end of file reached before completing %s"
-	ErrUnexpectedDot      = "encountered '.' with no open list"
-	ErrInvalidListSyntax  = "invalid list syntax"
-	ErrListNotClosed      = "end of file reached with open list"
-	ErrUnmatchedListEnd   = "encountered ')' with no open list"
-	ErrVectorNotClosed    = "end of file reached with open vector"
+	// ErrPrefixedNotPaired is raised when the parser encounters the end of the
+	// stream without being able to completed a paired element, such as a quote
+	ErrPrefixedNotPaired = "end of file reached before completing %s"
+
+	// ErrUnexpectedDot is raised when the parser encounters a dot in the
+	// stream when it isn't part of an open list
+	ErrUnexpectedDot = "encountered '.' with no open list"
+
+	// ErrInvalidListSyntax is raised when the parse encounters a misplaced dot
+	// when parsing an open list
+	ErrInvalidListSyntax = "invalid list syntax"
+
+	// ErrListNotClosed is raised when the parser encounters the end of the
+	// stream while an open list is still being parsed
+	ErrListNotClosed = "end of file reached with open list"
+
+	// ErrUnmatchedListEnd is raised when a list-end character is encountered
+	// in the stream when no open list is being parsed
+	ErrUnmatchedListEnd = "encountered ')' with no open list"
+
+	// ErrVectorNotClosed is raised when the parser encounters the end of the
+	// stream while an open vector is still being parsed
+	ErrVectorNotClosed = "end of file reached with open vector"
+
+	// ErrUnmatchedVectorEnd is raised when a vector-end character is
+	// encountered in the stream when no open vector is being parsed
 	ErrUnmatchedVectorEnd = "encountered ']' with no open vector"
-	ErrMapNotClosed       = "end of file reached with open map"
-	ErrUnmatchedMapEnd    = "encountered '}' with no open map"
+
+	// ErrObjectNotClosed is raised when the parser encounters the end of the
+	// stream while an open object is still being parsed
+	ErrObjectNotClosed = "end of file reached with open object"
+
+	// ErrUnmatchedObjectEnd is raised when an object-end character is
+	// encountered in the stream when no open object is being parsed
+	ErrUnmatchedObjectEnd = "encountered '}' with no open object"
 )
 
 var (
@@ -42,7 +67,7 @@ var (
 
 	collectionErrors = map[lex.TokenType]string{
 		lex.VectorEnd: ErrVectorNotClosed,
-		lex.ObjectEnd: ErrMapNotClosed,
+		lex.ObjectEnd: ErrObjectNotClosed,
 	}
 )
 
@@ -97,7 +122,7 @@ func (r *parser) value(t *lex.Token) data.Value {
 	case lex.VectorEnd:
 		panic(r.error(ErrUnmatchedVectorEnd))
 	case lex.ObjectEnd:
-		panic(r.error(ErrUnmatchedMapEnd))
+		panic(r.error(ErrUnmatchedObjectEnd))
 	case lex.Dot:
 		panic(r.error(ErrUnexpectedDot))
 	default:

@@ -129,11 +129,11 @@ func testReaderError(t *testing.T, src, err string, args ...any) {
 func TestReaderErrors(t *testing.T) {
 	testReaderError(t, "(99 100 ", parse.ErrListNotClosed)
 	testReaderError(t, "[99 100 ", parse.ErrVectorNotClosed)
-	testReaderError(t, "{:key 99", parse.ErrMapNotClosed)
+	testReaderError(t, "{:key 99", parse.ErrObjectNotClosed)
 
 	testReaderError(t, "99 100)", parse.ErrUnmatchedListEnd)
 	testReaderError(t, "99 100]", parse.ErrUnmatchedVectorEnd)
-	testReaderError(t, "99}", parse.ErrUnmatchedMapEnd)
+	testReaderError(t, "99}", parse.ErrUnmatchedObjectEnd)
 	testReaderError(t, "{99}", data.ErrMapNotPaired)
 
 	testReaderError(t, "(1 2 . 3 4)", parse.ErrInvalidListSyntax)

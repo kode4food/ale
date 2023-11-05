@@ -30,13 +30,6 @@ type (
 	}
 )
 
-// Error messages
-const (
-	ErrNameAlreadyBound   = "name is already bound in namespace: %s"
-	ErrNameNotBound       = "name is not bound in namespace: %s"
-	ErrSnapshotIncomplete = "can't snapshot environment. entry not bound: %s"
-)
-
 func (ns *namespace) Environment() *Environment {
 	return ns.environment
 }

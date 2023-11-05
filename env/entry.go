@@ -32,6 +32,21 @@ type (
 )
 
 const (
+	// ErrNameAlreadyBound is raised when an attempt is made to bind a
+	// Namespace entry that has already been bound
+	ErrNameAlreadyBound = "name is already bound in namespace: %s"
+
+	// ErrNameNotBound is raised when an attempt is mode to retrieve a value
+	// from a Namespace that hasn't been bound
+	ErrNameNotBound = "name is not bound in namespace: %s"
+
+	// ErrSnapshotIncomplete is raised when an attempt is made to create a
+	// Namespace snapshot in a situation where an unbound entry has been
+	// retrieved
+	ErrSnapshotIncomplete = "can't snapshot environment. entry not bound: %s"
+)
+
+const (
 	resolved entryFlags = 1 << iota
 	bound
 	private
