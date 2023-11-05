@@ -15,5 +15,5 @@ func TestEval(t *testing.T) {
 
 func TestPanicWith(t *testing.T) {
 	as := assert.New(t)
-	as.PanicWith(`(raise "boom!")`, fmt.Errorf("boom!"))
+	as.PanicWith(`(raise "boom")`, fmt.Errorf("boom"))
 }
