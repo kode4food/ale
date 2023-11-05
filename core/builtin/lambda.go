@@ -12,8 +12,8 @@ type lambdaEncoder struct {
 	cases paramCases
 }
 
-// ErrNoMatchingParamPattern is raised when none of the paramter patterns for a
-// Lambda were capable of being matched
+// ErrNoMatchingParamPattern is raised when none of the parameter patterns for
+// a Lambda were capable of being matched
 const ErrNoMatchingParamPattern = "no matching parameter pattern"
 
 // Lambda encodes a lambda
