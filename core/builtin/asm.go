@@ -9,6 +9,7 @@ import (
 	"github.com/kode4food/ale/compiler/generate"
 	"github.com/kode4food/ale/compiler/special"
 	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/eval"
 	"github.com/kode4food/ale/internal/strings"
 	"github.com/kode4food/ale/runtime/isa"
 	"github.com/kode4food/comb/basics"
@@ -38,14 +39,16 @@ const (
 	ErrUnexpectedForm        = "unexpected form: %s"
 	ErrIncompleteInstruction = "incomplete instruction: %s"
 	ErrUnknownLocalType      = "unexpected local type: %s, expected: %s"
+	ErrUnexpectedArgument    = "unexpected argument name: %s"
 	ErrUnexpectedName        = "unexpected local name: %s"
 	ErrUnexpectedLabel       = "unexpected label: %s"
 )
 
 const (
-	MakeEncoder = data.Local("!make-encoder")
+	MakeSpecial = data.Local("!make-special")
 	Resolve     = data.Local(".resolve")
-	EvalValue   = data.Local(".eval")
+	Evaluate    = data.Local(".eval")
+	ForEach     = data.Local(".for-each")
 	Const       = data.Local(".const")
 	Local       = data.Local(".local")
 	Private     = data.Local(".private")
@@ -97,8 +100,8 @@ func (e *asmEncoder) process(forms data.Sequence) {
 	if f, r, ok := forms.Split(); ok {
 		if l, ok := f.(data.Local); ok {
 			switch l {
-			case MakeEncoder:
-				e.makeEncoderCall(r)
+			case MakeSpecial:
+				e.makeSpecialCall(r)
 				return
 			}
 		}
@@ -106,7 +109,7 @@ func (e *asmEncoder) process(forms data.Sequence) {
 	e.encode(forms)
 }
 
-func (e *asmEncoder) makeEncoderCall(forms data.Sequence) {
+func (e *asmEncoder) makeSpecialCall(forms data.Sequence) {
 	cases := parseParamCases(forms)
 	ac := cases.makeArityChecker()
 	f := cases.makeFetchers()
@@ -251,57 +254,62 @@ func makeEmitCall(oc isa.Opcode, actOn isa.ActOn) *call {
 
 func getEncoderCalls() callMap {
 	return callMap{
-		Resolve: {
-			Call: func(e encoder.Encoder, args ...data.Value) {
-				s := args[0].(data.Symbol)
-				if l, ok := s.(data.Local); ok {
-					generate.Symbol(e, e.(*asmEncoder).resolvePrivate(l))
-					return
-				}
-				generate.Symbol(e, s)
-			},
-			argCount: 1,
-		},
-		EvalValue: {
-			Call: func(e encoder.Encoder, args ...data.Value) {
-				if v, ok := e.(*asmEncoder).resolveEncoderArg(args[0]); ok {
-					generate.Value(e, v)
-					return
-				}
-				generate.Value(e, args[0])
-			},
-			argCount: 1,
-		},
-		Const: {
-			Call: func(e encoder.Encoder, args ...data.Value) {
-				if v, ok := e.(*asmEncoder).resolveEncoderArg(args[0]); ok {
-					generate.Literal(e, v)
-					return
-				}
-				index := e.AddConstant(args[0])
-				e.Emit(isa.Const, index)
-			},
-			argCount: 1,
-		},
-		Local: {
-			Call:     makeLocalEncoder(publicNamer),
-			argCount: 2,
-		},
-		Private: {
-			Call:     makeLocalEncoder(privateNamer),
-			argCount: 2,
-		},
-		PushLocals: {
-			Call: func(e encoder.Encoder, _ ...data.Value) {
-				e.PushLocals()
-			},
-		},
-		PopLocals: {
-			Call: func(e encoder.Encoder, _ ...data.Value) {
-				e.PopLocals()
-			},
-		},
+		Resolve:    {Call: resolveCall, argCount: 1},
+		Evaluate:   {Call: evaluateCall, argCount: 1},
+		ForEach:    {Call: forEachCall, argCount: 2},
+		Const:      {Call: constCall, argCount: 1},
+		PushLocals: {Call: pushLocalsCall},
+		PopLocals:  {Call: popLocalsCall},
+		Local:      {Call: makeLocalEncoder(publicNamer), argCount: 2},
+		Private:    {Call: makeLocalEncoder(privateNamer), argCount: 2},
 	}
+}
+
+func resolveCall(e encoder.Encoder, args ...data.Value) {
+	s := args[0].(data.Symbol)
+	if l, ok := s.(data.Local); ok {
+		generate.Symbol(e, e.(*asmEncoder).resolvePrivate(l))
+		return
+	}
+	generate.Symbol(e, s)
+}
+
+func evaluateCall(e encoder.Encoder, args ...data.Value) {
+	if v, ok := e.(*asmEncoder).resolveEncoderArg(args[0]); ok {
+		generate.Value(e, v)
+		return
+	}
+	generate.Value(e, args[0])
+}
+
+func forEachCall(e encoder.Encoder, args ...data.Value) {
+	name := args[0].(data.Local)
+	encode := eval.Value(e.Globals(), args[1]).(special.Call)
+	s, ok := e.(*asmEncoder).resolveEncoderArg(name)
+	if !ok {
+		panic(fmt.Errorf(ErrUnexpectedArgument, name))
+	}
+	seq := s.(data.Sequence)
+	for f, r, ok := seq.Split(); ok; f, r, ok = r.Split() {
+		encode(e, f)
+	}
+}
+
+func constCall(e encoder.Encoder, args ...data.Value) {
+	if v, ok := e.(*asmEncoder).resolveEncoderArg(args[0]); ok {
+		generate.Literal(e, v)
+		return
+	}
+	index := e.AddConstant(args[0])
+	e.Emit(isa.Const, index)
+}
+
+func pushLocalsCall(e encoder.Encoder, _ ...data.Value) {
+	e.PushLocals()
+}
+
+func popLocalsCall(e encoder.Encoder, _ ...data.Value) {
+	e.PopLocals()
 }
 
 func makeLocalEncoder(

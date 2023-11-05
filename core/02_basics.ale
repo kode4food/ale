@@ -1,9 +1,8 @@
 ;;;; ale core: basics
 
 (define* quote
-  (asm*
-    !make-encoder (form)
-    .const form))
+  (asm* !make-special (form)
+      .const form))
 
 ;; type-based predicates
 (define* is-any     (is-a* :any))
@@ -38,8 +37,7 @@
 
 (private* dec*)
 (define* dec*
-  (asm*
-      !make-encoder (value)
+  (asm* !make-special (value)
       .eval value
       .const 1
       sub))
@@ -184,7 +182,11 @@
      :end))))))
 
 (define* begin
-  (macro*
-    (lambda body
-      ; an empty let results in the desired scoping behavior
-      `(let () ,@body))))
+  (asm* !make-special body
+      .push-locals
+      null
+      .for-each body
+        (asm* !make-special (val)
+            pop
+            .eval val)
+      .pop-locals))

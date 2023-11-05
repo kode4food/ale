@@ -129,7 +129,7 @@ func TestAsmMakeEncoder(t *testing.T) {
 
 	as.EvalTo(`
 		(define* if'
-			(asm* !make-encoder
+			(asm* !make-special
 				[(predicate consequent alternative)
 					.eval predicate
 					cond-jump :consequent
@@ -156,7 +156,7 @@ func TestAsmMakeRestEncoder(t *testing.T) {
 
 	as.EvalTo(`
 		(define* test
-			(asm* !make-encoder
+			(asm* !make-special
 				[(head . rest)
 					.eval head]))
 		(test 1 2 3 4)
@@ -164,7 +164,7 @@ func TestAsmMakeRestEncoder(t *testing.T) {
 
 	as.EvalTo(`
 		(define* test
-			(asm* !make-encoder
+			(asm* !make-special
 				[(head . rest)
 					.eval rest]))
 		(test 1 2 3 4)
