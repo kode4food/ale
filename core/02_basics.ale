@@ -183,10 +183,7 @@
 
 (define* begin
   (asm* !make-special body
-      .push-locals
       null
-      .for-each body
-        (asm* !make-special (val)
-            pop
-            .eval val)
-      .pop-locals))
+      .for-each body (asm* !make-special (val)
+          pop
+          .eval val)))
