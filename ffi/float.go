@@ -12,10 +12,9 @@ type (
 	float64Wrapper reflect.Kind
 )
 
-// Error messages
-const (
-	ErrValueMustBeFloat = "value must be a float"
-)
+// ErrValueMustBeFloat is raised when a float Unwrap call can't treat its
+// source as a data.Integer or data.Float
+const ErrValueMustBeFloat = "value must be a float"
 
 var (
 	float32zero = reflect.ValueOf(float32(0))

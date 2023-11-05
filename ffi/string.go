@@ -9,10 +9,9 @@ import (
 
 type stringWrapper reflect.Kind
 
-// Error messages
-const (
-	ErrValueMustBeString = "value must be a string"
-)
+// ErrValueMustBeString is raised when an string Unwrap call can't treat its
+// source as a data.String
+const ErrValueMustBeString = "value must be a string"
 
 var stringZero = reflect.ValueOf("")
 

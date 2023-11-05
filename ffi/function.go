@@ -17,10 +17,9 @@ type (
 	makeFuncType func(args []reflect.Value) (results []reflect.Value)
 )
 
-// Error messages
-const (
-	ErrValueMustBeFunction = "value must be a function"
-)
+// ErrValueMustBeProcedure is raised when a function Unwrap call can't treat
+// its source as a data.Procedure
+const ErrValueMustBeProcedure = "value must be a procedure"
 
 func makeWrappedFunc(t reflect.Type) (Wrapper, error) {
 	io, err := makeInOutWrappers(t)
@@ -41,7 +40,7 @@ func (w *funcWrapper) Unwrap(v data.Value) (reflect.Value, error) {
 	if v, ok := v.(data.Procedure); ok {
 		return w.unwrapCall(v), nil
 	}
-	return _emptyValue, errors.New(ErrValueMustBeFunction)
+	return _emptyValue, errors.New(ErrValueMustBeProcedure)
 }
 
 func (w *funcWrapper) unwrapCall(l data.Procedure) reflect.Value {

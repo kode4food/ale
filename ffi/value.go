@@ -9,10 +9,9 @@ import (
 
 type valueWrapper struct{}
 
-// Error messages
-const (
-	ErrMustImplementValue = "must implement value"
-)
+// ErrMustImplementValue is raised when a value Unwrap call can't treat its
+// source as a data.Value
+const ErrMustImplementValue = "must implement value"
 
 var dataValue = reflect.TypeOf((*data.Value)(nil)).Elem()
 

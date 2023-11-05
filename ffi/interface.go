@@ -22,9 +22,13 @@ type (
 	}
 )
 
-// Error messages
 const (
-	ErrInterfaceTypeMismatch         = "interface type mismatch"
+	// ErrInterfaceTypeMismatch is raised when an interface of the receiver in
+	// a data.Object doesn't match the expected wrapped interface
+	ErrInterfaceTypeMismatch = "interface type mismatch"
+
+	// ErrInterfaceCoercionNotSupported is raised when the value to unwrap
+	// isn't a data.Object
 	ErrInterfaceCoercionNotSupported = "value cannot be coerced into interface"
 )
 

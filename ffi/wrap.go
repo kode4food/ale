@@ -21,10 +21,8 @@ type (
 	}
 )
 
-// Error messages
-const (
-	ErrUnsupportedType = "unsupported type"
-)
+// ErrUnsupportedType is raised when wrapping encounters an unsupported type
+const ErrUnsupportedType = "unsupported type"
 
 var (
 	cache = makeTypeCache()

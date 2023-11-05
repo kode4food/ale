@@ -15,10 +15,9 @@ type (
 	int8Wrapper  reflect.Kind
 )
 
-// Error messages
-const (
-	ErrValueMustBeInteger = "value must be an integer"
-)
+// ErrValueMustBeInteger is raised when an integer Unwrap call can't treat
+// its source as a data.Integer
+const ErrValueMustBeInteger = "value must be an integer"
 
 var (
 	intZero   = reflect.ValueOf(0)

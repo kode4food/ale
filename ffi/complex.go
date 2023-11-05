@@ -12,9 +12,13 @@ type (
 	complex64Wrapper  reflect.Kind
 )
 
-// Error messages
 const (
-	ErrValueMustBeCons      = "value must be a cons cell"
+	// ErrValueMustBeCons is raised when a complex Unwrap call can't treat its
+	// source as a data.Cons
+	ErrValueMustBeCons = "value must be a cons cell"
+
+	// ErrConsMustContainFloat is raised when a complex Unwrap call can't treat
+	// its source's components as data.Floats
 	ErrConsMustContainFloat = "components must be float values"
 )
 

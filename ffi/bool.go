@@ -9,10 +9,9 @@ import (
 
 type boolWrapper reflect.Kind
 
-// Error messages
-const (
-	ErrValueMustBeBool = "value must be a bool"
-)
+// ErrValueMustBeBool is raised when a boolean Unwrap call can't treat its
+// source as a data.Bool
+const ErrValueMustBeBool = "value must be a bool"
 
 var (
 	boolTrue  = reflect.ValueOf(true)
