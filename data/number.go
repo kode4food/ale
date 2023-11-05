@@ -17,11 +17,6 @@ type Number interface {
 	IsNegInf() bool
 }
 
-// Error messages
-const (
-	ErrDivideByZero = "divide by zero"
-)
-
 // purify performs automatic contagion of operands
 func purify(l, r Number) (Number, Number) {
 	switch l := l.(type) {

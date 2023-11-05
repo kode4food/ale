@@ -12,11 +12,9 @@ type lambdaEncoder struct {
 	cases paramCases
 }
 
-// Error messages
-const (
-	ErrUnexpectedCaseSyntax   = "unexpected case syntax: %s"
-	ErrNoMatchingParamPattern = "no matching parameter pattern"
-)
+// ErrNoMatchingParamPattern is raised when none of the paramter patterns for a
+// Lambda were capable of being matched
+const ErrNoMatchingParamPattern = "no matching parameter pattern"
 
 // Lambda encodes a lambda
 func Lambda(e encoder.Encoder, args ...data.Value) {

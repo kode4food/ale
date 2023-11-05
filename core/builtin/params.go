@@ -20,6 +20,7 @@ type (
 
 // Error messages
 const (
+	ErrUnexpectedCaseSyntax  = "unexpected case syntax: %s"
 	ErrUnexpectedParamSyntax = "unexpected parameter syntax: %s"
 )
 

@@ -14,10 +14,9 @@ type arrayWrapper struct {
 	elem Wrapper
 }
 
-// Error messages
-const (
-	ErrValueMustBeSequence = "value must be a sequence"
-)
+// ErrValueMustBeSequence is raised when an Array Unwrap call can't treat its
+// source as a data.Sequence
+const ErrValueMustBeSequence = "value must be a sequence"
 
 func makeWrappedArray(t reflect.Type) (Wrapper, error) {
 	if isMarshaledByteArray(t) {

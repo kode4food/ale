@@ -10,10 +10,8 @@ import (
 	"github.com/kode4food/ale/read"
 )
 
-const (
-	//ErrFileNotFound is raised when a file is not found
-	ErrFileNotFound = "file not found: %s"
-)
+// ErrFileNotFound is raised when a file is not found
+const ErrFileNotFound = "file not found: %s"
 
 // EvaluateStdIn reads from StdIn and evaluates it
 func EvaluateStdIn() {

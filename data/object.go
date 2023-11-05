@@ -28,10 +28,9 @@ const (
 	InstanceKey = Keyword("instance")
 )
 
-// Error messages
-const (
-	ErrMapNotPaired = "map does not contain an even number of elements"
-)
+// ErrMapNotPaired is raised when a call to ValuesToObject receives an odd
+// number of args, meaning it won't be capable of zipping them into an Object
+const ErrMapNotPaired = "map does not contain an even number of elements"
 
 // EmptyObject represents an empty Object
 var (

@@ -8,10 +8,8 @@ import (
 	"github.com/kode4food/comb/basics"
 )
 
-// Error messages
-const (
-	ErrSymbolNotDocumented = "symbol not documented: %s"
-)
+// ErrSymbolNotDocumented is raised when a call to doc can't resolve a name
+const ErrSymbolNotDocumented = "symbol not documented: %s"
 
 const extension = ".md"
 

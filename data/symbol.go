@@ -68,10 +68,9 @@ const (
 	genSymOverflow = uint8(len(SymbolGenDigits))
 )
 
-// Error messages
-const (
-	ErrInvalidSymbol = "invalid symbol: %s"
-)
+// ErrInvalidSymbol is raised when a call to ParseSymbol can't interpret its
+// input as a proper Symbol name (local or qualified)
+const ErrInvalidSymbol = "invalid symbol: %s"
 
 var (
 	gen = NewSymbolGenerator()

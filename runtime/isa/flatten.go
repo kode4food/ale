@@ -18,10 +18,9 @@ type (
 	labels map[Operand]*label
 )
 
-// Error messages
-const (
-	ErrLabelAlreadyAnchored = "label has already been anchored"
-)
+// ErrLabelAlreadyAnchored is raised when the flattener identifies that a label
+// has been anchored more than once in the Instructions stream
+const ErrLabelAlreadyAnchored = "label has already been anchored"
 
 // Flatten takes a set of Instructions and flattens them into something that
 // the abstract machine can execute

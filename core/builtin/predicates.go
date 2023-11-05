@@ -12,10 +12,9 @@ import (
 
 type predicate func(data.Value) bool
 
-// Error messages
-const (
-	ErrUnknownPredicate = "unknown predicate: %s"
-)
+// ErrUnknownPredicate is raised when a call to IsA can't resolve a built-in
+// predicate for the specified keyword
+const ErrUnknownPredicate = "unknown predicate: %s"
 
 const (
 	AnyKey       = data.Keyword("any")

@@ -9,10 +9,9 @@ import (
 	"github.com/kode4food/ale/macro"
 )
 
-// Error messages
-const (
-	ErrFunctionRequired = "argument must be a function: %s"
-)
+// ErrProcedureRequired is raised when a call to the Macro built-in doesn't
+// receive a data.Procedure to wrap
+const ErrProcedureRequired = "argument must be a procedure: %s"
 
 // MacroExpand performs macro expansion of a form until it can no longer
 var MacroExpand = makeEvaluator(macro.Expand)
@@ -32,7 +31,7 @@ var Macro = data.MakeProcedure(func(args ...data.Value) data.Value {
 		}
 		return macro.Call(wrapper)
 	default:
-		panic(fmt.Errorf(ErrFunctionRequired, args[0]))
+		panic(fmt.Errorf(ErrProcedureRequired, args[0]))
 	}
 }, 1)
 

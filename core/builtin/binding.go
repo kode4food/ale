@@ -11,11 +11,18 @@ import (
 
 type uniqueNames map[data.Local]bool
 
-// Error messages
 const (
-	ErrUnpairedBindings    = "binding must be a paired vector"
+	// ErrUnpairedBindings is raised when a Let binding Vector has fewer or
+	// more than two elements
+	ErrUnpairedBindings = "binding must be a paired vector"
+
+	// ErrUnexpectedLetSyntax is raised when the Let bindings are not in the
+	// form of a List or Vector
 	ErrUnexpectedLetSyntax = "unexpected binding syntax: %s"
-	ErrNameAlreadyBound    = "name is already bound in local scope: %s"
+
+	// ErrNameAlreadyBound is raised when there's an attempt to bind the same
+	// name more than once in a single Let scope
+	ErrNameAlreadyBound = "name is already bound in local scope: %s"
 )
 
 // Let encodes a binding form. Binding values are evaluated first, and are then
