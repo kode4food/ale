@@ -42,7 +42,7 @@ const (
 	ErrUnexpectedForm = "unexpected form: %s"
 
 	// ErrIncompleteInstruction is raised when an instruction is encountered in
-	// the assembler block that isn't accompanied by a required operand
+	// the assembler block not accompanied by a required operand
 	ErrIncompleteInstruction = "incomplete instruction: %s"
 
 	// ErrUnknownLocalType is raised when a local or private is declared that
