@@ -18,9 +18,16 @@ type (
 	argFetcher func(data.Values) (data.Values, bool)
 )
 
-// Error messages
 const (
-	ErrUnexpectedCaseSyntax  = "unexpected case syntax: %s"
+	// ErrUnexpectedCaseSyntax is raised when a call to Lambda doesn't include
+	// a proper parameter case initializer. If it first encounters a Vector,
+	// the parsing will assume multiple parameter cases, otherwise it will
+	// assume a single parameter case
+	ErrUnexpectedCaseSyntax = "unexpected case syntax: %s"
+
+	// ErrUnexpectedParamSyntax is raised when a Lambda parameter case is
+	// represented by an unexpected syntax. Valid syntax representations are
+	// data.List, data.Cons, or data.Local
 	ErrUnexpectedParamSyntax = "unexpected parameter syntax: %s"
 )
 

@@ -80,7 +80,7 @@ func TestObjectAssoc(t *testing.T) {
 
 	as.PanicWith(`
 		(assoc {} :not-a-pair)
-	`, errors.New(builtin.ErrPutRequiresPair))
+	`, errors.New(builtin.ErrAssocRequiresPair))
 
 }
 

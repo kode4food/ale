@@ -6,6 +6,10 @@ import (
 	"github.com/kode4food/ale/data"
 )
 
+// ErrAssocRequiresPair is raised when a call to Assoc receives a second
+// argument other than a Pair
+const ErrAssocRequiresPair = "assoc requires a key/value combination or a pair"
+
 // Object creates a new object instance
 var Object = data.MakeProcedure(func(args ...data.Value) data.Value {
 	res, err := data.ValuesToObject(args...)
@@ -32,7 +36,7 @@ var Assoc = data.MakeProcedure(func(args ...data.Value) data.Value {
 	if p, ok := args[1].(data.Pair); ok {
 		return s.Put(p)
 	}
-	panic(errors.New(ErrPutRequiresPair))
+	panic(errors.New(ErrAssocRequiresPair))
 }, 2, 3)
 
 // Dissoc returns a new Mapper with the key removed

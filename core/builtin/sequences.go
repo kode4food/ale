@@ -6,11 +6,9 @@ import (
 	"github.com/kode4food/ale/data"
 )
 
-// Error messages
-const (
-	ErrIndexOutOfBounds = "index out of bounds"
-	ErrPutRequiresPair  = "put requires a key/value combination or a pair"
-)
+// ErrIndexOutOfBounds is raised when a call to Nth receives an index that is
+// outside of the bounds of the sequence being accessed
+const ErrIndexOutOfBounds = "index out of bounds"
 
 var (
 	// List constructs a new list

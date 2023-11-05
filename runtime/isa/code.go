@@ -22,9 +22,13 @@ type (
 	Instructions []Instruction
 )
 
-// Error messages
 const (
-	ErrBadInstruction  = "instruction operand mismatch: %s"
+	// ErrBadInstruction is raised when a call to isa.New can't succeed due to
+	// either missing or excessive operands
+	ErrBadInstruction = "instruction operand mismatch: %s"
+
+	// ErrExpectedOperand is raised when an Operand isn't represented by an
+	// unsigned Word that will fit within the number of Operand bits
 	ErrExpectedOperand = "expected unsigned operand: %d"
 )
 
