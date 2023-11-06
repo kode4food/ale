@@ -1,9 +1,5 @@
 ;;;; ale core: basics
 
-(define* quote
-  (asm* !make-special (form)
-      .const form))
-
 ;; type-based predicates
 (define* is-any     (is-a* :any))
 (define* is-apply   (is-a* :function))
@@ -34,6 +30,17 @@
 (define* is-resolved   (is-a* :resolved))
 (define* is-reversible (is-a* :reverser))
 (define* is-seq        (is-a* :sequence))
+
+(define* quote
+  (asm* !make-special (form)
+      .const form))
+
+(define* begin
+  (asm* !make-special body
+      null
+      .for-each body (asm* !make-special (val)
+          pop
+          .eval val)))
 
 (private* dec*)
 (define* dec*
@@ -180,10 +187,3 @@
      :success
          true
      :end))))))
-
-(define* begin
-  (asm* !make-special body
-      null
-      .for-each body (asm* !make-special (val)
-          pop
-          .eval val)))

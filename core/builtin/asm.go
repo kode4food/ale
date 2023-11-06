@@ -60,6 +60,10 @@ const (
 	// ErrUnexpectedLabel is raised when a jump or cond-jump instruction refers
 	// to a label that hasn't been anchored in the assembler block
 	ErrUnexpectedLabel = "unexpected label: %s"
+
+	// ErrBadNameResolution is raised when an attempt is made to bind a local
+	// using an argument to the encoder that is not a Local symbol
+	ErrBadNameResolution = "encoder argument is not a name: %s"
 )
 
 const (
@@ -344,7 +348,13 @@ func makeLocalEncoder(
 	}
 }
 
-func publicNamer(_ *asmEncoder, l data.Local) data.Local {
+func publicNamer(e *asmEncoder, l data.Local) data.Local {
+	if v, ok := e.resolveEncoderArg(l); ok {
+		if res, ok := v.(data.Local); ok {
+			return res
+		}
+		panic(fmt.Errorf(ErrBadNameResolution, v))
+	}
 	return l
 }
 
