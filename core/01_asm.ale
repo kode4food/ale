@@ -68,3 +68,14 @@
       :consequent
           .eval consequent
       :end]))
+
+(define* quote
+  (asm* !make-special (form)
+      .const form))
+
+(define* begin
+  (asm* !make-special body
+      null
+      .for-each body (asm* !make-special (val)
+          pop
+          .eval val)))

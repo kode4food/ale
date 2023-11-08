@@ -31,17 +31,6 @@
 (define* is-reversible (is-a* :reverser))
 (define* is-seq        (is-a* :sequence))
 
-(define* quote
-  (asm* !make-special (form)
-      .const form))
-
-(define* begin
-  (asm* !make-special body
-      null
-      .for-each body (asm* !make-special (val)
-          pop
-          .eval val)))
-
 (private* dec*)
 (define* dec*
   (asm* !make-special (value)
