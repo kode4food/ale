@@ -27,7 +27,7 @@ func (*returnSplitter) ExitBranches(b visitor.Branches) {
 	if len(code) != 1 {
 		return
 	}
-	if oc, _ := code[0].Split(); oc == isa.Return {
+	if oc := code[0].Opcode(); oc == isa.Return {
 		i.Set(isa.Instructions{})
 		addReturnToBranches(b)
 	}

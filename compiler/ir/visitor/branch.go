@@ -46,8 +46,7 @@ type (
 // Branch splits linear instructions into a tree of conditional branches
 func Branch(code isa.Instructions) Node {
 	for pc, inst := range code {
-		oc, _ := inst.Split()
-		if oc != isa.CondJump {
+		if oc := inst.Opcode(); oc != isa.CondJump {
 			continue
 		}
 		if rs := splitCondJump(code, pc); rs != nil {
@@ -66,7 +65,7 @@ func splitCondJump(code isa.Instructions, condJumpIdx int) *branches {
 
 	condJump := code[condJumpIdx]
 	rest := code[condJumpIdx+1:]
-	_, idx := condJump.Split()
+	idx := condJump.Operand()
 	thenIdx, thenLabel := findLabel(rest, idx)
 	if thenIdx <= 0 {
 		return nil // not part of this block

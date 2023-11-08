@@ -27,7 +27,7 @@ func literalReturns(root visitor.Node) visitor.Node {
 }
 
 func literalReturnMapper(i isa.Instructions) isa.Instructions {
-	oc, _ := i[0].Split()
+	oc := i[0].Opcode()
 	res := literalReturnMap[oc]
 	return isa.Instructions{res.New()}
 }

@@ -57,6 +57,14 @@ func (i Instructions) String() string {
 	)
 }
 
+func (i Instruction) Opcode() Opcode {
+	return Opcode(i) & OpcodeMask
+}
+
+func (i Instruction) Operand() Operand {
+	return Operand(i) >> OpcodeSize & OperandMask
+}
+
 func (i Instruction) Split() (Opcode, Operand) {
 	return Opcode(i) & OpcodeMask, Operand(i) >> OpcodeSize & OperandMask
 }

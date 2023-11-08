@@ -58,8 +58,7 @@ func (s *stackSizes) calculateInstructions(inst visitor.Instructions) {
 }
 
 func (s *stackSizes) calculateInstruction(inst isa.Instruction) {
-	oc, _ := inst.Split()
-	effect := isa.MustGetEffect(oc)
+	effect := isa.MustGetEffect(inst.Opcode())
 	dPop := getStackChange(inst, effect.DPop)
 	s.endSize += (effect.Push - effect.Pop) - dPop
 	s.maxSize = max(s.endSize, s.maxSize)
@@ -85,8 +84,7 @@ func (s *stackSizes) calculateBranch(n visitor.Node) *stackSizes {
 
 func getStackChange(inst isa.Instruction, dPop bool) int {
 	if dPop {
-		_, op := inst.Split()
-		return int(op)
+		return int(inst.Operand())
 	}
 	return 0
 }

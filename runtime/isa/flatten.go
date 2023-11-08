@@ -42,7 +42,7 @@ func (f *flattener) flatten() Instructions {
 }
 
 func (f *flattener) handleInst(l Instruction) {
-	oc, _ := l.Split()
+	oc := l.Opcode()
 	switch oc {
 	case Jump:
 		f.handleJump(l)
@@ -87,7 +87,7 @@ func (f *flattener) handleJump(inst Instruction) {
 }
 
 func (f *flattener) handleLabel(inst Instruction) {
-	_, op := inst.Split()
+	op := inst.Operand()
 	l := f.getLabel(op)
 	if l.anchored {
 		panic(errors.New(ErrLabelAlreadyAnchored))
@@ -95,7 +95,7 @@ func (f *flattener) handleLabel(inst Instruction) {
 	l.offset = f.nextOutputOffset()
 	l.anchored = true
 	for _, off := range l.backRefs {
-		oc, _ := f.output[int(off)].Split()
+		oc := f.output[int(off)].Opcode()
 		ni := New(oc, l.offset)
 		f.output[int(off)] = ni
 	}
