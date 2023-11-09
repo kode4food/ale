@@ -3,7 +3,6 @@ package vm
 import (
 	"errors"
 	"fmt"
-	"unsafe"
 
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/env"
@@ -26,11 +25,12 @@ func newClosure(lambda *Procedure, values data.Values) *closure {
 // Call turns closure into a Procedure, and serves as the virtual machine
 func (c *closure) Call(args ...data.Value) data.Value {
 	var (
-		CODE isa.Instructions
-		MEM  data.Values
-		PC   unsafe.Pointer
+		PC   int
 		LP   int
 		SP   int
+		INST isa.Instruction
+		CODE isa.Instructions
+		MEM  data.Values
 	)
 
 initMem:
@@ -43,14 +43,14 @@ initCode:
 initState:
 	SP = LP - 1
 	// cheaper than a goto
-	PC = unsafe.Add(unsafe.Pointer(&CODE[0]), -int(unsafe.Sizeof(CODE[0])))
+	PC = -1
 
 nextPC:
-	PC = unsafe.Add(PC, unsafe.Sizeof(CODE[0]))
+	PC++
 
 opSwitch:
-	oc, op := (*(*isa.Instruction)(PC)).Split()
-	switch oc {
+	INST = CODE[PC]
+	switch INST.Opcode() {
 	case isa.Null:
 		MEM[SP] = data.Null
 		SP--
@@ -62,12 +62,12 @@ opSwitch:
 		goto nextPC
 
 	case isa.PosInt:
-		MEM[SP] = data.Integer(op)
+		MEM[SP] = data.Integer(INST.Operand())
 		SP--
 		goto nextPC
 
 	case isa.NegInt:
-		MEM[SP] = -data.Integer(op)
+		MEM[SP] = -data.Integer(INST.Operand())
 		SP--
 		goto nextPC
 
@@ -82,17 +82,17 @@ opSwitch:
 		goto nextPC
 
 	case isa.Const:
-		MEM[SP] = c.Procedure.Constants[op]
+		MEM[SP] = c.Procedure.Constants[INST.Operand()]
 		SP--
 		goto nextPC
 
 	case isa.Arg:
-		MEM[SP] = args[op]
+		MEM[SP] = args[INST.Operand()]
 		SP--
 		goto nextPC
 
 	case isa.RestArg:
-		MEM[SP] = data.NewVector(args[op:]...)
+		MEM[SP] = data.NewVector(args[INST.Operand():]...)
 		SP--
 		goto nextPC
 
@@ -102,18 +102,18 @@ opSwitch:
 		goto nextPC
 
 	case isa.Closure:
-		MEM[SP] = c.values[op]
+		MEM[SP] = c.values[INST.Operand()]
 		SP--
 		goto nextPC
 
 	case isa.Load:
-		MEM[SP] = MEM[LP+int(op)]
+		MEM[SP] = MEM[LP+int(INST.Operand())]
 		SP--
 		goto nextPC
 
 	case isa.Store:
 		SP++
-		MEM[LP+int(op)] = MEM[SP]
+		MEM[LP+int(INST.Operand())] = MEM[SP]
 		goto nextPC
 
 	case isa.NewRef:
@@ -318,6 +318,7 @@ opSwitch:
 		goto nextPC
 
 	case isa.Call:
+		op := INST.Operand()
 		SP1 := SP + 1
 		fn := MEM[SP1].(data.Procedure)
 		// prepare args
@@ -341,7 +342,7 @@ opSwitch:
 		SP1 := SP + 1
 		val := MEM[SP1]
 		// prepare args
-		args = make(data.Values, op)
+		args = make(data.Values, INST.Operand())
 		copy(args, MEM[SP1+1:LP]) // because stack mutates
 		// call function
 		cl, ok := val.(*closure)
@@ -360,13 +361,13 @@ opSwitch:
 		goto initCode
 
 	case isa.Jump:
-		PC = unsafe.Pointer(&CODE[int(op)])
+		PC = int(INST.Operand())
 		goto opSwitch
 
 	case isa.CondJump:
 		SP++
 		if MEM[SP] != data.False {
-			PC = unsafe.Pointer(&CODE[int(op)])
+			PC = int(INST.Operand())
 			goto opSwitch
 		}
 		goto nextPC
@@ -391,7 +392,7 @@ opSwitch:
 
 	default:
 		// Programmer error
-		panic(fmt.Sprintf("unknown opcode: %s", oc))
+		panic(fmt.Sprintf("unknown opcode: %s", INST.Opcode()))
 	}
 }
 
