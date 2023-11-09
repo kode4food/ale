@@ -31,33 +31,23 @@
 (define* is-reversible (is-a* :reverser))
 (define* is-seq        (is-a* :sequence))
 
-(private* dec*)
-(define* dec*
-  (asm* !make-special (value)
-      .eval value
-      .const 1
-      sub))
+(define* car
+  (lambda (cons)
+    (asm*
+        .resolve cons
+        car)))
 
-(define* apply
-  (lambda
-    [(func args)
-       (asm*
-           .resolve args
-           .resolve func
-           call-with)]
-    [(func f . r)
-       (let-rec
-         [prepend-args
-          (lambda (args result idx)
-            (if (asm* .resolve idx zero num-gte)
-                (prepend-args args (cons (args idx) result) (dec* idx))
-                result))]
-         (let [idx (dec* (length r))]
-           (let [args (prepend-args r (r idx) (dec* idx))]
-             (asm*
-                 .eval (cons f args)
-                 .resolve func
-                 call-with))))]))
+(define* cdr
+  (lambda (cons)
+    (asm*
+        .resolve cons
+        cdr)))
+
+(define* is-empty
+  (lambda (seq)
+    (asm*
+        .resolve seq
+        empty)))
 
 ;; syntax-quoting requires it
 (define* concat!
@@ -74,6 +64,10 @@
                    (concat-inner (cons (cdr f) r)
                                  (append head (car f)))))))]
       (concat-inner colls []))))
+
+(define* quote
+  (asm* !make-special (form)
+      .const form))
 
 (define* label
   (macro*
@@ -111,68 +105,16 @@
                 or#
                 (or ,@(cdr clauses))))])))
 
+(define* begin
+  (asm* !make-special body
+      null
+      .for-each body (asm* !make-special (val)
+          pop
+          .eval val)))
+
 (define* raise
   (lambda (err)
     (asm*
         .resolve err
         panic
         null)))
-
-(private* reduce-inst)
-(define* reduce-inst (macro* (lambda (args init inst)
-  (apply list (concat!
-    '(ale/asm*
-        .private accum :val
-        .eval) [init] '(
-        store accum
-        .private rest :val
-        .resolve) [args] '(
-        store rest
-    :loop
-        load rest
-        empty
-        cond-jump :end
-        load accum
-        load rest
-        car)
-        [inst] '(
-        store accum
-        load rest
-        cdr
-        store rest
-        jump :loop
-    :end
-        load accum))))))
-
-(private* predicate-inst)
-(define* predicate-inst (macro* (lambda (f r inst)
-  (apply list (concat!
-    '(ale/asm*
-         .private prev :val
-         .resolve) [f] '(
-         store prev
-         .private rest :val
-         .resolve) [r] '(
-         store rest
-     :loop
-         load rest
-         empty
-         cond-jump :success
-         load prev
-         load rest
-         car
-         ) [inst] '(
-         cond-jump :next
-         false
-         jump :end
-     :next
-         load rest
-         dup
-         car
-         store prev
-         cdr
-         store rest
-         jump :loop
-     :success
-         true
-     :end))))))

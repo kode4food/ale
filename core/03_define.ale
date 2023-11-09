@@ -49,9 +49,6 @@
     `(label ,name (lambda ,@forms))
     `(lambda ,name ,@forms)))
 
-(define-macro (thunk . forms)
-  `(lambda () ,@forms))
-
 (define-macro declare
   [(name) `(declare* ,name)]
   [names `(begin ,@(map! (lambda (n) (list 'ale/declare* n)) names))])

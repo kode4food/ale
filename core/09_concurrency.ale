@@ -2,6 +2,9 @@
 
 (declare *err*)
 
+(define-macro (thunk . forms)
+  `(lambda () ,@forms))
+
 (define-macro (go-with-monitor monitor . body)
   `(go* (thunk (recover
                  (thunk ,@body)

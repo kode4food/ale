@@ -8,6 +8,39 @@
 (define first car)
 (define rest cdr)
 
+(private* predicate-inst)
+(define* predicate-inst (macro* (lambda (f r inst)
+  (apply list (concat!
+    '(ale/asm*
+         .private prev :val
+         .resolve) [f] '(
+         store prev
+         .private rest :val
+         .resolve) [r] '(
+         store rest
+     :loop
+         load rest
+         empty
+         cond-jump :success
+         load prev
+         load rest
+         car
+         ) [inst] '(
+         cond-jump :next
+         false
+         jump :end
+     :next
+         load rest
+         dup
+         car
+         store prev
+         cdr
+         store rest
+         jump :loop
+     :success
+         true
+     :end))))))
+
 (define (eq f . r)
   (predicate-inst f r eq))
 

@@ -1,5 +1,31 @@
 ;;;; ale core: numerics
 
+(private* reduce-inst)
+(define* reduce-inst (macro* (lambda (args init inst)
+  (apply list (concat!
+    '(ale/asm*
+        .private accum :val
+        .eval) [init] '(
+        store accum
+        .private rest :val
+        .resolve) [args] '(
+        store rest
+    :loop
+        load rest
+        empty
+        cond-jump :end
+        load accum
+        load rest
+        car)
+        [inst] '(
+        store accum
+        load rest
+        cdr
+        store rest
+        jump :loop
+    :end
+        load accum))))))
+
 (define (+ . args) (reduce-inst args 0 add))
 (define (* . args) (reduce-inst args 1 mul))
 
