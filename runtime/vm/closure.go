@@ -34,11 +34,11 @@ func (c *closure) Call(args ...data.Value) data.Value {
 	)
 
 initMem:
-	MEM = make(data.Values, c.Procedure.StackSize+c.Procedure.LocalCount)
+	MEM = make(data.Values, c.StackSize+c.LocalCount)
 
 initCode:
-	CODE = c.Procedure.Code
-	LP = c.Procedure.StackSize
+	CODE = c.Code
+	LP = c.StackSize
 
 initState:
 	SP = LP - 1
@@ -82,7 +82,7 @@ opSwitch:
 		goto nextPC
 
 	case isa.Const:
-		MEM[SP] = c.Procedure.Constants[INST.Operand()]
+		MEM[SP] = c.Constants[INST.Operand()]
 		SP--
 		goto nextPC
 
@@ -171,14 +171,14 @@ opSwitch:
 
 	case isa.Declare:
 		SP++
-		c.Procedure.Globals.Declare(
+		c.Globals.Declare(
 			MEM[SP].(data.Local),
 		)
 		goto nextPC
 
 	case isa.Private:
 		SP++
-		c.Procedure.Globals.Private(
+		c.Globals.Private(
 			MEM[SP].(data.Local),
 		)
 		goto nextPC
@@ -187,13 +187,13 @@ opSwitch:
 		SP++
 		name := MEM[SP].(data.Local)
 		SP++
-		c.Procedure.Globals.Declare(name).Bind(MEM[SP])
+		c.Globals.Declare(name).Bind(MEM[SP])
 		goto nextPC
 
 	case isa.Resolve:
 		SP1 := &MEM[SP+1]
 		*SP1 = env.MustResolveValue(
-			c.Procedure.Globals,
+			c.Globals,
 			(*SP1).(data.Symbol),
 		)
 		goto nextPC
@@ -353,8 +353,8 @@ opSwitch:
 			goto initState
 		}
 		c = cl // intentional
-		ss := c.Procedure.StackSize
-		lc := c.Procedure.LocalCount
+		ss := c.StackSize
+		lc := c.LocalCount
 		if len(MEM) < ss+lc {
 			goto initMem
 		}
