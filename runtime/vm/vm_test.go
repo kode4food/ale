@@ -439,7 +439,7 @@ func TestForUnimplementedOpcodes(t *testing.T) {
 func TestBadOpcode(t *testing.T) {
 	as := assert.New(t)
 	defer as.ExpectProgrammerError(
-		fmt.Sprintf("unknown opcode: %s", isa.Label),
+		fmt.Sprintf(vm.ErrBadInstruction, isa.Instruction(isa.Label)),
 	)
 	runCode(isa.Instructions{isa.Instruction(isa.Label)})
 }
