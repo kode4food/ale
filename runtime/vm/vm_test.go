@@ -29,7 +29,7 @@ func makeProcedure(code isa.Instructions) data.Procedure {
 		LocalCount: 10,
 		Globals:    env.NewEnvironment().GetAnonymous(),
 	}
-	closure := proc.Call(S("closure"))
+	closure := proc.Call(S("Closure"))
 	return closure.(data.Procedure)
 }
 
@@ -65,7 +65,7 @@ func TestSimple(t *testing.T) {
 		isa.Return.New(),
 	})
 
-	testResult(t, S("closure"), isa.Instructions{
+	testResult(t, S("Closure"), isa.Instructions{
 		isa.Closure.New(0),
 		isa.Return.New(),
 	})

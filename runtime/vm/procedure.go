@@ -9,15 +9,22 @@ import (
 	"github.com/kode4food/ale/runtime/isa"
 )
 
-// Procedure encapsulates the initial environment of an abstract machine
-type Procedure struct {
-	Globals      env.Namespace
-	Constants    data.Values
-	Code         isa.Instructions
-	StackSize    int
-	LocalCount   int
-	ArityChecker data.ArityChecker
-}
+type (
+	// Procedure encapsulates the initial environment of an abstract machine
+	Procedure struct {
+		Globals      env.Namespace
+		Constants    data.Values
+		Code         isa.Instructions
+		StackSize    int
+		LocalCount   int
+		ArityChecker data.ArityChecker
+	}
+
+	Closure struct {
+		*Procedure
+		Captured data.Values
+	}
+)
 
 // MakeProcedure instantiates an abstract machine Procedure from the provided
 // Encoder's intermediate representation
@@ -35,9 +42,12 @@ func MakeProcedure(e encoder.Encoder) *Procedure {
 }
 
 // Call allows an abstract machine Procedure to be called for the purpose of
-// instantiating a closure. Only the compiler invokes this calling interface.
+// instantiating a Closure. Only the compiler invokes this calling interface.
 func (p *Procedure) Call(values ...data.Value) data.Value {
-	return newClosure(p, values)
+	return &Closure{
+		Procedure: p,
+		Captured:  values,
+	}
 }
 
 // CheckArity performs a compile-time arity check for the Procedure
@@ -57,4 +67,18 @@ func (p *Procedure) Equal(v data.Value) bool {
 
 func (p *Procedure) String() string {
 	return data.DumpString(p)
+}
+
+// Call turns Closure into a Procedure, and serves as the virtual machine
+func (c *Closure) Call(args ...data.Value) data.Value {
+	return (&VM{Closure: c, ARGS: args}).Run()
+}
+
+// CheckArity performs a compile-time arity check for the Closure
+func (c *Closure) CheckArity(i int) error {
+	return c.ArityChecker(i)
+}
+
+func (c *Closure) Equal(v data.Value) bool {
+	return c == v
 }

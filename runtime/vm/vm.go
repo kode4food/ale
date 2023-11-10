@@ -10,20 +10,12 @@ import (
 	"github.com/kode4food/ale/runtime/isa"
 )
 
-type closure struct {
-	*Procedure
-	values data.Values
+type VM struct {
+	*Closure
+	ARGS data.Values
 }
 
-func newClosure(lambda *Procedure, values data.Values) *closure {
-	return &closure{
-		Procedure: lambda,
-		values:    values,
-	}
-}
-
-// Call turns closure into a Procedure, and serves as the virtual machine
-func (c *closure) Call(args ...data.Value) data.Value {
+func (vm *VM) Run() data.Value {
 	var (
 		PC   int
 		LP   int
@@ -34,16 +26,16 @@ func (c *closure) Call(args ...data.Value) data.Value {
 	)
 
 initMem:
-	MEM = make(data.Values, c.StackSize+c.LocalCount)
+	MEM = make(data.Values, vm.StackSize+vm.LocalCount)
 
 initCode:
-	CODE = c.Code
-	LP = c.StackSize
+	CODE = vm.Code
+	LP = vm.StackSize
 
 initState:
 	SP = LP - 1
-	// cheaper than a goto
-	PC = -1
+	PC = 0
+	goto opSwitch
 
 nextPC:
 	PC++
@@ -82,27 +74,27 @@ opSwitch:
 		goto nextPC
 
 	case isa.Const:
-		MEM[SP] = c.Constants[INST.Operand()]
+		MEM[SP] = vm.Constants[INST.Operand()]
 		SP--
 		goto nextPC
 
 	case isa.Arg:
-		MEM[SP] = args[INST.Operand()]
+		MEM[SP] = vm.ARGS[INST.Operand()]
 		SP--
 		goto nextPC
 
 	case isa.RestArg:
-		MEM[SP] = data.NewVector(args[INST.Operand():]...)
+		MEM[SP] = data.NewVector(vm.ARGS[INST.Operand():]...)
 		SP--
 		goto nextPC
 
 	case isa.ArgLen:
-		MEM[SP] = data.Integer(len(args))
+		MEM[SP] = data.Integer(len(vm.ARGS))
 		SP--
 		goto nextPC
 
 	case isa.Closure:
-		MEM[SP] = c.values[INST.Operand()]
+		MEM[SP] = vm.Captured[INST.Operand()]
 		SP--
 		goto nextPC
 
@@ -171,14 +163,14 @@ opSwitch:
 
 	case isa.Declare:
 		SP++
-		c.Globals.Declare(
+		vm.Globals.Declare(
 			MEM[SP].(data.Local),
 		)
 		goto nextPC
 
 	case isa.Private:
 		SP++
-		c.Globals.Private(
+		vm.Globals.Private(
 			MEM[SP].(data.Local),
 		)
 		goto nextPC
@@ -187,13 +179,13 @@ opSwitch:
 		SP++
 		name := MEM[SP].(data.Local)
 		SP++
-		c.Globals.Declare(name).Bind(MEM[SP])
+		vm.Globals.Declare(name).Bind(MEM[SP])
 		goto nextPC
 
 	case isa.Resolve:
 		SP1 := &MEM[SP+1]
 		*SP1 = env.MustResolveValue(
-			c.Globals,
+			vm.Globals,
 			(*SP1).(data.Symbol),
 		)
 		goto nextPC
@@ -342,19 +334,19 @@ opSwitch:
 		SP1 := SP + 1
 		val := MEM[SP1]
 		// prepare args
-		args = make(data.Values, INST.Operand())
-		copy(args, MEM[SP1+1:LP]) // because stack mutates
+		vm.ARGS = make(data.Values, INST.Operand())
+		copy(vm.ARGS, MEM[SP1+1:LP]) // because stack mutates
 		// call function
-		cl, ok := val.(*closure)
+		cl, ok := val.(*Closure)
 		if !ok {
-			return val.(data.Procedure).Call(args...)
+			return val.(data.Procedure).Call(vm.ARGS...)
 		}
-		if cl == c {
+		if cl == vm.Closure {
 			goto initState
 		}
-		c = cl // intentional
-		ss := c.StackSize
-		lc := c.LocalCount
+		vm.Closure = cl
+		ss := vm.StackSize
+		lc := vm.LocalCount
 		if len(MEM) < ss+lc {
 			goto initMem
 		}
@@ -394,13 +386,4 @@ opSwitch:
 		// Programmer error
 		panic(fmt.Sprintf("unknown opcode: %s", INST.Opcode()))
 	}
-}
-
-// CheckArity performs a compile-time arity check for the closure
-func (c *closure) CheckArity(i int) error {
-	return c.ArityChecker(i)
-}
-
-func (c *closure) Equal(v data.Value) bool {
-	return c == v
 }

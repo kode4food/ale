@@ -322,8 +322,7 @@ func constCall(e encoder.Encoder, args ...data.Value) {
 		generate.Literal(e, v)
 		return
 	}
-	index := e.AddConstant(args[0])
-	e.Emit(isa.Const, index)
+	generate.Literal(e, args[0])
 }
 
 func pushLocalsCall(e encoder.Encoder, _ ...data.Value) {
