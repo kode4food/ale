@@ -126,7 +126,7 @@ func (vm *VM) Run() data.Value {
 		case isa.NumLt:
 			doNumLt(vm)
 		case isa.NumLte:
-			goNumLte(vm)
+			doNumLte(vm)
 		case isa.NumGt:
 			doNumGt(vm)
 		case isa.NumGte:

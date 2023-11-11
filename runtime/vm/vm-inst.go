@@ -260,7 +260,7 @@ func doNumLt(vm *VM) {
 	vm.PC++
 }
 
-func goNumLte(vm *VM) {
+func doNumLte(vm *VM) {
 	vm.SP++
 	SP1 := &(vm.MEM[vm.SP+1])
 	cmp := (*SP1).(data.Number).Cmp(
