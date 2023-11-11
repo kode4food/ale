@@ -86,12 +86,12 @@ func BenchmarkCalls(b *testing.B) {
 func BenchmarkTailCalls(b *testing.B) {
 	env := bootstrap.DevNullEnvironment()
 	ns := env.GetAnonymous()
-	_ = eval.String(ns, `
+	beer := eval.String(ns, `
 		(define (println . body)) ; bypass the OS
 		(define (bottles n)
 		  (str
-		    (cond [ (= n 0) "No more bottles"]
-		          [ (= n 1) "One bottle"]
+		    (cond [(= n 0) "No more bottles"]
+		          [(= n 1) "One bottle"]
 		          [:else (str n " bottles")])
 		    " of beer"))
 		(define (beer n)
@@ -101,10 +101,27 @@ func BenchmarkTailCalls(b *testing.B) {
 		    (println (bottles (- n 1)) "on the wall")
 		    (println)
 		    (beer (- n 1))))
-	`)
-	entry, _ := ns.Resolve("beer")
-	beer := entry.Value().(data.Procedure)
+    
+		beer
+	`).(data.Procedure)
 	for n := 0; n < b.N; n++ {
 		_ = beer.Call(data.Integer(99))
+	}
+}
+
+func BenchmarkNonTailCalls(b *testing.B) {
+	env := bootstrap.DevNullEnvironment()
+	ns := env.GetAnonymous()
+	fib := eval.String(ns, `
+		(define (fib n)
+			(cond
+				[(= n 0) 0]
+				[(= n 1) 1]
+				[:else (+ (fib (- n 1)) (fib (- n 2)))]))
+    
+		fib
+	`).(data.Procedure)
+	for n := 0; n < b.N; n++ {
+		_ = fib.Call(data.Integer(10))
 	}
 }
