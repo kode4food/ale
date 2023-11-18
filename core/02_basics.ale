@@ -31,23 +31,25 @@
 (define* is-reversible (is-a* :reverser))
 (define* is-seq        (is-a* :sequence))
 
-(define* car
-  (lambda (cons)
-    (asm*
-        .resolve cons
-        car)))
-
-(define* cdr
-  (lambda (cons)
-    (asm*
-        .resolve cons
-        cdr)))
-
-(define* is-empty
-  (lambda (seq)
-    (asm*
-        .resolve seq
-        empty)))
+(define* apply
+  (lambda (func . args)
+    (let-rec
+      [flatten-args
+        (lambda (args)
+          (if (is-empty (cdr args))
+              (let [seq (car args)]
+                (if (is-seq seq)
+                    seq
+                    (asm*
+                        .const "final apply argument must be a sequence"
+                        panic
+                        null)))
+              (cons (car args) (flatten-args (cdr args)))))]
+      (let [flat-args (flatten-args args)]
+        (asm*
+            .resolve flat-args
+            .resolve func
+            call-with)))))
 
 ;; syntax-quoting requires it
 (define* concat!

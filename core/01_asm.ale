@@ -51,30 +51,20 @@
         .resolve car
         cons)))
 
-(private* dec*)
-(define* dec*
-  (asm* !make-special (value)
-      .eval value
-      .const 1
-      sub))
+(define* car
+  (lambda (cons)
+    (asm*
+        .resolve cons
+        car)))
 
-(define* apply
-  (lambda
-    [(func args)
-       (asm*
-           .resolve args
-           .resolve func
-           call-with)]
-    [(func f . r)
-       (let-rec
-         [prepend-args
-          (lambda (args result idx)
-            (if (asm* .resolve idx zero num-gte)
-                (prepend-args args (cons (args idx) result) (dec* idx))
-                result))]
-         (let [idx (dec* (length r))]
-           (let [args (prepend-args r (r idx) (dec* idx))]
-             (asm*
-                 .eval (cons f args)
-                 .resolve func
-                 call-with))))]))
+(define* cdr
+  (lambda (cons)
+    (asm*
+        .resolve cons
+        cdr)))
+
+(define* is-empty
+  (lambda (seq)
+    (asm*
+        .resolve seq
+        empty)))

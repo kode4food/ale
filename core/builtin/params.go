@@ -8,9 +8,10 @@ import (
 
 type (
 	paramCase struct {
-		params data.Locals
-		rest   bool
-		body   data.Sequence
+		signature data.Value
+		params    data.Locals
+		rest      bool
+		body      data.Sequence
 	}
 
 	paramCases []*paramCase
@@ -29,6 +30,10 @@ const (
 	// represented by an unexpected syntax. Valid syntax representations are
 	// data.List, data.Cons, or data.Local
 	ErrUnexpectedParamSyntax = "unexpected parameter syntax: %s"
+
+	// ErrUnreachableCase is raised when a Lambda parameter is defined that
+	// would otherwise be impossible to reach given previous definitions
+	ErrUnreachableCase = "unreachable parameter case: %s, matched by: %s"
 )
 
 func parseParamCases(s data.Sequence) paramCases {
@@ -42,9 +47,13 @@ func parseParamCases(s data.Sequence) paramCases {
 		return paramCases{c}
 	case data.Vector:
 		var res paramCases
+		var err error
 		for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {
 			c := parseParamCase(f.(data.Vector))
-			res = append(res, c)
+			res, err = res.addParamCase(c)
+			if err != nil {
+				panic(err)
+			}
 		}
 		return res
 	default:
@@ -52,27 +61,44 @@ func parseParamCases(s data.Sequence) paramCases {
 	}
 }
 
-func (lc paramCases) makeArityChecker() data.ArityChecker {
-	if len(lc) == 0 {
-		return data.MakeChecker(0)
-	}
-	v0 := lc[0]
-	lower, upper := v0.arityRange()
-	for _, s := range lc[1:] {
-		l, u := s.arityRange()
-		lower = min(l, lower)
-		if u == data.OrMore || upper == data.OrMore {
-			upper = data.OrMore
-			continue
+func (pc paramCases) addParamCase(added *paramCase) (paramCases, error) {
+	aLow, _ := added.arityRange()
+	for _, orig := range pc {
+		oLow, oHigh := orig.arityRange()
+		if oHigh == data.OrMore && aLow >= oLow {
+			return pc, fmt.Errorf(
+				ErrUnreachableCase, added.signature, orig.signature,
+			)
 		}
-		upper = max(u, upper)
 	}
-	return data.MakeChecker(lower, upper)
+	return append(pc, added), nil
 }
 
-func (lc paramCases) makeFetchers() []argFetcher {
-	res := make([]argFetcher, len(lc))
-	for i, c := range lc {
+func (pc paramCases) makeArityChecker() data.ArityChecker {
+	switch len(pc) {
+	case 0:
+		return data.MakeChecker(0)
+	case 1:
+		l, h := pc[0].arityRange()
+		return data.MakeChecker(l, h)
+	default:
+		lower, upper := pc[0].arityRange()
+		for _, s := range pc[1:] {
+			l, u := s.arityRange()
+			lower = min(l, lower)
+			if u == data.OrMore || upper == data.OrMore {
+				upper = data.OrMore
+				continue
+			}
+			upper = max(u, upper)
+		}
+		return data.MakeChecker(lower, upper)
+	}
+}
+
+func (pc paramCases) makeFetchers() []argFetcher {
+	res := make([]argFetcher, len(pc))
+	for i, c := range pc {
 		res[i] = c.makeFetcher()
 	}
 	return res
@@ -82,9 +108,10 @@ func parseParamCase(s data.Sequence) *paramCase {
 	f, body, _ := s.Split()
 	argNames, restArg := parseParamNames(f)
 	return &paramCase{
-		params: argNames,
-		rest:   restArg,
-		body:   body,
+		signature: f,
+		params:    argNames,
+		rest:      restArg,
+		body:      body,
 	}
 }
 

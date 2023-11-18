@@ -3,9 +3,8 @@ package bootstrap
 import (
 	"os"
 
-	"github.com/kode4food/ale/core/builtin"
-
 	"github.com/kode4food/ale/compiler/special"
+	"github.com/kode4food/ale/core/builtin"
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/env"
 	"github.com/kode4food/ale/internal/do"
