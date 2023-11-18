@@ -39,7 +39,7 @@
 
 (define :private (with-open-close value)
   (let [c (:close value)]
-    (if (apply? c) c no-op)))
+    (if (procedure? c) c no-op)))
 
 (define-macro (with-open bindings . body)
   (assert-args

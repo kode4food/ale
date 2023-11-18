@@ -23,7 +23,7 @@ const (
 	BooleanKey   = data.Keyword("boolean")
 	ConsKey      = data.Keyword("cons")
 	CountedKey   = data.Keyword("counted")
-	FunctionKey  = data.Keyword("function")
+	ProcedureKey = data.Keyword("procedure")
 	IndexedKey   = data.Keyword("indexed")
 	KeywordKey   = data.Keyword("keyword")
 	ListKey      = data.Keyword("list")
@@ -54,21 +54,21 @@ var predicates = map[data.Keyword]data.Procedure{
 	PairKey:     makePredicate(isPair),
 	ResolvedKey: makePredicate(isResolved),
 
-	AnyKey:      data.MakeTypePredicate(types.BasicAny),
-	BooleanKey:  data.MakeTypePredicate(types.BasicBoolean),
-	ConsKey:     data.MakeTypePredicate(types.BasicCons),
-	FunctionKey: data.MakeTypePredicate(types.BasicProcedure),
-	KeywordKey:  data.MakeTypePredicate(types.BasicKeyword),
-	ListKey:     data.MakeTypePredicate(listType),
-	MacroKey:    data.MakeTypePredicate(macro.CallType),
-	NullKey:     data.MakeTypePredicate(types.BasicNull),
-	NumberKey:   data.MakeTypePredicate(types.BasicNumber),
-	ObjectKey:   data.MakeTypePredicate(types.BasicObject),
-	PromiseKey:  data.MakeTypePredicate(async.PromiseType),
-	SpecialKey:  data.MakeTypePredicate(special.CallType),
-	StringKey:   data.MakeTypePredicate(types.BasicString),
-	SymbolKey:   data.MakeTypePredicate(types.BasicSymbol),
-	VectorKey:   data.MakeTypePredicate(types.BasicVector),
+	AnyKey:       data.MakeTypePredicate(types.BasicAny),
+	BooleanKey:   data.MakeTypePredicate(types.BasicBoolean),
+	ConsKey:      data.MakeTypePredicate(types.BasicCons),
+	ProcedureKey: data.MakeTypePredicate(types.BasicProcedure),
+	KeywordKey:   data.MakeTypePredicate(types.BasicKeyword),
+	ListKey:      data.MakeTypePredicate(listType),
+	MacroKey:     data.MakeTypePredicate(macro.CallType),
+	NullKey:      data.MakeTypePredicate(types.BasicNull),
+	NumberKey:    data.MakeTypePredicate(types.BasicNumber),
+	ObjectKey:    data.MakeTypePredicate(types.BasicObject),
+	PromiseKey:   data.MakeTypePredicate(async.PromiseType),
+	SpecialKey:   data.MakeTypePredicate(special.CallType),
+	StringKey:    data.MakeTypePredicate(types.BasicString),
+	SymbolKey:    data.MakeTypePredicate(types.BasicSymbol),
+	VectorKey:    data.MakeTypePredicate(types.BasicVector),
 
 	AppenderKey:  makeGoTypePredicate[data.Appender](),
 	CountedKey:   makeGoTypePredicate[data.Counted](),

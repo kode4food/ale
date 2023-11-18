@@ -1,19 +1,19 @@
 ;;;; ale core: basics
 
 ;; type-based predicates
-(define* is-any     (is-a* :any))
-(define* is-apply   (is-a* :function))
-(define* is-boolean (is-a* :boolean))
-(define* is-cons    (is-a* :cons))
-(define* is-keyword (is-a* :keyword))
-(define* is-macro   (is-a* :macro))
-(define* is-null    (is-a* :null))
-(define* is-number  (is-a* :number))
-(define* is-object  (is-a* :object))
-(define* is-special (is-a* :special))
-(define* is-string  (is-a* :string))
-(define* is-symbol  (is-a* :symbol))
-(define* is-vector  (is-a* :vector))
+(define* is-any       (is-a* :any))
+(define* is-boolean   (is-a* :boolean))
+(define* is-cons      (is-a* :cons))
+(define* is-keyword   (is-a* :keyword))
+(define* is-macro     (is-a* :macro))
+(define* is-null      (is-a* :null))
+(define* is-number    (is-a* :number))
+(define* is-object    (is-a* :object))
+(define* is-procedure (is-a* :procedure))
+(define* is-special   (is-a* :special))
+(define* is-string    (is-a* :string))
+(define* is-symbol    (is-a* :symbol))
+(define* is-vector    (is-a* :vector))
 
 ;; derived predicates
 (define* is-atom       (is-a* :atom))

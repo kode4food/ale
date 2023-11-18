@@ -12,7 +12,7 @@
                   (or (eq fnSym 'lambda-rec)
                       (eq fnSym 'ale/lambda-rec))
                   (local? fnName))
-             "bindings must contain named functions")
+             "bindings must contain named procedures")
            (parse-bindings (append out [fnName fnList]) (rest in)))
          `(let-rec ,(seq->list out) ,@body)))
    [] bindings))
@@ -21,7 +21,7 @@
   [(func) func]
   [(func . first-args)
      (assert-args
-       (apply? func) "partial requires a function")
+       (procedure? func) "partial requires a procedure")
      (lambda rest-args
        (apply func (apply append* (cons first-args rest-args))))])
 

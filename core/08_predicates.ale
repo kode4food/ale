@@ -27,7 +27,6 @@
 
 (define-predicate is-any "any")
 (define-predicate is-appendable "appendable")
-(define-predicate is-apply "apply")
 (define-predicate is-atom "atom")
 (define-predicate is-boolean "boolean")
 (define-predicate is-cons "cons")
@@ -49,6 +48,7 @@
 (define-predicate is-odd "odd")
 (define-predicate is-pair "pair")
 (define-predicate is-pos-inf "inf")
+(define-predicate is-procedure "procedure")
 (define-predicate is-promise "promise")
 (define-predicate is-qualified "qualified")
 (define-predicate is-resolved "resolved")
