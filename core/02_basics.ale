@@ -31,6 +31,13 @@
 (define* is-reversible (is-a* :reverser))
 (define* is-seq        (is-a* :sequence))
 
+(define* raise
+  (lambda (err)
+    (asm*
+        .resolve err
+        panic
+        null)))
+
 (define* apply
   (lambda (func . args)
     (let-rec
@@ -40,10 +47,7 @@
               (let [seq (car args)]
                 (if (is-seq seq)
                     seq
-                    (asm*
-                        .const "final apply argument must be a sequence"
-                        panic
-                        null)))
+                    (raise "final argument to apply must be a sequence")))
               (cons (car args) (flatten-args (cdr args)))))]
       (let [flat-args (flatten-args args)]
         (asm*
@@ -113,10 +117,3 @@
       .for-each body (asm* !make-special (val)
           pop
           .eval val)))
-
-(define* raise
-  (lambda (err)
-    (asm*
-        .resolve err
-        panic
-        null)))
