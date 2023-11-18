@@ -62,10 +62,10 @@ func parseParamCases(s data.Sequence) paramCases {
 }
 
 func (pc paramCases) addParamCase(added *paramCase) (paramCases, error) {
-	aLow, aHigh := added.arityRange()
+	addedLow, addedHigh := added.arityRange()
 	for _, orig := range pc {
-		oLow, oHigh := orig.arityRange()
-		if isUnreachable(oLow, oHigh, aLow, aHigh) {
+		origLow, origHigh := orig.arityRange()
+		if isUnreachable(origLow, origHigh, addedLow, addedHigh) {
 			return pc, fmt.Errorf(
 				ErrUnreachableCase, added.signature, orig.signature,
 			)
@@ -74,12 +74,12 @@ func (pc paramCases) addParamCase(added *paramCase) (paramCases, error) {
 	return append(pc, added), nil
 }
 
-func isUnreachable(oLow, oHigh, aLow, aHigh int) bool {
-	switch oHigh {
+func isUnreachable(origLow, origHigh, addedLow, addedHigh int) bool {
+	switch origHigh {
 	case data.OrMore:
-		return aLow >= oLow
+		return addedLow >= origLow
 	default:
-		return aHigh != data.OrMore && aLow == oLow
+		return addedHigh != data.OrMore && addedLow == origLow
 	}
 }
 
