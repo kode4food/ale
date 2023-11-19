@@ -75,12 +75,10 @@ func (pc paramCases) addParamCase(added *paramCase) (paramCases, error) {
 }
 
 func isUnreachable(origLow, origHigh, addedLow, addedHigh int) bool {
-	switch origHigh {
-	case data.OrMore:
+	if origHigh == data.OrMore {
 		return addedLow >= origLow
-	default:
-		return addedHigh != data.OrMore && addedLow == origLow
 	}
+	return addedHigh != data.OrMore && addedLow == origLow
 }
 
 func (pc paramCases) makeArityChecker() data.ArityChecker {
