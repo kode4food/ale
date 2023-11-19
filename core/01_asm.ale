@@ -25,24 +25,9 @@
     ; block evaluator will pop this
     null)
 
-(define* if
-  (asm* !make-special
-    [(predicate consequent alternative)
-          .eval predicate
-          cond-jump :consequent
-          .eval alternative
-          jump :end
-      :consequent
-          .eval consequent
-      :end]
-    [(predicate consequent)
-          .eval predicate
-          cond-jump :consequent
-          null
-          jump :end
-      :consequent
-          .eval consequent
-      :end]))
+(define* quote
+  (asm* !make-special (form)
+      .const form))
 
 (define* cons
   (lambda (car cdr)
@@ -68,3 +53,17 @@
     (asm*
         .resolve seq
         empty)))
+
+(define* raise
+  (lambda (err)
+    (asm*
+        .resolve err
+        panic
+        null)))
+
+(define* begin
+  (asm* !make-special body
+      null
+      .for-each body (asm* !make-special (val)
+          pop
+          .eval val)))

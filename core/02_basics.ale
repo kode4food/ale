@@ -31,12 +31,24 @@
 (define* is-reversible (is-a* :reverser))
 (define* is-seq        (is-a* :sequence))
 
-(define* raise
-  (lambda (err)
-    (asm*
-        .resolve err
-        panic
-        null)))
+(define* if
+  (asm* !make-special
+    [(predicate consequent alternative)
+          .eval predicate
+          cond-jump :consequent
+          .eval alternative
+          jump :end
+      :consequent
+          .eval consequent
+      :end]
+    [(predicate consequent)
+          .eval predicate
+          cond-jump :consequent
+          null
+          jump :end
+      :consequent
+          .eval consequent
+      :end]))
 
 (define* apply
   (lambda (func . args)
@@ -71,23 +83,10 @@
                                  (append head (car f)))))))]
       (concat-inner colls []))))
 
-(define* quote
-  (asm* !make-special (form)
-      .const form))
-
 (define* label
   (macro*
     (lambda (name form)
       `(let-rec [,name ,form] ,name))))
-
-;; case and some macros require it
-(define* map!
-  (label map!
-    (lambda (func coll)
-      (if (is-empty coll)
-        '()
-        (cons (func (car coll))
-              (map! func (cdr coll)))))))
 
 (define* and
   (macro*
@@ -110,10 +109,3 @@
             (if or#
                 or#
                 (or ,@(cdr clauses))))])))
-
-(define* begin
-  (asm* !make-special body
-      null
-      .for-each body (asm* !make-special (val)
-          pop
-          .eval val)))
