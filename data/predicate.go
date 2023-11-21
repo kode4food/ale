@@ -54,6 +54,10 @@ func (t *TypePredicate) Equal(other Value) bool {
 	return false
 }
 
+func (t *TypePredicate) Get(key Value) (Value, bool) {
+	return DumpMapped(t).Get(key)
+}
+
 func (t *TypePredicate) String() string {
 	return DumpString(t)
 }

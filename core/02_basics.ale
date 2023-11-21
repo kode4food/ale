@@ -50,16 +50,22 @@
           .eval consequent
       :end]))
 
+(define* assert-type
+  (lambda (type value)
+    (let [pred (is-a* type)]
+      (if (pred value)
+          value
+          (raise "got " (:name (type-of* value))
+                 ", expected " (cdr (str type))
+                 ": " (str! value))))))
+
 (define* apply
   (lambda (func . args)
     (let-rec
       [flatten-args
         (lambda (args)
           (if (is-empty (cdr args))
-              (let [seq (car args)]
-                (if (is-seq seq)
-                    seq
-                    (raise "final argument to apply must be a sequence")))
+              (assert-type :sequence (car args))
               (cons (car args) (flatten-args (cdr args)))))]
       (let [flat-args (flatten-args args)]
         (asm*

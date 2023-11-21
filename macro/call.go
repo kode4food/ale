@@ -21,6 +21,10 @@ func (Call) Equal(data.Value) bool {
 	return false
 }
 
+func (c Call) Get(key data.Value) (data.Value, bool) {
+	return data.DumpMapped(c).Get(key)
+}
+
 func (c Call) String() string {
 	return data.DumpString(c)
 }

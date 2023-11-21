@@ -55,9 +55,11 @@
         empty)))
 
 (define* raise
-  (lambda (err)
+  (lambda strs
     (asm*
-        .resolve err
+        .resolve strs
+        .resolve ale/str
+        call-with
         panic
         null)))
 

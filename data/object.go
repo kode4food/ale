@@ -20,14 +20,6 @@ const (
 	bucketMask = bucketSize - 1
 )
 
-// Standard Keys
-const (
-	NameKey     = Keyword("name")
-	TypeKey     = Keyword("type")
-	CountKey    = Keyword("count")
-	InstanceKey = Keyword("instance")
-)
-
 // ErrMapNotPaired is raised when a call to ValuesToObject receives an odd
 // number of args, meaning it won't be capable of zipping them into an Object
 const ErrMapNotPaired = "map does not contain an even number of elements"

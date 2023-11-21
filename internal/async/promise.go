@@ -73,6 +73,10 @@ func (p *Promise) Equal(v data.Value) bool {
 	return p == v
 }
 
+func (p *Promise) Get(key data.Value) (data.Value, bool) {
+	return data.DumpMapped(p).Get(key)
+}
+
 func (p *Promise) String() string {
 	return data.DumpString(p)
 }

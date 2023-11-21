@@ -5,47 +5,94 @@ import (
 	"cmp"
 	"fmt"
 
-	"github.com/kode4food/comb/maps"
+	"github.com/kode4food/comb/basics"
 )
 
-type dumpStringMap map[Value]Value
+type dumped struct{ Value }
 
-// DumpString takes a Value and attempts to dump out a bunch of info
+// Standard Keys
+const (
+	CountKey    = Keyword("count")
+	InstanceKey = Keyword("instance")
+	NameKey     = Keyword("name")
+	TypeKey     = Keyword("type")
+)
+
+var (
+	dumpMap = map[Value]func(Value) (Value, bool){
+		NameKey:     dumpName,
+		TypeKey:     dumpType,
+		CountKey:    dumpCount,
+		InstanceKey: dumpInstance,
+	}
+
+	dumpKeys = basics.SortedKeysFunc(dumpMap, func(l, r Value) int {
+		return cmp.Compare(l.(Keyword), r.(Keyword))
+	})
+)
+
+// DumpMapped takes a Value and dumps out a bunch of info as a Mapped
+func DumpMapped(v Value) Mapped {
+	return dump(v)
+}
+
+// DumpString takes a Value and dumps out a bunch of info as a string
 func DumpString(v Value) string {
-	p := String(fmt.Sprintf("%p", v))
-	m := dumpStringMap{InstanceKey: p}
+	return dump(v).String()
+}
+
+func dump(v Value) dumped {
+	return dumped{v}
+}
+
+func (d dumped) Get(key Value) (Value, bool) {
+	if f, ok := dumpMap[key]; ok {
+		return f(d.Value)
+	}
+	return Null, false
+}
+
+func dumpInstance(v Value) (Value, bool) {
+	return String(fmt.Sprintf("%p", v)), true
+}
+
+func dumpName(v Value) (Value, bool) {
 	if n, ok := v.(Named); ok {
-		m[NameKey] = n.Name()
+		return n.Name(), true
 	}
+	return Null, false
+}
+
+func dumpType(v Value) (Value, bool) {
 	if t, ok := v.(Typed); ok {
-		m[TypeKey] = Local(t.Type().Name())
+		return Local(t.Type().Name()), true
 	}
+	return Null, false
+}
+
+func dumpCount(v Value) (Value, bool) {
 	if c, ok := v.(Counted); ok {
-		m[CountKey] = Integer(c.Count())
+		return Integer(c.Count()), true
 	}
-	return m.String()
+	return Null, false
 }
 
-var valueKeySorter = maps.SortedKeysFunc[Value, Value](func(l, r Value) int {
-	return cmp.Compare(
-		fmt.Sprintf("%p", l), fmt.Sprintf("%p", r),
-	)
-}).Must()
-
-func (d dumpStringMap) sortedKeys() Values {
-	return valueKeySorter(d)
-}
-
-func (d dumpStringMap) String() string {
+func (d dumped) String() string {
 	var buf bytes.Buffer
 	buf.WriteString("{")
-	for i, k := range d.sortedKeys() {
+	i := 0
+	for _, k := range dumpKeys {
+		v, ok := d.Get(k)
+		if !ok {
+			continue
+		}
 		if i > 0 {
 			buf.WriteString(" ")
 		}
 		buf.WriteString(MaybeQuoteString(k))
 		buf.WriteString(" ")
-		buf.WriteString(MaybeQuoteString(d[k]))
+		buf.WriteString(MaybeQuoteString(v))
+		i++
 	}
 	buf.WriteString("}")
 	return buf.String()

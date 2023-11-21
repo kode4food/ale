@@ -118,6 +118,10 @@ func (c *chanSequence) Equal(v data.Value) bool {
 	return c == v
 }
 
+func (c *chanSequence) Get(key data.Value) (data.Value, bool) {
+	return data.DumpMapped(c).Get(key)
+}
+
 func (c *chanSequence) String() string {
 	return data.DumpString(c)
 }

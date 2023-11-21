@@ -15,9 +15,7 @@
           (assoc (parse-define r) f #t)
           (if (and (is-cons-or-list f) (is-local (car f)))
               {:name (car f) :lambda #t :body `(lambda ,(cdr f) ,@r)}
-              (if (is-local f)
-                  {:name f :body (car r)}
-                  (raise (str "invalid define: " body))))))))
+              {:name (assert-type :local f) :body (car r)})))))
 
 (define* define
   (macro*

@@ -117,6 +117,10 @@ func (receiver) Type() types.Type {
 	return receiverType
 }
 
+func (r receiver) Get(key data.Value) (data.Value, bool) {
+	return data.DumpMapped(r).Get(key)
+}
+
 func (r receiver) String() string {
 	return data.DumpString(r)
 }

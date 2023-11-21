@@ -65,6 +65,10 @@ func (p *Procedure) Equal(v data.Value) bool {
 	return p == v
 }
 
+func (p *Procedure) Get(key data.Value) (data.Value, bool) {
+	return data.DumpMapped(p).Get(key)
+}
+
 func (p *Procedure) String() string {
 	return data.DumpString(p)
 }
