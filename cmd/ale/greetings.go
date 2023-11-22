@@ -21,7 +21,7 @@ var (
 	}
 
 	farewell_utf8 = []string{
-		"وداعاً!",    // Arabic
+		"!وداعاً",    // Arabic
 		"😊👋",         // Emoji
 		"Adiaŭ!",     // Esperanto
 		"Αντίο!",     // Greek
