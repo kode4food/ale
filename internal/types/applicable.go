@@ -75,14 +75,14 @@ func (s Signature) name() string {
 }
 
 func (s Signature) argNames() string {
-	a := s.Params
+	p := s.Params
 	if !s.TakesRest {
-		return typeList(a).name()
+		return typeList(p).name()
 	}
-	l := len(a)
-	args := typeList(a[:l-1]).name()
-	rest := a[l-1].Name()
-	return fmt.Sprintf("%s.%s", args, rest)
+	l := len(p)
+	params := typeList(p[:l-1]).name()
+	rest := p[l-1].Name()
+	return fmt.Sprintf("%s.%s", params, rest)
 }
 
 func (s Signature) acceptsFromSignatures(
@@ -100,13 +100,13 @@ func (s Signature) accepts(c *Checker, other Signature) bool {
 	if !c.AcceptsChild(s.Result, other.Result) {
 		return false
 	}
-	sa := s.Params
-	oa := other.Params
-	if len(sa) != len(oa) || s.TakesRest != other.TakesRest {
+	sp := s.Params
+	op := other.Params
+	if len(sp) != len(op) || s.TakesRest != other.TakesRest {
 		return false
 	}
-	for i, a := range sa {
-		if !c.AcceptsChild(a, oa[i]) {
+	for i, p := range sp {
+		if !c.AcceptsChild(p, op[i]) {
 			return false
 		}
 	}

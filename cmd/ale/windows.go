@@ -2,12 +2,13 @@
 
 package main
 
-var farewells = []string{
-	"¡Adiós!",
-	"Au revoir!",
-	"Bye for now!",
-	"Ciao!",
-	"Hoşçakal!",
-	"Tchau!",
-	"Tschüss!",
+import "os"
+
+var farewells = getFarewells()
+
+func getFarewells() []string {
+	if os.Getenv("ShellId") == "Microsoft.PowerShell" {
+		return append(farewell_latin1, farewell_utf8...)
+	}
+	return farewell_latin1
 }

@@ -67,13 +67,13 @@ func (le *lambdaEncoder) encodeCases(cases paramCases) {
 
 func (le *lambdaEncoder) predicate(c *paramCase) {
 	le.Emit(isa.ArgLen)
-	al := len(c.params)
+	cl := len(c.params)
 	if c.rest {
-		generate.Literal(le, data.Integer(al-1))
+		generate.Literal(le, data.Integer(cl-1))
 		le.Emit(isa.NumGte)
 		return
 	}
-	generate.Literal(le, data.Integer(al))
+	generate.Literal(le, data.Integer(cl))
 	le.Emit(isa.NumEq)
 }
 

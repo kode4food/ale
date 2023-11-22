@@ -21,15 +21,15 @@ func (e *encoder) PushParams(names data.Locals, rest bool) {
 
 func (e *encoder) PopParams() {
 	params := e.params
-	al := len(params)
-	e.params = params[0 : al-1]
+	pl := len(params)
+	e.params = params[0 : pl-1]
 }
 
 func (e *encoder) ResolveParam(n data.Local) (*IndexedCell, bool) {
 	params := e.params
 	for i := len(params) - 1; i >= 0; i-- {
-		a := params[i]
-		if c, ok := resolveParam(a, n); ok {
+		p := params[i]
+		if c, ok := resolveParam(p, n); ok {
 			return c, ok
 		}
 	}

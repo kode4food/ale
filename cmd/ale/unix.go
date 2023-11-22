@@ -2,18 +2,4 @@
 
 package main
 
-var farewells = []string{
-	"¡Adiós!",
-	"Au revoir!",
-	"Bye for now!",
-	"Ciao!",
-	"Hoşçakal!",
-	"Tchau!",
-	"Tschüss!",
-	"Αντίο!",
-	"До свидания!",
-	"अलविदा!",
-	"안녕!",
-	"じゃあね",
-	"再见!",
-}
+var farewells = append(farewell_latin1, farewell_utf8...)
