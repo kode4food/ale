@@ -159,16 +159,16 @@ func TestAsmMakeRestEncoder(t *testing.T) {
 			(asm* !make-special
 				[(head . rest)
 					.eval head]))
-		(test 1 2 3 4)
-	`, I(1))
+		[(test 1 2 3 4) (test 5 6) (test 7)]
+	`, V(I(1), I(5), I(7)))
 
 	as.EvalTo(`
 		(define* test
 			(asm* !make-special
 				[(head . rest)
 					.eval rest]))
-		(test 1 2 3 4)
-	`, V(I(2), I(3), I(4)))
+		[(test 1 2 3 4) (test 5 6) (test 7)]
+	`, V(V(I(2), I(3), I(4)), V(I(6)), V()))
 }
 
 func TestAsmOperandSizeError(t *testing.T) {
