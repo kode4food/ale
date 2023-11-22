@@ -13,6 +13,7 @@ type dumped struct{ Value }
 // Standard Keys
 const (
 	CountKey    = Keyword("count")
+	HashKey     = Keyword("hash")
 	InstanceKey = Keyword("instance")
 	NameKey     = Keyword("name")
 	TypeKey     = Keyword("type")
@@ -20,10 +21,11 @@ const (
 
 var (
 	dumpMap = map[Value]func(Value) (Value, bool){
+		CountKey:    dumpCount,
+		HashKey:     dumpHash,
+		InstanceKey: dumpInstance,
 		NameKey:     dumpName,
 		TypeKey:     dumpType,
-		CountKey:    dumpCount,
-		InstanceKey: dumpInstance,
 	}
 
 	dumpKeys = basics.SortedKeysFunc(dumpMap, func(l, r Value) int {
@@ -52,31 +54,6 @@ func (d dumped) Get(key Value) (Value, bool) {
 	return Null, false
 }
 
-func dumpInstance(v Value) (Value, bool) {
-	return String(fmt.Sprintf("%p", v)), true
-}
-
-func dumpName(v Value) (Value, bool) {
-	if n, ok := v.(Named); ok {
-		return n.Name(), true
-	}
-	return Null, false
-}
-
-func dumpType(v Value) (Value, bool) {
-	if t, ok := v.(Typed); ok {
-		return Local(t.Type().Name()), true
-	}
-	return Null, false
-}
-
-func dumpCount(v Value) (Value, bool) {
-	if c, ok := v.(Counted); ok {
-		return Integer(c.Count()), true
-	}
-	return Null, false
-}
-
 func (d dumped) String() string {
 	var buf bytes.Buffer
 	buf.WriteString("{")
@@ -96,4 +73,36 @@ func (d dumped) String() string {
 	}
 	buf.WriteString("}")
 	return buf.String()
+}
+
+func dumpCount(v Value) (Value, bool) {
+	if c, ok := v.(Counted); ok {
+		return Integer(c.Count()), true
+	}
+	return Null, false
+}
+
+func dumpHash(v Value) (Value, bool) {
+	if h, ok := v.(Hashed); ok {
+		return Integer(h.HashCode()), true
+	}
+	return Null, false
+}
+
+func dumpInstance(v Value) (Value, bool) {
+	return String(fmt.Sprintf("%p", v)), true
+}
+
+func dumpName(v Value) (Value, bool) {
+	if n, ok := v.(Named); ok {
+		return n.Name(), true
+	}
+	return Null, false
+}
+
+func dumpType(v Value) (Value, bool) {
+	if t, ok := v.(Typed); ok {
+		return Local(t.Type().Name()), true
+	}
+	return Null, false
 }

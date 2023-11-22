@@ -148,7 +148,7 @@ func (c *paramCase) makeFetcher() argFetcher {
 	cl := len(c.params)
 	if c.rest {
 		return func(args data.Values) (data.Values, bool) {
-			if len(args) < cl {
+			if len(args) < cl-1 {
 				return args, false
 			}
 			res := make(data.Values, cl)

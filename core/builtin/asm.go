@@ -146,7 +146,7 @@ func (e *asmEncoder) makeSpecialCall(forms data.Sequence) {
 				return
 			}
 		}
-		panic(ErrNoMatchingParamPattern)
+		panic(errors.New(ErrNoMatchingParamPattern))
 	}
 	e.Emit(isa.Const, e.AddConstant(special.Call(fn)))
 }
