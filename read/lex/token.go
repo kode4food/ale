@@ -19,7 +19,6 @@ type (
 	}
 )
 
-//go:generate go run golang.org/x/tools/cmd/stringer -output token_string.go -type TokenType
 const (
 	Error TokenType = iota
 	Keyword
@@ -90,12 +89,6 @@ func (t *Token) Equal(v data.Value) bool {
 		return t.typ == v.typ && t.value.Equal(v.value)
 	}
 	return false
-}
-
-// String converts this Value into a string
-func (t *Token) String() string {
-	name := data.Local(t.typ.String())
-	return data.NewVector(name, t.value).String()
 }
 
 func (t *Token) isNewLine() bool {

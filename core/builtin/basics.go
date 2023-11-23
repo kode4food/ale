@@ -42,7 +42,7 @@ var Defer = data.MakeProcedure(func(args ...data.Value) (res data.Value) {
 var Read = data.MakeProcedure(func(args ...data.Value) data.Value {
 	v := args[0]
 	s := v.(data.Sequence)
-	if v, ok := data.Last(read.FromString(sequence.ToStr(s))); ok {
+	if v, ok := data.Last(read.FromString(sequence.ToString(s))); ok {
 		return v
 	}
 	return data.Null

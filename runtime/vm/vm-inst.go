@@ -383,7 +383,7 @@ func doNoOp(vm *VM) {
 
 func doPanic(vm *VM) {
 	vm.ST = FAILURE
-	panic(errors.New(vm.MEM[vm.SP+1].String()))
+	panic(errors.New(data.ToString(vm.MEM[vm.SP+1])))
 }
 
 func doReturn(vm *VM) {

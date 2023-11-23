@@ -1,7 +1,6 @@
 package data
 
 import (
-	"fmt"
 	"hash/maphash"
 	"math/rand"
 
@@ -14,7 +13,6 @@ type (
 
 	// Value is the generic interface for all values
 	Value interface {
-		fmt.Stringer
 		Equal(Value) bool
 	}
 
@@ -113,7 +111,7 @@ func HashCode(v Value) uint64 {
 	if h, ok := v.(Hashed); ok {
 		return h.HashCode()
 	}
-	return HashString(v.String())
+	return HashString(ToString(v))
 }
 
 // HashString returns a hash code for the provided string

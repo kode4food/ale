@@ -55,7 +55,3 @@ func (p *procedure) Equal(v Value) bool {
 func (p *procedure) Get(key Value) (Value, bool) {
 	return DumpMapped(p).Get(key)
 }
-
-func (p *procedure) String() string {
-	return DumpString(p)
-}

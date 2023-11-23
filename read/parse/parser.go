@@ -92,7 +92,7 @@ func (r *parser) nextToken() *lex.Token {
 	r.token = token.(*lex.Token)
 	r.seq = seq
 	if r.token.Type() == lex.Error {
-		panic(r.error(r.token.Value().String()))
+		panic(r.error(data.ToString(r.token.Value())))
 	}
 	return r.token
 }

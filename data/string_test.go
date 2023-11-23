@@ -30,7 +30,7 @@ func TestStr(t *testing.T) {
 	s2 := S("thér\\再e")
 	as.Number(7, s2.Count())
 
-	s3 := data.MaybeQuoteString(s2)
+	s3 := data.ToQuotedString(s2)
 	r1 := []rune(s3)
 	as.Number(10, len(r1))
 	as.String(`"`, string(r1[0]))

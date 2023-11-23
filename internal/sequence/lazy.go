@@ -77,7 +77,3 @@ func (l *lazySequence) Equal(v data.Value) bool {
 func (l *lazySequence) Get(key data.Value) (data.Value, bool) {
 	return data.DumpMapped(l).Get(key)
 }
-
-func (l *lazySequence) String() string {
-	return data.DumpString(l)
-}

@@ -2,6 +2,7 @@ package data
 
 import (
 	"bytes"
+	"fmt"
 	"unicode/utf8"
 
 	"github.com/kode4food/ale/internal/types"
@@ -116,10 +117,17 @@ func (s String) Quote() string {
 	return buf.String()
 }
 
-// MaybeQuoteString converts Values to string, quoting wrapped Strings
-func MaybeQuoteString(v Value) string {
+func ToString(v Value) string {
+	if s, ok := v.(fmt.Stringer); ok {
+		return s.String()
+	}
+	return DumpString(v)
+}
+
+// ToQuotedString converts Values to string, possibly quoting wrapped Strings
+func ToQuotedString(v Value) string {
 	if s, ok := v.(String); ok {
 		return s.Quote()
 	}
-	return v.String()
+	return ToString(v)
 }

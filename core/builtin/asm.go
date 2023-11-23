@@ -168,7 +168,7 @@ func (e *asmEncoder) encode(forms data.Sequence) {
 			d.Call(e, args...)
 			r = rest
 		default:
-			panic(fmt.Errorf(ErrUnexpectedForm, f.String()))
+			panic(fmt.Errorf(ErrUnexpectedForm, data.ToString(f)))
 		}
 	}
 }

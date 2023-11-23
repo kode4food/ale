@@ -58,10 +58,6 @@ func (t *TypePredicate) Get(key Value) (Value, bool) {
 	return DumpMapped(t).Get(key)
 }
 
-func (t *TypePredicate) String() string {
-	return DumpString(t)
-}
-
 func typeOf(v Value) types.Type {
 	if v, ok := v.(Typed); ok {
 		return v.Type()

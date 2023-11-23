@@ -166,13 +166,13 @@ func TestObjectSplitDeterminism(t *testing.T) {
 		C(K("y"), I(99)),
 	)
 	f1, r1, ok := o.Split()
-	r1Str := r1.String()
+	r1Str := data.ToString(r1)
 	as.True(ok)
 	for i := 0; i < 50; i++ {
 		f2, r2, ok := o.Split()
 		as.True(ok)
 		as.Equal(f1, f2)
-		as.Equal(r1Str, r2.String())
+		as.Equal(r1Str, data.ToString(r2))
 	}
 }
 
@@ -185,12 +185,12 @@ func TestObjectCarCdr(t *testing.T) {
 	)
 	a1 := o.Car()
 	d1 := o.Cdr()
-	dStr := d1.String()
+	dStr := data.ToString(d1)
 	for i := 0; i < 50; i++ {
 		a2 := o.Car()
 		d2 := o.Cdr()
 		as.Equal(a1, a2)
-		as.Equal(dStr, d2.String())
+		as.Equal(dStr, data.ToString(d2))
 	}
 }
 

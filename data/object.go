@@ -219,8 +219,8 @@ func (o *Object) Equal(other Value) bool {
 	if len(lp) != len(rp) {
 		return false
 	}
-	rs := rp.Sorted()
-	for i, l := range lp.Sorted() {
+	rs := rp.sorted()
+	for i, l := range lp.sorted() {
 		if !l.Equal(rs[i]) {
 			return false
 		}
@@ -266,13 +266,13 @@ func (o *Object) pairs(p Pairs) Pairs {
 func (o *Object) String() string {
 	var buf bytes.Buffer
 	buf.WriteString("{")
-	for i, p := range o.Pairs().Sorted() {
+	for i, p := range o.Pairs().sorted() {
 		if i > 0 {
 			buf.WriteString(" ")
 		}
-		buf.WriteString(MaybeQuoteString(p.Car()))
+		buf.WriteString(ToQuotedString(p.Car()))
 		buf.WriteString(" ")
-		buf.WriteString(MaybeQuoteString(p.Cdr()))
+		buf.WriteString(ToQuotedString(p.Cdr()))
 	}
 	buf.WriteString("}")
 	return buf.String()

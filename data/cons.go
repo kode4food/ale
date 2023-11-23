@@ -27,10 +27,12 @@ type (
 	}
 )
 
-// Sorted returns a sorted set of Pairs
-func (p Pairs) Sorted() Pairs {
+// sorted returns a sorted set of Pairs
+func (p Pairs) sorted() Pairs {
 	return basics.SortFunc(p, func(l, r Pair) int {
-		return cmp.Compare(l.Car().String(), r.Car().String())
+		ls := ToString(l.Car())
+		rs := ToString(r.Car())
+		return cmp.Compare(ls, rs)
 	})
 }
 
@@ -68,11 +70,11 @@ func (c *Cons) String() string {
 	buf.WriteByte('(')
 	var next Pair = c
 	for {
-		buf.WriteString(MaybeQuoteString(next.Car()))
+		buf.WriteString(ToQuotedString(next.Car()))
 		cdr := next.Cdr()
 		if s, ok := cdr.(String); ok {
 			buf.WriteString(" . ")
-			buf.WriteString(MaybeQuoteString(s))
+			buf.WriteString(ToQuotedString(s))
 			break
 		}
 		if s, ok := cdr.(Sequence); ok && s.IsEmpty() {
@@ -84,7 +86,7 @@ func (c *Cons) String() string {
 			continue
 		}
 		buf.WriteString(" . ")
-		buf.WriteString(MaybeQuoteString(cdr))
+		buf.WriteString(ToQuotedString(cdr))
 		break
 	}
 	buf.WriteByte(')')

@@ -76,8 +76,8 @@ func ToObject(s data.Sequence) (*data.Object, error) {
 	}
 }
 
-// ToStr takes any sequence and attempts to convert it to a String
-func ToStr(s data.Sequence) data.String {
+// ToString takes any sequence and attempts to convert it to a String
+func ToString(s data.Sequence) data.String {
 	if st, ok := s.(data.String); ok {
 		return st
 	}
@@ -86,7 +86,7 @@ func ToStr(s data.Sequence) data.String {
 		if f == data.Null {
 			continue
 		}
-		buf.WriteString(f.String())
+		buf.WriteString(data.ToString(f))
 	}
 	return data.String(buf.String())
 }

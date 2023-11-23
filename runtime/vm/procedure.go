@@ -69,10 +69,6 @@ func (p *Procedure) Get(key data.Value) (data.Value, bool) {
 	return data.DumpMapped(p).Get(key)
 }
 
-func (p *Procedure) String() string {
-	return data.DumpString(p)
-}
-
 // Call turns Closure into a Procedure, and serves as the virtual machine
 func (c *Closure) Call(args ...data.Value) data.Value {
 	return (&VM{CL: c, ARGS: args}).Run()

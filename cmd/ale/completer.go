@@ -93,7 +93,7 @@ func (r *REPL) prefixedQualified(s data.Qualified) []string {
 		),
 		func(n data.Local) string {
 			qs := data.NewQualifiedSymbol(n, domain)
-			return qs.String() + " "
+			return data.ToString(qs) + " "
 		},
 	)
 }

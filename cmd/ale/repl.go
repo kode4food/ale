@@ -196,7 +196,7 @@ func (r *REPL) outputResult(v data.Value) {
 	if v == nothing {
 		return
 	}
-	sv := data.MaybeQuoteString(v)
+	sv := data.ToQuotedString(v)
 	res := fmt.Sprintf(good, r.nsSpace(), r.idx, sv)
 	fmt.Println(res)
 }
@@ -210,16 +210,12 @@ func (r *REPL) outputError(err error) {
 func (r *REPL) saveHistory() {
 	defer func() { _ = recover() }()
 	seq := r.scanBuffer()
-	hist := string(sequence.ToStr(seq))
+	hist := string(sequence.ToString(seq))
 	_ = r.rl.SaveHistory(hist)
 }
 
 func (*sentinel) Equal(data.Value) bool {
 	return false
-}
-
-func (*sentinel) String() string {
-	return ""
 }
 
 func isEmptyString(s string) bool {
@@ -234,7 +230,7 @@ func toError(i any) error {
 	case error:
 		return i
 	case data.Value:
-		return errors.New(i.String())
+		return errors.New(data.ToString(i))
 	default:
 		// Programmer error
 		panic(fmt.Sprintf("non-standard error: %s", i))

@@ -25,8 +25,4 @@ func TestRef(t *testing.T) {
 	as.Equal(r4, r5)
 	as.Equal(r4, L(I(1), I(2)))
 	as.NotEqual(r5, r6)
-
-	as.String(`(ref "non-matching")`, r2)
-	as.String(`(ref (1 2))`, r4)
-	as.String(`(ref)`, r6)
 }

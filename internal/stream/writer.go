@@ -32,5 +32,5 @@ func NewWriter(w io.Writer, o OutputFunc) *data.Object {
 
 // StrOutput is the standard string-based output function
 func StrOutput(w *bufio.Writer, v data.Value) {
-	_, _ = w.Write([]byte(v.String()))
+	_, _ = w.Write([]byte(data.ToString(v)))
 }

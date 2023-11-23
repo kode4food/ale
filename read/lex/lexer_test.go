@@ -44,7 +44,14 @@ func TestCreateLexer(t *testing.T) {
 	as := assert.New(t)
 	l := read.Tokens("hello")
 	as.NotNil(l)
-	as.String(`([Identifier "hello"])`, data.MakeSequenceStr(l))
+	f, r, ok := l.Split()
+	as.True(ok)
+	as.True(r.IsEmpty())
+	tk, ok := f.(*lex.Token)
+	as.NotNil(tk)
+	as.True(ok)
+	as.String("hello", tk.Value())
+	as.Equal(lex.Identifier, tk.Type())
 }
 
 func TestWhitespace(t *testing.T) {
@@ -184,11 +191,4 @@ func TestTokenEquality(t *testing.T) {
 	as.False(t1.Equal(t5))
 	as.False(t4.Equal(t5))
 	as.False(t1.Equal(I(37)))
-}
-
-func TestStrangeToken(t *testing.T) {
-	as := assert.New(t)
-
-	tkn := lex.MakeToken(lex.TokenType(99), S("hello"))
-	as.String(`[TokenType(99) "hello"]`, tkn)
 }

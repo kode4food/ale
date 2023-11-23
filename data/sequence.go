@@ -70,10 +70,10 @@ func MakeSequenceStr(s Sequence) string {
 	}
 	var b bytes.Buffer
 	b.WriteString("(")
-	b.WriteString(MaybeQuoteString(f))
+	b.WriteString(ToQuotedString(f))
 	for f, r, ok = r.Split(); ok; f, r, ok = r.Split() {
 		b.WriteString(" ")
-		b.WriteString(MaybeQuoteString(f))
+		b.WriteString(ToQuotedString(f))
 	}
 	b.WriteString(")")
 	return b.String()

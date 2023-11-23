@@ -48,7 +48,7 @@ func (w *Wrapper) String(expect string, expr any) {
 	case data.Local:
 		w.Assertions.Equal(expect, string(s))
 	case data.Value:
-		w.Assertions.Equal(expect, s.String())
+		w.Assertions.Equal(expect, data.ToString(s))
 	default:
 		panic(fmt.Errorf(ErrInvalidTestExpression, expr))
 	}
@@ -83,7 +83,7 @@ func (w *Wrapper) Equal(expect any, expr any) {
 			w.True(expect.Equal(expr))
 			return
 		}
-		w.String(expect.String(), expr)
+		w.String(data.ToString(expect), expr)
 	default:
 		w.Assertions.Equal(expect, expr)
 	}
@@ -112,14 +112,14 @@ func (w *Wrapper) False(expr any) {
 // Contains check if the expected string is in the provided Value
 func (w *Wrapper) Contains(expect string, expr data.Value) {
 	w.Helper()
-	val := expr.String()
+	val := data.ToString(expr)
 	w.Assertions.True(strings.Contains(val, expect))
 }
 
 // NotContains checks if the expected string is not in the provided Value
 func (w *Wrapper) NotContains(expect string, expr data.Value) {
 	w.Helper()
-	val := expr.String()
+	val := data.ToString(expr)
 	w.Assertions.False(strings.Contains(val, expect))
 }
 

@@ -109,7 +109,7 @@ func (v Vector) String() string {
 		if i > 0 {
 			b.WriteString(" ")
 		}
-		b.WriteString(MaybeQuoteString(e))
+		b.WriteString(ToQuotedString(e))
 	}
 	b.WriteString("]")
 	return b.String()

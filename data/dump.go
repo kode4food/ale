@@ -66,9 +66,9 @@ func (d dumped) String() string {
 		if i > 0 {
 			buf.WriteString(" ")
 		}
-		buf.WriteString(MaybeQuoteString(k))
+		buf.WriteString(ToQuotedString(k))
 		buf.WriteString(" ")
-		buf.WriteString(MaybeQuoteString(v))
+		buf.WriteString(ToQuotedString(v))
 		i++
 	}
 	buf.WriteString("}")
