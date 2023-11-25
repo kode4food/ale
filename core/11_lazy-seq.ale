@@ -8,8 +8,7 @@
      (lazy-seq
        (if (and (> count 0)
                 (!empty? coll))
-           (cons (first coll) (take-inner (dec count) (rest coll)))
-           '())))
+           (cons (first coll) (take-inner (dec count) (rest coll))))))
    count coll))
 
 (define (take-while pred coll)

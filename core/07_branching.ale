@@ -59,8 +59,7 @@
      `(if-let ,binding ,then null)]
   [(binding then else)
      (assert-args
-       (and (is-vector binding)
-            (= 2 (length binding)))
+       (is-binding-clause binding)
        (str "invalid if-let binding: " binding))
      (let ([sym  (binding 0)]
            [test (binding 1)])
