@@ -17,5 +17,5 @@ func TestReplace(t *testing.T) {
 
 	as.Instructions(isa.Instructions{
 		isa.RetFalse.New(),
-	}, optimize.Instructions(e1.Code()))
+	}, optimize.FromEncoder(e1))
 }

@@ -1,6 +1,7 @@
 package optimize
 
 import (
+	"github.com/kode4food/ale/compiler/encoder"
 	"github.com/kode4food/ale/compiler/ir/visitor"
 	"github.com/kode4food/ale/runtime/isa"
 	"github.com/kode4food/comb/basics"
@@ -13,17 +14,17 @@ var (
 		isa.True:  isa.RetTrue,
 	}
 
-	literalKeys = basics.MapKeys(literalReturnMap)
-
 	literalReturnPatterns = visitor.Pattern{
-		literalKeys,
+		basics.MapKeys(literalReturnMap),
 		{isa.Return},
 	}
 )
 
-func literalReturns(root visitor.Node) visitor.Node {
-	visitor.Replace(root, literalReturnPatterns, literalReturnMapper)
-	return root
+func makeLiteralReturns(encoder.Encoder) optimizer {
+	return func(root visitor.Node) visitor.Node {
+		visitor.Replace(root, literalReturnPatterns, literalReturnMapper)
+		return root
+	}
 }
 
 func literalReturnMapper(i isa.Instructions) isa.Instructions {

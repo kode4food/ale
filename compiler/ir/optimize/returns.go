@@ -1,16 +1,19 @@
 package optimize
 
 import (
+	"github.com/kode4food/ale/compiler/encoder"
 	"github.com/kode4food/ale/compiler/ir/visitor"
 	"github.com/kode4food/ale/runtime/isa"
 )
 
 type returnSplitter struct{}
 
-func splitReturns(root visitor.Node) visitor.Node {
-	r := new(returnSplitter)
-	visitor.DepthFirst(root, r)
-	return root
+func makeSplitReturns(encoder.Encoder) optimizer {
+	return func(root visitor.Node) visitor.Node {
+		r := new(returnSplitter)
+		visitor.DepthFirst(root, r)
+		return root
+	}
 }
 
 func (*returnSplitter) EnterRoot(visitor.Node)            {}

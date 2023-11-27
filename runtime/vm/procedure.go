@@ -1,8 +1,6 @@
 package vm
 
 import (
-	"github.com/kode4food/ale/compiler/encoder"
-	"github.com/kode4food/ale/compiler/ir/optimize"
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/env"
 	"github.com/kode4food/ale/internal/types"
@@ -25,21 +23,6 @@ type (
 		Captured data.Values
 	}
 )
-
-// MakeProcedure instantiates an abstract machine Procedure from the provided
-// Encoder's intermediate representation
-func MakeProcedure(e encoder.Encoder) *Procedure {
-	code := e.Code()
-	optimized := optimize.Instructions(code)
-	return &Procedure{
-		Globals:      e.Globals(),
-		Constants:    e.Constants(),
-		StackSize:    int(e.StackSize()),
-		LocalCount:   int(e.LocalCount()),
-		Code:         isa.Flatten(optimized),
-		ArityChecker: data.AnyArityChecker,
-	}
-}
 
 // Call allows an abstract machine Procedure to be called for the purpose of
 // instantiating a Closure. Only the compiler invokes this calling interface.

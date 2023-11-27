@@ -2,6 +2,7 @@ package generate
 
 import (
 	"github.com/kode4food/ale/compiler/encoder"
+	"github.com/kode4food/ale/compiler/procedure"
 	"github.com/kode4food/ale/runtime/isa"
 	"github.com/kode4food/ale/runtime/vm"
 )
@@ -9,7 +10,7 @@ import (
 func Procedure(e encoder.Encoder, build Builder) *vm.Procedure {
 	child := e.Child()
 	build(child)
-	fn := vm.MakeProcedure(child)
+	fn := procedure.FromEncoder(child)
 
 	cells := child.Closure()
 	clen := len(cells)

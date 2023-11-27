@@ -22,6 +22,8 @@ type (
 	}
 )
 
+const AnyOpcode = isa.OpcodeMask + 1
+
 // Replace visits all Instruction nodes and if any of the instructions therein
 // match the provided Pattern, they will be replaced using the provided Mapper
 func Replace(root Node, pattern Pattern, mapper Mapper) {
@@ -63,5 +65,8 @@ func (r *replace) Instructions(i Instructions) {
 }
 
 func (p Pattern) matchesState(opcode isa.Opcode, state int) bool {
+	if len(p[state]) == 1 && p[state][0] == AnyOpcode {
+		return true
+	}
 	return slices.Contains(p[state], opcode)
 }

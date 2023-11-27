@@ -3,12 +3,12 @@ package eval
 import (
 	"github.com/kode4food/ale/compiler/encoder"
 	"github.com/kode4food/ale/compiler/generate"
+	"github.com/kode4food/ale/compiler/procedure"
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/env"
 	"github.com/kode4food/ale/read"
 	"github.com/kode4food/ale/runtime"
 	"github.com/kode4food/ale/runtime/isa"
-	"github.com/kode4food/ale/runtime/vm"
 )
 
 // String evaluates the specified raw source
@@ -36,7 +36,7 @@ func Value(ns env.Namespace, v data.Value) data.Value {
 }
 
 func encodeAndRun(e encoder.Encoder) data.Value {
-	fn := vm.MakeProcedure(e)
+	fn := procedure.FromEncoder(e)
 	closure := fn.Call().(data.Procedure)
 	return closure.Call()
 }
