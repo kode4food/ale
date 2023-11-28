@@ -4,6 +4,7 @@ import (
 	"github.com/kode4food/ale/compiler/encoder"
 	"github.com/kode4food/ale/compiler/ir/visitor"
 	"github.com/kode4food/ale/runtime/isa"
+	"github.com/kode4food/ale/runtime/vm"
 )
 
 type tailCallMapper struct{ encoder.Encoder }
@@ -21,7 +22,18 @@ func makeTailCalls(e encoder.Encoder) optimizer {
 	}
 }
 
+func (m tailCallMapper) excludeTailCall(i isa.Instruction) bool {
+	if oc, op := i.Split(); oc == isa.Const {
+		_, ok := m.Constants()[op].(*vm.Closure)
+		return !ok
+	}
+	return false
+}
+
 func (m tailCallMapper) perform(i isa.Instructions) isa.Instructions {
+	if m.excludeTailCall(i[0]) {
+		return i
+	}
 	var argCount isa.Operand
 	oc, op := i[1].Split()
 	switch oc {
