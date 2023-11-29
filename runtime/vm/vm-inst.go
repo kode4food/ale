@@ -57,7 +57,7 @@ func doArg(vm *VM) {
 }
 
 func doRestArg(vm *VM) {
-	vm.MEM[vm.SP] = data.NewVector(vm.ARGS[vm.INST.Operand():]...)
+	vm.MEM[vm.SP] = data.Vector(vm.ARGS[vm.INST.Operand():])
 	vm.SP--
 	vm.PC++
 }

@@ -24,9 +24,9 @@ func Env() data.Value {
 
 // Args returns a vector containing the args passed to this program
 func Args() data.Value {
-	return data.NewVector(basics.Map(os.Args, func(v string) data.Value {
+	return data.Vector(basics.Map(os.Args, func(v string) data.Value {
 		return data.String(v)
-	})...)
+	}))
 }
 
 // CurrentTime returns the current system time in nanoseconds

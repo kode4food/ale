@@ -19,7 +19,7 @@ const ErrNoMatchingParamPattern = "no matching parameter pattern"
 // Lambda encodes a lambda
 func Lambda(e encoder.Encoder, args ...data.Value) {
 	var le *lambdaEncoder
-	cases := parseParamCases(data.NewVector(args...))
+	cases := parseParamCases(data.Vector(args))
 	fn := generate.Procedure(e, func(c encoder.Encoder) {
 		le = makeLambda(c, cases)
 		le.encode()

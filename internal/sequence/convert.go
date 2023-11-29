@@ -61,7 +61,7 @@ func ToVector(s data.Sequence) data.Vector {
 		return s
 	default:
 		v := ToValues(s)
-		return data.NewVector(v...)
+		return data.Vector(v)
 	}
 }
 

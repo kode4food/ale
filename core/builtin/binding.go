@@ -47,7 +47,7 @@ func LetMutual(e encoder.Encoder, args ...data.Value) {
 func parseLet(args ...data.Value) (generate.Bindings, data.Vector) {
 	data.AssertMinimum(2, len(args))
 	bindings := parseLetBindings(args[0])
-	return bindings, data.NewVector(args[1:]...)
+	return bindings, args[1:]
 }
 
 func parseLetBindings(v data.Value) generate.Bindings {

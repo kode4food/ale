@@ -38,7 +38,7 @@ func (w *sliceWrapper) Wrap(c *Context, v reflect.Value) (data.Value, error) {
 		}
 		out[i] = v
 	}
-	return data.NewVector(out...), nil
+	return data.Vector(out), nil
 }
 
 func (w *sliceWrapper) Unwrap(v data.Value) (reflect.Value, error) {

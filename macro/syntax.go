@@ -114,7 +114,7 @@ func (se *syntaxEnv) quoteObject(as *data.Object) data.Value {
 		p := f.(data.Pair)
 		res = append(res, p.Car(), p.Cdr())
 	}
-	v := data.NewVector(res...)
+	v := data.Vector(res)
 	return data.NewList(applySym, objectSym, se.quoteElements(v))
 }
 

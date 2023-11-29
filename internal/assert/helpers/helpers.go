@@ -63,5 +63,5 @@ func S(s string) data.String {
 
 // V constructs a Vector
 func V(args ...data.Value) data.Vector {
-	return data.NewVector(args...)
+	return args
 }

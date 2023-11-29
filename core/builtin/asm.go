@@ -96,7 +96,7 @@ var (
 
 // Asm provides indirect access to the Encoder's methods and generators
 func Asm(e encoder.Encoder, args ...data.Value) {
-	makeAsmEncoder(e).process(data.NewVector(args...))
+	makeAsmEncoder(e).process(data.Vector(args))
 }
 
 func makeAsmEncoder(e encoder.Encoder) *asmEncoder {

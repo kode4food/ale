@@ -11,7 +11,7 @@ const emptyString = data.String("")
 
 // Str converts the provided arguments to an undelimited string
 var Str = data.MakeProcedure(func(args ...data.Value) data.Value {
-	v := data.NewVector(args...)
+	v := data.Vector(args)
 	return sequence.ToString(v)
 })
 
