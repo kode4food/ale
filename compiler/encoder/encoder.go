@@ -1,6 +1,8 @@
 package encoder
 
 import (
+	"slices"
+
 	"github.com/kode4food/ale/compiler/ir/analysis"
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/env"
@@ -79,10 +81,7 @@ func (e *encoder) Emit(oc isa.Opcode, args ...isa.Operand) {
 
 // Code returns the encoder's resulting abstract machine Instructions
 func (e *encoder) Code() isa.Instructions {
-	code := e.code
-	res := make(isa.Instructions, len(code))
-	copy(res, code)
-	return res
+	return slices.Clone(e.code)
 }
 
 // StackSize returns the encoder's calculated stack size

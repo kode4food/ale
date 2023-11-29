@@ -68,7 +68,9 @@ func (v Vector) Split() (Value, Sequence, bool) {
 }
 
 func (v Vector) Prepend(e Value) Sequence {
-	return append(Vector{e}, v...)
+	res := make(Vector, 1, len(v)+1)
+	res[0] = e
+	return append(res, v...)
 }
 
 func (v Vector) Append(e Value) Sequence {

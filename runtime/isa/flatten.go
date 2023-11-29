@@ -1,6 +1,9 @@
 package isa
 
-import "errors"
+import (
+	"errors"
+	"slices"
+)
 
 type (
 	flattener struct {
@@ -36,9 +39,7 @@ func (f *flattener) flatten() Instructions {
 	for _, l := range f.input {
 		f.handleInst(l)
 	}
-	res := make(Instructions, len(f.output))
-	copy(res, f.output)
-	return res
+	return slices.Clone(f.output)
 }
 
 func (f *flattener) handleInst(l Instruction) {

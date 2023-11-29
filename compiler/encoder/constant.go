@@ -9,10 +9,7 @@ import (
 
 // Constants return the encoder's set of constants
 func (e *encoder) Constants() data.Values {
-	ec := e.constants
-	res := make(data.Values, len(ec))
-	copy(res, ec)
-	return res
+	return slices.Clone(e.constants)
 }
 
 // AddConstant adds a value to the constant list (if necessary)
