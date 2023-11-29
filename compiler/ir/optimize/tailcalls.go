@@ -22,16 +22,16 @@ func makeTailCalls(e encoder.Encoder) optimizer {
 	}
 }
 
-func (m tailCallMapper) excludeTailCall(i isa.Instruction) bool {
+func (m tailCallMapper) canTailCall(i isa.Instruction) bool {
 	if oc, op := i.Split(); oc == isa.Const {
 		_, ok := m.Constants()[op].(*vm.Closure)
-		return !ok
+		return ok
 	}
-	return false
+	return true
 }
 
 func (m tailCallMapper) perform(i isa.Instructions) isa.Instructions {
-	if m.excludeTailCall(i[0]) {
+	if !m.canTailCall(i[0]) {
 		return i
 	}
 	var argCount isa.Operand
