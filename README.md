@@ -6,10 +6,10 @@ Ale is a Lisp Environment for [Go](https://golang.org/) applications
 
 ## How To Install
 
-Make sure your `GOPATH` is set, then run `go get` to retrieve the package.
+Make sure your `GOPATH` is set, then run `go install` to install the command line tool.
 
 ```bash
-go get github.com/kode4food/ale/cmd/ale
+go install github.com/kode4food/ale/cmd/ale@latest
 ```
 
 ## How To Run A Source File
