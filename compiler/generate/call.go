@@ -26,7 +26,7 @@ func Call(e encoder.Encoder, l *data.List) {
 	callValue(e, f, args)
 }
 
-func callValue(e encoder.Encoder, v data.Value, args data.Values) {
+func callValue(e encoder.Encoder, v data.Value, args data.Vector) {
 	if s, ok := v.(data.Symbol); ok {
 		callSymbol(e, s, args)
 		return
@@ -34,7 +34,7 @@ func callValue(e encoder.Encoder, v data.Value, args data.Values) {
 	callNonSymbol(e, v, args)
 }
 
-func callSymbol(e encoder.Encoder, s data.Symbol, args data.Values) {
+func callSymbol(e encoder.Encoder, s data.Symbol, args data.Vector) {
 	if l, ok := s.(data.Local); ok {
 		if _, ok := e.ResolveLocal(l); ok {
 			callDynamic(e, l, args)
@@ -55,7 +55,7 @@ func callSymbol(e encoder.Encoder, s data.Symbol, args data.Values) {
 	callDynamic(e, s, args)
 }
 
-func callNonSymbol(e encoder.Encoder, v data.Value, args data.Values) {
+func callNonSymbol(e encoder.Encoder, v data.Value, args data.Vector) {
 	if compiler.IsEvaluable(v) {
 		callDynamic(e, v, args)
 		return
@@ -68,7 +68,7 @@ func callNonSymbol(e encoder.Encoder, v data.Value, args data.Values) {
 	}
 }
 
-func assertArity(f data.Procedure, args data.Values) {
+func assertArity(f data.Procedure, args data.Vector) {
 	al := len(args)
 	if err := f.CheckArity(al); err != nil {
 		panic(err)
@@ -88,7 +88,7 @@ func callWith(e encoder.Encoder, emitFunc funcEmitter, emitArgs argsEmitter) {
 	}
 }
 
-func callStatic(e encoder.Encoder, f data.Procedure, args data.Values) {
+func callStatic(e encoder.Encoder, f data.Procedure, args data.Vector) {
 	assertArity(f, args)
 	emitFunc := staticLiteral(e, f)
 	emitArgs := makeArgs(e, args)
@@ -101,7 +101,7 @@ func staticLiteral(e encoder.Encoder, fn data.Value) funcEmitter {
 	}
 }
 
-func callDynamic(e encoder.Encoder, v data.Value, args data.Values) {
+func callDynamic(e encoder.Encoder, v data.Value, args data.Vector) {
 	emitFunc := dynamicEval(e, v)
 	emitArgs := makeArgs(e, args)
 	callWith(e, emitFunc, emitArgs)
@@ -113,7 +113,7 @@ func dynamicEval(e encoder.Encoder, v data.Value) funcEmitter {
 	}
 }
 
-func makeArgs(e encoder.Encoder, args data.Values) argsEmitter {
+func makeArgs(e encoder.Encoder, args data.Vector) argsEmitter {
 	return func() int {
 		al := len(args)
 		for i := al - 1; i >= 0; i-- {

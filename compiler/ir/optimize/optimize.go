@@ -13,6 +13,7 @@ var makeOptimizers = []func(encoder.Encoder) optimizer{
 	makeSplitReturns,   // roll standalone returns into preceding branches
 	makeTailCalls,      // replace calls in tail position with a tail-call
 	makeLiteralReturns, // convert literal returns into single instructions
+	makeInlineCalls,    // convert some calls into inlined instructions
 }
 
 // FromEncoder returns optimized Instructions from the provided Encoder

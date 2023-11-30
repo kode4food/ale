@@ -48,12 +48,12 @@ func Sequence(e encoder.Encoder, s data.Sequence) {
 // Vector encodes a vector
 func Vector(e encoder.Encoder, v data.Vector) {
 	f := resolveBuiltIn(e, vectorSym)
-	callStatic(e, f, v.Values())
+	callStatic(e, f, v)
 }
 
 // Object encodes an object
 func Object(e encoder.Encoder, a *data.Object) {
-	args := data.Values{}
+	args := data.Vector{}
 	for f, r, ok := a.Split(); ok; f, r, ok = r.Split() {
 		v := f.(data.Pair)
 		args = append(args, v.Car(), v.Cdr())

@@ -82,7 +82,7 @@ func TestVectorInterface(t *testing.T) {
 	as := assert.New(t)
 	r := testWrap(as)
 	m := as.MustGet(r, K("Double")).(data.Procedure)
-	d := m.Call(ffi.MustWrap(I(4)), ffi.MustWrap(I(6))).(data.Vector).Values()
+	d := m.Call(ffi.MustWrap(I(4)), ffi.MustWrap(I(6))).(data.Vector)
 	as.Equal(2, len(d))
 	as.Equal(I(8), d[0])
 	as.Equal(I(12), d[1])

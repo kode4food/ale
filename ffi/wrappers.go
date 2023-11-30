@@ -9,7 +9,7 @@ import (
 // Wrappers is a set of Wrapper
 type Wrappers []Wrapper
 
-func (w Wrappers) unwrap(args data.Values) []reflect.Value {
+func (w Wrappers) unwrap(args data.Vector) []reflect.Value {
 	unwrapped := make([]reflect.Value, len(w))
 	for i, wrapped := range w {
 		arg, err := wrapped.Unwrap(args[i])
@@ -21,9 +21,9 @@ func (w Wrappers) unwrap(args data.Values) []reflect.Value {
 	return unwrapped
 }
 
-func (w Wrappers) wrap(args []reflect.Value) data.Values {
+func (w Wrappers) wrap(args []reflect.Value) data.Vector {
 	wc := new(Context)
-	in := make(data.Values, len(args))
+	in := make(data.Vector, len(args))
 	for i, arg := range args {
 		arg, err := w[i].Wrap(wc, arg)
 		if err != nil {

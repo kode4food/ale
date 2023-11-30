@@ -138,7 +138,7 @@ func (r *parser) prefixed(s data.Symbol) data.Value {
 }
 
 func (r *parser) list() data.Value {
-	res := data.Values{}
+	res := data.Vector{}
 	var sawDotAt = -1
 	for t, i := r.nextToken(), 0; t != nil; t, i = r.nextToken(), i+1 {
 		switch t.Type() {
@@ -175,8 +175,8 @@ func (r *parser) object() data.Value {
 	return res
 }
 
-func (r *parser) nonDotted(endToken lex.TokenType) data.Values {
-	res := data.Values{}
+func (r *parser) nonDotted(endToken lex.TokenType) data.Vector {
+	res := data.Vector{}
 	for {
 		t := r.nextToken()
 		if t == nil {

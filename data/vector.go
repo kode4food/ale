@@ -9,7 +9,7 @@ import (
 )
 
 // Vector is a fixed-length array of Values
-type Vector Values
+type Vector []Value
 
 // EmptyVector represents an empty Vector
 var (
@@ -21,10 +21,6 @@ var (
 // NewVector creates a new Vector instance
 func NewVector(v ...Value) Vector {
 	return v
-}
-
-func (v Vector) Values() Values {
-	return Values(v)
 }
 
 func (v Vector) Count() int {

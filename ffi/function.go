@@ -78,7 +78,7 @@ func (w *funcWrapper) unwrapValueCall(l data.Procedure) makeFuncType {
 func (w *funcWrapper) unwrapVectorCall(l data.Procedure) makeFuncType {
 	return func(args []reflect.Value) []reflect.Value {
 		in := w.in.wrap(args)
-		res := l.Call(in...).(data.Vector).Values()
+		res := l.Call(in...).(data.Vector)
 		return w.out.unwrap(res)
 	}
 }

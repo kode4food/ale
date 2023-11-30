@@ -38,7 +38,7 @@ func TestVectorResult(t *testing.T) {
 		return i * 2, s + "-modified"
 	}).(data.Procedure)
 	as.NotNil(f)
-	r := f.Call(I(4), S("hello")).(data.Vector).Values()
+	r := f.Call(I(4), S("hello")).(data.Vector)
 	as.Equal(I(8), r[0])
 	as.Equal(S("hello-modified"), r[1])
 }

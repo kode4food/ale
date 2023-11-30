@@ -18,8 +18,8 @@ type (
 		SP   int
 		INST isa.Instruction
 		CODE isa.Instructions
-		MEM  data.Values
-		ARGS data.Values
+		MEM  data.Vector
+		ARGS data.Vector
 		RES  data.Value
 	}
 )
@@ -35,7 +35,7 @@ const (
 )
 
 func (vm *VM) initMem() {
-	vm.MEM = make(data.Values, vm.CL.StackSize+vm.CL.LocalCount)
+	vm.MEM = make(data.Vector, vm.CL.StackSize+vm.CL.LocalCount)
 	vm.initCode()
 }
 

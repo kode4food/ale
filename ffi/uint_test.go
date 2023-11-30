@@ -23,7 +23,7 @@ func TestUInt64Wrapper(t *testing.T) {
 	f := ffi.MustWrap(func(i1 uint32, i2 uint64) (uint32, uint64) {
 		return i1 * 2, i2 * 3
 	}).(data.Procedure)
-	r := f.Call(I(9), I(15)).(data.Vector).Values()
+	r := f.Call(I(9), I(15)).(data.Vector)
 	as.Equal(I(18), r[0])
 	as.Equal(I(45), r[1])
 }
@@ -33,7 +33,7 @@ func TestUInt16Wrapper(t *testing.T) {
 	f := ffi.MustWrap(func(i1 uint16, i2 uint8) (uint16, uint8) {
 		return i1 * 2, i2 * 3
 	}).(data.Procedure)
-	r := f.Call(I(9), I(15)).(data.Vector).Values()
+	r := f.Call(I(9), I(15)).(data.Vector)
 	as.Equal(I(18), r[0])
 	as.Equal(I(45), r[1])
 }

@@ -13,7 +13,7 @@ import (
 	"github.com/kode4food/ale/runtime/vm"
 )
 
-var constants = data.Values{
+var constants = data.Vector{
 	I(5),
 	I(6),
 	S("a thrown error"),
@@ -377,7 +377,7 @@ func TestJumps(t *testing.T) {
 
 func TestArgs(t *testing.T) {
 	as := assert.New(t)
-	args := data.Values{S("arg1"), S("arg2"), S("arg3"), S("arg4")}
+	args := data.Vector{S("arg1"), S("arg2"), S("arg3"), S("arg4")}
 
 	c1 := makeProcedure(isa.Instructions{
 		isa.ArgLen.New(),

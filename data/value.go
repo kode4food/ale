@@ -16,9 +16,6 @@ type (
 		Equal(Value) bool
 	}
 
-	// Values represent a set of Values
-	Values []Value
-
 	// Typed is the generic interface for values that are typed
 	Typed interface {
 		Type() types.Type
@@ -37,11 +34,6 @@ type (
 	// Mapped is the interface for Values that have accessible properties
 	Mapped interface {
 		Get(Value) (Value, bool)
-	}
-
-	// Valuer can return its data as a slice of Values
-	Valuer interface {
-		Values() Values
 	}
 
 	// Hashed can return a hash code for the value

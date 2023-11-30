@@ -21,7 +21,7 @@ type (
 		NewLabel() isa.Operand
 
 		Globals() env.Namespace
-		Constants() data.Values
+		Constants() data.Vector
 		AddConstant(data.Value) isa.Operand
 
 		Closure() IndexedCells
@@ -43,7 +43,7 @@ type (
 	encoder struct {
 		parent    Encoder
 		globals   env.Namespace
-		constants data.Values
+		constants data.Vector
 		closure   IndexedCells
 		params    paramStack
 		locals    []Locals

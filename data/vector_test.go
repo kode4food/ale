@@ -92,15 +92,15 @@ func TestVectorSplit(t *testing.T) {
 	as.True(ok)
 	as.Equal(S("hello"), f)
 	as.Equal(
-		data.Values{S("how"), S("are"), S("you?")},
-		r.(data.Vector).Values(),
+		data.Vector{S("how"), S("are"), S("you?")},
+		r.(data.Vector),
 	)
 
 	v2 := data.NewVector(S("hello"))
 	f, r, ok = v2.Split()
 	as.True(ok)
 	as.Equal(S("hello"), f)
-	as.Equal(data.Values{}, r.(data.Vector).Values())
+	as.Equal(data.Vector{}, r.(data.Vector))
 
 	v3 := data.NewVector()
 	_, _, ok = v3.Split()

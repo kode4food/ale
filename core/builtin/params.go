@@ -16,7 +16,7 @@ type (
 
 	paramCases []*paramCase
 
-	argFetcher func(data.Values) (data.Values, bool)
+	argFetcher func(data.Vector) (data.Vector, bool)
 )
 
 const (
@@ -147,17 +147,17 @@ func (c *paramCase) arityRange() (int, int) {
 func (c *paramCase) makeFetcher() argFetcher {
 	cl := len(c.params)
 	if c.rest {
-		return func(args data.Values) (data.Values, bool) {
+		return func(args data.Vector) (data.Vector, bool) {
 			if len(args) < cl-1 {
 				return args, false
 			}
-			res := make(data.Values, cl)
+			res := make(data.Vector, cl)
 			copy(res, args[0:cl-1])
 			res[cl-1] = data.Vector(args[cl-1:])
 			return res, true
 		}
 	}
-	return func(args data.Values) (data.Values, bool) {
+	return func(args data.Vector) (data.Vector, bool) {
 		return args, cl == len(args)
 	}
 }

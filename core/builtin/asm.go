@@ -108,7 +108,7 @@ func makeAsmEncoder(e encoder.Encoder) *asmEncoder {
 	}
 }
 
-func (e *asmEncoder) withParams(n data.Locals, v data.Values) *asmEncoder {
+func (e *asmEncoder) withParams(n data.Locals, v data.Vector) *asmEncoder {
 	args := make(map[data.Local]data.Value, len(n))
 	for i, k := range n {
 		args[k] = v[i]
@@ -183,7 +183,7 @@ func (e *asmEncoder) getLabelIndex(n data.Local) isa.Operand {
 }
 
 func (e *asmEncoder) toOperands(
-	oc isa.Opcode, args data.Values,
+	oc isa.Opcode, args data.Vector,
 ) []isa.Operand {
 	return basics.Map(args, func(a data.Value) isa.Operand {
 		ao := isa.Effects[oc].Operand
@@ -377,10 +377,10 @@ func mergeCalls(maps ...callMap) callMap {
 	return res
 }
 
-func take(s data.Sequence, count int) (data.Values, data.Sequence, bool) {
+func take(s data.Sequence, count int) (data.Vector, data.Sequence, bool) {
 	var f data.Value
 	var ok bool
-	res := make(data.Values, count)
+	res := make(data.Vector, count)
 	for i := 0; i < count; i++ {
 		if f, s, ok = s.Split(); !ok {
 			return nil, nil, false

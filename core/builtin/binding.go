@@ -70,8 +70,7 @@ func parseLetBindings(v data.Value) generate.Bindings {
 	}
 }
 
-func parseLetBinding(b data.Vector) *generate.Binding {
-	v := b.Values()
+func parseLetBinding(v data.Vector) *generate.Binding {
 	if len(v) != 2 {
 		panic(errors.New(ErrUnpairedBindings))
 	}

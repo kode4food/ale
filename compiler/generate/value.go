@@ -32,7 +32,7 @@ func Value(e encoder.Encoder, v data.Value) {
 // Pair encodes a pair
 func Pair(e encoder.Encoder, c data.Pair) {
 	f := resolveBuiltIn(e, consSym)
-	args := data.Values{c.Car(), c.Cdr()}
+	args := data.Vector{c.Car(), c.Cdr()}
 	callStatic(e, f, args)
 }
 

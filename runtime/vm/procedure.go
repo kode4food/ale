@@ -11,7 +11,7 @@ type (
 	// Procedure encapsulates the initial environment of an abstract machine
 	Procedure struct {
 		Globals      env.Namespace
-		Constants    data.Values
+		Constants    data.Vector
 		Code         isa.Instructions
 		StackSize    int
 		LocalCount   int
@@ -20,7 +20,7 @@ type (
 
 	Closure struct {
 		*Procedure
-		Captured data.Values
+		Captured data.Vector
 	}
 )
 

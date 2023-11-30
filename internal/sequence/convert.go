@@ -12,7 +12,7 @@ func ToList(s data.Sequence) data.Sequence {
 	case *data.List:
 		return s
 	case data.CountedSequence:
-		res := make(data.Values, s.Count())
+		res := make(data.Vector, s.Count())
 		idx := 0
 		for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {
 			res[idx] = f
@@ -29,12 +29,12 @@ func uncountedToList(s data.Sequence) data.Sequence {
 }
 
 // ToValues takes any sequence and converts it to a value array
-func ToValues(s data.Sequence) data.Values {
+func ToValues(s data.Sequence) data.Vector {
 	switch s := s.(type) {
-	case data.ValuerSequence:
-		return s.Values()
+	case data.Vector:
+		return data.Vector(s)
 	case data.CountedSequence:
-		res := make(data.Values, s.Count())
+		res := make(data.Vector, s.Count())
 		idx := 0
 		for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {
 			res[idx] = f
@@ -46,8 +46,8 @@ func ToValues(s data.Sequence) data.Values {
 	}
 }
 
-func uncountedToValues(s data.Sequence) data.Values {
-	res := data.Values{}
+func uncountedToValues(s data.Sequence) data.Vector {
+	res := data.Vector{}
 	for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {
 		res = append(res, f)
 	}
