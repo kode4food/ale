@@ -43,7 +43,7 @@ func (w *arrayWrapper) Wrap(c *Context, v reflect.Value) (data.Value, error) {
 		}
 		out[i] = elem
 	}
-	return data.Vector(out), nil
+	return out, nil
 }
 
 func (w *arrayWrapper) Unwrap(v data.Value) (reflect.Value, error) {

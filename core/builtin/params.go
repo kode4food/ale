@@ -153,7 +153,7 @@ func (c *paramCase) makeFetcher() argFetcher {
 			}
 			res := make(data.Vector, cl)
 			copy(res, args[0:cl-1])
-			res[cl-1] = data.Vector(args[cl-1:])
+			res[cl-1] = args[cl-1:]
 			return res, true
 		}
 	}

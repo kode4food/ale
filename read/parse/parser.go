@@ -162,8 +162,7 @@ func (r *parser) list() data.Value {
 }
 
 func (r *parser) vector() data.Value {
-	v := r.nonDotted(lex.VectorEnd)
-	return data.Vector(v)
+	return r.nonDotted(lex.VectorEnd)
 }
 
 func (r *parser) object() data.Value {

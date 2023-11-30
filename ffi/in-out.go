@@ -71,7 +71,6 @@ func (w *inOutWrappers) wrapVectorFunction(fn reflect.Value) data.Procedure {
 	return data.MakeProcedure(func(args ...data.Value) data.Value {
 		in := w.in.unwrap(args)
 		res := fn.Call(in)
-		out := w.out.wrap(res)
-		return data.Vector(out)
+		return w.out.wrap(res)
 	}, len(w.in))
 }

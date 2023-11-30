@@ -32,7 +32,7 @@ func uncountedToList(s data.Sequence) data.Sequence {
 func ToValues(s data.Sequence) data.Vector {
 	switch s := s.(type) {
 	case data.Vector:
-		return data.Vector(s)
+		return s
 	case data.CountedSequence:
 		res := make(data.Vector, s.Count())
 		idx := 0
@@ -60,8 +60,7 @@ func ToVector(s data.Sequence) data.Vector {
 	case data.Vector:
 		return s
 	default:
-		v := ToValues(s)
-		return data.Vector(v)
+		return ToValues(s)
 	}
 }
 
