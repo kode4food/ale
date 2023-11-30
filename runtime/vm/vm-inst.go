@@ -319,11 +319,9 @@ func doCall1(vm *VM) {
 func doCall(vm *VM) {
 	op := vm.INST.Operand()
 	SP1 := vm.SP + 1
+	SP2 := SP1 + 1
 	fn := vm.MEM[SP1].(data.Procedure)
-	// prepare args
-	args := make(data.Values, op)
-	copy(args, vm.MEM[SP1+1:]) // because stack mutates
-	// call function
+	args := append(make(data.Values, 0, op), vm.MEM[SP2:SP2+int(op)]...)
 	RES := SP1 + int(op)
 	vm.MEM[RES] = fn.Call(args...)
 	vm.SP = RES - 1
@@ -340,12 +338,11 @@ func doCallWith(vm *VM) {
 }
 
 func doTailCall(vm *VM) {
+	op := vm.INST.Operand()
 	SP1 := vm.SP + 1
+	SP2 := SP1 + 1
 	val := vm.MEM[SP1]
-	// prepare args
-	vm.ARGS = make(data.Values, vm.INST.Operand())
-	copy(vm.ARGS, vm.MEM[SP1+1:]) // because stack mutates
-	// call function
+	vm.ARGS = append(make(data.Values, 0, op), vm.MEM[SP2:SP2+int(op)]...)
 	cl, ok := val.(*Closure)
 	if !ok {
 		vm.ST = SUCCESS
