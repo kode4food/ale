@@ -8,7 +8,7 @@ var farewells = getFarewells()
 
 func getFarewells() []string {
 	if os.Getenv("ShellId") == "Microsoft.PowerShell" {
-		return append(farewell_latin1, farewell_utf8...)
+		return append(farewellLatin1, farewellUtf8...)
 	}
-	return farewell_latin1
+	return farewellLatin1
 }

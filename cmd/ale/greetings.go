@@ -1,7 +1,7 @@
 package main
 
 var (
-	farewell_latin1 = []string{
+	farewellLatin1 = []string{
 		"Zbogom!",    // Croatian
 		"Farvel!",    // Danish
 		"Tot ziens!", // Dutch
@@ -20,7 +20,7 @@ var (
 		"Hwyl fawr!", // Welsh
 	}
 
-	farewell_utf8 = []string{
+	farewellUtf8 = []string{
 		"😊👋",         // Emoji
 		"Adiaŭ!",     // Esperanto
 		"Αντίο!",     // Greek

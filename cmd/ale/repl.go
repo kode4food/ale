@@ -106,7 +106,7 @@ func (r *REPL) Run() {
 
 		if err != nil {
 			emptyBuffer := isEmptyString(r.buf.String())
-			if err == readline.ErrInterrupt && !emptyBuffer {
+			if errors.Is(err, readline.ErrInterrupt) && !emptyBuffer {
 				r.reset()
 				continue
 			}
