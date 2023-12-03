@@ -27,7 +27,6 @@ var Chan = data.MakeProcedure(func(args ...data.Value) data.Value {
 		size = int(args[0].(data.Integer))
 	}
 	return stream.NewChannel(size)
-
 }, 0, 1)
 
 // Promise instantiates a new eventually fulfilled promise

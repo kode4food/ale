@@ -36,6 +36,13 @@ func (p Pairs) sorted() Pairs {
 	})
 }
 
+// compile-time checks for interface implementation
+var (
+	_ Hashed = &Cons{}
+	_ Pair   = &Cons{}
+	_ Typed  = &Cons{}
+)
+
 // NewCons returns a new Cons cell instance
 func NewCons(car, cdr Value) *Cons {
 	return &Cons{

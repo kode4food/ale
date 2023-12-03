@@ -14,6 +14,20 @@ type String string
 // EmptyString represents the... empty string
 const EmptyString = String("")
 
+const (
+	// ErrInvalidStartIndex is raised when an attempt to take a substring of a
+	// String would result in a start index outside the String's actual range
+	ErrInvalidStartIndex = "starting index is out of range: %d"
+
+	// ErrInvalidEndIndex is raised when an attempt to take a substring of a
+	// String would result in an end index beyond the String's actual range
+	ErrInvalidEndIndex = "ending index is out of range: %d"
+
+	// ErrEndIndexTooLow is raised when an attempt to take a substring of a
+	// String specifies an ending index that is lower than the starting index
+	ErrEndIndexTooLow = "ending index is lower than starting index: %d < %d"
+)
+
 var unescapeTable = map[string]string{
 	"\\": "\\\\",
 	"\n": "\\n",
@@ -23,6 +37,15 @@ var unescapeTable = map[string]string{
 	"\r": "\\r",
 	"\"": "\\\"",
 }
+
+var (
+	// compile-time checks for interface implementation
+	_ Caller       = EmptyString
+	_ Hashed       = EmptyString
+	_ RandomAccess = EmptyString
+	_ Reverser     = EmptyString
+	_ Typed        = EmptyString
+)
 
 // Car returns the first character of the String
 func (s String) Car() Value {
@@ -63,19 +86,77 @@ func (s String) ElementAt(index int) (Value, bool) {
 	if index < 0 {
 		return Null, false
 	}
-	ns := string(s)
-	p := 0
-	for i := 0; i < index; i++ {
-		_, w := utf8.DecodeRuneInString(ns[p:])
-		if w == 0 {
-			return Null, false
-		}
-		p += w
+	ns, ok := s.from(index)
+	if !ok {
+		return Null, false
 	}
-	if r, w := utf8.DecodeRuneInString(ns[p:]); w > 0 {
+	if r, w := utf8.DecodeRuneInString(string(ns)); w > 0 {
 		return String(r), true
 	}
 	return Null, false
+}
+
+func (s String) Reverse() Sequence {
+	n := len(s)
+	runes := make([]rune, n)
+	for _, r := range s {
+		n--
+		runes[n] = r
+	}
+	return String(runes[n:])
+}
+
+func (s String) Call(args ...Value) Value {
+	if len(args) == 1 {
+		a := args[0].(Integer)
+		return s.Call(a, a+1)
+	}
+
+	idx := int(args[0].(Integer))
+	if idx < 0 {
+		panic(fmt.Errorf(ErrInvalidStartIndex, idx))
+	}
+	ns, ok := s.from(idx)
+	if !ok {
+		panic(fmt.Errorf(ErrInvalidStartIndex, idx))
+	}
+
+	end := int(args[1].(Integer))
+	if end < idx {
+		panic(fmt.Errorf(ErrEndIndexTooLow, idx, end))
+	}
+	if res, ok := ns.take(end - idx); ok {
+		return res
+	}
+	panic(fmt.Errorf(ErrInvalidEndIndex, end))
+}
+
+func (s String) CheckArity(argCount int) error {
+	return checkRangedArity(1, 2, argCount)
+}
+
+func (s String) from(index int) (String, bool) {
+	ns := string(s)
+	for i := 0; i < index; i++ {
+		_, w := utf8.DecodeRuneInString(ns)
+		if w == 0 {
+			return EmptyString, false
+		}
+		ns = ns[w:]
+	}
+	return String(ns), true
+}
+
+func (s String) take(count int) (String, bool) {
+	ns := string(s)
+	for i := 0; i < count; i++ {
+		_, w := utf8.DecodeRuneInString(ns)
+		if w == 0 {
+			return EmptyString, false
+		}
+		ns = ns[w:]
+	}
+	return s[0 : len(s)-len(ns)], true
 }
 
 // Equal compares this String to another for equality

@@ -29,6 +29,13 @@ var (
 	EmptyObject *Object
 
 	objectHash = rand.Uint64()
+
+	// compile-time checks for interface implementation
+	_ Caller          = &Object{}
+	_ CountedSequence = &Object{}
+	_ Hashed          = &Object{}
+	_ Mapper          = &Object{}
+	_ Typed           = &Object{}
 )
 
 // NewObject instantiates a new Object instance. Based on Phil Bagwell's Hashed

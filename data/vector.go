@@ -16,6 +16,15 @@ var (
 	EmptyVector = Vector{}
 
 	vectorHash = rand.Uint64()
+
+	// compile-time checks for interface implementation
+	_ Appender     = EmptyVector
+	_ Caller       = EmptyVector
+	_ Hashed       = EmptyVector
+	_ Prepender    = EmptyVector
+	_ RandomAccess = EmptyVector
+	_ Reverser     = EmptyVector
+	_ Typed        = EmptyVector
 )
 
 // NewVector creates a new Vector instance

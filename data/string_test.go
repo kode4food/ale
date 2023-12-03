@@ -1,6 +1,7 @@
 package data_test
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/kode4food/ale/data"
@@ -77,4 +78,33 @@ func TestStringEquality(t *testing.T) {
 	as.True(s1.Equal(s2))
 	as.False(s1.Equal(s3))
 	as.False(s1.Equal(I(32)))
+}
+
+func TestSubstringCall(t *testing.T) {
+	as := assert.New(t)
+	as.EvalTo(`("hello" 0)`, S("h"))
+	as.EvalTo(`("hello" 1)`, S("e"))
+	as.EvalTo(`("hello" 4)`, S("o"))
+	as.EvalTo(`("hello" 0 1)`, S("h"))
+	as.EvalTo(`("hello" 0 2)`, S("he"))
+	as.EvalTo(`("hello" 0 5)`, S("hello"))
+	as.EvalTo(`("hello" 3 5)`, S("lo"))
+
+	as.PanicWith(`("hello" -1)`, fmt.Sprintf(data.ErrInvalidStartIndex, -1))
+	as.PanicWith(`("hello" 6)`, fmt.Sprintf(data.ErrInvalidStartIndex, 6))
+	as.PanicWith(`("hello" 5)`, fmt.Sprintf(data.ErrInvalidEndIndex, 6))
+	as.PanicWith(`("hello" 0 6)`, fmt.Sprintf(data.ErrInvalidEndIndex, 6))
+	as.PanicWith(`("hello" 3 2)`, fmt.Sprintf(data.ErrEndIndexTooLow, 3, 2))
+}
+
+func TestReverse(t *testing.T) {
+	as := assert.New(t)
+	as.EvalTo(`(reverse "hello")`, S("olleh"))
+	as.EvalTo(`(reverse "")`, S(""))
+	as.EvalTo(`(reverse "X")`, S("X"))
+	as.EvalTo(`(reverse "😎⚽")`, S("⚽😎"))
+	as.EvalTo(
+		`(reverse "The quick bròwn 狐 jumped over the lazy 犬")`,
+		S("犬 yzal eht revo depmuj 狐 nwòrb kciuq ehT"),
+	)
 }
