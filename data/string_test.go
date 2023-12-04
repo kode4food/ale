@@ -92,7 +92,7 @@ func TestSubstringCall(t *testing.T) {
 
 	as.PanicWith(`("hello" -1)`, fmt.Sprintf(data.ErrInvalidStartIndex, -1))
 	as.PanicWith(`("hello" 6)`, fmt.Sprintf(data.ErrInvalidStartIndex, 6))
-	as.PanicWith(`("hello" 5)`, fmt.Sprintf(data.ErrInvalidEndIndex, 6))
+	as.PanicWith(`("hello" 5)`, fmt.Sprintf(data.ErrInvalidStartIndex, 5))
 	as.PanicWith(`("hello" 0 6)`, fmt.Sprintf(data.ErrInvalidEndIndex, 6))
 	as.PanicWith(`("hello" 3 2)`, fmt.Sprintf(data.ErrEndIndexTooLow, 3, 2))
 }

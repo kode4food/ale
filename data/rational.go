@@ -20,11 +20,6 @@ type (
 	Ratio big.Rat
 )
 
-var (
-	rationalHash = rand.Uint64()
-	one          = big.NewInt(1)
-)
-
 const (
 	// ErrExpectedFloat is raised when a call to ParseFloat can't properly
 	// interpret its input as a floating point number
@@ -33,6 +28,11 @@ const (
 	// ErrExpectedRatio is raised when a call to ParseRatio can't properly
 	// interpret its input as a ratio
 	ErrExpectedRatio = "value is not a ratio: %s"
+)
+
+var (
+	rationalHash = rand.Uint64()
+	one          = big.NewInt(1)
 )
 
 // ParseFloat attempts to parse a string representing a float

@@ -144,7 +144,7 @@ func (s String) from(index int) (String, bool) {
 		}
 		ns = ns[w:]
 	}
-	return String(ns), true
+	return String(ns), len(ns) > 0
 }
 
 func (s String) take(count int) (String, bool) {
