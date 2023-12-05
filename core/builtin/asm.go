@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"maps"
 
 	"github.com/kode4food/ale/compiler/encoder"
 	"github.com/kode4food/ale/compiler/generate"
@@ -18,8 +19,8 @@ import (
 type (
 	asmEncoder struct {
 		encoder.Encoder
-		labels  map[data.Local]isa.Operand
 		args    map[data.Local]data.Value
+		labels  map[data.Local]isa.Operand
 		private map[data.Local]data.Local
 	}
 
@@ -31,6 +32,7 @@ type (
 	callMap map[data.Local]*call
 
 	toOperandFunc func(data.Value) (isa.Operand, error)
+	toNameFunc    func(e *asmEncoder, l data.Local) data.Local
 )
 
 const (
@@ -113,8 +115,16 @@ func (e *asmEncoder) withParams(n data.Locals, v data.Vector) *asmEncoder {
 	for i, k := range n {
 		args[k] = v[i]
 	}
-	res := *e
+	res := e.copy()
 	res.args = args
+	return res
+}
+
+func (e *asmEncoder) copy() *asmEncoder {
+	res := *e
+	res.args = maps.Clone(res.args)
+	res.private = maps.Clone(res.private)
+	res.labels = maps.Clone(res.labels)
 	return &res
 }
 
@@ -182,9 +192,7 @@ func (e *asmEncoder) getLabelIndex(n data.Local) isa.Operand {
 	return idx
 }
 
-func (e *asmEncoder) toOperands(
-	oc isa.Opcode, args data.Vector,
-) []isa.Operand {
+func (e *asmEncoder) toOperands(oc isa.Opcode, args data.Vector) []isa.Operand {
 	return basics.Map(args, func(a data.Value) isa.Operand {
 		ao := isa.Effects[oc].Operand
 		toOperand := e.getToOperandFor(ao)
@@ -333,11 +341,9 @@ func popLocalsCall(e encoder.Encoder, _ ...data.Value) {
 	e.PopLocals()
 }
 
-func makeLocalEncoder(
-	namer func(e *asmEncoder, l data.Local) data.Local,
-) special.Call {
+func makeLocalEncoder(toName toNameFunc) special.Call {
 	return func(e encoder.Encoder, args ...data.Value) {
-		name := namer(e.(*asmEncoder), args[0].(data.Local))
+		name := toName(e.(*asmEncoder), args[0].(data.Local))
 		kwd := args[1].(data.Keyword)
 		cellType, ok := cellTypes[kwd]
 		if !ok {

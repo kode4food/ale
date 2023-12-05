@@ -151,9 +151,10 @@ func (c *paramCase) makeFetcher() argFetcher {
 			if len(args) < cl-1 {
 				return args, false
 			}
-			res := make(data.Vector, cl)
-			copy(res, args[0:cl-1])
-			res[cl-1] = args[cl-1:]
+			res := append(
+				append(make(data.Vector, 0, cl), args[0:cl-1]...),
+				args[cl-1:],
+			)
 			return res, true
 		}
 	}

@@ -85,9 +85,7 @@ func (s Signature) argNames() string {
 	return fmt.Sprintf("%s.%s", params, rest)
 }
 
-func (s Signature) acceptsFromSignatures(
-	c *Checker, other []Signature,
-) bool {
+func (s Signature) acceptsFromSignatures(c *Checker, other []Signature) bool {
 	for _, o := range other {
 		if s.accepts(c, o) {
 			return true
