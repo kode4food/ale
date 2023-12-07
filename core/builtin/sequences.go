@@ -35,13 +35,13 @@ var Reverse = data.MakeProcedure(func(args ...data.Value) data.Value {
 var Length = data.MakeProcedure(func(args ...data.Value) data.Value {
 	s := args[0].(data.Counted)
 	l := s.Count()
-	return data.Integer(l)
+	return l
 }, 1)
 
 // Nth returns the nth element of the provided sequence or a default
 var Nth = data.MakeProcedure(func(args ...data.Value) data.Value {
 	s := args[0].(data.Indexed)
-	i := int(args[1].(data.Integer))
+	i := args[1].(data.Integer)
 	if res, ok := s.ElementAt(i); ok {
 		return res
 	}

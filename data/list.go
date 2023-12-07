@@ -10,7 +10,7 @@ import (
 type List struct {
 	first Value
 	rest  *List
-	count int
+	count Integer
 }
 
 var (
@@ -31,7 +31,7 @@ var (
 // NewList creates a new List instance
 func NewList(v ...Value) *List {
 	var res *List
-	for i, u := len(v)-1, 1; i >= 0; i, u = i-1, u+1 {
+	for i, u := len(v)-1, Integer(1); i >= 0; i, u = i-1, u+1 {
 		res = &List{
 			first: v[i],
 			rest:  res,
@@ -67,7 +67,7 @@ func (l *List) Split() (Value, Sequence, bool) {
 }
 
 func (l *List) Prepend(v Value) Sequence {
-	c := 1
+	c := Integer(1)
 	if l != nil {
 		c += l.count
 	}
@@ -85,7 +85,7 @@ func (l *List) Reverse() Sequence {
 
 	var res *List
 	e := l
-	for d, u := e.count, 1; d > 0; e, d, u = e.rest, d-1, u+1 {
+	for d, u := e.count, Integer(1); d > 0; e, d, u = e.rest, d-1, u+1 {
 		res = &List{
 			first: e.Car(),
 			rest:  res,
@@ -95,20 +95,20 @@ func (l *List) Reverse() Sequence {
 	return res
 }
 
-func (l *List) Count() int {
+func (l *List) Count() Integer {
 	if l == nil {
 		return 0
 	}
 	return l.count
 }
 
-func (l *List) ElementAt(index int) (Value, bool) {
+func (l *List) ElementAt(index Integer) (Value, bool) {
 	if l == nil || index > l.count-1 || index < 0 {
 		return Null, false
 	}
 
 	e := l
-	for i := 0; i < index; i++ {
+	for i := Integer(0); i < index; i++ {
 		e = e.rest
 	}
 	return e.Car(), true

@@ -23,12 +23,12 @@ type (
 
 	// Counted interfaces allow a Value to return a count of its items
 	Counted interface {
-		Count() int
+		Count() Integer
 	}
 
 	// Indexed is the interface for values that have indexed elements
 	Indexed interface {
-		ElementAt(int) (Value, bool)
+		ElementAt(Integer) (Value, bool)
 	}
 
 	// Mapped is the interface for Values that have accessible properties

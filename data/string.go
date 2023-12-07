@@ -77,12 +77,12 @@ func (s String) IsEmpty() bool {
 }
 
 // Count returns the length of the String
-func (s String) Count() int {
-	return utf8.RuneCountInString(string(s))
+func (s String) Count() Integer {
+	return Integer(utf8.RuneCountInString(string(s)))
 }
 
 // ElementAt returns the Character at the indexed position in the String
-func (s String) ElementAt(index int) (Value, bool) {
+func (s String) ElementAt(index Integer) (Value, bool) {
 	if index < 0 {
 		return Null, false
 	}
@@ -107,21 +107,19 @@ func (s String) Reverse() Sequence {
 }
 
 func (s String) Call(args ...Value) Value {
+	idx := args[0].(Integer)
 	if len(args) == 1 {
-		a := args[0].(Integer)
-		return s.Call(a, a+1)
-	}
-
-	idx := int(args[0].(Integer))
-	if idx < 0 {
+		return s.Call(idx, idx+1)
+	} else if idx < 0 {
 		panic(fmt.Errorf(ErrInvalidStartIndex, idx))
 	}
+
 	ns, ok := s.from(idx)
 	if !ok {
 		panic(fmt.Errorf(ErrInvalidStartIndex, idx))
 	}
 
-	end := int(args[1].(Integer))
+	end := args[1].(Integer)
 	if end < idx {
 		panic(fmt.Errorf(ErrEndIndexTooLow, idx, end))
 	}
@@ -135,9 +133,9 @@ func (s String) CheckArity(argCount int) error {
 	return checkRangedArity(1, 2, argCount)
 }
 
-func (s String) from(index int) (String, bool) {
+func (s String) from(index Integer) (String, bool) {
 	ns := string(s)
-	for i := 0; i < index; i++ {
+	for i := Integer(0); i < index; i++ {
 		_, w := utf8.DecodeRuneInString(ns)
 		if w == 0 {
 			return EmptyString, false
@@ -147,9 +145,9 @@ func (s String) from(index int) (String, bool) {
 	return String(ns), len(ns) > 0
 }
 
-func (s String) take(count int) (String, bool) {
+func (s String) take(count Integer) (String, bool) {
 	ns := string(s)
-	for i := 0; i < count; i++ {
+	for i := Integer(0); i < count; i++ {
 		_, w := utf8.DecodeRuneInString(ns)
 		if w == 0 {
 			return EmptyString, false

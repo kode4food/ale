@@ -16,7 +16,7 @@ func (dumpTest) Name() data.Local {
 	return "dump-test"
 }
 
-func (dumpTest) Count() int {
+func (dumpTest) Count() data.Integer {
 	return 42
 }
 

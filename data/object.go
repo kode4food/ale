@@ -188,11 +188,11 @@ func (o *Object) Split() (Value, Sequence, bool) {
 	return Null, EmptyObject, false
 }
 
-func (o *Object) Count() int {
+func (o *Object) Count() Integer {
 	if o == nil {
 		return 0
 	}
-	res := 1
+	res := Integer(1)
 	for _, c := range o.children {
 		if c != nil {
 			res += c.Count()
