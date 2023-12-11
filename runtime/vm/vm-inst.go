@@ -2,6 +2,7 @@ package vm
 
 import (
 	"errors"
+	"slices"
 
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/env"
@@ -321,7 +322,7 @@ func doCall(vm *VM) {
 	SP1 := vm.SP + 1
 	SP2 := SP1 + 1
 	fn := vm.MEM[SP1].(data.Procedure)
-	args := append(make(data.Vector, 0, op), vm.MEM[SP2:SP2+int(op)]...)
+	args := slices.Clone(vm.MEM[SP2 : SP2+int(op)])
 	RES := SP1 + int(op)
 	vm.MEM[RES] = fn.Call(args...)
 	vm.SP = RES - 1
@@ -342,7 +343,7 @@ func doTailCall(vm *VM) {
 	SP1 := vm.SP + 1
 	SP2 := SP1 + 1
 	val := vm.MEM[SP1]
-	vm.ARGS = append(make(data.Vector, 0, op), vm.MEM[SP2:SP2+int(op)]...)
+	vm.ARGS = slices.Clone(vm.MEM[SP2 : SP2+int(op)])
 	cl, ok := val.(*Closure)
 	if !ok {
 		vm.ST = SUCCESS

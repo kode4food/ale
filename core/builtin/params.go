@@ -2,6 +2,7 @@ package builtin
 
 import (
 	"fmt"
+	"slices"
 
 	"github.com/kode4food/ale/data"
 )
@@ -151,10 +152,7 @@ func (c *paramCase) makeFetcher() argFetcher {
 			if len(args) < cl-1 {
 				return args, false
 			}
-			res := append(
-				append(make(data.Vector, 0, cl), args[0:cl-1]...),
-				args[cl-1:],
-			)
+			res := append(slices.Clone(args[0:cl-1]), args[cl-1:])
 			return res, true
 		}
 	}

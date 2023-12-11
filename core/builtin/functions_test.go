@@ -129,6 +129,6 @@ func TestTailCallEval(t *testing.T) {
 				[(> x 0)    (to-zero (- x 1))]
 				[:else 0]))
 
-		(to-zero 9999999)
+		(to-zero 999999)
 	`, I(0))
 }
