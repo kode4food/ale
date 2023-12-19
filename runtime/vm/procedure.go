@@ -1,6 +1,7 @@
 package vm
 
 import (
+	"math/rand"
 	"slices"
 
 	"github.com/kode4food/ale/data"
@@ -25,6 +26,8 @@ type (
 		Captured data.Vector
 	}
 )
+
+var procedureHash = rand.Uint64()
 
 // Call allows an abstract machine Procedure to be called for the purpose of
 // instantiating a Closure. Only the compiler invokes this calling interface.
@@ -58,6 +61,14 @@ func (p *Procedure) Equal(other data.Value) bool {
 			p.Constants.Equal(other.Constants)
 	}
 	return false
+}
+
+func (p *Procedure) HashCode() uint64 {
+	hash := procedureHash
+	for i, inst := range p.Code {
+		hash *= uint64(inst) << (i % 64)
+	}
+	return hash
 }
 
 func (p *Procedure) Get(key data.Value) (data.Value, bool) {
