@@ -13,11 +13,11 @@ func TestLazySequence(t *testing.T) {
 	as := assert.New(t)
 
 	var i int
-	var fn data.Procedure
+	var p data.Procedure
 
-	fn = data.MakeProcedure(func(...data.Value) data.Value {
+	p = data.MakeProcedure(func(...data.Value) data.Value {
 		if i < 10 {
-			p := builtin.LazySequence.Call(fn).(data.Prepender)
+			p := builtin.LazySequence.Call(p).(data.Prepender)
 			res := p.Prepend(data.Integer(i))
 			i++
 			return res
@@ -25,7 +25,7 @@ func TestLazySequence(t *testing.T) {
 		return data.Null
 	}, 0)
 
-	s := builtin.LazySequence.Call(fn).(data.Sequence)
+	s := builtin.LazySequence.Call(p).(data.Sequence)
 	as.String(`(0 1 2 3 4 5 6 7 8 9)`, data.MakeSequenceStr(s))
 }
 

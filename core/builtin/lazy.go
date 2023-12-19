@@ -12,9 +12,9 @@ var LazySequence = data.MakeProcedure(func(args ...data.Value) data.Value {
 	return sequence.NewLazy(resolver)
 }, 1)
 
-func makeLazyResolver(f data.Procedure) sequence.LazyResolver {
+func makeLazyResolver(p data.Procedure) sequence.LazyResolver {
 	return func() (data.Value, data.Sequence, bool) {
-		r := f.Call()
+		r := p.Call()
 		if r != data.Null {
 			s := r.(data.Sequence)
 			if sf, sr, ok := s.Split(); ok {

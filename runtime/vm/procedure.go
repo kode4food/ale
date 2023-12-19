@@ -1,6 +1,8 @@
 package vm
 
 import (
+	"slices"
+
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/env"
 	"github.com/kode4food/ale/internal/types"
@@ -44,8 +46,18 @@ func (p *Procedure) Type() types.Type {
 }
 
 // Equal compares this Procedure to another for equality
-func (p *Procedure) Equal(v data.Value) bool {
-	return p == v
+func (p *Procedure) Equal(other data.Value) bool {
+	if p == other {
+		return true
+	}
+	if other, ok := other.(*Procedure); ok {
+		return p.Globals == other.Globals &&
+			p.StackSize == other.StackSize &&
+			p.LocalCount == other.LocalCount &&
+			slices.Equal(p.Code, other.Code) &&
+			p.Constants.Equal(other.Constants)
+	}
+	return false
 }
 
 func (p *Procedure) Get(key data.Value) (data.Value, bool) {
@@ -62,6 +74,13 @@ func (c *Closure) CheckArity(i int) error {
 	return c.ArityChecker(i)
 }
 
-func (c *Closure) Equal(v data.Value) bool {
-	return c == v
+func (c *Closure) Equal(other data.Value) bool {
+	if c == other {
+		return true
+	}
+	if other, ok := other.(*Closure); ok {
+		return c.Procedure.Equal(other.Procedure) &&
+			c.Captured.Equal(other.Captured)
+	}
+	return false
 }

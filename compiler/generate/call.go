@@ -68,9 +68,9 @@ func callNonSymbol(e encoder.Encoder, v data.Value, args data.Vector) {
 	}
 }
 
-func assertArity(f data.Procedure, args data.Vector) {
+func assertArity(p data.Procedure, args data.Vector) {
 	al := len(args)
-	if err := f.CheckArity(al); err != nil {
+	if err := p.CheckArity(al); err != nil {
 		panic(err)
 	}
 }
@@ -88,9 +88,9 @@ func callWith(e encoder.Encoder, emitFunc funcEmitter, emitArgs argsEmitter) {
 	}
 }
 
-func callStatic(e encoder.Encoder, f data.Procedure, args data.Vector) {
-	assertArity(f, args)
-	emitFunc := staticLiteral(e, f)
+func callStatic(e encoder.Encoder, p data.Procedure, args data.Vector) {
+	assertArity(p, args)
+	emitFunc := staticLiteral(e, p)
 	emitArgs := makeArgs(e, args)
 	callWith(e, emitFunc, emitArgs)
 }

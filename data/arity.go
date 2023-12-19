@@ -44,32 +44,36 @@ func MakeChecker(arity ...int) ArityChecker {
 	}
 }
 
-// AssertFixed explodes if a fixed arity check fails
-func AssertFixed(fixed, count int) int {
-	if err := MakeFixedChecker(fixed)(count); err != nil {
-		panic(err)
-	}
-	return count
-}
-
 // AnyArityChecker allows for any number of arguments
 func AnyArityChecker(int) error {
 	return nil
 }
 
+// AssertFixed explodes if a fixed arity check fails
+func AssertFixed(fixed, count int) int {
+	if err := checkFixedArity(fixed, count); err != nil {
+		panic(err)
+	}
+	return count
+}
+
 // MakeFixedChecker generates a fixed arity checker
 func MakeFixedChecker(fixed int) ArityChecker {
 	return func(count int) error {
-		if count != fixed {
-			return fmt.Errorf(ErrFixedArity, fixed, count)
-		}
-		return nil
+		return checkFixedArity(fixed, count)
 	}
+}
+
+func checkFixedArity(fixed, count int) error {
+	if count != fixed {
+		return fmt.Errorf(ErrFixedArity, fixed, count)
+	}
+	return nil
 }
 
 // AssertMinimum explodes if a fixed arity check fails
 func AssertMinimum(min, count int) int {
-	if err := MakeMinimumChecker(min)(count); err != nil {
+	if err := checkMinimumArity(min, count); err != nil {
 		panic(err)
 	}
 	return count
@@ -78,16 +82,20 @@ func AssertMinimum(min, count int) int {
 // MakeMinimumChecker generates a minimum arity checker
 func MakeMinimumChecker(min int) ArityChecker {
 	return func(count int) error {
-		if count < min {
-			return fmt.Errorf(ErrMinimumArity, min, count)
-		}
-		return nil
+		return checkMinimumArity(min, count)
 	}
+}
+
+func checkMinimumArity(min, count int) error {
+	if count < min {
+		return fmt.Errorf(ErrMinimumArity, min, count)
+	}
+	return nil
 }
 
 // AssertRanged explodes if a fixed arity check fails
 func AssertRanged(min, max, count int) int {
-	if err := MakeRangedChecker(min, max)(count); err != nil {
+	if err := checkRangedArity(min, max, count); err != nil {
 		panic(err)
 	}
 	return count
@@ -96,13 +104,13 @@ func AssertRanged(min, max, count int) int {
 // MakeRangedChecker generates a ranged arity checker
 func MakeRangedChecker(min, max int) ArityChecker {
 	return func(count int) error {
-		if count < min || count > max {
-			return fmt.Errorf(ErrRangedArity, min, max, count)
-		}
-		return nil
+		return checkRangedArity(min, max, count)
 	}
 }
 
 func checkRangedArity(min, max, count int) error {
-	return MakeRangedChecker(min, max)(count)
+	if count < min || count > max {
+		return fmt.Errorf(ErrRangedArity, min, max, count)
+	}
+	return nil
 }
