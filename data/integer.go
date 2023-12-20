@@ -167,7 +167,7 @@ func (l Integer) Equal(r Value) bool {
 
 // HashCode returns a hash code for this Integer
 func (l Integer) HashCode() uint64 {
-	return intHash ^ (uint64(1) << (l % 64))
+	return intHash ^ HashInt64(int64(l))
 }
 
 // String converts this Integer to a string

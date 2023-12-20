@@ -1,7 +1,6 @@
 package data
 
 import (
-	"hash/maphash"
 	"math/rand"
 
 	"github.com/kode4food/ale/internal/types"
@@ -35,11 +34,6 @@ type (
 	Mapped interface {
 		Get(Value) (Value, bool)
 	}
-
-	// Hashed can return a hash code for the value
-	Hashed interface {
-		HashCode() uint64
-	}
 )
 
 const (
@@ -57,8 +51,6 @@ const (
 )
 
 var (
-	seed = maphash.MakeSeed()
-
 	trueHash  = rand.Uint64()
 	falseHash = rand.Uint64()
 )
@@ -94,27 +86,4 @@ func (b Bool) HashCode() uint64 {
 		return trueHash
 	}
 	return falseHash
-}
-
-// HashCode returns a hash code for the provided Value. If the Value implements
-// the Hashed interface, it will call us the HashCode() method. Otherwise, it
-// will create a hash code from the stringified form of the Value
-func HashCode(v Value) uint64 {
-	if h, ok := v.(Hashed); ok {
-		return h.HashCode()
-	}
-	return HashString(ToString(v))
-}
-
-// HashString returns a hash code for the provided string
-func HashString(s string) uint64 {
-	return HashBytes([]byte(s))
-}
-
-// HashBytes returns a hash code for the provided byte slice
-func HashBytes(b []byte) uint64 {
-	var h maphash.Hash
-	h.SetSeed(seed)
-	_, _ = h.Write(b)
-	return h.Sum64()
 }

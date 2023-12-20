@@ -22,7 +22,6 @@ const (
 var (
 	dumpMap = map[Value]func(Value) (Value, bool){
 		CountKey:    dumpCount,
-		HashKey:     dumpHash,
 		InstanceKey: dumpInstance,
 		NameKey:     dumpName,
 		TypeKey:     dumpType,
@@ -77,14 +76,7 @@ func (d dumped) String() string {
 
 func dumpCount(v Value) (Value, bool) {
 	if c, ok := v.(Counted); ok {
-		return Integer(c.Count()), true
-	}
-	return Null, false
-}
-
-func dumpHash(v Value) (Value, bool) {
-	if h, ok := v.(Hashed); ok {
-		return Integer(h.HashCode()), true
+		return c.Count(), true
 	}
 	return Null, false
 }

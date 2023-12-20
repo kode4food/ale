@@ -73,11 +73,11 @@ func (p *Procedure) HashCode() uint64 {
 	res := procedureHash
 	for i, inst := range p.Code {
 		res ^= uint64(inst + 1)
-		res ^= uint64(1) << (i % 64)
+		res ^= data.HashInt(i)
 	}
 	for i, c := range p.Constants {
 		res ^= data.HashCode(c)
-		res ^= uint64(1) << (i % 64)
+		res ^= data.HashInt(i)
 	}
 	atomic.StoreUint64(&p.hash, res)
 	return res
@@ -115,7 +115,7 @@ func (c *Closure) HashCode() uint64 {
 	res := c.Procedure.HashCode()
 	for i, v := range c.Captured {
 		res ^= data.HashCode(v)
-		res ^= uint64(1) << (i % 64)
+		res ^= data.HashInt(i)
 	}
 	atomic.StoreUint64(&c.hash, res)
 	return res

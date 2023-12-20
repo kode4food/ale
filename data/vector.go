@@ -130,7 +130,7 @@ func (v Vector) HashCode() uint64 {
 	res := vectorHash
 	for i, e := range v {
 		res ^= HashCode(e)
-		res ^= uint64(1) << (i % 64)
+		res ^= HashInt(i)
 	}
 	return res
 }
