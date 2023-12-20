@@ -157,7 +157,7 @@ func (Float) Type() types.Type {
 
 // HashCode returns a hash code for this Float
 func (l Float) HashCode() uint64 {
-	return rationalHash * uint64(l)
+	return rationalHash ^ uint64(l)
 }
 
 // ParseRatio attempts to parse a string representing a ratio
@@ -293,7 +293,7 @@ func (*Ratio) Type() types.Type {
 // HashCode returns a hash code for this Ratio
 func (l *Ratio) HashCode() uint64 {
 	br := (*big.Rat)(l)
-	return rationalHash * br.Num().Uint64() * br.Denom().Uint64()
+	return rationalHash ^ br.Num().Uint64() ^ br.Denom().Uint64()
 }
 
 func (l *Ratio) float() Float {

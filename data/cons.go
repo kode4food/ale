@@ -106,5 +106,5 @@ func (*Cons) Type() types.Type {
 
 // HashCode returns the hash code for this Cons
 func (c *Cons) HashCode() uint64 {
-	return HashCode(c.car) * HashCode(c.cdr)
+	return HashCode(c.car) ^ HashCode(c.cdr)
 }

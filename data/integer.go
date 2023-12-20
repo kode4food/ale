@@ -167,7 +167,7 @@ func (l Integer) Equal(r Value) bool {
 
 // HashCode returns a hash code for this Integer
 func (l Integer) HashCode() uint64 {
-	return intHash * uint64(l)
+	return intHash ^ (uint64(1) << (l % 64))
 }
 
 // String converts this Integer to a string
@@ -308,7 +308,7 @@ func (*BigInt) Type() types.Type {
 
 // HashCode returns a hash code for this BigInt
 func (l *BigInt) HashCode() uint64 {
-	return intHash * (*big.Int)(l).Uint64()
+	return intHash ^ HashBytes((*big.Int)(l).Bytes())
 }
 
 func (l *BigInt) float() Float {

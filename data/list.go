@@ -2,6 +2,7 @@ package data
 
 import (
 	"math/rand"
+	"sync/atomic"
 
 	"github.com/kode4food/ale/internal/types"
 )
@@ -11,6 +12,7 @@ type List struct {
 	first Value
 	rest  *List
 	count Integer
+	hash  uint64
 }
 
 var (
@@ -32,8 +34,9 @@ var (
 func NewList(v ...Value) *List {
 	var res *List
 	for i, u := len(v)-1, Integer(1); i >= 0; i, u = i-1, u+1 {
+		f := v[i]
 		res = &List{
-			first: v[i],
+			first: f,
 			rest:  res,
 			count: u,
 		}
@@ -126,15 +129,15 @@ func (l *List) Equal(other Value) bool {
 	if l == nil {
 		return l == other
 	}
-	r, ok := other.(*List)
-	if !ok || l.count != r.count {
+	cr, ok := other.(*List)
+	if !ok || l.count != cr.count {
 		return false
 	}
-	for l := l; l != nil; l, r = l.rest, r.rest {
-		if l == r {
+	for cl := l; cl != nil; cl, cr = cl.rest, cr.rest {
+		if cl == cr {
 			return true
 		}
-		if !l.first.Equal(r.first) {
+		if !cl.first.Equal(cr.first) {
 			return false
 		}
 	}
@@ -153,9 +156,22 @@ func (l *List) Type() types.Type {
 }
 
 func (l *List) HashCode() uint64 {
-	h := nullHash
-	for l := l; l != nil; l = l.rest {
-		h *= HashCode(l.first)
+	if l == nil {
+		return nullHash
 	}
-	return h
+	if h := atomic.LoadUint64(&l.hash); h != 0 {
+		return h
+	}
+	var res uint64 = 0
+	for c := l; c != nil; c = c.rest {
+		if ch := atomic.LoadUint64(&c.hash); ch != 0 {
+			res ^= ch
+			atomic.StoreUint64(&l.hash, res)
+			return res
+		}
+		res ^= HashCode(c.first) ^ (uint64(1) << (c.count % 64))
+	}
+	res ^= nullHash
+	atomic.StoreUint64(&l.hash, res)
+	return res
 }

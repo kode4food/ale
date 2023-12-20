@@ -247,7 +247,7 @@ func (o *Object) HashCode() uint64 {
 }
 
 func (o *Object) hashCode(acc uint64) uint64 {
-	h := acc * HashCode(o.pair.Car()) * HashCode(o.pair.Cdr())
+	h := acc ^ HashCode(o.pair.Car()) ^ HashCode(o.pair.Cdr())
 	for _, c := range o.children {
 		if c != nil {
 			h = c.hashCode(h)

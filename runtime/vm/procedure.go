@@ -3,6 +3,7 @@ package vm
 import (
 	"math/rand"
 	"slices"
+	"sync/atomic"
 
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/env"
@@ -19,6 +20,7 @@ type (
 		StackSize    int
 		LocalCount   int
 		ArityChecker data.ArityChecker
+		hash         uint64
 	}
 
 	Closure struct {
@@ -64,11 +66,18 @@ func (p *Procedure) Equal(other data.Value) bool {
 }
 
 func (p *Procedure) HashCode() uint64 {
-	hash := procedureHash
-	for i, inst := range p.Code {
-		hash *= uint64(inst) << (i % 64)
+	if h := atomic.LoadUint64(&p.hash); h != 0 {
+		return h
 	}
-	return hash
+	res := procedureHash
+	for i, inst := range p.Code {
+		res ^= uint64(inst+1) ^ (uint64(1) << (i % 64))
+	}
+	for _, c := range p.Constants {
+		res ^= data.HashCode(c)
+	}
+	atomic.StoreUint64(&p.hash, res)
+	return res
 }
 
 func (p *Procedure) Get(key data.Value) (data.Value, bool) {

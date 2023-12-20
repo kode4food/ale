@@ -128,8 +128,8 @@ func (Vector) Type() types.Type {
 
 func (v Vector) HashCode() uint64 {
 	h := vectorHash
-	for _, e := range v {
-		h *= HashCode(e)
+	for i, e := range v {
+		h ^= HashCode(e) ^ (uint64(1) << (i % 64))
 	}
 	return h
 }

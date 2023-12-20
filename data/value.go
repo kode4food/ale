@@ -108,8 +108,13 @@ func HashCode(v Value) uint64 {
 
 // HashString returns a hash code for the provided string
 func HashString(s string) uint64 {
-	var b maphash.Hash
-	b.SetSeed(seed)
-	_, _ = b.WriteString(s)
-	return b.Sum64()
+	return HashBytes([]byte(s))
+}
+
+// HashBytes returns a hash code for the provided byte slice
+func HashBytes(b []byte) uint64 {
+	var h maphash.Hash
+	h.SetSeed(seed)
+	_, _ = h.Write(b)
+	return h.Sum64()
 }

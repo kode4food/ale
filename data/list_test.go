@@ -138,3 +138,16 @@ func TestListCall(t *testing.T) {
 	testSequenceCallInterface(as, l1)
 	testSequenceCallInterface(as, l2)
 }
+
+func TestListHashCode(t *testing.T) {
+	as := assert.New(t)
+	l1 := L(I(8), I(4), I(2), I(1))
+	l2 := L(I(8), I(4), I(2), I(1))
+	l3 := L(I(4), I(2), I(1))
+	as.Equal(l1.HashCode(), l2.HashCode())
+	as.NotEqual(l1.HashCode(), l3.HashCode())
+
+	l4 := l3.Prepend(I(8)).(*data.List)
+	as.Equal(l1.HashCode(), l4.HashCode())
+	as.Equal(l2.HashCode(), l4.HashCode())
+}

@@ -51,5 +51,5 @@ func (Keyword) Type() types.Type {
 
 // HashCode returns the hash code for this Keyword
 func (k Keyword) HashCode() uint64 {
-	return keywordHash * HashString(string(k))
+	return keywordHash ^ HashString(string(k))
 }

@@ -225,5 +225,5 @@ func (s qualified) String() string {
 }
 
 func (s qualified) HashCode() uint64 {
-	return HashString(string(s.name)) * HashString(string(s.domain))
+	return HashString(string(s.name)) ^ HashString(string(s.domain))
 }
