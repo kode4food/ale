@@ -26,6 +26,7 @@ type (
 	Closure struct {
 		*Procedure
 		Captured data.Vector
+		hash     uint64
 	}
 )
 
@@ -103,4 +104,16 @@ func (c *Closure) Equal(other data.Value) bool {
 			c.Captured.Equal(other.Captured)
 	}
 	return false
+}
+
+func (c *Closure) HashCode() uint64 {
+	if h := atomic.LoadUint64(&c.hash); h != 0 {
+		return h
+	}
+	res := c.Procedure.HashCode()
+	for i, v := range c.Captured {
+		res ^= data.HashCode(v) ^ (uint64(1) << (i % 64))
+	}
+	atomic.StoreUint64(&c.hash, res)
+	return res
 }
