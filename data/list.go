@@ -169,7 +169,8 @@ func (l *List) HashCode() uint64 {
 			atomic.StoreUint64(&l.hash, res)
 			return res
 		}
-		res ^= HashCode(c.first) ^ (uint64(1) << (c.count % 64))
+		res ^= HashCode(c.first)
+		res ^= uint64(1) << (c.count % 64)
 	}
 	res ^= nullHash
 	atomic.StoreUint64(&l.hash, res)
