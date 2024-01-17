@@ -11,6 +11,7 @@ import (
 	"github.com/kode4food/ale/compiler/special"
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/eval"
+	"github.com/kode4food/ale/internal/debug"
 	"github.com/kode4food/ale/internal/strings"
 	"github.com/kode4food/ale/runtime/isa"
 	"github.com/kode4food/comb/basics"
@@ -142,14 +143,14 @@ func (e *asmEncoder) process(forms data.Sequence) {
 }
 
 func (e *asmEncoder) makeSpecialCall(forms data.Sequence) {
-	cases := parseParamCases(forms)
-	ac := cases.makeArityChecker()
-	f := cases.makeFetchers()
+	pc := parseParamCases(forms)
+	ac := pc.makeChecker()
+	f := pc.makeFetchers()
 	fn := func(e encoder.Encoder, args ...data.Value) {
 		if err := ac(len(args)); err != nil {
 			panic(err)
 		}
-		for i, c := range cases {
+		for i, c := range pc.Cases() {
 			if a, ok := f[i](args); ok {
 				ae := makeAsmEncoder(e).withParams(c.params, a)
 				ae.encode(c.body)
@@ -374,8 +375,7 @@ func mergeCalls(maps ...callMap) callMap {
 	for _, m := range maps {
 		for k, v := range m {
 			if _, ok := res[k]; ok {
-				// Programmer error
-				panic(fmt.Sprintf("duplicate entry: %s", k))
+				panic(debug.ProgrammerError("duplicate entry: %s", k))
 			}
 			res[k] = v
 		}

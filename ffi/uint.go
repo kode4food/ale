@@ -5,6 +5,7 @@ import (
 	"reflect"
 
 	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/internal/debug"
 )
 
 type (
@@ -37,8 +38,7 @@ func makeWrappedUnsignedInt(t reflect.Type) (Wrapper, error) {
 	case reflect.Uint8:
 		return uint8Wrapper(k), nil
 	default:
-		// Programmer error
-		panic("uint kind is incorrect")
+		panic(debug.ProgrammerError("uint kind is incorrect"))
 	}
 }
 

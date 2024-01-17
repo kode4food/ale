@@ -2,6 +2,7 @@ package builtin
 
 import (
 	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/internal/debug"
 	"github.com/kode4food/ale/internal/sequence"
 	"github.com/kode4food/ale/read"
 	"github.com/kode4food/ale/runtime"
@@ -20,8 +21,7 @@ var Recover = data.MakeProcedure(func(args ...data.Value) (res data.Value) {
 			case error:
 				res = rescue.Call(data.String(rec.Error()))
 			default:
-				// Programmer error
-				panic("recover returned an invalid result")
+				panic(debug.ProgrammerError("recover returned invalid result"))
 			}
 		}
 	}()

@@ -9,7 +9,7 @@ import (
 
 type lambdaEncoder struct {
 	encoder.Encoder
-	cases paramCases
+	cases *paramCases
 }
 
 // ErrNoMatchingParamPattern is raised when none of the parameter patterns for
@@ -19,15 +19,15 @@ const ErrNoMatchingParamPattern = "no matching parameter pattern"
 // Lambda encodes a lambda
 func Lambda(e encoder.Encoder, args ...data.Value) {
 	var le *lambdaEncoder
-	cases := parseParamCases(data.Vector(args))
+	pc := parseParamCases(data.Vector(args))
 	fn := generate.Procedure(e, func(c encoder.Encoder) {
-		le = makeLambda(c, cases)
+		le = makeLambda(c, pc)
 		le.encode()
 	})
-	fn.ArityChecker = cases.makeArityChecker()
+	fn.ArityChecker = pc.makeChecker()
 }
 
-func makeLambda(e encoder.Encoder, v paramCases) *lambdaEncoder {
+func makeLambda(e encoder.Encoder, v *paramCases) *lambdaEncoder {
 	res := &lambdaEncoder{
 		Encoder: e,
 		cases:   v,
@@ -36,14 +36,15 @@ func makeLambda(e encoder.Encoder, v paramCases) *lambdaEncoder {
 }
 
 func (le *lambdaEncoder) encode() {
-	if len(le.cases) == 0 {
+	cases := le.cases.Cases()
+	if len(cases) == 0 {
 		le.Emit(isa.RetNull)
 		return
 	}
-	le.encodeCases(le.cases)
+	le.encodeCases(cases)
 }
 
-func (le *lambdaEncoder) encodeCases(cases paramCases) {
+func (le *lambdaEncoder) encodeCases(cases []*paramCase) {
 	switch len(cases) {
 	case 0:
 		generate.Literal(le, data.String(ErrNoMatchingParamPattern))

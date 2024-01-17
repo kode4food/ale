@@ -7,10 +7,9 @@ import (
 )
 
 type (
-	// Pattern is a replacement pattern for the visitor. The
-	// second level of the array identifies the possible matching
-	// Opcodes, while the first level identifies the sequence in
-	// which they should appear
+	// Pattern is a replacement pattern for the visitor. The second level of
+	// the array identifies the possible matching Opcodes, while the first
+	// level identifies the sequence in which they should appear
 	Pattern [][]isa.Opcode
 
 	// Mapper maps one set of instructions to another

@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/internal/debug"
 	"github.com/kode4food/ale/read"
 	"github.com/kode4food/ale/read/lex"
 	"github.com/kode4food/comb/basics"
@@ -49,8 +50,7 @@ func (r *REPL) prefixedSymbols(pfx string) []string {
 	case data.Qualified:
 		return r.prefixedQualified(s)
 	}
-	// Programmer error
-	panic("unexpected symbol parsing result")
+	panic(debug.ProgrammerError("unexpected symbol parsing result"))
 }
 
 func (r *REPL) prefixedLocals(s data.Local) []string {

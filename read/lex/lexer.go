@@ -5,6 +5,7 @@ import (
 	"regexp"
 
 	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/internal/debug"
 	"github.com/kode4food/ale/internal/lang"
 	"github.com/kode4food/ale/internal/sequence"
 	"github.com/kode4food/comb/basics"
@@ -123,8 +124,7 @@ func MakeMatcher(m ...matchEntries) Matcher {
 				return s.function(sm), src[len(sm[0]):]
 			}
 		}
-		// Programmer error
-		panic("unmatched lexing state")
+		panic(debug.ProgrammerError("unmatched lexing state"))
 	}
 }
 

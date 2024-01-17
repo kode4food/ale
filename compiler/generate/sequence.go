@@ -1,11 +1,10 @@
 package generate
 
 import (
-	"fmt"
-
 	"github.com/kode4food/ale/compiler/encoder"
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/env"
+	"github.com/kode4food/ale/internal/debug"
 	"github.com/kode4food/ale/runtime/isa"
 )
 
@@ -40,8 +39,7 @@ func Sequence(e encoder.Encoder, s data.Sequence) {
 	case *data.Object:
 		Object(e, s)
 	default:
-		// Programmer error
-		panic(fmt.Sprintf("sequence cannot be compiled: %s", s))
+		panic(debug.ProgrammerError("sequence cannot be compiled: %s", s))
 	}
 }
 

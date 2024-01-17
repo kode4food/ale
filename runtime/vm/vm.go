@@ -1,9 +1,8 @@
 package vm
 
 import (
-	"fmt"
-
 	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/internal/debug"
 	"github.com/kode4food/ale/runtime/isa"
 )
 
@@ -55,84 +54,16 @@ func (vm *VM) Run() data.Value {
 	for vm.ST == RUNNING {
 		vm.INST = vm.CODE[vm.PC]
 		switch vm.INST.Opcode() {
-		case isa.Null:
-			doNull(vm)
-		case isa.Zero:
-			doZero(vm)
-		case isa.PosInt:
-			doPosInt(vm)
-		case isa.NegInt:
-			doNegInt(vm)
-		case isa.True:
-			doTrue(vm)
-		case isa.False:
-			doFalse(vm)
-		case isa.Const:
-			doConst(vm)
-		case isa.Arg:
-			doArg(vm)
-		case isa.RestArg:
-			doRestArg(vm)
-		case isa.ArgLen:
-			doArgLen(vm)
-		case isa.Closure:
-			doClosure(vm)
-		case isa.Load:
-			doLoad(vm)
-		case isa.Store:
-			doStore(vm)
-		case isa.NewRef:
-			doNewRef(vm)
-		case isa.BindRef:
-			doBindRef(vm)
-		case isa.Deref:
-			doDeref(vm)
-		case isa.Car:
-			doCar(vm)
-		case isa.Cdr:
-			doCdr(vm)
-		case isa.Cons:
-			doCons(vm)
-		case isa.Empty:
-			doEmpty(vm)
-		case isa.Eq:
-			doEq(vm)
-		case isa.Not:
-			doNot(vm)
-		case isa.Declare:
-			doDeclare(vm)
-		case isa.Private:
-			doPrivate(vm)
-		case isa.Bind:
-			doBind(vm)
-		case isa.Resolve:
-			doResolve(vm)
-		case isa.Dup:
-			doDup(vm)
-		case isa.Pop:
-			doPop(vm)
 		case isa.Add:
 			doAdd(vm)
-		case isa.Sub:
-			doSub(vm)
-		case isa.Mul:
-			doMul(vm)
-		case isa.Div:
-			doDiv(vm)
-		case isa.Mod:
-			doMod(vm)
-		case isa.NumEq:
-			doNumEq(vm)
-		case isa.NumLt:
-			doNumLt(vm)
-		case isa.NumLte:
-			doNumLte(vm)
-		case isa.NumGt:
-			doNumGt(vm)
-		case isa.NumGte:
-			doNumGte(vm)
-		case isa.Neg:
-			doNeg(vm)
+		case isa.Arg:
+			doArg(vm)
+		case isa.ArgLen:
+			doArgLen(vm)
+		case isa.Bind:
+			doBind(vm)
+		case isa.BindRef:
+			doBindRef(vm)
 		case isa.Call0:
 			doCall0(vm)
 		case isa.Call1:
@@ -141,27 +72,94 @@ func (vm *VM) Run() data.Value {
 			doCall(vm)
 		case isa.CallWith:
 			doCallWith(vm)
-		case isa.TailCall:
-			doTailCall(vm)
-		case isa.Jump:
-			doJump(vm)
+		case isa.Car:
+			doCar(vm)
+		case isa.Cdr:
+			doCdr(vm)
+		case isa.Closure:
+			doClosure(vm)
 		case isa.CondJump:
 			doCondJump(vm)
+		case isa.Cons:
+			doCons(vm)
+		case isa.Const:
+			doConst(vm)
+		case isa.Declare:
+			doDeclare(vm)
+		case isa.Deref:
+			doDeref(vm)
+		case isa.Div:
+			doDiv(vm)
+		case isa.Dup:
+			doDup(vm)
+		case isa.Empty:
+			doEmpty(vm)
+		case isa.Eq:
+			doEq(vm)
+		case isa.False:
+			doFalse(vm)
+		case isa.Jump:
+			doJump(vm)
+		case isa.Load:
+			doLoad(vm)
+		case isa.Mod:
+			doMod(vm)
+		case isa.Mul:
+			doMul(vm)
+		case isa.Neg:
+			doNeg(vm)
+		case isa.NegInt:
+			doNegInt(vm)
+		case isa.NewRef:
+			doNewRef(vm)
 		case isa.NoOp:
 			doNoOp(vm)
+		case isa.Not:
+			doNot(vm)
+		case isa.Null:
+			doNull(vm)
+		case isa.NumEq:
+			doNumEq(vm)
+		case isa.NumGt:
+			doNumGt(vm)
+		case isa.NumGte:
+			doNumGte(vm)
+		case isa.NumLt:
+			doNumLt(vm)
+		case isa.NumLte:
+			doNumLte(vm)
 		case isa.Panic:
 			doPanic(vm)
-		case isa.Return:
-			doReturn(vm)
+		case isa.Pop:
+			doPop(vm)
+		case isa.PosInt:
+			doPosInt(vm)
+		case isa.Private:
+			doPrivate(vm)
+		case isa.Resolve:
+			doResolve(vm)
+		case isa.RestArg:
+			doRestArg(vm)
+		case isa.RetFalse:
+			doRetFalse(vm)
 		case isa.RetNull:
 			doRetNull(vm)
 		case isa.RetTrue:
 			doRetTrue(vm)
-		case isa.RetFalse:
-			doRetFalse(vm)
+		case isa.Return:
+			doReturn(vm)
+		case isa.Store:
+			doStore(vm)
+		case isa.Sub:
+			doSub(vm)
+		case isa.TailCall:
+			doTailCall(vm)
+		case isa.True:
+			doTrue(vm)
+		case isa.Zero:
+			doZero(vm)
 		default:
-			// Programmer error
-			panic(fmt.Sprintf(ErrBadInstruction, vm.INST))
+			panic(debug.ProgrammerError(ErrBadInstruction, vm.INST))
 		}
 	}
 	return vm.RES

@@ -5,6 +5,7 @@ import (
 	"reflect"
 
 	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/internal/debug"
 )
 
 type (
@@ -15,8 +16,8 @@ type (
 	int8Wrapper  reflect.Kind
 )
 
-// ErrValueMustBeInteger is raised when an integer Unwrap call can't treat
-// its source as a data.Integer
+// ErrValueMustBeInteger is raised when an integer Unwrap call can't treat its
+// source as a data.Integer
 const ErrValueMustBeInteger = "value must be an integer"
 
 var (
@@ -41,8 +42,7 @@ func makeWrappedInt(t reflect.Type) (Wrapper, error) {
 	case reflect.Int8:
 		return int8Wrapper(k), nil
 	default:
-		// Programmer error
-		panic("int kind is incorrect")
+		panic(debug.ProgrammerError("int kind is incorrect"))
 	}
 }
 

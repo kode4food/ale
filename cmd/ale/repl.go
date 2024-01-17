@@ -24,6 +24,7 @@ import (
 	"github.com/kode4food/ale/env"
 	"github.com/kode4food/ale/eval"
 	"github.com/kode4food/ale/internal/console"
+	"github.com/kode4food/ale/internal/debug"
 	"github.com/kode4food/ale/internal/lang"
 	"github.com/kode4food/ale/internal/markdown"
 	"github.com/kode4food/ale/internal/sequence"
@@ -232,8 +233,7 @@ func toError(i any) error {
 	case data.Value:
 		return errors.New(data.ToString(i))
 	default:
-		// Programmer error
-		panic(fmt.Sprintf("non-standard error: %s", i))
+		panic(debug.ProgrammerError("non-standard error: %s", i))
 	}
 }
 
@@ -325,8 +325,7 @@ func formatForREPL(s string) string {
 func help(...data.Value) data.Value {
 	md, err := docstring.Get("help")
 	if err != nil {
-		// Programmer error, help is missing
-		panic(err)
+		panic(debug.ProgrammerError(err.Error()))
 	}
 	fmt.Println(formatForREPL(md))
 	return nothing

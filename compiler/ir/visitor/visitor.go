@@ -1,5 +1,7 @@
 package visitor
 
+import "github.com/kode4food/ale/internal/debug"
+
 // Visitor is an interface called back upon visiting
 type Visitor interface {
 	EnterRoot(Node)
@@ -28,7 +30,6 @@ func depthFirst(node Node, visitor Visitor) {
 		depthFirst(node.Prologue(), visitor)
 		visitor.ExitBranches(node)
 	default:
-		// Programmer error
-		panic("unexpected node type")
+		panic(debug.ProgrammerError("unexpected node type"))
 	}
 }

@@ -7,6 +7,7 @@ import (
 	"slices"
 
 	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/internal/debug"
 	"github.com/kode4food/ale/internal/strings"
 )
 
@@ -87,6 +88,5 @@ func normalizeTypeAssertionError(e *runtime.TypeAssertionError) error {
 			)
 		}
 	}
-	// Programmer error
-	panic("could not normalize type assertion error")
+	panic(debug.ProgrammerError("could not normalize type assertion error"))
 }

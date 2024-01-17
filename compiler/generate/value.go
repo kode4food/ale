@@ -1,11 +1,10 @@
 package generate
 
 import (
-	"fmt"
-
 	"github.com/kode4food/ale/compiler/encoder"
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/env"
+	"github.com/kode4food/ale/internal/debug"
 	"github.com/kode4food/ale/macro"
 )
 
@@ -24,8 +23,7 @@ func Value(e encoder.Encoder, v data.Value) {
 	case data.Keyword, data.Number, data.Bool, data.Procedure:
 		Literal(e, expanded)
 	default:
-		// Programmer error
-		panic(fmt.Sprintf("unknown value type: %s", v))
+		panic(debug.ProgrammerError("unknown value type: %s", v))
 	}
 }
 

@@ -5,6 +5,7 @@ import (
 	"reflect"
 
 	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/internal/debug"
 )
 
 type (
@@ -35,8 +36,7 @@ func makeWrappedComplex(t reflect.Type) (Wrapper, error) {
 	case reflect.Complex64:
 		return complex64Wrapper(k), nil
 	default:
-		// Programmer error
-		panic("complex kind is incorrect")
+		panic(debug.ProgrammerError("complex kind is incorrect"))
 	}
 }
 

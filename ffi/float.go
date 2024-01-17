@@ -5,6 +5,7 @@ import (
 	"reflect"
 
 	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/internal/debug"
 )
 
 type (
@@ -29,8 +30,7 @@ func makeWrappedFloat(t reflect.Type) (Wrapper, error) {
 	case reflect.Float64:
 		return float64Wrapper(k), nil
 	default:
-		// Programmer error
-		panic("float kind is incorrect")
+		panic(debug.ProgrammerError("float kind is incorrect"))
 	}
 }
 

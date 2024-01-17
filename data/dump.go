@@ -13,7 +13,6 @@ type dumped struct{ Value }
 // Standard Keys
 const (
 	CountKey    = Keyword("count")
-	HashKey     = Keyword("hash")
 	InstanceKey = Keyword("instance")
 	NameKey     = Keyword("name")
 	TypeKey     = Keyword("type")

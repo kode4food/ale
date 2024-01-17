@@ -90,11 +90,11 @@ func TestSubstringCall(t *testing.T) {
 	as.EvalTo(`("hello" 0 5)`, S("hello"))
 	as.EvalTo(`("hello" 3 5)`, S("lo"))
 
-	as.PanicWith(`("hello" -1)`, fmt.Sprintf(data.ErrInvalidStartIndex, -1))
-	as.PanicWith(`("hello" 6)`, fmt.Sprintf(data.ErrInvalidStartIndex, 6))
-	as.PanicWith(`("hello" 5)`, fmt.Sprintf(data.ErrInvalidStartIndex, 5))
-	as.PanicWith(`("hello" 0 6)`, fmt.Sprintf(data.ErrInvalidEndIndex, 6))
-	as.PanicWith(`("hello" 3 2)`, fmt.Sprintf(data.ErrEndIndexTooLow, 3, 2))
+	as.PanicWith(`("hello" -1)`, fmt.Errorf(data.ErrInvalidStartIndex, -1))
+	as.PanicWith(`("hello" 6)`, fmt.Errorf(data.ErrInvalidStartIndex, 6))
+	as.PanicWith(`("hello" 5)`, fmt.Errorf(data.ErrInvalidStartIndex, 5))
+	as.PanicWith(`("hello" 0 6)`, fmt.Errorf(data.ErrInvalidEndIndex, 6))
+	as.PanicWith(`("hello" 3 2)`, fmt.Errorf(data.ErrEndIndexTooLow, 3, 2))
 }
 
 func TestReverse(t *testing.T) {

@@ -1,6 +1,6 @@
 package data
 
-import "fmt"
+import "github.com/kode4food/ale/internal/debug"
 
 // Number describes a numeric value of some kind
 type Number interface {
@@ -60,6 +60,5 @@ func purify(l, r Number) (Number, Number) {
 			return l, r.ratio()
 		}
 	}
-	// Programmer error
-	panic(fmt.Sprintf("could not purify: %v and %v", l, r))
+	panic(debug.ProgrammerError("could not purify: %v and %v", l, r))
 }

@@ -4,6 +4,7 @@ import (
 	"github.com/kode4food/ale/compiler/encoder"
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/env"
+	"github.com/kode4food/ale/internal/debug"
 	"github.com/kode4food/ale/runtime/isa"
 )
 
@@ -46,8 +47,7 @@ func resolveLocal(e encoder.Encoder, l data.Local) *encoder.ScopedCell {
 			c, _ := e.ResolveClosure(l)
 			e.Emit(isa.Closure, c.Index)
 		default:
-			// Programmer error
-			panic("unknown scope type")
+			panic(debug.ProgrammerError("unknown scope type"))
 		}
 		return s
 	}

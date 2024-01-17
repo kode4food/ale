@@ -3,6 +3,7 @@ package builtin
 import (
 	"fmt"
 	"slices"
+	"strings"
 
 	"github.com/kode4food/ale/data"
 )
@@ -15,7 +16,12 @@ type (
 		body      data.Sequence
 	}
 
-	paramCases []*paramCase
+	paramCases struct {
+		cases   []*paramCase
+		fixed   []uint8
+		hasRest bool
+		lowRest int
+	}
 
 	argFetcher func(data.Vector) (data.Vector, bool)
 )
@@ -34,25 +40,32 @@ const (
 
 	// ErrUnreachableCase is raised when a Lambda parameter is defined that
 	// would otherwise be impossible to reach given previous definitions
-	ErrUnreachableCase = "unreachable parameter case: %s, matched by: %s"
+	ErrUnreachableCase = "unreachable parameter case: %s"
+
+	// ErrUnmatchedCase is raised when a Lambda is called and the number of
+	// arguments provided doesn't match any of the declared parameter cases
+	ErrUnmatchedCase = "got %d arguments, expected %s"
 )
 
-func parseParamCases(s data.Sequence) paramCases {
+const arityBits = 8
+
+func parseParamCases(s data.Sequence) *paramCases {
+	res := &paramCases{}
 	if s.IsEmpty() {
-		return paramCases{}
+		return res
 	}
 	f := s.Car()
 	switch f.(type) {
 	case *data.List, *data.Cons, data.Local:
 		c := parseParamCase(s)
-		return paramCases{c}
+		if err := res.addParamCase(c); err != nil {
+			panic(err)
+		}
+		return res
 	case data.Vector:
-		var res paramCases
-		var err error
 		for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {
 			c := parseParamCase(f.(data.Vector))
-			res, err = res.addParamCase(c)
-			if err != nil {
+			if err := res.addParamCase(c); err != nil {
 				panic(err)
 			}
 		}
@@ -62,52 +75,138 @@ func parseParamCases(s data.Sequence) paramCases {
 	}
 }
 
-func (pc paramCases) addParamCase(added *paramCase) (paramCases, error) {
-	addedLow, addedHigh := added.arityRange()
-	for _, orig := range pc {
-		origLow, origHigh := orig.arityRange()
-		if isUnreachable(origLow, origHigh, addedLow, addedHigh) {
-			return pc, fmt.Errorf(
-				ErrUnreachableCase, added.signature, orig.signature,
-			)
-		}
-	}
-	return append(pc, added), nil
+func (pc *paramCases) Cases() []*paramCase {
+	return pc.cases
 }
 
-func isUnreachable(origLow, origHigh, addedLow, addedHigh int) bool {
-	if origHigh == data.OrMore {
-		return addedLow >= origLow
+func (pc *paramCases) addParamCase(added *paramCase) error {
+	a, ar := added.getArity()
+	if !pc.isReachable(a, ar) {
+		return fmt.Errorf(ErrUnreachableCase, added.signature)
 	}
-	return addedHigh != data.OrMore && addedLow == origLow
+	pc.cases = append(pc.cases, added)
+	if ar {
+		pc.addRest(a)
+	} else {
+		pc.addFixed(a)
+	}
+	return nil
 }
 
-func (pc paramCases) makeArityChecker() data.ArityChecker {
-	switch len(pc) {
-	case 0:
-		return data.MakeChecker(0)
-	case 1:
-		l, h := pc[0].arityRange()
-		return data.MakeChecker(l, h)
-	default:
-		lower, upper := pc[0].arityRange()
-		for _, s := range pc[1:] {
-			l, u := s.arityRange()
-			lower = min(l, lower)
-			if u == data.OrMore || upper == data.OrMore {
-				upper = data.OrMore
-				continue
-			}
-			upper = max(u, upper)
-		}
-		return data.MakeChecker(lower, upper)
+func (pc *paramCases) isReachable(i int, isRest bool) bool {
+	if len(pc.cases) == 0 {
+		return true
 	}
+	if pc.hasRest {
+		return i < pc.lowRest
+	}
+	if isRest {
+		return true
+	}
+	index, offset := i/arityBits, i%arityBits
+	if index < len(pc.fixed) {
+		return (pc.fixed[index] & (1 << offset)) == 0
+	}
+	return true
 }
 
-func (pc paramCases) makeFetchers() []argFetcher {
-	res := make([]argFetcher, len(pc))
-	for i, c := range pc {
+func (pc *paramCases) makeFetchers() []argFetcher {
+	res := make([]argFetcher, len(pc.cases))
+	for i, c := range pc.cases {
 		res[i] = c.makeFetcher()
+	}
+	return res
+}
+
+func (pc *paramCases) makeChecker() data.ArityChecker {
+	if pc.hasRest {
+		return pc.makeRestChecker()
+	}
+	return pc.makeFixedChecker()
+}
+
+func (pc *paramCases) makeFixedChecker() data.ArityChecker {
+	fixed := pc.fixed
+	signatures := pc.signatures()
+	return func(i int) error {
+		index, offset := i/arityBits, i%arityBits
+		if index >= len(fixed) || fixed[index]&(1<<offset) == 0 {
+			return fmt.Errorf(ErrUnmatchedCase, i, signatures)
+		}
+		return nil
+	}
+}
+
+func (pc *paramCases) makeRestChecker() data.ArityChecker {
+	lowRest := pc.lowRest
+	fixedChecker := pc.makeFixedChecker()
+	return func(i int) error {
+		if i >= lowRest {
+			return nil
+		}
+		return fixedChecker(i)
+	}
+}
+
+func (pc *paramCases) addFixed(i int) {
+	index, offset := i/arityBits, i%arityBits
+	for len(pc.fixed) <= index {
+		pc.fixed = append(pc.fixed, 0)
+	}
+	pc.fixed[index] |= 1 << offset
+}
+
+func (pc *paramCases) addRest(i int) {
+	if pc.hasRest {
+		pc.lowRest = min(pc.lowRest, i)
+	} else {
+		pc.lowRest = i
+		pc.hasRest = true
+	}
+}
+
+func (pc *paramCases) signatures() string {
+	var res []string
+	for _, r := range pc.fixedRanges() {
+		if pc.hasRest && r[1] >= pc.lowRest-1 {
+			res = append(res, formatOrMore(r[0]))
+			return strings.Join(res, ", ")
+		}
+		res = append(res, formatRange(r))
+	}
+
+	if pc.hasRest {
+		res = append(res, formatOrMore(pc.lowRest))
+	}
+
+	return strings.Join(res, ", ")
+}
+
+func (pc *paramCases) fixedRanges() [][2]int {
+	fixed := pc.fixedSet()
+	if len(fixed) == 0 {
+		return [][2]int{}
+	}
+
+	var res [][2]int
+	start := fixed[0]
+	for i := 1; i < len(fixed); i++ {
+		if fixed[i] != fixed[i-1]+1 {
+			res = append(res, [2]int{start, fixed[i-1]})
+			start = fixed[i]
+		}
+	}
+	res = append(res, [2]int{start, fixed[len(fixed)-1]})
+	return res
+}
+
+func (pc *paramCases) fixedSet() []int {
+	var res []int
+	for i := 0; i < len(pc.fixed)*arityBits; i++ {
+		index, offset := i/arityBits, i%arityBits
+		if pc.fixed[index]&(1<<offset) != 0 {
+			res = append(res, i)
+		}
 	}
 	return res
 }
@@ -137,12 +236,12 @@ func (c *paramCase) restArg() (data.Local, bool) {
 	return "", false
 }
 
-func (c *paramCase) arityRange() (int, int) {
+func (c *paramCase) getArity() (int, bool) {
 	fl := len(c.fixedArgs())
 	if _, ok := c.restArg(); ok {
-		return fl, data.OrMore
+		return fl, true
 	}
-	return fl, fl
+	return fl, false
 }
 
 func (c *paramCase) makeFetcher() argFetcher {
@@ -198,4 +297,16 @@ func parseConsParamNames(c *data.Cons) data.Locals {
 		an = append(an, cdr.(data.Local))
 		return an
 	}
+}
+
+func formatRange(r [2]int) string {
+	if r[0] == r[1] {
+		return fmt.Sprintf("%d", r[0])
+	} else {
+		return fmt.Sprintf("%d-%d", r[0], r[1])
+	}
+}
+
+func formatOrMore(i int) string {
+	return fmt.Sprintf("%d or more", i)
 }

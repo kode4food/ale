@@ -102,51 +102,51 @@ func doBindRef(vm *VM) {
 }
 
 func doDeref(vm *VM) {
-	SP1 := &(vm.MEM[vm.SP+1])
-	*SP1 = (*SP1).(*Ref).Value
+	SP1 := vm.SP + 1
+	vm.MEM[SP1] = vm.MEM[SP1].(*Ref).Value
 	vm.PC++
 }
 
 func doCar(vm *VM) {
-	SP1 := &(vm.MEM[vm.SP+1])
-	*SP1 = (*SP1).(data.Pair).Car()
+	SP1 := vm.SP + 1
+	vm.MEM[SP1] = vm.MEM[SP1].(data.Pair).Car()
 	vm.PC++
 }
 
 func doCdr(vm *VM) {
-	SP1 := &(vm.MEM[vm.SP+1])
-	*SP1 = (*SP1).(data.Pair).Cdr()
+	SP1 := vm.SP + 1
+	vm.MEM[SP1] = vm.MEM[SP1].(data.Pair).Cdr()
 	vm.PC++
 }
 
 func doCons(vm *VM) {
 	vm.SP++
-	SP1 := &(vm.MEM[vm.SP+1])
-	if p, ok := (*SP1).(data.Prepender); ok {
-		*SP1 = p.Prepend(vm.MEM[vm.SP])
+	SP1 := vm.SP + 1
+	if p, ok := vm.MEM[SP1].(data.Prepender); ok {
+		vm.MEM[SP1] = p.Prepend(vm.MEM[vm.SP])
 		vm.PC++
 		return
 	}
-	*SP1 = data.NewCons(vm.MEM[vm.SP], *SP1)
+	vm.MEM[SP1] = data.NewCons(vm.MEM[vm.SP], vm.MEM[SP1])
 	vm.PC++
 }
 
 func doEmpty(vm *VM) {
-	SP1 := &(vm.MEM[vm.SP+1])
-	*SP1 = data.Bool((*SP1).(data.Sequence).IsEmpty())
+	SP1 := vm.SP + 1
+	vm.MEM[SP1] = data.Bool(vm.MEM[SP1].(data.Sequence).IsEmpty())
 	vm.PC++
 }
 
 func doEq(vm *VM) {
 	vm.SP++
-	SP1 := &(vm.MEM[vm.SP+1])
-	*SP1 = data.Bool((*SP1).Equal(vm.MEM[vm.SP]))
+	SP1 := vm.SP + 1
+	vm.MEM[SP1] = data.Bool(vm.MEM[SP1].Equal(vm.MEM[vm.SP]))
 	vm.PC++
 }
 
 func doNot(vm *VM) {
-	SP1 := &(vm.MEM[vm.SP+1])
-	*SP1 = !(*SP1).(data.Bool)
+	SP1 := vm.SP + 1
+	vm.MEM[SP1] = !vm.MEM[SP1].(data.Bool)
 	vm.PC++
 }
 
@@ -175,10 +175,10 @@ func doBind(vm *VM) {
 }
 
 func doResolve(vm *VM) {
-	SP1 := &(vm.MEM[vm.SP+1])
-	*SP1 = env.MustResolveValue(
+	SP1 := vm.SP + 1
+	vm.MEM[SP1] = env.MustResolveValue(
 		vm.CL.Globals,
-		(*SP1).(data.Symbol),
+		vm.MEM[SP1].(data.Symbol),
 	)
 	vm.PC++
 }
@@ -196,8 +196,8 @@ func doPop(vm *VM) {
 
 func doAdd(vm *VM) {
 	vm.SP++
-	SP1 := &(vm.MEM[vm.SP+1])
-	*SP1 = (*SP1).(data.Number).Add(
+	SP1 := vm.SP + 1
+	vm.MEM[SP1] = vm.MEM[SP1].(data.Number).Add(
 		vm.MEM[vm.SP].(data.Number),
 	)
 	vm.PC++
@@ -205,8 +205,8 @@ func doAdd(vm *VM) {
 
 func doSub(vm *VM) {
 	vm.SP++
-	SP1 := &(vm.MEM[vm.SP+1])
-	*SP1 = (*SP1).(data.Number).Sub(
+	SP1 := vm.SP + 1
+	vm.MEM[SP1] = vm.MEM[SP1].(data.Number).Sub(
 		vm.MEM[vm.SP].(data.Number),
 	)
 	vm.PC++
@@ -214,8 +214,8 @@ func doSub(vm *VM) {
 
 func doMul(vm *VM) {
 	vm.SP++
-	SP1 := &(vm.MEM[vm.SP+1])
-	*SP1 = (*SP1).(data.Number).Mul(
+	SP1 := vm.SP + 1
+	vm.MEM[SP1] = vm.MEM[SP1].(data.Number).Mul(
 		vm.MEM[vm.SP].(data.Number),
 	)
 	vm.PC++
@@ -223,8 +223,8 @@ func doMul(vm *VM) {
 
 func doDiv(vm *VM) {
 	vm.SP++
-	SP1 := &(vm.MEM[vm.SP+1])
-	*SP1 = (*SP1).(data.Number).Div(
+	SP1 := vm.SP + 1
+	vm.MEM[SP1] = vm.MEM[SP1].(data.Number).Div(
 		vm.MEM[vm.SP].(data.Number),
 	)
 	vm.PC++
@@ -232,8 +232,8 @@ func doDiv(vm *VM) {
 
 func doMod(vm *VM) {
 	vm.SP++
-	SP1 := &(vm.MEM[vm.SP+1])
-	*SP1 = (*SP1).(data.Number).Mod(
+	SP1 := vm.SP + 1
+	vm.MEM[SP1] = vm.MEM[SP1].(data.Number).Mod(
 		vm.MEM[vm.SP].(data.Number),
 	)
 	vm.PC++
@@ -241,9 +241,9 @@ func doMod(vm *VM) {
 
 func doNumEq(vm *VM) {
 	vm.SP++
-	SP1 := &(vm.MEM[vm.SP+1])
-	*SP1 = data.Bool(
-		data.EqualTo == (*SP1).(data.Number).Cmp(
+	SP1 := vm.SP + 1
+	vm.MEM[SP1] = data.Bool(
+		data.EqualTo == vm.MEM[SP1].(data.Number).Cmp(
 			vm.MEM[vm.SP].(data.Number),
 		),
 	)
@@ -252,9 +252,9 @@ func doNumEq(vm *VM) {
 
 func doNumLt(vm *VM) {
 	vm.SP++
-	SP1 := &(vm.MEM[vm.SP+1])
-	*SP1 = data.Bool(
-		data.LessThan == (*SP1).(data.Number).Cmp(
+	SP1 := vm.SP + 1
+	vm.MEM[SP1] = data.Bool(
+		data.LessThan == vm.MEM[SP1].(data.Number).Cmp(
 			vm.MEM[vm.SP].(data.Number),
 		),
 	)
@@ -263,11 +263,11 @@ func doNumLt(vm *VM) {
 
 func doNumLte(vm *VM) {
 	vm.SP++
-	SP1 := &(vm.MEM[vm.SP+1])
-	cmp := (*SP1).(data.Number).Cmp(
+	SP1 := vm.SP + 1
+	cmp := vm.MEM[SP1].(data.Number).Cmp(
 		vm.MEM[vm.SP].(data.Number),
 	)
-	*SP1 = data.Bool(
+	vm.MEM[SP1] = data.Bool(
 		cmp == data.LessThan || cmp == data.EqualTo,
 	)
 	vm.PC++
@@ -275,9 +275,9 @@ func doNumLte(vm *VM) {
 
 func doNumGt(vm *VM) {
 	vm.SP++
-	SP1 := &(vm.MEM[vm.SP+1])
-	*SP1 = data.Bool(
-		data.GreaterThan == (*SP1).(data.Number).Cmp(
+	SP1 := vm.SP + 1
+	vm.MEM[SP1] = data.Bool(
+		data.GreaterThan == vm.MEM[SP1].(data.Number).Cmp(
 			vm.MEM[vm.SP].(data.Number),
 		),
 	)
@@ -286,34 +286,34 @@ func doNumGt(vm *VM) {
 
 func doNumGte(vm *VM) {
 	vm.SP++
-	SP1 := &(vm.MEM[vm.SP+1])
-	cmp := (*SP1).(data.Number).Cmp(
+	SP1 := vm.SP + 1
+	cmp := vm.MEM[SP1].(data.Number).Cmp(
 		vm.MEM[vm.SP].(data.Number),
 	)
-	*SP1 = data.Bool(
+	vm.MEM[SP1] = data.Bool(
 		cmp == data.GreaterThan || cmp == data.EqualTo,
 	)
 	vm.PC++
 }
 
 func doNeg(vm *VM) {
-	SP1 := &(vm.MEM[vm.SP+1])
-	*SP1 = data.Integer(0).Sub(
-		(*SP1).(data.Number),
+	SP1 := vm.SP + 1
+	vm.MEM[SP1] = data.Integer(0).Sub(
+		vm.MEM[SP1].(data.Number),
 	)
 	vm.PC++
 }
 
 func doCall0(vm *VM) {
-	SP1 := &(vm.MEM[vm.SP+1])
-	*SP1 = (*SP1).(data.Procedure).Call()
+	SP1 := vm.SP + 1
+	vm.MEM[SP1] = vm.MEM[SP1].(data.Procedure).Call()
 	vm.PC++
 }
 
 func doCall1(vm *VM) {
 	vm.SP++
-	SP1 := &(vm.MEM[vm.SP+1])
-	*SP1 = vm.MEM[vm.SP].(data.Procedure).Call(*SP1)
+	SP1 := vm.SP + 1
+	vm.MEM[SP1] = vm.MEM[vm.SP].(data.Procedure).Call(vm.MEM[SP1])
 	vm.PC++
 }
 
@@ -331,9 +331,9 @@ func doCall(vm *VM) {
 
 func doCallWith(vm *VM) {
 	vm.SP++
-	SP1 := &(vm.MEM[vm.SP+1])
-	*SP1 = vm.MEM[vm.SP].(data.Procedure).Call(
-		sequence.ToValues((*SP1).(data.Sequence))...,
+	SP1 := vm.SP + 1
+	vm.MEM[SP1] = vm.MEM[vm.SP].(data.Procedure).Call(
+		sequence.ToValues(vm.MEM[SP1].(data.Sequence))...,
 	)
 	vm.PC++
 }
