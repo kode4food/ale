@@ -4,7 +4,7 @@ go 1.21
 
 require (
 	github.com/chzyer/readline v1.5.1
-	github.com/google/uuid v1.5.0
+	github.com/google/uuid v1.6.0
 	github.com/kode4food/comb v0.0.0-20231101072951-3eb6f80a4d3f
 	github.com/stretchr/testify v1.8.4
 	golang.org/x/tools v0.17.0
