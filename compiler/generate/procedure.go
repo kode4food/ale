@@ -10,9 +10,10 @@ import (
 func Procedure(e encoder.Encoder, build Builder) *vm.Procedure {
 	child := e.Child()
 	build(child)
-	fn := procedure.FromEncoder(child)
+	enc := child.Encode()
+	fn := procedure.FromEncoded(enc)
 
-	cells := child.Closure()
+	cells := enc.Closure
 	clen := len(cells)
 	if clen == 0 {
 		// nothing needed to be captured from local variables, so pass the

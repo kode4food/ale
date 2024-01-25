@@ -8,7 +8,7 @@ import (
 
 type returnSplitter struct{}
 
-func makeSplitReturns(encoder.Encoder) optimizer {
+func makeSplitReturns(*encoder.Encoded) optimizer {
 	return func(root visitor.Node) visitor.Node {
 		r := new(returnSplitter)
 		visitor.DepthFirst(root, r)

@@ -19,7 +19,7 @@ func TestBlock(t *testing.T) {
 	as.Instructions(isa.Instructions{
 		isa.Null.New(),
 		isa.Return.New(),
-	}, e1.Code())
+	}, e1.Encode().Code)
 
 	e2 := assert.GetTestEncoder()
 	generate.Block(e2, V(
@@ -28,6 +28,7 @@ func TestBlock(t *testing.T) {
 	))
 	e2.Emit(isa.Return)
 
+	enc2 := e2.Encode()
 	as.Instructions(isa.Instructions{
 		isa.PosInt.New(2),
 		isa.PosInt.New(1),
@@ -36,8 +37,8 @@ func TestBlock(t *testing.T) {
 		isa.Pop.New(),
 		isa.True.New(),
 		isa.Return.New(),
-	}, e2.Code())
+	}, enc2.Code)
 
-	c := e2.Constants()
+	c := enc2.Constants
 	as.Equal(assert.GetRootSymbol(e2, "+"), c[0])
 }

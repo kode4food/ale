@@ -29,7 +29,7 @@ func TestLabels(t *testing.T) {
 		isa.Label.New(1),
 		isa.NoOp.New(),
 		isa.Label.New(0),
-	}, e.Code())
+	}, e.Encode().Code)
 }
 
 func TestLabelDoubleAnchor(t *testing.T) {
@@ -42,5 +42,5 @@ func TestLabelDoubleAnchor(t *testing.T) {
 	e.Emit(isa.Jump, l1)
 
 	defer as.ExpectPanic(fmt.Errorf(analysis.ErrLabelMultipleAnchors, 0))
-	analysis.Verify(e.Code())
+	analysis.Verify(e.Encode().Code)
 }

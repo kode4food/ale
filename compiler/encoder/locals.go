@@ -20,10 +20,6 @@ const (
 	ErrDuplicateName = "name duplicated in scope: %s"
 )
 
-func (e *encoder) LocalCount() isa.Operand {
-	return e.maxLocal
-}
-
 func (e *encoder) PushLocals() {
 	e.locals = append(e.locals, Locals{})
 }

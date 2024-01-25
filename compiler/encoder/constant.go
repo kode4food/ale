@@ -9,7 +9,7 @@ import (
 
 // Constants return the encoder's set of constants
 func (e *encoder) Constants() data.Vector {
-	return slices.Clone(e.constants)
+	return e.constants
 }
 
 // AddConstant adds a value to the constant list (if necessary)

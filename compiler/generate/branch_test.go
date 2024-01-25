@@ -31,6 +31,6 @@ func TestBranch(t *testing.T) {
 			isa.Label.New(1),
 			isa.Return.New(),
 		},
-		e.Code(),
+		e.Encode().Code,
 	)
 }

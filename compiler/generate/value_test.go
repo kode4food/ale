@@ -17,15 +17,16 @@ func TestPair(t *testing.T) {
 	generate.Value(e1, data.NewCons(S("left"), S("right")))
 	e1.Emit(isa.Return)
 
+	enc1 := e1.Encode()
 	as.Instructions(isa.Instructions{
 		isa.Const.New(0),
 		isa.Const.New(1),
 		isa.Const.New(2),
 		isa.Call.New(2),
 		isa.Return.New(),
-	}, e1.Code())
+	}, enc1.Code)
 
-	c := e1.Constants()
+	c := enc1.Constants
 	as.Equal(S("right"), c[0])
 	as.Equal(S("left"), c[1])
 

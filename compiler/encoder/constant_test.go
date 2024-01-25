@@ -16,7 +16,7 @@ func TestConstants(t *testing.T) {
 	i3 := e.AddConstant(S("hello"))
 	as.Equal(i1, i3)
 
-	c := e.Constants()
+	c := e.Encode().Constants
 	as.Equal(2, len(c))
 	as.Equal(S("hello"), c[i1])
 	as.Equal(I(42), c[i2])

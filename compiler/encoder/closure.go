@@ -6,11 +6,6 @@ import (
 	"github.com/kode4food/comb/basics"
 )
 
-// Closure calculates the enclosed names for this encoder
-func (e *encoder) Closure() IndexedCells {
-	return e.closure
-}
-
 func (e *encoder) ResolveClosure(n data.Local) (*IndexedCell, bool) {
 	c, ok := basics.Find(e.closure, func(c *IndexedCell) bool {
 		return c.Name == n

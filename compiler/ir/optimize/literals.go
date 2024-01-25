@@ -20,7 +20,7 @@ var (
 	}
 )
 
-func makeLiteralReturns(encoder.Encoder) optimizer {
+func makeLiteralReturns(*encoder.Encoded) optimizer {
 	return func(root visitor.Node) visitor.Node {
 		visitor.Replace(root, literalReturnPatterns, literalReturnMapper)
 		return root

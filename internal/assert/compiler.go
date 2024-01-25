@@ -14,7 +14,7 @@ func (w *Wrapper) EncodesAs(expected isa.Instructions, src data.String) {
 	e := GetTestEncoder()
 	v := read.FromString(src)
 	generate.Block(e, v)
-	w.Instructions(expected, e.Code())
+	w.Instructions(expected, e.Encode().Code)
 }
 
 // Instructions test that two sets of Instructions are identical

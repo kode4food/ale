@@ -74,7 +74,7 @@ func testMacroExpandWith(t *testing.T, enc testEncoder) {
 	enc(e1, neq)
 	e1.Emit(isa.Return)
 
-	c := e1.Constants()
+	c := e1.Encode().Constants
 	as.Equal(2, len(c))
 	s, ok := c[0].(data.Local)
 	as.True(ok)

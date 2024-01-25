@@ -15,23 +15,18 @@ type (
 		Child() Encoder
 
 		Emit(isa.Opcode, ...isa.Operand)
-		Code() isa.Instructions
-		StackSize() isa.Operand
+		Encode() *Encoded
 
 		NewLabel() isa.Operand
 
 		Globals() env.Namespace
-		Constants() data.Vector
 		AddConstant(data.Value) isa.Operand
-
-		Closure() IndexedCells
 		ResolveClosure(data.Local) (*IndexedCell, bool)
 
 		PushParams(data.Locals, bool)
 		PopParams()
 		ResolveParam(data.Local) (*IndexedCell, bool)
 
-		LocalCount() isa.Operand
 		PushLocals()
 		PopLocals()
 		AddLocal(data.Local, CellType) *IndexedCell
@@ -51,6 +46,18 @@ type (
 		nextLabel isa.Operand
 		nextLocal isa.Operand
 		maxLocal  isa.Operand
+	}
+
+	// Encoded is a snapshot of the current Encoder's state. It is used as an
+	// intermediate step in the compilation process, particularly as input to
+	// the optimizer.
+	Encoded struct {
+		Code       isa.Instructions
+		Globals    env.Namespace
+		Constants  data.Vector
+		Closure    IndexedCells
+		LocalCount isa.Operand
+		StackSize  isa.Operand
 	}
 )
 
@@ -79,13 +86,20 @@ func (e *encoder) Emit(oc isa.Opcode, args ...isa.Operand) {
 	e.code = append(e.code, oc.New(args...))
 }
 
-// Code returns the encoder's resulting abstract machine Instructions
-func (e *encoder) Code() isa.Instructions {
-	return slices.Clone(e.code)
+// Encode returns the encoder's resulting abstract machine Instructions
+func (e *encoder) Encode() *Encoded {
+	return &Encoded{
+		Code:       slices.Clone(e.code),
+		Globals:    e.Globals(),
+		Constants:  slices.Clone(e.constants),
+		Closure:    slices.Clone(e.closure),
+		LocalCount: e.maxLocal,
+		StackSize:  e.stackSize(),
+	}
 }
 
 // StackSize returns the encoder's calculated stack size
-func (e *encoder) StackSize() isa.Operand {
+func (e *encoder) stackSize() isa.Operand {
 	res, _ := analysis.CalculateStackSize(e.code)
 	return res
 }

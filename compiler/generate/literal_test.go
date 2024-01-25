@@ -29,6 +29,7 @@ func TestLiteral(t *testing.T) {
 		e.Emit(isa.Pop)
 	}
 
+	enc := e.Encode()
 	as.Instructions(
 		isa.Instructions{
 			isa.Zero.New(),
@@ -50,9 +51,9 @@ func TestLiteral(t *testing.T) {
 			isa.Pop.New(),
 			isa.Pop.New(),
 		},
-		e.Code(),
+		enc.Code,
 	)
 
-	c := e.Constants()
+	c := enc.Constants
 	as.Equal(S("hello there!"), c[0])
 }

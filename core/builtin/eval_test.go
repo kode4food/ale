@@ -23,6 +23,7 @@ func TestEval(t *testing.T) {
 	)
 	e1.Emit(isa.Return)
 
+	enc1 := e1.Encode()
 	as.Instructions(isa.Instructions{
 		isa.PosInt.New(2),
 		isa.PosInt.New(1),
@@ -33,9 +34,9 @@ func TestEval(t *testing.T) {
 		isa.Const.New(2),
 		isa.Call1.New(),
 		isa.Return.New(),
-	}, e1.Code())
+	}, enc1.Code)
 
-	c := e1.Constants()
+	c := enc1.Constants
 	as.Equal(LS("+"), c[0])
 	as.Equal(assert.GetRootSymbol(e1, "list"), c[1])
 

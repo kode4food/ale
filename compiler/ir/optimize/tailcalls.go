@@ -8,7 +8,7 @@ import (
 	"github.com/kode4food/ale/runtime/vm"
 )
 
-type tailCallMapper struct{ encoder.Encoder }
+type tailCallMapper struct{ *encoder.Encoded }
 
 var tailCallPattern = visitor.Pattern{
 	{visitor.AnyOpcode},
@@ -16,16 +16,17 @@ var tailCallPattern = visitor.Pattern{
 	{isa.Return},
 }
 
-func makeTailCalls(e encoder.Encoder) optimizer {
+func makeTailCalls(e *encoder.Encoded) optimizer {
 	return func(root visitor.Node) visitor.Node {
-		visitor.Replace(root, tailCallPattern, tailCallMapper{e}.perform)
+		mapper := tailCallMapper{e}
+		visitor.Replace(root, tailCallPattern, mapper.perform)
 		return root
 	}
 }
 
 func (m tailCallMapper) canTailCall(i isa.Instruction) bool {
 	if oc, op := i.Split(); oc == isa.Const {
-		_, ok := m.Constants()[op].(*vm.Closure)
+		_, ok := m.Constants[op].(*vm.Closure)
 		return ok
 	}
 	return true
