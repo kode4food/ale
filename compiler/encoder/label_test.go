@@ -42,5 +42,5 @@ func TestLabelDoubleAnchor(t *testing.T) {
 	e.Emit(isa.Jump, l1)
 
 	defer as.ExpectPanic(fmt.Errorf(analysis.ErrLabelMultipleAnchors, 0))
-	analysis.Verify(e.Encode().Code)
+	analysis.MustVerify(e.Encode().Code)
 }

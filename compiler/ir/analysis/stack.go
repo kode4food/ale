@@ -23,32 +23,53 @@ const (
 	ErrBadBranchTermination = "branches should end in the same state"
 )
 
-func verifyStackSize(code isa.Instructions) {
+func verifyStackSize(code isa.Instructions) error {
 	s := new(stackSizes)
-	s.calculateNode(visitor.Branch(code))
-	if s.endSize != 0 {
-		panic(fmt.Errorf(ErrBadStackTermination, s.endSize))
+	if err := s.calculateNode(visitor.Branch(code)); err != nil {
+		return err
 	}
+	if s.endSize != 0 {
+		return fmt.Errorf(ErrBadStackTermination, s.endSize)
+	}
+	return nil
 }
 
-// CalculateStackSize returns the maximum and final depths for the stack based
-// on the instructions provided. If the final depth is non-zero, this is
-// usually an indication that bad instructions were encoded
-func CalculateStackSize(code isa.Instructions) (isa.Operand, isa.Operand) {
+// CalculateStackSize returns the maximum depth for the stack based on the
+// Instructions provided.
+func CalculateStackSize(code isa.Instructions) (isa.Operand, error) {
 	s := new(stackSizes)
-	s.calculateNode(visitor.Branch(code))
-	return isa.Operand(s.maxSize), isa.Operand(s.endSize)
+	if err := s.calculateNode(visitor.Branch(code)); err != nil {
+		return 0, err
+	}
+	return isa.Operand(s.maxSize), nil
 }
 
-func (s *stackSizes) calculateNode(n visitor.Node) {
+// MustCalculateStackSize is a wrapper around CalculateStackSize that will
+// panic if the Instructions provided are invalid
+func MustCalculateStackSize(code isa.Instructions) isa.Operand {
+	res, err := CalculateStackSize(code)
+	if err != nil {
+		panic(err)
+	}
+	return res
+}
+
+func (s *stackSizes) calculateNode(n visitor.Node) error {
 	switch n := n.(type) {
 	case visitor.Branches:
 		s.calculateInstructions(n.Prologue())
-		s.calculateBranches(n.ThenBranch(), n.ElseBranch())
-		s.calculateNode(n.Epilogue())
+		t := n.ThenBranch()
+		e := n.ElseBranch()
+		if err := s.calculateBranches(t, e); err != nil {
+			return err
+		}
+		if err := s.calculateNode(n.Epilogue()); err != nil {
+			return err
+		}
 	case visitor.Instructions:
 		s.calculateInstructions(n)
 	}
+	return nil
 }
 
 func (s *stackSizes) calculateInstructions(inst visitor.Instructions) {
@@ -64,22 +85,31 @@ func (s *stackSizes) calculateInstruction(inst isa.Instruction) {
 	s.maxSize = max(s.endSize, s.maxSize)
 }
 
-func (s *stackSizes) calculateBranches(thenNode, elseNode visitor.Node) {
-	thenRes := s.calculateBranch(thenNode)
-	elseRes := s.calculateBranch(elseNode)
+func (s *stackSizes) calculateBranches(thenNode, elseNode visitor.Node) error {
+	thenRes, err := s.calculateBranch(thenNode)
+	if err != nil {
+		return err
+	}
+	elseRes, err := s.calculateBranch(elseNode)
+	if err != nil {
+		return err
+	}
 	if elseRes.endSize != thenRes.endSize {
-		panic(errors.New(ErrBadBranchTermination))
+		return errors.New(ErrBadBranchTermination)
 	}
 	s.endSize += elseRes.endSize
+	return nil
 }
 
-func (s *stackSizes) calculateBranch(n visitor.Node) *stackSizes {
+func (s *stackSizes) calculateBranch(n visitor.Node) (*stackSizes, error) {
 	res := &stackSizes{
 		maxSize: s.maxSize,
 	}
-	res.calculateNode(n)
+	if err := res.calculateNode(n); err != nil {
+		return nil, err
+	}
 	s.maxSize = max(s.maxSize, res.maxSize)
-	return res
+	return res, nil
 }
 
 func getStackChange(inst isa.Instruction, dPop bool) int {

@@ -16,12 +16,15 @@ const (
 	ErrLabelMultipleAnchors = "label anchored multiple times: %d"
 )
 
-func verifyJumps(code isa.Instructions) {
+func verifyJumps(code isa.Instructions) error {
 	for _, l := range code {
 		if oc, op := l.Split(); oc == isa.CondJump || oc == isa.Jump {
-			mustFindLabel(code, op)
+			if _, err := findLabel(code, op); err != nil {
+				return err
+			}
 		}
 	}
+	return nil
 }
 
 func findLabel(code isa.Instructions, lbl isa.Operand) (int, error) {
@@ -38,12 +41,4 @@ func findLabel(code isa.Instructions, lbl isa.Operand) (int, error) {
 		return res, fmt.Errorf(ErrLabelNotAnchored, lbl)
 	}
 	return res, nil
-}
-
-func mustFindLabel(code isa.Instructions, lbl isa.Operand) int {
-	res, err := findLabel(code, lbl)
-	if err != nil {
-		panic(err)
-	}
-	return res
 }

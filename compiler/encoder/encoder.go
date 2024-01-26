@@ -16,23 +16,22 @@ type (
 
 		Emit(isa.Opcode, ...isa.Operand)
 		Encode() *Encoded
-
+		Globals() env.Namespace
 		NewLabel() isa.Operand
 
-		Globals() env.Namespace
 		AddConstant(data.Value) isa.Operand
-		ResolveClosure(data.Local) (*IndexedCell, bool)
 
 		PushParams(data.Locals, bool)
 		PopParams()
-		ResolveParam(data.Local) (*IndexedCell, bool)
 
 		PushLocals()
 		PopLocals()
 		AddLocal(data.Local, CellType) *IndexedCell
-		ResolveLocal(data.Local) (*IndexedCell, bool)
 
 		ResolveScoped(data.Local) (*ScopedCell, bool)
+		ResolveClosure(data.Local) (*IndexedCell, bool)
+		ResolveParam(data.Local) (*IndexedCell, bool)
+		ResolveLocal(data.Local) (*IndexedCell, bool)
 	}
 
 	encoder struct {
@@ -69,16 +68,12 @@ func NewEncoder(globals env.Namespace) Encoder {
 	}
 }
 
-func (e *encoder) child() *encoder {
+// Child creates a child Encoder
+func (e *encoder) Child() Encoder {
 	return &encoder{
 		parent: e,
 		locals: []Locals{{}},
 	}
-}
-
-// Child creates a child Encoder
-func (e *encoder) Child() Encoder {
-	return e.child()
 }
 
 // Emit adds instructions to the Encoder's eventual output
@@ -94,14 +89,8 @@ func (e *encoder) Encode() *Encoded {
 		Constants:  slices.Clone(e.constants),
 		Closure:    slices.Clone(e.closure),
 		LocalCount: e.maxLocal,
-		StackSize:  e.stackSize(),
+		StackSize:  analysis.MustCalculateStackSize(e.code),
 	}
-}
-
-// StackSize returns the encoder's calculated stack size
-func (e *encoder) stackSize() isa.Operand {
-	res, _ := analysis.CalculateStackSize(e.code)
-	return res
 }
 
 // Globals returns the global name/value map

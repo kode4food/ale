@@ -24,7 +24,7 @@ func TestVerifyGoodStack(t *testing.T) {
 	e.Emit(isa.Return)
 
 	defer as.ExpectNoPanic()
-	analysis.Verify(e.Encode().Code)
+	analysis.MustVerify(e.Encode().Code)
 }
 
 func TestVerifyBadBranchStack(t *testing.T) {
@@ -42,7 +42,7 @@ func TestVerifyBadBranchStack(t *testing.T) {
 	e.Emit(isa.Return)
 
 	defer as.ExpectPanic(errors.New(analysis.ErrBadBranchTermination))
-	analysis.Verify(e.Encode().Code)
+	analysis.MustVerify(e.Encode().Code)
 }
 
 func TestVerifyBadEndStack(t *testing.T) {
@@ -52,7 +52,7 @@ func TestVerifyBadEndStack(t *testing.T) {
 	e.Emit(isa.True)
 
 	defer as.ExpectPanic(fmt.Errorf(analysis.ErrBadStackTermination, 1))
-	analysis.Verify(e.Encode().Code)
+	analysis.MustVerify(e.Encode().Code)
 }
 
 func TestVerifyGoodJump(t *testing.T) {
@@ -66,7 +66,7 @@ func TestVerifyGoodJump(t *testing.T) {
 	e.Emit(isa.Jump, lbl)
 
 	defer as.ExpectNoPanic()
-	analysis.Verify(e.Encode().Code)
+	analysis.MustVerify(e.Encode().Code)
 }
 
 func TestVerifyBadJump(t *testing.T) {
@@ -79,5 +79,5 @@ func TestVerifyBadJump(t *testing.T) {
 	e.Emit(isa.Jump, lbl)
 
 	defer as.ExpectPanic(fmt.Errorf(analysis.ErrLabelNotAnchored, 0))
-	analysis.Verify(e.Encode().Code)
+	analysis.MustVerify(e.Encode().Code)
 }

@@ -8,6 +8,7 @@ import (
 
 	"github.com/kode4food/ale/compiler/encoder"
 	"github.com/kode4food/ale/compiler/generate"
+	"github.com/kode4food/ale/compiler/ir/analysis"
 	"github.com/kode4food/ale/compiler/special"
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/eval"
@@ -109,6 +110,12 @@ func makeAsmEncoder(e encoder.Encoder) *asmEncoder {
 		args:    map[data.Local]data.Value{},
 		private: map[data.Local]data.Local{},
 	}
+}
+
+func (e *asmEncoder) Encode() *encoder.Encoded {
+	res := e.Encoder.Encode()
+	analysis.MustVerify(res.Code)
+	return res
 }
 
 func (e *asmEncoder) withParams(n data.Locals, v data.Vector) *asmEncoder {
