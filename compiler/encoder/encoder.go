@@ -58,6 +58,10 @@ type (
 		LocalCount isa.Operand
 		StackSize  isa.Operand
 	}
+
+	// Runnable is a flattened representation of the Encoded state that can be
+	// executed by the abstract machine
+	Runnable Encoded
 )
 
 // NewEncoder instantiates a new Encoder
@@ -102,4 +106,12 @@ func (e *encoder) Globals() env.Namespace {
 		return e.parent.Globals()
 	}
 	return nil
+}
+
+// Runnable returns a flattened representation of the Encoded state that can be
+// executed by the abstract machine
+func (e *Encoded) Runnable() *Runnable {
+	res := *e
+	res.Code = isa.Flatten(e.Code)
+	return (*Runnable)(&res)
 }

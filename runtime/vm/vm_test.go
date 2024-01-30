@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/kode4food/ale/compiler/encoder"
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/env"
 	"github.com/kode4food/ale/internal/assert"
@@ -23,11 +24,13 @@ var constants = data.Vector{
 
 func makeProcedure(code isa.Instructions) data.Procedure {
 	proc := &vm.Procedure{
-		Code:       code,
-		Constants:  constants,
-		StackSize:  16,
-		LocalCount: 10,
-		Globals:    env.NewEnvironment().GetAnonymous(),
+		Runnable: encoder.Runnable{
+			Code:       code,
+			Constants:  constants,
+			StackSize:  16,
+			LocalCount: 10,
+			Globals:    env.NewEnvironment().GetAnonymous(),
+		},
 	}
 	closure := proc.Call(S("Closure"))
 	return closure.(data.Procedure)

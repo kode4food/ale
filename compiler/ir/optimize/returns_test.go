@@ -31,5 +31,5 @@ func TestSplitReturns(t *testing.T) {
 		isa.PosInt.New(1),
 		isa.Return.New(),
 		isa.Label.New(1),
-	}, optimize.FromEncoded(e1.Encode()))
+	}, optimize.FromEncoded(e1.Encode()).Code)
 }

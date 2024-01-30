@@ -40,7 +40,7 @@ func (vm *VM) initMem() {
 
 func (vm *VM) initCode() {
 	vm.CODE = vm.CL.Code
-	vm.LP = vm.CL.StackSize
+	vm.LP = int(vm.CL.StackSize)
 	vm.initState()
 }
 

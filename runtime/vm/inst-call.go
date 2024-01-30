@@ -58,7 +58,7 @@ func doTailCall(vm *VM) {
 		return
 	}
 	vm.CL = cl
-	if len(vm.MEM) < vm.CL.StackSize+vm.CL.LocalCount {
+	if len(vm.MEM) < int(vm.CL.StackSize+vm.CL.LocalCount) {
 		vm.initMem()
 		return
 	}

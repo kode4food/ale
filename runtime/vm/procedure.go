@@ -5,20 +5,15 @@ import (
 	"slices"
 	"sync/atomic"
 
+	"github.com/kode4food/ale/compiler/encoder"
 	"github.com/kode4food/ale/data"
-	"github.com/kode4food/ale/env"
 	"github.com/kode4food/ale/internal/types"
-	"github.com/kode4food/ale/runtime/isa"
 )
 
 type (
 	// Procedure encapsulates the initial environment of an abstract machine
 	Procedure struct {
-		Globals      env.Namespace
-		Constants    data.Vector
-		Code         isa.Instructions
-		StackSize    int
-		LocalCount   int
+		encoder.Runnable
 		ArityChecker data.ArityChecker
 		hash         uint64
 	}
