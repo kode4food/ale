@@ -7,6 +7,7 @@ import (
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/env"
 	"github.com/kode4food/ale/runtime/isa"
+	"github.com/kode4food/comb/basics"
 )
 
 type (
@@ -51,17 +52,12 @@ type (
 	// intermediate step in the compilation process, particularly as input to
 	// the optimizer.
 	Encoded struct {
-		Code       isa.Instructions
-		Globals    env.Namespace
-		Constants  data.Vector
-		Closure    IndexedCells
-		LocalCount isa.Operand
-		StackSize  isa.Operand
+		notRunnable
+		Closure data.Locals
 	}
 
-	// Runnable is a flattened representation of the Encoded state that can be
-	// executed by the abstract machine
-	Runnable Encoded
+	// notRunnable captures the fields to later create a Runnable
+	notRunnable isa.Runnable
 )
 
 // NewEncoder instantiates a new Encoder
@@ -88,12 +84,16 @@ func (e *encoder) Emit(oc isa.Opcode, args ...isa.Operand) {
 // Encode returns the encoder's resulting abstract machine Instructions
 func (e *encoder) Encode() *Encoded {
 	return &Encoded{
-		Code:       slices.Clone(e.code),
-		Globals:    e.Globals(),
-		Constants:  slices.Clone(e.constants),
-		Closure:    slices.Clone(e.closure),
-		LocalCount: e.maxLocal,
-		StackSize:  analysis.MustCalculateStackSize(e.code),
+		notRunnable: notRunnable{
+			Code:       slices.Clone(e.code),
+			Globals:    e.Globals(),
+			Constants:  slices.Clone(e.constants),
+			LocalCount: e.maxLocal,
+			StackSize:  analysis.MustCalculateStackSize(e.code),
+		},
+		Closure: basics.Map(e.closure, func(elem *IndexedCell) data.Local {
+			return elem.Name
+		}),
 	}
 }
 
@@ -108,10 +108,10 @@ func (e *encoder) Globals() env.Namespace {
 	return nil
 }
 
-// Runnable returns a flattened representation of the Encoded state that can be
-// executed by the abstract machine
-func (e *Encoded) Runnable() *Runnable {
-	res := *e
+// Runnable returns a flattened representation of the Encoded state that can
+// be executed by the abstract machine
+func (e *Encoded) Runnable() *isa.Runnable {
+	res := (isa.Runnable)(e.notRunnable)
 	res.Code = isa.Flatten(e.Code)
-	return (*Runnable)(&res)
+	return &res
 }

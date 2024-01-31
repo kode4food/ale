@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/kode4food/ale/env"
+
 	"github.com/kode4food/ale/data"
 	str "github.com/kode4food/ale/internal/strings"
 	"github.com/kode4food/comb/basics"
@@ -20,6 +22,16 @@ type (
 
 	// Instructions represent a set of Instructions
 	Instructions []Instruction
+
+	// Runnable is a flattened representation of the Encoded state that can be
+	// executed by the abstract machine
+	Runnable struct {
+		Code       Instructions
+		Globals    env.Namespace
+		Constants  data.Vector
+		LocalCount Operand
+		StackSize  Operand
+	}
 )
 
 const (

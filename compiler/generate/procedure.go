@@ -23,8 +23,7 @@ func Procedure(e encoder.Encoder, build Builder) *vm.Procedure {
 	}
 
 	for i := clen - 1; i >= 0; i-- {
-		name := cells[i].Name
-		Symbol(e, name)
+		Symbol(e, cells[i])
 	}
 	e.Emit(isa.Const, e.AddConstant(fn))
 	e.Emit(isa.Call, isa.Operand(clen))

@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/kode4food/ale/compiler/encoder"
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/env"
 	"github.com/kode4food/ale/internal/assert"
@@ -24,7 +23,7 @@ var constants = data.Vector{
 
 func makeProcedure(code isa.Instructions) data.Procedure {
 	proc := &vm.Procedure{
-		Runnable: encoder.Runnable{
+		Runnable: isa.Runnable{
 			Code:       code,
 			Constants:  constants,
 			StackSize:  16,
