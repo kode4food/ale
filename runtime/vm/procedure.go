@@ -15,8 +15,11 @@ type (
 	Procedure struct {
 		isa.Runnable
 		ArityChecker data.ArityChecker
+		flags        ProcFlag
 		hash         uint64
 	}
+
+	ProcFlag uint
 
 	Closure struct {
 		*Procedure
@@ -25,7 +28,26 @@ type (
 	}
 )
 
+const (
+	NoInline ProcFlag = 1 << iota
+)
+
 var procedureHash = rand.Uint64()
+
+func MakeProcedure(run *isa.Runnable, arity data.ArityChecker) *Procedure {
+	res := &Procedure{
+		Runnable:     *run,
+		ArityChecker: arity,
+	}
+	if res.Runnable.Code.HasOpcode(isa.TailCall) {
+		res.flags |= NoInline
+	}
+	return res
+}
+
+func (p *Procedure) HasFlag(f ProcFlag) bool {
+	return p.flags&f != 0
+}
 
 // Call allows an abstract machine Procedure to be called for the purpose of
 // instantiating a Closure. Only the compiler invokes this calling interface.

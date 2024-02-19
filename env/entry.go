@@ -23,12 +23,12 @@ type (
 		owner Namespace
 		name  data.Local
 		value data.Value
-		flags entryFlags
+		flags entryFlag
 	}
 
 	entries map[data.Local]*entry
 
-	entryFlags uint32
+	entryFlag uint
 )
 
 const (
@@ -47,7 +47,7 @@ const (
 )
 
 const (
-	resolved entryFlags = 1 << iota
+	resolved entryFlag = 1 << iota
 	bound
 	private
 )
@@ -117,10 +117,10 @@ func (e *entry) IsPrivate() bool {
 	return e.hasFlag(private)
 }
 
-func (e *entry) hasFlag(flag entryFlags) bool {
+func (e *entry) hasFlag(flag entryFlag) bool {
 	return e.flags&flag != 0
 }
 
-func (e *entry) setFlag(flag entryFlags) {
+func (e *entry) setFlag(flag entryFlag) {
 	e.flags |= flag
 }

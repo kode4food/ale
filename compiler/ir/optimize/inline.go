@@ -65,7 +65,7 @@ func (m *inlineCallMapper) perform(i isa.Instructions) isa.Instructions {
 func (m *inlineCallMapper) canInline(i isa.Instruction) (*vm.Closure, bool) {
 	p, ok := m.Constants[i.Operand()].(*vm.Closure)
 	return p, ok &&
-		!p.Code.HasOpcode(isa.TailCall) &&
+		!p.HasFlag(vm.NoInline) &&
 		m.numInlined < maxInlined &&
 		p.Globals == m.Globals
 }
