@@ -39,7 +39,7 @@ func MakeProcedure(run *isa.Runnable, arity data.ArityChecker) *Procedure {
 		Runnable:     *run,
 		ArityChecker: arity,
 	}
-	if res.Runnable.Code.HasOpcode(isa.TailCall) {
+	if res.Code.HasOpcode(isa.TailCall) {
 		res.flags |= NoInline
 	}
 	return res
