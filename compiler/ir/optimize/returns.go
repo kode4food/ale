@@ -9,10 +9,11 @@ import (
 type returnSplitter struct{}
 
 func makeSplitReturns(*encoder.Encoded) optimizer {
-	return func(root visitor.Node) visitor.Node {
+	return func(code isa.Instructions) isa.Instructions {
 		r := new(returnSplitter)
+		root := visitor.Branch(code)
 		visitor.DepthFirst(root, r)
-		return root
+		return root.Code()
 	}
 }
 

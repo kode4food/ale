@@ -15,7 +15,7 @@ type (
 	// Mapper maps one set of instructions to another
 	Mapper func(isa.Instructions) isa.Instructions
 
-	replace struct {
+	Replacer struct {
 		pattern Pattern
 		mapper  Mapper
 	}
@@ -25,38 +25,44 @@ const AnyOpcode = isa.OpcodeMask + 1
 
 // Replace visits all Instruction nodes and if any of the instructions therein
 // match the provided Pattern, they will be replaced using the provided Mapper
-func Replace(root Node, pattern Pattern, mapper Mapper) {
-	r := &replace{
+func Replace(pattern Pattern, mapper Mapper) *Replacer {
+	return &Replacer{
 		pattern: pattern,
 		mapper:  mapper,
 	}
-	DepthFirst(root, r)
 }
 
-func (*replace) EnterRoot(Node)         {}
-func (*replace) ExitRoot(Node)          {}
-func (*replace) EnterBranches(Branches) {}
-func (*replace) ExitBranches(Branches)  {}
+func (*Replacer) EnterRoot(Node)         {}
+func (*Replacer) ExitRoot(Node)          {}
+func (*Replacer) EnterBranches(Branches) {}
+func (*Replacer) ExitBranches(Branches)  {}
 
-func (r *replace) Instructions(i Instructions) {
+func (r *Replacer) Instructions(i Instructions) {
 	pattern := r.pattern
 	code := i.Code()
 	var state, start, found int
 	res := isa.Instructions{}
-	for pc, inst := range code {
-		if oc := inst.Opcode(); pattern.matchesState(oc, state) {
+	for pc := 0; pc < len(code); {
+		inst := code[pc]
+		if oc := inst.Opcode(); !pattern.matchesState(oc, state) {
 			if state == 0 {
-				found = pc
+				pc++
+			} else {
+				state = 0
 			}
-			state++
-			if state < len(pattern) {
-				continue
-			}
-			next := pc + 1
-			res = append(res, code[start:found]...)
-			res = append(res, r.mapper(code[found:next])...)
-			start = next
+			continue
 		}
+		if state == 0 {
+			found = pc
+		}
+		pc++
+		if state < len(pattern)-1 {
+			state++
+			continue
+		}
+		res = append(res, code[start:found]...)
+		res = append(res, r.mapper(code[found:pc])...)
+		start = pc
 		state = 0
 	}
 	res = append(res, code[start:]...)

@@ -12,14 +12,13 @@ const (
 	// OpcodeSize are the number of bits required for an Opcode value
 	OpcodeSize = 6
 
+	opcodeMask = Opcode(1<<OpcodeSize - 1)
+
 	// OpcodeMask masks the bits for encoding an Opcode into an Instruction
-	OpcodeMask = Opcode(1<<OpcodeSize - 1)
+	OpcodeMask = opcodeMask
 
 	// OperandMask masks the bits for encoding an Operand into an Instruction
 	OperandMask = ^Operand(OpcodeMask) >> OpcodeSize
-
-	// Label is an internal Opcode
-	Label = OpcodeMask
 )
 
 //go:generate go run golang.org/x/tools/cmd/stringer -type=Opcode
@@ -47,6 +46,7 @@ const (
 	Eq                     // Value Equality
 	False                  // Push False
 	Jump                   // Absolute Jump
+	Label                  // Internal Label
 	Load                   // Retrieve Local Value
 	Mod                    // Remainder
 	Mul                    // Multiplication
@@ -63,8 +63,10 @@ const (
 	NumLte                 // Less or Equal To
 	Panic                  // Abnormally Halt
 	Pop                    // Discard Value
+	PopArgs                // Pop arguments from the VM's arg stack
 	PosInt                 // Push Positive Integer (in Operand)
 	Private                // Declare a private Namespace entry
+	PushArgs               // Push arguments onto the VM's arg stack
 	Resolve                // Resolve Global Symbol
 	RestArg                // Retrieve Arguments Tail
 	RetFalse               // Return False

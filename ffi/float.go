@@ -23,8 +23,7 @@ var (
 )
 
 func makeWrappedFloat(t reflect.Type) (Wrapper, error) {
-	k := t.Kind()
-	switch k {
+	switch k := t.Kind(); k {
 	case reflect.Float32:
 		return float32Wrapper(k), nil
 	case reflect.Float64:

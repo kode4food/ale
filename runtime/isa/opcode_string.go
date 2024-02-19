@@ -8,7 +8,7 @@ func _() {
 	// An "invalid array index" compiler error signifies that the constant values have changed.
 	// Re-run the stringer command to generate them again.
 	var x [1]struct{}
-	_ = x[OpcodeMask-63]
+	_ = x[opcodeMask-63]
 	_ = x[Add-0]
 	_ = x[Arg-1]
 	_ = x[ArgLen-2]
@@ -32,49 +32,52 @@ func _() {
 	_ = x[Eq-20]
 	_ = x[False-21]
 	_ = x[Jump-22]
-	_ = x[Load-23]
-	_ = x[Mod-24]
-	_ = x[Mul-25]
-	_ = x[Neg-26]
-	_ = x[NegInt-27]
-	_ = x[NewRef-28]
-	_ = x[NoOp-29]
-	_ = x[Not-30]
-	_ = x[Null-31]
-	_ = x[NumEq-32]
-	_ = x[NumGt-33]
-	_ = x[NumGte-34]
-	_ = x[NumLt-35]
-	_ = x[NumLte-36]
-	_ = x[Panic-37]
-	_ = x[Pop-38]
-	_ = x[PosInt-39]
-	_ = x[Private-40]
-	_ = x[Resolve-41]
-	_ = x[RestArg-42]
-	_ = x[RetFalse-43]
-	_ = x[RetNull-44]
-	_ = x[RetTrue-45]
-	_ = x[Return-46]
-	_ = x[Store-47]
-	_ = x[Sub-48]
-	_ = x[TailCall-49]
-	_ = x[True-50]
-	_ = x[Zero-51]
+	_ = x[Label-23]
+	_ = x[Load-24]
+	_ = x[Mod-25]
+	_ = x[Mul-26]
+	_ = x[Neg-27]
+	_ = x[NegInt-28]
+	_ = x[NewRef-29]
+	_ = x[NoOp-30]
+	_ = x[Not-31]
+	_ = x[Null-32]
+	_ = x[NumEq-33]
+	_ = x[NumGt-34]
+	_ = x[NumGte-35]
+	_ = x[NumLt-36]
+	_ = x[NumLte-37]
+	_ = x[Panic-38]
+	_ = x[Pop-39]
+	_ = x[PopArgs-40]
+	_ = x[PosInt-41]
+	_ = x[Private-42]
+	_ = x[PushArgs-43]
+	_ = x[Resolve-44]
+	_ = x[RestArg-45]
+	_ = x[RetFalse-46]
+	_ = x[RetNull-47]
+	_ = x[RetTrue-48]
+	_ = x[Return-49]
+	_ = x[Store-50]
+	_ = x[Sub-51]
+	_ = x[TailCall-52]
+	_ = x[True-53]
+	_ = x[Zero-54]
 }
 
 const (
-	_Opcode_name_0 = "AddArgArgLenBindBindRefCallCall0Call1CallWithCarCdrClosureCondJumpConsConstDeclareDerefDivDupEmptyEqFalseJumpLoadModMulNegNegIntNewRefNoOpNotNullNumEqNumGtNumGteNumLtNumLtePanicPopPosIntPrivateResolveRestArgRetFalseRetNullRetTrueReturnStoreSubTailCallTrueZero"
-	_Opcode_name_1 = "OpcodeMask"
+	_Opcode_name_0 = "AddArgArgLenBindBindRefCallCall0Call1CallWithCarCdrClosureCondJumpConsConstDeclareDerefDivDupEmptyEqFalseJumpLabelLoadModMulNegNegIntNewRefNoOpNotNullNumEqNumGtNumGteNumLtNumLtePanicPopPopArgsPosIntPrivatePushArgsResolveRestArgRetFalseRetNullRetTrueReturnStoreSubTailCallTrueZero"
+	_Opcode_name_1 = "opcodeMask"
 )
 
 var (
-	_Opcode_index_0 = [...]uint16{0, 3, 6, 12, 16, 23, 27, 32, 37, 45, 48, 51, 58, 66, 70, 75, 82, 87, 90, 93, 98, 100, 105, 109, 113, 116, 119, 122, 128, 134, 138, 141, 145, 150, 155, 161, 166, 172, 177, 180, 186, 193, 200, 207, 215, 222, 229, 235, 240, 243, 251, 255, 259}
+	_Opcode_index_0 = [...]uint16{0, 3, 6, 12, 16, 23, 27, 32, 37, 45, 48, 51, 58, 66, 70, 75, 82, 87, 90, 93, 98, 100, 105, 109, 114, 118, 121, 124, 127, 133, 139, 143, 146, 150, 155, 160, 166, 171, 177, 182, 185, 192, 198, 205, 213, 220, 227, 235, 242, 249, 255, 260, 263, 271, 275, 279}
 )
 
 func (i Opcode) String() string {
 	switch {
-	case i <= 51:
+	case i <= 54:
 		return _Opcode_name_0[_Opcode_index_0[i]:_Opcode_index_0[i+1]]
 	case i == 63:
 		return _Opcode_name_1

@@ -29,8 +29,7 @@ var (
 )
 
 func makeWrappedComplex(t reflect.Type) (Wrapper, error) {
-	k := t.Kind()
-	switch k {
+	switch k := t.Kind(); k {
 	case reflect.Complex128:
 		return complex128Wrapper(k), nil
 	case reflect.Complex64:

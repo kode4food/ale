@@ -17,19 +17,13 @@ var tailCallPattern = visitor.Pattern{
 }
 
 func makeTailCalls(e *encoder.Encoded) optimizer {
-	return func(root visitor.Node) visitor.Node {
-		mapper := tailCallMapper{e}
-		visitor.Replace(root, tailCallPattern, mapper.perform)
-		return root
+	return func(code isa.Instructions) isa.Instructions {
+		mapper := &tailCallMapper{e}
+		r := visitor.Replace(tailCallPattern, mapper.perform)
+		root := visitor.All(code)
+		r.Instructions(root)
+		return root.Code()
 	}
-}
-
-func (m tailCallMapper) canTailCall(i isa.Instruction) bool {
-	if oc, op := i.Split(); oc == isa.Const {
-		_, ok := m.Constants[op].(*vm.Closure)
-		return ok
-	}
-	return true
 }
 
 func (m tailCallMapper) perform(i isa.Instructions) isa.Instructions {
@@ -37,8 +31,7 @@ func (m tailCallMapper) perform(i isa.Instructions) isa.Instructions {
 		return i
 	}
 	var argCount isa.Operand
-	oc, op := i[1].Split()
-	switch oc {
+	switch oc, op := i[1].Split(); oc {
 	case isa.Call0:
 		// no-op
 	case isa.Call1:
@@ -52,4 +45,12 @@ func (m tailCallMapper) perform(i isa.Instructions) isa.Instructions {
 		i[0],
 		isa.TailCall.New(argCount),
 	}
+}
+
+func (m tailCallMapper) canTailCall(i isa.Instruction) bool {
+	if oc, op := i.Split(); oc == isa.Const {
+		_, ok := m.Constants[op].(*vm.Closure)
+		return ok
+	}
+	return true
 }

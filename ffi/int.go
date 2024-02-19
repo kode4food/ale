@@ -29,8 +29,7 @@ var (
 )
 
 func makeWrappedInt(t reflect.Type) (Wrapper, error) {
-	k := t.Kind()
-	switch k {
+	switch k := t.Kind(); k {
 	case reflect.Int:
 		return intWrapper(k), nil
 	case reflect.Int64:

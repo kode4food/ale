@@ -14,16 +14,20 @@ var (
 		isa.True:  isa.RetTrue,
 	}
 
-	literalReturnPatterns = visitor.Pattern{
-		basics.MapKeys(literalReturnMap),
-		{isa.Return},
-	}
+	literalReturnReplace = visitor.Replace(
+		visitor.Pattern{
+			basics.MapKeys(literalReturnMap),
+			{isa.Return},
+		},
+		literalReturnMapper,
+	)
 )
 
 func makeLiteralReturns(*encoder.Encoded) optimizer {
-	return func(root visitor.Node) visitor.Node {
-		visitor.Replace(root, literalReturnPatterns, literalReturnMapper)
-		return root
+	return func(code isa.Instructions) isa.Instructions {
+		root := visitor.All(code)
+		literalReturnReplace.Instructions(root)
+		return root.Code()
 	}
 }
 

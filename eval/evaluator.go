@@ -3,6 +3,7 @@ package eval
 import (
 	"github.com/kode4food/ale/compiler/encoder"
 	"github.com/kode4food/ale/compiler/generate"
+	"github.com/kode4food/ale/compiler/ir/analysis"
 	"github.com/kode4food/ale/compiler/procedure"
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/env"
@@ -37,6 +38,7 @@ func Value(ns env.Namespace, v data.Value) data.Value {
 
 func encodeAndRun(e encoder.Encoder) data.Value {
 	encoded := e.Encode()
+	analysis.MustVerify(encoded.Code)
 	fn := procedure.FromEncoded(encoded)
 	closure := fn.Call().(data.Procedure)
 	return closure.Call()

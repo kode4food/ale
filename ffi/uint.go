@@ -25,8 +25,7 @@ var (
 )
 
 func makeWrappedUnsignedInt(t reflect.Type) (Wrapper, error) {
-	k := t.Kind()
-	switch k {
+	switch k := t.Kind(); k {
 	case reflect.Uint:
 		return uintWrapper(k), nil
 	case reflect.Uint64:

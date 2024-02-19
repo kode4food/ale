@@ -1,30 +1,37 @@
-package isa_test
+package encoder_test
 
 import (
 	"testing"
 
+	"github.com/kode4food/ale/compiler/encoder"
 	"github.com/kode4food/ale/internal/assert"
 	"github.com/kode4food/ale/runtime/isa"
 )
 
-func TestFlattenJump(t *testing.T) {
+func makeEncoded(code isa.Instructions) *encoder.Encoded {
+	return &encoder.Encoded{
+		Code: code,
+	}
+}
+
+func TestRunnableJump(t *testing.T) {
 	as := assert.New(t)
 
-	i1 := isa.Flatten(isa.Instructions{
+	i1 := makeEncoded(isa.Instructions{
 		isa.NoOp.New(),
 		isa.Label.New(0),
 		isa.Jump.New(0),
-	})
+	}).Runnable()
 
 	as.Equal(isa.Instructions{
 		isa.Jump.New(0),
-	}, i1)
+	}, i1.Code)
 }
 
-func TestFlattenCondJump(t *testing.T) {
+func TestRunnableCondJump(t *testing.T) {
 	as := assert.New(t)
 
-	i1 := isa.Flatten(isa.Instructions{
+	i1 := makeEncoded(isa.Instructions{
 		isa.NoOp.New(),
 		isa.Label.New(0),
 		isa.NoOp.New(),
@@ -32,18 +39,18 @@ func TestFlattenCondJump(t *testing.T) {
 		isa.NoOp.New(),
 		isa.CondJump.New(0),
 		isa.NoOp.New(),
-	})
+	}).Runnable()
 
 	as.Equal(isa.Instructions{
 		isa.False.New(),
 		isa.CondJump.New(0),
-	}, i1)
+	}, i1.Code)
 }
 
-func TestForwardJump(t *testing.T) {
+func TestRunnableForwardJump(t *testing.T) {
 	as := assert.New(t)
 
-	i1 := isa.Flatten(isa.Instructions{
+	i1 := makeEncoded(isa.Instructions{
 		isa.NoOp.New(),
 		isa.Label.New(0),
 		isa.NoOp.New(),
@@ -52,21 +59,20 @@ func TestForwardJump(t *testing.T) {
 		isa.Label.New(1),
 		isa.NoOp.New(),
 		isa.Jump.New(0),
-	})
+	}).Runnable()
 
 	as.Equal(isa.Instructions{
-		isa.Jump.New(1),
 		isa.Jump.New(0),
-	}, i1)
+	}, i1.Code)
 }
 
-func TestDoubleAnchor(t *testing.T) {
+func TestRunnableDoubleAnchor(t *testing.T) {
 	as := assert.New(t)
 
-	defer as.ExpectPanic(isa.ErrLabelAlreadyAnchored)
+	defer as.ExpectPanic(encoder.ErrLabelAlreadyAnchored)
 
-	isa.Flatten(isa.Instructions{
+	makeEncoded(isa.Instructions{
 		isa.Label.New(0),
 		isa.Label.New(0),
-	})
+	}).Runnable()
 }

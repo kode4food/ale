@@ -4,9 +4,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/kode4food/ale/env"
-
 	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/env"
 	str "github.com/kode4food/ale/internal/strings"
 	"github.com/kode4food/comb/basics"
 )
@@ -23,7 +22,7 @@ type (
 	// Instructions represent a set of Instructions
 	Instructions []Instruction
 
-	// Runnable is a flattened representation of the Encoded state that can be
+	// Runnable is a finalized representation of the Encoded state that can be
 	// executed by the abstract machine
 	Runnable struct {
 		Code       Instructions
@@ -58,6 +57,15 @@ func New(oc Opcode, args ...Operand) Instruction {
 	default:
 		panic(fmt.Errorf(ErrBadInstruction, oc.String()))
 	}
+}
+
+func (i Instructions) HasOpcode(oc Opcode) bool {
+	for _, e := range i {
+		if e.Opcode() == oc {
+			return true
+		}
+	}
+	return false
 }
 
 func (i Instructions) String() string {

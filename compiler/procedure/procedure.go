@@ -11,7 +11,7 @@ import (
 // Encoded representation
 func FromEncoded(e *encoder.Encoded) *vm.Procedure {
 	return &vm.Procedure{
-		Runnable:     *optimize.FromEncoded(e).Runnable(),
+		Runnable:     *optimize.Encoded(e).Runnable(),
 		ArityChecker: data.AnyArityChecker,
 	}
 }

@@ -43,6 +43,13 @@ type (
 	}
 )
 
+// All treats a set of instructions as a single block (no branching)
+func All(code isa.Instructions) Instructions {
+	return &instructions{
+		code: code,
+	}
+}
+
 // Branch splits linear instructions into a tree of conditional branches
 func Branch(code isa.Instructions) Node {
 	for pc, inst := range code {

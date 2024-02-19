@@ -3,7 +3,6 @@ package encoder
 import (
 	"slices"
 
-	"github.com/kode4food/ale/compiler/ir/analysis"
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/env"
 	"github.com/kode4food/ale/runtime/isa"
@@ -45,19 +44,7 @@ type (
 		code      isa.Instructions
 		nextLabel isa.Operand
 		nextLocal isa.Operand
-		maxLocal  isa.Operand
 	}
-
-	// Encoded is a snapshot of the current Encoder's state. It is used as an
-	// intermediate step in the compilation process, particularly as input to
-	// the optimizer.
-	Encoded struct {
-		notRunnable
-		Closure data.Locals
-	}
-
-	// notRunnable captures the fields to later create a Runnable
-	notRunnable isa.Runnable
 )
 
 // NewEncoder instantiates a new Encoder
@@ -84,13 +71,9 @@ func (e *encoder) Emit(oc isa.Opcode, args ...isa.Operand) {
 // Encode returns the encoder's resulting abstract machine Instructions
 func (e *encoder) Encode() *Encoded {
 	return &Encoded{
-		notRunnable: notRunnable{
-			Code:       slices.Clone(e.code),
-			Globals:    e.Globals(),
-			Constants:  slices.Clone(e.constants),
-			LocalCount: e.maxLocal,
-			StackSize:  analysis.MustCalculateStackSize(e.code),
-		},
+		Code:      e.code,
+		Globals:   e.Globals(),
+		Constants: slices.Clone(e.constants),
 		Closure: basics.Map(e.closure, func(elem *IndexedCell) data.Local {
 			return elem.Name
 		}),
@@ -106,12 +89,4 @@ func (e *encoder) Globals() env.Namespace {
 		return e.parent.Globals()
 	}
 	return nil
-}
-
-// Runnable returns a flattened representation of the Encoded state that can
-// be executed by the abstract machine
-func (e *Encoded) Runnable() *isa.Runnable {
-	res := (isa.Runnable)(e.notRunnable)
-	res.Code = isa.Flatten(e.Code)
-	return &res
 }

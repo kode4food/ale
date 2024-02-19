@@ -1,15 +1,23 @@
 package assert
 
 import (
+	"sync"
+
 	"github.com/kode4food/ale/compiler/encoder"
 	"github.com/kode4food/ale/core/bootstrap"
 	"github.com/kode4food/ale/env"
 )
 
-var testEnv = bootstrap.DevNullEnvironment()
+var (
+	testOnce sync.Once
+	testEnv  *env.Environment
+)
 
 // GetTestEnvironment returns an immutable root testing Environment
 func GetTestEnvironment() *env.Environment {
+	testOnce.Do(func() {
+		testEnv = bootstrap.DevNullEnvironment()
+	})
 	return testEnv
 }
 

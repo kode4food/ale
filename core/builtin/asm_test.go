@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/kode4food/ale/compiler/ir/analysis"
+
 	"github.com/kode4food/ale/compiler/encoder"
 	"github.com/kode4food/ale/core/builtin"
 	"github.com/kode4food/ale/internal/assert"
@@ -182,4 +184,9 @@ func TestAsmOperandSizeError(t *testing.T) {
 		fmt.Sprintf("(asm* pos-int %d)", isa.OperandMask+1),
 		fmt.Errorf(isa.ErrExpectedOperand, isa.OperandMask+1),
 	)
+}
+
+func TestAsmStackSizeError(t *testing.T) {
+	as := assert.New(t)
+	as.PanicWith(`(asm* pop)`, fmt.Errorf(analysis.ErrBadStackTermination, -2))
 }

@@ -43,9 +43,6 @@ func (e *encoder) peekLocals() Locals {
 func (e *encoder) allocLocal() isa.Operand {
 	idx := e.nextLocal
 	e.nextLocal++
-	if e.nextLocal > e.maxLocal {
-		e.maxLocal = e.nextLocal
-	}
 	return idx
 }
 

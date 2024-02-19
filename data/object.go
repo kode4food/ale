@@ -27,8 +27,8 @@ const ErrMapNotPaired = "map does not contain an even number of elements"
 // EmptyObject represents an empty Object
 var (
 	EmptyObject *Object
-
-	objectHash = rand.Uint64()
+	emptyPairs  = Pairs{}
+	objectHash  = rand.Uint64()
 
 	// compile-time checks for interface implementation
 	_ Caller          = &Object{}
@@ -257,6 +257,9 @@ func (o *Object) hashCode(acc uint64) uint64 {
 }
 
 func (o *Object) Pairs() Pairs {
+	if o == nil {
+		return emptyPairs
+	}
 	return o.pairs(Pairs{})
 }
 

@@ -56,9 +56,7 @@ func resolveLocal(e encoder.Encoder, l data.Local) *encoder.ScopedCell {
 }
 
 func resolveGlobal(e encoder.Encoder, s data.Symbol) {
-	globals := e.Globals()
-	entry := env.MustResolveSymbol(globals, s)
-	if entry.IsBound() && entry.Owner() == globals {
+	if entry := env.MustResolveSymbol(e.Globals(), s); entry.IsBound() {
 		Literal(e, entry.Value())
 		return
 	}

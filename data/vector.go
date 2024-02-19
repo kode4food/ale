@@ -94,6 +94,11 @@ func (v Vector) Reverse() Sequence {
 	return res
 }
 
+func (v Vector) IndexOf(val Value) (int, bool) {
+	i := slices.IndexFunc(v, val.Equal)
+	return i, i != -1
+}
+
 func (v Vector) Call(args ...Value) Value {
 	return indexedCall(v, args)
 }

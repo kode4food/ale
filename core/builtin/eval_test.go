@@ -28,7 +28,6 @@ func TestEval(t *testing.T) {
 		isa.PosInt.New(2),
 		isa.PosInt.New(1),
 		isa.Const.New(0),
-		isa.Resolve.New(),
 		isa.Const.New(1),
 		isa.Call.New(3),
 		isa.Const.New(2),
@@ -37,7 +36,7 @@ func TestEval(t *testing.T) {
 	}, enc1.Code)
 
 	c := enc1.Constants
-	as.Equal(LS("+"), c[0])
+	as.Equal(assert.GetRootSymbol(e1, "+"), c[0])
 	as.Equal(assert.GetRootSymbol(e1, "list"), c[1])
 
 	// check to see that the third constant is evalFunc
