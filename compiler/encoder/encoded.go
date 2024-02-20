@@ -51,12 +51,6 @@ func (e *Encoded) Copy() *Encoded {
 	return &res
 }
 
-func (e *Encoded) AddConstant(v data.Value) isa.Operand {
-	c, idx := addConstant(e.Constants, v)
-	e.Constants = c
-	return idx
-}
-
 // Runnable takes an Encoded and finalizes it into a Runnable that the abstract
 // machine can execute. Jumps are resolved and unused constants are discarded.
 func (e *Encoded) Runnable() *isa.Runnable {
