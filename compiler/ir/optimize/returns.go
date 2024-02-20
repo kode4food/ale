@@ -8,13 +8,11 @@ import (
 
 type returnSplitter struct{}
 
-func makeSplitReturns(*encoder.Encoded) optimizer {
-	return func(code isa.Instructions) isa.Instructions {
-		r := new(returnSplitter)
-		root := visitor.Branch(code)
-		visitor.DepthFirst(root, r)
-		return root.Code()
-	}
+func splitReturns(e *encoder.Encoded) {
+	r := new(returnSplitter)
+	root := visitor.Branch(e.Code)
+	visitor.DepthFirst(root, r)
+	e.Code = root.Code()
 }
 
 func (*returnSplitter) EnterRoot(visitor.Node)            {}

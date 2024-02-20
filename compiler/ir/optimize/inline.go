@@ -35,17 +35,15 @@ var (
 	}
 )
 
-func makeInlineCalls(e *encoder.Encoded) optimizer {
-	return func(code isa.Instructions) isa.Instructions {
-		mapper := &inlineCallMapper{
-			Encoded:   e,
-			nextLabel: getNextLabel(e.Code),
-			baseLocal: getNextLocal(e.Code),
-		}
-		root := visitor.All(code)
-		visitor.Replace(inlineCallPattern, mapper.perform).Instructions(root)
-		return root.Code()
+func inlineCalls(e *encoder.Encoded) {
+	mapper := &inlineCallMapper{
+		Encoded:   e,
+		nextLabel: getNextLabel(e.Code),
+		baseLocal: getNextLocal(e.Code),
 	}
+	root := visitor.All(e.Code)
+	visitor.Replace(inlineCallPattern, mapper.perform).Instructions(root)
+	e.Code = root.Code()
 }
 
 func (m *inlineCallMapper) perform(i isa.Instructions) isa.Instructions {

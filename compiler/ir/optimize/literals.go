@@ -23,12 +23,10 @@ var (
 	)
 )
 
-func makeLiteralReturns(*encoder.Encoded) optimizer {
-	return func(code isa.Instructions) isa.Instructions {
-		root := visitor.All(code)
-		literalReturnReplace.Instructions(root)
-		return root.Code()
-	}
+func literalReturns(e *encoder.Encoded) {
+	root := visitor.All(e.Code)
+	literalReturnReplace.Instructions(root)
+	e.Code = root.Code()
 }
 
 func literalReturnMapper(i isa.Instructions) isa.Instructions {

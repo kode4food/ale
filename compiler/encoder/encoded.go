@@ -2,6 +2,7 @@ package encoder
 
 import (
 	"errors"
+	"slices"
 
 	"github.com/kode4food/ale/compiler/ir/analysis"
 	"github.com/kode4food/ale/data"
@@ -41,6 +42,14 @@ type (
 // ErrLabelAlreadyAnchored is raised when the finalizer identifies that a label
 // has been anchored more than once in the Instructions stream
 const ErrLabelAlreadyAnchored = "label has already been anchored"
+
+func (e *Encoded) Copy() *Encoded {
+	res := *e
+	res.Code = slices.Clone(e.Code)
+	res.Constants = slices.Clone(e.Constants)
+	res.Closure = slices.Clone(e.Closure)
+	return &res
+}
 
 func (e *Encoded) AddConstant(v data.Value) isa.Operand {
 	c, idx := addConstant(e.Constants, v)

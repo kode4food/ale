@@ -16,14 +16,12 @@ var tailCallPattern = visitor.Pattern{
 	{isa.Return},
 }
 
-func makeTailCalls(e *encoder.Encoded) optimizer {
-	return func(code isa.Instructions) isa.Instructions {
-		mapper := &tailCallMapper{e}
-		r := visitor.Replace(tailCallPattern, mapper.perform)
-		root := visitor.All(code)
-		r.Instructions(root)
-		return root.Code()
-	}
+func makeTailCalls(e *encoder.Encoded) {
+	mapper := &tailCallMapper{e}
+	r := visitor.Replace(tailCallPattern, mapper.perform)
+	root := visitor.All(e.Code)
+	r.Instructions(root)
+	e.Code = root.Code()
 }
 
 func (m tailCallMapper) perform(i isa.Instructions) isa.Instructions {

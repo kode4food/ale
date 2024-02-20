@@ -1,30 +1,21 @@
 package optimize
 
-import (
-	"github.com/kode4food/ale/compiler/encoder"
-	"github.com/kode4food/ale/runtime/isa"
-	"github.com/kode4food/comb/basics"
-)
+import "github.com/kode4food/ale/compiler/encoder"
 
-type optimizer func(instructions isa.Instructions) isa.Instructions
+type optimizer func(*encoder.Encoded)
 
-var makeOptimizers = []func(*encoder.Encoded) optimizer{
-	makeSplitReturns,   // roll standalone returns into preceding branches
-	makeLiteralReturns, // convert literal returns into single instructions
-	makeTailCalls,      // replace calls in tail position with a tail-call
-	makeInlineCalls,    // inline calls to procedures that qualify
+var optimizers = []optimizer{
+	splitReturns,   // roll standalone returns into preceding branches
+	literalReturns, // convert literal returns into single instructions
+	makeTailCalls,  // replace calls in tail position with a tail-call
+	inlineCalls,    // inline calls to procedures that qualify
 }
 
 // Encoded takes an Encoded representation and returns an optimized one
 func Encoded(e *encoder.Encoded) *encoder.Encoded {
-	res := *e
-	optimizers := basics.Map(makeOptimizers,
-		func(fn func(*encoder.Encoded) optimizer) optimizer {
-			return fn(&res)
-		},
-	)
+	res := e.Copy()
 	for _, o := range optimizers {
-		res.Code = o(res.Code)
+		o(res)
 	}
-	return &res
+	return res
 }
