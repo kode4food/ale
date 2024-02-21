@@ -24,7 +24,7 @@ func TestBranch(t *testing.T) {
 	e1.Emit(isa.Pop)
 	e1.Emit(isa.Return)
 
-	b := visitor.Branch(e1.Encode().Code).(visitor.Branches)
+	b := visitor.Branched(e1.Encode().Code).(visitor.Branches)
 
 	as.Instructions(isa.Instructions{
 		isa.NegInt.New(1),

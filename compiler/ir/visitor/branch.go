@@ -8,7 +8,7 @@ import (
 )
 
 type (
-	// A Node is returned when a Branch analysis is performed
+	// A Node is returned when a Branched analysis is performed
 	Node interface {
 		Code() isa.Instructions
 	}
@@ -50,8 +50,8 @@ func All(code isa.Instructions) Instructions {
 	}
 }
 
-// Branch splits linear instructions into a tree of conditional branches
-func Branch(code isa.Instructions) Node {
+// Branched splits linear instructions into a tree of conditional branches
+func Branched(code isa.Instructions) Node {
 	for pc, inst := range code {
 		if oc := inst.Opcode(); oc != isa.CondJump {
 			continue
@@ -92,12 +92,12 @@ func splitCondJump(code isa.Instructions, condJumpIdx int) *branches {
 
 	return &branches{
 		prologue:   prologue,
-		elseBranch: Branch(rest[0:elseJumpIdx]),
+		elseBranch: Branched(rest[0:elseJumpIdx]),
 		elseJump:   elseJump,
 		thenLabel:  thenLabel,
-		thenBranch: Branch(rest[thenIdx+1 : joinIdx]),
+		thenBranch: Branched(rest[thenIdx+1 : joinIdx]),
 		joinLabel:  joinLabel,
-		epilogue:   Branch(rest[joinIdx+1:]),
+		epilogue:   Branched(rest[joinIdx+1:]),
 	}
 }
 

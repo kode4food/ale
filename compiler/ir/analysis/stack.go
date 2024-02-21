@@ -25,7 +25,7 @@ const (
 
 func verifyStackSize(code isa.Instructions) error {
 	s := new(stackSizes)
-	if err := s.calculateNode(visitor.Branch(code)); err != nil {
+	if err := s.calculateNode(visitor.Branched(code)); err != nil {
 		return err
 	}
 	if s.endSize != 0 {
@@ -38,7 +38,7 @@ func verifyStackSize(code isa.Instructions) error {
 // Instructions provided.
 func CalculateStackSize(code isa.Instructions) (isa.Operand, error) {
 	s := new(stackSizes)
-	if err := s.calculateNode(visitor.Branch(code)); err != nil {
+	if err := s.calculateNode(visitor.Branched(code)); err != nil {
 		return 0, err
 	}
 	return isa.Operand(s.maxSize), nil
