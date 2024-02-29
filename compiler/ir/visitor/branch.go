@@ -1,11 +1,6 @@
 package visitor
 
-import (
-	"bytes"
-	"strings"
-
-	"github.com/kode4food/ale/runtime/isa"
-)
+import "github.com/kode4food/ale/runtime/isa"
 
 type (
 	// A Node is returned when a Branched analysis is performed
@@ -137,14 +132,6 @@ func (b *branches) Code() isa.Instructions {
 	return res
 }
 
-func (b *branches) String() string {
-	return indentedString(0, b)
-}
-
-func (i *instructions) String() string {
-	return indentedString(0, i)
-}
-
 func findLabel(code isa.Instructions, lbl isa.Operand) (int, isa.Instruction) {
 	for pc, inst := range code {
 		if oc, op := inst.Split(); oc == isa.Label && op == lbl {
@@ -152,24 +139,4 @@ func findLabel(code isa.Instructions, lbl isa.Operand) (int, isa.Instruction) {
 		}
 	}
 	return -1, 0
-}
-
-func indentedString(lvl int, n Node) string {
-	var buf bytes.Buffer
-	switch n := n.(type) {
-	case Branches:
-		buf.WriteString(indentedString(lvl, n.Prologue()))
-		buf.WriteString(indentedString(lvl+1, n.ThenBranch()))
-		buf.WriteString(strings.Repeat("  ", lvl))
-		buf.WriteString("else:\n")
-		buf.WriteString(indentedString(lvl+1, n.ElseBranch()))
-		buf.WriteString(indentedString(lvl, n.Epilogue()))
-	case Instructions:
-		for _, i := range n.Code() {
-			buf.WriteString(strings.Repeat("  ", lvl))
-			buf.WriteString(i.String())
-			buf.WriteString("\n")
-		}
-	}
-	return buf.String()
 }

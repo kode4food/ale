@@ -1,7 +1,6 @@
 package visitor_test
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/kode4food/ale/compiler/encoder"
@@ -44,11 +43,4 @@ func TestBranch(t *testing.T) {
 		isa.Pop.New(),
 		isa.Return.New(),
 	}, b.Epilogue().Code())
-
-	as.Equal(
-		"neg-int 1\ntrue\ncond-jump 0\n  pos-int 1\nelse:\n  zero\npop\nreturn\n",
-		b.(fmt.Stringer).String(),
-	)
-
-	as.Equal("pop\nreturn\n", b.Epilogue().(fmt.Stringer).String())
 }
