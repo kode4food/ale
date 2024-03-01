@@ -8,13 +8,13 @@ import (
 )
 
 func doArg(vm *VM) {
-	vm.MEM[vm.SP] = vm.ARGS.Data[vm.INST.Operand()]
+	vm.MEM[vm.SP] = vm.ARGS[vm.INST.Operand()]
 	vm.SP--
 	vm.PC++
 }
 
 func doArgLen(vm *VM) {
-	vm.MEM[vm.SP] = data.Integer(len(vm.ARGS.Data))
+	vm.MEM[vm.SP] = data.Integer(len(vm.ARGS))
 	vm.SP--
 	vm.PC++
 }
@@ -96,13 +96,15 @@ func doResolve(vm *VM) {
 }
 
 func doRestArg(vm *VM) {
-	vm.MEM[vm.SP] = vm.ARGS.Data[vm.INST.Operand():]
+	vm.MEM[vm.SP] = vm.ARGS[vm.INST.Operand():]
 	vm.SP--
 	vm.PC++
 }
 
 func doPopArgs(vm *VM) {
-	vm.ARGS = *vm.ARGS.Next
+	head := vm.argStack
+	vm.ARGS = head.args
+	vm.argStack = head.next
 	vm.PC++
 }
 
@@ -110,9 +112,11 @@ func doPushArgs(vm *VM) {
 	op := vm.INST.Operand()
 	SP1 := vm.SP + 1
 	RES := SP1 + int(op)
-	args := vm.ARGS
-	vm.ARGS.Next = &args
-	vm.ARGS.Data = slices.Clone(vm.MEM[SP1:RES])
+	vm.argStack = &argStack{
+		args: vm.ARGS,
+		next: vm.argStack,
+	}
+	vm.ARGS = slices.Clone(vm.MEM[SP1:RES])
 	vm.SP = RES - 1
 	vm.PC++
 }

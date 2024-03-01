@@ -106,7 +106,7 @@ func (p *Procedure) Get(key data.Value) (data.Value, bool) {
 
 // Call turns Closure into a Procedure, and serves as the virtual machine
 func (c *Closure) Call(args ...data.Value) data.Value {
-	return (&VM{CL: c, ARGS: ArgStack{Data: args}}).Run()
+	return (&VM{CL: c, ARGS: args}).Run()
 }
 
 // CheckArity performs a compile-time arity check for the Closure

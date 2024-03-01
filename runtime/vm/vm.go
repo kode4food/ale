@@ -18,13 +18,15 @@ type (
 		INST isa.Instruction
 		CODE isa.Instructions
 		MEM  data.Vector
-		ARGS ArgStack
+		ARGS data.Vector
 		RES  data.Value
+
+		argStack *argStack
 	}
 
-	ArgStack struct {
-		Data data.Vector
-		Next *ArgStack
+	argStack struct {
+		args data.Vector
+		next *argStack
 	}
 )
 

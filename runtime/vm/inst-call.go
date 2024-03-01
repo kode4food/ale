@@ -46,11 +46,11 @@ func doTailCall(vm *VM) {
 	SP1 := vm.SP + 1
 	SP2 := SP1 + 1
 	val := vm.MEM[SP1]
-	vm.ARGS.Data = slices.Clone(vm.MEM[SP2 : SP2+int(op)])
+	vm.ARGS = slices.Clone(vm.MEM[SP2 : SP2+int(op)])
 	cl, ok := val.(*Closure)
 	if !ok {
 		vm.ST = SUCCESS
-		vm.RES = val.(data.Procedure).Call(vm.ARGS.Data...)
+		vm.RES = val.(data.Procedure).Call(vm.ARGS...)
 		return
 	}
 	if cl == vm.CL {
