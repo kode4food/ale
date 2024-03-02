@@ -63,20 +63,20 @@ const (
 	NumLte                 // Less or Equal To
 	Panic                  // Abnormally Halt
 	Pop                    // Discard Value
-	PopArgs                // Pop arguments from the VM's arg stack
 	PosInt                 // Push Positive Integer (in Operand)
 	Private                // Declare a private Namespace entry
-	PushArgs               // Push arguments onto the VM's arg stack
 	Resolve                // Resolve Global Symbol
 	RestArg                // Retrieve Arguments Tail
 	RetFalse               // Return False
 	RetNull                // Return Null (Empty List)
 	RetTrue                // Return True
 	Return                 // Return Value
+	SetArgs                // Set arguments from a Vector on the stack
 	Store                  // Store Local
 	Sub                    // Subtraction
 	TailCall               // Tail Call
 	True                   // Push True
+	Vector                 // Make a new Vector from the Stack
 	Zero                   // Push Zero
 )
 

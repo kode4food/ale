@@ -1,6 +1,10 @@
 package vm
 
-import "github.com/kode4food/ale/data"
+import (
+	"slices"
+
+	"github.com/kode4food/ale/data"
+)
 
 func doCar(vm *VM) {
 	SP1 := vm.SP + 1
@@ -29,5 +33,14 @@ func doCons(vm *VM) {
 func doEmpty(vm *VM) {
 	SP1 := vm.SP + 1
 	vm.MEM[SP1] = data.Bool(vm.MEM[SP1].(data.Sequence).IsEmpty())
+	vm.PC++
+}
+
+func doVector(vm *VM) {
+	op := vm.INST.Operand()
+	SP1 := vm.SP + 1
+	RES := SP1 + int(op)
+	vm.MEM[RES-1] = slices.Clone(vm.MEM[SP1:RES])
+	vm.SP = RES - 2
 	vm.PC++
 }

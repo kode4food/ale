@@ -52,11 +52,15 @@ func (m *inlineCallMapper) perform(i isa.Instructions) isa.Instructions {
 		return i
 	}
 	m.numInlined++
-	c := slices.Clone(p.Code)
-	m.reindex(c, p)
+
+	c := m.reindex(p)
 	c = m.relabel(c)
 	c = m.returns(c)
-	c = m.stackArgs(c, getCallArgCount(i[1]))
+
+	argCount := getCallArgCount(i[1])
+	argsLocal := m.baseLocal + getNextLocal(p.Code)
+	c = m.stackArgs(c, argCount, argsLocal)
+
 	return c
 }
 
@@ -68,25 +72,27 @@ func (m *inlineCallMapper) canInline(i isa.Instruction) (*vm.Closure, bool) {
 		p.Globals == m.Globals
 }
 
-func (m *inlineCallMapper) reindex(c isa.Instructions, p *vm.Closure) {
+func (m *inlineCallMapper) reindex(p *vm.Closure) isa.Instructions {
+	res := slices.Clone(p.Code)
 	captured := map[isa.Operand]isa.Operand{}
-	for idx, i := range c {
+	for idx, i := range res {
 		switch oc, op := i.Split(); oc {
 		case isa.Const:
 			val := p.Constants[op]
 			to := m.addConstant(val)
-			c[idx] = isa.New(oc, to)
+			res[idx] = isa.New(oc, to)
 		case isa.Closure:
 			to, ok := captured[op]
 			if !ok {
 				to = m.addConstant(p.Captured[op])
 				captured[op] = to
 			}
-			c[idx] = isa.New(isa.Const, to)
+			res[idx] = isa.New(isa.Const, to)
 		case isa.Load, isa.Store:
-			c[idx] = isa.New(oc, op+m.baseLocal)
+			res[idx] = isa.New(oc, op+m.baseLocal)
 		}
 	}
+	return res
 }
 
 func (m *inlineCallMapper) relabel(c isa.Instructions) isa.Instructions {
@@ -153,12 +159,20 @@ func (m *inlineCallMapper) addConstant(val data.Value) isa.Operand {
 }
 
 func (m *inlineCallMapper) stackArgs(
-	c isa.Instructions, argc isa.Operand,
+	c isa.Instructions, argc isa.Operand, argsLocal isa.Operand,
 ) isa.Instructions {
-	res := make(isa.Instructions, 0, len(c)+2)
-	res = append(res, isa.PushArgs.New(argc))
+	res := make(isa.Instructions, 0, len(c)+6)
+	res = append(res,
+		isa.RestArg.New(0),
+		isa.Store.New(argsLocal),
+		isa.Vector.New(argc),
+		isa.SetArgs.New(),
+	)
 	res = append(res, c...)
-	res = append(res, isa.PopArgs.New())
+	res = append(res,
+		isa.Load.New(argsLocal),
+		isa.SetArgs.New(),
+	)
 	return res
 }
 

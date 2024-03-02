@@ -20,13 +20,6 @@ type (
 		MEM  data.Vector
 		ARGS data.Vector
 		RES  data.Value
-
-		argStack *argStack
-	}
-
-	argStack struct {
-		args data.Vector
-		next *argStack
 	}
 )
 
@@ -139,14 +132,10 @@ func (vm *VM) Run() data.Value {
 			doPanic(vm)
 		case isa.Pop:
 			doPop(vm)
-		case isa.PopArgs:
-			doPopArgs(vm)
 		case isa.PosInt:
 			doPosInt(vm)
 		case isa.Private:
 			doPrivate(vm)
-		case isa.PushArgs:
-			doPushArgs(vm)
 		case isa.Resolve:
 			doResolve(vm)
 		case isa.RestArg:
@@ -159,6 +148,8 @@ func (vm *VM) Run() data.Value {
 			doRetTrue(vm)
 		case isa.Return:
 			doReturn(vm)
+		case isa.SetArgs:
+			doSetArgs(vm)
 		case isa.Store:
 			doStore(vm)
 		case isa.Sub:
@@ -167,6 +158,8 @@ func (vm *VM) Run() data.Value {
 			doTailCall(vm)
 		case isa.True:
 			doTrue(vm)
+		case isa.Vector:
+			doVector(vm)
 		case isa.Zero:
 			doZero(vm)
 		default:

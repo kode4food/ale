@@ -1,8 +1,6 @@
 package vm
 
 import (
-	"slices"
-
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/env"
 )
@@ -101,23 +99,9 @@ func doRestArg(vm *VM) {
 	vm.PC++
 }
 
-func doPopArgs(vm *VM) {
-	head := vm.argStack
-	vm.ARGS = head.args
-	vm.argStack = head.next
-	vm.PC++
-}
-
-func doPushArgs(vm *VM) {
-	op := vm.INST.Operand()
-	SP1 := vm.SP + 1
-	RES := SP1 + int(op)
-	vm.argStack = &argStack{
-		args: vm.ARGS,
-		next: vm.argStack,
-	}
-	vm.ARGS = slices.Clone(vm.MEM[SP1:RES])
-	vm.SP = RES - 1
+func doSetArgs(vm *VM) {
+	vm.SP++
+	vm.ARGS = vm.MEM[vm.SP].(data.Vector)
 	vm.PC++
 }
 
