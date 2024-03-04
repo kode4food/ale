@@ -38,9 +38,8 @@ func doEmpty(vm *VM) {
 
 func doVector(vm *VM) {
 	op := vm.INST.Operand()
-	SP1 := vm.SP + 1
-	RES := SP1 + int(op)
-	vm.MEM[RES-1] = slices.Clone(vm.MEM[SP1:RES])
-	vm.SP = RES - 2
+	RES := vm.SP + int(op)
+	vm.MEM[RES] = slices.Clone(vm.MEM[vm.SP+1 : RES+1])
+	vm.SP = RES - 1
 	vm.PC++
 }
