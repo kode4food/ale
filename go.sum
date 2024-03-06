@@ -14,8 +14,8 @@ github.com/kode4food/comb v0.0.0-20231101072951-3eb6f80a4d3f h1:PVccAkK61n7u2k5j
 github.com/kode4food/comb v0.0.0-20231101072951-3eb6f80a4d3f/go.mod h1:RBneVoCD4gswA4hUo7hQJQDBSfvpFMyT7IDo89+1hvo=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
-github.com/stretchr/testify v1.8.4 h1:CcVxjf3Q8PM0mHUKJCdn+eZZtm5yQwehR5yeSVQQcUk=
-github.com/stretchr/testify v1.8.4/go.mod h1:sz/lmYIOXD/1dqDmKjjqLyZ2RngseejIcXlSw2iwfAo=
+github.com/stretchr/testify v1.9.0 h1:HtqpIVDClZ4nwg75+f6Lvsy/wHu+3BoSGCbBAcpTsTg=
+github.com/stretchr/testify v1.9.0/go.mod h1:r2ic/lqez/lEtzL7wO/rwa5dbSLXVDPFyf8C91i36aY=
 golang.org/x/exp/typeparams v0.0.0-20231206192017-f3f8817b8deb h1:O9ulz4QbYejvlkJzZ6gNIYs+YhXXWg886sWk5ugFPSw=
 golang.org/x/exp/typeparams v0.0.0-20231206192017-f3f8817b8deb/go.mod h1:AbB0pIl9nAr9wVwH+Z2ZpaocVmF5I4GyWCDIsVjR0bk=
 golang.org/x/mod v0.16.0 h1:QX4fJ0Rr5cPQCF7O9lh9Se4pmwfwskqZfq5moyldzic=
