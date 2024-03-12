@@ -10,8 +10,8 @@ import (
 
 type arrayWrapper struct {
 	typ  reflect.Type
-	len  int
 	elem Wrapper
+	len  int
 }
 
 // ErrValueMustBeSequence is raised when an Array Unwrap call can't treat its

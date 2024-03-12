@@ -12,9 +12,9 @@ import (
 )
 
 type aleRuntimeError struct {
+	wrapped error
 	*data.Object
 	message string
-	wrapped error
 }
 
 // ErrUnexpectedType maps a Go interface conversion error to something that

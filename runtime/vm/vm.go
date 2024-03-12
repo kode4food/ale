@@ -10,16 +10,16 @@ type (
 	State int
 
 	VM struct {
+		CODE isa.Instructions
+		RES  data.Value
 		CL   *Closure
+		MEM  data.Vector
+		ARGS data.Vector
 		ST   State
 		PC   int
 		LP   int
 		SP   int
 		INST isa.Instruction
-		CODE isa.Instructions
-		MEM  data.Vector
-		ARGS data.Vector
-		RES  data.Value
 	}
 )
 

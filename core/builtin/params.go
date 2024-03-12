@@ -11,9 +11,9 @@ import (
 type (
 	paramCase struct {
 		signature data.Value
+		body      data.Sequence
 		params    data.Locals
 		rest      bool
-		body      data.Sequence
 	}
 
 	paramCases struct {

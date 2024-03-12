@@ -25,9 +25,9 @@ type (
 	// Runnable is a finalized representation of the Encoded state that can be
 	// executed by the abstract machine
 	Runnable struct {
-		Code       Instructions
-		Globals    env.Namespace
 		Constants  data.Vector
+		Globals    env.Namespace
+		Code       Instructions
 		LocalCount Operand
 		StackSize  Operand
 	}
@@ -77,16 +77,18 @@ func (i Instructions) String() string {
 	)
 }
 
+func (i Instruction) Split() (Opcode, Operand) {
+	return Opcode(i) & OpcodeMask, Operand(i) >> OpcodeSize & OperandMask
+}
+
 func (i Instruction) Opcode() Opcode {
-	return Opcode(i) & OpcodeMask
+	oc, _ := i.Split()
+	return oc
 }
 
 func (i Instruction) Operand() Operand {
-	return Operand(i) >> OpcodeSize & OperandMask
-}
-
-func (i Instruction) Split() (Opcode, Operand) {
-	return Opcode(i) & OpcodeMask, Operand(i) >> OpcodeSize & OperandMask
+	_, op := i.Split()
+	return op
 }
 
 // Equal compares this Instruction to another for equality

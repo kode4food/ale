@@ -16,8 +16,8 @@ type (
 	Mapper func(isa.Instructions) isa.Instructions
 
 	Replacer struct {
-		pattern Pattern
 		mapper  Mapper
+		pattern Pattern
 	}
 )
 

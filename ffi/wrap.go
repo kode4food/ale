@@ -16,8 +16,8 @@ type (
 	}
 
 	typeCache struct {
-		sync.RWMutex
 		entries map[reflect.Type]Wrapper
+		sync.RWMutex
 	}
 )
 

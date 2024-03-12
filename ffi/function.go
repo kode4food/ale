@@ -14,7 +14,7 @@ type (
 	}
 
 	// the type accepted by reflect.MakeFunc
-	makeFuncType func(args []reflect.Value) (results []reflect.Value)
+	makeFuncType func([]reflect.Value) []reflect.Value
 )
 
 // ErrValueMustBeProcedure is raised when a function Unwrap call can't treat

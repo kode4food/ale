@@ -12,8 +12,8 @@ import (
 )
 
 type mockWriterCloser struct {
-	closed bool
 	io.Writer
+	closed bool
 }
 
 func (m *mockWriterCloser) Close() error {

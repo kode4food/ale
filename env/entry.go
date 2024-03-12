@@ -19,11 +19,11 @@ type (
 	}
 
 	entry struct {
-		sync.RWMutex
 		owner Namespace
-		name  data.Local
 		value data.Value
+		name  data.Local
 		flags entryFlag
+		sync.RWMutex
 	}
 
 	entries map[data.Local]*entry

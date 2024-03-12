@@ -12,8 +12,8 @@ type (
 	}
 
 	Basic struct {
-		kind Kind
 		name string
+		kind Kind
 	}
 )
 

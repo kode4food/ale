@@ -13,10 +13,10 @@ import (
 type (
 	// Procedure encapsulates the initial environment of an abstract machine
 	Procedure struct {
-		isa.Runnable
 		ArityChecker data.ArityChecker
-		flags        ProcFlag
-		hash         uint64
+		isa.Runnable
+		hash  uint64
+		flags ProcFlag
 	}
 
 	ProcFlag uint

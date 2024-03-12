@@ -8,8 +8,8 @@ import (
 // Context tracks wrapped reflect.Values to detect cycles
 type Context struct {
 	parent *Context
-	child  bool
 	value  reflect.Value
+	child  bool
 }
 
 // ErrCycleDetected is raised when wrapping encounters a reference cycle

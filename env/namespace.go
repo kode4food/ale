@@ -19,10 +19,10 @@ type (
 	}
 
 	namespace struct {
-		sync.RWMutex
+		entries     entries
 		environment *Environment
 		domain      data.Local
-		entries     entries
+		sync.RWMutex
 	}
 
 	anonymous struct {

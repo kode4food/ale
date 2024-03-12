@@ -23,20 +23,18 @@ type (
 
 	finalizer struct {
 		*Encoded
-		labels     labels
+		labels     map[isa.Operand]*label
+		constMap   map[isa.Operand]isa.Operand
 		output     isa.Instructions
 		constants  data.Vector
-		constMap   map[isa.Operand]isa.Operand
 		localCount isa.Operand
 	}
 
 	label struct {
-		anchored bool
-		offset   isa.Operand
 		backRefs []isa.Operand
+		offset   isa.Operand
+		anchored bool
 	}
-
-	labels map[isa.Operand]*label
 )
 
 // ErrLabelAlreadyAnchored is raised when the finalizer identifies that a label
@@ -56,7 +54,7 @@ func (e *Encoded) Copy() *Encoded {
 func (e *Encoded) Runnable() *isa.Runnable {
 	f := &finalizer{
 		Encoded:  e,
-		labels:   labels{},
+		labels:   map[isa.Operand]*label{},
 		constMap: map[isa.Operand]isa.Operand{},
 	}
 	return f.finalize()

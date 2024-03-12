@@ -8,8 +8,8 @@ import (
 
 type (
 	Binding struct {
-		Name data.Local
 		data.Value
+		Name data.Local
 	}
 
 	Bindings []*Binding

@@ -19,8 +19,8 @@ type (
 
 	// Field describes one of the fields of a RecordType
 	Field struct {
-		Name  string
 		Value Type
+		Name  string
 	}
 
 	fields []Field
@@ -40,7 +40,7 @@ func (r *Record) Fields() []Field {
 }
 
 func (r *Record) Name() string {
-	return fmt.Sprintf("record(%s)", r.fields.name())
+	return fmt.Sprintf("record(%s)", r.name())
 }
 
 func (r *Record) Accepts(c *Checker, other Type) bool {
@@ -69,7 +69,7 @@ func (r *Record) Equal(other Type) bool {
 		return true
 	}
 	if other, ok := other.(*Record); ok {
-		return r.basic.Equal(other.basic) && r.fields.equal(other.fields)
+		return r.basic.Equal(other.basic) && r.equal(other.fields)
 	}
 	return false
 }

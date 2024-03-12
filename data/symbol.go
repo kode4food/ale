@@ -42,9 +42,9 @@ type (
 
 	// SymbolGenerator produces instance-unique local symbols
 	SymbolGenerator struct {
-		sync.Mutex
 		prefix string
 		data   [128]uint8
+		sync.Mutex
 		maxPos int
 	}
 

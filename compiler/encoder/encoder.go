@@ -35,13 +35,13 @@ type (
 	}
 
 	encoder struct {
+		locals    []Locals
+		code      isa.Instructions
 		parent    Encoder
 		globals   env.Namespace
 		constants data.Vector
 		closure   IndexedCells
 		params    paramStack
-		locals    []Locals
-		code      isa.Instructions
 		nextLabel isa.Operand
 		nextLocal isa.Operand
 	}

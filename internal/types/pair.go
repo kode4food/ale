@@ -3,9 +3,9 @@ package types
 // Pair describes a pair of typed Values
 type Pair struct {
 	basic
-	name string
 	car  Type
 	cdr  Type
+	name string
 }
 
 // MakeCons declares a new PairType that will only allow a MakeListOf with elements of

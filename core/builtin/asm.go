@@ -33,7 +33,7 @@ type (
 	callMap map[data.Local]*call
 
 	toOperandFunc func(data.Value) (isa.Operand, error)
-	toNameFunc    func(e *asmEncoder, l data.Local) data.Local
+	toNameFunc    func(*asmEncoder, data.Local) data.Local
 )
 
 const (

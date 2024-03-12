@@ -12,8 +12,8 @@ type (
 
 	// Token is a lexer value
 	Token struct {
-		typ    TokenType
 		value  data.Value
+		typ    TokenType
 		line   int
 		column int
 	}

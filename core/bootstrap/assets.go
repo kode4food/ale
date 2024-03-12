@@ -12,8 +12,8 @@ import (
 )
 
 type asset struct {
-	name  string
 	block data.Sequence
+	name  string
 }
 
 var (

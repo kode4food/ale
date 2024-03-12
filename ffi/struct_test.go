@@ -10,10 +10,10 @@ import (
 )
 
 type stateInfo struct {
-	Name        string
-	Population  int `ale:"pop"`
 	Loop        *stateInfo
+	Name        string
 	notExported string
+	Population  int `ale:"pop"`
 }
 
 func testStructStateInfo() *stateInfo {

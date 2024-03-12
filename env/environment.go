@@ -10,8 +10,8 @@ import (
 type (
 	// Environment maintains a mapping of domain names to namespaces
 	Environment struct {
-		sync.Mutex
 		data map[data.Local]Namespace
+		sync.Mutex
 	}
 
 	// Resolver resolves a namespace instance

@@ -17,9 +17,9 @@ type (
 
 	// Signature describes an ApplicableType calling signature
 	Signature struct {
+		Result    Type
 		Params    []Type
 		TakesRest bool
-		Result    Type
 	}
 
 	signatures []Signature
@@ -40,7 +40,7 @@ func (a *Applicable) Signatures() []Signature {
 }
 
 func (a *Applicable) Name() string {
-	return fmt.Sprintf("%s(%s)", a.basic.Name(), a.signatures.name())
+	return fmt.Sprintf("%s(%s)", a.basic.Name(), a.name())
 }
 
 func (a *Applicable) Accepts(c *Checker, other Type) bool {
@@ -65,7 +65,7 @@ func (a *Applicable) Equal(other Type) bool {
 	}
 	if other, ok := other.(*Applicable); ok {
 		return a.basic.Equal(other.basic) &&
-			a.signatures.equal(other.signatures)
+			a.equal(other.signatures)
 	}
 	return false
 }

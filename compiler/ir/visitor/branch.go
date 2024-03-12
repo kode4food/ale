@@ -30,11 +30,11 @@ type (
 	branches struct {
 		prologue   Instructions
 		elseBranch Node
+		thenBranch Node
+		epilogue   Node
 		elseJump   isa.Instruction
 		thenLabel  isa.Instruction
-		thenBranch Node
 		joinLabel  isa.Instruction
-		epilogue   Node
 	}
 )
 

@@ -14,9 +14,9 @@ type (
 		once     do.Action
 		resolver LazyResolver
 
-		ok     bool
 		result data.Value
 		rest   data.Sequence
+		ok     bool
 	}
 )
 

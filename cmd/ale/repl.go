@@ -39,9 +39,9 @@ type (
 
 	// REPL manages a FromLexer-Eval-Print Loop
 	REPL struct {
-		buf bytes.Buffer
-		rl  *readline.Instance
 		ns  env.Namespace
+		rl  *readline.Instance
+		buf bytes.Buffer
 		idx int
 	}
 )
@@ -79,7 +79,6 @@ func NewREPL() *REPL {
 		DisableAutoSaveHistory: true,
 		AutoComplete:           repl,
 	})
-
 	if err != nil {
 		panic(err)
 	}
