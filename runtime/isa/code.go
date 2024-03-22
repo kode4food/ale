@@ -91,6 +91,16 @@ func (i Instruction) Operand() Operand {
 	return op
 }
 
+func (i Instruction) StackChange() int {
+	oc, op := i.Split()
+	effect := MustGetEffect(oc)
+	base := effect.Push - effect.Pop
+	if effect.DPop {
+		return base - int(op)
+	}
+	return base
+}
+
 // Equal compares this Instruction to another for equality
 func (i Instruction) Equal(v data.Value) bool {
 	if v, ok := v.(Instruction); ok {
