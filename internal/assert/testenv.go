@@ -3,9 +3,9 @@ package assert
 import (
 	"sync"
 
-	"github.com/kode4food/ale/compiler/encoder"
-	"github.com/kode4food/ale/core/bootstrap"
-	"github.com/kode4food/ale/env"
+	"github.com/kode4food/ale/pkg/compiler/encoder"
+	"github.com/kode4food/ale/pkg/core/bootstrap"
+	"github.com/kode4food/ale/pkg/env"
 )
 
 var (

@@ -5,10 +5,10 @@ package markdown_test
 import (
 	"testing"
 
-	"github.com/kode4food/ale/docstring"
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
 	"github.com/kode4food/ale/internal/markdown"
+	"github.com/kode4food/ale/pkg/core/docstring"
 )
 
 func TestFormatMarkdown(t *testing.T) {

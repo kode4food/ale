@@ -3,9 +3,9 @@ package stream
 import (
 	"runtime"
 
-	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/do"
 	"github.com/kode4food/ale/internal/types"
+	"github.com/kode4food/ale/pkg/data"
 )
 
 type (

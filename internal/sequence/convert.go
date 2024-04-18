@@ -3,7 +3,7 @@ package sequence
 import (
 	"bytes"
 
-	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/pkg/data"
 )
 
 // ToList takes any sequence and converts it to a List

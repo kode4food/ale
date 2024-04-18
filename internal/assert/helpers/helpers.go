@@ -3,7 +3,7 @@ package helpers
 import (
 	"fmt"
 
-	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/pkg/data"
 )
 
 // B constructs a Bool

@@ -4,8 +4,8 @@ import (
 	"bufio"
 	"io"
 
-	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/sequence"
+	"github.com/kode4food/ale/pkg/data"
 )
 
 // InputFunc is a callback used to unmarshal values from a Reader

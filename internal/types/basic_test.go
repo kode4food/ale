@@ -3,8 +3,8 @@ package types_test
 import (
 	"testing"
 
-	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/types"
+	"github.com/kode4food/ale/pkg/data"
 	"github.com/stretchr/testify/assert"
 )
 

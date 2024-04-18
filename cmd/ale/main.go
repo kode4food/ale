@@ -1,15 +1,19 @@
 package main
 
-import "os"
+import (
+	"os"
+
+	"github.com/kode4food/ale/cmd/ale/internal"
+)
 
 func main() {
 	switch {
 	case isStdInPiped():
-		EvaluateStdIn()
+		internal.EvaluateStdIn()
 	case len(os.Args) < 2:
-		NewREPL().Run()
+		internal.NewREPL().Run()
 	default:
-		EvaluateFile(os.Args[1])
+		internal.EvaluateFile(os.Args[1])
 	}
 }
 

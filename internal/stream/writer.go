@@ -4,7 +4,7 @@ import (
 	"bufio"
 	"io"
 
-	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/pkg/data"
 )
 
 // OutputFunc is a callback used to marshal values to a Writer

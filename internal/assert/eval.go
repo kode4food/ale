@@ -1,8 +1,8 @@
 package assert
 
 import (
-	"github.com/kode4food/ale/data"
-	"github.com/kode4food/ale/eval"
+	"github.com/kode4food/ale/pkg/data"
+	"github.com/kode4food/ale/pkg/eval"
 )
 
 // Eval will evaluate source code on behalf of the test framework

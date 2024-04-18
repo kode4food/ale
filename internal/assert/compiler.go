@@ -1,12 +1,12 @@
 package assert
 
 import (
-	"github.com/kode4food/ale/compiler/encoder"
-	"github.com/kode4food/ale/compiler/generate"
-	"github.com/kode4food/ale/data"
-	"github.com/kode4food/ale/env"
-	"github.com/kode4food/ale/read"
-	"github.com/kode4food/ale/runtime/isa"
+	"github.com/kode4food/ale/pkg/compiler/encoder"
+	"github.com/kode4food/ale/pkg/compiler/generate"
+	"github.com/kode4food/ale/pkg/data"
+	"github.com/kode4food/ale/pkg/env"
+	"github.com/kode4food/ale/pkg/read"
+	"github.com/kode4food/ale/pkg/runtime/isa"
 )
 
 // EncodesAs tests that a string generates the expected set of Instructions

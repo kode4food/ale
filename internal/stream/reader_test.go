@@ -4,9 +4,9 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/assert"
 	"github.com/kode4food/ale/internal/stream"
+	"github.com/kode4food/ale/pkg/data"
 )
 
 func TestReader(t *testing.T) {

@@ -3,7 +3,7 @@ package stream
 import (
 	"io"
 
-	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/pkg/data"
 )
 
 // Writer is used to emit or write values to a stream

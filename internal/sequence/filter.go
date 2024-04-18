@@ -1,6 +1,6 @@
 package sequence
 
-import "github.com/kode4food/ale/data"
+import "github.com/kode4food/ale/pkg/data"
 
 type FilterFunc func(data.Value) bool
 

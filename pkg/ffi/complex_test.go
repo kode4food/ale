@@ -1,0 +1,22 @@
+package ffi_test
+
+import (
+	"testing"
+
+	"github.com/kode4food/ale/internal/assert"
+	. "github.com/kode4food/ale/internal/assert/helpers"
+	"github.com/kode4food/ale/pkg/data"
+	"github.com/kode4food/ale/pkg/ffi"
+)
+
+func TestComplexWrapper(t *testing.T) {
+	as := assert.New(t)
+	f := ffi.MustWrap(func(i1 complex64, i2 complex128) (complex64, complex128) {
+		return i1 * 2, i2 * 3
+	}).(data.Procedure)
+	c1 := C(F(9), F(15))
+	c2 := C(F(32), F(2))
+	r := f.Call(c1, c2).(data.Vector)
+	as.String("(18.0 . 30.0)", r[0])
+	as.String("(96.0 . 6.0)", r[1])
+}
