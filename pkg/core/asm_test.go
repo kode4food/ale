@@ -7,10 +7,10 @@ import (
 
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
-	"github.com/kode4food/ale/pkg/compiler/encoder"
-	"github.com/kode4food/ale/pkg/compiler/ir/analysis"
+	"github.com/kode4food/ale/internal/compiler/encoder"
+	"github.com/kode4food/ale/internal/compiler/ir/analysis"
+	"github.com/kode4food/ale/internal/runtime/isa"
 	builtin "github.com/kode4food/ale/pkg/core"
-	"github.com/kode4food/ale/pkg/runtime/isa"
 )
 
 func TestAsmAddition(t *testing.T) {

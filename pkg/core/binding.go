@@ -4,8 +4,8 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/kode4food/ale/pkg/compiler/encoder"
-	"github.com/kode4food/ale/pkg/compiler/generate"
+	"github.com/kode4food/ale/internal/compiler/encoder"
+	"github.com/kode4food/ale/internal/compiler/generate"
 	"github.com/kode4food/ale/pkg/data"
 )
 

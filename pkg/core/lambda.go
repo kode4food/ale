@@ -1,10 +1,10 @@
 package core
 
 import (
-	"github.com/kode4food/ale/pkg/compiler/encoder"
-	"github.com/kode4food/ale/pkg/compiler/generate"
+	"github.com/kode4food/ale/internal/compiler/encoder"
+	"github.com/kode4food/ale/internal/compiler/generate"
+	"github.com/kode4food/ale/internal/runtime/isa"
 	"github.com/kode4food/ale/pkg/data"
-	"github.com/kode4food/ale/pkg/runtime/isa"
 )
 
 type lambdaEncoder struct {

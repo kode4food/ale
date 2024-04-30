@@ -3,7 +3,7 @@ package core
 import (
 	"fmt"
 
-	"github.com/kode4food/ale/pkg/compiler"
+	"github.com/kode4food/ale/internal/compiler"
 	"github.com/kode4food/ale/pkg/data"
 	"github.com/kode4food/ale/pkg/env"
 	"github.com/kode4food/ale/pkg/macro"

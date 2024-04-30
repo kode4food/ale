@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/kode4food/ale/internal/assert"
-	"github.com/kode4food/ale/pkg/compiler/special"
+	"github.com/kode4food/ale/internal/compiler/special"
 	"github.com/kode4food/ale/pkg/core/bootstrap"
 	"github.com/kode4food/ale/pkg/data"
 )

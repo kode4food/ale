@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	"github.com/kode4food/ale/internal/async"
+	"github.com/kode4food/ale/internal/compiler/special"
 	"github.com/kode4food/ale/internal/types"
-	"github.com/kode4food/ale/pkg/compiler/special"
 	"github.com/kode4food/ale/pkg/data"
 	"github.com/kode4food/ale/pkg/macro"
 )

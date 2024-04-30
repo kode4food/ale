@@ -5,5 +5,5 @@ const (
 	AppName = "Ale (A Lisp Environment)"
 
 	// Version is the current version
-	Version = "0.1"
+	Version = "0.2"
 )

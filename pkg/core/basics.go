@@ -2,10 +2,10 @@ package core
 
 import (
 	"github.com/kode4food/ale/internal/debug"
+	"github.com/kode4food/ale/internal/runtime"
 	"github.com/kode4food/ale/internal/sequence"
 	"github.com/kode4food/ale/pkg/data"
 	"github.com/kode4food/ale/pkg/read"
-	"github.com/kode4food/ale/pkg/runtime"
 )
 
 // Recover invokes a function and runs a recovery function if Go panics

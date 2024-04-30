@@ -3,9 +3,9 @@ package bootstrap
 import (
 	"fmt"
 
-	"github.com/kode4food/ale/pkg/compiler/encoder"
-	"github.com/kode4food/ale/pkg/compiler/generate"
-	"github.com/kode4food/ale/pkg/compiler/special"
+	"github.com/kode4food/ale/internal/compiler/encoder"
+	"github.com/kode4food/ale/internal/compiler/generate"
+	"github.com/kode4food/ale/internal/compiler/special"
 	"github.com/kode4food/ale/pkg/core"
 	"github.com/kode4food/ale/pkg/data"
 	"github.com/kode4food/ale/pkg/macro"

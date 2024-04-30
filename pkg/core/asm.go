@@ -6,14 +6,14 @@ import (
 	"fmt"
 	"maps"
 
+	"github.com/kode4food/ale/internal/compiler/encoder"
+	"github.com/kode4food/ale/internal/compiler/generate"
+	"github.com/kode4food/ale/internal/compiler/special"
 	"github.com/kode4food/ale/internal/debug"
+	"github.com/kode4food/ale/internal/runtime/isa"
 	"github.com/kode4food/ale/internal/strings"
-	"github.com/kode4food/ale/pkg/compiler/encoder"
-	"github.com/kode4food/ale/pkg/compiler/generate"
-	"github.com/kode4food/ale/pkg/compiler/special"
 	"github.com/kode4food/ale/pkg/data"
 	"github.com/kode4food/ale/pkg/eval"
-	"github.com/kode4food/ale/pkg/runtime/isa"
 	"github.com/kode4food/comb/basics"
 )
 

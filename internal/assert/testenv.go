@@ -3,7 +3,7 @@ package assert
 import (
 	"sync"
 
-	"github.com/kode4food/ale/pkg/compiler/encoder"
+	"github.com/kode4food/ale/internal/compiler/encoder"
 	"github.com/kode4food/ale/pkg/core/bootstrap"
 	"github.com/kode4food/ale/pkg/env"
 )

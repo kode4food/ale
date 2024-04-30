@@ -7,11 +7,11 @@ import (
 
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
+	"github.com/kode4food/ale/internal/runtime"
 	"github.com/kode4food/ale/pkg/core"
 	"github.com/kode4food/ale/pkg/core/bootstrap"
 	"github.com/kode4food/ale/pkg/data"
 	"github.com/kode4food/ale/pkg/read/parse"
-	"github.com/kode4food/ale/pkg/runtime"
 )
 
 func unexpectedTypeError(got, expected string) error {

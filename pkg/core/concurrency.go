@@ -2,9 +2,9 @@ package core
 
 import (
 	"github.com/kode4food/ale/internal/async"
+	"github.com/kode4food/ale/internal/runtime"
 	"github.com/kode4food/ale/internal/stream"
 	"github.com/kode4food/ale/pkg/data"
-	"github.com/kode4food/ale/pkg/runtime"
 )
 
 // Go runs the provided function asynchronously

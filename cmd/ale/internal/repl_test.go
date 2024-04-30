@@ -6,8 +6,8 @@ import (
 	main "github.com/kode4food/ale/cmd/ale/internal"
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
-	"github.com/kode4food/ale/pkg/compiler/encoder"
-	"github.com/kode4food/ale/pkg/compiler/special"
+	"github.com/kode4food/ale/internal/compiler/encoder"
+	"github.com/kode4food/ale/internal/compiler/special"
 	"github.com/kode4food/ale/pkg/data"
 )
 

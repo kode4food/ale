@@ -1,14 +1,14 @@
 package eval
 
 import (
-	"github.com/kode4food/ale/pkg/compiler/encoder"
-	"github.com/kode4food/ale/pkg/compiler/generate"
-	"github.com/kode4food/ale/pkg/compiler/procedure"
+	"github.com/kode4food/ale/internal/compiler/encoder"
+	"github.com/kode4food/ale/internal/compiler/generate"
+	"github.com/kode4food/ale/internal/compiler/procedure"
+	"github.com/kode4food/ale/internal/runtime"
+	"github.com/kode4food/ale/internal/runtime/isa"
 	"github.com/kode4food/ale/pkg/data"
 	"github.com/kode4food/ale/pkg/env"
 	"github.com/kode4food/ale/pkg/read"
-	"github.com/kode4food/ale/pkg/runtime"
-	"github.com/kode4food/ale/pkg/runtime/isa"
 )
 
 // String evaluates the specified raw source
