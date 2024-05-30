@@ -31,7 +31,7 @@ func (r *REPL) autoComplete(buf string) ([]string, int) {
 	src := data.String(buf)
 	seq := read.Tokens(src)
 	if l, ok := data.Last(seq); ok {
-		if l := l.(*lex.Token); ok && l.Type() == lex.Identifier {
+		if l, ok := l.(*lex.Token); ok && l.Type() == lex.Identifier {
 			pfx := string(l.Value().(data.String))
 			return r.prefixedSymbols(pfx), len(pfx)
 		}

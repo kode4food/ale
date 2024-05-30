@@ -45,6 +45,8 @@ func (c *Context) checkDuplicate(v reflect.Value) error {
 			if cv.Len() == v.Len() && cv.Pointer() == v.Pointer() {
 				return errors.New(ErrCycleDetected)
 			}
+		default:
+			// No-Op
 		}
 	}
 	return c.parent.checkDuplicate(v)

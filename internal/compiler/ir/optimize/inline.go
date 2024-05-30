@@ -91,6 +91,8 @@ func (m *inlineCallMapper) reindex(p *vm.Closure) isa.Instructions {
 			res[idx] = isa.New(isa.Const, to)
 		case isa.Load, isa.Store:
 			res[idx] = isa.New(oc, op+m.baseLocal)
+		default:
+			// No-Op
 		}
 	}
 	return res

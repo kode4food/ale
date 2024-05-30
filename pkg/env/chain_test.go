@@ -24,6 +24,7 @@ func TestSnapshot(t *testing.T) {
 
 	e2 := env.NewEnvironment()
 	ns2, err := ns1.Snapshot(e2)
+	as.Nil(err)
 	as.Equal(LS("some-ns"), ns2.Domain())
 	as.Equal(e2, ns2.Environment())
 

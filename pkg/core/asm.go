@@ -1,17 +1,17 @@
 package core
 
 import (
-	"bytes"
 	"errors"
 	"fmt"
 	"maps"
+	"strings"
 
 	"github.com/kode4food/ale/internal/compiler/encoder"
 	"github.com/kode4food/ale/internal/compiler/generate"
 	"github.com/kode4food/ale/internal/compiler/special"
 	"github.com/kode4food/ale/internal/debug"
 	"github.com/kode4food/ale/internal/runtime/isa"
-	"github.com/kode4food/ale/internal/strings"
+	str "github.com/kode4food/ale/internal/strings"
 	"github.com/kode4food/ale/pkg/data"
 	"github.com/kode4food/ale/pkg/eval"
 	"github.com/kode4food/comb/basics"
@@ -262,7 +262,7 @@ func (e *asmEncoder) resolvePrivate(l data.Local) data.Local {
 func getInstructionCalls() callMap {
 	res := make(callMap, len(isa.Effects))
 	for oc, effect := range isa.Effects {
-		name := data.Local(strings.CamelToSnake(oc.String()))
+		name := data.Local(str.CamelToSnake(oc.String()))
 		res[name] = func(oc isa.Opcode, ao isa.ActOn) *call {
 			return makeEmitCall(oc, ao)
 		}(oc, effect.Operand)
@@ -417,7 +417,7 @@ func toOperand(val data.Value) (isa.Operand, error) {
 
 func makeCellTypeNames() string {
 	res := basics.MapKeys(cellTypes)
-	var buf bytes.Buffer
+	var buf strings.Builder
 	for i, s := range res {
 		switch {
 		case i == len(res)-1:

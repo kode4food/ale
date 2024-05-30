@@ -41,7 +41,7 @@ func (ns *namespace) Domain() data.Local {
 func (ns *namespace) Declared() data.Locals {
 	ns.RLock()
 	defer ns.RUnlock()
-	var res data.Locals
+	res := data.Locals{}
 	for _, e := range ns.entries {
 		if !e.IsPrivate() {
 			res = append(res, e.Name())

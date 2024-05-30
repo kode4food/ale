@@ -1,7 +1,6 @@
 package data
 
 import (
-	"bytes"
 	"fmt"
 	"math/rand"
 	"regexp"
@@ -217,7 +216,7 @@ func (qualified) Type() types.Type {
 }
 
 func (s qualified) String() string {
-	var buf bytes.Buffer
+	var buf strings.Builder
 	buf.WriteString(string(s.domain))
 	buf.WriteRune(DomainSeparator)
 	buf.WriteString(string(s.name))

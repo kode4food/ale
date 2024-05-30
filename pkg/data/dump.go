@@ -1,9 +1,9 @@
 package data
 
 import (
-	"bytes"
 	"cmp"
 	"fmt"
+	"strings"
 
 	"github.com/kode4food/comb/basics"
 )
@@ -53,7 +53,7 @@ func (d dumped) Get(key Value) (Value, bool) {
 }
 
 func (d dumped) String() string {
-	var buf bytes.Buffer
+	var buf strings.Builder
 	buf.WriteString("{")
 	i := 0
 	for _, k := range dumpKeys {

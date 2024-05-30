@@ -63,7 +63,7 @@ func (t typeList) names() []string {
 }
 
 func (t typeList) flatten() typeList {
-	var res typeList
+	res := typeList{}
 	for _, o := range t {
 		if o, ok := o.(*Union); ok {
 			res = append(res, o.Options()...)

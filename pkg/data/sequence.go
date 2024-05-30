@@ -1,6 +1,6 @@
 package data
 
-import "bytes"
+import "strings"
 
 type (
 	// Sequence interfaces expose a lazily resolved sequence
@@ -62,7 +62,7 @@ func MakeSequenceStr(s Sequence) string {
 	if !ok {
 		return "()"
 	}
-	var b bytes.Buffer
+	var b strings.Builder
 	b.WriteString("(")
 	b.WriteString(ToQuotedString(f))
 	for f, r, ok = r.Split(); ok; f, r, ok = r.Split() {

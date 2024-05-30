@@ -1,7 +1,6 @@
 package internal
 
 import (
-	"bytes"
 	"errors"
 	"fmt"
 	"math/rand"
@@ -41,7 +40,7 @@ type (
 	REPL struct {
 		ns  env.Namespace
 		rl  *readline.Instance
-		buf bytes.Buffer
+		buf strings.Builder
 		idx int
 	}
 )

@@ -1,8 +1,8 @@
 package stream_test
 
 import (
-	"bytes"
 	"io"
+	"strings"
 	"testing"
 
 	"github.com/kode4food/ale/internal/assert"
@@ -24,7 +24,7 @@ func (m *mockWriterCloser) Close() error {
 func TestWriter(t *testing.T) {
 	as := assert.New(t)
 
-	var buf bytes.Buffer
+	var buf strings.Builder
 	c := &mockWriterCloser{
 		Writer: &buf,
 	}

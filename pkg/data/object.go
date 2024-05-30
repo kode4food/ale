@@ -1,9 +1,9 @@
 package data
 
 import (
-	"bytes"
 	"errors"
 	"math/rand"
+	"strings"
 
 	"github.com/kode4food/ale/internal/types"
 )
@@ -31,11 +31,13 @@ var (
 	objectHash  = rand.Uint64()
 
 	// compile-time checks for interface implementation
-	_ Caller          = &Object{}
-	_ CountedSequence = &Object{}
-	_ Hashed          = &Object{}
-	_ Mapper          = &Object{}
-	_ Typed           = &Object{}
+	_ interface {
+		Caller
+		CountedSequence
+		Hashed
+		Mapper
+		Typed
+	} = &Object{}
 )
 
 // NewObject instantiates a new Object instance. Based on Phil Bagwell's Hashed
@@ -274,7 +276,7 @@ func (o *Object) pairs(p Pairs) Pairs {
 }
 
 func (o *Object) String() string {
-	var buf bytes.Buffer
+	var buf strings.Builder
 	buf.WriteString("{")
 	for i, p := range o.Pairs().sorted() {
 		if i > 0 {

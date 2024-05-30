@@ -1,7 +1,6 @@
 package types
 
 import (
-	"bytes"
 	"cmp"
 	"fmt"
 	"strings"
@@ -89,7 +88,7 @@ func (f fields) sorted() fields {
 }
 
 func (f fields) name() string {
-	var buf bytes.Buffer
+	var buf strings.Builder
 	for i, elem := range f.sorted() {
 		if i > 0 {
 			buf.WriteRune(',')

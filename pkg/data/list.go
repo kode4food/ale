@@ -22,12 +22,14 @@ var (
 	nullHash = rand.Uint64()
 
 	// compile-time checks for interface implementation
-	_ Caller       = Null
-	_ Hashed       = Null
-	_ Prepender    = Null
-	_ RandomAccess = Null
-	_ Reverser     = Null
-	_ Typed        = Null
+	_ interface {
+		Caller
+		Hashed
+		Prepender
+		RandomAccess
+		Reverser
+		Typed
+	} = Null
 )
 
 // NewList creates a new List instance

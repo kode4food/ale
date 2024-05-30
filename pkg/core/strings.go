@@ -1,7 +1,7 @@
 package core
 
 import (
-	"bytes"
+	"strings"
 
 	"github.com/kode4food/ale/internal/sequence"
 	"github.com/kode4food/ale/pkg/data"
@@ -21,7 +21,7 @@ var ReaderStr = data.MakeProcedure(func(args ...data.Value) data.Value {
 		return emptyString
 	}
 
-	var b bytes.Buffer
+	var b strings.Builder
 	b.WriteString(data.ToQuotedString(args[0]))
 	for _, f := range args[1:] {
 		b.WriteString(" ")

@@ -1,8 +1,8 @@
 package data
 
 import (
-	"bytes"
 	"fmt"
+	"strings"
 	"unicode/utf8"
 
 	"github.com/kode4food/ale/internal/types"
@@ -40,11 +40,13 @@ var unescapeTable = map[string]string{
 
 var (
 	// compile-time checks for interface implementation
-	_ Caller       = EmptyString
-	_ Hashed       = EmptyString
-	_ RandomAccess = EmptyString
-	_ Reverser     = EmptyString
-	_ Typed        = EmptyString
+	_ interface {
+		Caller
+		Hashed
+		RandomAccess
+		Reverser
+		Typed
+	} = EmptyString
 )
 
 // Car returns the first character of the String
@@ -182,7 +184,7 @@ func (s String) HashCode() uint64 {
 
 // Quote quotes and escapes a string
 func (s String) Quote() string {
-	var buf bytes.Buffer
+	var buf strings.Builder
 	buf.WriteString(`"`)
 	for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {
 		ch := string(f.(String))

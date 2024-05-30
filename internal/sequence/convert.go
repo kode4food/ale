@@ -1,7 +1,7 @@
 package sequence
 
 import (
-	"bytes"
+	"strings"
 
 	"github.com/kode4food/ale/pkg/data"
 )
@@ -80,7 +80,7 @@ func ToString(s data.Sequence) data.String {
 	if st, ok := s.(data.String); ok {
 		return st
 	}
-	var buf bytes.Buffer
+	var buf strings.Builder
 	for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {
 		if f == data.Null {
 			continue

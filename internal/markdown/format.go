@@ -1,7 +1,6 @@
 package markdown
 
 import (
-	"bytes"
 	"fmt"
 	"regexp"
 	"strings"
@@ -111,7 +110,7 @@ func formatLine(l string) string {
 }
 
 func formatContent(doc string) string {
-	var buf bytes.Buffer
+	var buf strings.Builder
 	var src = strings.TrimSpace(doc)
 	for len(src) > 0 {
 		f, sm, ok := firstFormatterMatch(src)
@@ -174,7 +173,7 @@ func wrapLine(s string, w int) []string {
 	i, s := lineIndent(s)
 	il := strippedLen(i)
 
-	var b bytes.Buffer
+	var b strings.Builder
 	b.WriteString(i)
 	for _, e := range strings.Split(s, " ") {
 		bl := strippedLen(b.String())

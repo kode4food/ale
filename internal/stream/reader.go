@@ -2,6 +2,7 @@ package stream
 
 import (
 	"bufio"
+	"errors"
 	"io"
 
 	"github.com/kode4food/ale/internal/sequence"
@@ -32,7 +33,7 @@ func LineInput(r *bufio.Reader) (data.Value, bool) {
 	if err == nil {
 		return data.String(l[0 : len(l)-1]), true
 	}
-	if err == io.EOF && len(l) > 0 {
+	if errors.Is(err, io.EOF) && len(l) > 0 {
 		return data.String(l), true
 	}
 	return data.Null, false

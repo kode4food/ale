@@ -1,8 +1,8 @@
 package data
 
 import (
-	"bytes"
 	"cmp"
+	"strings"
 
 	"github.com/kode4food/ale/internal/types"
 	"github.com/kode4food/comb/basics"
@@ -38,9 +38,11 @@ func (p Pairs) sorted() Pairs {
 
 // compile-time checks for interface implementation
 var (
-	_ Hashed = &Cons{}
-	_ Pair   = &Cons{}
-	_ Typed  = &Cons{}
+	_ interface {
+		Hashed
+		Pair
+		Typed
+	} = &Cons{}
 )
 
 // NewCons returns a new Cons cell instance
@@ -73,7 +75,7 @@ func (c *Cons) Equal(v Value) bool {
 }
 
 func (c *Cons) String() string {
-	var buf bytes.Buffer
+	var buf strings.Builder
 	buf.WriteByte('(')
 	var next Pair = c
 	for {

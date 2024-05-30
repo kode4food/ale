@@ -1,9 +1,9 @@
 package data
 
 import (
-	"bytes"
 	"math/rand"
 	"slices"
+	"strings"
 
 	"github.com/kode4food/ale/internal/types"
 )
@@ -18,13 +18,15 @@ var (
 	vectorHash = rand.Uint64()
 
 	// compile-time checks for interface implementation
-	_ Appender     = EmptyVector
-	_ Caller       = EmptyVector
-	_ Hashed       = EmptyVector
-	_ Prepender    = EmptyVector
-	_ RandomAccess = EmptyVector
-	_ Reverser     = EmptyVector
-	_ Typed        = EmptyVector
+	_ interface {
+		Appender
+		Caller
+		Hashed
+		Prepender
+		RandomAccess
+		Reverser
+		Typed
+	} = EmptyVector
 )
 
 // NewVector creates a new Vector instance
@@ -115,7 +117,7 @@ func (v Vector) Equal(other Value) bool {
 }
 
 func (v Vector) String() string {
-	var b bytes.Buffer
+	var b strings.Builder
 	b.WriteString("[")
 	for i, e := range v {
 		if i > 0 {
