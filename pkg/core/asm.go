@@ -13,13 +13,13 @@ import (
 	"github.com/kode4food/ale/internal/runtime/isa"
 	str "github.com/kode4food/ale/internal/strings"
 	"github.com/kode4food/ale/pkg/data"
-	"github.com/kode4food/ale/pkg/eval"
 	"github.com/kode4food/comb/basics"
 )
 
 type (
 	asmEncoder struct {
 		encoder.Encoder
+		calls   map[data.Local]*call
 		args    map[data.Local]data.Value
 		labels  map[data.Local]isa.Operand
 		private map[data.Local]data.Local
@@ -28,6 +28,7 @@ type (
 	call struct {
 		special.Call
 		argCount int
+		hasBlock bool
 	}
 
 	callMap map[data.Local]*call
@@ -67,6 +68,14 @@ const (
 	// ErrBadNameResolution is raised when an attempt is made to bind a local
 	// using an argument to the encoder that is not a Local symbol
 	ErrBadNameResolution = "encoder argument is not a name: %s"
+
+	// ErrExpectedBinding is raised when a binding vector is expected but not
+	// provded to the .for-each call
+	ErrExpectedBinding = "expected binding vector, got: %s"
+
+	// ErrExpectedEndOfBlock is raised when an end-of-block marker is expected
+	// but an end of stream is encountered instead
+	ErrExpectedEndOfBlock = "expected end of block"
 )
 
 const (
@@ -79,13 +88,10 @@ const (
 	Private     = data.Local(".private")
 	PushLocals  = data.Local(".push-locals")
 	PopLocals   = data.Local(".pop-locals")
+	EndBlock    = data.Local(".end")
 )
 
 var (
-	instructionCalls = getInstructionCalls()
-	encoderCalls     = getEncoderCalls()
-	calls            = mergeCalls(instructionCalls, encoderCalls)
-
 	gen = data.NewSymbolGenerator()
 
 	cellTypes = map[data.Keyword]encoder.CellType{
@@ -105,6 +111,7 @@ func Asm(e encoder.Encoder, args ...data.Value) {
 func makeAsmEncoder(e encoder.Encoder) *asmEncoder {
 	return &asmEncoder{
 		Encoder: e,
+		calls:   getCalls(),
 		labels:  map[data.Local]isa.Operand{},
 		args:    map[data.Local]data.Value{},
 		private: map[data.Local]data.Local{},
@@ -123,6 +130,7 @@ func (e *asmEncoder) withParams(n data.Locals, v data.Vector) *asmEncoder {
 
 func (e *asmEncoder) copy() *asmEncoder {
 	res := *e
+	res.calls = maps.Clone(res.calls)
 	res.args = maps.Clone(res.args)
 	res.private = maps.Clone(res.private)
 	res.labels = maps.Clone(res.labels)
@@ -144,6 +152,10 @@ func (e *asmEncoder) process(forms data.Sequence) {
 
 func (e *asmEncoder) makeSpecialCall(forms data.Sequence) {
 	pc := parseParamCases(forms)
+	e.makeSpecialFromCases(pc)
+}
+
+func (e *asmEncoder) makeSpecialFromCases(pc *paramCases) {
 	ac := pc.makeChecker()
 	f := pc.makeFetchers()
 	fn := func(e encoder.Encoder, args ...data.Value) {
@@ -168,13 +180,18 @@ func (e *asmEncoder) encode(forms data.Sequence) {
 		case data.Keyword:
 			e.Emit(isa.Label, e.getLabelIndex(name.Name()))
 		case data.Local:
-			d, ok := calls[name]
+			d, ok := e.calls[name]
 			if !ok {
 				panic(fmt.Errorf(ErrUnknownDirective, name))
 			}
 			args, rest, ok := take(r, d.argCount)
 			if !ok {
 				panic(fmt.Errorf(ErrIncompleteInstruction, name))
+			}
+			if d.hasBlock {
+				var block data.Vector
+				block, rest = parseBlock(rest)
+				args = append(args, block...)
 			}
 			d.Call(e, args...)
 			r = rest
@@ -259,6 +276,26 @@ func (e *asmEncoder) resolvePrivate(l data.Local) data.Local {
 	return l
 }
 
+func getCalls() callMap {
+	return mergeCalls(
+		getInstructionCalls(),
+		getEncoderCalls(),
+	)
+}
+
+func mergeCalls(maps ...callMap) callMap {
+	res := callMap{}
+	for _, m := range maps {
+		for k, v := range m {
+			if _, ok := res[k]; ok {
+				panic(debug.ProgrammerError("duplicate entry: %s", k))
+			}
+			res[k] = v
+		}
+	}
+	return res
+}
+
 func getInstructionCalls() callMap {
 	res := make(callMap, len(isa.Effects))
 	for oc, effect := range isa.Effects {
@@ -268,6 +305,19 @@ func getInstructionCalls() callMap {
 		}(oc, effect.Operand)
 	}
 	return res
+}
+
+func getEncoderCalls() callMap {
+	return callMap{
+		Resolve:    {Call: resolveCall, argCount: 1},
+		Evaluate:   {Call: evaluateCall, argCount: 1},
+		ForEach:    {Call: forEachCall, argCount: 1, hasBlock: true},
+		Const:      {Call: constCall, argCount: 1},
+		PushLocals: {Call: pushLocalsCall},
+		PopLocals:  {Call: popLocalsCall},
+		Local:      {Call: makeLocalEncoder(publicNamer), argCount: 2},
+		Private:    {Call: makeLocalEncoder(privateNamer), argCount: 2},
+	}
 }
 
 func makeEmitCall(oc isa.Opcode, actOn isa.ActOn) *call {
@@ -280,19 +330,6 @@ func makeEmitCall(oc isa.Opcode, actOn isa.ActOn) *call {
 			e.Emit(oc, e.(*asmEncoder).toOperands(oc, args)...)
 		},
 		argCount: argCount,
-	}
-}
-
-func getEncoderCalls() callMap {
-	return callMap{
-		Resolve:    {Call: resolveCall, argCount: 1},
-		Evaluate:   {Call: evaluateCall, argCount: 1},
-		ForEach:    {Call: forEachCall, argCount: 2},
-		Const:      {Call: constCall, argCount: 1},
-		PushLocals: {Call: pushLocalsCall},
-		PopLocals:  {Call: popLocalsCall},
-		Local:      {Call: makeLocalEncoder(publicNamer), argCount: 2},
-		Private:    {Call: makeLocalEncoder(privateNamer), argCount: 2},
 	}
 }
 
@@ -314,16 +351,44 @@ func evaluateCall(e encoder.Encoder, args ...data.Value) {
 }
 
 func forEachCall(e encoder.Encoder, args ...data.Value) {
-	name := args[0].(data.Local)
-	encode := eval.Value(e.Globals(), args[1]).(special.Call)
-	s, ok := e.(*asmEncoder).resolveEncoderArg(name)
+	n, v, ok := parseForEachBinding(args[0])
 	if !ok {
-		panic(fmt.Errorf(ErrUnexpectedParameter, name))
+		panic(fmt.Errorf(ErrExpectedBinding, args[0]))
 	}
+	s, ok := e.(*asmEncoder).resolveEncoderArg(v)
+	if !ok {
+		panic(fmt.Errorf(ErrUnexpectedParameter, v))
+	}
+	ae := e.(*asmEncoder).copy()
+	forms := data.Vector(args[1:])
 	seq := s.(data.Sequence)
 	for f, r, ok := seq.Split(); ok; f, r, ok = r.Split() {
-		encode(e, f)
+		ae.args[n] = f
+		ae.encode(forms)
 	}
+}
+
+func parseForEachBinding(v data.Value) (data.Local, data.Value, bool) {
+	b, ok := v.(data.Vector)
+	if !ok || len(b) != 2 {
+		return "", nil, false
+	}
+	l, ok := b[0].(data.Local)
+	if !ok {
+		return "", nil, false
+	}
+	return l, b[1], true
+}
+
+func parseBlock(s data.Sequence) (data.Vector, data.Sequence) {
+	var res data.Vector
+	for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {
+		if l, ok := f.(data.Local); ok && l == EndBlock {
+			return res, r
+		}
+		res = append(res, f)
+	}
+	panic(errors.New(ErrExpectedEndOfBlock))
 }
 
 func constCall(e encoder.Encoder, args ...data.Value) {
@@ -368,19 +433,6 @@ func privateNamer(e *asmEncoder, l data.Local) data.Local {
 	p := gen.Local(l)
 	e.private[l] = p
 	return p
-}
-
-func mergeCalls(maps ...callMap) callMap {
-	res := callMap{}
-	for _, m := range maps {
-		for k, v := range m {
-			if _, ok := res[k]; ok {
-				panic(debug.ProgrammerError("duplicate entry: %s", k))
-			}
-			res[k] = v
-		}
-	}
-	return res
 }
 
 func take(s data.Sequence, count int) (data.Vector, data.Sequence, bool) {

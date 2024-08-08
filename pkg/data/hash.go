@@ -37,7 +37,7 @@ func HashInt(i int) uint64 {
 func HashInt64(i int64) uint64 {
 	u := uint64(i)
 	b := make([]byte, unsafe.Sizeof(u))
-	binary.LittleEndian.PutUint64(b, u)
+	binary.NativeEndian.PutUint64(b, u)
 	return HashBytes(b)
 }
 

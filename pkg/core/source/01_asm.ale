@@ -66,6 +66,7 @@
 (define* begin
   (asm* !make-special body
       null
-      .for-each body (asm* !make-special (val)
+      .for-each [val body]
           pop
-          .eval val)))
+          .eval val
+      .end))
