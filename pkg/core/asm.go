@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"maps"
 	"strings"
+	"sync"
 
 	"github.com/kode4food/ale/internal/compiler/encoder"
 	"github.com/kode4food/ale/internal/compiler/generate"
@@ -19,19 +20,18 @@ import (
 type (
 	asmEncoder struct {
 		encoder.Encoder
-		calls   map[data.Local]*call
 		args    map[data.Local]data.Value
 		labels  map[data.Local]isa.Operand
 		private map[data.Local]data.Local
 	}
+
+	callMap map[data.Local]*call
 
 	call struct {
 		special.Call
 		argCount int
 		hasBlock bool
 	}
-
-	callMap map[data.Local]*call
 
 	toOperandFunc func(data.Value) (isa.Operand, error)
 	toNameFunc    func(*asmEncoder, data.Local) data.Local
@@ -101,6 +101,9 @@ var (
 	}
 
 	cellTypeNames = makeCellTypeNames()
+
+	callsOnce sync.Once
+	calls     callMap
 )
 
 // Asm provides indirect access to the Encoder's methods and generators
@@ -111,7 +114,6 @@ func Asm(e encoder.Encoder, args ...data.Value) {
 func makeAsmEncoder(e encoder.Encoder) *asmEncoder {
 	return &asmEncoder{
 		Encoder: e,
-		calls:   getCalls(),
 		labels:  map[data.Local]isa.Operand{},
 		args:    map[data.Local]data.Value{},
 		private: map[data.Local]data.Local{},
@@ -130,7 +132,6 @@ func (e *asmEncoder) withParams(n data.Locals, v data.Vector) *asmEncoder {
 
 func (e *asmEncoder) copy() *asmEncoder {
 	res := *e
-	res.calls = maps.Clone(res.calls)
 	res.args = maps.Clone(res.args)
 	res.private = maps.Clone(res.private)
 	res.labels = maps.Clone(res.labels)
@@ -180,7 +181,7 @@ func (e *asmEncoder) encode(forms data.Sequence) {
 		case data.Keyword:
 			e.Emit(isa.Label, e.getLabelIndex(name.Name()))
 		case data.Local:
-			d, ok := e.calls[name]
+			d, ok := getCalls()[name]
 			if !ok {
 				panic(fmt.Errorf(ErrUnknownDirective, name))
 			}
@@ -277,10 +278,13 @@ func (e *asmEncoder) resolvePrivate(l data.Local) data.Local {
 }
 
 func getCalls() callMap {
-	return mergeCalls(
-		getInstructionCalls(),
-		getEncoderCalls(),
-	)
+	callsOnce.Do(func() {
+		calls = mergeCalls(
+			getInstructionCalls(),
+			getEncoderCalls(),
+		)
+	})
+	return calls
 }
 
 func mergeCalls(maps ...callMap) callMap {
