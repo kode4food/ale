@@ -400,22 +400,22 @@ func getInstructionCalls() namedParsers {
 
 func getEncoderCalls() namedParsers {
 	return namedParsers{
-		Resolve:    makeArgsParser(Resolve, 1, resolveCall),
-		Evaluate:   makeArgsParser(Evaluate, 1, evaluateCall),
-		ForEach:    forEachCall,
-		Const:      makeArgsParser(Const, 1, constCall),
-		PushLocals: makeArgsParser(PushLocals, 0, pushLocalsCall),
-		PopLocals:  makeArgsParser(PopLocals, 0, popLocalsCall),
-		Local:      makeLocalEncoder(Local, publicNamer),
-		Private:    makeLocalEncoder(Private, privateNamer),
+		Resolve:    parseArgs(Resolve, 1, resolveCall),
+		Evaluate:   parseArgs(Evaluate, 1, evaluateCall),
+		ForEach:    parseForEachCall,
+		Const:      parseArgs(Const, 1, constCall),
+		PushLocals: parseArgs(PushLocals, 0, pushLocalsCall),
+		PopLocals:  parseArgs(PopLocals, 0, popLocalsCall),
+		Local:      parseLocalEncoder(Local, publicNamer),
+		Private:    parseLocalEncoder(Private, privateNamer),
 	}
 }
 
-func makeArgsParser(inst data.Local, argCount int, fn asmArgsParse) asmParse {
+func parseArgs(inst data.Local, argsLen int, fn asmArgsParse) asmParse {
 	return func(p *asmParser, s data.Sequence) (asmEmit, data.Sequence, error) {
-		args, rest, ok := take(s, argCount)
+		args, rest, ok := take(s, argsLen)
 		if !ok {
-			return nil, nil, fmt.Errorf(ErrIncompleteInstruction, inst, argCount)
+			return nil, nil, fmt.Errorf(ErrIncompleteInstruction, inst, argsLen)
 		}
 		res, err := fn(p, args...)
 		if err != nil {
@@ -448,7 +448,9 @@ func evaluateCall(_ *asmParser, args ...data.Value) (asmEmit, error) {
 	}, nil
 }
 
-func forEachCall(p *asmParser, s data.Sequence) (asmEmit, data.Sequence, error) {
+func parseForEachCall(
+	p *asmParser, s data.Sequence,
+) (asmEmit, data.Sequence, error) {
 	args, s, ok := take(s, 1)
 	if !ok {
 		return nil, nil, fmt.Errorf(ErrExpectedBinding, args[0])
@@ -518,8 +520,8 @@ func popLocalsCall(*asmParser, ...data.Value) (asmEmit, error) {
 	}, nil
 }
 
-func makeLocalEncoder(inst data.Local, toName asmToName) asmParse {
-	return makeArgsParser(inst, 2,
+func parseLocalEncoder(inst data.Local, toName asmToName) asmParse {
+	return parseArgs(inst, 2,
 		func(p *asmParser, args ...data.Value) (asmEmit, error) {
 			return func(e *asmEncoder) error {
 				name, err := toName(e, args[0].(data.Local))
@@ -571,7 +573,7 @@ func makeStandaloneEmit(oc isa.Opcode) asmParse {
 }
 
 func makeOperandEmit(oc isa.Opcode) asmParse {
-	return makeArgsParser(data.Local(oc.String()), 1,
+	return parseArgs(data.Local(oc.String()), 1,
 		func(p *asmParser, args ...data.Value) (asmEmit, error) {
 			return func(e *asmEncoder) error {
 				e.Emit(oc, e.toOperands(oc, args)...)
