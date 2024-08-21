@@ -1,7 +1,7 @@
 package ffi
 
 import (
-	"fmt"
+	"errors"
 	"reflect"
 
 	"github.com/kode4food/ale/pkg/data"
@@ -23,7 +23,7 @@ func (d valueWrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
 	if v, ok := v.Interface().(data.Value); ok {
 		return v, nil
 	}
-	return nil, fmt.Errorf(ErrMustImplementValue)
+	return nil, errors.New(ErrMustImplementValue)
 }
 
 func (d valueWrapper) Unwrap(v data.Value) (reflect.Value, error) {

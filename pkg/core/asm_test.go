@@ -142,7 +142,7 @@ func TestAsmMakeEncoder(t *testing.T) {
 				[(predicate consequent)
 					.eval predicate
 					cond-jump :consequent
-					nil
+					null
 					jump :end
 				:consequent
 					.eval consequent

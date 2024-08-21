@@ -1,7 +1,7 @@
 package core_test
 
 import (
-	"fmt"
+	"errors"
 	"testing"
 
 	"github.com/kode4food/ale/internal/assert"
@@ -50,7 +50,7 @@ func TestRecover(t *testing.T) {
 
 	errStr := "blew up"
 	testRecover(as, S(errStr), errStr)
-	testRecover(as, fmt.Errorf(errStr), errStr)
+	testRecover(as, errors.New(errStr), errStr)
 
 	defer as.ExpectProgrammerError("recover returned invalid result")
 	testRecover(as, &struct{}{}, "won't be needed")

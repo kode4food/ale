@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"maps"
+	"slices"
 	"strings"
 	"sync"
 
@@ -18,23 +19,26 @@ import (
 )
 
 type (
-	asmEncoder struct {
-		encoder.Encoder
-		args    map[data.Local]data.Value
-		labels  map[data.Local]isa.Operand
+	asmParser struct {
+		params  data.Locals
 		private map[data.Local]data.Local
 	}
 
-	callMap map[data.Local]*call
-
-	call struct {
-		special.Call
-		argCount int
-		hasBlock bool
+	asmEncoder struct {
+		encoder.Encoder
+		*asmParser
+		args   map[data.Local]data.Value
+		labels map[data.Local]isa.Operand
 	}
 
-	toOperandFunc func(data.Value) (isa.Operand, error)
-	toNameFunc    func(*asmEncoder, data.Local) data.Local
+	namedParsers map[data.Local]asmParse
+
+	asmParse     func(*asmParser, data.Sequence) (asmEmit, data.Sequence, error)
+	asmArgsParse func(*asmParser, ...data.Value) (asmEmit, error)
+
+	asmEmit      func(*asmEncoder) error
+	asmToOperand func(*asmEncoder, data.Value) (isa.Operand, error)
+	asmToName    func(*asmEncoder, data.Local) (data.Local, error)
 )
 
 const (
@@ -46,8 +50,8 @@ const (
 	ErrUnexpectedForm = "unexpected form: %s"
 
 	// ErrIncompleteInstruction is raised when an instruction is encountered in
-	// the assembler block not accompanied by a required operand
-	ErrIncompleteInstruction = "incomplete instruction: %s"
+	// the assembler block not accompanied by enough operands
+	ErrIncompleteInstruction = "incomplete %s instruction, args expected: %d"
 
 	// ErrUnknownLocalType is raised when a local or private is declared that
 	// doesn't have a proper disposition (var, ref, rest)
@@ -70,12 +74,16 @@ const (
 	ErrBadNameResolution = "encoder argument is not a name: %s"
 
 	// ErrExpectedBinding is raised when a binding vector is expected but not
-	// provded to the .for-each call
+	// provided to the .for-each call
 	ErrExpectedBinding = "expected binding vector, got: %s"
 
 	// ErrExpectedEndOfBlock is raised when an end-of-block marker is expected
 	// but an end of stream is encountered instead
 	ErrExpectedEndOfBlock = "expected end of block"
+
+	// ErrExpectedSequence is raised when a sequence is expected but not
+	// provided to the .for-each call
+	ErrExpectedSequence = "expected sequence, got: %s"
 )
 
 const (
@@ -103,103 +111,228 @@ var (
 	cellTypeNames = makeCellTypeNames()
 
 	callsOnce sync.Once
-	calls     callMap
+	calls     namedParsers
 )
+
+func noAsmEmit(*asmEncoder) error { return nil }
 
 // Asm provides indirect access to the Encoder's methods and generators
 func Asm(e encoder.Encoder, args ...data.Value) {
-	makeAsmEncoder(e).process(data.Vector(args))
+	p := makeAsmParser()
+	emit, err := p.parse(data.Vector(args))
+	if err != nil {
+		panic(err)
+	}
+	ae := p.wrapEncoder(e)
+	if err := emit(ae); err != nil {
+		panic(err)
+	}
 }
 
-func makeAsmEncoder(e encoder.Encoder) *asmEncoder {
-	return &asmEncoder{
-		Encoder: e,
-		labels:  map[data.Local]isa.Operand{},
-		args:    map[data.Local]data.Value{},
+func makeAsmParser() *asmParser {
+	return &asmParser{
+		params:  data.Locals{},
 		private: map[data.Local]data.Local{},
 	}
 }
 
-func (e *asmEncoder) withParams(n data.Locals, v data.Vector) *asmEncoder {
-	args := make(map[data.Local]data.Value, len(n))
-	for i, k := range n {
-		args[k] = v[i]
-	}
-	res := e.copy()
-	res.args = args
+func (p *asmParser) withParams(n data.Locals) *asmParser {
+	res := p.copy()
+	res.params = slices.Clone(n)
 	return res
 }
 
-func (e *asmEncoder) copy() *asmEncoder {
-	res := *e
-	res.args = maps.Clone(res.args)
+func (p *asmParser) copy() *asmParser {
+	res := *p
+	res.params = slices.Clone(res.params)
 	res.private = maps.Clone(res.private)
-	res.labels = maps.Clone(res.labels)
 	return &res
 }
 
-func (e *asmEncoder) process(forms data.Sequence) {
-	if f, r, ok := forms.Split(); ok {
-		if l, ok := f.(data.Local); ok {
-			switch l {
-			case MakeSpecial:
-				e.makeSpecialCall(r)
-				return
-			}
-		}
+func (p *asmParser) wrapEncoder(
+	e encoder.Encoder, args ...data.Value,
+) *asmEncoder {
+	a := make(map[data.Local]data.Value, len(args))
+	for i, k := range p.params {
+		a[k] = args[i]
 	}
-	e.encode(forms)
+	return &asmEncoder{
+		asmParser: p,
+		Encoder:   e,
+		args:      a,
+		labels:    map[data.Local]isa.Operand{},
+	}
 }
 
-func (e *asmEncoder) makeSpecialCall(forms data.Sequence) {
+func (p *asmParser) parse(forms data.Sequence) (asmEmit, error) {
+	if f, r, ok := forms.Split(); ok && f == MakeSpecial {
+		return p.specialCall(r)
+	}
+	return p.sequence(forms)
+}
+
+func (p *asmParser) specialCall(forms data.Sequence) (asmEmit, error) {
 	pc := parseParamCases(forms)
-	e.makeSpecialFromCases(pc)
-}
+	cases := pc.Cases()
+	ap := make([]*asmParser, len(cases))
+	emitters := make([]asmEmit, len(cases))
+	for i, c := range cases {
+		ap[i] = p.withParams(c.params)
+		e, err := ap[i].sequence(c.body)
+		if err != nil {
+			return nil, err
+		}
+		emitters[i] = e
+	}
 
-func (e *asmEncoder) makeSpecialFromCases(pc *paramCases) {
 	ac := pc.makeChecker()
-	f := pc.makeFetchers()
+	fetchers := pc.makeFetchers()
+
 	fn := func(e encoder.Encoder, args ...data.Value) {
 		if err := ac(len(args)); err != nil {
 			panic(err)
 		}
-		for i, c := range pc.Cases() {
-			if a, ok := f[i](args); ok {
-				ae := makeAsmEncoder(e).withParams(c.params, a)
-				ae.encode(c.body)
+		for i, f := range fetchers {
+			if a, ok := f(args); ok {
+				ae := ap[i].wrapEncoder(e, a...)
+				if err := emitters[i](ae); err != nil {
+					panic(err)
+				}
 				return
 			}
 		}
 		panic(errors.New(ErrNoMatchingParamPattern))
 	}
-	e.Emit(isa.Const, e.AddConstant(special.Call(fn)))
+
+	return func(e *asmEncoder) error {
+		e.Emit(isa.Const, e.AddConstant(special.Call(fn)))
+		return nil
+	}, nil
 }
 
-func (e *asmEncoder) encode(forms data.Sequence) {
-	for f, r, ok := forms.Split(); ok; f, r, ok = r.Split() {
-		switch name := f.(type) {
-		case data.Keyword:
-			e.Emit(isa.Label, e.getLabelIndex(name.Name()))
-		case data.Local:
-			d, ok := getCalls()[name]
-			if !ok {
-				panic(fmt.Errorf(ErrUnknownDirective, name))
-			}
-			args, rest, ok := take(r, d.argCount)
-			if !ok {
-				panic(fmt.Errorf(ErrIncompleteInstruction, name))
-			}
-			if d.hasBlock {
-				var block data.Vector
-				block, rest = parseBlock(rest)
-				args = append(args, block...)
-			}
-			d.Call(e, args...)
-			r = rest
-		default:
-			panic(fmt.Errorf(ErrUnexpectedForm, data.ToString(f)))
+func (p *asmParser) next(s data.Sequence) (asmEmit, data.Sequence, error) {
+	f, r, _ := s.Split()
+	switch t := f.(type) {
+	case data.Keyword:
+		return func(e *asmEncoder) error {
+			e.Emit(isa.Label, e.getLabelIndex(t.Name()))
+			return nil
+		}, r, nil
+	case data.Local:
+		parse, ok := getCalls()[t]
+		if !ok {
+			return nil, nil, fmt.Errorf(ErrUnknownDirective, t)
 		}
+		return parse(p, r)
+	default:
+		return nil, nil, fmt.Errorf(ErrUnexpectedForm, data.ToString(f))
 	}
+}
+
+func (p *asmParser) sequence(s data.Sequence) (asmEmit, error) {
+	if s.IsEmpty() {
+		return noAsmEmit, nil
+	}
+	next, rest, err := p.next(s)
+	if err != nil {
+		return nil, err
+	}
+	return p.rest(next, rest)
+}
+
+func (p *asmParser) rest(emit asmEmit, r data.Sequence) (asmEmit, error) {
+	next, err := p.sequence(r)
+	if err != nil {
+		return nil, err
+	}
+	return func(e *asmEncoder) error {
+		if err := emit(e); err != nil {
+			return err
+		}
+		return next(e)
+	}, nil
+}
+
+func (p *asmParser) block(s data.Sequence) (asmEmit, data.Sequence, error) {
+	if s.IsEmpty() {
+		return nil, nil, errors.New(ErrExpectedEndOfBlock)
+	}
+	f, r, _ := s.Split()
+	if f == EndBlock {
+		return noAsmEmit, r, nil
+	}
+	next, rest, err := p.next(s)
+	if err != nil {
+		return nil, nil, err
+	}
+	return p.blockRest(next, rest)
+}
+
+func (p *asmParser) blockRest(
+	emit asmEmit, r data.Sequence,
+) (asmEmit, data.Sequence, error) {
+	next, rest, err := p.block(r)
+	if err != nil {
+		return nil, nil, err
+	}
+	return func(e *asmEncoder) error {
+		if err := emit(e); err != nil {
+			return err
+		}
+		return next(e)
+	}, rest, nil
+}
+
+func (p *asmParser) getToOperandFor(ao isa.ActOn) asmToOperand {
+	switch ao {
+	case isa.Locals:
+		return p.makeNameToWord()
+	case isa.Labels:
+		return p.makeLabelToWord()
+	default:
+		return toOperand
+	}
+}
+
+func (p *asmParser) makeLabelToWord() asmToOperand {
+	return wrapToOperandError(
+		func(e *asmEncoder, val data.Value) (isa.Operand, error) {
+			if v, ok := e.resolveEncoderArg(val); ok {
+				val = v
+			}
+			if val, ok := val.(data.Keyword); ok {
+				return e.getLabelIndex(val.Name()), nil
+			}
+			return toOperand(e, val)
+		},
+		ErrUnexpectedLabel,
+	)
+}
+
+func (p *asmParser) makeNameToWord() asmToOperand {
+	return wrapToOperandError(
+		func(e *asmEncoder, val data.Value) (isa.Operand, error) {
+			if v, ok := e.resolveEncoderArg(val); ok {
+				val = v
+			}
+			if val, ok := val.(data.Local); ok {
+				n := p.resolvePrivate(val)
+				if cell, ok := e.ResolveLocal(n); ok {
+					return cell.Index, nil
+				}
+				return 0, fmt.Errorf(ErrUnexpectedName, val)
+			}
+			return toOperand(e, val)
+		},
+		ErrUnexpectedName,
+	)
+}
+
+func (p *asmParser) resolvePrivate(l data.Local) data.Local {
+	if g, ok := p.private[l]; ok {
+		return g
+	}
+	return l
 }
 
 func (e *asmEncoder) getLabelIndex(n data.Local) isa.Operand {
@@ -215,51 +348,12 @@ func (e *asmEncoder) toOperands(oc isa.Opcode, args data.Vector) []isa.Operand {
 	return basics.Map(args, func(a data.Value) isa.Operand {
 		ao := isa.Effects[oc].Operand
 		toOperand := e.getToOperandFor(ao)
-		r, err := toOperand(a)
+		r, err := toOperand(e, a)
 		if err != nil {
 			panic(err)
 		}
 		return r
 	})
-}
-
-func (e *asmEncoder) getToOperandFor(ao isa.ActOn) toOperandFunc {
-	switch ao {
-	case isa.Locals:
-		return e.makeNameToWord()
-	case isa.Labels:
-		return e.makeLabelToWord()
-	default:
-		return toOperand
-	}
-}
-
-func (e *asmEncoder) makeLabelToWord() toOperandFunc {
-	return wrapToOperandError(func(val data.Value) (isa.Operand, error) {
-		if v, ok := e.resolveEncoderArg(val); ok {
-			val = v
-		}
-		if val, ok := val.(data.Keyword); ok {
-			return e.getLabelIndex(val.Name()), nil
-		}
-		return toOperand(val)
-	}, ErrUnexpectedLabel)
-}
-
-func (e *asmEncoder) makeNameToWord() toOperandFunc {
-	return wrapToOperandError(func(val data.Value) (isa.Operand, error) {
-		if v, ok := e.resolveEncoderArg(val); ok {
-			val = v
-		}
-		if val, ok := val.(data.Local); ok {
-			n := e.resolvePrivate(val)
-			if cell, ok := e.ResolveLocal(n); ok {
-				return cell.Index, nil
-			}
-			return 0, fmt.Errorf(ErrUnexpectedName, val)
-		}
-		return toOperand(val)
-	}, ErrUnexpectedName)
 }
 
 func (e *asmEncoder) resolveEncoderArg(v data.Value) (data.Value, bool) {
@@ -270,14 +364,7 @@ func (e *asmEncoder) resolveEncoderArg(v data.Value) (data.Value, bool) {
 	return nil, false
 }
 
-func (e *asmEncoder) resolvePrivate(l data.Local) data.Local {
-	if g, ok := e.private[l]; ok {
-		return g
-	}
-	return l
-}
-
-func getCalls() callMap {
+func getCalls() namedParsers {
 	callsOnce.Do(func() {
 		calls = mergeCalls(
 			getInstructionCalls(),
@@ -287,8 +374,8 @@ func getCalls() callMap {
 	return calls
 }
 
-func mergeCalls(maps ...callMap) callMap {
-	res := callMap{}
+func mergeCalls(maps ...namedParsers) namedParsers {
+	res := namedParsers{}
 	for _, m := range maps {
 		for k, v := range m {
 			if _, ok := res[k]; ok {
@@ -300,76 +387,98 @@ func mergeCalls(maps ...callMap) callMap {
 	return res
 }
 
-func getInstructionCalls() callMap {
-	res := make(callMap, len(isa.Effects))
+func getInstructionCalls() namedParsers {
+	res := make(namedParsers, len(isa.Effects))
 	for oc, effect := range isa.Effects {
 		name := data.Local(str.CamelToSnake(oc.String()))
-		res[name] = func(oc isa.Opcode, ao isa.ActOn) *call {
+		res[name] = func(oc isa.Opcode, ao isa.ActOn) asmParse {
 			return makeEmitCall(oc, ao)
 		}(oc, effect.Operand)
 	}
 	return res
 }
 
-func getEncoderCalls() callMap {
-	return callMap{
-		Resolve:    {Call: resolveCall, argCount: 1},
-		Evaluate:   {Call: evaluateCall, argCount: 1},
-		ForEach:    {Call: forEachCall, argCount: 1, hasBlock: true},
-		Const:      {Call: constCall, argCount: 1},
-		PushLocals: {Call: pushLocalsCall},
-		PopLocals:  {Call: popLocalsCall},
-		Local:      {Call: makeLocalEncoder(publicNamer), argCount: 2},
-		Private:    {Call: makeLocalEncoder(privateNamer), argCount: 2},
+func getEncoderCalls() namedParsers {
+	return namedParsers{
+		Resolve:    makeArgsParser(Resolve, 1, resolveCall),
+		Evaluate:   makeArgsParser(Evaluate, 1, evaluateCall),
+		ForEach:    forEachCall,
+		Const:      makeArgsParser(Const, 1, constCall),
+		PushLocals: makeArgsParser(PushLocals, 0, pushLocalsCall),
+		PopLocals:  makeArgsParser(PopLocals, 0, popLocalsCall),
+		Local:      makeLocalEncoder(Local, publicNamer),
+		Private:    makeLocalEncoder(Private, privateNamer),
 	}
 }
 
-func makeEmitCall(oc isa.Opcode, actOn isa.ActOn) *call {
-	argCount := 0
-	if actOn != isa.Nothing {
-		argCount = 1
-	}
-	return &call{
-		Call: func(e encoder.Encoder, args ...data.Value) {
-			e.Emit(oc, e.(*asmEncoder).toOperands(oc, args)...)
-		},
-		argCount: argCount,
+func makeArgsParser(inst data.Local, argCount int, fn asmArgsParse) asmParse {
+	return func(p *asmParser, s data.Sequence) (asmEmit, data.Sequence, error) {
+		args, rest, ok := take(s, argCount)
+		if !ok {
+			return nil, nil, fmt.Errorf(ErrIncompleteInstruction, inst, argCount)
+		}
+		res, err := fn(p, args...)
+		if err != nil {
+			return nil, nil, err
+		}
+		return res, rest, nil
 	}
 }
 
-func resolveCall(e encoder.Encoder, args ...data.Value) {
-	s := args[0].(data.Symbol)
-	if l, ok := s.(data.Local); ok {
-		generate.Symbol(e, e.(*asmEncoder).resolvePrivate(l))
-		return
-	}
-	generate.Symbol(e, s)
+func resolveCall(_ *asmParser, args ...data.Value) (asmEmit, error) {
+	return func(e *asmEncoder) error {
+		s := args[0].(data.Symbol)
+		if l, ok := s.(data.Local); ok {
+			generate.Symbol(e, e.resolvePrivate(l))
+			return nil
+		}
+		generate.Symbol(e, s)
+		return nil
+	}, nil
 }
 
-func evaluateCall(e encoder.Encoder, args ...data.Value) {
-	if v, ok := e.(*asmEncoder).resolveEncoderArg(args[0]); ok {
-		generate.Value(e, v)
-		return
-	}
-	generate.Value(e, args[0])
+func evaluateCall(_ *asmParser, args ...data.Value) (asmEmit, error) {
+	return func(e *asmEncoder) error {
+		if v, ok := e.resolveEncoderArg(args[0]); ok {
+			generate.Value(e, v)
+			return nil
+		}
+		generate.Value(e, args[0])
+		return nil
+	}, nil
 }
 
-func forEachCall(e encoder.Encoder, args ...data.Value) {
-	n, v, ok := parseForEachBinding(args[0])
+func forEachCall(p *asmParser, s data.Sequence) (asmEmit, data.Sequence, error) {
+	args, s, ok := take(s, 1)
 	if !ok {
-		panic(fmt.Errorf(ErrExpectedBinding, args[0]))
+		return nil, nil, fmt.Errorf(ErrExpectedBinding, args[0])
 	}
-	s, ok := e.(*asmEncoder).resolveEncoderArg(v)
+	k, v, ok := parseForEachBinding(args[0])
 	if !ok {
-		panic(fmt.Errorf(ErrUnexpectedParameter, v))
+		return nil, nil, fmt.Errorf(ErrExpectedBinding, args[0])
 	}
-	ae := e.(*asmEncoder).copy()
-	forms := data.Vector(args[1:])
-	seq := s.(data.Sequence)
-	for f, r, ok := seq.Split(); ok; f, r, ok = r.Split() {
-		ae.args[n] = f
-		ae.encode(forms)
+	block, rest, err := p.block(s)
+	if err != nil {
+		return nil, nil, err
 	}
+
+	return func(e *asmEncoder) error {
+		s, ok := e.resolveEncoderArg(v)
+		if !ok {
+			return fmt.Errorf(ErrUnexpectedParameter, v)
+		}
+		seq, ok := s.(data.Sequence)
+		if !ok {
+			return fmt.Errorf(ErrExpectedSequence, data.ToString(s))
+		}
+		pc := p.withParams(data.Locals{k})
+		for f, r, ok := seq.Split(); ok; f, r, ok = r.Split() {
+			if err := block(pc.wrapEncoder(e, f)); err != nil {
+				return err
+			}
+		}
+		return nil
+	}, rest, nil
 }
 
 func parseForEachBinding(v data.Value) (data.Local, data.Value, bool) {
@@ -384,59 +493,92 @@ func parseForEachBinding(v data.Value) (data.Local, data.Value, bool) {
 	return l, b[1], true
 }
 
-func parseBlock(s data.Sequence) (data.Vector, data.Sequence) {
-	var res data.Vector
-	for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {
-		if l, ok := f.(data.Local); ok && l == EndBlock {
-			return res, r
+func constCall(_ *asmParser, args ...data.Value) (asmEmit, error) {
+	return func(e *asmEncoder) error {
+		if v, ok := e.resolveEncoderArg(args[0]); ok {
+			generate.Literal(e, v)
+			return nil
 		}
-		res = append(res, f)
-	}
-	panic(errors.New(ErrExpectedEndOfBlock))
+		generate.Literal(e, args[0])
+		return nil
+	}, nil
 }
 
-func constCall(e encoder.Encoder, args ...data.Value) {
-	if v, ok := e.(*asmEncoder).resolveEncoderArg(args[0]); ok {
-		generate.Literal(e, v)
-		return
-	}
-	generate.Literal(e, args[0])
+func pushLocalsCall(*asmParser, ...data.Value) (asmEmit, error) {
+	return func(e *asmEncoder) error {
+		e.PushLocals()
+		return nil
+	}, nil
 }
 
-func pushLocalsCall(e encoder.Encoder, _ ...data.Value) {
-	e.PushLocals()
+func popLocalsCall(*asmParser, ...data.Value) (asmEmit, error) {
+	return func(e *asmEncoder) error {
+		e.PopLocals()
+		return nil
+	}, nil
 }
 
-func popLocalsCall(e encoder.Encoder, _ ...data.Value) {
-	e.PopLocals()
+func makeLocalEncoder(inst data.Local, toName asmToName) asmParse {
+	return makeArgsParser(inst, 2,
+		func(p *asmParser, args ...data.Value) (asmEmit, error) {
+			return func(e *asmEncoder) error {
+				name, err := toName(e, args[0].(data.Local))
+				if err != nil {
+					return err
+				}
+				kwd := args[1].(data.Keyword)
+				cellType, ok := cellTypes[kwd]
+				if !ok {
+					return fmt.Errorf(ErrUnknownLocalType, kwd, cellTypeNames)
+				}
+				e.AddLocal(name, cellType)
+				return nil
+			}, nil
+		},
+	)
 }
 
-func makeLocalEncoder(toName toNameFunc) special.Call {
-	return func(e encoder.Encoder, args ...data.Value) {
-		name := toName(e.(*asmEncoder), args[0].(data.Local))
-		kwd := args[1].(data.Keyword)
-		cellType, ok := cellTypes[kwd]
-		if !ok {
-			panic(fmt.Errorf(ErrUnknownLocalType, kwd, cellTypeNames))
-		}
-		e.AddLocal(name, cellType)
-	}
-}
-
-func publicNamer(e *asmEncoder, l data.Local) data.Local {
+func publicNamer(e *asmEncoder, l data.Local) (data.Local, error) {
 	if v, ok := e.resolveEncoderArg(l); ok {
 		if res, ok := v.(data.Local); ok {
-			return res
+			return res, nil
 		}
-		panic(fmt.Errorf(ErrBadNameResolution, v))
+		return "", fmt.Errorf(ErrBadNameResolution, v)
 	}
-	return l
+	return l, nil
 }
 
-func privateNamer(e *asmEncoder, l data.Local) data.Local {
+func privateNamer(e *asmEncoder, l data.Local) (data.Local, error) {
 	p := gen.Local(l)
 	e.private[l] = p
-	return p
+	return p, nil
+}
+
+func makeEmitCall(oc isa.Opcode, actOn isa.ActOn) asmParse {
+	if actOn == isa.Nothing {
+		return makeStandaloneEmit(oc)
+	}
+	return makeOperandEmit(oc)
+}
+
+func makeStandaloneEmit(oc isa.Opcode) asmParse {
+	return func(p *asmParser, s data.Sequence) (asmEmit, data.Sequence, error) {
+		return func(e *asmEncoder) error {
+			e.Emit(oc)
+			return nil
+		}, s, nil
+	}
+}
+
+func makeOperandEmit(oc isa.Opcode) asmParse {
+	return makeArgsParser(data.Local(oc.String()), 1,
+		func(p *asmParser, args ...data.Value) (asmEmit, error) {
+			return func(e *asmEncoder) error {
+				e.Emit(oc, e.toOperands(oc, args)...)
+				return nil
+			}, nil
+		},
+	)
 }
 
 func take(s data.Sequence, count int) (data.Vector, data.Sequence, bool) {
@@ -452,9 +594,9 @@ func take(s data.Sequence, count int) (data.Vector, data.Sequence, bool) {
 	return res, s, true
 }
 
-func wrapToOperandError(toOperand toOperandFunc, errStr string) toOperandFunc {
-	return func(val data.Value) (isa.Operand, error) {
-		res, err := toOperand(val)
+func wrapToOperandError(toOperand asmToOperand, errStr string) asmToOperand {
+	return func(e *asmEncoder, val data.Value) (isa.Operand, error) {
+		res, err := toOperand(e, val)
 		if err != nil {
 			return 0, errors.Join(fmt.Errorf(errStr, val), err)
 		}
@@ -462,7 +604,7 @@ func wrapToOperandError(toOperand toOperandFunc, errStr string) toOperandFunc {
 	}
 }
 
-func toOperand(val data.Value) (isa.Operand, error) {
+func toOperand(_ *asmEncoder, val data.Value) (isa.Operand, error) {
 	if val, ok := val.(data.Integer); ok {
 		if isa.IsValidOperand(int(val)) {
 			return isa.Operand(val), nil
