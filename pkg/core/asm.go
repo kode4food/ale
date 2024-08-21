@@ -364,8 +364,12 @@ func (e *asmEncoder) toOperands(oc isa.Opcode, args data.Vector) []isa.Operand {
 
 func (e *asmEncoder) resolveEncoderArg(v data.Value) (data.Value, bool) {
 	if v, ok := v.(data.Local); ok {
-		res, ok := e.args[v]
-		return res, ok
+		if res, ok := e.args[v]; ok {
+			return res, true
+		}
+	}
+	if p, ok := e.Encoder.(*asmEncoder); ok {
+		return p.resolveEncoderArg(v)
 	}
 	return nil, false
 }
