@@ -31,7 +31,7 @@ type (
 		labels map[data.Local]isa.Operand
 	}
 
-	namedParsers map[data.Local]asmParse
+	namedAsmParsers map[data.Local]asmParse
 
 	asmParse     func(*asmParser, data.Sequence) (asmEmit, data.Sequence, error)
 	asmArgsParse func(*asmParser, ...data.Value) (asmEmit, error)
@@ -111,7 +111,7 @@ var (
 	cellTypeNames = makeCellTypeNames()
 
 	callsOnce sync.Once
-	calls     namedParsers
+	calls     namedAsmParsers
 )
 
 func noAsmEmit(*asmEncoder) error { return nil }
@@ -295,7 +295,7 @@ func (p *asmParser) getToOperandFor(ao isa.ActOn) asmToOperand {
 }
 
 func (p *asmParser) makeLabelToWord() asmToOperand {
-	return wrapToOperandError(
+	return wrapToOperandError(ErrUnexpectedLabel,
 		func(e *asmEncoder, val data.Value) (isa.Operand, error) {
 			if v, ok := e.resolveEncoderArg(val); ok {
 				val = v
@@ -305,12 +305,11 @@ func (p *asmParser) makeLabelToWord() asmToOperand {
 			}
 			return toOperand(e, val)
 		},
-		ErrUnexpectedLabel,
 	)
 }
 
 func (p *asmParser) makeNameToWord() asmToOperand {
-	return wrapToOperandError(
+	return wrapToOperandError(ErrUnexpectedName,
 		func(e *asmEncoder, val data.Value) (isa.Operand, error) {
 			if v, ok := e.resolveEncoderArg(val); ok {
 				val = v
@@ -324,7 +323,6 @@ func (p *asmParser) makeNameToWord() asmToOperand {
 			}
 			return toOperand(e, val)
 		},
-		ErrUnexpectedName,
 	)
 }
 
@@ -364,7 +362,7 @@ func (e *asmEncoder) resolveEncoderArg(v data.Value) (data.Value, bool) {
 	return nil, false
 }
 
-func getCalls() namedParsers {
+func getCalls() namedAsmParsers {
 	callsOnce.Do(func() {
 		calls = mergeCalls(
 			getInstructionCalls(),
@@ -374,8 +372,8 @@ func getCalls() namedParsers {
 	return calls
 }
 
-func mergeCalls(maps ...namedParsers) namedParsers {
-	res := namedParsers{}
+func mergeCalls(maps ...namedAsmParsers) namedAsmParsers {
+	res := namedAsmParsers{}
 	for _, m := range maps {
 		for k, v := range m {
 			if _, ok := res[k]; ok {
@@ -387,8 +385,8 @@ func mergeCalls(maps ...namedParsers) namedParsers {
 	return res
 }
 
-func getInstructionCalls() namedParsers {
-	res := make(namedParsers, len(isa.Effects))
+func getInstructionCalls() namedAsmParsers {
+	res := make(namedAsmParsers, len(isa.Effects))
 	for oc, effect := range isa.Effects {
 		name := data.Local(str.CamelToSnake(oc.String()))
 		res[name] = func(oc isa.Opcode, ao isa.ActOn) asmParse {
@@ -398,8 +396,8 @@ func getInstructionCalls() namedParsers {
 	return res
 }
 
-func getEncoderCalls() namedParsers {
-	return namedParsers{
+func getEncoderCalls() namedAsmParsers {
+	return namedAsmParsers{
 		Resolve:    parseArgs(Resolve, 1, resolveCall),
 		Evaluate:   parseArgs(Evaluate, 1, evaluateCall),
 		ForEach:    parseForEachCall,
@@ -596,7 +594,7 @@ func take(s data.Sequence, count int) (data.Vector, data.Sequence, bool) {
 	return res, s, true
 }
 
-func wrapToOperandError(toOperand asmToOperand, errStr string) asmToOperand {
+func wrapToOperandError(errStr string, toOperand asmToOperand) asmToOperand {
 	return func(e *asmEncoder, val data.Value) (isa.Operand, error) {
 		res, err := toOperand(e, val)
 		if err != nil {
