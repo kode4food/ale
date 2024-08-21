@@ -73,17 +73,13 @@ const (
 	// using an argument to the encoder that is not a Local symbol
 	ErrBadNameResolution = "encoder argument is not a name: %s"
 
-	// ErrExpectedBinding is raised when a binding vector is expected but not
-	// provided to the .for-each call
-	ErrExpectedBinding = "expected binding vector, got: %s"
-
 	// ErrExpectedEndOfBlock is raised when an end-of-block marker is expected
 	// but an end of stream is encountered instead
 	ErrExpectedEndOfBlock = "expected end of block"
 
-	// ErrExpectedSequence is raised when a sequence is expected but not
-	// provided to the .for-each call
-	ErrExpectedSequence = "expected sequence, got: %s"
+	// ErrExpectedType is raised when a value of a certain type is expected,
+	// but not provided
+	ErrExpectedType = "expected %s, got: %s"
 )
 
 const (
@@ -97,6 +93,14 @@ const (
 	PushLocals  = data.Local(".push-locals")
 	PopLocals   = data.Local(".pop-locals")
 	EndBlock    = data.Local(".end")
+)
+
+const (
+	bindType = "binding vector"
+	seqType  = "sequence"
+	symType  = "symbol"
+	nameType = "name"
+	kwdType  = "keyword"
 )
 
 var (
@@ -424,8 +428,12 @@ func parseArgs(inst data.Local, argsLen int, fn asmArgsParse) asmParse {
 }
 
 func resolveCall(_ *asmParser, args ...data.Value) (asmEmit, error) {
+	s, ok := args[0].(data.Symbol)
+	if !ok {
+		return nil, typeError(symType, args[0])
+	}
+
 	return func(e *asmEncoder) error {
-		s := args[0].(data.Symbol)
 		if l, ok := s.(data.Local); ok {
 			generate.Symbol(e, e.resolvePrivate(l))
 			return nil
@@ -449,15 +457,16 @@ func evaluateCall(_ *asmParser, args ...data.Value) (asmEmit, error) {
 func parseForEachCall(
 	p *asmParser, s data.Sequence,
 ) (asmEmit, data.Sequence, error) {
-	args, s, ok := take(s, 1)
+	f, r, ok := s.Split()
 	if !ok {
-		return nil, nil, fmt.Errorf(ErrExpectedBinding, args[0])
+		return nil, nil, typeError(bindType, f)
 	}
-	k, v, ok := parseForEachBinding(args[0])
-	if !ok {
-		return nil, nil, fmt.Errorf(ErrExpectedBinding, args[0])
+	k, v, err := parseForEachBinding(f)
+	if err != nil {
+		return nil, nil, err
 	}
-	block, rest, err := p.block(s)
+	pc := p.withParams(data.Locals{k})
+	block, rest, err := p.block(r)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -469,9 +478,8 @@ func parseForEachCall(
 		}
 		seq, ok := s.(data.Sequence)
 		if !ok {
-			return fmt.Errorf(ErrExpectedSequence, data.ToString(s))
+			return typeError(seqType, s)
 		}
-		pc := p.withParams(data.Locals{k})
 		for f, r, ok := seq.Split(); ok; f, r, ok = r.Split() {
 			if err := block(pc.wrapEncoder(e, f)); err != nil {
 				return err
@@ -481,16 +489,16 @@ func parseForEachCall(
 	}, rest, nil
 }
 
-func parseForEachBinding(v data.Value) (data.Local, data.Value, bool) {
+func parseForEachBinding(v data.Value) (data.Local, data.Value, error) {
 	b, ok := v.(data.Vector)
 	if !ok || len(b) != 2 {
-		return "", nil, false
+		return "", nil, typeError(bindType, v)
 	}
 	l, ok := b[0].(data.Local)
 	if !ok {
-		return "", nil, false
+		return "", nil, typeError(nameType, b[0])
 	}
-	return l, b[1], true
+	return l, b[1], nil
 }
 
 func constCall(_ *asmParser, args ...data.Value) (asmEmit, error) {
@@ -521,15 +529,23 @@ func popLocalsCall(*asmParser, ...data.Value) (asmEmit, error) {
 func parseLocalEncoder(inst data.Local, toName asmToName) asmParse {
 	return parseArgs(inst, 2,
 		func(p *asmParser, args ...data.Value) (asmEmit, error) {
+			l, ok := args[0].(data.Local)
+			if !ok {
+				return nil, typeError(nameType, args[0])
+			}
+			k, ok := args[1].(data.Keyword)
+			if !ok {
+				return nil, typeError(kwdType, args[1])
+			}
+			cellType, ok := cellTypes[k]
+			if !ok {
+				return nil, fmt.Errorf(ErrUnknownLocalType, k, cellTypeNames)
+			}
+
 			return func(e *asmEncoder) error {
-				name, err := toName(e, args[0].(data.Local))
+				name, err := toName(e, l)
 				if err != nil {
 					return err
-				}
-				kwd := args[1].(data.Keyword)
-				cellType, ok := cellTypes[kwd]
-				if !ok {
-					return fmt.Errorf(ErrUnknownLocalType, kwd, cellTypeNames)
 				}
 				e.AddLocal(name, cellType)
 				return nil
@@ -626,4 +642,8 @@ func makeCellTypeNames() string {
 		buf.WriteString(s.String())
 	}
 	return buf.String()
+}
+
+func typeError(expected string, val data.Value) error {
+	return fmt.Errorf(ErrExpectedType, expected, data.ToString(val))
 }
