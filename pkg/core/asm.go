@@ -477,7 +477,7 @@ func parseForEachCall(
 		return nil, nil, err
 	}
 	pc := p.withParams(data.Locals{k})
-	block, rest, err := p.block(r)
+	block, rest, err := pc.block(r)
 	if err != nil {
 		return nil, nil, err
 	}
