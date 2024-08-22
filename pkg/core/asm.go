@@ -441,11 +441,14 @@ func resolveCall(_ *asmParser, args ...data.Value) (asmEmit, error) {
 		return nil, err
 	}
 
-	return func(e *asmEncoder) error {
-		if l, ok := s.(data.Local); ok {
+	if l, ok := s.(data.Local); ok {
+		return func(e *asmEncoder) error {
 			generate.Symbol(e, e.resolvePrivate(l))
 			return nil
-		}
+		}, nil
+	}
+
+	return func(e *asmEncoder) error {
 		generate.Symbol(e, s)
 		return nil
 	}, nil
