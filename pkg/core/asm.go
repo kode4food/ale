@@ -49,9 +49,9 @@ const (
 	// the assembler block
 	ErrUnexpectedForm = "unexpected form: %s"
 
-	// ErrIncompleteInstruction is raised when an instruction is encountered in
-	// the assembler block not accompanied by enough operands
-	ErrIncompleteInstruction = "incomplete %s instruction, args expected: %d"
+	// ErrTooFewArguments is raised when an instruction is encountered in the
+	// assembler block not accompanied by enough operands
+	ErrTooFewArguments = "incomplete %s instruction, args expected: %d"
 
 	// ErrUnknownLocalType is raised when a local or private is declared that
 	// doesn't have a proper disposition (var, ref, rest)
@@ -425,7 +425,7 @@ func parseArgs(inst data.Local, argsLen int, fn asmArgsParse) asmParse {
 	return func(p *asmParser, s data.Sequence) (asmEmit, data.Sequence, error) {
 		args, rest, ok := take(s, argsLen)
 		if !ok {
-			return nil, nil, fmt.Errorf(ErrIncompleteInstruction, inst, argsLen)
+			return nil, nil, fmt.Errorf(ErrTooFewArguments, inst, argsLen)
 		}
 		res, err := fn(p, args...)
 		if err != nil {
@@ -548,9 +548,9 @@ func parseLocalEncoder(inst data.Local, toName asmToName) asmParse {
 			if err != nil {
 				return nil, err
 			}
-			cellType, ok := cellTypes[k]
-			if !ok {
-				return nil, fmt.Errorf(ErrUnknownLocalType, k, cellTypeNames)
+			cellType, err := getCellType(k)
+			if err != nil {
+				return nil, err
 			}
 
 			return func(e *asmEncoder) error {
@@ -638,6 +638,14 @@ func toOperand(_ *asmEncoder, val data.Value) (isa.Operand, error) {
 		}
 	}
 	return 0, fmt.Errorf(isa.ErrExpectedOperand, val)
+}
+
+func getCellType(k data.Keyword) (encoder.CellType, error) {
+	res, ok := cellTypes[k]
+	if ok {
+		return res, nil
+	}
+	return 0, fmt.Errorf(ErrUnknownLocalType, k, cellTypeNames)
 }
 
 func makeCellTypeNames() string {
