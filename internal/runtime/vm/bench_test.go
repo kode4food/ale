@@ -66,7 +66,7 @@ func BenchmarkNumberLoop(b *testing.B) {
 	}
 }
 
-var bCode = makeProcedure(isa.Instructions{
+var bCode = makeClosure(isa.Instructions{
 	isa.Const.New(0), // the extra stack item is intentional
 	isa.Const.New(0),
 	isa.Const.New(1),

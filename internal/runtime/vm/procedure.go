@@ -20,12 +20,6 @@ type (
 	}
 
 	ProcFlag uint
-
-	Closure struct {
-		*Procedure
-		captured data.Vector
-		hash     uint64
-	}
 )
 
 const (
@@ -69,6 +63,10 @@ func (p *Procedure) Type() types.Type {
 	return types.BasicProcedure
 }
 
+func (p *Procedure) Get(key data.Value) (data.Value, bool) {
+	return data.DumpMapped(p).Get(key)
+}
+
 // Equal compares this Procedure to another for equality
 func (p *Procedure) Equal(other data.Value) bool {
 	if p == other {
@@ -98,48 +96,5 @@ func (p *Procedure) HashCode() uint64 {
 		res ^= data.HashInt(i)
 	}
 	atomic.StoreUint64(&p.hash, res)
-	return res
-}
-
-func (p *Procedure) Get(key data.Value) (data.Value, bool) {
-	return data.DumpMapped(p).Get(key)
-}
-
-// Captured returns the captured values of a Closure
-func (c *Closure) Captured() data.Vector {
-	return c.captured
-}
-
-// Call turns Closure into a Procedure, and serves as the virtual machine
-func (c *Closure) Call(args ...data.Value) data.Value {
-	return c.Run(args)
-}
-
-// CheckArity performs a compile-time arity check for the Closure
-func (c *Closure) CheckArity(i int) error {
-	return c.ArityChecker(i)
-}
-
-func (c *Closure) Equal(other data.Value) bool {
-	if c == other {
-		return true
-	}
-	if other, ok := other.(*Closure); ok {
-		return c.Procedure.Equal(other.Procedure) &&
-			c.captured.Equal(other.captured)
-	}
-	return false
-}
-
-func (c *Closure) HashCode() uint64 {
-	if h := atomic.LoadUint64(&c.hash); h != 0 {
-		return h
-	}
-	res := c.Procedure.HashCode()
-	for i, v := range c.captured {
-		res ^= data.HashCode(v)
-		res ^= data.HashInt(i)
-	}
-	atomic.StoreUint64(&c.hash, res)
 	return res
 }
