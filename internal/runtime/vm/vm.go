@@ -1,170 +1,393 @@
 package vm
 
 import (
+	"errors"
+	"slices"
+
 	"github.com/kode4food/ale/internal/debug"
 	"github.com/kode4food/ale/internal/runtime/isa"
+	"github.com/kode4food/ale/internal/sequence"
 	"github.com/kode4food/ale/pkg/data"
-)
-
-type (
-	state int
-
-	VM struct {
-		CODE isa.Instructions
-		RES  data.Value
-		CL   *Closure
-		MEM  data.Vector
-		ARGS data.Vector
-		ST   state
-		PC   int
-		LP   int
-		SP   int
-		INST isa.Instruction
-	}
+	"github.com/kode4food/ale/pkg/env"
 )
 
 // ErrBadInstruction is raised when the VM encounters an Opcode that has not
 // been properly mapped
 const ErrBadInstruction = "unknown instruction encountered: %s"
 
-const (
-	failure state = iota - 1
-	running
-	success
-)
+func (c *Closure) Run(args data.Vector) data.Value {
+	var MEM data.Vector
+	var CODE isa.Instructions
+	var PC, LP, SP int
+	var INST isa.Instruction
 
-func (vm *VM) initMem() {
-	vm.MEM = make(data.Vector, vm.CL.StackSize+vm.CL.LocalCount)
-	vm.initCode()
-}
+InitMem:
+	MEM = make(data.Vector, c.StackSize+c.LocalCount)
 
-func (vm *VM) initCode() {
-	vm.CODE = vm.CL.Code
-	vm.LP = int(vm.CL.StackSize)
-	vm.initState()
-}
+InitCode:
+	CODE = c.Code
+	LP = int(c.StackSize)
 
-func (vm *VM) initState() {
-	vm.SP = vm.LP - 1
-	vm.PC = 0
-}
+InitState:
+	SP = LP - 1
+	PC = 0
+	goto CurrentPC
 
-func (vm *VM) Run() data.Value {
-	vm.initMem()
-	for vm.ST == running {
-		vm.INST = vm.CODE[vm.PC]
-		switch vm.INST.Opcode() {
-		case isa.Add:
-			doAdd(vm)
-		case isa.Arg:
-			doArg(vm)
-		case isa.ArgLen:
-			doArgLen(vm)
-		case isa.Bind:
-			doBind(vm)
-		case isa.BindRef:
-			doBindRef(vm)
-		case isa.Call0:
-			doCall0(vm)
-		case isa.Call1:
-			doCall1(vm)
-		case isa.Call:
-			doCall(vm)
-		case isa.CallWith:
-			doCallWith(vm)
-		case isa.Car:
-			doCar(vm)
-		case isa.Cdr:
-			doCdr(vm)
-		case isa.Closure:
-			doClosure(vm)
-		case isa.CondJump:
-			doCondJump(vm)
-		case isa.Cons:
-			doCons(vm)
-		case isa.Const:
-			doConst(vm)
-		case isa.Declare:
-			doDeclare(vm)
-		case isa.Deref:
-			doDeref(vm)
-		case isa.Div:
-			doDiv(vm)
-		case isa.Dup:
-			doDup(vm)
-		case isa.Empty:
-			doEmpty(vm)
-		case isa.Eq:
-			doEq(vm)
-		case isa.False:
-			doFalse(vm)
-		case isa.Jump:
-			doJump(vm)
-		case isa.Load:
-			doLoad(vm)
-		case isa.Mod:
-			doMod(vm)
-		case isa.Mul:
-			doMul(vm)
-		case isa.Neg:
-			doNeg(vm)
-		case isa.NegInt:
-			doNegInt(vm)
-		case isa.NewRef:
-			doNewRef(vm)
-		case isa.NoOp:
-			doNoOp(vm)
-		case isa.Not:
-			doNot(vm)
-		case isa.Null:
-			doNull(vm)
-		case isa.NumEq:
-			doNumEq(vm)
-		case isa.NumGt:
-			doNumGt(vm)
-		case isa.NumGte:
-			doNumGte(vm)
-		case isa.NumLt:
-			doNumLt(vm)
-		case isa.NumLte:
-			doNumLte(vm)
-		case isa.Panic:
-			doPanic(vm)
-		case isa.Pop:
-			doPop(vm)
-		case isa.PosInt:
-			doPosInt(vm)
-		case isa.Private:
-			doPrivate(vm)
-		case isa.Resolve:
-			doResolve(vm)
-		case isa.RestArg:
-			doRestArg(vm)
-		case isa.RetFalse:
-			doRetFalse(vm)
-		case isa.RetNull:
-			doRetNull(vm)
-		case isa.RetTrue:
-			doRetTrue(vm)
-		case isa.Return:
-			doReturn(vm)
-		case isa.SetArgs:
-			doSetArgs(vm)
-		case isa.Store:
-			doStore(vm)
-		case isa.Sub:
-			doSub(vm)
-		case isa.TailCall:
-			doTailCall(vm)
-		case isa.True:
-			doTrue(vm)
-		case isa.Vector:
-			doVector(vm)
-		case isa.Zero:
-			doZero(vm)
-		default:
-			panic(debug.ProgrammerError(ErrBadInstruction, vm.INST))
+NextPC:
+	PC++
+
+CurrentPC:
+	INST = CODE[PC]
+	switch INST.Opcode() {
+
+	case isa.Add:
+		SP++
+		SP1 := SP + 1
+		MEM[SP1] = MEM[SP1].(data.Number).Add(
+			MEM[SP].(data.Number),
+		)
+		goto NextPC
+
+	case isa.Arg:
+		MEM[SP] = args[INST.Operand()]
+		SP--
+		goto NextPC
+
+	case isa.ArgLen:
+		MEM[SP] = data.Integer(len(args))
+		SP--
+		goto NextPC
+
+	case isa.Bind:
+		SP++
+		name := MEM[SP].(data.Local)
+		SP++
+		c.Globals.Declare(name).Bind(MEM[SP])
+		goto NextPC
+
+	case isa.BindRef:
+		SP++
+		ref := MEM[SP].(*Ref)
+		SP++
+		ref.Value = MEM[SP]
+		goto NextPC
+
+	case isa.Call0:
+		SP1 := SP + 1
+		MEM[SP1] = MEM[SP1].(data.Procedure).Call()
+		goto NextPC
+
+	case isa.Call1:
+		SP++
+		SP1 := SP + 1
+		MEM[SP1] = MEM[SP].(data.Procedure).Call(MEM[SP1])
+		goto NextPC
+
+	case isa.Call:
+		op := INST.Operand()
+		SP1 := SP + 1
+		SP2 := SP1 + 1
+		fn := MEM[SP1].(data.Procedure)
+		args := slices.Clone(MEM[SP2 : SP2+int(op)])
+		RES := SP1 + int(op)
+		MEM[RES] = fn.Call(args...)
+		SP = RES - 1
+		goto NextPC
+
+	case isa.CallWith:
+		SP++
+		SP1 := SP + 1
+		MEM[SP1] = MEM[SP].(data.Procedure).Call(
+			sequence.ToValues(MEM[SP1].(data.Sequence))...,
+		)
+		goto NextPC
+
+	case isa.Car:
+		SP1 := SP + 1
+		MEM[SP1] = MEM[SP1].(data.Pair).Car()
+		goto NextPC
+
+	case isa.Cdr:
+		SP1 := SP + 1
+		MEM[SP1] = MEM[SP1].(data.Pair).Cdr()
+		goto NextPC
+
+	case isa.Closure:
+		MEM[SP] = c.captured[INST.Operand()]
+		SP--
+		goto NextPC
+
+	case isa.CondJump:
+		SP++
+		if MEM[SP] != data.False {
+			PC = int(INST.Operand())
+			goto CurrentPC
 		}
+		goto NextPC
+
+	case isa.Cons:
+		SP++
+		SP1 := SP + 1
+		if p, ok := MEM[SP1].(data.Prepender); ok {
+			MEM[SP1] = p.Prepend(MEM[SP])
+			goto NextPC
+		}
+		MEM[SP1] = data.NewCons(MEM[SP], MEM[SP1])
+		goto NextPC
+
+	case isa.Const:
+		MEM[SP] = c.Constants[INST.Operand()]
+		SP--
+		goto NextPC
+
+	case isa.Declare:
+		SP++
+		c.Globals.Declare(
+			MEM[SP].(data.Local),
+		)
+		goto NextPC
+
+	case isa.Deref:
+		SP1 := SP + 1
+		MEM[SP1] = MEM[SP1].(*Ref).Value
+		goto NextPC
+
+	case isa.Div:
+		SP++
+		SP1 := SP + 1
+		MEM[SP1] = MEM[SP1].(data.Number).Div(
+			MEM[SP].(data.Number),
+		)
+		goto NextPC
+
+	case isa.Dup:
+		MEM[SP] = MEM[SP+1]
+		SP--
+		goto NextPC
+
+	case isa.Empty:
+		SP1 := SP + 1
+		MEM[SP1] = data.Bool(MEM[SP1].(data.Sequence).IsEmpty())
+		goto NextPC
+
+	case isa.Eq:
+		SP++
+		SP1 := SP + 1
+		MEM[SP1] = data.Bool(MEM[SP1].Equal(MEM[SP]))
+		goto NextPC
+
+	case isa.False:
+		MEM[SP] = data.False
+		SP--
+		goto NextPC
+
+	case isa.Jump:
+		PC = int(INST.Operand())
+		goto CurrentPC
+
+	case isa.Load:
+		MEM[SP] = MEM[LP+int(INST.Operand())]
+		SP--
+		goto NextPC
+
+	case isa.Mod:
+		SP++
+		SP1 := SP + 1
+		MEM[SP1] = MEM[SP1].(data.Number).Mod(
+			MEM[SP].(data.Number),
+		)
+		goto NextPC
+
+	case isa.Mul:
+		SP++
+		SP1 := SP + 1
+		MEM[SP1] = MEM[SP1].(data.Number).Mul(
+			MEM[SP].(data.Number),
+		)
+		goto NextPC
+
+	case isa.Neg:
+		SP1 := SP + 1
+		MEM[SP1] = data.Integer(0).Sub(
+			MEM[SP1].(data.Number),
+		)
+		goto NextPC
+
+	case isa.NegInt:
+		MEM[SP] = -data.Integer(INST.Operand())
+		SP--
+		goto NextPC
+
+	case isa.NewRef:
+		MEM[SP] = new(Ref)
+		SP--
+		goto NextPC
+
+	case isa.NoOp:
+		goto NextPC
+
+	case isa.Not:
+		SP1 := SP + 1
+		MEM[SP1] = !MEM[SP1].(data.Bool)
+		goto NextPC
+
+	case isa.Null:
+		MEM[SP] = data.Null
+		SP--
+		goto NextPC
+
+	case isa.NumEq:
+		SP++
+		SP1 := SP + 1
+		MEM[SP1] = data.Bool(
+			data.EqualTo == MEM[SP1].(data.Number).Cmp(
+				MEM[SP].(data.Number),
+			),
+		)
+		goto NextPC
+
+	case isa.NumGt:
+		SP++
+		SP1 := SP + 1
+		MEM[SP1] = data.Bool(
+			data.GreaterThan == MEM[SP1].(data.Number).Cmp(
+				MEM[SP].(data.Number),
+			),
+		)
+		goto NextPC
+
+	case isa.NumGte:
+		SP++
+		SP1 := SP + 1
+		cmp := MEM[SP1].(data.Number).Cmp(
+			MEM[SP].(data.Number),
+		)
+		MEM[SP1] = data.Bool(
+			cmp == data.GreaterThan || cmp == data.EqualTo,
+		)
+		goto NextPC
+
+	case isa.NumLt:
+		SP++
+		SP1 := SP + 1
+		MEM[SP1] = data.Bool(
+			data.LessThan == MEM[SP1].(data.Number).Cmp(
+				MEM[SP].(data.Number),
+			),
+		)
+		goto NextPC
+
+	case isa.NumLte:
+		SP++
+		SP1 := SP + 1
+		cmp := MEM[SP1].(data.Number).Cmp(
+			MEM[SP].(data.Number),
+		)
+		MEM[SP1] = data.Bool(
+			cmp == data.LessThan || cmp == data.EqualTo,
+		)
+		goto NextPC
+
+	case isa.Panic:
+		panic(errors.New(data.ToString(MEM[SP+1])))
+
+	case isa.Pop:
+		SP++
+		goto NextPC
+
+	case isa.PosInt:
+		MEM[SP] = data.Integer(INST.Operand())
+		SP--
+		goto NextPC
+
+	case isa.Private:
+		SP++
+		c.Globals.Private(
+			MEM[SP].(data.Local),
+		)
+		goto NextPC
+
+	case isa.Resolve:
+		SP1 := SP + 1
+		MEM[SP1] = env.MustResolveValue(
+			c.Globals,
+			MEM[SP1].(data.Symbol),
+		)
+		goto NextPC
+
+	case isa.RestArg:
+		MEM[SP] = args[INST.Operand():]
+		SP--
+		goto NextPC
+
+	case isa.RetFalse:
+		return data.False
+
+	case isa.RetNull:
+		return data.Null
+
+	case isa.RetTrue:
+		return data.True
+
+	case isa.Return:
+		return MEM[SP+1]
+
+	case isa.SetArgs:
+		SP++
+		args = MEM[SP].(data.Vector)
+		goto NextPC
+
+	case isa.Store:
+		SP++
+		MEM[LP+int(INST.Operand())] = MEM[SP]
+		goto NextPC
+
+	case isa.Sub:
+		SP++
+		SP1 := SP + 1
+		MEM[SP1] = MEM[SP1].(data.Number).Sub(
+			MEM[SP].(data.Number),
+		)
+		goto NextPC
+
+	case isa.TailCall:
+		op := INST.Operand()
+		SP1 := SP + 1
+		SP2 := SP1 + 1
+		val := MEM[SP1]
+		args = slices.Clone(MEM[SP2 : SP2+int(op)])
+		cl, ok := val.(*Closure)
+		if !ok {
+			return val.(data.Procedure).Call(args...)
+		}
+		if cl == c {
+			goto InitState
+		}
+		c = cl // intentional
+		if len(MEM) < int(c.StackSize+c.LocalCount) {
+			goto InitMem
+		}
+		goto InitCode
+
+	case isa.True:
+		MEM[SP] = data.True
+		SP--
+		goto NextPC
+
+	case isa.Vector:
+		op := INST.Operand()
+		RES := SP + int(op)
+		MEM[RES] = slices.Clone(MEM[SP+1 : RES+1])
+		SP = RES - 1
+		goto NextPC
+
+	case isa.Zero:
+		MEM[SP] = data.Integer(0)
+		SP--
+		goto NextPC
+
+	default:
+		panic(debug.ProgrammerError(ErrBadInstruction, INST))
+
 	}
-	return vm.RES
 }
