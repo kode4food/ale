@@ -78,17 +78,15 @@ func (i Instructions) String() string {
 }
 
 func (i Instruction) Split() (Opcode, Operand) {
-	return Opcode(i) & OpcodeMask, Operand(i) >> OpcodeSize & OperandMask
+	return i.Opcode(), i.Operand()
 }
 
 func (i Instruction) Opcode() Opcode {
-	oc, _ := i.Split()
-	return oc
+	return Opcode(i) & OpcodeMask
 }
 
 func (i Instruction) Operand() Operand {
-	_, op := i.Split()
-	return op
+	return Operand(i) >> OpcodeSize & OperandMask
 }
 
 func (i Instruction) StackChange() int {
