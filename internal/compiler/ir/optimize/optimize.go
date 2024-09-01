@@ -29,7 +29,7 @@ func globalReplace(p visitor.Pattern, m visitor.Mapper) optimizer {
 	replace := visitor.Replace(p, m)
 	return func(e *encoder.Encoded) {
 		root := visitor.All(e.Code)
-		replace.Instructions(root)
+		visitor.Visit(root, replace)
 		e.Code = root.Code()
 	}
 }

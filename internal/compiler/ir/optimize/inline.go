@@ -42,7 +42,8 @@ func inlineCalls(e *encoder.Encoded) {
 		baseLocal: getNextLocal(e.Code),
 	}
 	root := visitor.All(e.Code)
-	visitor.Replace(inlineCallPattern, mapper.perform).Instructions(root)
+	replace := visitor.Replace(inlineCallPattern, mapper.perform)
+	visitor.Visit(root, replace)
 	e.Code = root.Code()
 }
 

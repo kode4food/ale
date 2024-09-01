@@ -17,10 +17,10 @@ var tailCallPattern = visitor.Pattern{
 }
 
 func makeTailCalls(e *encoder.Encoded) {
-	mapper := &tailCallMapper{e}
-	r := visitor.Replace(tailCallPattern, mapper.perform)
 	root := visitor.All(e.Code)
-	r.Instructions(root)
+	mapper := &tailCallMapper{e}
+	replace := visitor.Replace(tailCallPattern, mapper.perform)
+	visitor.Visit(root, replace)
 	e.Code = root.Code()
 }
 

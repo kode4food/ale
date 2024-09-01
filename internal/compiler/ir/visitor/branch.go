@@ -27,6 +27,14 @@ type (
 		code isa.Instructions
 	}
 
+	BranchScanner struct {
+		Then     Scanner
+		Else     Scanner
+		Epilogue Scanner
+	}
+
+	Scanner func(isa.Instructions) Node
+
 	branches struct {
 		prologue   Instructions
 		elseBranch Node
@@ -39,7 +47,7 @@ type (
 )
 
 // All treats a set of instructions as a single block (no branching)
-func All(code isa.Instructions) Instructions {
+func All(code isa.Instructions) Node {
 	return &instructions{
 		code: code,
 	}
@@ -47,11 +55,20 @@ func All(code isa.Instructions) Instructions {
 
 // Branched splits linear instructions into a tree of conditional branches
 func Branched(code isa.Instructions) Node {
+	b := &BranchScanner{
+		Then:     Branched,
+		Else:     Branched,
+		Epilogue: Branched,
+	}
+	return b.Scan(code)
+}
+
+func (b *BranchScanner) Scan(code isa.Instructions) Node {
 	for pc, inst := range code {
 		if oc := inst.Opcode(); oc != isa.CondJump {
 			continue
 		}
-		if rs := splitCondJump(code, pc); rs != nil {
+		if rs := b.splitCondJump(code, pc); rs != nil {
 			return rs
 		}
 	}
@@ -60,7 +77,9 @@ func Branched(code isa.Instructions) Node {
 	}
 }
 
-func splitCondJump(code isa.Instructions, condJumpIdx int) *branches {
+func (b *BranchScanner) splitCondJump(
+	code isa.Instructions, condJumpIdx int,
+) *branches {
 	prologue := &instructions{
 		code: code[0 : condJumpIdx+1],
 	}
@@ -87,12 +106,12 @@ func splitCondJump(code isa.Instructions, condJumpIdx int) *branches {
 
 	return &branches{
 		prologue:   prologue,
-		elseBranch: Branched(rest[0:elseJumpIdx]),
+		elseBranch: b.Else(rest[0:elseJumpIdx]),
 		elseJump:   elseJump,
 		thenLabel:  thenLabel,
-		thenBranch: Branched(rest[thenIdx+1 : joinIdx]),
+		thenBranch: b.Then(rest[thenIdx+1 : joinIdx]),
 		joinLabel:  joinLabel,
-		epilogue:   Branched(rest[joinIdx+1:]),
+		epilogue:   b.Epilogue(rest[joinIdx+1:]),
 	}
 }
 
