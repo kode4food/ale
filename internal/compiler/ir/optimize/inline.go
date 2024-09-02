@@ -54,11 +54,13 @@ func (m *inlineCallMapper) perform(i isa.Instructions) isa.Instructions {
 	}
 	m.numInlined++
 
-	c := m.reindex(p)
-	c = m.relabel(c)
+	argCount := getCallArgCount(i[1])
+
+	c := m.relabel(p.Code)
+	c = m.getParamCase(c, argCount)
+	c = m.reindex(p, c)
 	c = m.returns(c)
 
-	argCount := getCallArgCount(i[1])
 	argsLocal := m.baseLocal + getNextLocal(p.Code)
 	c = m.stackArgs(c, argCount, argsLocal)
 
@@ -71,32 +73,6 @@ func (m *inlineCallMapper) canInline(i isa.Instruction) (*vm.Closure, bool) {
 		!p.HasFlag(vm.NoInline) &&
 		m.numInlined < maxInlined &&
 		p.Globals == m.Globals
-}
-
-func (m *inlineCallMapper) reindex(p *vm.Closure) isa.Instructions {
-	res := slices.Clone(p.Code)
-	pc := p.Captured()
-	captured := map[isa.Operand]isa.Operand{}
-	for idx, i := range res {
-		switch oc, op := i.Split(); oc {
-		case isa.Const:
-			val := p.Constants[op]
-			to := m.addConstant(val)
-			res[idx] = isa.New(oc, to)
-		case isa.Closure:
-			to, ok := captured[op]
-			if !ok {
-				to = m.addConstant(pc[op])
-				captured[op] = to
-			}
-			res[idx] = isa.New(isa.Const, to)
-		case isa.Load, isa.Store:
-			res[idx] = isa.New(oc, op+m.baseLocal)
-		default:
-			// No-Op
-		}
-	}
-	return res
 }
 
 func (m *inlineCallMapper) relabel(c isa.Instructions) isa.Instructions {
@@ -121,6 +97,51 @@ func (m *inlineCallMapper) relabel(c isa.Instructions) isa.Instructions {
 	})
 	for _, oc := range s {
 		res = slices.Insert(res, int(oc), isa.New(isa.Label, labels[oc]))
+	}
+	return res
+}
+
+func (m *inlineCallMapper) getParamCase(
+	c isa.Instructions, argCount isa.Operand,
+) isa.Instructions {
+	b := &visitor.BranchScanner{
+		Then:     visitor.All,
+		Epilogue: visitor.All,
+	}
+	b.Else = b.Scan
+
+	if b, ok := b.Scan(c).(visitor.Branches); ok {
+		if bc := getParamBranch(b, argCount); bc != nil {
+			return bc
+		}
+	}
+	return c
+}
+
+func (m *inlineCallMapper) reindex(
+	p *vm.Closure, c isa.Instructions,
+) isa.Instructions {
+	res := slices.Clone(c)
+	pc := p.Captured()
+	captured := map[isa.Operand]isa.Operand{}
+	for idx, i := range res {
+		switch oc, op := i.Split(); oc {
+		case isa.Const:
+			val := p.Constants[op]
+			to := m.addConstant(val)
+			res[idx] = isa.New(oc, to)
+		case isa.Closure:
+			to, ok := captured[op]
+			if !ok {
+				to = m.addConstant(pc[op])
+				captured[op] = to
+			}
+			res[idx] = isa.New(isa.Const, to)
+		case isa.Load, isa.Store:
+			res[idx] = isa.New(oc, op+m.baseLocal)
+		default:
+			// No-Op
+		}
 	}
 	return res
 }
@@ -210,4 +231,38 @@ func getNextOperand(c isa.Instructions, actOn isa.ActOn) isa.Operand {
 		}
 	}
 	return res
+}
+
+func getParamBranch(b visitor.Branches, argCount isa.Operand) isa.Instructions {
+	oc, op, ok := isParamCase(b)
+	if !ok {
+		return nil
+	}
+	switch {
+	case oc == isa.NumEq && argCount == op:
+		return b.ThenBranch().Code()
+	case oc == isa.NumGte && argCount >= op:
+		return b.ThenBranch().Code()
+	default:
+		if eb, ok := b.ElseBranch().(visitor.Branches); ok {
+			return getParamBranch(eb, argCount)
+		}
+		return nil
+	}
+}
+
+func isParamCase(b visitor.Branches) (isa.Opcode, isa.Operand, bool) {
+	p := b.Prologue().Code()
+	if len(p) != 4 {
+		return isa.NoOp, 0, false
+	}
+	if p[0].Opcode() != isa.ArgLen || p[3].Opcode() != isa.CondJump {
+		return isa.NoOp, 0, false
+	}
+	if p[1].Opcode() != isa.PosInt {
+		return isa.NoOp, 0, false
+	}
+	oc := p[2].Opcode()
+	op := p[1].Operand()
+	return oc, op, oc == isa.NumEq || oc == isa.NumGte
 }
