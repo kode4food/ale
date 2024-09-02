@@ -421,11 +421,11 @@ func getEncoderCalls() namedAsmParsers {
 	}
 }
 
-func parseArgs(inst data.Local, argsLen int, fn asmArgsParse) asmParse {
+func parseArgs(inst data.Local, argCount int, fn asmArgsParse) asmParse {
 	return func(p *asmParser, s data.Sequence) (asmEmit, data.Sequence, error) {
-		args, rest, ok := take(s, argsLen)
+		args, rest, ok := take(s, argCount)
 		if !ok {
-			return nil, nil, fmt.Errorf(ErrTooFewArguments, inst, argsLen)
+			return nil, nil, fmt.Errorf(ErrTooFewArguments, inst, argCount)
 		}
 		res, err := fn(p, args...)
 		if err != nil {

@@ -184,13 +184,13 @@ func (m *inlineCallMapper) addConstant(val data.Value) isa.Operand {
 }
 
 func (m *inlineCallMapper) stackArgs(
-	c isa.Instructions, argc isa.Operand, argsLocal isa.Operand,
+	c isa.Instructions, argCount isa.Operand, argsLocal isa.Operand,
 ) isa.Instructions {
 	res := make(isa.Instructions, 0, len(c)+6)
 	res = append(res,
 		isa.RestArg.New(0),
 		isa.Store.New(argsLocal),
-		isa.Vector.New(argc),
+		isa.Vector.New(argCount),
 		isa.SetArgs.New(),
 	)
 	res = append(res, c...)
