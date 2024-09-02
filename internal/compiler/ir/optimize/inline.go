@@ -192,6 +192,7 @@ func getNextOperand(c isa.Instructions, actOn isa.ActOn) isa.Operand {
 	}
 	return res
 }
+
 func paramBranchFor(c isa.Instructions, argCount isa.Operand) isa.Instructions {
 	b := &visitor.BranchScanner{
 		Then:     visitor.All,
