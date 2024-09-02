@@ -20,8 +20,8 @@ type (
 	}
 
 	argStack struct {
-		args data.Vector
 		prev *argStack
+		args data.Vector
 	}
 )
 

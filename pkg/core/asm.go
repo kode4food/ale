@@ -20,8 +20,8 @@ import (
 
 type (
 	asmParser struct {
-		params  data.Locals
 		private map[data.Local]data.Local
+		params  data.Locals
 	}
 
 	asmEncoder struct {
