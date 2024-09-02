@@ -12,15 +12,29 @@ import (
 	"github.com/kode4food/ale/pkg/env"
 )
 
-type Closure struct {
-	*Procedure
-	captured data.Vector
-	hash     uint64
-}
+type (
+	Closure struct {
+		*Procedure
+		captured data.Vector
+		hash     uint64
+	}
 
-// ErrBadInstruction is raised when the VM encounters an Opcode that has not
-// been properly mapped
-const ErrBadInstruction = "unknown instruction encountered: %s"
+	argStack struct {
+		args data.Vector
+		prev *argStack
+	}
+)
+
+// Error messages
+const (
+	// ErrBadInstruction is raised when the VM encounters an Opcode that has not
+	// been properly mapped
+	ErrBadInstruction = "unknown instruction encountered: %s"
+
+	// ErrEmptyArgStack is raised when the VM encounters an instruction to pop
+	// the argument stack, but the head of the stack is empty
+	ErrEmptyArgStack = "attempt to pop empty argument stack"
+)
 
 // Captured returns the captured values of a Closure
 func (c *Closure) Captured() data.Vector {
@@ -33,6 +47,7 @@ func (c *Closure) Call(args ...data.Value) data.Value {
 	var CODE isa.Instructions
 	var PC, LP, SP int
 	var INST isa.Instruction
+	var AP *argStack
 
 InitMem:
 	MEM = make(data.Vector, c.StackSize+c.LocalCount)
@@ -308,6 +323,14 @@ CurrentPC:
 		SP++
 		goto NextPC
 
+	case isa.PopArgs:
+		if AP == nil {
+			panic(debug.ProgrammerError(ErrEmptyArgStack))
+		}
+		args = AP.args
+		AP = AP.prev
+		goto NextPC
+
 	case isa.PosInt:
 		MEM[SP] = data.Integer(INST.Operand())
 		SP--
@@ -318,6 +341,16 @@ CurrentPC:
 		c.Globals.Private(
 			MEM[SP].(data.Local),
 		)
+		goto NextPC
+
+	case isa.PushArgs:
+		RES := SP + int(INST.Operand())
+		AP = &argStack{
+			args: args,
+			prev: AP,
+		}
+		args = slices.Clone(MEM[SP+1 : RES+1])
+		SP = RES
 		goto NextPC
 
 	case isa.Resolve:
@@ -344,11 +377,6 @@ CurrentPC:
 
 	case isa.Return:
 		return MEM[SP+1]
-
-	case isa.SetArgs:
-		SP++
-		args = MEM[SP].(data.Vector)
-		goto NextPC
 
 	case isa.Store:
 		SP++

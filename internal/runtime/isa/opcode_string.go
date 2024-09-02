@@ -49,35 +49,36 @@ func _() {
 	_ = x[NumLte-37]
 	_ = x[Panic-38]
 	_ = x[Pop-39]
-	_ = x[PosInt-40]
-	_ = x[Private-41]
-	_ = x[Resolve-42]
-	_ = x[RestArg-43]
-	_ = x[RetFalse-44]
-	_ = x[RetNull-45]
-	_ = x[RetTrue-46]
-	_ = x[Return-47]
-	_ = x[SetArgs-48]
-	_ = x[Store-49]
-	_ = x[Sub-50]
-	_ = x[TailCall-51]
-	_ = x[True-52]
-	_ = x[Vector-53]
-	_ = x[Zero-54]
+	_ = x[PopArgs-40]
+	_ = x[PosInt-41]
+	_ = x[Private-42]
+	_ = x[PushArgs-43]
+	_ = x[Resolve-44]
+	_ = x[RestArg-45]
+	_ = x[RetFalse-46]
+	_ = x[RetNull-47]
+	_ = x[RetTrue-48]
+	_ = x[Return-49]
+	_ = x[Store-50]
+	_ = x[Sub-51]
+	_ = x[TailCall-52]
+	_ = x[True-53]
+	_ = x[Vector-54]
+	_ = x[Zero-55]
 }
 
 const (
-	_Opcode_name_0 = "AddArgArgLenBindBindRefCallCall0Call1CallWithCarCdrClosureCondJumpConsConstDeclareDerefDivDupEmptyEqFalseJumpLabelLoadModMulNegNegIntNewRefNoOpNotNullNumEqNumGtNumGteNumLtNumLtePanicPopPosIntPrivateResolveRestArgRetFalseRetNullRetTrueReturnSetArgsStoreSubTailCallTrueVectorZero"
+	_Opcode_name_0 = "AddArgArgLenBindBindRefCallCall0Call1CallWithCarCdrClosureCondJumpConsConstDeclareDerefDivDupEmptyEqFalseJumpLabelLoadModMulNegNegIntNewRefNoOpNotNullNumEqNumGtNumGteNumLtNumLtePanicPopPopArgsPosIntPrivatePushArgsResolveRestArgRetFalseRetNullRetTrueReturnStoreSubTailCallTrueVectorZero"
 	_Opcode_name_1 = "opcodeMask"
 )
 
 var (
-	_Opcode_index_0 = [...]uint16{0, 3, 6, 12, 16, 23, 27, 32, 37, 45, 48, 51, 58, 66, 70, 75, 82, 87, 90, 93, 98, 100, 105, 109, 114, 118, 121, 124, 127, 133, 139, 143, 146, 150, 155, 160, 166, 171, 177, 182, 185, 191, 198, 205, 212, 220, 227, 234, 240, 247, 252, 255, 263, 267, 273, 277}
+	_Opcode_index_0 = [...]uint16{0, 3, 6, 12, 16, 23, 27, 32, 37, 45, 48, 51, 58, 66, 70, 75, 82, 87, 90, 93, 98, 100, 105, 109, 114, 118, 121, 124, 127, 133, 139, 143, 146, 150, 155, 160, 166, 171, 177, 182, 185, 192, 198, 205, 213, 220, 227, 235, 242, 249, 255, 260, 263, 271, 275, 281, 285}
 )
 
 func (i Opcode) String() string {
 	switch {
-	case i <= 54:
+	case i <= 55:
 		return _Opcode_name_0[_Opcode_index_0[i]:_Opcode_index_0[i+1]]
 	case i == 63:
 		return _Opcode_name_1

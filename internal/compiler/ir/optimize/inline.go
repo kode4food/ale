@@ -55,16 +55,11 @@ func (m *inlineCallMapper) perform(i isa.Instructions) isa.Instructions {
 	m.numInlined++
 
 	argCount := getCallArgCount(i[1])
-
 	c := m.relabel(p.Code)
 	c = m.getParamCase(c, argCount)
 	c = m.reindex(p, c)
 	c = m.returns(c)
-
-	argsLocal := m.baseLocal + getNextLocal(p.Code)
-	c = m.stackArgs(c, argCount, argsLocal)
-
-	return c
+	return m.transformArgs(c, argCount)
 }
 
 func (m *inlineCallMapper) canInline(i isa.Instruction) (*vm.Closure, bool) {
@@ -183,21 +178,13 @@ func (m *inlineCallMapper) addConstant(val data.Value) isa.Operand {
 	return isa.Operand(len(c) - 1)
 }
 
-func (m *inlineCallMapper) stackArgs(
-	c isa.Instructions, argCount isa.Operand, argsLocal isa.Operand,
+func (m *inlineCallMapper) transformArgs(
+	c isa.Instructions, argCount isa.Operand,
 ) isa.Instructions {
-	res := make(isa.Instructions, 0, len(c)+6)
-	res = append(res,
-		isa.RestArg.New(0),
-		isa.Store.New(argsLocal),
-		isa.Vector.New(argCount),
-		isa.SetArgs.New(),
-	)
+	res := make(isa.Instructions, 0, len(c)+2)
+	res = append(res, isa.PushArgs.New(argCount))
 	res = append(res, c...)
-	res = append(res,
-		isa.Load.New(argsLocal),
-		isa.SetArgs.New(),
-	)
+	res = append(res, isa.PopArgs.New())
 	return res
 }
 
