@@ -139,11 +139,8 @@ func TestInlineArgClosure(t *testing.T) {
 	as.Equal(I(6), call.Constants[1])
 	as.Instructions(isa.Instructions{
 		isa.Const.New(0),
-		isa.PushArgs.New(1),
-		isa.Arg.New(0),
 		isa.Const.New(1),
 		isa.Add.New(),
-		isa.PopArgs.New(),
 		isa.Const.New(0),
 		isa.Add.New(),
 		isa.Return.New(),
@@ -209,11 +206,8 @@ func TestInlineNestedLocals(t *testing.T) {
 		isa.Const.New(1),
 		isa.PushArgs.New(2),
 		isa.Arg.New(0),
-		isa.PushArgs.New(1),
-		isa.Arg.New(0),
 		isa.Const.New(0),
 		isa.Add.New(),
-		isa.PopArgs.New(),
 		isa.Store.New(0),
 		isa.Const.New(1),
 		isa.Load.New(0),

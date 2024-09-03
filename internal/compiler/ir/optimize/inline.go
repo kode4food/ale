@@ -59,7 +59,7 @@ func (m *inlineCallMapper) perform(i isa.Instructions) isa.Instructions {
 	c = paramBranchFor(c, argCount)
 	c = m.reindex(p, c)
 	c = m.returns(c)
-	return stackArgs(c, argCount)
+	return transformArgs(c, argCount)
 }
 
 func (m *inlineCallMapper) canInline(i isa.Instruction) (*vm.Closure, bool) {
@@ -209,6 +209,12 @@ func paramBranchFor(c isa.Instructions, argCount isa.Operand) isa.Instructions {
 }
 
 func getParamBranch(b visitor.Branches, argCount isa.Operand) isa.Instructions {
+	if len(b.Epilogue().Code()) != 0 {
+		// compiled procedures don't include epilogues in the arity branching
+		// logic, so if any node along the path has an epilogue, then we can't
+		// inline the 'then' branch
+		return nil
+	}
 	oc, op, ok := isParamCase(b)
 	if !ok {
 		return nil
@@ -238,10 +244,39 @@ func isParamCase(b visitor.Branches) (isa.Opcode, isa.Operand, bool) {
 	return oc, op, oc == isa.NumEq || oc == isa.NumGte
 }
 
-func stackArgs(c isa.Instructions, argCount isa.Operand) isa.Instructions {
+func transformArgs(c isa.Instructions, argCount isa.Operand) isa.Instructions {
+	if res, ok := canImmediatelyPop(c); ok {
+		return res
+	}
 	res := make(isa.Instructions, 0, len(c)+2)
 	res = append(res, isa.PushArgs.New(argCount))
 	res = append(res, c...)
 	res = append(res, isa.PopArgs.New())
 	return res
+}
+
+func canImmediatelyPop(c isa.Instructions) (isa.Instructions, bool) {
+	if len(c) == 0 || c[0].Opcode() != isa.Arg || c[0].Operand() != 0 {
+		return nil, false
+	}
+	rest := c[1:]
+	if hasAnyArgInstruction(rest) {
+		return nil, false
+	}
+	return rest, true
+}
+
+func hasAnyArgInstruction(c isa.Instructions) bool {
+	return len(filterArgInstructions(c)) > 0
+}
+
+func filterArgInstructions(c isa.Instructions) isa.Instructions {
+	return basics.Filter(c, func(i isa.Instruction) bool {
+		switch i.Opcode() {
+		case isa.PushArgs, isa.PopArgs, isa.Arg, isa.RestArg:
+			return true
+		default:
+			return false
+		}
+	})
 }
