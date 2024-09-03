@@ -29,15 +29,10 @@ const (
 var procedureHash = rand.Uint64()
 
 func MakeProcedure(run *isa.Runnable, arity data.ArityChecker) *Procedure {
-	res := &Procedure{
+	return &Procedure{
 		Runnable:     *run,
 		ArityChecker: arity,
 	}
-
-	if res.Code.HasOpcode(isa.TailCall) {
-		res.flags |= NoInline
-	}
-	return res
 }
 
 func (p *Procedure) HasFlag(f ProcFlag) bool {

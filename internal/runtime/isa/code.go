@@ -59,15 +59,6 @@ func New(oc Opcode, args ...Operand) Instruction {
 	}
 }
 
-func (i Instructions) HasOpcode(oc Opcode) bool {
-	for _, e := range i {
-		if e.Opcode() == oc {
-			return true
-		}
-	}
-	return false
-}
-
 func (i Instructions) String() string {
 	return strings.Join(
 		basics.Map(i, func(in Instruction) string {

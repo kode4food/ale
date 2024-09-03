@@ -56,14 +56,18 @@ func (m *inlineMapper) perform(i isa.Instructions) isa.Instructions {
 	if !ok {
 		return i
 	}
-	m.numInlined++
 
 	argc := getCallArgCount(i[1])
 	c := m.relabel(p.Code)
 	c = paramBranchFor(c, argc)
+	if hasTailCallInstruction(c) {
+		return i
+	}
 	c = m.reindex(p, c)
 	c = m.returns(c)
-	return m.transformArgs(c, argc)
+	c = m.transformArgs(c, argc)
+	m.numInlined++
+	return c
 }
 
 func (m *inlineMapper) canInline(i isa.Instruction) (*vm.Closure, bool) {
@@ -268,6 +272,12 @@ func isParamCase(b visitor.Branches) (isa.Opcode, isa.Operand, bool) {
 	oc := p[2].Opcode()
 	op := p[1].Operand()
 	return oc, op, oc == isa.NumEq || oc == isa.NumGte
+}
+
+func hasTailCallInstruction(c isa.Instructions) bool {
+	return len(basics.Filter(c, func(i isa.Instruction) bool {
+		return i.Opcode() == isa.TailCall
+	})) > 0
 }
 
 func hasAnyArgInstruction(c isa.Instructions) bool {
