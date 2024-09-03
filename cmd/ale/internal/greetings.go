@@ -2,34 +2,45 @@ package internal
 
 var (
 	farewellLatin1 = []string{
-		"Zbogom!",    // Croatian
-		"Farvel!",    // Danish
-		"Tot ziens!", // Dutch
-		"Goodbye!",   // English
-		"Nägemist!",  // Estonian
-		"Au revoir!", // French
-		"Tschüss!",   // German
-		"Aloha!",     // Hawaiian
-		"Ciao!",      // Italian
-		"Ha det!",    // Norwegian
-		"Zegnaj!",    // Polish
-		"Adeus!",     // Portuguese
-		"Пока!",      // Russian
-		"¡Adiós!",    // Spanish
-		"Hej då!",    // Swedish
-		"Hwyl fawr!", // Welsh
+		"Ćao!",           // Croatian
+		"Čau!",           // Czech
+		"Hej hej!",       // Danish
+		"Doei!",          // Dutch
+		"Goodbye!",       // English
+		"Tšau!",          // Estonian
+		"Moi moi!",       // Finnish
+		"Salut!",         // French
+		"Tschüss!",       // German
+		"A hui hou!",     // Hawaiian
+		"Szia!",          // Hungarian
+		"Sampai jumpa!",  // Indonesian
+		"Ciao!",          // Italian
+		"Iki!",           // Lithuanian
+		"Ha det!",        // Norwegian
+		"Do zobaczenia!", // Polish
+		"Tchau!",         // Portuguese
+		"Пока!",          // Russian
+		"Vidimo se!",     // Serbian
+		"Se vidimo!",     // Slovenian
+		"¡Chao!",         // Spanish
+		"Kwaheri!",       // Swahili
+		"Hej då!",        // Swedish
+		"Paalam!",        // Tagalog
+		"Hwyl!",          // Welsh
 	}
 
 	farewellUtf8 = []string{
 		"😊👋",         // Emoji
-		"Adiaŭ!",     // Esperanto
-		"Αντίο!",     // Greek
+		"Ĝis!",       // Esperanto
+		"ნახვამდის!", // Georgian
+		"Γεια!",      // Greek
 		"अलविदा!",    // Hindi
-		"さようなら！",     // Japanese
+		"じゃあね!",      // Japanese
 		"안녕!",        // Korean
-		"再见！",        // Mandarin
+		"Atā!",       // Latvian
+		"再见!",        // Mandarin
 		"ลาก่อน!",    // Thai
-		"Hoşça kal!", // Turkish
+		"Görüşürüz!", // Turkish
 		"Tạm biệt!",  // Vietnamese
 	}
 )
