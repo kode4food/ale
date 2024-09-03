@@ -28,20 +28,20 @@ func (m tailCallMapper) perform(i isa.Instructions) isa.Instructions {
 	if !m.canTailCall(i[0]) {
 		return i
 	}
-	var argCount isa.Operand
+	var argc isa.Operand
 	switch oc, op := i[1].Split(); oc {
 	case isa.Call0:
 		// no-op
 	case isa.Call1:
-		argCount = 1
+		argc = 1
 	case isa.Call:
-		argCount = op
+		argc = op
 	default:
 		panic(debug.ProgrammerError("bad opcode matching"))
 	}
 	return isa.Instructions{
 		i[0],
-		isa.TailCall.New(argCount),
+		isa.TailCall.New(argc),
 	}
 }
 

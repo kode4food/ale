@@ -13,12 +13,16 @@ import (
 	"github.com/kode4food/comb/basics"
 )
 
-type inlineCallMapper struct {
-	*encoder.Encoded
-	numInlined int
-	nextLabel  isa.Operand
-	baseLocal  isa.Operand
-}
+type (
+	inlineMapper struct {
+		*encoder.Encoded
+		numInlined int
+		nextLabel  isa.Operand
+		baseLocal  isa.Operand
+	}
+
+	operandMap map[isa.Operand]isa.Operand
+)
 
 const maxInlined = 16
 
@@ -36,7 +40,7 @@ var (
 )
 
 func inlineCalls(e *encoder.Encoded) {
-	mapper := &inlineCallMapper{
+	mapper := &inlineMapper{
 		Encoded:   e,
 		nextLabel: getNextLabel(e.Code),
 		baseLocal: getNextLocal(e.Code),
@@ -47,22 +51,22 @@ func inlineCalls(e *encoder.Encoded) {
 	e.Code = root.Code()
 }
 
-func (m *inlineCallMapper) perform(i isa.Instructions) isa.Instructions {
+func (m *inlineMapper) perform(i isa.Instructions) isa.Instructions {
 	p, ok := m.canInline(i[0])
 	if !ok {
 		return i
 	}
 	m.numInlined++
 
-	argCount := getCallArgCount(i[1])
+	argc := getCallArgCount(i[1])
 	c := m.relabel(p.Code)
-	c = paramBranchFor(c, argCount)
+	c = paramBranchFor(c, argc)
 	c = m.reindex(p, c)
 	c = m.returns(c)
-	return m.transformArgs(c, argCount)
+	return m.transformArgs(c, argc)
 }
 
-func (m *inlineCallMapper) canInline(i isa.Instruction) (*vm.Closure, bool) {
+func (m *inlineMapper) canInline(i isa.Instruction) (*vm.Closure, bool) {
 	p, ok := m.Constants[i.Operand()].(*vm.Closure)
 	return p, ok &&
 		!p.HasFlag(vm.NoInline) &&
@@ -70,9 +74,9 @@ func (m *inlineCallMapper) canInline(i isa.Instruction) (*vm.Closure, bool) {
 		p.Globals == m.Globals
 }
 
-func (m *inlineCallMapper) relabel(c isa.Instructions) isa.Instructions {
+func (m *inlineMapper) relabel(c isa.Instructions) isa.Instructions {
 	res := slices.Clone(c)
-	labels := map[isa.Operand]isa.Operand{}
+	labels := operandMap{}
 	for idx, i := range res {
 		if oc, op := i.Split(); isa.Effects[oc].Operand == isa.Labels {
 			to, ok := labels[op]
@@ -96,12 +100,12 @@ func (m *inlineCallMapper) relabel(c isa.Instructions) isa.Instructions {
 	return res
 }
 
-func (m *inlineCallMapper) reindex(
+func (m *inlineMapper) reindex(
 	p *vm.Closure, c isa.Instructions,
 ) isa.Instructions {
 	res := slices.Clone(c)
 	pc := p.Captured()
-	captured := map[isa.Operand]isa.Operand{}
+	captured := operandMap{}
 	for idx, i := range res {
 		switch oc, op := i.Split(); oc {
 		case isa.Const:
@@ -124,7 +128,17 @@ func (m *inlineCallMapper) reindex(
 	return res
 }
 
-func (m *inlineCallMapper) returns(c isa.Instructions) isa.Instructions {
+func (m *inlineMapper) addConstant(val data.Value) isa.Operand {
+	c := m.Constants
+	if idx, ok := c.IndexOf(val); ok {
+		return isa.Operand(idx)
+	}
+	c = append(c, val)
+	m.Constants = c
+	return isa.Operand(len(c) - 1)
+}
+
+func (m *inlineMapper) returns(c isa.Instructions) isa.Instructions {
 	res := make(isa.Instructions, 0, len(c))
 	var label isa.Operand
 	var increment bool
@@ -151,14 +165,26 @@ func (m *inlineCallMapper) returns(c isa.Instructions) isa.Instructions {
 	return res
 }
 
-func (m *inlineCallMapper) addConstant(val data.Value) isa.Operand {
-	c := m.Constants
-	if idx, ok := c.IndexOf(val); ok {
-		return isa.Operand(idx)
+func (m *inlineMapper) transformArgs(
+	c isa.Instructions, argc isa.Operand,
+) isa.Instructions {
+	switch argc {
+	case 0:
+		if !hasAnyArgInstruction(c) {
+			return c
+		}
+	case 1:
+		if canImmediatelyPop(c) {
+			return immediatelyPop(c)
+		}
+		fallthrough
+	default:
+		if canMapArgsToLocals(c, argc) {
+			argsBase := m.baseLocal + getNextLocal(c)
+			return mapArgsToLocals(c, argsBase, argc)
+		}
 	}
-	c = append(c, val)
-	m.Constants = c
-	return isa.Operand(len(c) - 1)
+	return stackArgs(c, argc)
 }
 
 func getCallArgCount(i isa.Instruction) isa.Operand {
@@ -193,7 +219,7 @@ func getNextOperand(c isa.Instructions, actOn isa.ActOn) isa.Operand {
 	return res
 }
 
-func paramBranchFor(c isa.Instructions, argCount isa.Operand) isa.Instructions {
+func paramBranchFor(c isa.Instructions, argc isa.Operand) isa.Instructions {
 	b := &visitor.BranchScanner{
 		Then:     visitor.All,
 		Epilogue: visitor.All,
@@ -201,14 +227,14 @@ func paramBranchFor(c isa.Instructions, argCount isa.Operand) isa.Instructions {
 	b.Else = b.Scan
 
 	if b, ok := b.Scan(c).(visitor.Branches); ok {
-		if bc := getParamBranch(b, argCount); bc != nil {
+		if bc := getParamBranch(b, argc); bc != nil {
 			return bc
 		}
 	}
 	return c
 }
 
-func getParamBranch(b visitor.Branches, argCount isa.Operand) isa.Instructions {
+func getParamBranch(b visitor.Branches, argc isa.Operand) isa.Instructions {
 	if len(b.Epilogue().Code()) != 0 {
 		// compiled procedures don't include epilogues in the arity branching
 		// logic, so if any node along the path has an epilogue, then we can't
@@ -219,11 +245,11 @@ func getParamBranch(b visitor.Branches, argCount isa.Operand) isa.Instructions {
 	if !ok {
 		return nil
 	}
-	if oc == isa.NumEq && argCount == op || oc == isa.NumGte && argCount >= op {
+	if oc == isa.NumEq && argc == op || oc == isa.NumGte && argc >= op {
 		return b.ThenBranch().Code()
 	}
 	if eb, ok := b.ElseBranch().(visitor.Branches); ok {
-		return getParamBranch(eb, argCount)
+		return getParamBranch(eb, argc)
 	}
 	return nil
 }
@@ -244,34 +270,57 @@ func isParamCase(b visitor.Branches) (isa.Opcode, isa.Operand, bool) {
 	return oc, op, oc == isa.NumEq || oc == isa.NumGte
 }
 
-func (m *inlineCallMapper) transformArgs(
-	c isa.Instructions, argCount isa.Operand,
-) isa.Instructions {
-	switch argCount {
-	case 0:
-		if !hasAnyArgInstruction(c) {
-			return c
-		}
-	case 1:
-		if canImmediatelyPop(c) {
-			return immediatelyPop(c)
-		}
-		fallthrough
-	default:
-		if canMapToLocals(c, argCount) {
-			argsLocal := m.baseLocal + getNextLocal(c)
-			return mapToLocals(c, argsLocal, argCount)
-		}
-	}
-	return stackArgs(c, argCount)
+func hasAnyArgInstruction(c isa.Instructions) bool {
+	return len(filterArgInstructions(c)) > 0
 }
 
-func mapToLocals(
-	c isa.Instructions, argsLocal, argCount isa.Operand,
+func filterArgInstructions(c isa.Instructions) isa.Instructions {
+	return basics.Filter(c, func(i isa.Instruction) bool {
+		switch i.Opcode() {
+		case isa.PushArgs, isa.PopArgs, isa.Arg, isa.RestArg:
+			return true
+		default:
+			return false
+		}
+	})
+}
+
+func canImmediatelyPop(c isa.Instructions) bool {
+	if len(c) == 0 || c[0].Opcode() != isa.Arg || c[0].Operand() != 0 {
+		return false
+	}
+	return !hasAnyArgInstruction(c[1:])
+}
+
+func immediatelyPop(c isa.Instructions) isa.Instructions {
+	return c[1:]
+}
+
+func canMapArgsToLocals(c isa.Instructions, argc isa.Operand) bool {
+	highArg := -1
+	for _, i := range filterArgInstructions(c) {
+		switch i.Opcode() {
+		case isa.Arg:
+			idx := int(i.Operand())
+			if idx > highArg {
+				highArg = idx
+			}
+		case isa.RestArg, isa.PushArgs, isa.PopArgs:
+			return false
+
+		default:
+			// no-op
+		}
+	}
+	return highArg < int(argc)
+}
+
+func mapArgsToLocals(
+	c isa.Instructions, argsBase, argc isa.Operand,
 ) isa.Instructions {
-	al := makeArgLocalMap(c, argsLocal)
-	res := make(isa.Instructions, 0, len(c)+int(argCount))
-	for i := 0; i < int(argCount); i++ {
+	al := makeArgLocalMap(c, argsBase)
+	res := make(isa.Instructions, 0, len(c)+int(argc))
+	for i := 0; i < int(argc); i++ {
 		if to, ok := al[isa.Operand(i)]; ok {
 			res = append(res, isa.Store.New(to))
 			continue
@@ -288,11 +337,9 @@ func mapToLocals(
 	return res
 }
 
-func makeArgLocalMap(
-	c isa.Instructions, argsLocal isa.Operand,
-) map[isa.Operand]isa.Operand {
-	next := argsLocal
-	res := map[isa.Operand]isa.Operand{}
+func makeArgLocalMap(c isa.Instructions, argsBase isa.Operand) operandMap {
+	next := argsBase
+	res := operandMap{}
 	for _, i := range c {
 		if i.Opcode() != isa.Arg {
 			continue
@@ -306,55 +353,10 @@ func makeArgLocalMap(
 	return res
 }
 
-func stackArgs(c isa.Instructions, argCount isa.Operand) isa.Instructions {
+func stackArgs(c isa.Instructions, argc isa.Operand) isa.Instructions {
 	res := make(isa.Instructions, 0, len(c)+2)
-	res = append(res, isa.PushArgs.New(argCount))
+	res = append(res, isa.PushArgs.New(argc))
 	res = append(res, c...)
 	res = append(res, isa.PopArgs.New())
 	return res
-}
-
-func canImmediatelyPop(c isa.Instructions) bool {
-	if len(c) == 0 || c[0].Opcode() != isa.Arg || c[0].Operand() != 0 {
-		return false
-	}
-	return !hasAnyArgInstruction(c[1:])
-}
-
-func immediatelyPop(c isa.Instructions) isa.Instructions {
-	return c[1:]
-}
-
-func canMapToLocals(c isa.Instructions, argCount isa.Operand) bool {
-	highArg := -1
-	for _, i := range filterArgInstructions(c) {
-		switch i.Opcode() {
-		case isa.Arg:
-			idx := int(i.Operand())
-			if idx > highArg {
-				highArg = idx
-			}
-		case isa.RestArg, isa.PushArgs, isa.PopArgs:
-			return false
-
-		default:
-			// no-op
-		}
-	}
-	return highArg < int(argCount)
-}
-
-func hasAnyArgInstruction(c isa.Instructions) bool {
-	return len(filterArgInstructions(c)) > 0
-}
-
-func filterArgInstructions(c isa.Instructions) isa.Instructions {
-	return basics.Filter(c, func(i isa.Instruction) bool {
-		switch i.Opcode() {
-		case isa.PushArgs, isa.PopArgs, isa.Arg, isa.RestArg:
-			return true
-		default:
-			return false
-		}
-	})
 }
