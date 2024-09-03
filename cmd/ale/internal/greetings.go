@@ -26,21 +26,23 @@ var (
 	}
 
 	farewellUtf8 = []string{
-		"Ćao!",       // Croatian
-		"Čau!",       // Czech
-		"😊👋",         // Emoji
-		"Ĝis!",       // Esperanto
-		"Tšau!",      // Estonian
-		"ნახვამდის!", // Georgian
-		"Γεια!",      // Greek
-		"अलविदा!",    // Hindi
-		"じゃあね!",      // Japanese
-		"안녕!",        // Korean
-		"Atā!",       // Latvian
-		"再见!",        // Mandarin
-		"Пока!",      // Russian
-		"ลาก่อน!",    // Thai
-		"Görüşürüz!", // Turkish
-		"Tạm biệt!",  // Vietnamese
+		"ቻው!",          // Amharic
+		"Ցտեսություն!", // Armenian
+		"Ćao!",         // Croatian
+		"Čau!",         // Czech
+		"😊👋",           // Emoji
+		"Ĝis!",         // Esperanto
+		"Tšau!",        // Estonian
+		"ნახვამდის!",   // Georgian
+		"Γεια!",        // Greek
+		"अलविदा!",      // Hindi
+		"じゃあね!",        // Japanese
+		"안녕!",          // Korean
+		"Atā!",         // Latvian
+		"再见!",          // Mandarin
+		"Пока!",        // Russian
+		"ลาก่อน!",      // Thai
+		"Görüşürüz!",   // Turkish
+		"Tạm biệt!",    // Vietnamese
 	}
 )
