@@ -46,7 +46,7 @@ func (c *Context) checkDuplicate(v reflect.Value) error {
 				return errors.New(ErrCycleDetected)
 			}
 		default:
-			// No-Op
+			// no-op
 		}
 	}
 	return c.parent.checkDuplicate(v)

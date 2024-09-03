@@ -59,7 +59,7 @@ func (m *inlineCallMapper) perform(i isa.Instructions) isa.Instructions {
 	c = paramBranchFor(c, argCount)
 	c = m.reindex(p, c)
 	c = m.returns(c)
-	return transformArgs(c, argCount)
+	return m.transformArgs(c, argCount)
 }
 
 func (m *inlineCallMapper) canInline(i isa.Instruction) (*vm.Closure, bool) {
@@ -118,7 +118,7 @@ func (m *inlineCallMapper) reindex(
 		case isa.Load, isa.Store:
 			res[idx] = isa.New(oc, op+m.baseLocal)
 		default:
-			// No-Op
+			// no-op
 		}
 	}
 	return res
@@ -244,10 +244,69 @@ func isParamCase(b visitor.Branches) (isa.Opcode, isa.Operand, bool) {
 	return oc, op, oc == isa.NumEq || oc == isa.NumGte
 }
 
-func transformArgs(c isa.Instructions, argCount isa.Operand) isa.Instructions {
-	if res, ok := canImmediatelyPop(c); ok {
-		return res
+func (m *inlineCallMapper) transformArgs(
+	c isa.Instructions, argCount isa.Operand,
+) isa.Instructions {
+	switch argCount {
+	case 0:
+		if !hasAnyArgInstruction(c) {
+			return c
+		}
+	case 1:
+		if canImmediatelyPop(c) {
+			return immediatelyPop(c)
+		}
+		fallthrough
+	default:
+		if canMapToLocals(c, argCount) {
+			argsLocal := m.baseLocal + getNextLocal(c)
+			return mapToLocals(c, argsLocal, argCount)
+		}
 	}
+	return stackArgs(c, argCount)
+}
+
+func mapToLocals(
+	c isa.Instructions, argsLocal, argCount isa.Operand,
+) isa.Instructions {
+	al := makeArgLocalMap(c, argsLocal)
+	res := make(isa.Instructions, 0, len(c)+int(argCount))
+	for i := 0; i < int(argCount); i++ {
+		if to, ok := al[isa.Operand(i)]; ok {
+			res = append(res, isa.Store.New(to))
+			continue
+		}
+		res = append(res, isa.Pop.New())
+	}
+	res = append(res, basics.Map(c, func(i isa.Instruction) isa.Instruction {
+		if i.Opcode() == isa.Arg {
+			to := al[i.Operand()]
+			return isa.Load.New(to)
+		}
+		return i
+	})...)
+	return res
+}
+
+func makeArgLocalMap(
+	c isa.Instructions, argsLocal isa.Operand,
+) map[isa.Operand]isa.Operand {
+	next := argsLocal
+	res := map[isa.Operand]isa.Operand{}
+	for _, i := range c {
+		if i.Opcode() != isa.Arg {
+			continue
+		}
+		op := i.Operand()
+		if _, ok := res[op]; !ok {
+			res[op] = next
+			next++
+		}
+	}
+	return res
+}
+
+func stackArgs(c isa.Instructions, argCount isa.Operand) isa.Instructions {
 	res := make(isa.Instructions, 0, len(c)+2)
 	res = append(res, isa.PushArgs.New(argCount))
 	res = append(res, c...)
@@ -255,15 +314,34 @@ func transformArgs(c isa.Instructions, argCount isa.Operand) isa.Instructions {
 	return res
 }
 
-func canImmediatelyPop(c isa.Instructions) (isa.Instructions, bool) {
+func canImmediatelyPop(c isa.Instructions) bool {
 	if len(c) == 0 || c[0].Opcode() != isa.Arg || c[0].Operand() != 0 {
-		return nil, false
+		return false
 	}
-	rest := c[1:]
-	if hasAnyArgInstruction(rest) {
-		return nil, false
+	return !hasAnyArgInstruction(c[1:])
+}
+
+func immediatelyPop(c isa.Instructions) isa.Instructions {
+	return c[1:]
+}
+
+func canMapToLocals(c isa.Instructions, argCount isa.Operand) bool {
+	highArg := -1
+	for _, i := range filterArgInstructions(c) {
+		switch i.Opcode() {
+		case isa.Arg:
+			idx := int(i.Operand())
+			if idx > highArg {
+				highArg = idx
+			}
+		case isa.RestArg, isa.PushArgs, isa.PopArgs:
+			return false
+
+		default:
+			// no-op
+		}
 	}
-	return rest, true
+	return highArg < int(argCount)
 }
 
 func hasAnyArgInstruction(c isa.Instructions) bool {
