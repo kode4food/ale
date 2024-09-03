@@ -2,12 +2,9 @@ package internal
 
 var (
 	farewellLatin1 = []string{
-		"Ćao!",           // Croatian
-		"Čau!",           // Czech
 		"Hej hej!",       // Danish
 		"Doei!",          // Dutch
 		"Goodbye!",       // English
-		"Tšau!",          // Estonian
 		"Moi moi!",       // Finnish
 		"Salut!",         // French
 		"Tschüss!",       // German
@@ -19,7 +16,6 @@ var (
 		"Ha det!",        // Norwegian
 		"Do zobaczenia!", // Polish
 		"Tchau!",         // Portuguese
-		"Пока!",          // Russian
 		"Vidimo se!",     // Serbian
 		"Se vidimo!",     // Slovenian
 		"¡Chao!",         // Spanish
@@ -30,8 +26,11 @@ var (
 	}
 
 	farewellUtf8 = []string{
+		"Ćao!",       // Croatian
+		"Čau!",       // Czech
 		"😊👋",         // Emoji
 		"Ĝis!",       // Esperanto
+		"Tšau!",      // Estonian
 		"ნახვამდის!", // Georgian
 		"Γεια!",      // Greek
 		"अलविदा!",    // Hindi
@@ -39,6 +38,7 @@ var (
 		"안녕!",        // Korean
 		"Atā!",       // Latvian
 		"再见!",        // Mandarin
+		"Пока!",      // Russian
 		"ลาก่อน!",    // Thai
 		"Görüşürüz!", // Turkish
 		"Tạm biệt!",  // Vietnamese
