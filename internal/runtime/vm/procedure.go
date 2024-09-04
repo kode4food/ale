@@ -10,21 +10,12 @@ import (
 	"github.com/kode4food/ale/pkg/data"
 )
 
-type (
-	// Procedure encapsulates the initial environment of an abstract machine
-	Procedure struct {
-		ArityChecker data.ArityChecker
-		isa.Runnable
-		hash  uint64
-		flags ProcFlag
-	}
-
-	ProcFlag uint
-)
-
-const (
-	NoInline ProcFlag = 1 << iota
-)
+// Procedure encapsulates the initial environment of an abstract machine
+type Procedure struct {
+	ArityChecker data.ArityChecker
+	isa.Runnable
+	hash uint64
+}
 
 var procedureHash = rand.Uint64()
 
@@ -33,10 +24,6 @@ func MakeProcedure(run *isa.Runnable, arity data.ArityChecker) *Procedure {
 		Runnable:     *run,
 		ArityChecker: arity,
 	}
-}
-
-func (p *Procedure) HasFlag(f ProcFlag) bool {
-	return p.flags&f != 0
 }
 
 // Call allows an abstract machine Procedure to be called for the purpose of

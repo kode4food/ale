@@ -72,10 +72,7 @@ func (m *inlineMapper) perform(i isa.Instructions) isa.Instructions {
 
 func (m *inlineMapper) canInline(i isa.Instruction) (*vm.Closure, bool) {
 	p, ok := m.Constants[i.Operand()].(*vm.Closure)
-	return p, ok &&
-		!p.HasFlag(vm.NoInline) &&
-		m.numInlined < maxInlined &&
-		p.Globals == m.Globals
+	return p, ok && m.numInlined < maxInlined && p.Globals == m.Globals
 }
 
 func (m *inlineMapper) relabel(c isa.Instructions) isa.Instructions {
