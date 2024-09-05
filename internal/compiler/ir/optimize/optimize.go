@@ -11,9 +11,10 @@ type optimizer func(*encoder.Encoded)
 var optimizers = []optimizer{
 	splitReturns,      // roll standalone returns into preceding branches
 	ineffectivePushes, // values pushed to the stack for no reason
-	literalReturns,    // convert literal returns into single instructions
 	makeTailCalls,     // replace calls in tail position with a tail-call
 	inlineCalls,       // inline calls to procedures that qualify
+	ineffectiveStores, // isolated store followed by a load of same opcode
+	literalReturns,    // convert literal returns into single instructions
 }
 
 // Encoded takes an Encoded representation and returns an optimized one
