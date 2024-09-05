@@ -21,7 +21,7 @@ type aleRuntimeError struct {
 // will make more sense to an Ale program
 const ErrUnexpectedType = "got %s, expected %s"
 
-var interfaceConversion = []*regexp.Regexp{
+var interfaceConversion = [...]*regexp.Regexp{
 	regexp.MustCompile(
 		`: [^.]+[.](?P<got>[a-zA-Z0-9]+) ` +
 			`is not [^.]+[.](?P<expected>[a-zA-Z0-9]+).*$`,

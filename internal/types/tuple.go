@@ -2,12 +2,13 @@ package types
 
 import "fmt"
 
+var makeTupleBase = [...]*Basic{BasicCons, BasicList, BasicVector}
+
 // MakeTuple declares a new TupleType that will only allow a MakeListOf or MakeVectorOf
 // with positional elements of the provided Types
 func MakeTuple(elems ...Type) Type {
-	base := []*Basic{BasicCons, BasicList, BasicVector}
 	res := make([]Type, 3)
-	for idx, t := range base {
+	for idx, t := range makeTupleBase {
 		var comp Type = BasicNull
 		for i := len(elems) - 1; i >= 0; i = i - 1 {
 			comp = &Pair{

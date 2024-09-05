@@ -7,7 +7,7 @@ import (
 	"github.com/kode4food/comb/basics"
 )
 
-var ineffectivePushes = globalReplace(
+var ineffectivePushes = globalRepeatedReplace(
 	visitor.Pattern{
 		selectEffects(func(e *isa.Effect) bool {
 			return e.Push == 1 && e.Pop == 0 && !e.DPop && !e.Exit
@@ -18,15 +18,13 @@ var ineffectivePushes = globalReplace(
 )
 
 func ineffectiveStores(e *encoder.Encoded) {
-	c := e.Code
 	for {
-		if res := replaceIneffectiveStore(c); res != nil {
-			c = res
+		if res := replaceIneffectiveStore(e.Code); res != nil {
+			e.Code = res
 			continue
 		}
 		break
 	}
-	e.Code = c
 }
 
 func replaceIneffectiveStore(c isa.Instructions) isa.Instructions {

@@ -1,6 +1,8 @@
 package optimize
 
 import (
+	"slices"
+
 	"github.com/kode4food/ale/internal/compiler/encoder"
 	"github.com/kode4food/ale/internal/compiler/ir/visitor"
 	"github.com/kode4food/ale/internal/runtime/isa"
@@ -8,7 +10,7 @@ import (
 
 type optimizer func(*encoder.Encoded)
 
-var optimizers = []optimizer{
+var optimizers = [...]optimizer{
 	splitReturns,      // roll standalone returns into preceding branches
 	makeTailCalls,     // replace calls in tail position with a tail-call
 	inlineCalls,       // inline calls to procedures that qualify
@@ -32,6 +34,21 @@ func globalReplace(p visitor.Pattern, m visitor.Mapper) optimizer {
 		root := visitor.All(e.Code)
 		visitor.Visit(root, replace)
 		e.Code = root.Code()
+	}
+}
+
+func globalRepeatedReplace(p visitor.Pattern, m visitor.Mapper) optimizer {
+	replace := visitor.Replace(p, m)
+	return func(e *encoder.Encoded) {
+		for {
+			root := visitor.All(e.Code)
+			visitor.Visit(root, replace)
+			res := root.Code()
+			if slices.Equal(e.Code, res) {
+				return
+			}
+			e.Code = res
+		}
 	}
 }
 

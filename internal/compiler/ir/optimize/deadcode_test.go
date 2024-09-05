@@ -57,4 +57,21 @@ func TestIneffectiveStores(t *testing.T) {
 		isa.Add.New(),
 		isa.Return.New(),
 	}, optimize.Encoded(e2.Encode()).Code)
+
+	e3 := encoder.NewEncoder(ns)
+	e3.Emit(isa.PosInt, 1)
+	e3.Emit(isa.PosInt, 2)
+	e3.Emit(isa.Store, 0)
+	e3.Emit(isa.Store, 1)
+	e3.Emit(isa.Load, 1)
+	e3.Emit(isa.Load, 0)
+	e3.Emit(isa.Add)
+	e3.Emit(isa.Return)
+
+	as.Instructions(isa.Instructions{
+		isa.PosInt.New(1),
+		isa.PosInt.New(2),
+		isa.Add.New(),
+		isa.Return.New(),
+	}, optimize.Encoded(e3.Encode()).Code)
 }

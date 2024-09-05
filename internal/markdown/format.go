@@ -40,7 +40,7 @@ var (
 		regexp.MustCompile(`^\s\s.*$`):  formatIndent,
 	}
 
-	docFormatters = []*patternFormatter{
+	docFormatters = [...]*patternFormatter{
 		{comment, formatComment},
 		{ticks, trimmedFormatter("`", console.Code)},
 		{ticks, trimmedFormatter("`", console.Code)},
