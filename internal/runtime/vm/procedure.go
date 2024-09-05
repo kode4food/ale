@@ -26,8 +26,8 @@ func MakeProcedure(run *isa.Runnable, arity data.ArityChecker) *Procedure {
 	}
 }
 
-// Call allows an abstract machine Procedure to be called for the purpose of
-// instantiating a Closure. Only the compiler invokes this calling interface.
+// Call allows an abstract machine Procedure to be called to instantiate a
+// Closure. Only the compiler invokes this calling interface.
 func (p *Procedure) Call(values ...data.Value) data.Value {
 	return &Closure{
 		Procedure: p,
