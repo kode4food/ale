@@ -38,22 +38,22 @@ func replaceIneffectiveStore(c isa.Instructions) isa.Instructions {
 	if len(rest) == 0 {
 		return nil
 	}
-	if rest[0].Opcode() != isa.Load || rest[0].Operand() != op {
-		if res := replaceIneffectiveStore(rest); res != nil {
-			return append(c[0:idx+1], res...)
-		}
-		return nil
-	}
-	if len(basics.Filter(rest[1:], func(i isa.Instruction) bool {
-		oc := i.Opcode()
-		return (oc == isa.Store || oc == isa.Load) && i.Operand() == op
-	})) > 0 {
+
+	if rest[0] != isa.Load.New(op) || hasConflictingLoadStore(rest[1:], op) {
 		if res := replaceIneffectiveStore(rest); res != nil {
 			return append(c[0:idx+1], res...)
 		}
 		return nil
 	}
 	return append(c[0:idx], rest[1:]...)
+}
+
+func hasConflictingLoadStore(c isa.Instructions, op isa.Operand) bool {
+	load := isa.Load.New(op)
+	store := isa.Store.New(op)
+	return len(basics.Filter(c, func(i isa.Instruction) bool {
+		return i == load || i == store
+	})) > 0
 }
 
 func findOpcode(c isa.Instructions, oc isa.Opcode) int {
