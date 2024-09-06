@@ -8,6 +8,7 @@ import (
 
 type returnSplitter struct{}
 
+// splitReturns rolls standalone returns into preceding branches
 func splitReturns(e *encoder.Encoded) {
 	r := new(returnSplitter)
 	root := visitor.Branched(e.Code)

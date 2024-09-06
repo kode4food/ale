@@ -10,20 +10,28 @@ import (
 
 type optimizer func(*encoder.Encoded)
 
-var optimizers = [...]optimizer{
-	splitReturns,      // roll standalone returns into preceding branches
-	makeTailCalls,     // replace calls in tail position with a tail-call
-	inlineCalls,       // inline calls to procedures that qualify
-	ineffectiveStores, // isolated store followed by a load of same operand
-	ineffectivePushes, // values pushed to the stack for no reason
-	literalReturns,    // convert literal returns into single instructions
+var optimizers = [...]struct {
+	process optimizer
+	repeat  bool
+}{
+	{process: splitReturns},
+	{process: makeTailCalls},
+	{process: inlineCalls},
+	{process: ineffectiveStores, repeat: true},
+	{process: ineffectivePushes, repeat: true},
+	{process: literalReturns},
 }
 
 // Encoded takes an Encoded representation and returns an optimized one
 func Encoded(e *encoder.Encoded) *encoder.Encoded {
 	res := e.Copy()
 	for _, o := range optimizers {
-		o(res)
+	repeat:
+		prev := res.Code
+		o.process(res)
+		if o.repeat && !slices.Equal(prev, res.Code) {
+			goto repeat
+		}
 	}
 	return res
 }
@@ -34,21 +42,6 @@ func globalReplace(p visitor.Pattern, m visitor.Mapper) optimizer {
 		root := visitor.All(e.Code)
 		visitor.Visit(root, replace)
 		e.Code = root.Code()
-	}
-}
-
-func globalRepeatedReplace(p visitor.Pattern, m visitor.Mapper) optimizer {
-	replace := visitor.Replace(p, m)
-	return func(e *encoder.Encoded) {
-		for {
-			root := visitor.All(e.Code)
-			visitor.Visit(root, replace)
-			res := root.Code()
-			if slices.Equal(e.Code, res) {
-				return
-			}
-			e.Code = res
-		}
 	}
 }
 

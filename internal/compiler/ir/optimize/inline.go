@@ -39,6 +39,7 @@ var (
 	}
 )
 
+// inlineCalls imports callee instructions into procedures that qualify
 func inlineCalls(e *encoder.Encoded) {
 	mapper := &inlineMapper{
 		Encoded:   e,

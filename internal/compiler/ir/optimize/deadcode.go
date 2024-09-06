@@ -7,7 +7,9 @@ import (
 	"github.com/kode4food/comb/basics"
 )
 
-var ineffectivePushes = globalRepeatedReplace(
+// ineffectivePushes deletes values pushed to the stack for no reason,
+// specifically if they're literals followed immediately by a pop instruction
+var ineffectivePushes = globalReplace(
 	visitor.Pattern{
 		selectEffects(func(e *isa.Effect) bool {
 			return e.Push == 1 && e.Pop == 0 && !e.DPop && !e.Exit
@@ -17,13 +19,11 @@ var ineffectivePushes = globalRepeatedReplace(
 	removeInstructions,
 )
 
+// ineffectiveStores deletes isolated store instructions followed by a load
+// instruction wit the same operand
 func ineffectiveStores(e *encoder.Encoded) {
-	for {
-		if res := replaceIneffectiveStore(e.Code); res != nil {
-			e.Code = res
-			continue
-		}
-		break
+	if res := replaceIneffectiveStore(e.Code); res != nil {
+		e.Code = res
 	}
 }
 
