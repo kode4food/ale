@@ -42,11 +42,11 @@ type (
 const ErrLabelAlreadyAnchored = "label has already been anchored"
 
 func (e *Encoded) Copy() *Encoded {
-	res := &(*e)
+	res := *e
 	res.Code = slices.Clone(e.Code)
 	res.Constants = slices.Clone(e.Constants)
 	res.Closure = slices.Clone(e.Closure)
-	return res
+	return &res
 }
 
 // Runnable takes an Encoded and finalizes it into a Runnable that the abstract
