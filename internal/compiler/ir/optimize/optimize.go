@@ -10,30 +10,34 @@ import (
 
 type optimizer func(*encoder.Encoded)
 
-var optimizers = [...]struct {
-	process optimizer
-	repeat  bool
-}{
-	{process: splitReturns},
-	{process: makeTailCalls},
-	{process: inlineCalls},
-	{process: ineffectiveStores, repeat: true},
-	{process: ineffectivePushes, repeat: true},
-	{process: literalReturns},
+var optimizers = [...]optimizer{
+	splitReturns,
+	makeTailCalls,
+	inlineCalls,
+	repeatWhenModified(ineffectiveStores),
+	repeatWhenModified(ineffectivePushes),
+	literalReturns,
 }
 
 // Encoded takes an Encoded representation and returns an optimized one
 func Encoded(e *encoder.Encoded) *encoder.Encoded {
 	res := e.Copy()
 	for _, o := range optimizers {
-	repeat:
-		prev := res.Code
-		o.process(res)
-		if o.repeat && !slices.Equal(prev, res.Code) {
-			goto repeat
-		}
+		o(res)
 	}
 	return res
+}
+
+func repeatWhenModified(o optimizer) optimizer {
+	return func(e *encoder.Encoded) {
+		for {
+			prev := e.Code
+			o(e)
+			if slices.Equal(prev, e.Code) {
+				return
+			}
+		}
+	}
 }
 
 func globalReplace(p visitor.Pattern, m visitor.Mapper) optimizer {
@@ -46,7 +50,7 @@ func globalReplace(p visitor.Pattern, m visitor.Mapper) optimizer {
 }
 
 func selectEffects(filter func(*isa.Effect) bool) []isa.Opcode {
-	res := make([]isa.Opcode, 0)
+	var res []isa.Opcode
 	for oc, effect := range isa.Effects {
 		if filter(effect) {
 			res = append(res, oc)
