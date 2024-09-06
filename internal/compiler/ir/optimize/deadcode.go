@@ -21,10 +21,11 @@ var ineffectivePushes = globalReplace(
 
 // ineffectiveStores deletes isolated store instructions followed by a load
 // instruction wit the same operand
-func ineffectiveStores(e *encoder.Encoded) {
-	if res := replaceIneffectiveStore(e.Code); res != nil {
-		e.Code = res
+func ineffectiveStores(e *encoder.Encoded) *encoder.Encoded {
+	if c := replaceIneffectiveStore(e.Code); c != nil {
+		e.Code = c
 	}
+	return e
 }
 
 func replaceIneffectiveStore(c isa.Instructions) isa.Instructions {

@@ -8,9 +8,11 @@ import (
 	"github.com/kode4food/ale/internal/runtime/isa"
 )
 
-type optimizer func(*encoder.Encoded)
+type optimizer func(*encoder.Encoded) *encoder.Encoded
 
-var optimize = compose(
+// Encoded takes an Encoded representation and returns an optimized one
+var Encoded = compose(
+	copyEncoded,
 	splitReturns,
 	makeTailCalls,
 	inlineCalls,
@@ -18,33 +20,33 @@ var optimize = compose(
 	literalReturns,
 )
 
-// Encoded takes an Encoded representation and returns an optimized one
-func Encoded(e *encoder.Encoded) *encoder.Encoded {
-	res := e.Copy()
-	optimize(res)
-	return res
-}
-
 func compose(first optimizer, rest ...optimizer) optimizer {
 	if len(rest) == 0 {
 		return first
 	}
 	optimizers := append([]optimizer{first}, rest...)
-	return func(e *encoder.Encoded) {
+	return func(e *encoder.Encoded) *encoder.Encoded {
+		res := e
 		for _, o := range optimizers {
-			o(e)
+			res = o(res)
 		}
+		return res
 	}
+}
+
+func copyEncoded(e *encoder.Encoded) *encoder.Encoded {
+	return e.Copy()
 }
 
 func repeatWhenModified(first optimizer, rest ...optimizer) optimizer {
 	o := compose(first, rest...)
-	return func(e *encoder.Encoded) {
+	return func(e *encoder.Encoded) *encoder.Encoded {
+		res := e
 		for {
-			prev := e.Code
-			o(e)
-			if slices.Equal(prev, e.Code) {
-				return
+			prev := res.Code
+			res = o(res)
+			if slices.Equal(prev, res.Code) {
+				return res
 			}
 		}
 	}
@@ -52,10 +54,11 @@ func repeatWhenModified(first optimizer, rest ...optimizer) optimizer {
 
 func globalReplace(p visitor.Pattern, m visitor.Mapper) optimizer {
 	replace := visitor.Replace(p, m)
-	return func(e *encoder.Encoded) {
+	return func(e *encoder.Encoded) *encoder.Encoded {
 		root := visitor.All(e.Code)
 		visitor.Visit(root, replace)
 		e.Code = root.Code()
+		return e
 	}
 }
 

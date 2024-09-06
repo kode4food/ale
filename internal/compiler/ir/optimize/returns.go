@@ -9,11 +9,11 @@ import (
 type returnSplitter struct{}
 
 // splitReturns rolls standalone returns into the preceding branches
-func splitReturns(e *encoder.Encoded) {
-	r := new(returnSplitter)
+func splitReturns(e *encoder.Encoded) *encoder.Encoded {
 	root := visitor.Branched(e.Code)
-	visitor.Visit(root, r)
+	visitor.Visit(root, new(returnSplitter))
 	e.Code = root.Code()
+	return e
 }
 
 func (*returnSplitter) EnterRoot(visitor.Node)            {}
