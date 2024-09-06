@@ -10,25 +10,35 @@ import (
 
 type optimizer func(*encoder.Encoded)
 
-var optimizers = [...]optimizer{
+var optimize = compose(
 	splitReturns,
 	makeTailCalls,
 	inlineCalls,
-	repeatWhenModified(ineffectiveStores),
-	repeatWhenModified(ineffectivePushes),
+	repeatWhenModified(ineffectiveStores, ineffectivePushes),
 	literalReturns,
-}
+)
 
 // Encoded takes an Encoded representation and returns an optimized one
 func Encoded(e *encoder.Encoded) *encoder.Encoded {
 	res := e.Copy()
-	for _, o := range optimizers {
-		o(res)
-	}
+	optimize(res)
 	return res
 }
 
-func repeatWhenModified(o optimizer) optimizer {
+func compose(first optimizer, rest ...optimizer) optimizer {
+	if len(rest) == 0 {
+		return first
+	}
+	optimizers := append([]optimizer{first}, rest...)
+	return func(e *encoder.Encoded) {
+		for _, o := range optimizers {
+			o(e)
+		}
+	}
+}
+
+func repeatWhenModified(first optimizer, rest ...optimizer) optimizer {
+	o := compose(first, rest...)
 	return func(e *encoder.Encoded) {
 		for {
 			prev := e.Code
