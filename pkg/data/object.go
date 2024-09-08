@@ -46,7 +46,7 @@ var (
 //
 //	http://lampwww.epfl.ch/papers/idealhashtrees.pdf
 func NewObject(pairs ...Pair) *Object {
-	var res *Object
+	res := EmptyObject
 	for _, p := range pairs {
 		res = res.Put(p).(*Object)
 	}
@@ -58,7 +58,7 @@ func ValuesToObject(v ...Value) (*Object, error) {
 	if len(v)%2 != 0 {
 		return nil, errors.New(ErrMapNotPaired)
 	}
-	var res *Object
+	res := EmptyObject
 	for i := len(v) - 2; i >= 0; i -= 2 {
 		res = res.Put(NewCons(v[i], v[i+1])).(*Object)
 	}

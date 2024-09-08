@@ -16,15 +16,12 @@ import (
 type (
 	inlineMapper struct {
 		*encoder.Encoded
-		numInlined int
-		nextLabel  isa.Operand
-		baseLocal  isa.Operand
+		nextLabel isa.Operand
+		baseLocal isa.Operand
 	}
 
 	operandMap map[isa.Operand]isa.Operand
 )
-
-const maxInlined = 16
 
 var (
 	inlineCallPattern = visitor.Pattern{
@@ -68,13 +65,12 @@ func (m *inlineMapper) perform(i isa.Instructions) isa.Instructions {
 	c = m.reindex(p, c)
 	c = m.returns(c)
 	c = m.transformArgs(c, argc)
-	m.numInlined++
 	return c
 }
 
 func (m *inlineMapper) canInline(i isa.Instruction) (*vm.Closure, bool) {
 	p, ok := m.Constants[i.Operand()].(*vm.Closure)
-	return p, ok && m.numInlined < maxInlined && p.Globals == m.Globals
+	return p, ok && p.Globals == m.Globals
 }
 
 func (m *inlineMapper) relabel(c isa.Instructions) isa.Instructions {
