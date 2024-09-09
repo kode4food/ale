@@ -32,26 +32,22 @@ func (p *Pair) Name() string {
 }
 
 func (p *Pair) Accepts(c *Checker, other Type) bool {
-	if p == other {
-		return true
-	}
 	if other, ok := other.(*Pair); ok {
-		return p.basic.Accepts(c, other) &&
-			c.AcceptsChild(p.car, other.Car()) &&
-			c.AcceptsChild(p.cdr, other.Cdr())
+		return p == other ||
+			p.basic.Accepts(c, other) &&
+				c.AcceptsChild(p.car, other.Car()) &&
+				c.AcceptsChild(p.cdr, other.Cdr())
 	}
 	return false
 }
 
 func (p *Pair) Equal(other Type) bool {
-	if p == other {
-		return true
-	}
 	if other, ok := other.(*Pair); ok {
-		return p.name == other.name &&
-			p.basic.Equal(other.basic) &&
-			p.car.Equal(other.car) &&
-			p.cdr.Equal(other.cdr)
+		return p == other ||
+			p.name == other.name &&
+				p.basic.Equal(other.basic) &&
+				p.car.Equal(other.car) &&
+				p.cdr.Equal(other.cdr)
 	}
 	return false
 }

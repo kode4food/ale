@@ -44,10 +44,10 @@ func (a *Applicable) Name() string {
 }
 
 func (a *Applicable) Accepts(c *Checker, other Type) bool {
-	if a == other {
-		return true
-	}
 	if other, ok := other.(*Applicable); ok {
+		if a == other {
+			return true
+		}
 		os := other.Signatures()
 		for _, s := range a.signatures {
 			if !s.acceptsFromSignatures(c, os) {
@@ -60,12 +60,10 @@ func (a *Applicable) Accepts(c *Checker, other Type) bool {
 }
 
 func (a *Applicable) Equal(other Type) bool {
-	if a == other {
-		return true
-	}
 	if other, ok := other.(*Applicable); ok {
-		return a.basic.Equal(other.basic) &&
-			a.equal(other.signatures)
+		return a == other ||
+			a.basic.Equal(other.basic) &&
+				a.equal(other.signatures)
 	}
 	return false
 }

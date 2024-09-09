@@ -51,15 +51,13 @@ func (p *Procedure) Get(key data.Value) (data.Value, bool) {
 
 // Equal compares this Procedure to another for equality
 func (p *Procedure) Equal(other data.Value) bool {
-	if p == other {
-		return true
-	}
 	if other, ok := other.(*Procedure); ok {
-		return p.Globals == other.Globals &&
-			p.StackSize == other.StackSize &&
-			p.LocalCount == other.LocalCount &&
-			slices.Equal(p.Code, other.Code) &&
-			p.Constants.Equal(other.Constants)
+		return p == other ||
+			p.Globals == other.Globals &&
+				p.StackSize == other.StackSize &&
+				p.LocalCount == other.LocalCount &&
+				slices.Equal(p.Code, other.Code) &&
+				p.Constants.Equal(other.Constants)
 	}
 	return false
 }

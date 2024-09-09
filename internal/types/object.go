@@ -34,25 +34,21 @@ func (o *Object) Name() string {
 }
 
 func (o *Object) Accepts(c *Checker, other Type) bool {
-	if o == other {
-		return true
-	}
 	if other, ok := other.(*Object); ok {
-		return o.basic.Accepts(c, other) &&
-			c.AcceptsChild(o.key, other.Key()) &&
-			c.AcceptsChild(o.value, other.Value())
+		return o == other ||
+			o.basic.Accepts(c, other) &&
+				c.AcceptsChild(o.key, other.Key()) &&
+				c.AcceptsChild(o.value, other.Value())
 	}
 	return false
 }
 
 func (o *Object) Equal(other Type) bool {
-	if o == other {
-		return true
-	}
 	if other, ok := other.(*Object); ok {
-		return o.basic.Equal(other.basic) &&
-			o.key.Equal(other.key) &&
-			o.value.Equal(other.value)
+		return o == other ||
+			o.basic.Equal(other.basic) &&
+				o.key.Equal(other.key) &&
+				o.value.Equal(other.value)
 	}
 	return false
 }

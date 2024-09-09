@@ -9,7 +9,7 @@ type Ref struct {
 
 func (r *Ref) Equal(other data.Value) bool {
 	if other, ok := other.(*Ref); ok {
-		return r.Value.Equal(other.Value)
+		return r == other || r.Value.Equal(other.Value)
 	}
 	return r.Value.Equal(other)
 }

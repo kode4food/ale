@@ -12,11 +12,6 @@ func (*Any) Accepts(*Checker, Type) bool {
 }
 
 func (a *Any) Equal(other Type) bool {
-	if a == other {
-		return true
-	}
-	if _, ok := other.(*Any); ok {
-		return true
-	}
-	return false
+	_, ok := other.(*Any)
+	return ok
 }

@@ -43,10 +43,10 @@ func (r *Record) Name() string {
 }
 
 func (r *Record) Accepts(c *Checker, other Type) bool {
-	if r == other {
-		return true
-	}
 	if other, ok := other.(*Record); ok {
+		if r == other {
+			return true
+		}
 		rf := r.fields
 		of := other.Fields()
 		if len(rf) > len(of) {
@@ -64,11 +64,8 @@ func (r *Record) Accepts(c *Checker, other Type) bool {
 }
 
 func (r *Record) Equal(other Type) bool {
-	if r == other {
-		return true
-	}
 	if other, ok := other.(*Record); ok {
-		return r.basic.Equal(other.basic) && r.equal(other.fields)
+		return r == other || r.basic.Equal(other.basic) && r.equal(other.fields)
 	}
 	return false
 }

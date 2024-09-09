@@ -216,25 +216,24 @@ func (o *Object) CheckArity(argCount int) error {
 }
 
 func (o *Object) Equal(other Value) bool {
-	if o == nil || o == other {
-		return o == other
-	}
-	r, ok := other.(*Object)
-	if !ok {
-		return false
-	}
-	lp := o.Pairs()
-	rp := r.Pairs()
-	if len(lp) != len(rp) {
-		return false
-	}
-	rs := rp.sorted()
-	for i, l := range lp.sorted() {
-		if !l.Equal(rs[i]) {
+	if other, ok := other.(*Object); ok {
+		if o == nil || o == other {
+			return o == other
+		}
+		lp := o.Pairs()
+		rp := other.Pairs()
+		if len(lp) != len(rp) {
 			return false
 		}
+		rs := rp.sorted()
+		for i, l := range lp.sorted() {
+			if !l.Equal(rs[i]) {
+				return false
+			}
+		}
+		return true
 	}
-	return true
+	return false
 }
 
 func (*Object) Type() types.Type {

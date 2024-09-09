@@ -44,20 +44,18 @@ func (u *Union) Options() []Type {
 func (u *Union) Accepts(c *Checker, other Type) bool {
 	switch other := other.(type) {
 	case *Union:
-		return u.acceptsUnion(c, other)
+		return u == other || u.acceptsUnion(c, other)
 	default:
 		return u.acceptsType(c, other)
 	}
 }
 
 func (u *Union) Equal(other Type) bool {
-	if u == other {
-		return true
-	}
 	if other, ok := other.(*Union); ok {
-		return u.name == other.name &&
-			u.basic.Equal(other.basic) &&
-			u.options.equal(other.options)
+		return u == other ||
+			u.name == other.name &&
+				u.basic.Equal(other.basic) &&
+				u.options.equal(other.options)
 	}
 	return false
 }

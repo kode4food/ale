@@ -439,12 +439,10 @@ func (c *Closure) CheckArity(i int) error {
 }
 
 func (c *Closure) Equal(other data.Value) bool {
-	if c == other {
-		return true
-	}
 	if other, ok := other.(*Closure); ok {
-		return c.Procedure.Equal(other.Procedure) &&
-			c.captured.Equal(other.captured)
+		return c == other ||
+			c.Procedure.Equal(other.Procedure) &&
+				c.captured.Equal(other.captured)
 	}
 	return false
 }

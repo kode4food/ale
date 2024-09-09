@@ -48,21 +48,15 @@ func (b *Basic) Name() string {
 }
 
 func (b *Basic) Accepts(_ *Checker, other Type) bool {
-	if b == other {
-		return true
-	}
 	if other, ok := other.(basic); ok {
-		return b.kind == other.Kind()
+		return b == other || b.kind == other.Kind()
 	}
 	return false
 }
 
 func (b *Basic) Equal(other Type) bool {
-	if b == other {
-		return true
-	}
 	if other, ok := other.(*Basic); ok {
-		return b.kind == other.kind && b.name == other.name
+		return b == other || b.kind == other.kind && b.name == other.name
 	}
 	return false
 }

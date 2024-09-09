@@ -128,22 +128,24 @@ func (l *List) CheckArity(argCount int) error {
 }
 
 func (l *List) Equal(other Value) bool {
-	if l == nil {
-		return l == other
-	}
-	cr, ok := other.(*List)
-	if !ok || l.count != cr.count {
-		return false
-	}
-	for cl := l; cl != nil; cl, cr = cl.rest, cr.rest {
-		if cl == cr {
-			return true
+	if other, ok := other.(*List); ok {
+		if l == nil || l == other {
+			return l == other
 		}
-		if !cl.first.Equal(cr.first) {
+		if l.count != other.count {
 			return false
 		}
+		for cl := l; cl != nil; cl, other = cl.rest, other.rest {
+			if cl == other {
+				return true
+			}
+			if !cl.first.Equal(other.first) {
+				return false
+			}
+		}
+		return true
 	}
-	return true
+	return false
 }
 
 func (l *List) String() string {
