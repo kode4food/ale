@@ -114,8 +114,8 @@ func (c *chanSequence) Type() types.Type {
 	return chanSequenceType
 }
 
-func (c *chanSequence) Equal(v data.Value) bool {
-	return c == v
+func (c *chanSequence) Equal(other data.Value) bool {
+	return c == other
 }
 
 func (c *chanSequence) Get(key data.Value) (data.Value, bool) {

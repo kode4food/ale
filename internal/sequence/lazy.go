@@ -70,8 +70,8 @@ func (l *lazySequence) Type() types.Type {
 	return lazySequenceType
 }
 
-func (l *lazySequence) Equal(v data.Value) bool {
-	return l == v
+func (l *lazySequence) Equal(other data.Value) bool {
+	return l == other
 }
 
 func (l *lazySequence) Get(key data.Value) (data.Value, bool) {

@@ -60,11 +60,8 @@ func Equal(l, r Value) bool {
 }
 
 // Equal compares this Bool to another for equality
-func (b Bool) Equal(v Value) bool {
-	if v, ok := v.(Bool); ok {
-		return b == v
-	}
-	return false
+func (b Bool) Equal(other Value) bool {
+	return b == other
 }
 
 // String converts this Value into a string

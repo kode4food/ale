@@ -91,11 +91,8 @@ func (i Instruction) StackChange() int {
 }
 
 // Equal compares this Instruction to another for equality
-func (i Instruction) Equal(v data.Value) bool {
-	if v, ok := v.(Instruction); ok {
-		return i == v
-	}
-	return false
+func (i Instruction) Equal(other data.Value) bool {
+	return i == other
 }
 
 func (i Instruction) String() string {

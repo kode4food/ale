@@ -159,10 +159,7 @@ func (Integer) IsNegInf() bool {
 
 // Equal compares this Integer to another for equality
 func (l Integer) Equal(r Value) bool {
-	if r, ok := r.(Integer); ok {
-		return l == r
-	}
-	return false
+	return l == r
 }
 
 // HashCode returns a hash code for this Integer
@@ -289,6 +286,9 @@ func (*BigInt) IsNegInf() bool {
 // Equal compares this BigInt to another for equality
 func (l *BigInt) Equal(r Value) bool {
 	if r, ok := r.(*BigInt); ok {
+		if l == r {
+			return true
+		}
 		lb := (*big.Int)(l)
 		rb := (*big.Int)(r)
 		return lb.Cmp(rb) == 0

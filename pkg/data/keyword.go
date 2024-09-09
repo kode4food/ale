@@ -32,11 +32,8 @@ func (k Keyword) CheckArity(argCount int) error {
 }
 
 // Equal compares this Keyword to another for equality
-func (k Keyword) Equal(v Value) bool {
-	if v, ok := v.(Keyword); ok {
-		return k == v
-	}
-	return false
+func (k Keyword) Equal(other Value) bool {
+	return k == other
 }
 
 // String converts Keyword into a string

@@ -64,12 +64,9 @@ func (c *Cons) Cdr() Value {
 }
 
 // Equal compares this Cons to another for equality
-func (c *Cons) Equal(v Value) bool {
-	if c == v {
-		return true
-	}
-	if v, ok := v.(*Cons); ok {
-		return c.car.Equal(v.car) && c.cdr.Equal(v.cdr)
+func (c *Cons) Equal(other Value) bool {
+	if other, ok := other.(*Cons); ok {
+		return c == other || c.car.Equal(other.car) && c.cdr.Equal(other.cdr)
 	}
 	return false
 }

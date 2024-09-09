@@ -69,8 +69,8 @@ func (p *Promise) Type() types.Type {
 	return PromiseType
 }
 
-func (p *Promise) Equal(v data.Value) bool {
-	return p == v
+func (p *Promise) Equal(other data.Value) bool {
+	return p == other
 }
 
 func (p *Promise) Get(key data.Value) (data.Value, bool) {

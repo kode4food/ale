@@ -51,8 +51,8 @@ func (p *procedure) Type() types.Type {
 	return types.BasicProcedure
 }
 
-func (p *procedure) Equal(v Value) bool {
-	return p == v
+func (p *procedure) Equal(other Value) bool {
+	return p == other
 }
 
 func (p *procedure) Get(key Value) (Value, bool) {

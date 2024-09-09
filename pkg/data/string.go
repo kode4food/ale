@@ -160,11 +160,8 @@ func (s String) take(count Integer) (String, bool) {
 }
 
 // Equal compares this String to another for equality
-func (s String) Equal(v Value) bool {
-	if v, ok := v.(String); ok {
-		return s == v
-	}
-	return false
+func (s String) Equal(other Value) bool {
+	return s == other
 }
 
 // String converts this Value into a string

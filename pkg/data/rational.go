@@ -135,10 +135,7 @@ func (l Float) IsNegInf() bool {
 
 // Equal compares this Float to another for equality
 func (l Float) Equal(r Value) bool {
-	if r, ok := r.(Float); ok {
-		return l == r
-	}
-	return false
+	return l == r
 }
 
 // String converts this Float to a string
@@ -269,10 +266,10 @@ func (*Ratio) IsNegInf() bool {
 
 // Equal compares this Ratio to another for equality
 func (l *Ratio) Equal(r Value) bool {
-	if l == r {
-		return true
-	}
 	if r, ok := r.(*Ratio); ok {
+		if l == r {
+			return true
+		}
 		lb := (*big.Rat)(l)
 		rb := (*big.Rat)(r)
 		return lb.Cmp(rb) == 0

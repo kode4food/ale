@@ -162,11 +162,8 @@ func (l Local) Name() Local {
 	return l
 }
 
-func (l Local) Equal(v Value) bool {
-	if v, ok := v.(Local); ok {
-		return l == v
-	}
-	return false
+func (l Local) Equal(other Value) bool {
+	return l == other
 }
 
 func (Local) Type() types.Type {
@@ -204,11 +201,8 @@ func (s qualified) Domain() Local {
 	return s.domain
 }
 
-func (s qualified) Equal(v Value) bool {
-	if v, ok := v.(qualified); ok {
-		return s == v
-	}
-	return false
+func (s qualified) Equal(other Value) bool {
+	return s == other
 }
 
 func (qualified) Type() types.Type {
