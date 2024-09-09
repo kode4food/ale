@@ -282,7 +282,7 @@ func hasAnyArgInstruction(c isa.Instructions) bool {
 func filterArgInstructions(c isa.Instructions) isa.Instructions {
 	return basics.Filter(c, func(i isa.Instruction) bool {
 		switch i.Opcode() {
-		case isa.PushArgs, isa.PopArgs, isa.Arg, isa.RestArg:
+		case isa.PushArgs, isa.PopArgs, isa.Arg, isa.ArgLen, isa.RestArg:
 			return true
 		default:
 			return false
@@ -291,10 +291,7 @@ func filterArgInstructions(c isa.Instructions) isa.Instructions {
 }
 
 func canImmediatelyPop(c isa.Instructions) bool {
-	if len(c) == 0 || c[0].Opcode() != isa.Arg || c[0].Operand() != 0 {
-		return false
-	}
-	return !hasAnyArgInstruction(c[1:])
+	return len(c) > 0 && c[0] == isa.Arg.New(0) && !hasAnyArgInstruction(c[1:])
 }
 
 func immediatelyPop(c isa.Instructions) isa.Instructions {
@@ -310,7 +307,7 @@ func canMapArgsToLocals(c isa.Instructions, argc isa.Operand) bool {
 			if idx > highArg {
 				highArg = idx
 			}
-		case isa.RestArg, isa.PushArgs, isa.PopArgs:
+		case isa.PushArgs, isa.PopArgs, isa.ArgLen, isa.RestArg:
 			return false
 
 		default:
