@@ -4,11 +4,9 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/kode4food/ale/pkg/core"
-
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
-	"github.com/kode4food/ale/internal/runtime/isa"
+	"github.com/kode4food/ale/pkg/core"
 	"github.com/kode4food/ale/pkg/data"
 )
 
@@ -57,30 +55,4 @@ func TestBadMacro(t *testing.T) {
 
 	defer as.ExpectPanic(fmt.Errorf(core.ErrProcedureRequired, "32"))
 	_ = core.Macro.Call(I(32))
-}
-
-func TestMacroExpand(t *testing.T) {
-	testMacroExpandWith(t, core.MacroExpand)
-}
-
-func TestMacroExpand1(t *testing.T) {
-	testMacroExpandWith(t, core.MacroExpand1)
-}
-
-func testMacroExpandWith(t *testing.T, enc testEncoder) {
-	as := assert.New(t)
-	e1 := assert.GetTestEncoder()
-
-	neq := L(LS("declare"), LS("some-sym"))
-	enc(e1, neq)
-	e1.Emit(isa.Return)
-
-	c := e1.Encode().Constants
-	as.Equal(2, len(c))
-	s, ok := c[0].(data.Local)
-	as.True(ok)
-	as.Equal("some-sym", s.String())
-	f, ok := c[1].(data.Procedure)
-	as.True(ok)
-	as.Equal("(ale/declare* some-sym)", data.ToString(f.Call(neq)))
 }

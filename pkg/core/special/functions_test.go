@@ -1,4 +1,4 @@
-package core_test
+package special_test
 
 import (
 	"errors"
@@ -17,6 +17,10 @@ import (
 
 func unexpectedTypeError(got, expected string) error {
 	return fmt.Errorf(runtime.ErrUnexpectedType, got, expected)
+}
+
+func getPredicate(kwd data.Keyword) data.Procedure {
+	return core.IsA.Call(kwd).(data.Procedure)
 }
 
 func TestApply(t *testing.T) {

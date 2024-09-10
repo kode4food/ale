@@ -2,12 +2,18 @@ package core_test
 
 import (
 	"errors"
+	"fmt"
 	"testing"
 
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
+	"github.com/kode4food/ale/internal/runtime"
 	"github.com/kode4food/ale/pkg/data"
 )
+
+func unexpectedTypeError(got, expected string) error {
+	return fmt.Errorf(runtime.ErrUnexpectedType, got, expected)
+}
 
 func TestListEval(t *testing.T) {
 	as := assert.New(t)

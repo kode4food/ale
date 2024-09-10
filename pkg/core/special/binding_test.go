@@ -1,4 +1,4 @@
-package core_test
+package special_test
 
 import (
 	"errors"
@@ -7,7 +7,7 @@ import (
 
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
-	"github.com/kode4food/ale/pkg/core"
+	"github.com/kode4food/ale/pkg/core/special"
 )
 
 func TestLet(t *testing.T) {
@@ -19,14 +19,14 @@ func TestBindingErrors(t *testing.T) {
 	as := assert.New(t)
 
 	as.PanicWith(`(let ([x 99][y]) (+ x y))`,
-		errors.New(core.ErrUnpairedBindings),
+		errors.New(special.ErrUnpairedBindings),
 	)
 
 	as.PanicWith(`(let ([x 99][x 99]) (+ x y))`,
-		fmt.Errorf(core.ErrNameAlreadyBound, "x"),
+		fmt.Errorf(special.ErrNameAlreadyBound, "x"),
 	)
 
 	as.PanicWith(`(let (x . 99) (+ x x))`,
-		fmt.Errorf(core.ErrUnexpectedLetSyntax, "(x . 99)"),
+		fmt.Errorf(special.ErrUnexpectedLetSyntax, "(x . 99)"),
 	)
 }

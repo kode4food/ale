@@ -1,4 +1,4 @@
-package core
+package special
 
 import (
 	"github.com/kode4food/ale/internal/compiler/encoder"

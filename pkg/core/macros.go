@@ -13,12 +13,6 @@ import (
 // receive a data.Procedure to wrap
 const ErrProcedureRequired = "argument must be a procedure: %s"
 
-// MacroExpand performs macro expansion of a form until it can no longer
-var MacroExpand = makeEvaluator(macro.Expand)
-
-// MacroExpand1 performs a single-step macro expansion of a form
-var MacroExpand1 = makeEvaluator(macro.Expand1)
-
 // Macro converts a function into a macro
 var Macro = data.MakeProcedure(func(args ...data.Value) data.Value {
 	switch body := args[0].(type) {

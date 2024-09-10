@@ -1,4 +1,4 @@
-package core_test
+package special_test
 
 import (
 	"errors"
