@@ -4,10 +4,11 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/kode4food/ale/pkg/core"
+
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
 	"github.com/kode4food/ale/internal/runtime/isa"
-	builtin "github.com/kode4food/ale/pkg/core"
 	"github.com/kode4food/ale/pkg/data"
 )
 
@@ -54,16 +55,16 @@ func TestMacroExpandEval(t *testing.T) {
 func TestBadMacro(t *testing.T) {
 	as := assert.New(t)
 
-	defer as.ExpectPanic(fmt.Errorf(builtin.ErrProcedureRequired, "32"))
-	_ = builtin.Macro.Call(I(32))
+	defer as.ExpectPanic(fmt.Errorf(core.ErrProcedureRequired, "32"))
+	_ = core.Macro.Call(I(32))
 }
 
 func TestMacroExpand(t *testing.T) {
-	testMacroExpandWith(t, builtin.MacroExpand)
+	testMacroExpandWith(t, core.MacroExpand)
 }
 
 func TestMacroExpand1(t *testing.T) {
-	testMacroExpandWith(t, builtin.MacroExpand1)
+	testMacroExpandWith(t, core.MacroExpand1)
 }
 
 func testMacroExpandWith(t *testing.T, enc testEncoder) {

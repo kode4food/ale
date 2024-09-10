@@ -1,4 +1,4 @@
-package core_test
+package asm_test
 
 import (
 	"errors"
@@ -10,7 +10,7 @@ import (
 	"github.com/kode4food/ale/internal/compiler/encoder"
 	"github.com/kode4food/ale/internal/compiler/ir/analysis"
 	"github.com/kode4food/ale/internal/runtime/isa"
-	builtin "github.com/kode4food/ale/pkg/core"
+	"github.com/kode4food/ale/pkg/core/asm"
 )
 
 func TestAsmAddition(t *testing.T) {
@@ -63,7 +63,7 @@ func TestAsmLabelError(t *testing.T) {
 			true
 			cond-jump "not-a-label"
 		:not-a-label)
-    `, fmt.Errorf(builtin.ErrUnexpectedLabel, "not-a-label"))
+    `, fmt.Errorf(asm.ErrUnexpectedLabel, "not-a-label"))
 }
 
 func TestAsmLabelNumbering(t *testing.T) {
@@ -97,7 +97,7 @@ func TestAsmOutOfScopeError(t *testing.T) {
 			store wont-be-found
 			.pop-locals
 			load wont-be-found)
-    `, fmt.Errorf(builtin.ErrUnexpectedName, "wont-be-found"))
+    `, fmt.Errorf(asm.ErrUnexpectedName, "wont-be-found"))
 }
 
 func TestAsmLocalScopeError(t *testing.T) {

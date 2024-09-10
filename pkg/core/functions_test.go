@@ -10,6 +10,7 @@ import (
 	"github.com/kode4food/ale/internal/runtime"
 	"github.com/kode4food/ale/pkg/core"
 	"github.com/kode4food/ale/pkg/core/bootstrap"
+	"github.com/kode4food/ale/pkg/core/internal"
 	"github.com/kode4food/ale/pkg/data"
 	"github.com/kode4food/ale/pkg/read/parse"
 )
@@ -80,10 +81,10 @@ func TestLambdaEval(t *testing.T) {
 func TestBadLambdaEval(t *testing.T) {
 	as := assert.New(t)
 
-	eNum := fmt.Errorf(core.ErrUnexpectedCaseSyntax, "99")
+	eNum := fmt.Errorf(internal.ErrUnexpectedCaseSyntax, "99")
 	as.PanicWith(`(lambda-rec 99 "hello")`, eNum)
 
-	eSym := fmt.Errorf(core.ErrUnexpectedCaseSyntax, "foo/bar")
+	eSym := fmt.Errorf(internal.ErrUnexpectedCaseSyntax, "foo/bar")
 	as.PanicWith(`(lambda-rec foo/bar () "hello")`, eSym)
 }
 

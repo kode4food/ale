@@ -7,6 +7,7 @@ import (
 	"github.com/kode4food/ale/internal/compiler/generate"
 	"github.com/kode4food/ale/internal/compiler/special"
 	"github.com/kode4food/ale/pkg/core"
+	"github.com/kode4food/ale/pkg/core/asm"
 	"github.com/kode4food/ale/pkg/data"
 	"github.com/kode4food/ale/pkg/macro"
 )
@@ -50,7 +51,7 @@ func (b *bootstrap) initialFunctions() {
 
 func (b *bootstrap) specialForms() {
 	b.specials(map[data.Local]special.Call{
-		"asm*":          core.Asm,
+		"asm*":          asm.Asm,
 		"eval":          core.Eval,
 		"lambda":        core.Lambda,
 		"let":           core.Let,

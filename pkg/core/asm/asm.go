@@ -1,4 +1,4 @@
-package core
+package asm
 
 import (
 	"errors"
@@ -14,6 +14,7 @@ import (
 	"github.com/kode4food/ale/internal/debug"
 	"github.com/kode4food/ale/internal/runtime/isa"
 	str "github.com/kode4food/ale/internal/strings"
+	"github.com/kode4food/ale/pkg/core/internal"
 	"github.com/kode4food/ale/pkg/data"
 	"github.com/kode4food/comb/basics"
 )
@@ -180,21 +181,21 @@ func (p *asmParser) parse(forms data.Sequence) (asmEmit, error) {
 }
 
 func (p *asmParser) specialCall(forms data.Sequence) (asmEmit, error) {
-	pc := parseParamCases(forms)
-	cases := pc.Cases()
+	pc := internal.ParseParamCases(forms)
+	cases := pc.Cases
 	ap := make([]*asmParser, len(cases))
 	emitters := make([]asmEmit, len(cases))
 	for i, c := range cases {
-		ap[i] = p.withParams(c.params)
-		e, err := ap[i].sequence(c.body)
+		ap[i] = p.withParams(c.Params)
+		e, err := ap[i].sequence(c.Body)
 		if err != nil {
 			return nil, err
 		}
 		emitters[i] = e
 	}
 
-	ac := pc.makeChecker()
-	fetchers := pc.makeFetchers()
+	ac := pc.MakeArityChecker()
+	fetchers := pc.MakeArgFetchers()
 
 	fn := func(e encoder.Encoder, args ...data.Value) {
 		if err := ac(len(args)); err != nil {
@@ -209,7 +210,7 @@ func (p *asmParser) specialCall(forms data.Sequence) (asmEmit, error) {
 				return
 			}
 		}
-		panic(errors.New(ErrNoMatchingParamPattern))
+		panic(errors.New(internal.ErrNoMatchingParamPattern))
 	}
 
 	return func(e *asmEncoder) error {

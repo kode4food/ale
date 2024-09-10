@@ -7,7 +7,7 @@ import (
 
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
-	builtin "github.com/kode4food/ale/pkg/core"
+	"github.com/kode4food/ale/pkg/core"
 )
 
 func TestLet(t *testing.T) {
@@ -19,14 +19,14 @@ func TestBindingErrors(t *testing.T) {
 	as := assert.New(t)
 
 	as.PanicWith(`(let ([x 99][y]) (+ x y))`,
-		errors.New(builtin.ErrUnpairedBindings),
+		errors.New(core.ErrUnpairedBindings),
 	)
 
 	as.PanicWith(`(let ([x 99][x 99]) (+ x y))`,
-		fmt.Errorf(builtin.ErrNameAlreadyBound, "x"),
+		fmt.Errorf(core.ErrNameAlreadyBound, "x"),
 	)
 
 	as.PanicWith(`(let (x . 99) (+ x x))`,
-		fmt.Errorf(builtin.ErrUnexpectedLetSyntax, "(x . 99)"),
+		fmt.Errorf(core.ErrUnexpectedLetSyntax, "(x . 99)"),
 	)
 }

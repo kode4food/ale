@@ -1,12 +1,13 @@
-package core_test
+package internal_test
 
 import (
 	"fmt"
 	"testing"
 
+	"github.com/kode4food/ale/pkg/core/internal"
+
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
-	builtin "github.com/kode4food/ale/pkg/core"
 	"github.com/kode4food/ale/pkg/data"
 )
 
@@ -18,20 +19,20 @@ func TestReachability(t *testing.T) {
 			[(x y) "hello"]
 			[(z) "there"]
 			[(a b) "error"])
-	`, fmt.Errorf(builtin.ErrUnreachableCase, "(a b)"))
+	`, fmt.Errorf(internal.ErrUnreachableCase, "(a b)"))
 
 	as.PanicWith(`
 		(lambda
 			[(x y . z) "hello"]
 			[(x y) "there"]
 			[(a b) "error"])
-	`, fmt.Errorf(builtin.ErrUnreachableCase, "(x y)"))
+	`, fmt.Errorf(internal.ErrUnreachableCase, "(x y)"))
 
 	as.PanicWith(`
 		(define-lambda test
 			[(a b . c) #t]
 		    [(a b c . d) #f])
-	`, fmt.Errorf(builtin.ErrUnreachableCase, "(a b c . d)"))
+	`, fmt.Errorf(internal.ErrUnreachableCase, "(a b c . d)"))
 
 	as.EvalTo(`
 		(define-lambda test
@@ -59,7 +60,7 @@ func TestUnmatchedCase(t *testing.T) {
 			[(a b c d e) [e]]
 			[(a b c d e f g . h) [a]])
 		(test)
-	`, fmt.Errorf(builtin.ErrUnmatchedCase, 0, "1-3, 5, 7 or more"))
+	`, fmt.Errorf(internal.ErrUnmatchedCase, 0, "1-3, 5, 7 or more"))
 
 	as.PanicWith(`
 		(define-lambda test
@@ -69,7 +70,7 @@ func TestUnmatchedCase(t *testing.T) {
 			[(a b c d e) [e]]
 			[(a b c d e g . h) [a]])
 		(test)
-	`, fmt.Errorf(builtin.ErrUnmatchedCase, 0, "1-3, 5 or more"))
+	`, fmt.Errorf(internal.ErrUnmatchedCase, 0, "1-3, 5 or more"))
 
 	as.PanicWith(`
 		(define-lambda test
@@ -78,5 +79,5 @@ func TestUnmatchedCase(t *testing.T) {
 			[(a b c) [a b c]]
 			[(a b c d e) [e]])
 		(test 1 2)
-	`, fmt.Errorf(builtin.ErrUnmatchedCase, 2, "0-1, 3, 5"))
+	`, fmt.Errorf(internal.ErrUnmatchedCase, 2, "0-1, 3, 5"))
 }

@@ -6,7 +6,7 @@ import (
 
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
-	"github.com/kode4food/ale/pkg/core"
+	"github.com/kode4food/ale/pkg/core/internal"
 	"github.com/kode4food/ale/pkg/data"
 )
 
@@ -30,10 +30,10 @@ func TestLambdaErrors(t *testing.T) {
 	as := assert.New(t)
 
 	as.PanicWith(`(lambda :kwd '())`,
-		fmt.Errorf(core.ErrUnexpectedCaseSyntax, ":kwd"),
+		fmt.Errorf(internal.ErrUnexpectedCaseSyntax, ":kwd"),
 	)
 
 	as.PanicWith(`(lambda [:kwd] '())`,
-		fmt.Errorf(core.ErrUnexpectedParamSyntax, ":kwd"),
+		fmt.Errorf(internal.ErrUnexpectedParamSyntax, ":kwd"),
 	)
 }

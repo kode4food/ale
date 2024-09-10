@@ -7,7 +7,7 @@ import (
 	. "github.com/kode4food/ale/internal/assert/helpers"
 	"github.com/kode4food/ale/internal/compiler/encoder"
 	"github.com/kode4food/ale/internal/runtime/isa"
-	builtin "github.com/kode4food/ale/pkg/core"
+	"github.com/kode4food/ale/pkg/core"
 	"github.com/kode4food/ale/pkg/data"
 )
 
@@ -18,7 +18,7 @@ func TestEval(t *testing.T) {
 
 	add := L(LS("+"), I(1), I(2))
 	e1 := assert.GetTestEncoder()
-	builtin.Eval(e1,
+	core.Eval(e1,
 		add.Prepend(LS("list")),
 	)
 	e1.Emit(isa.Return)

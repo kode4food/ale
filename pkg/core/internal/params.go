@@ -1,4 +1,4 @@
-package core
+package internal
 
 import (
 	"fmt"
@@ -9,21 +9,21 @@ import (
 )
 
 type (
-	paramCase struct {
-		signature data.Value
-		body      data.Sequence
-		params    data.Locals
-		rest      bool
+	ParamCase struct {
+		Signature data.Value
+		Body      data.Sequence
+		Params    data.Locals
+		Rest      bool
 	}
 
-	paramCases struct {
-		cases   []*paramCase
-		fixed   []uint8
-		hasRest bool
-		lowRest int
+	ParamCases struct {
+		Cases   []*ParamCase
+		Fixed   []uint8
+		HasRest bool
+		LowRest int
 	}
 
-	argFetcher func(data.Vector) (data.Vector, bool)
+	ArgFetcher func(data.Vector) (data.Vector, bool)
 )
 
 const (
@@ -45,12 +45,16 @@ const (
 	// ErrUnmatchedCase is raised when a Lambda is called and the number of
 	// arguments provided doesn't match any of the declared parameter cases
 	ErrUnmatchedCase = "got %d arguments, expected %s"
+
+	// ErrNoMatchingParamPattern is raised when none of the parameter patterns for
+	// a Lambda were capable of being matched
+	ErrNoMatchingParamPattern = "no matching parameter pattern"
 )
 
 const arityBits = 8
 
-func parseParamCases(s data.Sequence) *paramCases {
-	res := &paramCases{}
+func ParseParamCases(s data.Sequence) *ParamCases {
+	res := &ParamCases{}
 	if s.IsEmpty() {
 		return res
 	}
@@ -75,16 +79,27 @@ func parseParamCases(s data.Sequence) *paramCases {
 	}
 }
 
-func (pc *paramCases) Cases() []*paramCase {
-	return pc.cases
+func (pc *ParamCases) MakeArgFetchers() []ArgFetcher {
+	res := make([]ArgFetcher, len(pc.Cases))
+	for i, c := range pc.Cases {
+		res[i] = c.makeArgFetcher()
+	}
+	return res
 }
 
-func (pc *paramCases) addParamCase(added *paramCase) error {
+func (pc *ParamCases) MakeArityChecker() data.ArityChecker {
+	if pc.HasRest {
+		return pc.makeRestChecker()
+	}
+	return pc.makeFixedChecker()
+}
+
+func (pc *ParamCases) addParamCase(added *ParamCase) error {
 	a, ar := added.getArity()
 	if !pc.isReachable(a, ar) {
-		return fmt.Errorf(ErrUnreachableCase, added.signature)
+		return fmt.Errorf(ErrUnreachableCase, added.Signature)
 	}
-	pc.cases = append(pc.cases, added)
+	pc.Cases = append(pc.Cases, added)
 	if ar {
 		pc.addRest(a)
 	} else {
@@ -93,40 +108,25 @@ func (pc *paramCases) addParamCase(added *paramCase) error {
 	return nil
 }
 
-func (pc *paramCases) isReachable(i int, isRest bool) bool {
-	if len(pc.cases) == 0 {
+func (pc *ParamCases) isReachable(i int, isRest bool) bool {
+	if len(pc.Cases) == 0 {
 		return true
 	}
-	if pc.hasRest {
-		return i < pc.lowRest
+	if pc.HasRest {
+		return i < pc.LowRest
 	}
 	if isRest {
 		return true
 	}
 	index, offset := i/arityBits, i%arityBits
-	if index < len(pc.fixed) {
-		return (pc.fixed[index] & (1 << offset)) == 0
+	if index < len(pc.Fixed) {
+		return (pc.Fixed[index] & (1 << offset)) == 0
 	}
 	return true
 }
 
-func (pc *paramCases) makeFetchers() []argFetcher {
-	res := make([]argFetcher, len(pc.cases))
-	for i, c := range pc.cases {
-		res[i] = c.makeFetcher()
-	}
-	return res
-}
-
-func (pc *paramCases) makeChecker() data.ArityChecker {
-	if pc.hasRest {
-		return pc.makeRestChecker()
-	}
-	return pc.makeFixedChecker()
-}
-
-func (pc *paramCases) makeFixedChecker() data.ArityChecker {
-	fixed := pc.fixed
+func (pc *ParamCases) makeFixedChecker() data.ArityChecker {
+	fixed := pc.Fixed
 	signatures := pc.signatures()
 	return func(i int) error {
 		index, offset := i/arityBits, i%arityBits
@@ -137,8 +137,8 @@ func (pc *paramCases) makeFixedChecker() data.ArityChecker {
 	}
 }
 
-func (pc *paramCases) makeRestChecker() data.ArityChecker {
-	lowRest := pc.lowRest
+func (pc *ParamCases) makeRestChecker() data.ArityChecker {
+	lowRest := pc.LowRest
 	fixedChecker := pc.makeFixedChecker()
 	return func(i int) error {
 		if i >= lowRest {
@@ -148,41 +148,41 @@ func (pc *paramCases) makeRestChecker() data.ArityChecker {
 	}
 }
 
-func (pc *paramCases) addFixed(i int) {
+func (pc *ParamCases) addFixed(i int) {
 	index, offset := i/arityBits, i%arityBits
-	for len(pc.fixed) <= index {
-		pc.fixed = append(pc.fixed, 0)
+	for len(pc.Fixed) <= index {
+		pc.Fixed = append(pc.Fixed, 0)
 	}
-	pc.fixed[index] |= 1 << offset
+	pc.Fixed[index] |= 1 << offset
 }
 
-func (pc *paramCases) addRest(i int) {
-	if pc.hasRest {
-		pc.lowRest = min(pc.lowRest, i)
+func (pc *ParamCases) addRest(i int) {
+	if pc.HasRest {
+		pc.LowRest = min(pc.LowRest, i)
 	} else {
-		pc.lowRest = i
-		pc.hasRest = true
+		pc.LowRest = i
+		pc.HasRest = true
 	}
 }
 
-func (pc *paramCases) signatures() string {
+func (pc *ParamCases) signatures() string {
 	var res []string
 	for _, r := range pc.fixedRanges() {
-		if pc.hasRest && r[1] >= pc.lowRest-1 {
+		if pc.HasRest && r[1] >= pc.LowRest-1 {
 			res = append(res, formatOrMore(r[0]))
 			return strings.Join(res, ", ")
 		}
 		res = append(res, formatRange(r))
 	}
 
-	if pc.hasRest {
-		res = append(res, formatOrMore(pc.lowRest))
+	if pc.HasRest {
+		res = append(res, formatOrMore(pc.LowRest))
 	}
 
 	return strings.Join(res, ", ")
 }
 
-func (pc *paramCases) fixedRanges() [][2]int {
+func (pc *ParamCases) fixedRanges() [][2]int {
 	fixed := pc.fixedSet()
 	if len(fixed) == 0 {
 		return [][2]int{}
@@ -200,43 +200,43 @@ func (pc *paramCases) fixedRanges() [][2]int {
 	return res
 }
 
-func (pc *paramCases) fixedSet() []int {
+func (pc *ParamCases) fixedSet() []int {
 	var res []int
-	for i := 0; i < len(pc.fixed)*arityBits; i++ {
+	for i := 0; i < len(pc.Fixed)*arityBits; i++ {
 		index, offset := i/arityBits, i%arityBits
-		if pc.fixed[index]&(1<<offset) != 0 {
+		if pc.Fixed[index]&(1<<offset) != 0 {
 			res = append(res, i)
 		}
 	}
 	return res
 }
 
-func parseParamCase(s data.Sequence) *paramCase {
+func parseParamCase(s data.Sequence) *ParamCase {
 	f, body, _ := s.Split()
 	argNames, restArg := parseParamNames(f)
-	return &paramCase{
-		signature: f,
-		params:    argNames,
-		rest:      restArg,
-		body:      body,
+	return &ParamCase{
+		Signature: f,
+		Params:    argNames,
+		Rest:      restArg,
+		Body:      body,
 	}
 }
 
-func (c *paramCase) fixedArgs() data.Locals {
-	if c.rest {
-		return c.params[0 : len(c.params)-1]
+func (c *ParamCase) fixedArgs() data.Locals {
+	if c.Rest {
+		return c.Params[0 : len(c.Params)-1]
 	}
-	return c.params
+	return c.Params
 }
 
-func (c *paramCase) restArg() (data.Local, bool) {
-	if c.rest {
-		return c.params[len(c.params)-1], true
+func (c *ParamCase) restArg() (data.Local, bool) {
+	if c.Rest {
+		return c.Params[len(c.Params)-1], true
 	}
 	return "", false
 }
 
-func (c *paramCase) getArity() (int, bool) {
+func (c *ParamCase) getArity() (int, bool) {
 	fl := len(c.fixedArgs())
 	if _, ok := c.restArg(); ok {
 		return fl, true
@@ -244,9 +244,9 @@ func (c *paramCase) getArity() (int, bool) {
 	return fl, false
 }
 
-func (c *paramCase) makeFetcher() argFetcher {
-	cl := len(c.params)
-	if c.rest {
+func (c *ParamCase) makeArgFetcher() ArgFetcher {
+	cl := len(c.Params)
+	if c.Rest {
 		return func(args data.Vector) (data.Vector, bool) {
 			if len(args) < cl-1 {
 				return args, false
