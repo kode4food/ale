@@ -1,4 +1,4 @@
-package core_test
+package builtin_test
 
 import (
 	"fmt"
@@ -6,13 +6,13 @@ import (
 
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
-	"github.com/kode4food/ale/pkg/core"
+	"github.com/kode4food/ale/pkg/core/builtin"
 	"github.com/kode4food/ale/pkg/core/internal"
 	"github.com/kode4food/ale/pkg/data"
 )
 
 func getPredicate(kwd data.Keyword) data.Procedure {
-	return core.IsA.Call(kwd).(data.Procedure)
+	return builtin.IsA.Call(kwd).(data.Procedure)
 }
 
 func TestPredicatesEval(t *testing.T) {
@@ -48,7 +48,7 @@ func TestPredicatesEval(t *testing.T) {
 	as.PanicWith(`(null?)`, fmt.Errorf(internal.ErrUnmatchedCase, 0, "1 or more"))
 
 	as.PanicWith(`(is-a :dog "woof!")`,
-		fmt.Errorf(core.ErrUnknownPredicate, data.Keyword("dog")),
+		fmt.Errorf(builtin.ErrUnknownPredicate, data.Keyword("dog")),
 	)
 }
 

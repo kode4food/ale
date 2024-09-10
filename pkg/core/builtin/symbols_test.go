@@ -1,4 +1,4 @@
-package core_test
+package builtin_test
 
 import (
 	"fmt"
@@ -6,7 +6,7 @@ import (
 
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
-	"github.com/kode4food/ale/pkg/core"
+	"github.com/kode4food/ale/pkg/core/builtin"
 	"github.com/kode4food/ale/pkg/data"
 	"github.com/kode4food/ale/pkg/env"
 )
@@ -15,31 +15,31 @@ func TestSymbols(t *testing.T) {
 	as := assert.New(t)
 
 	s1 := data.NewQualifiedSymbol("hello", "ale")
-	as.True(getPredicate(core.SymbolKey).Call(s1))
-	as.False(getPredicate(core.LocalKey).Call(s1))
-	as.True(getPredicate(core.QualifiedKey).Call(s1))
+	as.True(getPredicate(builtin.SymbolKey).Call(s1))
+	as.False(getPredicate(builtin.LocalKey).Call(s1))
+	as.True(getPredicate(builtin.QualifiedKey).Call(s1))
 
-	s2 := core.Sym.Call(s1)
+	s2 := builtin.Sym.Call(s1)
 	as.Identical(s1, s2)
 
-	s3 := core.Sym.Call(S("ale/hello"))
+	s3 := builtin.Sym.Call(S("ale/hello"))
 	as.Equal(s1, s3)
 
-	s4 := core.Sym.Call(S("howdy"))
-	as.True(getPredicate(core.LocalKey).Call(s4))
-	as.False(getPredicate(core.QualifiedKey).Call(s4))
+	s4 := builtin.Sym.Call(S("howdy"))
+	as.True(getPredicate(builtin.LocalKey).Call(s4))
+	as.False(getPredicate(builtin.QualifiedKey).Call(s4))
 }
 
 func TestGenerated(t *testing.T) {
 	as := assert.New(t)
 
-	s1 := core.GenSym.Call()
-	as.True(getPredicate(core.SymbolKey).Call(s1))
-	as.True(getPredicate(core.LocalKey).Call(s1))
-	as.False(getPredicate(core.QualifiedKey).Call(s1))
+	s1 := builtin.GenSym.Call()
+	as.True(getPredicate(builtin.SymbolKey).Call(s1))
+	as.True(getPredicate(builtin.LocalKey).Call(s1))
+	as.False(getPredicate(builtin.QualifiedKey).Call(s1))
 	as.Contains("x-anon-gensym-", s1)
 
-	s2 := core.GenSym.Call(LS("blah"))
+	s2 := builtin.GenSym.Call(LS("blah"))
 	as.Contains("x-blah-gensym-", s2)
 }
 

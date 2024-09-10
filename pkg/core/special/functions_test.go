@@ -8,8 +8,8 @@ import (
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
 	"github.com/kode4food/ale/internal/runtime"
-	"github.com/kode4food/ale/pkg/core"
 	"github.com/kode4food/ale/pkg/core/bootstrap"
+	"github.com/kode4food/ale/pkg/core/builtin"
 	"github.com/kode4food/ale/pkg/core/internal"
 	"github.com/kode4food/ale/pkg/data"
 	"github.com/kode4food/ale/pkg/read/parse"
@@ -20,14 +20,14 @@ func unexpectedTypeError(got, expected string) error {
 }
 
 func getPredicate(kwd data.Keyword) data.Procedure {
-	return core.IsA.Call(kwd).(data.Procedure)
+	return builtin.IsA.Call(kwd).(data.Procedure)
 }
 
 func TestApply(t *testing.T) {
 	as := assert.New(t)
 
-	as.True(getPredicate(core.ProcedureKey).Call(core.Vector))
-	as.False(getPredicate(core.ProcedureKey).Call(S("55")))
+	as.True(getPredicate(builtin.ProcedureKey).Call(builtin.Vector))
+	as.False(getPredicate(builtin.ProcedureKey).Call(S("55")))
 
 	as.EvalTo(`
 		(apply + '(1 2 3))`, I(6))
@@ -53,13 +53,13 @@ func TestFunctionPredicates(t *testing.T) {
 
 	e := bootstrap.DevNullEnvironment()
 
-	as.False(getPredicate(core.SpecialKey).Call(core.Str))
-	as.True(getPredicate(core.ProcedureKey).Call(core.Str))
+	as.False(getPredicate(builtin.SpecialKey).Call(builtin.Str))
+	as.True(getPredicate(builtin.ProcedureKey).Call(builtin.Str))
 
 	i, ok := e.GetRoot().Resolve("if")
 	as.True(ok && i.IsBound())
-	as.True(getPredicate(core.SpecialKey).Call(i.Value()))
-	as.False(getPredicate(core.ProcedureKey).Call(i.Value()))
+	as.True(getPredicate(builtin.SpecialKey).Call(i.Value()))
+	as.False(getPredicate(builtin.ProcedureKey).Call(i.Value()))
 }
 
 func TestProcedurePredicatesEval(t *testing.T) {

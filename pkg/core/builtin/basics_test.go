@@ -1,4 +1,4 @@
-package core_test
+package builtin_test
 
 import (
 	"errors"
@@ -6,14 +6,14 @@ import (
 
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
-	"github.com/kode4food/ale/pkg/core"
+	"github.com/kode4food/ale/pkg/core/builtin"
 	"github.com/kode4food/ale/pkg/data"
 )
 
 func TestRead(t *testing.T) {
 	as := assert.New(t)
 
-	r1 := core.Read.Call(S("[1 2 3]")).(data.Vector)
+	r1 := builtin.Read.Call(S("[1 2 3]")).(data.Vector)
 
 	v2, ok := r1.ElementAt(0)
 	as.True(ok)
@@ -26,13 +26,13 @@ func TestRead(t *testing.T) {
 
 func TestEmptyRead(t *testing.T) {
 	as := assert.New(t)
-	r1 := core.Read.Call(S(""))
+	r1 := builtin.Read.Call(S(""))
 	as.Nil(r1)
 }
 
 func testRecover(as *assert.Wrapper, err any, errStr string) {
 	var triggered = false
-	core.Recover.Call(
+	builtin.Recover.Call(
 		data.MakeProcedure(func(...data.Value) data.Value {
 			panic(err)
 		}, 0),
@@ -65,7 +65,7 @@ func TestDefer(t *testing.T) {
 		recover()
 	}()
 
-	core.Defer.Call(
+	builtin.Defer.Call(
 		data.MakeProcedure(func(...data.Value) data.Value {
 			panic(S("blowed up!"))
 		}, 0),

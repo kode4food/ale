@@ -6,7 +6,7 @@ import (
 	"github.com/kode4food/ale/internal/compiler/special"
 	"github.com/kode4food/ale/internal/do"
 	"github.com/kode4food/ale/internal/stream"
-	"github.com/kode4food/ale/pkg/core"
+	"github.com/kode4food/ale/pkg/core/builtin"
 	"github.com/kode4food/ale/pkg/data"
 	"github.com/kode4food/ale/pkg/env"
 	"github.com/kode4food/ale/pkg/macro"
@@ -32,7 +32,7 @@ var (
 	devNull      *env.Environment
 )
 
-// Into sets up initial built-ins and assets. This call is useful if you're
+// Into sets up initial built-ins and populateAssets. This call is useful if you're
 // wiring up your own Environments. Otherwise, calls to TopLevelEnvironment and
 // DevNullEnvironment will perform this action for you.
 func Into(e *env.Environment) {
@@ -42,20 +42,22 @@ func Into(e *env.Environment) {
 		specialMap:  specialMap{},
 		procMap:     procMap{},
 	}
-	b.builtIns()
-	b.assets()
+	b.populateDefiners()
+	b.populateSpecialForms()
+	b.populateBuiltins()
+	b.populateAssets()
 }
 
 // ProcessEnv binds *env* to the operating system's environment variables
 func ProcessEnv(e *env.Environment) {
 	ns := e.GetRoot()
-	ns.Declare("*env*").Bind(core.Env())
+	ns.Declare("*env*").Bind(builtin.Env())
 }
 
 // ProcessArgs binds *args* to the current Go app's command line arguments
 func ProcessArgs(e *env.Environment) {
 	ns := e.GetRoot()
-	ns.Declare("*args*").Bind(core.Args())
+	ns.Declare("*args*").Bind(builtin.Args())
 }
 
 // StandardIO binds *in*, *out*, and *err* to the operating system's standard

@@ -22,7 +22,7 @@ var (
 	assets []asset
 )
 
-func (b *bootstrap) assets() {
+func (b *bootstrap) populateAssets() {
 	var filename string
 
 	defer func() {

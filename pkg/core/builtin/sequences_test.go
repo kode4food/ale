@@ -1,4 +1,4 @@
-package core_test
+package builtin_test
 
 import (
 	"errors"

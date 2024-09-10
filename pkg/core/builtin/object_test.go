@@ -1,4 +1,4 @@
-package core_test
+package builtin_test
 
 import (
 	"errors"
@@ -6,24 +6,24 @@ import (
 
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
-	"github.com/kode4food/ale/pkg/core"
+	"github.com/kode4food/ale/pkg/core/builtin"
 	"github.com/kode4food/ale/pkg/data"
 )
 
 func TestObject(t *testing.T) {
 	as := assert.New(t)
 
-	a1 := core.Object.Call(K("hello"), S("foo"))
+	a1 := builtin.Object.Call(K("hello"), S("foo"))
 	m1 := a1.(data.Mapped)
 	v1, ok := m1.Get(K("hello"))
 	as.True(ok)
 	as.String("foo", v1)
 
-	as.True(getPredicate(core.ObjectKey).Call(a1))
-	as.False(getPredicate(core.ObjectKey).Call(I(99)))
+	as.True(getPredicate(builtin.ObjectKey).Call(a1))
+	as.False(getPredicate(builtin.ObjectKey).Call(I(99)))
 
-	as.True(getPredicate(core.MappedKey).Call(a1))
-	as.False(getPredicate(core.MappedKey).Call(I(99)))
+	as.True(getPredicate(builtin.MappedKey).Call(a1))
+	as.False(getPredicate(builtin.MappedKey).Call(I(99)))
 }
 
 func TestObjectEval(t *testing.T) {
@@ -80,7 +80,7 @@ func TestObjectAssoc(t *testing.T) {
 
 	as.PanicWith(`
 		(assoc {} :not-a-pair)
-	`, errors.New(core.ErrAssocRequiresPair))
+	`, errors.New(builtin.ErrAssocRequiresPair))
 
 }
 

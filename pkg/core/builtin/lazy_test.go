@@ -1,11 +1,11 @@
-package core_test
+package builtin_test
 
 import (
 	"testing"
 
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
-	"github.com/kode4food/ale/pkg/core"
+	"github.com/kode4food/ale/pkg/core/builtin"
 	"github.com/kode4food/ale/pkg/data"
 )
 
@@ -17,7 +17,7 @@ func TestLazySequence(t *testing.T) {
 
 	p = data.MakeProcedure(func(...data.Value) data.Value {
 		if i < 10 {
-			p := core.LazySequence.Call(p).(data.Prepender)
+			p := builtin.LazySequence.Call(p).(data.Prepender)
 			res := p.Prepend(data.Integer(i))
 			i++
 			return res
@@ -25,7 +25,7 @@ func TestLazySequence(t *testing.T) {
 		return data.Null
 	}, 0)
 
-	s := core.LazySequence.Call(p).(data.Sequence)
+	s := builtin.LazySequence.Call(p).(data.Sequence)
 	as.String(`(0 1 2 3 4 5 6 7 8 9)`, data.MakeSequenceStr(s))
 }
 

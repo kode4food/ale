@@ -1,4 +1,4 @@
-package core
+package builtin
 
 import (
 	"github.com/kode4food/ale/internal/sequence"
