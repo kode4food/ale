@@ -7,6 +7,7 @@ import (
 	"github.com/kode4food/ale/internal/compiler/special"
 	"github.com/kode4food/ale/pkg/core/bootstrap"
 	"github.com/kode4food/ale/pkg/data"
+	"github.com/kode4food/ale/pkg/env"
 )
 
 func TestDevNullEnvironment(t *testing.T) {
@@ -56,6 +57,8 @@ func TestBootstrapInto(t *testing.T) {
 
 func BenchmarkBootstrapping(b *testing.B) {
 	for n := 0; n < b.N; n++ {
-		bootstrap.DevNullEnvironment()
+		e := env.NewEnvironment()
+		bootstrap.DevNull(e)
+		bootstrap.Into(e)
 	}
 }
