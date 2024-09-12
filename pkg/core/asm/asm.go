@@ -1,7 +1,6 @@
 package asm
 
 import (
-	"errors"
 	"fmt"
 	"strings"
 	"sync"
@@ -16,17 +15,13 @@ import (
 )
 
 const (
+	// ErrBadNameResolution is raised when an attempt is made to bind a local
+	// using an argument to the encoder that is not a Local symbol
+	ErrBadNameResolution = "encoder argument is not a name: %s"
+
 	// ErrUnknownLocalType is raised when a local or private is declared that
 	// doesn't have a proper disposition (var, ref, rest)
 	ErrUnknownLocalType = "unexpected local type: %s, expected: %s"
-
-	// ErrUnexpectedName is raised when a local name is referenced that hasn't
-	// been declared as part of the assembler encoder's scope
-	ErrUnexpectedName = "unexpected local name: %s"
-
-	// ErrUnexpectedLabel is raised when a jump or cond-jump instruction refers
-	// to a label that hasn't been anchored in the assembler block
-	ErrUnexpectedLabel = "unexpected label: %s"
 
 	// ErrExpectedType is raised when a value of a certain type is expected,
 	// but not provided at the current position
@@ -114,15 +109,67 @@ func getInstructionCalls() namedAsmParsers {
 
 func getEncoderCalls() namedAsmParsers {
 	return namedAsmParsers{
-		Resolve:    parseArgs(Resolve, 1, resolveCall),
-		Evaluate:   parseArgs(Evaluate, 1, evaluateCall),
 		Const:      parseArgs(Const, 1, constCall),
-		PushLocals: parseArgs(PushLocals, 0, pushLocalsCall),
-		PopLocals:  parseArgs(PopLocals, 0, popLocalsCall),
-		Local:      parseLocalEncoder(Local, publicNamer),
-		Private:    parseLocalEncoder(Private, privateNamer),
+		Evaluate:   parseArgs(Evaluate, 1, evaluateCall),
 		ForEach:    parseForEachCall,
+		Local:      parseLocalEncoder(Local, publicNamer),
+		PopLocals:  parseArgs(PopLocals, 0, popLocalsCall),
+		Private:    parseLocalEncoder(Private, privateNamer),
+		PushLocals: parseArgs(PushLocals, 0, pushLocalsCall),
+		Resolve:    parseArgs(Resolve, 1, resolveCall),
 	}
+}
+
+func constCall(_ *asmParser, args ...data.Value) (asmEmit, error) {
+	return func(e *asmEncoder) error {
+		if v, ok := e.resolveEncoderArg(args[0]); ok {
+			generate.Literal(e, v)
+			return nil
+		}
+		generate.Literal(e, args[0])
+		return nil
+	}, nil
+}
+
+func evaluateCall(_ *asmParser, args ...data.Value) (asmEmit, error) {
+	return func(e *asmEncoder) error {
+		if v, ok := e.resolveEncoderArg(args[0]); ok {
+			generate.Value(e, v)
+			return nil
+		}
+		generate.Value(e, args[0])
+		return nil
+	}, nil
+}
+
+func publicNamer(e *asmEncoder, l data.Local) (data.Local, error) {
+	if v, ok := e.resolveEncoderArg(l); ok {
+		if res, ok := v.(data.Local); ok {
+			return res, nil
+		}
+		return "", fmt.Errorf(ErrBadNameResolution, v)
+	}
+	return l, nil
+}
+
+func popLocalsCall(*asmParser, ...data.Value) (asmEmit, error) {
+	return func(e *asmEncoder) error {
+		e.PopLocals()
+		return nil
+	}, nil
+}
+
+func privateNamer(e *asmEncoder, l data.Local) (data.Local, error) {
+	p := gen.Local(l)
+	e.private[l] = p
+	return p, nil
+}
+
+func pushLocalsCall(*asmParser, ...data.Value) (asmEmit, error) {
+	return func(e *asmEncoder) error {
+		e.PushLocals()
+		return nil
+	}, nil
 }
 
 func resolveCall(_ *asmParser, args ...data.Value) (asmEmit, error) {
@@ -140,42 +187,6 @@ func resolveCall(_ *asmParser, args ...data.Value) (asmEmit, error) {
 
 	return func(e *asmEncoder) error {
 		generate.Symbol(e, s)
-		return nil
-	}, nil
-}
-
-func evaluateCall(_ *asmParser, args ...data.Value) (asmEmit, error) {
-	return func(e *asmEncoder) error {
-		if v, ok := e.resolveEncoderArg(args[0]); ok {
-			generate.Value(e, v)
-			return nil
-		}
-		generate.Value(e, args[0])
-		return nil
-	}, nil
-}
-
-func constCall(_ *asmParser, args ...data.Value) (asmEmit, error) {
-	return func(e *asmEncoder) error {
-		if v, ok := e.resolveEncoderArg(args[0]); ok {
-			generate.Literal(e, v)
-			return nil
-		}
-		generate.Literal(e, args[0])
-		return nil
-	}, nil
-}
-
-func pushLocalsCall(*asmParser, ...data.Value) (asmEmit, error) {
-	return func(e *asmEncoder) error {
-		e.PushLocals()
-		return nil
-	}, nil
-}
-
-func popLocalsCall(*asmParser, ...data.Value) (asmEmit, error) {
-	return func(e *asmEncoder) error {
-		e.PopLocals()
 		return nil
 	}, nil
 }
@@ -208,22 +219,6 @@ func parseLocalEncoder(inst data.Local, toName asmToName) asmParse {
 	)
 }
 
-func publicNamer(e *asmEncoder, l data.Local) (data.Local, error) {
-	if v, ok := e.resolveEncoderArg(l); ok {
-		if res, ok := v.(data.Local); ok {
-			return res, nil
-		}
-		return "", fmt.Errorf(ErrBadNameResolution, v)
-	}
-	return l, nil
-}
-
-func privateNamer(e *asmEncoder, l data.Local) (data.Local, error) {
-	p := gen.Local(l)
-	e.private[l] = p
-	return p, nil
-}
-
 func makeEmitCall(oc isa.Opcode, actOn isa.ActOn) asmParse {
 	if actOn == isa.Nothing {
 		return makeStandaloneEmit(oc)
@@ -249,25 +244,6 @@ func makeOperandEmit(oc isa.Opcode) asmParse {
 			}, nil
 		},
 	)
-}
-
-func wrapToOperandError(errStr string, toOperand asmToOperand) asmToOperand {
-	return func(e *asmEncoder, val data.Value) (isa.Operand, error) {
-		res, err := toOperand(e, val)
-		if err != nil {
-			return 0, errors.Join(fmt.Errorf(errStr, val), err)
-		}
-		return res, nil
-	}
-}
-
-func toOperand(_ *asmEncoder, val data.Value) (isa.Operand, error) {
-	if val, ok := val.(data.Integer); ok {
-		if isa.IsValidOperand(int(val)) {
-			return isa.Operand(val), nil
-		}
-	}
-	return 0, fmt.Errorf(isa.ErrExpectedOperand, val)
 }
 
 func getCellType(k data.Keyword) (encoder.CellType, error) {
