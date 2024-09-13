@@ -16,7 +16,7 @@ type lambdaEncoder struct {
 // Lambda encodes a lambda
 func Lambda(e encoder.Encoder, args ...data.Value) {
 	var le *lambdaEncoder
-	pc := internal.ParseParamCases(data.Vector(args))
+	pc := internal.MustParseParamCases(data.Vector(args))
 	fn := generate.Procedure(e, func(c encoder.Encoder) {
 		le = makeLambda(c, pc)
 		le.encode()
@@ -76,12 +76,6 @@ func (le *lambdaEncoder) predicate(c *internal.ParamCase) {
 }
 
 func (le *lambdaEncoder) consequent(c *internal.ParamCase) {
-	body := c.Body
-	if body.IsEmpty() {
-		le.Emit(isa.RetNull)
-		return
-	}
-
 	le.PushParams(c.Params, c.Rest)
 	le.PushLocals()
 	generate.Block(le, c.Body)

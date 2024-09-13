@@ -1,13 +1,13 @@
 package special_test
 
 import (
+	"errors"
 	"fmt"
 	"testing"
 
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
 	"github.com/kode4food/ale/pkg/core/internal"
-	"github.com/kode4food/ale/pkg/data"
 )
 
 func TestLambda(t *testing.T) {
@@ -23,7 +23,6 @@ func TestLambda(t *testing.T) {
 
 	as.EvalTo(`((lambda x x) 1 2 3)`, V(I(1), I(2), I(3)))
 	as.EvalTo(`((lambda (x) x) 1)`, I(1))
-	as.EvalTo(`((lambda))`, data.Null)
 }
 
 func TestLambdaErrors(t *testing.T) {
@@ -35,5 +34,9 @@ func TestLambdaErrors(t *testing.T) {
 
 	as.PanicWith(`(lambda [:kwd] '())`,
 		fmt.Errorf(internal.ErrUnexpectedParamSyntax, ":kwd"),
+	)
+
+	as.PanicWith(`(lambda)`,
+		errors.New(internal.ErrNoCasesDefined),
 	)
 }

@@ -13,9 +13,12 @@
           [r (cdr body)])
       (if ({:private #t :macro #t} f #f)
           (assoc (parse-define r) f #t)
-          (if (and (is-cons-or-list f) (is-local (car f)))
-              {:name (car f) :lambda #t :body `(lambda ,(cdr f) ,@r)}
-              {:name (assert-type :local f) :body (car r)})))))
+          (if (is-cons-or-list f)
+              {:name (assert-type :local (car f))
+               :lambda #t
+               :body `(lambda ,(cdr f) ,@r)}
+              {:name (assert-type :local f)
+               :body (car r)})))))
 
 (define* define
   (macro*

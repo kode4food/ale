@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"errors"
 	"fmt"
 	"slices"
 	"strings"
@@ -27,6 +28,10 @@ type (
 )
 
 const (
+	// ErrNoCasesDefined is raised when a call to Lambda doesn't include any
+	// parameter cases definitions.
+	ErrNoCasesDefined = "no parameter cases defined"
+
 	// ErrUnexpectedCaseSyntax is raised when a call to Lambda doesn't include
 	// a proper parameter case initializer. If it first encounters a Vector,
 	// the parsing will assume multiple parameter cases, otherwise it will
@@ -37,6 +42,10 @@ const (
 	// represented by an unexpected syntax. Valid syntax representations are
 	// data.List, data.Cons, or data.Local
 	ErrUnexpectedParamSyntax = "unexpected parameter syntax: %s"
+
+	// ErrNoCaseBodyDefined is raised when a Lambda parameter case defines its
+	// parameters, but not an associated body to evaluate
+	ErrNoCaseBodyDefined = "no parameter case body: %s"
 
 	// ErrUnreachableCase is raised when a Lambda parameter is defined that
 	// would otherwise be impossible to reach given previous definitions
@@ -53,29 +62,43 @@ const (
 
 const arityBits = 8
 
-func ParseParamCases(s data.Sequence) *ParamCases {
-	res := &ParamCases{}
-	if s.IsEmpty() {
-		return res
+func MustParseParamCases(s data.Sequence) *ParamCases {
+	res, err := ParseParamCases(s)
+	if err != nil {
+		panic(err)
 	}
+	return res
+}
+
+func ParseParamCases(s data.Sequence) (*ParamCases, error) {
+	if s.IsEmpty() {
+		return nil, errors.New(ErrNoCasesDefined)
+	}
+	res := &ParamCases{}
 	f := s.Car()
 	switch f.(type) {
 	case *data.List, *data.Cons, data.Local:
-		c := parseParamCase(s)
-		if err := res.addParamCase(c); err != nil {
-			panic(err)
+		c, err := parseParamCase(s)
+		if err != nil {
+			return nil, err
 		}
-		return res
+		if err := res.addParamCase(c); err != nil {
+			return nil, err
+		}
+		return res, nil
 	case data.Vector:
 		for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {
-			c := parseParamCase(f.(data.Vector))
+			c, err := parseParamCase(f.(data.Vector))
+			if err != nil {
+				return nil, err
+			}
 			if err := res.addParamCase(c); err != nil {
-				panic(err)
+				return nil, err
 			}
 		}
-		return res
+		return res, nil
 	default:
-		panic(fmt.Errorf(ErrUnexpectedCaseSyntax, f))
+		return nil, fmt.Errorf(ErrUnexpectedCaseSyntax, f)
 	}
 }
 
@@ -211,15 +234,18 @@ func (pc *ParamCases) fixedSet() []int {
 	return res
 }
 
-func parseParamCase(s data.Sequence) *ParamCase {
+func parseParamCase(s data.Sequence) (*ParamCase, error) {
 	f, body, _ := s.Split()
 	argNames, restArg := parseParamNames(f)
+	if body.IsEmpty() {
+		return nil, fmt.Errorf(ErrNoCaseBodyDefined, f)
+	}
 	return &ParamCase{
 		Signature: f,
 		Params:    argNames,
 		Rest:      restArg,
 		Body:      body,
-	}
+	}, nil
 }
 
 func (c *ParamCase) fixedArgs() data.Locals {

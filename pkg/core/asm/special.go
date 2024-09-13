@@ -11,7 +11,7 @@ import (
 )
 
 func (p *asmParser) specialCall(forms data.Sequence) (asmEmit, error) {
-	pc := internal.ParseParamCases(forms)
+	pc := internal.MustParseParamCases(forms)
 	cases := pc.Cases
 	ap := make([]*asmParser, len(cases))
 	emitters := make([]asmEmit, len(cases))

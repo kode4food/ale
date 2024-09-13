@@ -56,7 +56,7 @@
 (define-macro (!or . clauses)
   `(not (or ,@clauses)))
 
-(define (no-op . _))
+(define (no-op . _) null)
 
 (define (identity value) value)
 
