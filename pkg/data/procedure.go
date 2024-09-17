@@ -39,8 +39,8 @@ func MakeProcedure(c Call, arity ...int) Procedure {
 	}
 }
 
-func (p *procedure) CheckArity(argCount int) error {
-	return p.arity(argCount)
+func (p *procedure) CheckArity(argc int) error {
+	return p.arity(argc)
 }
 
 func (p *procedure) Call(args ...Value) Value {

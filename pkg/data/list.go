@@ -123,8 +123,8 @@ func (l *List) Call(args ...Value) Value {
 	return indexedCall(l, args)
 }
 
-func (l *List) CheckArity(argCount int) error {
-	return checkRangedArity(1, 2, argCount)
+func (l *List) CheckArity(argc int) error {
+	return checkRangedArity(1, 2, argc)
 }
 
 func (l *List) Equal(other Value) bool {
@@ -138,6 +138,11 @@ func (l *List) Equal(other Value) bool {
 		for cl := l; cl != nil; cl, other = cl.rest, other.rest {
 			if cl == other {
 				return true
+			}
+			lh := atomic.LoadUint64(&l.hash)
+			rh := atomic.LoadUint64(&other.hash)
+			if lh != 0 && rh != 0 && lh != rh {
+				return false
 			}
 			if !cl.first.Equal(other.first) {
 				return false

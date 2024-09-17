@@ -131,8 +131,8 @@ func (s String) Call(args ...Value) Value {
 	panic(fmt.Errorf(ErrInvalidEndIndex, end))
 }
 
-func (s String) CheckArity(argCount int) error {
-	return checkRangedArity(1, 2, argCount)
+func (s String) CheckArity(argc int) error {
+	return checkRangedArity(1, 2, argc)
 }
 
 func (s String) from(index Integer) (String, bool) {

@@ -105,8 +105,8 @@ func (v Vector) Call(args ...Value) Value {
 	return indexedCall(v, args)
 }
 
-func (v Vector) CheckArity(argCount int) error {
-	return checkRangedArity(1, 2, argCount)
+func (v Vector) CheckArity(argc int) error {
+	return checkRangedArity(1, 2, argc)
 }
 
 func (v Vector) Equal(other Value) bool {

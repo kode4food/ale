@@ -27,8 +27,8 @@ func (k Keyword) Call(args ...Value) Value {
 }
 
 // CheckArity performs a compile-time arity check for the Keyword
-func (k Keyword) CheckArity(argCount int) error {
-	return checkRangedArity(1, 2, argCount)
+func (k Keyword) CheckArity(argc int) error {
+	return checkRangedArity(1, 2, argc)
 }
 
 // Equal compares this Keyword to another for equality

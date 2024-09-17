@@ -40,8 +40,8 @@ func (t *TypePredicate) Call(args ...Value) Value {
 	return Bool(types.Accepts(t.typ, other))
 }
 
-func (t *TypePredicate) CheckArity(argCount int) error {
-	return checkFixedArity(1, argCount)
+func (t *TypePredicate) CheckArity(argc int) error {
+	return checkFixedArity(1, argc)
 }
 
 func (t *TypePredicate) Equal(other Value) bool {

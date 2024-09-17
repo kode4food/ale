@@ -142,11 +142,11 @@ func (p *asmParser) blockRest(
 	}, rest, nil
 }
 
-func parseArgs(inst data.Local, argCount int, fn asmArgsParse) asmParse {
+func parseArgs(inst data.Local, argc int, fn asmArgsParse) asmParse {
 	return func(p *asmParser, s data.Sequence) (asmEmit, data.Sequence, error) {
-		args, rest, ok := take(s, argCount)
+		args, rest, ok := take(s, argc)
 		if !ok {
-			return nil, nil, fmt.Errorf(ErrTooFewArguments, inst, argCount)
+			return nil, nil, fmt.Errorf(ErrTooFewArguments, inst, argc)
 		}
 		res, err := fn(p, args...)
 		if err != nil {

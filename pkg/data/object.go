@@ -4,6 +4,7 @@ import (
 	"errors"
 	"math/rand"
 	"strings"
+	"sync/atomic"
 
 	"github.com/kode4food/ale/internal/types"
 )
@@ -12,6 +13,7 @@ import (
 type Object struct {
 	pair     Pair
 	children [bucketSize]*Object
+	hash     uint64
 }
 
 const (
@@ -113,6 +115,7 @@ func (o *Object) put(p Pair, hash uint64) *Object {
 	// return a copy with the new bucket
 	res := *o
 	res.children[idx] = bucket
+	res.hash = 0
 	return &res
 }
 
@@ -139,6 +142,7 @@ func (o *Object) remove(k Value, hash uint64) (Value, *Object, bool) {
 		if v, r, ok := bucket.remove(k, hash>>bucketBits); ok {
 			res := *o
 			res.children[idx] = r
+			res.hash = 0
 			return v, &res, true
 		}
 	}
@@ -151,6 +155,7 @@ func (o *Object) promote() *Object {
 			res := *o
 			res.pair = c.pair
 			res.children[i] = c.promote()
+			res.hash = 0
 			return &res
 		}
 	}
@@ -211,8 +216,8 @@ func (o *Object) Call(args ...Value) Value {
 	return mappedCall(o, args)
 }
 
-func (o *Object) CheckArity(argCount int) error {
-	return checkRangedArity(1, 2, argCount)
+func (o *Object) CheckArity(argc int) error {
+	return checkRangedArity(1, 2, argc)
 }
 
 func (o *Object) Equal(other Value) bool {
@@ -244,17 +249,21 @@ func (o *Object) HashCode() uint64 {
 	if o == nil {
 		return objectHash
 	}
-	return o.hashCode(objectHash)
+	return o.hashCode() ^ objectHash
 }
 
-func (o *Object) hashCode(acc uint64) uint64 {
-	h := acc ^ HashCode(o.pair.Car()) ^ HashCode(o.pair.Cdr())
+func (o *Object) hashCode() uint64 {
+	if h := atomic.LoadUint64(&o.hash); h != 0 {
+		return h
+	}
+	res := HashCode(o.pair.Car()) ^ HashCode(o.pair.Cdr())
 	for _, c := range o.children {
 		if c != nil {
-			h = c.hashCode(h)
+			res ^= c.hashCode()
 		}
 	}
-	return h
+	atomic.StoreUint64(&o.hash, res)
+	return res
 }
 
 func (o *Object) Pairs() Pairs {
