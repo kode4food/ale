@@ -222,8 +222,13 @@ func (o *Object) CheckArity(argc int) error {
 
 func (o *Object) Equal(other Value) bool {
 	if other, ok := other.(*Object); ok {
-		if o == nil || o == other {
+		if o == nil || other == nil || o == other {
 			return o == other
+		}
+		lh := atomic.LoadUint64(&o.hash)
+		rh := atomic.LoadUint64(&other.hash)
+		if lh != 0 && rh != 0 && lh != rh {
+			return false
 		}
 		lp := o.Pairs()
 		rp := other.Pairs()

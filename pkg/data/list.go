@@ -129,7 +129,7 @@ func (l *List) CheckArity(argc int) error {
 
 func (l *List) Equal(other Value) bool {
 	if other, ok := other.(*List); ok {
-		if l == nil || l == other {
+		if l == nil || other == nil || l == other {
 			return l == other
 		}
 		if l.count != other.count {
