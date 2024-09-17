@@ -20,6 +20,11 @@ const (
 	ForEach = data.Local(".for-each")
 )
 
+const (
+	pairType = "binding pair"
+	seqType  = "sequence"
+)
+
 func parseForEachCall(
 	p *asmParser, s data.Sequence,
 ) (asmEmit, data.Sequence, error) {
