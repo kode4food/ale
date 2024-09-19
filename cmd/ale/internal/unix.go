@@ -2,4 +2,6 @@
 
 package internal
 
-var farewells = append(farewellLatin1, farewellUtf8...)
+import "slices"
+
+var farewells = slices.Concat(farewellLatin1, farewellUtf8)

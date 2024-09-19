@@ -10,9 +10,7 @@ import (
 )
 
 var (
-	deadCode = repeatWhenModified(
-		ineffectiveStores, ineffectiveCopies, ineffectivePushes,
-	)
+	deadCode = repeatWhenModified(redundantLocals, ineffectivePushes)
 
 	// ineffectivePushes deletes values pushed to the stack for no reason,
 	// specifically if they're literals followed immediately by a pop instruction
@@ -27,34 +25,69 @@ var (
 	)
 )
 
-// ineffectiveStores deletes isolated store instructions followed by a load
-// instruction with the same operand
-func ineffectiveStores(e *encoder.Encoded) *encoder.Encoded {
-	if c := replaceIneffectiveStore(e.Code); c != nil {
+// redundantLocals deletes or rewrites Load and Store combinations that result
+// in excessive memory location access or modification
+func redundantLocals(e *encoder.Encoded) *encoder.Encoded {
+	if c, ok := replaceRedundantLocals(e.Code); ok {
 		e.Code = c
 	}
 	return e
 }
 
-func replaceIneffectiveStore(c isa.Instructions) isa.Instructions {
-	idx := findOpcode(c, isa.Store)
-	if idx == -1 || hasReverseJump(c, idx) {
-		return nil
-	}
-	store := c[idx]
-	op := store.Operand()
-	rest := c[idx+1:]
-	if len(rest) == 0 {
-		return nil
-	}
+func replaceRedundantLocals(c isa.Instructions) (isa.Instructions, bool) {
+	labels := map[isa.Operand]int{}
+	res := make(isa.Instructions, 0, len(c))
+	var dirty bool
 
-	if rest[0] != isa.Load.New(op) || hasConflictingLoadStore(rest[1:], op) {
-		if res := replaceIneffectiveStore(rest); res != nil {
-			return append(c[0:idx+1], res...)
+	for idx := 0; idx < len(c); {
+		inst := c[idx]
+
+		switch inst.Opcode() {
+		case isa.Jump, isa.CondJump:
+			if off, ok := labels[inst.Operand()]; ok && off < idx {
+				return nil, false
+			}
+
+		case isa.Label:
+			labels[inst.Operand()] = idx
+
+		case isa.Store:
+			if idx == len(c)-1 || c[idx+1].Opcode() != isa.Load {
+				break
+			}
+			op := inst.Operand()
+			next := c[idx+1]
+			if next.Operand() != op || hasConflictingLoadStore(c[idx+2:], op) {
+				break
+			}
+			c = slices.Concat(c[:idx], c[idx+2:])
+			dirty = true
+			continue
+
+		case isa.Load:
+			if idx == len(c)-1 || c[idx+1].Opcode() != isa.Store {
+				break
+			}
+			next := c[idx+1]
+			from := inst.Operand()
+			to := next.Operand()
+			if hasConflictingStore(c[idx+2:], from, to) {
+				break
+			}
+			c = slices.Concat(
+				c[:idx],
+				mapIneffectiveLoads(c[idx+2:], isa.Load.New(to), inst),
+			)
+			dirty = true
+			continue
+
+		default:
+			// no-op
 		}
-		return nil
+		res = append(res, inst)
+		idx++
 	}
-	return append(c[0:idx], rest[1:]...)
+	return res, dirty
 }
 
 func hasConflictingLoadStore(c isa.Instructions, op isa.Operand) bool {
@@ -63,44 +96,6 @@ func hasConflictingLoadStore(c isa.Instructions, op isa.Operand) bool {
 	return len(basics.Filter(c, func(i isa.Instruction) bool {
 		return i == load || i == store
 	})) > 0
-}
-
-func findOpcode(c isa.Instructions, oc isa.Opcode) int {
-	for idx, i := range c {
-		if i.Opcode() == oc {
-			return idx
-		}
-	}
-	return -1
-}
-
-func ineffectiveCopies(e *encoder.Encoded) *encoder.Encoded {
-	if c := replaceIneffectiveCopy(e.Code); c != nil {
-		e.Code = c
-	}
-	return e
-}
-
-func replaceIneffectiveCopy(c isa.Instructions) isa.Instructions {
-	idx := findOpcode(c, isa.Load)
-	if idx == -1 || hasReverseJump(c, idx) {
-		return nil
-	}
-
-	load := c[idx]
-	rest := c[idx+1:]
-	if len(rest) == 0 || rest[0].Opcode() != isa.Store {
-		return nil
-	}
-
-	to := rest[0].Operand()
-	if hasConflictingStore(rest[1:], load.Operand(), to) {
-		return nil
-	}
-
-	return append(
-		c[0:idx], mapIneffectiveLoads(rest[1:], isa.Load.New(to), load)...,
-	)
 }
 
 func hasConflictingStore(c isa.Instructions, op ...isa.Operand) bool {
@@ -118,29 +113,4 @@ func mapIneffectiveLoads(
 		}
 		return i
 	})
-}
-
-func hasReverseJump(c isa.Instructions, before int) bool {
-	offsets := map[isa.Operand]int{}
-	for i, inst := range c {
-		switch inst.Opcode() {
-		case isa.Jump, isa.CondJump:
-			if i <= before {
-				continue
-			}
-			if o, ok := offsets[inst.Operand()]; ok && o < before {
-				return true
-			}
-
-		case isa.Label:
-			op := inst.Operand()
-			if _, ok := offsets[op]; !ok {
-				offsets[op] = i
-			}
-
-		default:
-			// no-op
-		}
-	}
-	return false
 }

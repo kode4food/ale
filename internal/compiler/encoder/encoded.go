@@ -88,7 +88,7 @@ func (f *finalizer) stripAdjacentJumps() {
 }
 
 func removeInstruction(inst isa.Instructions, idx int) isa.Instructions {
-	res := append(inst[:idx], inst[idx+1:]...)
+	res := slices.Concat(inst[:idx], inst[idx+1:])
 	for j, inst := range res {
 		oc, op := inst.Split()
 		if (oc == isa.Jump || oc == isa.CondJump) && op > isa.Operand(idx) {
