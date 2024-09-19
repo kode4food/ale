@@ -38,16 +38,12 @@ var (
 
 // inlineCalls imports callee instructions into procedures that qualify
 func inlineCalls(e *encoder.Encoded) *encoder.Encoded {
-	mapper := &inlineMapper{
+	m := &inlineMapper{
 		Encoded:   e,
 		nextLabel: getNextLabel(e.Code),
 		baseLocal: getNextLocal(e.Code),
 	}
-	root := visitor.All(e.Code)
-	replace := visitor.Replace(inlineCallPattern, mapper.perform)
-	visitor.Visit(root, replace)
-	e.Code = root.Code()
-	return e
+	return performReplace(e, visitor.Replace(inlineCallPattern, m.perform))
 }
 
 func (m *inlineMapper) perform(i isa.Instructions) isa.Instructions {

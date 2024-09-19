@@ -18,6 +18,7 @@ type (
 	Replacer struct {
 		mapper  Mapper
 		pattern Pattern
+		dirty   bool
 	}
 )
 
@@ -66,7 +67,14 @@ func (r *Replacer) Instructions(i Instructions) {
 		state = 0
 	}
 	res = append(res, code[start:]...)
-	i.Set(res)
+	if !slices.Equal(code, res) {
+		i.Set(res)
+		r.dirty = true
+	}
+}
+
+func (r *Replacer) IsDirty() bool {
+	return r.dirty
 }
 
 func (p Pattern) matchesState(opcode isa.Opcode, state int) bool {

@@ -53,13 +53,18 @@ func repeatWhenModified(first optimizer, rest ...optimizer) optimizer {
 }
 
 func globalReplace(p visitor.Pattern, m visitor.Mapper) optimizer {
-	replace := visitor.Replace(p, m)
 	return func(e *encoder.Encoded) *encoder.Encoded {
-		root := visitor.All(e.Code)
-		visitor.Visit(root, replace)
-		e.Code = root.Code()
-		return e
+		return performReplace(e, visitor.Replace(p, m))
 	}
+}
+
+func performReplace(e *encoder.Encoded, r *visitor.Replacer) *encoder.Encoded {
+	root := visitor.All(e.Code)
+	visitor.Visit(root, r)
+	if r.IsDirty() {
+		e.Code = root.Code()
+	}
+	return e
 }
 
 func selectEffects(filter func(*isa.Effect) bool) []isa.Opcode {
