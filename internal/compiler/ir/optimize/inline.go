@@ -270,24 +270,28 @@ func isParamCase(b visitor.Branches) (isa.Opcode, isa.Operand, bool) {
 }
 
 func hasTailCallInstruction(c isa.Instructions) bool {
-	return len(basics.Filter(c, func(i isa.Instruction) bool {
+	_, ok := basics.Find(c, func(i isa.Instruction) bool {
 		return i.Opcode() == isa.TailCall
-	})) > 0
+	})
+	return ok
 }
 
 func hasAnyArgInstruction(c isa.Instructions) bool {
-	return len(filterArgInstructions(c)) > 0
+	_, ok := basics.Find(c, argInstructionPred)
+	return ok
 }
 
 func filterArgInstructions(c isa.Instructions) isa.Instructions {
-	return basics.Filter(c, func(i isa.Instruction) bool {
-		switch i.Opcode() {
-		case isa.PushArgs, isa.PopArgs, isa.Arg, isa.ArgLen, isa.RestArg:
-			return true
-		default:
-			return false
-		}
-	})
+	return basics.Filter(c, argInstructionPred)
+}
+
+func argInstructionPred(i isa.Instruction) bool {
+	switch i.Opcode() {
+	case isa.PushArgs, isa.PopArgs, isa.Arg, isa.ArgLen, isa.RestArg:
+		return true
+	default:
+		return false
+	}
 }
 
 func canImmediatelyPop(c isa.Instructions) bool {

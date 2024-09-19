@@ -93,15 +93,17 @@ func replaceRedundantLocals(c isa.Instructions) (isa.Instructions, bool) {
 func hasConflictingLoadStore(c isa.Instructions, op isa.Operand) bool {
 	load := isa.Load.New(op)
 	store := isa.Store.New(op)
-	return len(basics.Filter(c, func(i isa.Instruction) bool {
+	_, ok := basics.Find(c, func(i isa.Instruction) bool {
 		return i == load || i == store
-	})) > 0
+	})
+	return ok
 }
 
 func hasConflictingStore(c isa.Instructions, op ...isa.Operand) bool {
-	return len(basics.Filter(c, func(i isa.Instruction) bool {
+	_, ok := basics.Find(c, func(i isa.Instruction) bool {
 		return i.Opcode() == isa.Store && slices.Contains(op, i.Operand())
-	})) > 0
+	})
+	return ok
 }
 
 func mapIneffectiveLoads(
