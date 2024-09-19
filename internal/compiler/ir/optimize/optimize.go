@@ -16,7 +16,7 @@ var Encoded = compose(
 	splitReturns,
 	makeTailCalls,
 	inlineCalls,
-	repeatWhenModified(ineffectiveStores, ineffectivePushes),
+	deadCode,
 	literalReturns,
 )
 

@@ -23,11 +23,11 @@ type (
 
 	finalizer struct {
 		*Encoded
-		labels     map[isa.Operand]*label
-		constMap   map[isa.Operand]isa.Operand
-		output     isa.Instructions
-		constants  data.Vector
-		localCount isa.Operand
+		labels    map[isa.Operand]*label
+		constMap  map[isa.Operand]isa.Operand
+		localMap  map[isa.Operand]isa.Operand
+		output    isa.Instructions
+		constants data.Vector
 	}
 
 	label struct {
@@ -56,6 +56,7 @@ func (e *Encoded) Runnable() *isa.Runnable {
 		Encoded:  e,
 		labels:   map[isa.Operand]*label{},
 		constMap: map[isa.Operand]isa.Operand{},
+		localMap: map[isa.Operand]isa.Operand{},
 	}
 	return f.finalize()
 }
@@ -70,7 +71,7 @@ func (f *finalizer) finalize() *isa.Runnable {
 		Code:       f.output,
 		Globals:    f.Globals,
 		Constants:  f.constants,
-		LocalCount: f.localCount,
+		LocalCount: isa.Operand(len(f.localMap)),
 		StackSize:  stackSize,
 	}
 }
@@ -118,10 +119,13 @@ func (f *finalizer) handleInst(i isa.Instruction) {
 }
 
 func (f *finalizer) handleLocal(i isa.Instruction) {
-	if op := i.Operand(); op >= f.localCount {
-		f.localCount = op + 1
+	from := i.Operand()
+	to, ok := f.localMap[from]
+	if !ok {
+		to = isa.Operand(len(f.localMap))
+		f.localMap[from] = to
 	}
-	f.output = append(f.output, i)
+	f.output = append(f.output, i.Opcode().New(to))
 }
 
 func (f *finalizer) handleConst(i isa.Instruction) {
