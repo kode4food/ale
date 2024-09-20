@@ -13,7 +13,8 @@ var (
 	deadCode = repeatWhenModified(redundantLocals, ineffectivePushes)
 
 	// ineffectivePushes deletes values pushed to the stack for no reason,
-	// specifically if they're literals followed immediately by a pop instruction
+	// specifically if they're literals followed immediately by a pop
+	// instruction
 	ineffectivePushes = globalReplace(
 		visitor.Pattern{
 			selectEffects(func(e *isa.Effect) bool {
