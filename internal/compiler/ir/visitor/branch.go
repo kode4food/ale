@@ -1,11 +1,16 @@
 package visitor
 
-import "github.com/kode4food/ale/internal/runtime/isa"
+import (
+	"slices"
+
+	"github.com/kode4food/ale/internal/runtime/isa"
+)
 
 type (
 	// A Node is returned when a Branched analysis is performed
 	Node interface {
 		Code() isa.Instructions
+		IsModified() bool
 	}
 
 	// Instructions represent a series of non-branching instructions
@@ -24,7 +29,8 @@ type (
 	}
 
 	instructions struct {
-		code isa.Instructions
+		code  isa.Instructions
+		dirty bool
 	}
 
 	BranchScanner struct {
@@ -116,11 +122,18 @@ func (b *BranchScanner) splitCondJump(
 }
 
 func (i *instructions) Set(code isa.Instructions) {
+	if !i.dirty && !slices.Equal(i.code, code) {
+		i.dirty = true
+	}
 	i.code = code
 }
 
 func (i *instructions) Code() isa.Instructions {
 	return i.code
+}
+
+func (i *instructions) IsModified() bool {
+	return i.dirty
 }
 
 func (b *branches) Prologue() Instructions {
@@ -149,6 +162,13 @@ func (b *branches) Code() isa.Instructions {
 	res = append(res, b.joinLabel)
 	res = append(res, b.epilogue.Code()...)
 	return res
+}
+
+func (b *branches) IsModified() bool {
+	return b.prologue.IsModified() ||
+		b.elseBranch.IsModified() ||
+		b.thenBranch.IsModified() ||
+		b.epilogue.IsModified()
 }
 
 func findLabel(code isa.Instructions, lbl isa.Operand) (int, isa.Instruction) {

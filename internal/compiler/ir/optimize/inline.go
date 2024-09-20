@@ -43,7 +43,8 @@ func inlineCalls(e *encoder.Encoded) *encoder.Encoded {
 		nextLabel: getNextLabel(e.Code),
 		baseLocal: getNextLocal(e.Code),
 	}
-	return performReplace(e, visitor.Replace(inlineCallPattern, m.perform))
+	r := visitor.Replace(inlineCallPattern, m.perform)
+	return performReplace(e, r)
 }
 
 func (m *inlineMapper) perform(i isa.Instructions) isa.Instructions {

@@ -54,14 +54,15 @@ func repeatWhenModified(first optimizer, rest ...optimizer) optimizer {
 
 func globalReplace(p visitor.Pattern, m visitor.Mapper) optimizer {
 	return func(e *encoder.Encoded) *encoder.Encoded {
-		return performReplace(e, visitor.Replace(p, m))
+		r := visitor.Replace(p, m)
+		return performReplace(e, r)
 	}
 }
 
 func performReplace(e *encoder.Encoded, r *visitor.Replacer) *encoder.Encoded {
 	root := visitor.All(e.Code)
 	visitor.Visit(root, r)
-	if r.IsDirty() {
+	if root.IsModified() {
 		e.Code = root.Code()
 	}
 	return e

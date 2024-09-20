@@ -19,7 +19,8 @@ var tailCallPattern = visitor.Pattern{
 // makeTailCalls replaces calls in tail position with a tail-call instruction
 func makeTailCalls(e *encoder.Encoded) *encoder.Encoded {
 	m := &tailCallMapper{e}
-	return performReplace(e, visitor.Replace(tailCallPattern, m.perform))
+	r := visitor.Replace(tailCallPattern, m.perform)
+	return performReplace(e, r)
 }
 
 func (m tailCallMapper) perform(i isa.Instructions) isa.Instructions {
