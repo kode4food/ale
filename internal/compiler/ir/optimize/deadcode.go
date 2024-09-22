@@ -9,21 +9,16 @@ import (
 	"github.com/kode4food/comb/basics"
 )
 
-var (
-	deadCode = repeatWhenModified(redundantLocals, ineffectivePushes)
-
-	// ineffectivePushes deletes values pushed to the stack for no reason,
-	// specifically if they're literals followed immediately by a pop
-	// instruction
-	ineffectivePushes = globalReplace(
-		visitor.Pattern{
-			selectEffects(func(e *isa.Effect) bool {
-				return e.Push == 1 && e.Pop == 0 && !e.DPop && !e.Exit
-			}),
-			{isa.Pop},
-		},
-		removeInstructions,
-	)
+// ineffectivePushes deletes values pushed to the stack for no reason,
+// specifically if they're literals followed immediately by a pop instruction
+var ineffectivePushes = globalReplace(
+	visitor.Pattern{
+		selectEffects(func(e *isa.Effect) bool {
+			return e.Push == 1 && e.Pop == 0 && !e.DPop && !e.Exit
+		}),
+		{isa.Pop},
+	},
+	removeInstructions,
 )
 
 // redundantLocals deletes or rewrites Load and Store combinations that result
