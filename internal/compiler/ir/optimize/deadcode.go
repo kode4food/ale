@@ -25,7 +25,7 @@ var ineffectivePushes = globalReplace(
 // in excessive memory location access or modification
 func redundantLocals(e *encoder.Encoded) *encoder.Encoded {
 	if c, ok := replaceRedundantLocals(e.Code); ok {
-		e.Code = c
+		return e.WithCode(c)
 	}
 	return e
 }

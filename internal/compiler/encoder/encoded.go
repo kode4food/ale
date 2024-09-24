@@ -41,11 +41,15 @@ type (
 // has been anchored more than once in the Instructions stream
 const ErrLabelAlreadyAnchored = "label has already been anchored"
 
-func (e *Encoded) Copy() *Encoded {
+func (e *Encoded) WithCode(c isa.Instructions) *Encoded {
 	res := *e
-	res.Code = slices.Clone(e.Code)
-	res.Constants = slices.Clone(e.Constants)
-	res.Closure = slices.Clone(e.Closure)
+	res.Code = c
+	return &res
+}
+
+func (e *Encoded) WithConstants(c data.Vector) *Encoded {
+	res := *e
+	res.Constants = c
 	return &res
 }
 

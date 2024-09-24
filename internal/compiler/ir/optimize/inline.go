@@ -16,6 +16,7 @@ import (
 type (
 	inlineMapper struct {
 		*encoder.Encoded
+		constants data.Vector
 		nextLabel isa.Operand
 		baseLocal isa.Operand
 	}
@@ -40,11 +41,13 @@ var (
 func inlineCalls(e *encoder.Encoded) *encoder.Encoded {
 	m := &inlineMapper{
 		Encoded:   e,
+		constants: e.Constants,
 		nextLabel: getNextLabel(e.Code),
 		baseLocal: getNextLocal(e.Code),
 	}
 	r := visitor.Replace(inlineCallPattern, m.perform)
-	return performReplace(e, r)
+	res := performReplace(e, r)
+	return res.WithConstants(m.constants)
 }
 
 func (m *inlineMapper) perform(i isa.Instructions) isa.Instructions {
@@ -66,7 +69,7 @@ func (m *inlineMapper) perform(i isa.Instructions) isa.Instructions {
 }
 
 func (m *inlineMapper) canInline(i isa.Instruction) (*vm.Closure, bool) {
-	p, ok := m.Constants[i.Operand()].(*vm.Closure)
+	p, ok := m.constants[i.Operand()].(*vm.Closure)
 	return p, ok && p.Globals == m.Globals
 }
 
@@ -125,12 +128,12 @@ func (m *inlineMapper) reindex(
 }
 
 func (m *inlineMapper) addConstant(val data.Value) isa.Operand {
-	c := m.Constants
+	c := m.constants
 	if idx, ok := c.IndexOf(val); ok {
 		return isa.Operand(idx)
 	}
 	c = append(c, val)
-	m.Constants = c
+	m.constants = c
 	return isa.Operand(len(c) - 1)
 }
 

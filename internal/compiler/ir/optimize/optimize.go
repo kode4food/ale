@@ -12,7 +12,6 @@ type optimizer func(*encoder.Encoded) *encoder.Encoded
 
 // Encoded takes an Encoded representation and returns an optimized one
 var Encoded = compose(
-	copyEncoded,
 	splitReturns,
 	makeTailCalls,
 	inlineCalls,
@@ -32,10 +31,6 @@ func compose(first optimizer, rest ...optimizer) optimizer {
 		}
 		return res
 	}
-}
-
-func copyEncoded(e *encoder.Encoded) *encoder.Encoded {
-	return e.Copy()
 }
 
 func repeatWhenModified(first optimizer, rest ...optimizer) optimizer {
@@ -62,8 +57,7 @@ func globalReplace(p visitor.Pattern, m visitor.Mapper) optimizer {
 func performReplace(e *encoder.Encoded, r *visitor.Replacer) *encoder.Encoded {
 	root := visitor.All(e.Code)
 	visitor.Visit(root, r)
-	e.Code = root.Code()
-	return e
+	return e.WithCode(root.Code())
 }
 
 func selectEffects(filter func(*isa.Effect) bool) []isa.Opcode {

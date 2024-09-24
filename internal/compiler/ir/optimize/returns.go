@@ -12,8 +12,7 @@ type returnSplitter struct{}
 func splitReturns(e *encoder.Encoded) *encoder.Encoded {
 	root := visitor.Branched(e.Code)
 	visitor.Visit(root, new(returnSplitter))
-	e.Code = root.Code()
-	return e
+	return e.WithCode(root.Code())
 }
 
 func (*returnSplitter) EnterRoot(visitor.Node)            {}
