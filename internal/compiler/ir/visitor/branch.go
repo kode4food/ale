@@ -10,7 +10,7 @@ type (
 	// A Node is returned when a Branched analysis is performed
 	Node interface {
 		Code() isa.Instructions
-		IsModified() bool
+		isModified() bool
 	}
 
 	// Instructions represent a series of non-branching instructions
@@ -42,6 +42,7 @@ type (
 	Scanner func(isa.Instructions) Node
 
 	branches struct {
+		code       isa.Instructions
 		prologue   Instructions
 		elseBranch Node
 		thenBranch Node
@@ -111,6 +112,7 @@ func (b *BranchScanner) splitCondJump(
 	}
 
 	return &branches{
+		code:       code,
 		prologue:   prologue,
 		elseBranch: b.Else(rest[0:elseJumpIdx]),
 		elseJump:   elseJump,
@@ -132,7 +134,7 @@ func (i *instructions) Code() isa.Instructions {
 	return i.code
 }
 
-func (i *instructions) IsModified() bool {
+func (i *instructions) isModified() bool {
 	return i.dirty
 }
 
@@ -153,6 +155,9 @@ func (b *branches) Epilogue() Node {
 }
 
 func (b *branches) Code() isa.Instructions {
+	if !b.isModified() {
+		return b.code
+	}
 	res := isa.Instructions{}
 	res = append(res, b.prologue.Code()...)
 	res = append(res, b.elseBranch.Code()...)
@@ -164,11 +169,11 @@ func (b *branches) Code() isa.Instructions {
 	return res
 }
 
-func (b *branches) IsModified() bool {
-	return b.prologue.IsModified() ||
-		b.elseBranch.IsModified() ||
-		b.thenBranch.IsModified() ||
-		b.epilogue.IsModified()
+func (b *branches) isModified() bool {
+	return b.prologue.isModified() ||
+		b.elseBranch.isModified() ||
+		b.thenBranch.isModified() ||
+		b.epilogue.isModified()
 }
 
 func findLabel(code isa.Instructions, lbl isa.Operand) (int, isa.Instruction) {

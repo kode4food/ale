@@ -62,9 +62,7 @@ func globalReplace(p visitor.Pattern, m visitor.Mapper) optimizer {
 func performReplace(e *encoder.Encoded, r *visitor.Replacer) *encoder.Encoded {
 	root := visitor.All(e.Code)
 	visitor.Visit(root, r)
-	if root.IsModified() {
-		e.Code = root.Code()
-	}
+	e.Code = root.Code()
 	return e
 }
 
