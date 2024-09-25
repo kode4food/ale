@@ -54,28 +54,30 @@ const (
 
 func (e *entry) snapshot(owner Namespace) (*entry, error) {
 	e.RLock()
-	defer e.RUnlock()
 	if e.hasFlag(resolved) && !e.hasFlag(bound) {
+		e.RUnlock()
 		return nil, fmt.Errorf(ErrSnapshotIncomplete, e.name)
 	}
-	return &entry{
+	res := &entry{
 		owner: owner,
 		name:  e.name,
 		value: e.value,
 		flags: e.flags,
-	}, nil
+	}
+	e.RUnlock()
+	return res, nil
 }
 
 func (e *entry) markResolved() {
 	e.Lock()
-	defer e.Unlock()
 	e.setFlag(resolved)
+	e.Unlock()
 }
 
 func (e *entry) markPrivate() {
 	e.Lock()
-	defer e.Unlock()
 	e.setFlag(private)
+	e.Unlock()
 }
 
 func (e *entry) Owner() Namespace {
@@ -88,33 +90,38 @@ func (e *entry) Name() data.Local {
 
 func (e *entry) Value() data.Value {
 	e.RLock()
-	defer e.RUnlock()
 	if e.hasFlag(bound) {
-		return e.value
+		res := e.value
+		e.RUnlock()
+		return res
 	}
+	e.RUnlock()
 	panic(fmt.Errorf(ErrNameNotBound, e.name))
 }
 
 func (e *entry) Bind(v data.Value) {
 	e.Lock()
-	defer e.Unlock()
 	if e.hasFlag(bound) {
+		e.Unlock()
 		panic(fmt.Errorf(ErrNameAlreadyBound, e.name))
 	}
 	e.value = v
 	e.setFlag(bound)
+	e.Unlock()
 }
 
 func (e *entry) IsBound() bool {
 	e.RLock()
-	defer e.RUnlock()
-	return e.hasFlag(bound)
+	res := e.hasFlag(bound)
+	e.RUnlock()
+	return res
 }
 
 func (e *entry) IsPrivate() bool {
 	e.RLock()
-	defer e.RUnlock()
-	return e.hasFlag(private)
+	res := e.hasFlag(private)
+	e.RUnlock()
+	return res
 }
 
 func (e *entry) hasFlag(flag entryFlag) bool {

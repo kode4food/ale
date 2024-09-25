@@ -313,7 +313,6 @@ func canMapArgsToLocals(c isa.Instructions, argc isa.Operand) bool {
 			}
 		case isa.PushArgs, isa.PopArgs, isa.ArgLen, isa.RestArg:
 			return false
-
 		default:
 			// no-op
 		}

@@ -50,7 +50,7 @@ func (c *Closure) Call(args ...data.Value) data.Value {
 	var AP *argStack
 
 InitMem:
-	MEM = make(data.Vector, c.StackSize+c.LocalCount)
+	MEM = malloc(int(c.StackSize + c.LocalCount))
 
 InitCode:
 	CODE = c.Code
@@ -317,7 +317,9 @@ CurrentPC:
 		goto NextPC
 
 	case isa.Panic:
-		panic(errors.New(data.ToString(MEM[SP+1])))
+		msg := data.ToString(MEM[SP+1])
+		free(MEM)
+		panic(errors.New(msg))
 
 	case isa.Pop:
 		SP++
@@ -367,16 +369,21 @@ CurrentPC:
 		goto NextPC
 
 	case isa.RetFalse:
+		free(MEM)
 		return data.False
 
 	case isa.RetNull:
+		free(MEM)
 		return data.Null
 
 	case isa.RetTrue:
+		free(MEM)
 		return data.True
 
 	case isa.Return:
-		return MEM[SP+1]
+		res := MEM[SP+1]
+		free(MEM)
+		return res
 
 	case isa.Store:
 		SP++
@@ -406,6 +413,7 @@ CurrentPC:
 		}
 		c = cl // intentional
 		if len(MEM) < int(c.StackSize+c.LocalCount) {
+			free(MEM)
 			goto InitMem
 		}
 		goto InitCode
@@ -428,6 +436,7 @@ CurrentPC:
 		goto NextPC
 
 	default:
+		free(MEM)
 		panic(debug.ProgrammerError(ErrBadInstruction, INST))
 
 	}

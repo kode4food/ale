@@ -58,18 +58,18 @@ func (e *Environment) Domains() data.Locals {
 
 func (e *Environment) Snapshot() (*Environment, error) {
 	e.Lock()
-	defer e.Unlock()
-
 	res := &Environment{
 		data: make(map[data.Local]Namespace, len(e.data)),
 	}
 	for k, v := range e.data {
 		s, err := v.Snapshot(res)
 		if err != nil {
+			e.Unlock()
 			return nil, err
 		}
 		res.data[k] = s
 	}
+	e.Unlock()
 	return res, nil
 }
 
@@ -85,12 +85,13 @@ func (e *Environment) New(n data.Local) Namespace {
 // Get returns a mapped namespace or instantiates a new one to be cached
 func (e *Environment) Get(domain data.Local, res Resolver) Namespace {
 	e.Lock()
-	defer e.Unlock()
 	if r, ok := e.data[domain]; ok {
+		e.Unlock()
 		return r
 	}
 	r := res()
 	e.data[domain] = r
+	e.Unlock()
 	return r
 }
 
