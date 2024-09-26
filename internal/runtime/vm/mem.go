@@ -102,13 +102,15 @@ func (b *memBucket) alloc() data.Vector {
 	}
 	total := spanSize / b.size
 	values := make(data.Vector, spanSize)
+	entries := make([]memEntry, total)
 	var next *memEntry
-	for i := b.size; i < total; i += b.size {
-		next = &memEntry{
-			values: values[i : i+b.size],
-			next:   next,
-		}
+	for i, off := 1, b.size; i < total; i, off = i+1, off+b.size {
+		e := &entries[i]
+		e.values = values[off : off+b.size]
+		e.next = next
+		next = e
 	}
+	b.putEntry(&entries[0])
 	b.free = next
 	b.spans++
 	b.Unlock()
