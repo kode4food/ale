@@ -5,7 +5,6 @@ import (
 	"unsafe"
 
 	"github.com/kode4food/ale/internal/debug"
-
 	"github.com/kode4food/ale/pkg/data"
 )
 

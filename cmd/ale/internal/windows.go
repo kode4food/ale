@@ -2,9 +2,7 @@
 
 package internal
 
-import (
-	"os"
-)
+import "os"
 
 var farewells = getFarewells()
 
