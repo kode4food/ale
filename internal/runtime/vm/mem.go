@@ -4,6 +4,8 @@ import (
 	"sync"
 	"unsafe"
 
+	"github.com/kode4food/ale/internal/debug"
+
 	"github.com/kode4food/ale/pkg/data"
 )
 
@@ -47,13 +49,16 @@ func newAllocator() *allocator {
 }
 
 func malloc(size int) data.Vector {
-	if size == 0 {
+	switch {
+	case size > 0 && size <= bucketCount:
+		return mem.getBucket(size).alloc()
+	case size == 0:
 		return data.EmptyVector
-	}
-	if size > bucketCount {
+	case size > bucketCount:
 		return make(data.Vector, size)
+	default:
+		panic(debug.ProgrammerError("invalid malloc: %d", size))
 	}
-	return mem.getBucket(size).alloc()
 }
 
 func free(vals data.Vector) {
