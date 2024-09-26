@@ -15,9 +15,10 @@ const (
 
 type (
 	memBucket struct {
-		free  *memEntry
-		size  int
-		spans int
+		free    *memEntry
+		entries *memEntry
+		size    int
+		spans   int
 		sync.Mutex
 	}
 
@@ -39,7 +40,8 @@ var (
 func newAllocator() *allocator {
 	res := &allocator{}
 	for i := 0; i < len(res.buckets); i++ {
-		res.buckets[i].size = i + 1
+		b := &res.buckets[i]
+		b.size = i + 1
 	}
 	return res
 }
@@ -64,34 +66,60 @@ func (a *allocator) getBucket(size int) *memBucket {
 	return &a.buckets[size-1]
 }
 
-func (s *memBucket) alloc() data.Vector {
-	s.Lock()
-	if next := s.free; next != nil {
-		s.free = next.next
-		s.Unlock()
-		return next.values
+func (b *memBucket) putEntry(e *memEntry) {
+	e.next = b.entries
+	b.entries = e
+}
+
+func (b *memBucket) getEntry() *memEntry {
+	if e := b.entries; e != nil {
+		b.entries = e.next
+		return e
 	}
-	total := spanSize / s.size
+	return &memEntry{}
+}
+
+func (b *memBucket) pushFree(e *memEntry) {
+	e.next = b.free
+	b.free = e
+}
+
+func (b *memBucket) popFree() *memEntry {
+	if e := b.free; e != nil {
+		b.free = e.next
+		return e
+	}
+	return nil
+}
+
+func (b *memBucket) alloc() data.Vector {
+	b.Lock()
+	if next := b.popFree(); next != nil {
+		res := next.values
+		b.putEntry(next)
+		b.Unlock()
+		return res
+	}
+	total := spanSize / b.size
 	values := make(data.Vector, spanSize)
 	var next *memEntry
-	for i := s.size; i < total; i += s.size {
+	for i := b.size; i < total; i += b.size {
 		next = &memEntry{
-			values: values[i : i+s.size],
+			values: values[i : i+b.size],
 			next:   next,
 		}
 	}
-	s.free = next
-	s.spans++
-	s.Unlock()
-	return values[0:s.size]
+	b.free = next
+	b.spans++
+	b.Unlock()
+	return values[0:b.size]
 }
 
-func (s *memBucket) dealloc(v data.Vector) {
+func (b *memBucket) dealloc(v data.Vector) {
 	copy(v, zeros)
-	s.Lock()
-	s.free = &memEntry{
-		values: v,
-		next:   s.free,
-	}
-	s.Unlock()
+	b.Lock()
+	e := b.getEntry()
+	e.values = v
+	b.pushFree(e)
+	b.Unlock()
 }

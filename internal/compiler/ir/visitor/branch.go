@@ -42,11 +42,11 @@ type (
 	Scanner func(isa.Instructions) Node
 
 	branches struct {
-		code       isa.Instructions
 		prologue   Instructions
 		elseBranch Node
 		thenBranch Node
 		epilogue   Node
+		code       isa.Instructions
 		elseJump   isa.Instruction
 		thenLabel  isa.Instruction
 		joinLabel  isa.Instruction
