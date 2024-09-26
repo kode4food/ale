@@ -49,6 +49,8 @@ func (c *Closure) Call(args ...data.Value) data.Value {
 	var INST isa.Instruction
 	var AP *argStack
 
+	defer func() { free(MEM) }()
+
 InitMem:
 	MEM = malloc(int(c.StackSize + c.LocalCount))
 
@@ -317,9 +319,7 @@ CurrentPC:
 		goto NextPC
 
 	case isa.Panic:
-		msg := data.ToString(MEM[SP+1])
-		free(MEM)
-		panic(errors.New(msg))
+		panic(errors.New(data.ToString(MEM[SP+1])))
 
 	case isa.Pop:
 		SP++
@@ -369,21 +369,16 @@ CurrentPC:
 		goto NextPC
 
 	case isa.RetFalse:
-		free(MEM)
 		return data.False
 
 	case isa.RetNull:
-		free(MEM)
 		return data.Null
 
 	case isa.RetTrue:
-		free(MEM)
 		return data.True
 
 	case isa.Return:
-		res := MEM[SP+1]
-		free(MEM)
-		return res
+		return MEM[SP+1]
 
 	case isa.Store:
 		SP++
@@ -436,7 +431,6 @@ CurrentPC:
 		goto NextPC
 
 	default:
-		free(MEM)
 		panic(debug.ProgrammerError(ErrBadInstruction, INST))
 
 	}

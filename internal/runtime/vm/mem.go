@@ -80,7 +80,7 @@ func (b *memBucket) getEntry() *memEntry {
 		b.entries = e.next
 		return e
 	}
-	return &memEntry{}
+	panic(debug.ProgrammerError("no free memory entries"))
 }
 
 func (b *memBucket) pushFree(e *memEntry) {
