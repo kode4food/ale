@@ -33,10 +33,7 @@ type (
 	}
 )
 
-var (
-	zeros = make(data.Vector, bucketCount)
-	mem   = newAllocator()
-)
+var mem = newAllocator()
 
 func newAllocator() *allocator {
 	res := &allocator{}
@@ -122,7 +119,7 @@ func (b *memBucket) alloc() data.Vector {
 }
 
 func (b *memBucket) dealloc(v data.Vector) {
-	copy(v, zeros)
+	clear(v)
 	b.Lock()
 	e := b.getEntry()
 	e.values = v
