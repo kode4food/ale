@@ -28,15 +28,23 @@ type (
 		values data.Vector
 	}
 
-	allocator struct {
+	Allocator struct {
 		buckets [bucketCount]memBucket
 	}
 )
 
-var mem = newAllocator()
+var mem = NewAllocator()
 
-func newAllocator() *allocator {
-	res := &allocator{}
+func malloc(size int) data.Vector {
+	return mem.Malloc(size)
+}
+
+func free(vals data.Vector) {
+	mem.Free(vals)
+}
+
+func NewAllocator() *Allocator {
+	res := &Allocator{}
 	for i := 0; i < len(res.buckets); i++ {
 		b := &res.buckets[i]
 		b.size = i + 1
@@ -44,10 +52,10 @@ func newAllocator() *allocator {
 	return res
 }
 
-func malloc(size int) data.Vector {
+func (a *Allocator) Malloc(size int) data.Vector {
 	switch {
 	case size > 0 && size <= bucketCount:
-		return mem.getBucket(size).alloc()
+		return a.getBucket(size).alloc()
 	case size == 0:
 		return data.EmptyVector
 	case size > bucketCount:
@@ -57,13 +65,13 @@ func malloc(size int) data.Vector {
 	}
 }
 
-func free(vals data.Vector) {
+func (a *Allocator) Free(vals data.Vector) {
 	if size := len(vals); size > 0 && size <= bucketCount {
-		mem.getBucket(size).dealloc(vals)
+		a.getBucket(size).dealloc(vals)
 	}
 }
 
-func (a *allocator) getBucket(size int) *memBucket {
+func (a *Allocator) getBucket(size int) *memBucket {
 	return &a.buckets[size-1]
 }
 
