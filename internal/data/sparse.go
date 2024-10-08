@@ -18,16 +18,6 @@ func NewSparseSlice[T any]() *SparseSlice[T] {
 	return nil
 }
 
-func (s *SparseSlice[T]) Clone() *SparseSlice[T] {
-	if s == nil {
-		return s
-	}
-	return &SparseSlice[T]{
-		data: slices.Clone(s.data),
-		mask: s.mask,
-	}
-}
-
 func (s *SparseSlice[T]) Data() []T {
 	if s == nil {
 		return nil
@@ -91,17 +81,6 @@ func (s *SparseSlice[T]) Unset(idx int) *SparseSlice[T] {
 		data: slices.Concat(s.data[:pos], s.data[pos+1:]),
 		mask: mask,
 	}
-}
-
-// Split removes and returns the value at the lowest set index.
-func (s *SparseSlice[T]) Split() (T, *SparseSlice[T], bool) {
-	if s == nil || s.mask == 0 {
-		var zero T
-		return zero, s, false
-	}
-	low := s.LowIndex()
-	value, _ := s.Get(low)
-	return value, s.Unset(low), true
 }
 
 func (s *SparseSlice[T]) IsEmpty() bool {

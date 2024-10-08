@@ -45,8 +45,7 @@ var (
 
 // NewObject instantiates a new Object instance. Based on Phil Bagwell's Hashed
 // Array Mapped Trie data structure. More information on HAMT's can be found at
-//
-//	http://lampwww.epfl.ch/papers/idealhashtrees.pdf
+// http://lampwww.epfl.ch/papers/idealhashtrees.pdf
 func NewObject(pairs ...Pair) *Object {
 	res := EmptyObject
 	for _, p := range pairs {

@@ -10,10 +10,12 @@ import (
 func TestSparseSliceSetGet(t *testing.T) {
 	as := assert.New(t)
 	s := data.NewSparseSlice[int]()
+	as.True(s.IsEmpty())
 
 	s = s.Set(5, 50)
 	s = s.Set(10, 100)
 	s = s.Set(3, 30)
+	as.False(s.IsEmpty())
 
 	val, ok := s.Get(5)
 	as.True(ok)
@@ -60,40 +62,4 @@ func TestSparseSliceReplace(t *testing.T) {
 	val, ok = s.Get(5)
 	as.True(ok)
 	as.Equal(50, val)
-}
-
-func TestSparseSliceSplit(t *testing.T) {
-	as := assert.New(t)
-	s := data.NewSparseSlice[int]()
-	s = s.Set(3, 30)
-	s = s.Set(7, 70)
-	s = s.Set(5, 50)
-
-	val, newSlice, ok := s.Split()
-	as.True(ok)
-	as.Equal(30, val)
-	as.False(newSlice.Contains(3))
-
-	_, ok = newSlice.Get(3)
-	as.False(ok)
-}
-
-func TestSparseSliceClone(t *testing.T) {
-	as := assert.New(t)
-	s := data.NewSparseSlice[int]()
-	s = s.Set(1, 10)
-	s = s.Set(4, 40)
-	clone := s.Clone()
-
-	val, ok := clone.Get(1)
-	as.True(ok)
-	as.Equal(10, val)
-
-	val, ok = clone.Get(4)
-	as.True(ok)
-	as.Equal(40, val)
-
-	clone = clone.Set(3, 30)
-	as.False(s.Contains(3))
-	as.True(clone.Contains(3))
 }
