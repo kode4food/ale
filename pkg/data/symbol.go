@@ -25,7 +25,7 @@ type (
 	// Locals represents a set of Local
 	Locals []Local
 
-	// Named is the generic interface for values that are named
+	// Named is the generic interface for data that are named
 	Named interface {
 		Name() Local
 	}

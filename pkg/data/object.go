@@ -6,13 +6,14 @@ import (
 	"strings"
 	"sync/atomic"
 
+	"github.com/kode4food/ale/internal/data"
 	"github.com/kode4food/ale/internal/types"
 )
 
 // Object maps a set of Values, known as keys, to another set of Values
 type Object struct {
 	pair     Pair
-	children [bucketSize]*Object
+	children *data.SparseSlice[*Object]
 	hash     uint64
 }
 
@@ -43,8 +44,7 @@ var (
 )
 
 // NewObject instantiates a new Object instance. Based on Phil Bagwell's Hashed
-// Array Mapped Trie data structure, though not as space efficient. More
-// information on HAMT's can be found at:
+// Array Mapped Trie data structure. More information on HAMT's can be found at
 //
 //	http://lampwww.epfl.ch/papers/idealhashtrees.pdf
 func NewObject(pairs ...Pair) *Object {
@@ -79,8 +79,8 @@ func (o *Object) get(k Value, hash uint64) (Value, bool) {
 	if o.pair.Car().Equal(k) {
 		return o.pair.Cdr(), true
 	}
-	bucket := o.children[hash&bucketMask]
-	if bucket != nil {
+	idx := int(hash & bucketMask)
+	if bucket, ok := o.children.Get(idx); ok {
 		return bucket.get(k, hash>>bucketBits)
 	}
 	return Null, false
@@ -104,17 +104,17 @@ func (o *Object) put(p Pair, hash uint64) *Object {
 		}
 	}
 
-	idx := hash & bucketMask
-	bucket := o.children[idx]
-	if bucket == nil {
-		bucket = &Object{pair: p}
-	} else {
+	idx := int(hash & bucketMask)
+	bucket, ok := o.children.Get(idx)
+	if ok {
 		bucket = bucket.put(p, hash>>bucketBits)
+	} else {
+		bucket = &Object{pair: p}
 	}
 
 	// return a copy with the new bucket
 	res := *o
-	res.children[idx] = bucket
+	res.children = res.children.Set(idx, bucket)
 	res.hash = 0
 	return &res
 }
@@ -137,29 +137,37 @@ func (o *Object) remove(k Value, hash uint64) (Value, *Object, bool) {
 	if o.pair.Car().Equal(k) {
 		return o.pair.Cdr(), o.promote(), true
 	}
-	idx := hash & bucketMask
-	if bucket := o.children[idx]; bucket != nil {
+
+	idx := int(hash & bucketMask)
+	if bucket, ok := o.children.Get(idx); ok {
 		if v, r, ok := bucket.remove(k, hash>>bucketBits); ok {
-			res := *o
-			res.children[idx] = r
-			res.hash = 0
-			return v, &res, true
+			return v, o.copyWithChildAt(idx, r), true
 		}
 	}
 	return nil, nil, false
 }
 
-func (o *Object) promote() *Object {
-	for i, c := range o.children {
-		if c != nil {
-			res := *o
-			res.pair = c.pair
-			res.children[i] = c.promote()
-			res.hash = 0
-			return &res
-		}
+func (o *Object) copyWithChildAt(idx int, child *Object) *Object {
+	res := *o
+	res.hash = 0
+	if child != nil {
+		res.children = res.children.Set(idx, child)
+	} else {
+		res.children = res.children.Unset(idx)
 	}
-	return nil
+	return &res
+}
+
+func (o *Object) promote() *Object {
+	if o.children.IsEmpty() {
+		return nil
+	}
+
+	low := o.children.LowIndex()
+	c, _ := o.children.Get(low)
+	res := o.copyWithChildAt(low, c.promote())
+	res.pair = c.pair
+	return res
 }
 
 func (o *Object) Car() Value {
@@ -200,10 +208,8 @@ func (o *Object) Count() Integer {
 		return 0
 	}
 	res := Integer(1)
-	for _, c := range o.children {
-		if c != nil {
-			res += c.Count()
-		}
+	for _, c := range o.children.Data() {
+		res += c.Count()
 	}
 	return res
 }
@@ -262,10 +268,8 @@ func (o *Object) hashCode() uint64 {
 		return h
 	}
 	res := HashCode(o.pair.Car()) ^ HashCode(o.pair.Cdr())
-	for _, c := range o.children {
-		if c != nil {
-			res ^= c.hashCode()
-		}
+	for _, c := range o.children.Data() {
+		res ^= c.hashCode()
 	}
 	atomic.StoreUint64(&o.hash, res)
 	return res
@@ -280,10 +284,8 @@ func (o *Object) Pairs() Pairs {
 
 func (o *Object) pairs(p Pairs) Pairs {
 	p = append(p, o.pair)
-	for _, c := range o.children {
-		if c != nil {
-			p = c.pairs(p)
-		}
+	for _, c := range o.children.Data() {
+		p = c.pairs(p)
 	}
 	return p
 }

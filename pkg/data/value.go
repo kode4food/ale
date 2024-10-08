@@ -7,15 +7,15 @@ import (
 )
 
 type (
-	// Bool represents the values True or False
+	// Bool represents the data True or False
 	Bool bool
 
-	// Value is the generic interface for all values
+	// Value is the generic interface for all data
 	Value interface {
 		Equal(Value) bool
 	}
 
-	// Typed is the generic interface for values that are typed
+	// Typed is the generic interface for data that are typed
 	Typed interface {
 		Type() types.Type
 	}
@@ -25,7 +25,7 @@ type (
 		Count() Integer
 	}
 
-	// Indexed is the interface for values that have indexed elements
+	// Indexed is the interface for data that have indexed elements
 	Indexed interface {
 		ElementAt(Integer) (Value, bool)
 	}

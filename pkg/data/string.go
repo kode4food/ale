@@ -8,7 +8,7 @@ import (
 	"github.com/kode4food/ale/internal/types"
 )
 
-// String is the Sequence-compatible representation of string values
+// String is the Sequence-compatible representation of string data
 type String string
 
 // EmptyString represents the... empty string
