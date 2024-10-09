@@ -48,6 +48,9 @@ func TestSparseSliceSetGet(t *testing.T) {
 func TestSparseSliceUnset(t *testing.T) {
 	as := assert.New(t)
 	s := data.NewSparseSlice[int]()
+	s = s.Unset(32)
+	as.True(s.IsEmpty())
+
 	s = s.Set(2, 20)
 	s = s.Set(6, 60)
 	as.Equal([]int{20, 60}, s.Data())
@@ -63,6 +66,13 @@ func TestSparseSliceUnset(t *testing.T) {
 	as.Equal([]int{60}, s.Data())
 	as.Equal(6, s.LowIndex())
 	as.Equal(6, s.HighIndex())
+
+	s1 := s.Unset(10)
+	as.Equal(s, s1)
+
+	s = s.Unset(6)
+	as.True(s.IsEmpty())
+	as.Nil(s)
 }
 
 func TestSparseSliceReplace(t *testing.T) {

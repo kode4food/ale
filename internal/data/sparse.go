@@ -105,6 +105,6 @@ func (s *SparseSlice[T]) Contains(idx int) bool {
 	return s != nil && (s.mask&(1<<idx)) != 0
 }
 
-func (s *SparseSlice[T]) position(index int) int {
-	return bits.OnesCount64(s.mask & ((1 << index) - 1))
+func (s *SparseSlice[T]) position(idx int) int {
+	return bits.OnesCount64(s.mask & ((1 << idx) - 1))
 }
