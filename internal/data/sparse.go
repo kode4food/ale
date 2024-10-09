@@ -87,7 +87,17 @@ func (s *SparseSlice[T]) IsEmpty() bool {
 	return s == nil || s.mask == 0
 }
 
+func (s *SparseSlice[T]) HighIndex() int {
+	if s == nil {
+		return -1
+	}
+	return 63 - bits.LeadingZeros64(s.mask)
+}
+
 func (s *SparseSlice[T]) LowIndex() int {
+	if s == nil {
+		return -1
+	}
 	return bits.TrailingZeros64(s.mask)
 }
 
