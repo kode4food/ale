@@ -1,6 +1,7 @@
 package data
 
 import (
+	"iter"
 	"math/bits"
 	"slices"
 )
@@ -16,13 +17,6 @@ type SparseSlice[T any] struct {
 // NewSparseSlice initializes an empty SparseSlice
 func NewSparseSlice[T any]() *SparseSlice[T] {
 	return nil
-}
-
-func (s *SparseSlice[T]) Data() []T {
-	if s == nil {
-		return nil
-	}
-	return s.data
 }
 
 // Set returns a new SparseSlice with the value set at the specified index.
@@ -103,6 +97,29 @@ func (s *SparseSlice[T]) LowIndex() int {
 
 func (s *SparseSlice[T]) Contains(idx int) bool {
 	return s != nil && (s.mask&(1<<idx)) != 0
+}
+
+func (s *SparseSlice[T]) All() iter.Seq2[int, T] {
+	return func(yield func(int, T) bool) {
+		if s == nil {
+			return
+		}
+		low, high := s.LowIndex(), s.HighIndex()
+		for i := low; i <= high; i++ {
+			if s.mask&(1<<i) != 0 {
+				if !yield(i, s.data[s.position(i)]) {
+					return
+				}
+			}
+		}
+	}
+}
+
+func (s *SparseSlice[T]) Values() iter.Seq[T] {
+	if s == nil {
+		return slices.Values([]T(nil))
+	}
+	return slices.Values(s.data)
 }
 
 func (s *SparseSlice[T]) position(idx int) int {

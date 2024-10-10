@@ -7,11 +7,33 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func testDataAll[T any](t *testing.T, s *data.SparseSlice[T], m map[int]T) {
+	as := assert.New(t)
+	l := 0
+	for idx, v := range s.All() {
+		r, ok := m[idx]
+		as.True(ok)
+		as.Equal(r, v)
+		l++
+	}
+	as.Equal(l, len(m))
+}
+
+func testDataValues[T any](t *testing.T, s *data.SparseSlice[T], d []T) {
+	as := assert.New(t)
+	i := 0
+	for v := range s.Values() {
+		as.Equal(d[i], v)
+		i++
+	}
+	as.Equal(i, len(d))
+}
+
 func TestEmptySparseSlice(t *testing.T) {
 	as := assert.New(t)
 	s := data.NewSparseSlice[int]()
 	as.True(s.IsEmpty())
-	as.Nil(s.Data())
+	testDataValues(t, s, []int{})
 	as.Equal(-1, s.LowIndex())
 	as.Equal(-1, s.HighIndex())
 }
@@ -25,7 +47,9 @@ func TestSparseSliceSetGet(t *testing.T) {
 	s = s.Set(10, 100)
 	s = s.Set(3, 30)
 	as.False(s.IsEmpty())
-	as.Equal([]int{30, 50, 100}, s.Data())
+
+	testDataAll(t, s, map[int]int{3: 30, 5: 50, 10: 100})
+	testDataValues(t, s, []int{30, 50, 100})
 	as.Equal(3, s.LowIndex())
 	as.Equal(10, s.HighIndex())
 
@@ -53,7 +77,9 @@ func TestSparseSliceUnset(t *testing.T) {
 
 	s = s.Set(2, 20)
 	s = s.Set(6, 60)
-	as.Equal([]int{20, 60}, s.Data())
+
+	testDataAll(t, s, map[int]int{2: 20, 6: 60})
+	testDataValues(t, s, []int{20, 60})
 	as.Equal(2, s.LowIndex())
 	as.Equal(6, s.HighIndex())
 
@@ -63,7 +89,9 @@ func TestSparseSliceUnset(t *testing.T) {
 	val, ok := s.Get(2)
 	as.False(ok)
 	as.Equal(0, val)
-	as.Equal([]int{60}, s.Data())
+
+	testDataAll(t, s, map[int]int{6: 60})
+	testDataValues(t, s, []int{60})
 	as.Equal(6, s.LowIndex())
 	as.Equal(6, s.HighIndex())
 
@@ -80,8 +108,8 @@ func TestSparseSliceReplace(t *testing.T) {
 	s := data.NewSparseSlice[int]()
 	s = s.Set(3, 30)
 	s = s.Set(5, 50)
-	as.Equal([]int{30, 50}, s.Data())
-
+	testDataAll(t, s, map[int]int{3: 30, 5: 50})
+	testDataValues(t, s, []int{30, 50})
 	s = s.Set(3, 300)
 
 	val, ok := s.Get(3)
@@ -92,5 +120,6 @@ func TestSparseSliceReplace(t *testing.T) {
 	as.True(ok)
 	as.Equal(50, val)
 
-	as.Equal([]int{300, 50}, s.Data())
+	testDataAll(t, s, map[int]int{3: 300, 5: 50})
+	testDataValues(t, s, []int{300, 50})
 }
