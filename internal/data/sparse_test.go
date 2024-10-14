@@ -4,8 +4,19 @@ import (
 	"testing"
 
 	"github.com/kode4food/ale/internal/data"
+	"github.com/kode4food/comb/basics"
 	"github.com/stretchr/testify/assert"
 )
+
+func testData[T any](t *testing.T, s *data.SparseSlice[T], m map[int]T) {
+	testDataAll(t, s, m)
+	k := basics.SortedKeys(m)
+	a := make([]T, 0, len(k))
+	for _, idx := range k {
+		a = append(a, m[idx])
+	}
+	testDataValues(t, s, a)
+}
 
 func testDataAll[T any](t *testing.T, s *data.SparseSlice[T], m map[int]T) {
 	as := assert.New(t)
@@ -48,8 +59,7 @@ func TestSparseSliceSetGet(t *testing.T) {
 	s = s.Set(3, 30)
 	as.False(s.IsEmpty())
 
-	testDataAll(t, s, map[int]int{3: 30, 5: 50, 10: 100})
-	testDataValues(t, s, []int{30, 50, 100})
+	testData(t, s, map[int]int{3: 30, 5: 50, 10: 100})
 	as.Equal(3, s.LowIndex())
 	as.Equal(10, s.HighIndex())
 
@@ -78,8 +88,7 @@ func TestSparseSliceUnset(t *testing.T) {
 	s = s.Set(2, 20)
 	s = s.Set(6, 60)
 
-	testDataAll(t, s, map[int]int{2: 20, 6: 60})
-	testDataValues(t, s, []int{20, 60})
+	testData(t, s, map[int]int{2: 20, 6: 60})
 	as.Equal(2, s.LowIndex())
 	as.Equal(6, s.HighIndex())
 
@@ -90,8 +99,7 @@ func TestSparseSliceUnset(t *testing.T) {
 	as.False(ok)
 	as.Equal(0, val)
 
-	testDataAll(t, s, map[int]int{6: 60})
-	testDataValues(t, s, []int{60})
+	testData(t, s, map[int]int{6: 60})
 	as.Equal(6, s.LowIndex())
 	as.Equal(6, s.HighIndex())
 
@@ -108,8 +116,7 @@ func TestSparseSliceReplace(t *testing.T) {
 	s := data.NewSparseSlice[int]()
 	s = s.Set(3, 30)
 	s = s.Set(5, 50)
-	testDataAll(t, s, map[int]int{3: 30, 5: 50})
-	testDataValues(t, s, []int{30, 50})
+	testData(t, s, map[int]int{3: 30, 5: 50})
 	s = s.Set(3, 300)
 
 	val, ok := s.Get(3)
@@ -119,7 +126,5 @@ func TestSparseSliceReplace(t *testing.T) {
 	val, ok = s.Get(5)
 	as.True(ok)
 	as.Equal(50, val)
-
-	testDataAll(t, s, map[int]int{3: 300, 5: 50})
-	testDataValues(t, s, []int{300, 50})
+	testData(t, s, map[int]int{3: 300, 5: 50})
 }
