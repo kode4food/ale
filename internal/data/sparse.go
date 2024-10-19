@@ -99,6 +99,13 @@ func (s *SparseSlice[T]) Contains(idx int) bool {
 	return s != nil && (s.mask&(1<<idx)) != 0
 }
 
+func (s *SparseSlice[T]) RawData() ([]T, uint64) {
+	if s == nil {
+		return nil, 0
+	}
+	return s.data, s.mask
+}
+
 func (s *SparseSlice[T]) All() iter.Seq2[int, T] {
 	return func(yield func(int, T) bool) {
 		if s == nil {

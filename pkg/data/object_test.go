@@ -254,3 +254,29 @@ func TestObjectHash(t *testing.T) {
 	as.NotEqual(uint64(0), o4.HashCode())
 	as.NotEqual(uint64(0), o5.HashCode())
 }
+
+func BenchmarkObjectOperations(b *testing.B) {
+	for n := 0; n < b.N; n++ {
+		// Load it
+		o1 := data.EmptyObject
+		for i := 0; i < 1000; i++ {
+			k := K(fmt.Sprintf("key-%d", i))
+			v := S(fmt.Sprintf("value-%d", i))
+			o1 = o1.Put(C(k, v)).(*data.Object)
+		}
+
+		// Remove half of it
+		for i := 0; i < 1000; i += 2 {
+			k := K(fmt.Sprintf("key-%d", i))
+			_, r, _ := o1.Remove(k)
+			o1 = r.(*data.Object)
+		}
+
+		// Remove the other half
+		for i := 1; i < 1000; i += 2 {
+			k := K(fmt.Sprintf("key-%d", i))
+			_, r, _ := o1.Remove(k)
+			o1 = r.(*data.Object)
+		}
+	}
+}

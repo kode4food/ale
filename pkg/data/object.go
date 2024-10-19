@@ -207,7 +207,7 @@ func (o *Object) Count() Integer {
 		return 0
 	}
 	res := Integer(1)
-	for c := range o.children.Values() {
+	for _, c := range o.childObjects() {
 		res += c.Count()
 	}
 	return res
@@ -267,7 +267,7 @@ func (o *Object) hashCode() uint64 {
 		return h
 	}
 	res := HashCode(o.pair.Car()) ^ HashCode(o.pair.Cdr())
-	for c := range o.children.Values() {
+	for _, c := range o.childObjects() {
 		res ^= c.hashCode()
 	}
 	atomic.StoreUint64(&o.hash, res)
@@ -283,7 +283,7 @@ func (o *Object) Pairs() Pairs {
 
 func (o *Object) pairs(p Pairs) Pairs {
 	p = append(p, o.pair)
-	for c := range o.children.Values() {
+	for _, c := range o.childObjects() {
 		p = c.pairs(p)
 	}
 	return p
@@ -302,4 +302,12 @@ func (o *Object) String() string {
 	}
 	buf.WriteString("}")
 	return buf.String()
+}
+
+func (o *Object) childObjects() []*Object {
+	if o == nil {
+		return nil
+	}
+	res, _ := o.children.RawData()
+	return res
 }
