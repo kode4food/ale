@@ -92,7 +92,9 @@ CurrentPC:
 		SP++
 		name := MEM[SP].(data.Local)
 		SP++
-		c.Globals.Declare(name).Bind(MEM[SP])
+		if err := c.Globals.Declare(name).Bind(MEM[SP]); err != nil {
+			panic(err)
+		}
 		goto NextPC
 
 	case isa.BindRef:

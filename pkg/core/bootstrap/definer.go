@@ -18,13 +18,13 @@ const (
 func (b *bootstrap) populateDefiners() {
 	ns := b.environment.GetRoot()
 
-	ns.Private(defBuiltInName).Bind(
+	_ = ns.Private(defBuiltInName).Bind(
 		makeDefiner(b.procMap, ErrBuiltInNotFound),
 	)
-	ns.Private(defSpecialName).Bind(
+	_ = ns.Private(defSpecialName).Bind(
 		makeDefiner(b.specialMap, ErrSpecialNotFound),
 	)
-	ns.Private(defMacroName).Bind(
+	_ = ns.Private(defMacroName).Bind(
 		makeDefiner(b.macroMap, ErrMacroNotFound),
 	)
 }
@@ -34,7 +34,9 @@ func makeDefiner[T data.Value](m map[data.Local]T, err string) special.Call {
 		data.AssertFixed(1, len(args))
 		n := args[0].(data.Local)
 		if sf, ok := m[n]; ok {
-			e.Globals().Declare(n).Bind(sf)
+			if err := e.Globals().Declare(n).Bind(sf); err != nil {
+				panic(err)
+			}
 			generate.Symbol(e, n)
 			return
 		}

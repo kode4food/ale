@@ -267,7 +267,7 @@ func (r *REPL) registerBuiltIns() {
 
 func (r *REPL) registerBuiltIn(n data.Local, v data.Value) {
 	ns := r.getBuiltInsNamespace()
-	ns.Declare(n).Bind(v)
+	_ = ns.Declare(n).Bind(v)
 }
 
 func (r *REPL) makeUse() data.Value {
