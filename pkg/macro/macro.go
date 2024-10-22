@@ -31,8 +31,8 @@ func expand1(ns env.Namespace, v data.Value) (data.Value, bool) {
 		return v, false
 	}
 	args := sequence.ToValues(r)
-	rv, ok := env.ResolveValue(ns, s) // that actually resolves
-	if !ok {
+	rv, err := env.ResolveValue(ns, s) // that actually resolves
+	if err != nil {
 		return v, false
 	}
 	m, ok := rv.(Call) // to a macro call

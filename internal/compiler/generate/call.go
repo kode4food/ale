@@ -42,7 +42,7 @@ func callSymbol(e encoder.Encoder, s data.Symbol, args data.Vector) {
 		}
 	}
 	globals := e.Globals()
-	if v, ok := env.ResolveValue(globals, s); ok {
+	if v, err := env.ResolveValue(globals, s); err == nil {
 		switch v := v.(type) {
 		case special.Call:
 			v(e, args...)

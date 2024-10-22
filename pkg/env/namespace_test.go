@@ -18,18 +18,18 @@ func TestDeclarations(t *testing.T) {
 	as.Equal(e, root.Environment())
 	as.Equal(env.RootDomain, root.Domain())
 
-	root.Declare("public2").Bind(data.True)
-	root.Private("private").Bind(data.True)
-	root.Declare("public1").Bind(data.True)
+	as.Nil(root.Declare("public2").Bind(data.True))
+	as.Nil(root.Private("private").Bind(data.True))
+	as.Nil(root.Declare("public1").Bind(data.True))
 
 	n := root.Declared()
 	as.Equal(2, len(n))
 	as.Equal(LS("public1"), n[0])
 	as.Equal(LS("public2"), n[1])
 
-	e1, ok := root.Resolve(n[0])
+	e1, err := root.Resolve(n[0])
 	as.NotNil(e1)
-	as.True(ok)
+	as.Nil(err)
 
 	as.Equal(n[0], e1.Name())
 	as.Equal(root, e1.Owner())
@@ -43,45 +43,19 @@ func TestChaining(t *testing.T) {
 
 	e := env.NewEnvironment()
 	root := e.GetRoot()
-	root.Declare("in-parent").Bind(data.True)
+	as.Nil(root.Declare("in-parent").Bind(data.True))
 
 	ns := e.GetAnonymous()
-	ns.Declare("in-child").Bind(data.True)
+	as.Nil(ns.Declare("in-child").Bind(data.True))
 
-	e1, ok := ns.Resolve("in-parent")
-	as.True(ok && e1.IsBound())
-	as.True(e1.Value())
-
-	e2, ok := ns.Resolve("in-child")
-	as.True(ok && e2.IsBound())
-	as.True(e2.Value())
-
-	e3, ok := root.Resolve("in-child")
-	as.False(ok)
-	as.Nil(e3)
-
-	s1 := LS("in-parent")
-	v4, ok := env.ResolveValue(ns, s1)
-	as.True(ok)
-	as.True(v4)
-
-	v5, ok := env.ResolveValue(root, s1)
-	as.True(ok)
-	as.True(v5)
-
-	s2 := LS("in-child")
-	v6, ok := env.ResolveValue(ns, s2)
-	as.True(ok)
-	as.True(v6)
-
-	v7, ok := env.ResolveValue(root, s2)
-	as.False(ok)
-	as.Nil(v7)
-
+	as.True(as.IsBound(ns, "in-parent"))
+	as.True(as.IsBound(ns, "in-child"))
+	as.True(as.IsBound(root, "in-parent"))
+	as.IsNotDeclared(root, "in-child")
 	s3 := env.RootSymbol("in-parent")
-	v8, ok := env.ResolveValue(ns, s3)
-	as.True(ok)
+	v8, err := env.ResolveValue(ns, s3)
 	as.True(v8)
+	as.Nil(err)
 }
 
 func TestBinding(t *testing.T) {
@@ -91,17 +65,16 @@ func TestBinding(t *testing.T) {
 	root := e.GetRoot()
 	d := root.Declare("some-name")
 
-	func() {
-		defer as.ExpectPanic(fmt.Errorf(env.ErrNameNotBound, d.Name()))
-		d.Value()
-	}()
+	v, err := d.Value()
+	as.Nil(v)
+	as.EqualError(err, fmt.Sprintf(env.ErrNameNotBound, d.Name()))
 
-	d.Bind(S("some-value"))
+	err = d.Bind(S("some-value"))
+	as.Nil(err)
+	err = d.Bind(S("some-other-value"))
+	as.EqualError(err, fmt.Sprintf(env.ErrNameAlreadyBound, d.Name()))
 
-	func() {
-		defer as.ExpectPanic(fmt.Errorf(env.ErrNameAlreadyBound, d.Name()))
-		d.Bind(S("some-other-value"))
-	}()
-
-	as.String("some-value", d.Value())
+	v, err = d.Value()
+	as.Nil(err)
+	as.String("some-value", v)
 }

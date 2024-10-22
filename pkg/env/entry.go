@@ -12,8 +12,8 @@ type (
 	Entry interface {
 		Owner() Namespace
 		Name() data.Local
-		Value() data.Value
-		Bind(data.Value)
+		Value() (data.Value, error)
+		Bind(data.Value) error
 		IsBound() bool
 		IsPrivate() bool
 	}
@@ -88,26 +88,27 @@ func (e *entry) Name() data.Local {
 	return e.name
 }
 
-func (e *entry) Value() data.Value {
+func (e *entry) Value() (data.Value, error) {
 	e.RLock()
 	if e.hasFlag(bound) {
 		res := e.value
 		e.RUnlock()
-		return res
+		return res, nil
 	}
 	e.RUnlock()
-	panic(fmt.Errorf(ErrNameNotBound, e.name))
+	return nil, fmt.Errorf(ErrNameNotBound, e.name)
 }
 
-func (e *entry) Bind(v data.Value) {
+func (e *entry) Bind(v data.Value) error {
 	e.Lock()
 	if e.hasFlag(bound) {
 		e.Unlock()
-		panic(fmt.Errorf(ErrNameAlreadyBound, e.name))
+		return fmt.Errorf(ErrNameAlreadyBound, e.name)
 	}
 	e.value = v
 	e.setFlag(bound)
 	e.Unlock()
+	return nil
 }
 
 func (e *entry) IsBound() bool {

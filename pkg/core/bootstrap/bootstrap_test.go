@@ -18,15 +18,10 @@ func TestDevNullEnvironment(t *testing.T) {
 
 	// It's okay to snapshot an environment if nobody has attempted to resolve
 	// an unbound namespace value
-	a, ok := ns.Resolve("*args*")
+	as.IsNotBound(ns, "*args*")
+	v, ok := as.IsBound(ns, "*in*").(data.Sequence)
 	as.True(ok)
-	as.False(a.IsBound())
-
-	i, ok := ns.Resolve("*in*")
-	as.True(ok && i.IsBound())
-	r, ok := i.Value().(data.Sequence)
-	as.True(ok)
-	as.True(r.IsEmpty())
+	as.True(v.IsEmpty())
 }
 
 func TestTopLevelEnvironment(t *testing.T) {
@@ -35,10 +30,7 @@ func TestTopLevelEnvironment(t *testing.T) {
 	e := bootstrap.TopLevelEnvironment()
 	ns := e.GetRoot()
 
-	a, ok := ns.Resolve("*args*")
-	as.True(ok && a.IsBound())
-
-	_, ok = a.Value().(data.Vector)
+	_, ok := as.IsBound(ns, "*args*").(data.Vector)
 	as.True(ok)
 }
 
@@ -48,10 +40,7 @@ func TestBootstrapInto(t *testing.T) {
 	e := bootstrap.TopLevelEnvironment()
 	ns := e.GetRoot()
 
-	d, ok := ns.Resolve("define*")
-	as.True(ok && d.IsBound())
-
-	_, ok = d.Value().(special.Call)
+	_, ok := as.IsBound(ns, "define*").(special.Call)
 	as.True(ok)
 }
 

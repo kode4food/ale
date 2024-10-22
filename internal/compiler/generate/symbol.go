@@ -57,7 +57,8 @@ func resolveLocal(e encoder.Encoder, l data.Local) *encoder.ScopedCell {
 
 func resolveGlobal(e encoder.Encoder, s data.Symbol) {
 	if entry := env.MustResolveSymbol(e.Globals(), s); entry.IsBound() {
-		Literal(e, entry.Value())
+		v, _ := entry.Value()
+		Literal(e, v)
 		return
 	}
 	Literal(e, s)

@@ -51,15 +51,13 @@ func TestPartialEval(t *testing.T) {
 func TestFunctionPredicates(t *testing.T) {
 	as := assert.New(t)
 
-	e := bootstrap.DevNullEnvironment()
-
 	as.False(getPredicate(builtin.SpecialKey).Call(builtin.Str))
 	as.True(getPredicate(builtin.ProcedureKey).Call(builtin.Str))
 
-	i, ok := e.GetRoot().Resolve("if")
-	as.True(ok && i.IsBound())
-	as.True(getPredicate(builtin.SpecialKey).Call(i.Value()))
-	as.False(getPredicate(builtin.ProcedureKey).Call(i.Value()))
+	e := bootstrap.DevNullEnvironment()
+	root := e.GetRoot()
+	as.True(getPredicate(builtin.SpecialKey).Call(as.IsBound(root, "if")))
+	as.False(getPredicate(builtin.ProcedureKey).Call(as.IsBound(root, "if")))
 }
 
 func TestProcedurePredicatesEval(t *testing.T) {

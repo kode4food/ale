@@ -54,9 +54,9 @@ func (ns *chainedNamespace) Private(n data.Local) Entry {
 	return ns.child.Private(n)
 }
 
-func (ns *chainedNamespace) Resolve(n data.Local) (Entry, bool) {
-	if e, ok := ns.child.Resolve(n); ok {
-		return e, true
+func (ns *chainedNamespace) Resolve(n data.Local) (Entry, error) {
+	if e, err := ns.child.Resolve(n); err == nil {
+		return e, nil
 	}
 	return resolvePublic(ns, ns.parent, n)
 }

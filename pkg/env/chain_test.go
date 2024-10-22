@@ -15,12 +15,12 @@ func TestSnapshot(t *testing.T) {
 
 	e1 := env.NewEnvironment()
 	root := e1.GetRoot()
-	root.Declare("public-parent").Bind(data.True)
-	root.Private("private-parent").Bind(data.True)
+	as.Nil(root.Declare("public-parent").Bind(data.True))
+	as.Nil(root.Private("private-parent").Bind(data.True))
 
 	ns1 := e1.GetQualified("some-ns")
-	ns1.Declare("public-child").Bind(data.True)
-	ns1.Private("private-child").Bind(data.True)
+	as.Nil(ns1.Declare("public-child").Bind(data.True))
+	as.Nil(ns1.Private("private-child").Bind(data.True))
 
 	e2 := env.NewEnvironment()
 	ns2, err := ns1.Snapshot(e2)
@@ -28,22 +28,15 @@ func TestSnapshot(t *testing.T) {
 	as.Equal(LS("some-ns"), ns2.Domain())
 	as.Equal(e2, ns2.Environment())
 
-	ns2.Declare("second-child").Bind(data.True)
+	as.Nil(ns2.Declare("second-child").Bind(data.True))
 	as.NotNil(ns2)
 	as.Nil(err)
 
 	d := ns2.Declared()
 	as.Equal(2, len(d))
-	e, ok := ns2.Resolve("public-child")
-	as.True(ok)
-	as.Equal(data.True, e.Value())
-
-	e, ok = ns2.Resolve("second-child")
-	as.True(ok)
-	as.Equal(data.True, e.Value())
-
-	_, ok = ns1.Resolve("second-child")
-	as.False(ok)
+	as.Equal(data.True, as.IsBound(ns2, "public-child"))
+	as.Equal(data.True, as.IsBound(ns2, "second-child"))
+	as.IsNotDeclared(ns1, "second-child")
 }
 
 func TestChainedSnapshotErrors(t *testing.T) {
@@ -54,23 +47,21 @@ func TestChainedSnapshotErrors(t *testing.T) {
 	ns1 := e1.GetQualified("some-ns")
 
 	sym1 := data.Local("was-unbound-but-resolved")
-	ns1.Declare(sym1)
-	e, ok := ns1.Resolve(sym1)
-	as.True(ok)
+	e := ns1.Declare(sym1)
+	as.IsNotBound(ns1, sym1)
 
 	e2, err := e1.Snapshot()
 	as.Nil(e2)
 	as.EqualError(err, fmt.Sprintf(env.ErrSnapshotIncomplete, sym1))
 
-	e.Bind(data.True)
+	as.Nil(e.Bind(data.True))
 	e2, err = e1.Snapshot()
 	as.NotNil(e2)
 	as.Nil(err)
 
 	sym2 := data.Local("also-unbound-but-resolved")
 	root.Declare(sym2)
-	_, ok = root.Resolve(sym2)
-	as.True(ok)
+	as.IsNotBound(root, sym2)
 
 	_, err = ns1.Snapshot(env.NewEnvironment())
 	as.EqualError(err, fmt.Sprintf(env.ErrSnapshotIncomplete, sym2))

@@ -1,6 +1,7 @@
 package env
 
 import (
+	"fmt"
 	"sync"
 
 	"github.com/kode4food/ale/pkg/data"
@@ -14,7 +15,7 @@ type (
 		Declared() data.Locals
 		Declare(data.Local) Entry
 		Private(data.Local) Entry
-		Resolve(data.Local) (Entry, bool)
+		Resolve(data.Local) (Entry, error)
 		Snapshot(*Environment) (Namespace, error)
 	}
 
@@ -76,15 +77,15 @@ func (ns *namespace) declare(n data.Local) *entry {
 	return e
 }
 
-func (ns *namespace) Resolve(n data.Local) (Entry, bool) {
+func (ns *namespace) Resolve(n data.Local) (Entry, error) {
 	ns.RLock()
 	if e, ok := ns.entries[n]; ok {
 		e.markResolved()
 		ns.RUnlock()
-		return e, true
+		return e, nil
 	}
 	ns.RUnlock()
-	return nil, false
+	return nil, fmt.Errorf(ErrSymbolNotDeclared, n)
 }
 
 func (ns *namespace) Snapshot(e *Environment) (Namespace, error) {
@@ -106,9 +107,9 @@ func (ns *namespace) Snapshot(e *Environment) (Namespace, error) {
 	return res, nil
 }
 
-func resolvePublic(from, in Namespace, n data.Local) (Entry, bool) {
-	if e, ok := in.Resolve(n); ok && (from == in || !e.IsPrivate()) {
-		return e, ok
+func resolvePublic(from, in Namespace, n data.Local) (Entry, error) {
+	if e, err := in.Resolve(n); err == nil && (from == in || !e.IsPrivate()) {
+		return e, nil
 	}
-	return nil, false
+	return nil, fmt.Errorf(ErrSymbolNotDeclared, n)
 }

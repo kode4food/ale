@@ -33,10 +33,8 @@ func TestBuiltInUse(t *testing.T) {
 
 	repl := main.NewREPL()
 	ns1 := repl.GetNS()
-	e, ok := ns1.Resolve("use")
-	as.True(ok && e.IsBound())
-	as.NotNil(e.Value())
-	use := asEncoder(t, e.Value())
+	v := as.IsBound(ns1, "use")
+	use := asEncoder(t, v)
 	nsName := LS("test-ns")
 	use(encoder.NewEncoder(ns1), nsName)
 

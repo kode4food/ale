@@ -15,21 +15,21 @@ func TestResolveSymbol(t *testing.T) {
 
 	e := env.NewEnvironment()
 	root := e.GetRoot()
-	root.Declare("public-parent").Bind(data.True)
-	root.Private("private-parent").Bind(data.True)
+	as.Nil(root.Declare("public-parent").Bind(data.True))
+	as.Nil(root.Private("private-parent").Bind(data.True))
 
 	ns := e.GetAnonymous()
-	ns.Declare("public-child").Bind(data.True)
-	ns.Private("private-child").Bind(data.True)
+	as.Nil(ns.Declare("public-child").Bind(data.True))
+	as.Nil(ns.Private("private-child").Bind(data.True))
 
-	_, ok := env.ResolveSymbol(ns, LS("public-child"))
-	as.True(ok)
+	_, err := env.ResolveSymbol(ns, LS("public-child"))
+	as.Nil(err)
 
 	ent := env.MustResolveSymbol(ns, LS("private-child"))
 	as.NotNil(ent)
 
-	_, ok = env.ResolveSymbol(ns, LS("public-parent"))
-	as.True(ok)
+	_, err = env.ResolveSymbol(ns, LS("public-parent"))
+	as.Nil(err)
 
 	ls := LS("private-parent")
 	defer as.ExpectPanic(fmt.Errorf(env.ErrSymbolNotDeclared, ls))
@@ -41,25 +41,24 @@ func TestResolveValue(t *testing.T) {
 
 	e := env.NewEnvironment()
 	root := e.GetRoot()
-	root.Declare("public-parent").Bind(data.True)
-	root.Private("private-parent").Bind(data.True)
+	as.Nil(root.Declare("public-parent").Bind(data.True))
+	as.Nil(root.Private("private-parent").Bind(data.True))
 
 	ns := e.GetAnonymous()
-	ns.Declare("public-child").Bind(data.True)
-	ns.Private("private-child").Bind(data.True)
+	as.Nil(ns.Declare("public-child").Bind(data.True))
+	as.Nil(ns.Private("private-child").Bind(data.True))
 
-	res, ok := env.ResolveValue(ns, LS("public-child"))
+	res, err := env.ResolveValue(ns, LS("public-child"))
 	as.True(res)
-	as.True(ok)
+	as.Nil(err)
 
-	res = env.MustResolveValue(ns, LS("private-child"))
+	as.True(env.MustResolveValue(ns, LS("private-child")))
+	res, err = env.ResolveValue(ns, LS("public-parent"))
 	as.True(res)
-
-	_, ok = env.ResolveValue(ns, LS("public-parent"))
-	as.True(ok)
+	as.Nil(err)
 
 	ls := LS("private-parent")
-	defer as.ExpectPanic(fmt.Errorf(env.ErrSymbolNotBound, ls))
+	defer as.ExpectPanic(fmt.Errorf(env.ErrSymbolNotDeclared, ls))
 	env.MustResolveValue(ns, ls)
 }
 

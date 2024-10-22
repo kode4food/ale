@@ -1,7 +1,6 @@
 package env
 
 import (
-	"fmt"
 	"sync"
 
 	"github.com/kode4food/ale/pkg/data"
@@ -124,7 +123,7 @@ func (e *Environment) GetQualified(n data.Local) Namespace {
 // ResolveSymbol attempts to resolve a symbol. If it's a qualified symbol, it
 // will be retrieved directly from the identified namespace. Otherwise, it will
 // be searched in the current namespace
-func ResolveSymbol(ns Namespace, s data.Symbol) (Entry, bool) {
+func ResolveSymbol(ns Namespace, s data.Symbol) (Entry, error) {
 	if q, ok := s.(data.Qualified); ok {
 		e := ns.Environment()
 		qns := e.GetQualified(q.Domain())
@@ -135,24 +134,27 @@ func ResolveSymbol(ns Namespace, s data.Symbol) (Entry, bool) {
 
 // MustResolveSymbol attempts to resolve a symbol or explodes violently
 func MustResolveSymbol(ns Namespace, s data.Symbol) Entry {
-	if entry, ok := ResolveSymbol(ns, s); ok {
-		return entry
+	entry, err := ResolveSymbol(ns, s)
+	if err != nil {
+		panic(err)
 	}
-	panic(fmt.Errorf(ErrSymbolNotDeclared, s.Name()))
+	return entry
 }
 
 // ResolveValue attempts to resolve a symbol to a bound value
-func ResolveValue(ns Namespace, s data.Symbol) (data.Value, bool) {
-	if e, ok := ResolveSymbol(ns, s); ok && e.IsBound() {
-		return e.Value(), true
+func ResolveValue(ns Namespace, s data.Symbol) (data.Value, error) {
+	e, err := ResolveSymbol(ns, s)
+	if err != nil {
+		return nil, err
 	}
-	return data.Null, false
+	return e.Value()
 }
 
 // MustResolveValue attempts to resolve a value or explodes violently
 func MustResolveValue(ns Namespace, s data.Symbol) data.Value {
-	if v, ok := ResolveValue(ns, s); ok {
-		return v
+	v, err := ResolveValue(ns, s)
+	if err != nil {
+		panic(err)
 	}
-	panic(fmt.Errorf(ErrSymbolNotBound, s))
+	return v
 }

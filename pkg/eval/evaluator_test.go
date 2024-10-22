@@ -27,9 +27,7 @@ func TestBasicEval(t *testing.T) {
 	as.Number(1, v3)
 
 	eval.String(ns, "(define x 99)")
-	x, ok := ns.Resolve("x")
-	as.True(ok && x.IsBound())
-	as.Number(99, x.Value())
+	as.Number(99, as.IsBound(ns, "x"))
 
 	v4 := eval.String(ns, "(and true true)")
 	as.True(v4)
@@ -42,11 +40,11 @@ func TestBuiltIns(t *testing.T) {
 	b := e.GetAnonymous()
 	ns := e.GetRoot()
 
-	ns.Declare("hello").Bind(
+	as.Nil(ns.Declare("hello").Bind(
 		data.MakeProcedure(func(...data.Value) data.Value {
 			return S("there")
 		}, 0),
-	)
+	))
 
 	tr := read.FromString(`(hello)`)
 	as.String("there", eval.Block(b, tr))
