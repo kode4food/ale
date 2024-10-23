@@ -77,27 +77,36 @@ func newParser(lexer data.Sequence) *parser {
 	}
 }
 
-func (r *parser) nextValue() (data.Value, bool) {
-	if t := r.nextToken(); t != nil {
-		return r.value(t), true
+func (r *parser) nextValue() (data.Value, bool, error) {
+	t, err := r.nextToken()
+	if err != nil {
+		return nil, false, err
 	}
-	return nil, false
+	if t != nil {
+		v, err := r.value(t)
+		if err != nil {
+			return nil, false, err
+
+		}
+		return v, true, nil
+	}
+	return nil, false, nil
 }
 
-func (r *parser) nextToken() *lex.Token {
+func (r *parser) nextToken() (*lex.Token, error) {
 	token, seq, ok := r.seq.Split()
 	if !ok {
-		return nil
+		return nil, nil
 	}
 	r.token = token.(*lex.Token)
 	r.seq = seq
 	if r.token.Type() == lex.Error {
-		panic(r.error(data.ToString(r.token.Value())))
+		return nil, r.error(data.ToString(r.token.Value()))
 	}
-	return r.token
+	return r.token, nil
 }
 
-func (r *parser) value(t *lex.Token) data.Value {
+func (r *parser) value(t *lex.Token) (data.Value, error) {
 	switch t.Type() {
 	case lex.QuoteMarker:
 		return r.prefixed(quoteSym)
@@ -114,78 +123,103 @@ func (r *parser) value(t *lex.Token) data.Value {
 	case lex.ObjectStart:
 		return r.object()
 	case lex.Keyword:
-		return r.keyword()
+		return r.keyword(), nil
 	case lex.Identifier:
 		return r.identifier()
 	case lex.ListEnd:
-		panic(r.error(ErrUnmatchedListEnd))
+		return nil, r.error(ErrUnmatchedListEnd)
 	case lex.VectorEnd:
-		panic(r.error(ErrUnmatchedVectorEnd))
+		return nil, r.error(ErrUnmatchedVectorEnd)
 	case lex.ObjectEnd:
-		panic(r.error(ErrUnmatchedObjectEnd))
+		return nil, r.error(ErrUnmatchedObjectEnd)
 	case lex.Dot:
-		panic(r.error(ErrUnexpectedDot))
+		return nil, r.error(ErrUnexpectedDot)
 	default:
-		return t.Value()
+		return t.Value(), nil
 	}
 }
 
-func (r *parser) prefixed(s data.Symbol) data.Value {
-	if v, ok := r.nextValue(); ok {
-		return data.NewList(s, v)
+func (r *parser) prefixed(s data.Symbol) (data.Value, error) {
+	v, ok, err := r.nextValue()
+	if err != nil {
+		return nil, err
 	}
-	panic(r.errorf(ErrPrefixedNotPaired, s))
+	if ok {
+		return data.NewList(s, v), nil
+	}
+	return nil, r.errorf(ErrPrefixedNotPaired, s)
 }
 
-func (r *parser) list() data.Value {
+func (r *parser) list() (data.Value, error) {
 	res := data.Vector{}
 	var sawDotAt = -1
-	for t, i := r.nextToken(), 0; t != nil; t, i = r.nextToken(), i+1 {
+	for pos := 0; ; pos++ {
+		t, err := r.nextToken()
+		if err != nil {
+			return nil, err
+		}
+		if t == nil {
+			break
+		}
 		switch t.Type() {
 		case lex.Dot:
-			if i == 0 || sawDotAt != -1 {
-				panic(r.error(ErrInvalidListSyntax))
+			if pos == 0 || sawDotAt != -1 {
+				return nil, r.error(ErrInvalidListSyntax)
 			}
-			sawDotAt = i
+			sawDotAt = pos
 		case lex.ListEnd:
 			if sawDotAt == -1 {
-				return data.NewList(res...)
+				return data.NewList(res...), nil
 			} else if sawDotAt != len(res)-1 {
-				panic(r.error(ErrInvalidListSyntax))
+				return nil, r.error(ErrInvalidListSyntax)
 			}
-			return makeDottedList(res...)
+			return makeDottedList(res...), nil
 		default:
-			res = append(res, r.value(t))
+			v, err := r.value(t)
+			if err != nil {
+				return nil, err
+			}
+			res = append(res, v)
 		}
 	}
-	panic(r.error(ErrListNotClosed))
+	return nil, r.error(ErrListNotClosed)
 }
 
-func (r *parser) vector() data.Value {
+func (r *parser) vector() (data.Value, error) {
 	return r.nonDotted(lex.VectorEnd)
 }
 
-func (r *parser) object() data.Value {
-	v := r.nonDotted(lex.ObjectEnd)
+func (r *parser) object() (data.Value, error) {
+	v, err := r.nonDotted(lex.ObjectEnd)
+	if err != nil {
+		return nil, err
+	}
 	res, err := data.ValuesToObject(v...)
 	if err != nil {
-		panic(r.maybeWrap(err))
+		return nil, r.maybeWrap(err)
 	}
-	return res
+	return res, nil
 }
 
-func (r *parser) nonDotted(endToken lex.TokenType) data.Vector {
+func (r *parser) nonDotted(endToken lex.TokenType) (data.Vector, error) {
 	res := data.Vector{}
 	for {
-		t := r.nextToken()
+		t, err := r.nextToken()
+		if err != nil {
+			return nil, err
+		}
 		if t == nil {
-			panic(r.error(collectionErrors[endToken]))
+			return nil, r.error(collectionErrors[endToken])
 		}
 		switch t.Type() {
 		case endToken:
-			return res
+			return res, nil
 		default:
-			res = append(res, r.value(t))
+			v, err := r.value(t)
+			if err != nil {
+				return nil, err
+			}
+			res = append(res, v)
 		}
 	}
 }
@@ -210,17 +244,17 @@ func (r *parser) keyword() data.Value {
 	return data.Keyword(n[1:])
 }
 
-func (r *parser) identifier() data.Value {
+func (r *parser) identifier() (data.Value, error) {
 	n := r.token.Value().(data.String)
 	if v, ok := specialNames[n]; ok {
-		return v
+		return v, nil
 	}
 
 	sym, err := data.ParseSymbol(n)
 	if err != nil {
-		panic(r.maybeWrap(err))
+		return nil, r.maybeWrap(err)
 	}
-	return sym
+	return sym, nil
 }
 
 func makeDottedList(v ...data.Value) data.Value {

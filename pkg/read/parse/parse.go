@@ -12,7 +12,11 @@ func FromLexer(lexer data.Sequence) data.Sequence {
 	r := newParser(lex.StripWhitespace(lexer))
 
 	res = func() (data.Value, data.Sequence, bool) {
-		if f, ok := r.nextValue(); ok {
+		f, ok, err := r.nextValue()
+		if err != nil {
+			panic(err)
+		}
+		if ok {
 			return f, sequence.NewLazy(res), true
 		}
 		return data.Null, data.Null, false
