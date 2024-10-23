@@ -3,6 +3,7 @@ package docstring
 import (
 	"fmt"
 
+	"github.com/kode4food/ale/internal/debug"
 	"github.com/kode4food/ale/internal/do"
 	"github.com/kode4food/ale/internal/markdown"
 	"github.com/kode4food/comb/basics"
@@ -47,7 +48,10 @@ func ensureDocStringCache() {
 	docStringCacheOnce(func() {
 		for _, filename := range assetNames() {
 			doc, _ := getAsset(filename)
-			meta := markdown.ParseHeader(string(doc))
+			meta, err := markdown.ParseHeader(string(doc))
+			if err != nil {
+				panic(debug.ProgrammerError(err.Error()))
+			}
 			if names := meta.Names; len(names) > 0 {
 				for _, name := range names {
 					docStringCache[name] = doc

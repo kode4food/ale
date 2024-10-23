@@ -53,9 +53,12 @@ var (
 )
 
 // FormatMarkdown formats a markdown asset for REPL display
-func FormatMarkdown(s string) string {
+func FormatMarkdown(s string) (string, error) {
 	doc := strings.TrimSpace(s)
-	header, lines := Parse(doc)
+	header, lines, err := Parse(doc)
+	if err != nil {
+		return "", err
+	}
 
 	var pre []string
 	if desc := header.Description; desc != "" {
@@ -71,7 +74,7 @@ func FormatMarkdown(s string) string {
 	lines = formatCode(lines)
 	lines = formatLines(lines)
 	res := strings.Join(lines, "\n")
-	return formatContent(res)
+	return formatContent(res), nil
 }
 
 func formatCode(lines []string) []string {

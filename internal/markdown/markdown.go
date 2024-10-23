@@ -19,16 +19,19 @@ type Header struct {
 // Parse parses the kind of Markdown document that might be processed by a
 // static site generator. It will parse any prologue parameters into the
 // resulting object and return the remaining content as individual lines
-func Parse(doc string) (*Header, []string) {
-	obj, rest := parseDocument(doc)
-	return obj, skipEmptyLines(rest)
+func Parse(doc string) (*Header, []string, error) {
+	obj, rest, err := parseDocument(doc)
+	if err != nil {
+		return nil, nil, err
+	}
+	return obj, skipEmptyLines(rest), nil
 }
 
 // ParseHeader parses the header of a Markdown document that might be processed
 // by a static site generator, returning the prologue parameters as a Header
-func ParseHeader(doc string) *Header {
-	res, _ := parseDocument(doc)
-	return res
+func ParseHeader(doc string) (*Header, error) {
+	res, _, err := parseDocument(doc)
+	return res, err
 }
 
 func skipEmptyLines(lines []string) []string {
@@ -39,10 +42,10 @@ func skipEmptyLines(lines []string) []string {
 	return lines[first:]
 }
 
-func parseDocument(doc string) (*Header, []string) {
+func parseDocument(doc string) (*Header, []string, error) {
 	lines := strings.Split(doc, "\n")
 	if strings.TrimSpace(lines[0]) != "---" {
-		return nil, lines
+		return nil, lines, nil
 	}
 
 	lines = lines[1:]
@@ -56,13 +59,17 @@ func parseDocument(doc string) (*Header, []string) {
 
 	head := lines[:rest-1]
 	y := strings.Join(head, "\n")
-	return parseHeader(y), lines[rest:]
+	res, err := parseHeader(y)
+	if err != nil {
+		return nil, nil, err
+	}
+	return res, lines[rest:], nil
 }
 
-func parseHeader(b string) *Header {
+func parseHeader(b string) (*Header, error) {
 	m := new(Header)
 	if err := yaml.Unmarshal([]byte(b), &m); err != nil {
-		panic(err)
+		return nil, err
 	}
-	return m
+	return m, nil
 }

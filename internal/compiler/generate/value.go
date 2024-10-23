@@ -33,14 +33,22 @@ func Value(e encoder.Encoder, v data.Value) error {
 
 // Pair encodes a pair
 func Pair(e encoder.Encoder, c data.Pair) error {
-	f := resolveBuiltIn(e, consSym)
+	f, err := resolveBuiltIn(e, consSym)
+	if err != nil {
+		return err
+	}
 	args := data.Vector{c.Car(), c.Cdr()}
 	return callStatic(e, f, args)
 }
 
-func resolveBuiltIn(e encoder.Encoder, sym data.Symbol) data.Procedure {
+func resolveBuiltIn(
+	e encoder.Encoder, sym data.Symbol,
+) (data.Procedure, error) {
 	ge := e.Globals().Environment()
 	root := ge.GetRoot()
-	res := env.MustResolveValue(root, sym)
-	return res.(data.Procedure)
+	res, err := env.ResolveValue(root, sym)
+	if err != nil {
+		return nil, err
+	}
+	return res.(data.Procedure), nil
 }

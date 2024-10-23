@@ -50,7 +50,10 @@ func Sequence(e encoder.Encoder, s data.Sequence) error {
 
 // Vector encodes a vector
 func Vector(e encoder.Encoder, v data.Vector) error {
-	f := resolveBuiltIn(e, vectorSym)
+	f, err := resolveBuiltIn(e, vectorSym)
+	if err != nil {
+		return err
+	}
 	return callStatic(e, f, v)
 }
 
@@ -61,6 +64,9 @@ func Object(e encoder.Encoder, a *data.Object) error {
 		v := f.(data.Pair)
 		args = append(args, v.Car(), v.Cdr())
 	}
-	f := resolveBuiltIn(e, objectSym)
+	f, err := resolveBuiltIn(e, objectSym)
+	if err != nil {
+		return err
+	}
 	return callStatic(e, f, args)
 }

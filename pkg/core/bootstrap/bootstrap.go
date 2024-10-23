@@ -4,6 +4,7 @@ import (
 	"os"
 
 	"github.com/kode4food/ale/internal/compiler/special"
+	"github.com/kode4food/ale/internal/debug"
 	"github.com/kode4food/ale/internal/do"
 	"github.com/kode4food/ale/internal/stream"
 	"github.com/kode4food/ale/pkg/core/builtin"
@@ -92,7 +93,7 @@ func TopLevelEnvironment() *env.Environment {
 	})
 	res, err := topLevel.Snapshot()
 	if err != nil {
-		panic(err)
+		panic(debug.ProgrammerError(err.Error()))
 	}
 	return res
 }
@@ -108,7 +109,7 @@ func DevNullEnvironment() *env.Environment {
 	})
 	res, err := devNull.Snapshot()
 	if err != nil {
-		panic(err)
+		panic(debug.ProgrammerError(err.Error()))
 	}
 	return res
 }

@@ -61,7 +61,11 @@ func resolveLocal(
 }
 
 func resolveGlobal(e encoder.Encoder, s data.Symbol) error {
-	if entry := env.MustResolveSymbol(e.Globals(), s); entry.IsBound() {
+	entry, err := env.ResolveSymbol(e.Globals(), s)
+	if err != nil {
+		return err
+	}
+	if entry.IsBound() {
 		v, _ := entry.Value()
 		return Literal(e, v)
 	}

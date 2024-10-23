@@ -79,7 +79,7 @@ func NewREPL() *REPL {
 		AutoComplete:           repl,
 	})
 	if err != nil {
-		panic(err)
+		panic(debug.ProgrammerError(err.Error()))
 	}
 
 	repl.rl = rl
@@ -307,8 +307,11 @@ func cls(...data.Value) data.Value {
 	return nothing
 }
 
-func formatForREPL(s string) string {
-	md := markdown.FormatMarkdown(s)
+func formatForREPL(s string) (string, error) {
+	md, err := markdown.FormatMarkdown(s)
+	if err != nil {
+		return "", err
+	}
 	lines := strings.Split(md, "\n")
 	var out []string
 	out = append(out, "")
@@ -320,7 +323,7 @@ func formatForREPL(s string) string {
 		}
 	}
 	out = append(out, "")
-	return strings.Join(out, "\n")
+	return strings.Join(out, "\n"), nil
 }
 
 func help(...data.Value) data.Value {
@@ -328,7 +331,11 @@ func help(...data.Value) data.Value {
 	if err != nil {
 		panic(debug.ProgrammerError(err.Error()))
 	}
-	fmt.Println(formatForREPL(md))
+	out, err := formatForREPL(md)
+	if err != nil {
+		panic(debug.ProgrammerError(err.Error()))
+	}
+	fmt.Println(out)
 	return nothing
 }
 
@@ -349,16 +356,22 @@ func docSymbol(sym data.Symbol) {
 		return
 	}
 	docStr := docstring.MustGet(name)
-	f := formatForREPL(docStr)
-	fmt.Println(f)
+	out, err := formatForREPL(docStr)
+	if err != nil {
+		panic(debug.ProgrammerError(err.Error()))
+	}
+	fmt.Println(out)
 }
 
 func docSymbolList() {
 	names := docstring.Names()
 	names = escapeNames(names)
 	joined := strings.Join(names, ", ")
-	f := formatForREPL(fmt.Sprintf(docTemplate, joined))
-	fmt.Println(f)
+	out, err := formatForREPL(fmt.Sprintf(docTemplate, joined))
+	if err != nil {
+		panic(debug.ProgrammerError(err.Error()))
+	}
+	fmt.Println(out)
 }
 
 var escapeNames = slices.Map(func(n string) string {
