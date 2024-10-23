@@ -44,15 +44,6 @@ func ParseFloat(s string) (Number, error) {
 	return Float(res), nil
 }
 
-// MustParseFloat forcefully parses a string representing a float
-func MustParseFloat(s string) Number {
-	res, err := ParseFloat(s)
-	if err != nil {
-		panic(err)
-	}
-	return res
-}
-
 // Cmp compares this Float to another Number
 func (l Float) Cmp(r Number) Comparison {
 	if math.IsNaN(float64(l)) {
@@ -163,15 +154,6 @@ func ParseRatio(s string) (Number, error) {
 		return maybeWhole(res), nil
 	}
 	return nil, fmt.Errorf(ErrExpectedRatio, s)
-}
-
-// MustParseRatio forcefully parses a string representing a ratio
-func MustParseRatio(s string) Number {
-	res, err := ParseRatio(s)
-	if err != nil {
-		panic(err)
-	}
-	return res
 }
 
 // Cmp compares this Ratio to another Number

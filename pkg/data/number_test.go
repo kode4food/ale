@@ -11,37 +11,61 @@ import (
 	"github.com/kode4food/ale/pkg/data"
 )
 
+func mustParseInteger(s string) data.Number {
+	res, err := data.ParseInteger(s)
+	if err != nil {
+		panic(err)
+	}
+	return res
+}
+
+func mustParseFloat(s string) data.Number {
+	res, err := data.ParseFloat(s)
+	if err != nil {
+		panic(err)
+	}
+	return res
+}
+
+func mustParseRatio(s string) data.Number {
+	res, err := data.ParseRatio(s)
+	if err != nil {
+		panic(err)
+	}
+	return res
+}
+
 func TestParseFloat(t *testing.T) {
 	as := assert.New(t)
 
-	n1 := data.MustParseFloat("12.8")
+	n1 := mustParseFloat("12.8")
 	n2 := data.Float(12.8)
 	as.Equal(n1, n2)
 
-	defer as.ExpectPanic(fmt.Errorf(data.ErrExpectedFloat, S(`'splosion!`)))
-	data.MustParseFloat("'splosion!")
+	_, err := data.ParseFloat("'splosion!")
+	as.EqualError(err, fmt.Sprintf(data.ErrExpectedFloat, S(`'splosion!`)))
 }
 
 func TestParseInteger(t *testing.T) {
 	as := assert.New(t)
 
-	n1 := data.MustParseInteger("37")
+	n1 := mustParseInteger("37")
 	n2 := data.Integer(37)
 	as.Equal(n1, n2)
 
-	defer as.ExpectPanic(fmt.Errorf(data.ErrExpectedInteger, S(`'splosion!`)))
-	data.MustParseInteger("'splosion!")
+	_, err := data.ParseInteger("'splosion!")
+	as.EqualError(err, fmt.Sprintf(data.ErrExpectedInteger, S(`'splosion!`)))
 }
 
 func TestParseRatio(t *testing.T) {
 	as := assert.New(t)
 
-	n1 := data.MustParseRatio("1/2")
-	n2 := data.MustParseFloat("0.5")
+	n1 := mustParseRatio("1/2")
+	n2 := mustParseFloat("0.5")
 	as.True(n1.Cmp(n2) == data.EqualTo)
 
-	defer as.ExpectPanic(fmt.Errorf(data.ErrExpectedRatio, S(`'splosion!`)))
-	data.MustParseRatio("'splosion!")
+	_, err := data.ParseRatio("'splosion!")
+	as.EqualError(err, fmt.Sprintf(data.ErrExpectedRatio, S(`'splosion!`)))
 }
 
 func TestEqualTo(t *testing.T) {
@@ -49,8 +73,8 @@ func TestEqualTo(t *testing.T) {
 	n1 := data.Integer(20)
 	n2 := data.Float(20.0)
 	n3 := data.Float(25.75)
-	n4 := data.MustParseRatio("40/2")
-	n5 := data.MustParseRatio("5/2")
+	n4 := mustParseRatio("40/2")
+	n5 := mustParseRatio("5/2")
 
 	as.Compare(data.EqualTo, n1, n1)
 	as.Compare(data.EqualTo, n3, n3)
@@ -61,7 +85,7 @@ func TestEqualTo(t *testing.T) {
 	as.Compare(data.EqualTo, n2, n4)
 	as.Compare(data.EqualTo, n1, n4)
 
-	as.Compare(data.EqualTo, n5, data.MustParseRatio("5/2"))
+	as.Compare(data.EqualTo, n5, mustParseRatio("5/2"))
 }
 
 func TestNumberEqual(t *testing.T) {
@@ -69,15 +93,15 @@ func TestNumberEqual(t *testing.T) {
 	n1 := data.Integer(20)
 	n2 := data.Float(20.0)
 	n3 := data.Float(25.75)
-	n4 := data.MustParseRatio("40/2")
-	n5 := data.MustParseRatio("5/2")
-	n6 := data.MustParseInteger("100000000000000000000000000000000000000000000")
+	n4 := mustParseRatio("40/2")
+	n5 := mustParseRatio("5/2")
+	n6 := mustParseInteger("100000000000000000000000000000000000000000000")
 
 	as.True(n1.Equal(n1))
 	as.True(n1.Equal(n4))
 	as.True(n3.Equal(n3))
 	as.True(n5.Equal(n5))
-	as.True(n5.Equal(data.MustParseRatio("5/2")))
+	as.True(n5.Equal(mustParseRatio("5/2")))
 	as.True(n6.Equal(n6))
 
 	as.False(n1.Equal(n2))
@@ -88,13 +112,13 @@ func TestNumberEqual(t *testing.T) {
 
 func TestLessThan(t *testing.T) {
 	as := assert.New(t)
-	n1 := data.MustParseFloat("12.8")
+	n1 := mustParseFloat("12.8")
 	n2 := data.Float(12.9)
 	n3 := data.Integer(20)
 	n4 := data.Float(20.0)
 	n5 := data.Float(25.75)
 	n6 := data.Integer(25)
-	n7 := data.MustParseRatio("3/4")
+	n7 := mustParseRatio("3/4")
 
 	as.Compare(data.LessThan, n1, n2)
 	as.Compare(data.LessThan, n1, n3)
@@ -107,13 +131,13 @@ func TestLessThan(t *testing.T) {
 
 func TestGreaterThan(t *testing.T) {
 	as := assert.New(t)
-	n1 := data.MustParseFloat("12.8")
+	n1 := mustParseFloat("12.8")
 	n2 := data.Float(12.9)
 	n3 := data.Integer(20)
 	n4 := data.Float(20.0)
 	n5 := data.Float(25.75)
 	n6 := data.Integer(25)
-	n7 := data.MustParseInteger("100000000000000000000000000000000000000000000")
+	n7 := mustParseInteger("100000000000000000000000000000000000000000000")
 
 	as.Compare(data.GreaterThan, n2, n1)
 	as.Compare(data.GreaterThan, n3, n1)
@@ -131,9 +155,9 @@ func TestMultiplication(t *testing.T) {
 	n3 := data.Integer(5)
 	n4 := data.Float(5.0)
 	n5 := data.Float(9.25)
-	n6 := data.MustParseRatio("1/2")
-	n7 := data.MustParseInteger("1000000000000000000000000000000000000000000")
-	n8 := data.MustParseRatio("1/5")
+	n6 := mustParseRatio("1/2")
+	n7 := mustParseInteger("1000000000000000000000000000000000000000000")
+	n8 := mustParseRatio("1/5")
 
 	as.Number(100.0, n1.Mul(n4))
 	as.Number(100.0, n2.Mul(n3))
@@ -152,8 +176,8 @@ func TestDivision(t *testing.T) {
 	n2 := data.Float(20.0)
 	n3 := data.Integer(5)
 	n4 := data.Float(5.0)
-	n5 := data.MustParseRatio("1/2")
-	n6 := data.MustParseInteger("1000000000000000000000000000000000000000000")
+	n5 := mustParseRatio("1/2")
+	n6 := mustParseInteger("1000000000000000000000000000000000000000000")
 
 	as.Number(4.0, n1.Div(n4))
 	as.Number(4.0, n2.Div(n3))
@@ -170,10 +194,10 @@ func TestRemainder(t *testing.T) {
 	n2 := data.Float(5.0)
 	n3 := data.Integer(7)
 	n4 := data.Float(7.0)
-	n5 := data.MustParseRatio("14/2")
-	n6 := data.MustParseInteger("1000000000000000000000000000000000000000000")
-	n7 := data.MustParseRatio("15/2")
-	n8 := data.MustParseRatio("7/2")
+	n5 := mustParseRatio("14/2")
+	n6 := mustParseInteger("1000000000000000000000000000000000000000000")
+	n7 := mustParseRatio("15/2")
+	n8 := mustParseRatio("7/2")
 	n9 := data.Integer(-20)
 
 	as.Number(2.0, n3.Mod(n2))
@@ -194,8 +218,8 @@ func TestAddition(t *testing.T) {
 	n2 := data.Integer(5)
 	n3 := data.Float(9.25)
 	n4 := data.Float(7.0)
-	n5 := data.MustParseRatio("14/2")
-	n6 := data.MustParseInteger("1000000000000000000000000000000000000000000")
+	n5 := mustParseRatio("14/2")
+	n6 := mustParseInteger("1000000000000000000000000000000000000000000")
 
 	as.Number(16.25, n3.Add(n4))
 	as.Number(29.25, n1.Add(n3))
@@ -214,9 +238,9 @@ func TestSubtraction(t *testing.T) {
 	n4 := data.Float(5.0)
 	n5 := data.Float(9.25)
 	n6 := data.Float(7.0)
-	n7 := data.MustParseRatio("14/2")
-	n8 := data.MustParseInteger("1000000000000000000000000000000000000000000")
-	n9 := data.MustParseRatio("1/5")
+	n7 := mustParseRatio("14/2")
+	n8 := mustParseInteger("1000000000000000000000000000000000000000000")
+	n9 := mustParseRatio("1/5")
 
 	as.Number(-15.0, n4.Sub(n1))
 	as.Number(15.0, n1.Sub(n4))
@@ -268,7 +292,7 @@ func TestNonNumbers(t *testing.T) {
 
 func TestStringifyNumbers(t *testing.T) {
 	as := assert.New(t)
-	n1 := data.MustParseFloat("12.8")
+	n1 := mustParseFloat("12.8")
 	n2 := data.Float(12.9)
 	n3 := data.Float(20)
 
@@ -280,10 +304,10 @@ func TestStringifyNumbers(t *testing.T) {
 func TestPurify(t *testing.T) {
 	as := assert.New(t)
 
-	n1 := data.MustParseFloat("0.5")
-	n2 := data.MustParseInteger("99999999999999999999999999999999999999999")
-	n3 := data.MustParseInteger("1")
-	n4 := data.MustParseRatio("1/2")
+	n1 := mustParseFloat("0.5")
+	n2 := mustParseInteger("99999999999999999999999999999999999999999")
+	n3 := mustParseInteger("1")
+	n4 := mustParseRatio("1/2")
 
 	as.String("1.5", n1.Add(n3))
 	as.String("1.0", n1.Add(n4))
@@ -356,10 +380,10 @@ func TestIntegerDemotion(t *testing.T) {
 func TestNumberHashing(t *testing.T) {
 	as := assert.New(t)
 
-	n1 := data.MustParseFloat("0.5")
-	n2 := data.MustParseInteger("99999999999999999999999999999999999999999")
-	n3 := data.MustParseInteger("1")
-	n4 := data.MustParseRatio("1/2")
+	n1 := mustParseFloat("0.5")
+	n2 := mustParseInteger("99999999999999999999999999999999999999999")
+	n3 := mustParseInteger("1")
+	n4 := mustParseRatio("1/2")
 
 	o := O(
 		C(n1, data.True),
@@ -395,10 +419,10 @@ func testNumberChecks(as *assert.Wrapper, n data.Number) {
 func TestNumberChecks(t *testing.T) {
 	as := assert.New(t)
 
-	n1 := data.MustParseFloat("0.5")
-	n2 := data.MustParseInteger("99999999999999999999999999999999999999999")
-	n3 := data.MustParseInteger("1")
-	n4 := data.MustParseRatio("1/2")
+	n1 := mustParseFloat("0.5")
+	n2 := mustParseInteger("99999999999999999999999999999999999999999")
+	n3 := mustParseInteger("1")
+	n4 := mustParseRatio("1/2")
 
 	testNumberChecks(as, n1)
 	testNumberChecks(as, n2)

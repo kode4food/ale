@@ -53,7 +53,11 @@ func O(p ...data.Pair) *data.Object {
 
 // R constructs a Ratio
 func R(num, den int64) data.Number {
-	return data.MustParseRatio(fmt.Sprintf("%d/%d", num, den))
+	res, err := data.ParseRatio(fmt.Sprintf("%d/%d", num, den))
+	if err != nil {
+		panic(err)
+	}
+	return res
 }
 
 // S constructs a String

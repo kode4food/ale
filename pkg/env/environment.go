@@ -132,15 +132,6 @@ func ResolveSymbol(ns Namespace, s data.Symbol) (Entry, error) {
 	return ns.Resolve(s.Name())
 }
 
-// MustResolveSymbol attempts to resolve a symbol or explodes violently
-func MustResolveSymbol(ns Namespace, s data.Symbol) Entry {
-	entry, err := ResolveSymbol(ns, s)
-	if err != nil {
-		panic(err)
-	}
-	return entry
-}
-
 // ResolveValue attempts to resolve a symbol to a bound value
 func ResolveValue(ns Namespace, s data.Symbol) (data.Value, error) {
 	e, err := ResolveSymbol(ns, s)

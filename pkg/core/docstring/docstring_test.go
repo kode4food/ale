@@ -34,7 +34,9 @@ func TestDocumentedBuiltinsExist(t *testing.T) {
 		if strings.Contains(d, "draft: true") {
 			continue
 		}
-		as.NotNil(env.MustResolveSymbol(ns, LS(name)))
+		res, err := env.ResolveSymbol(ns, LS(name))
+		as.NotNil(res)
+		as.Nil(err)
 	}
 }
 

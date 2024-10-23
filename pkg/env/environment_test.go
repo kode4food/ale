@@ -10,6 +10,14 @@ import (
 	"github.com/kode4food/ale/pkg/env"
 )
 
+func mustResolveSymbol(ns env.Namespace, s data.Symbol) env.Entry {
+	entry, err := env.ResolveSymbol(ns, s)
+	if err != nil {
+		panic(err)
+	}
+	return entry
+}
+
 func TestResolveSymbol(t *testing.T) {
 	as := assert.New(t)
 
@@ -25,7 +33,7 @@ func TestResolveSymbol(t *testing.T) {
 	_, err := env.ResolveSymbol(ns, LS("public-child"))
 	as.Nil(err)
 
-	ent := env.MustResolveSymbol(ns, LS("private-child"))
+	ent := mustResolveSymbol(ns, LS("private-child"))
 	as.NotNil(ent)
 
 	_, err = env.ResolveSymbol(ns, LS("public-parent"))
@@ -33,7 +41,7 @@ func TestResolveSymbol(t *testing.T) {
 
 	ls := LS("private-parent")
 	defer as.ExpectPanic(fmt.Errorf(env.ErrSymbolNotDeclared, ls))
-	env.MustResolveSymbol(ns, ls)
+	mustResolveSymbol(ns, ls)
 }
 
 func TestResolveValue(t *testing.T) {

@@ -42,15 +42,6 @@ func ParseInteger(s string) (Number, error) {
 	return nil, fmt.Errorf(ErrExpectedInteger, s)
 }
 
-// MustParseInteger forcefully parse a string representing an integer
-func MustParseInteger(s string) Number {
-	res, err := ParseInteger(s)
-	if err != nil {
-		panic(err)
-	}
-	return res
-}
-
 // Cmp compares this Integer to another Number
 func (l Integer) Cmp(r Number) Comparison {
 	if ri, ok := r.(Integer); ok {
