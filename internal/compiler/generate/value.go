@@ -11,27 +11,31 @@ import (
 var consSym = env.RootSymbol("cons")
 
 // Value encodes an expression
-func Value(e encoder.Encoder, v data.Value) {
+func Value(e encoder.Encoder, v data.Value) error {
 	ns := e.Globals()
-	switch expanded := macro.Expand(ns, v).(type) {
+	expanded, err := macro.Expand(ns, v)
+	if err != nil {
+		return err
+	}
+	switch expanded := expanded.(type) {
 	case data.Sequence:
-		Sequence(e, expanded)
+		return Sequence(e, expanded)
 	case data.Pair:
-		Pair(e, expanded)
+		return Pair(e, expanded)
 	case data.Symbol:
-		ReferenceSymbol(e, expanded)
+		return ReferenceSymbol(e, expanded)
 	case data.Keyword, data.Number, data.Bool, data.Procedure:
-		Literal(e, expanded)
+		return Literal(e, expanded)
 	default:
 		panic(debug.ProgrammerError("unknown value type: %s", v))
 	}
 }
 
 // Pair encodes a pair
-func Pair(e encoder.Encoder, c data.Pair) {
+func Pair(e encoder.Encoder, c data.Pair) error {
 	f := resolveBuiltIn(e, consSym)
 	args := data.Vector{c.Car(), c.Cdr()}
-	callStatic(e, f, args)
+	return callStatic(e, f, args)
 }
 
 func resolveBuiltIn(e encoder.Encoder, sym data.Symbol) data.Procedure {

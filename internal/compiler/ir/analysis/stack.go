@@ -44,16 +44,6 @@ func CalculateStackSize(code isa.Instructions) (isa.Operand, error) {
 	return isa.Operand(s.maxSize), nil
 }
 
-// MustCalculateStackSize is a wrapper around CalculateStackSize that will
-// panic if the Instructions provided are invalid
-func MustCalculateStackSize(code isa.Instructions) isa.Operand {
-	res, err := CalculateStackSize(code)
-	if err != nil {
-		panic(err)
-	}
-	return res
-}
-
 func (s *stackSizes) calculateNode(n visitor.Node) error {
 	switch n := n.(type) {
 	case visitor.Branches:

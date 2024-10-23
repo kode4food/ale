@@ -17,11 +17,12 @@ func makeEncoded(code isa.Instructions) *encoder.Encoded {
 func TestRunnableJump(t *testing.T) {
 	as := assert.New(t)
 
-	i1 := makeEncoded(isa.Instructions{
+	i1, err := makeEncoded(isa.Instructions{
 		isa.NoOp.New(),
 		isa.Label.New(0),
 		isa.Jump.New(0),
 	}).Runnable()
+	as.Nil(err)
 
 	as.Equal(isa.Instructions{
 		isa.Jump.New(0),
@@ -31,7 +32,7 @@ func TestRunnableJump(t *testing.T) {
 func TestRunnableCondJump(t *testing.T) {
 	as := assert.New(t)
 
-	i1 := makeEncoded(isa.Instructions{
+	i1, err := makeEncoded(isa.Instructions{
 		isa.NoOp.New(),
 		isa.Label.New(0),
 		isa.NoOp.New(),
@@ -40,6 +41,7 @@ func TestRunnableCondJump(t *testing.T) {
 		isa.CondJump.New(0),
 		isa.NoOp.New(),
 	}).Runnable()
+	as.Nil(err)
 
 	as.Equal(isa.Instructions{
 		isa.False.New(),
@@ -50,7 +52,7 @@ func TestRunnableCondJump(t *testing.T) {
 func TestRunnableForwardJump(t *testing.T) {
 	as := assert.New(t)
 
-	i1 := makeEncoded(isa.Instructions{
+	i1, err := makeEncoded(isa.Instructions{
 		isa.NoOp.New(),
 		isa.Label.New(0),
 		isa.NoOp.New(),
@@ -60,6 +62,7 @@ func TestRunnableForwardJump(t *testing.T) {
 		isa.NoOp.New(),
 		isa.Jump.New(0),
 	}).Runnable()
+	as.Nil(err)
 
 	as.Equal(isa.Instructions{
 		isa.Jump.New(0),
@@ -69,10 +72,10 @@ func TestRunnableForwardJump(t *testing.T) {
 func TestRunnableDoubleAnchor(t *testing.T) {
 	as := assert.New(t)
 
-	defer as.ExpectPanic(encoder.ErrLabelAlreadyAnchored)
-
-	makeEncoded(isa.Instructions{
+	_, err := makeEncoded(isa.Instructions{
 		isa.Label.New(0),
 		isa.Label.New(0),
 	}).Runnable()
+
+	as.EqualError(err, encoder.ErrLabelAlreadyAnchored)
 }

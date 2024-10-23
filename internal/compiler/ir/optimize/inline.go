@@ -84,7 +84,7 @@ func (m *inlineMapper) relabel(c isa.Instructions) isa.Instructions {
 				m.nextLabel++
 				labels[op] = to
 			}
-			res[idx] = isa.New(oc, to)
+			res[idx] = oc.New(to)
 		}
 	}
 	if len(labels) == 0 {
@@ -94,7 +94,7 @@ func (m *inlineMapper) relabel(c isa.Instructions) isa.Instructions {
 		return -cmp.Compare(l, r)
 	})
 	for _, oc := range s {
-		res = slices.Insert(res, int(oc), isa.New(isa.Label, labels[oc]))
+		res = slices.Insert(res, int(oc), isa.Label.New(labels[oc]))
 	}
 	return res
 }
@@ -110,16 +110,16 @@ func (m *inlineMapper) reindex(
 		case isa.Const:
 			val := p.Constants[op]
 			to := m.addConstant(val)
-			res[idx] = isa.New(oc, to)
+			res[idx] = oc.New(to)
 		case isa.Closure:
 			to, ok := captured[op]
 			if !ok {
 				to = m.addConstant(pc[op])
 				captured[op] = to
 			}
-			res[idx] = isa.New(isa.Const, to)
+			res[idx] = isa.Const.New(to)
 		case isa.Load, isa.Store:
-			res[idx] = isa.New(oc, op+m.baseLocal)
+			res[idx] = oc.New(op + m.baseLocal)
 		default:
 			// no-op
 		}

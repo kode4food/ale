@@ -14,11 +14,6 @@ func TestEffects(t *testing.T) {
 	e1 := isa.MustGetEffect(isa.CondJump)
 	as.Equal(isa.Labels, e1.Operand)
 
-	defer func() {
-		rec := recover()
-		err := fmt.Errorf(isa.ErrEffectNotDeclared, isa.Opcode(5000))
-		as.Equal(err, rec)
-	}()
-
-	isa.MustGetEffect(isa.Opcode(5000))
+	_, err := isa.GetEffect(isa.Opcode(5000))
+	as.EqualError(err, fmt.Sprintf(isa.ErrEffectNotDeclared, isa.Opcode(5000)))
 }

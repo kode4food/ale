@@ -9,7 +9,11 @@ import (
 func (w *Wrapper) Eval(src string) data.Value {
 	w.Helper()
 	ns := GetTestNamespace()
-	return eval.String(ns, data.String(src))
+	res, err := eval.String(ns, data.String(src))
+	if err != nil {
+		panic(err)
+	}
+	return res
 }
 
 // EvalTo will evaluate source code and test for an expected result

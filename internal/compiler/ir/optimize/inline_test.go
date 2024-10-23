@@ -14,6 +14,14 @@ import (
 	"github.com/kode4food/ale/pkg/env"
 )
 
+func mustFromEncoded(e *encoder.Encoded) *vm.Procedure {
+	res, err := procedure.FromEncoded(e)
+	if err != nil {
+		panic(err)
+	}
+	return res
+}
+
 func getInlineTestNamespace() env.Namespace {
 	e := env.NewEnvironment()
 	ns := e.GetRoot()
@@ -21,7 +29,8 @@ func getInlineTestNamespace() env.Namespace {
 	bind := func(n data.Local, fn func(enc encoder.Encoder), a ...data.Value) {
 		enc := encoder.NewEncoder(ns)
 		fn(enc)
-		ns.Declare(n).Bind(procedure.FromEncoded(enc.Encode()).Call(a...))
+		proc := mustFromEncoded(enc.Encode())
+		_ = ns.Declare(n).Bind(proc.Call(a...))
 	}
 
 	// only uses args, no jumps
@@ -67,7 +76,7 @@ func getInlineTestNamespace() env.Namespace {
 	}, I(6))
 
 	bind("diff", func(enc encoder.Encoder) {
-		generate.Branch(enc, func(_ encoder.Encoder) {
+		_ = generate.Branch(enc, func(_ encoder.Encoder) error {
 			enc.Emit(isa.Arg, 0)
 			enc.Emit(isa.Dup)
 			enc.Emit(isa.Store, 0)
@@ -75,12 +84,15 @@ func getInlineTestNamespace() env.Namespace {
 			enc.Emit(isa.Dup)
 			enc.Emit(isa.Store, 1)
 			enc.Emit(isa.NumLt)
-		}, func(_ encoder.Encoder) {
+			return nil
+		}, func(_ encoder.Encoder) error {
 			enc.Emit(isa.Load, 1)
 			enc.Emit(isa.Load, 0)
-		}, func(_ encoder.Encoder) {
+			return nil
+		}, func(_ encoder.Encoder) error {
 			enc.Emit(isa.Load, 0)
 			enc.Emit(isa.Load, 1)
+			return nil
 		})
 		enc.Emit(isa.Sub)
 		enc.Emit(isa.Return)
@@ -101,7 +113,7 @@ func TestInlineArgStacking(t *testing.T) {
 	enc.Emit(isa.Add)
 	enc.Emit(isa.Return)
 
-	call := procedure.FromEncoded(enc.Encode()).Call().(*vm.Closure)
+	call := mustFromEncoded(enc.Encode()).Call().(*vm.Closure)
 	as.Equal(I(22), call.Call())
 	as.Equal(2, len(call.Constants))
 	as.Equal(I(6), call.Constants[0])
@@ -132,7 +144,7 @@ func TestInlineArgClosure(t *testing.T) {
 	enc.Emit(isa.Add)
 	enc.Emit(isa.Return)
 
-	call := procedure.FromEncoded(enc.Encode()).Call().(*vm.Closure)
+	call := mustFromEncoded(enc.Encode()).Call().(*vm.Closure)
 	as.Equal(I(22), call.Call())
 	as.Equal(2, len(call.Constants))
 	as.Equal(I(8), call.Constants[0])
@@ -160,7 +172,7 @@ func TestInlineLocals(t *testing.T) {
 	enc.Emit(isa.Add)
 	enc.Emit(isa.Return)
 
-	call := procedure.FromEncoded(enc.Encode()).Call().(*vm.Closure)
+	call := mustFromEncoded(enc.Encode()).Call().(*vm.Closure)
 	as.Equal(I(22), call.Call())
 	as.Equal(2, len(call.Constants))
 	as.Equal(I(6), call.Constants[0])
@@ -192,7 +204,7 @@ func TestInlineNestedLocals(t *testing.T) {
 	enc.Emit(isa.Add)
 	enc.Emit(isa.Return)
 
-	call := procedure.FromEncoded(enc.Encode()).Call().(*vm.Closure)
+	call := mustFromEncoded(enc.Encode()).Call().(*vm.Closure)
 	as.Equal(I(30), call.Call())
 	as.Equal(2, len(call.Constants))
 	as.Equal(I(6), call.Constants[0])
@@ -228,23 +240,26 @@ func TestDiff(t *testing.T) {
 	as.Equal(I(2), diff.Call(I(7), I(5)))
 
 	enc := encoder.NewEncoder(ns)
-	generate.Branch(enc, func(_ encoder.Encoder) {
+	as.Nil(generate.Branch(enc, func(_ encoder.Encoder) error {
 		enc.Emit(isa.Arg, 0)
 		enc.Emit(isa.Arg, 1)
 		enc.Emit(isa.NumEq)
-	}, func(_ encoder.Encoder) {
+		return nil
+	}, func(_ encoder.Encoder) error {
 		enc.Emit(isa.Zero)
-	}, func(_ encoder.Encoder) {
+		return nil
+	}, func(_ encoder.Encoder) error {
 		enc.Emit(isa.Arg, 0)
 		enc.Emit(isa.Arg, 1)
 		enc.Emit(isa.Const, enc.AddConstant(diff))
 		enc.Emit(isa.Call, 2)
-	})
+		return nil
+	}))
 	enc.Emit(isa.PosInt, 1)
 	enc.Emit(isa.Add)
 	enc.Emit(isa.Return)
 
-	call := procedure.FromEncoded(enc.Encode()).Call().(*vm.Closure)
+	call := mustFromEncoded(enc.Encode()).Call().(*vm.Closure)
 	as.Equal(I(1), call.Call(I(5), I(5)))
 	as.Equal(I(2), call.Call(I(5), I(6)))
 	as.Equal(I(2), call.Call(I(6), I(5)))

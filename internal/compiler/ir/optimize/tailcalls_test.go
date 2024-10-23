@@ -14,7 +14,7 @@ func TestTailCalls(t *testing.T) {
 	as := assert.New(t)
 
 	e1 := assert.GetTestEncoder()
-	generate.Call(e1, L(assert.GetRootSymbol(e1, "+"), I(1), I(2)))
+	as.Nil(generate.Call(e1, L(assert.GetRootSymbol(e1, "+"), I(1), I(2))))
 	e1.Emit(isa.Return)
 
 	as.Instructions(isa.Instructions{

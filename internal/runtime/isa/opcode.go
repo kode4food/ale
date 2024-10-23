@@ -1,5 +1,7 @@
 package isa
 
+import "fmt"
+
 type (
 	// Opcode represents an Instruction's operation
 	Opcode Word
@@ -81,6 +83,18 @@ const (
 	Zero                   // Push Zero
 )
 
+// New creates a new Instruction instance from an Opcode
 func (o Opcode) New(ops ...Operand) Instruction {
-	return New(o, ops...)
+	effect := MustGetEffect(o)
+	switch {
+	case effect.Operand != Nothing && len(ops) == 1:
+		if !IsValidOperand(int(ops[0])) {
+			panic(fmt.Errorf(ErrExpectedOperand, ops[0]))
+		}
+		return Instruction(Opcode(ops[0]<<OpcodeSize) | o)
+	case effect.Operand == Nothing && len(ops) == 0:
+		return Instruction(o)
+	default:
+		panic(fmt.Errorf(ErrBadInstruction, o.String()))
+	}
 }

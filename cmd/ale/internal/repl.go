@@ -187,7 +187,10 @@ func (r *REPL) evalForm(ns env.Namespace, f data.Value) {
 		}
 	}()
 
-	res := eval.Value(ns, f)
+	res, err := eval.Value(ns, f)
+	if err != nil {
+		panic(err)
+	}
 	r.outputResult(res)
 }
 

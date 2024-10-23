@@ -32,8 +32,9 @@ func (e *EvalWrapped) EvalTo(src string, env Env, expect data.Value) {
 	for n, v := range env {
 		v, err := ffi.Wrap(v)
 		e.Nil(err)
-		ns.Declare(n).Bind(v)
+		e.Nil(ns.Declare(n).Bind(v))
 	}
-	res := eval.String(ns, data.String(src))
+	res, err := eval.String(ns, data.String(src))
+	e.Nil(err)
 	e.Equal(expect, res)
 }

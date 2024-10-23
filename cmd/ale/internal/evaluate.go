@@ -33,10 +33,12 @@ func EvaluateFile(filename string) {
 	evalBuffer(buffer)
 }
 
-func evalBuffer(src []byte) data.Value {
+func evalBuffer(src []byte) {
 	ns := makeUserNamespace()
 	r := read.FromString(data.String(src))
-	return eval.Block(ns, r)
+	if _, err := eval.Block(ns, r); err != nil {
+		panic(err)
+	}
 }
 
 func exitWithError() {

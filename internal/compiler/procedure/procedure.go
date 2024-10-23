@@ -10,10 +10,13 @@ import (
 
 // FromEncoded instantiates an abstract machine Procedure from the provided
 // Encoded representation
-func FromEncoded(e *encoder.Encoded) *vm.Procedure {
-	analysis.MustVerify(e.Code)
-	return vm.MakeProcedure(
-		optimize.Encoded(e).Runnable(),
-		data.AnyArityChecker,
-	)
+func FromEncoded(e *encoder.Encoded) (*vm.Procedure, error) {
+	if err := analysis.Verify(e.Code); err != nil {
+		return nil, err
+	}
+	run, err := optimize.Encoded(e).Runnable()
+	if err != nil {
+		return nil, err
+	}
+	return vm.MakeProcedure(run, data.AnyArityChecker), nil
 }

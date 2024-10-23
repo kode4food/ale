@@ -14,11 +14,11 @@ func TestSplitReturns(t *testing.T) {
 	as := assert.New(t)
 
 	e1 := assert.GetTestEncoder()
-	generate.Branch(e1,
-		func(encoder.Encoder) { e1.Emit(isa.True) },
-		func(encoder.Encoder) { e1.Emit(isa.PosInt, 1) },
-		func(encoder.Encoder) { e1.Emit(isa.Zero) },
-	)
+	as.Nil(generate.Branch(e1,
+		func(encoder.Encoder) error { e1.Emit(isa.True); return nil },
+		func(encoder.Encoder) error { e1.Emit(isa.PosInt, 1); return nil },
+		func(encoder.Encoder) error { e1.Emit(isa.Zero); return nil },
+	))
 	e1.Emit(isa.Return)
 
 	as.Instructions(isa.Instructions{

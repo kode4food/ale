@@ -9,28 +9,34 @@ import (
 )
 
 // Symbol encodes a symbol retrieval
-func Symbol(e encoder.Encoder, s data.Symbol) {
+func Symbol(e encoder.Encoder, s data.Symbol) error {
 	if l, ok := s.(data.Local); ok {
-		resolveLocal(e, l)
-		return
+		_, err := resolveLocal(e, l)
+		return err
 	}
-	resolveGlobal(e, s)
+	return resolveGlobal(e, s)
 }
 
 // ReferenceSymbol encodes a potential symbol retrieval and dereference
-func ReferenceSymbol(e encoder.Encoder, s data.Symbol) {
+func ReferenceSymbol(e encoder.Encoder, s data.Symbol) error {
 	switch s := s.(type) {
 	case data.Local:
-		c := resolveLocal(e, s)
+		c, err := resolveLocal(e, s)
+		if err != nil {
+			return err
+		}
 		if c != nil && c.Type == encoder.ReferenceCell {
 			e.Emit(isa.Deref)
 		}
 	default:
-		resolveGlobal(e, s)
+		return resolveGlobal(e, s)
 	}
+	return nil
 }
 
-func resolveLocal(e encoder.Encoder, l data.Local) *encoder.ScopedCell {
+func resolveLocal(
+	e encoder.Encoder, l data.Local,
+) (*encoder.ScopedCell, error) {
 	if s, ok := e.ResolveScoped(l); ok {
 		switch s.Scope {
 		case encoder.LocalScope:
@@ -49,18 +55,19 @@ func resolveLocal(e encoder.Encoder, l data.Local) *encoder.ScopedCell {
 		default:
 			panic(debug.ProgrammerError("unknown scope type"))
 		}
-		return s
+		return s, nil
 	}
-	resolveGlobal(e, l)
-	return nil
+	return nil, resolveGlobal(e, l)
 }
 
-func resolveGlobal(e encoder.Encoder, s data.Symbol) {
+func resolveGlobal(e encoder.Encoder, s data.Symbol) error {
 	if entry := env.MustResolveSymbol(e.Globals(), s); entry.IsBound() {
 		v, _ := entry.Value()
-		Literal(e, v)
-		return
+		return Literal(e, v)
 	}
-	Literal(e, s)
+	if err := Literal(e, s); err != nil {
+		return err
+	}
 	e.Emit(isa.Resolve)
+	return nil
 }

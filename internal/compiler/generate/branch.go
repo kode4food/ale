@@ -6,15 +6,24 @@ import (
 )
 
 // Branch constructs predicate, consequent, alternative branching
-func Branch(e encoder.Encoder, predicate, consequent, alternative Builder) {
+func Branch(
+	e encoder.Encoder, predicate, consequent, alternative Builder,
+) error {
 	thenLabel := e.NewLabel()
 	endLabel := e.NewLabel()
 
-	predicate(e)
+	if err := predicate(e); err != nil {
+		return err
+	}
 	e.Emit(isa.CondJump, thenLabel)
-	alternative(e)
+	if err := alternative(e); err != nil {
+		return err
+	}
 	e.Emit(isa.Jump, endLabel)
 	e.Emit(isa.Label, thenLabel)
-	consequent(e)
+	if err := consequent(e); err != nil {
+		return err
+	}
 	e.Emit(isa.Label, endLabel)
+	return nil
 }

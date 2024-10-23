@@ -97,8 +97,7 @@ func publicNamer(e *asmEncoder, l data.Local) (data.Local, error) {
 
 func popLocalsCall(*asmParser, ...data.Value) (asmEmit, error) {
 	return func(e *asmEncoder) error {
-		e.PopLocals()
-		return nil
+		return e.PopLocals()
 	}, nil
 }
 
@@ -155,8 +154,8 @@ func parseLocalEncoder(inst data.Local, toName asmToName) asmParse {
 				if err != nil {
 					return err
 				}
-				e.AddLocal(name, cellType)
-				return nil
+				_, err = e.AddLocal(name, cellType)
+				return err
 			}, nil
 		},
 	)

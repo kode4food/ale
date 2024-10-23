@@ -24,14 +24,15 @@ func (e *encoder) PushLocals() {
 	e.locals = append(e.locals, Locals{})
 }
 
-func (e *encoder) PopLocals() {
+func (e *encoder) PopLocals() error {
 	if len(e.locals) == 1 {
-		panic(errors.New(ErrNoLocalScope))
+		return errors.New(ErrNoLocalScope)
 	}
 	scope := e.peekLocals()
 	e.nextLocal -= isa.Operand(len(scope))
 	scopes := e.locals
 	e.locals = scopes[0 : len(scopes)-1]
+	return nil
 }
 
 func (e *encoder) peekLocals() Locals {
@@ -46,15 +47,15 @@ func (e *encoder) allocLocal() isa.Operand {
 	return idx
 }
 
-func (e *encoder) AddLocal(n data.Local, t CellType) *IndexedCell {
+func (e *encoder) AddLocal(n data.Local, t CellType) (*IndexedCell, error) {
 	scope := e.peekLocals()
 	if _, ok := scope[n]; ok {
-		panic(fmt.Errorf(ErrDuplicateName, n))
+		return nil, fmt.Errorf(ErrDuplicateName, n)
 	}
 	c := newCell(t, n)
 	res := newIndexedCell(e.allocLocal(), c)
 	scope[n] = res
-	return res
+	return res, nil
 }
 
 func (e *encoder) ResolveLocal(n data.Local) (*IndexedCell, bool) {

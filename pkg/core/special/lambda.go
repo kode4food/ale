@@ -17,10 +17,13 @@ type lambdaEncoder struct {
 func Lambda(e encoder.Encoder, args ...data.Value) {
 	var le *lambdaEncoder
 	pc := internal.MustParseParamCases(data.Vector(args))
-	fn := generate.Procedure(e, func(c encoder.Encoder) {
+	fn, err := generate.Procedure(e, func(c encoder.Encoder) error {
 		le = makeLambda(c, pc)
-		le.encode()
+		return le.encode()
 	})
+	if err != nil {
+		panic(err)
+	}
 	fn.ArityChecker = pc.MakeArityChecker()
 }
 
@@ -32,54 +35,66 @@ func makeLambda(e encoder.Encoder, v *internal.ParamCases) *lambdaEncoder {
 	return res
 }
 
-func (le *lambdaEncoder) encode() {
+func (le *lambdaEncoder) encode() error {
 	cases := le.cases.Cases
 	if len(cases) == 0 {
 		le.Emit(isa.RetNull)
-		return
+		return nil
 	}
-	le.encodeCases(cases)
+	return le.encodeCases(cases)
 }
 
-func (le *lambdaEncoder) encodeCases(cases []*internal.ParamCase) {
+func (le *lambdaEncoder) encodeCases(cases []*internal.ParamCase) error {
 	switch len(cases) {
 	case 0:
-		generate.Literal(le, data.String(internal.ErrNoMatchingParamPattern))
+		noMatch := data.String(internal.ErrNoMatchingParamPattern)
+		if err := generate.Literal(le, noMatch); err != nil {
+			return err
+		}
 		le.Emit(isa.Panic)
-		return
+		return nil
 	case 1:
 		if c := cases[0]; c.Rest && len(c.Params) == 1 {
-			le.consequent(c)
-			return
+			return le.consequent(c)
 		}
 		fallthrough
 	default:
 		c := cases[0]
-		generate.Branch(le,
-			func(encoder.Encoder) { le.predicate(c) },
-			func(encoder.Encoder) { le.consequent(c) },
-			func(encoder.Encoder) { le.encodeCases(cases[1:]) },
+		return generate.Branch(le,
+			func(encoder.Encoder) error { return le.predicate(c) },
+			func(encoder.Encoder) error { return le.consequent(c) },
+			func(encoder.Encoder) error { return le.encodeCases(cases[1:]) },
 		)
 	}
 }
 
-func (le *lambdaEncoder) predicate(c *internal.ParamCase) {
+func (le *lambdaEncoder) predicate(c *internal.ParamCase) error {
 	le.Emit(isa.ArgLen)
 	cl := len(c.Params)
 	if c.Rest {
-		generate.Literal(le, data.Integer(cl-1))
+		if err := generate.Literal(le, data.Integer(cl-1)); err != nil {
+			return err
+		}
 		le.Emit(isa.NumGte)
-		return
+		return nil
 	}
-	generate.Literal(le, data.Integer(cl))
+	if err := generate.Literal(le, data.Integer(cl)); err != nil {
+		return err
+	}
 	le.Emit(isa.NumEq)
+	return nil
 }
 
-func (le *lambdaEncoder) consequent(c *internal.ParamCase) {
+func (le *lambdaEncoder) consequent(c *internal.ParamCase) error {
 	le.PushParams(c.Params, c.Rest)
 	le.PushLocals()
-	generate.Block(le, c.Body)
+	if err := generate.Block(le, c.Body); err != nil {
+		return err
+	}
 	le.Emit(isa.Return)
-	le.PopLocals()
+	if err := le.PopLocals(); err != nil {
+		return err
+	}
 	le.PopParams()
+	return nil
 }

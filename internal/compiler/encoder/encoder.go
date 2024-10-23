@@ -25,8 +25,8 @@ type (
 		PopParams()
 
 		PushLocals()
-		PopLocals()
-		AddLocal(data.Local, CellType) *IndexedCell
+		PopLocals() error
+		AddLocal(data.Local, CellType) (*IndexedCell, error)
 
 		ResolveScoped(data.Local) (*ScopedCell, bool)
 		ResolveClosure(data.Local) (*IndexedCell, bool)

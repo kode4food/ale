@@ -53,7 +53,8 @@ func TestUnquoteEval(t *testing.T) {
 	ns := e.GetAnonymous()
 
 	ns.Declare("foo").Bind(F(456))
-	r1 := eval.String(ns, `'[123 ,foo]`)
+	r1, err := eval.String(ns, `'[123 ,foo]`)
+	as.Nil(err)
 	as.String("[123 (ale/unquote foo)]", r1)
 }
 

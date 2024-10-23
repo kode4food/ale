@@ -43,22 +43,6 @@ const (
 	ErrExpectedOperand = "expected unsigned operand: %d"
 )
 
-// New creates a new Instruction instance
-func New(oc Opcode, args ...Operand) Instruction {
-	effect := MustGetEffect(oc)
-	switch {
-	case effect.Operand != Nothing && len(args) == 1:
-		if !IsValidOperand(int(args[0])) {
-			panic(fmt.Errorf(ErrExpectedOperand, args[0]))
-		}
-		return Instruction(Opcode(args[0]<<OpcodeSize) | oc)
-	case effect.Operand == Nothing && len(args) == 0:
-		return Instruction(oc)
-	default:
-		panic(fmt.Errorf(ErrBadInstruction, oc.String()))
-	}
-}
-
 func (i Instructions) String() string {
 	return strings.Join(
 		basics.Map(i, func(in Instruction) string {

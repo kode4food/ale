@@ -13,32 +13,41 @@ type (
 	}
 
 	Bindings []*Binding
+	Binder   func(encoder.Encoder, Bindings, Builder) error
 )
 
-func Locals(e encoder.Encoder, bindings Bindings, body Builder) {
+func Locals(e encoder.Encoder, bindings Bindings, body Builder) error {
 	e.PushLocals()
 	// Push the evaluated expressions to be bound
 	for _, b := range bindings {
-		Value(e, b.Value)
+		if err := Value(e, b.Value); err != nil {
+			return err
+		}
 	}
 
 	// Bind the popped expression results to names
 	for i := len(bindings) - 1; i >= 0; i-- {
 		b := bindings[i]
-		l := e.AddLocal(b.Name, encoder.ValueCell)
+		l, err := e.AddLocal(b.Name, encoder.ValueCell)
+		if err != nil {
+			return err
+		}
 		e.Emit(isa.Store, l.Index)
 	}
 
 	body(e)
-	e.PopLocals()
+	return e.PopLocals()
 }
 
-func MutualLocals(e encoder.Encoder, bindings Bindings, body Builder) {
+func MutualLocals(e encoder.Encoder, bindings Bindings, body Builder) error {
 	e.PushLocals()
 	// Create references
 	cells := make(encoder.IndexedCells, len(bindings))
 	for i, b := range bindings {
-		c := e.AddLocal(b.Name, encoder.ReferenceCell)
+		c, err := e.AddLocal(b.Name, encoder.ReferenceCell)
+		if err != nil {
+			return err
+		}
 		e.Emit(isa.NewRef)
 		e.Emit(isa.Store, c.Index)
 		cells[i] = c
@@ -46,7 +55,9 @@ func MutualLocals(e encoder.Encoder, bindings Bindings, body Builder) {
 
 	// Push the evaluated expressions to be bound
 	for _, b := range bindings {
-		Value(e, b.Value)
+		if err := Value(e, b.Value); err != nil {
+			return err
+		}
 	}
 
 	// Bind the references
@@ -57,5 +68,5 @@ func MutualLocals(e encoder.Encoder, bindings Bindings, body Builder) {
 	}
 
 	body(e)
-	e.PopLocals()
+	return e.PopLocals()
 }

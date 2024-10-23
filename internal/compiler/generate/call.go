@@ -11,34 +11,31 @@ import (
 )
 
 type (
-	funcEmitter func()
-	argsEmitter func() int
+	funcEmitter func() error
+	argsEmitter func() (int, error)
 )
 
 // Call encodes a function call
-func Call(e encoder.Encoder, l *data.List) {
+func Call(e encoder.Encoder, l *data.List) error {
 	f, r, ok := l.Split()
 	if !ok {
-		Literal(e, data.Null)
-		return
+		return Literal(e, data.Null)
 	}
 	args := sequence.ToValues(r)
-	callValue(e, f, args)
+	return callValue(e, f, args)
 }
 
-func callValue(e encoder.Encoder, v data.Value, args data.Vector) {
+func callValue(e encoder.Encoder, v data.Value, args data.Vector) error {
 	if s, ok := v.(data.Symbol); ok {
-		callSymbol(e, s, args)
-		return
+		return callSymbol(e, s, args)
 	}
-	callNonSymbol(e, v, args)
+	return callNonSymbol(e, v, args)
 }
 
-func callSymbol(e encoder.Encoder, s data.Symbol, args data.Vector) {
+func callSymbol(e encoder.Encoder, s data.Symbol, args data.Vector) error {
 	if l, ok := s.(data.Local); ok {
 		if _, ok := e.ResolveLocal(l); ok {
-			callDynamic(e, l, args)
-			return
+			return callDynamic(e, l, args)
 		}
 	}
 	globals := e.Globals()
@@ -46,38 +43,32 @@ func callSymbol(e encoder.Encoder, s data.Symbol, args data.Vector) {
 		switch v := v.(type) {
 		case special.Call:
 			v(e, args...)
-			return
+			return nil
 		case data.Procedure:
-			callStatic(e, v, args)
-			return
+			return callStatic(e, v, args)
 		}
 	}
-	callDynamic(e, s, args)
+	return callDynamic(e, s, args)
 }
 
-func callNonSymbol(e encoder.Encoder, v data.Value, args data.Vector) {
+func callNonSymbol(e encoder.Encoder, v data.Value, args data.Vector) error {
 	if compiler.IsEvaluable(v) {
-		callDynamic(e, v, args)
-		return
+		return callDynamic(e, v, args)
 	}
-	switch v := v.(type) {
-	case data.Procedure:
-		callStatic(e, v, args)
-	default:
-		callDynamic(e, v, args)
+	if v, ok := v.(data.Procedure); ok {
+		return callStatic(e, v, args)
 	}
+	return callDynamic(e, v, args)
 }
 
-func assertArity(p data.Procedure, args data.Vector) {
-	al := len(args)
-	if err := p.CheckArity(al); err != nil {
-		panic(err)
+func callWith(e encoder.Encoder, fn funcEmitter, args argsEmitter) error {
+	al, err := args()
+	if err != nil {
+		return err
 	}
-}
-
-func callWith(e encoder.Encoder, emitFunc funcEmitter, emitArgs argsEmitter) {
-	al := emitArgs()
-	emitFunc()
+	if err := fn(); err != nil {
+		return err
+	}
 	switch al {
 	case 0:
 		e.Emit(isa.Call0)
@@ -86,39 +77,44 @@ func callWith(e encoder.Encoder, emitFunc funcEmitter, emitArgs argsEmitter) {
 	default:
 		e.Emit(isa.Call, isa.Operand(al))
 	}
+	return nil
 }
 
-func callStatic(e encoder.Encoder, p data.Procedure, args data.Vector) {
-	assertArity(p, args)
+func callStatic(e encoder.Encoder, p data.Procedure, args data.Vector) error {
+	if err := p.CheckArity(len(args)); err != nil {
+		return err
+	}
 	emitFunc := staticLiteral(e, p)
 	emitArgs := makeArgs(e, args)
-	callWith(e, emitFunc, emitArgs)
+	return callWith(e, emitFunc, emitArgs)
 }
 
 func staticLiteral(e encoder.Encoder, fn data.Value) funcEmitter {
-	return func() {
-		Literal(e, fn)
+	return func() error {
+		return Literal(e, fn)
 	}
 }
 
-func callDynamic(e encoder.Encoder, v data.Value, args data.Vector) {
+func callDynamic(e encoder.Encoder, v data.Value, args data.Vector) error {
 	emitFunc := dynamicEval(e, v)
 	emitArgs := makeArgs(e, args)
-	callWith(e, emitFunc, emitArgs)
+	return callWith(e, emitFunc, emitArgs)
 }
 
 func dynamicEval(e encoder.Encoder, v data.Value) funcEmitter {
-	return func() {
-		Value(e, v)
+	return func() error {
+		return Value(e, v)
 	}
 }
 
 func makeArgs(e encoder.Encoder, args data.Vector) argsEmitter {
-	return func() int {
+	return func() (int, error) {
 		al := len(args)
 		for i := al - 1; i >= 0; i-- {
-			Value(e, args[i])
+			if err := Value(e, args[i]); err != nil {
+				return 0, err
+			}
 		}
-		return al
+		return al, nil
 	}
 }

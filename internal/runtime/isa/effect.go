@@ -1,6 +1,10 @@
 package isa
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/kode4food/ale/internal/debug"
+)
 
 type (
 	// Effect captures how an Instruction impacts the state of the machine
@@ -93,10 +97,18 @@ var Effects = map[Opcode]*Effect{
 	Zero:     {Push: 1},
 }
 
+func GetEffect(oc Opcode) (*Effect, error) {
+	if effect, ok := Effects[oc]; ok {
+		return effect, nil
+	}
+	return nil, fmt.Errorf(ErrEffectNotDeclared, oc.String())
+}
+
 // MustGetEffect gives you effect information or explodes violently
 func MustGetEffect(oc Opcode) *Effect {
-	if effect, ok := Effects[oc]; ok {
-		return effect
+	e, err := GetEffect(oc)
+	if err != nil {
+		panic(debug.ProgrammerError(err.Error()))
 	}
-	panic(fmt.Errorf(ErrEffectNotDeclared, oc.String()))
+	return e
 }

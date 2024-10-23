@@ -7,17 +7,17 @@ import (
 )
 
 // Expand performs a complete macro expansion
-func Expand(ns env.Namespace, v data.Value) data.Value {
+func Expand(ns env.Namespace, v data.Value) (data.Value, error) {
 	if res, ok := expand1(ns, v); ok {
 		return Expand(ns, res)
 	}
-	return v
+	return v, nil
 }
 
 // Expand1 performs a single macro expansion
-func Expand1(ns env.Namespace, v data.Value) data.Value {
+func Expand1(ns env.Namespace, v data.Value) (data.Value, error) {
 	res, _ := expand1(ns, v)
-	return res
+	return res, nil
 }
 
 func expand1(ns env.Namespace, v data.Value) (data.Value, bool) {

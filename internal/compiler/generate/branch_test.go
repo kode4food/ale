@@ -13,11 +13,11 @@ func TestBranch(t *testing.T) {
 	as := assert.New(t)
 
 	e := assert.GetTestEncoder()
-	generate.Branch(e,
-		func(encoder.Encoder) { e.Emit(isa.True) },
-		func(encoder.Encoder) { e.Emit(isa.PosInt, 1) },
-		func(encoder.Encoder) { e.Emit(isa.Zero) },
-	)
+	as.Nil(generate.Branch(e,
+		func(encoder.Encoder) error { e.Emit(isa.True); return nil },
+		func(encoder.Encoder) error { e.Emit(isa.PosInt, 1); return nil },
+		func(encoder.Encoder) error { e.Emit(isa.Zero); return nil },
+	))
 	e.Emit(isa.Return)
 
 	as.Instructions(

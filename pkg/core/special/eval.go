@@ -10,7 +10,7 @@ import (
 	"github.com/kode4food/ale/pkg/macro"
 )
 
-type evalFunc func(env.Namespace, data.Value) data.Value
+type evalFunc func(env.Namespace, data.Value) (data.Value, error)
 
 var (
 	// Eval encodes an immediate evaluation
@@ -26,12 +26,20 @@ var (
 func makeEvaluator(eval evalFunc) func(encoder.Encoder, ...data.Value) {
 	return func(e encoder.Encoder, args ...data.Value) {
 		data.AssertFixed(1, len(args))
-		generate.Value(e, args[0])
+		if err := generate.Value(e, args[0]); err != nil {
+			panic(err)
+		}
 		ns := e.Globals()
 		fn := data.MakeProcedure(func(args ...data.Value) data.Value {
-			return eval(ns, args[0])
+			res, err := eval(ns, args[0])
+			if err != nil {
+				panic(err)
+			}
+			return res
 		}, 1)
-		generate.Literal(e, fn)
+		if err := generate.Literal(e, fn); err != nil {
+			panic(err)
+		}
 		e.Emit(isa.Call1)
 	}
 }

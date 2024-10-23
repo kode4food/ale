@@ -7,10 +7,10 @@ import (
 )
 
 // Literal encodes a literal (constant) value
-func Literal(e encoder.Encoder, v data.Value) {
+func Literal(e encoder.Encoder, v data.Value) error {
 	if v == data.Null {
 		Null(e)
-		return
+		return nil
 	}
 	switch v := v.(type) {
 	case data.Integer, data.Float:
@@ -21,6 +21,7 @@ func Literal(e encoder.Encoder, v data.Value) {
 		index := e.AddConstant(v)
 		e.Emit(isa.Const, index)
 	}
+	return nil
 }
 
 // Null encodes a Null

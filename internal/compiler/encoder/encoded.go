@@ -55,7 +55,7 @@ func (e *Encoded) WithConstants(c data.Vector) *Encoded {
 
 // Runnable takes an Encoded and finalizes it into a Runnable that the abstract
 // machine can execute. Jumps are resolved and unused constants are discarded.
-func (e *Encoded) Runnable() *isa.Runnable {
+func (e *Encoded) Runnable() (*isa.Runnable, error) {
 	f := &finalizer{
 		Encoded:  e,
 		labels:   map[isa.Operand]*label{},
@@ -65,19 +65,24 @@ func (e *Encoded) Runnable() *isa.Runnable {
 	return f.finalize()
 }
 
-func (f *finalizer) finalize() *isa.Runnable {
+func (f *finalizer) finalize() (*isa.Runnable, error) {
 	for _, inst := range f.Code {
-		f.handleInst(inst)
+		if err := f.handleInst(inst); err != nil {
+			return nil, err
+		}
 	}
 	f.stripAdjacentJumps()
-	stackSize := analysis.MustCalculateStackSize(f.output)
+	stackSize, err := analysis.CalculateStackSize(f.output)
+	if err != nil {
+		return nil, err
+	}
 	return &isa.Runnable{
 		Code:       f.output,
 		Globals:    f.Globals,
 		Constants:  f.constants,
 		LocalCount: isa.Operand(len(f.localMap)),
 		StackSize:  stackSize,
-	}
+	}, nil
 }
 
 func (f *finalizer) stripAdjacentJumps() {
@@ -96,13 +101,13 @@ func removeInstruction(inst isa.Instructions, idx int) isa.Instructions {
 	for j, inst := range res {
 		oc, op := inst.Split()
 		if (oc == isa.Jump || oc == isa.CondJump) && op > isa.Operand(idx) {
-			res[j] = isa.New(oc, op-1)
+			res[j] = oc.New(op - 1)
 		}
 	}
 	return res
 }
 
-func (f *finalizer) handleInst(i isa.Instruction) {
+func (f *finalizer) handleInst(i isa.Instruction) error {
 	switch oc := i.Opcode(); oc {
 	case isa.Load, isa.Store:
 		f.handleLocal(i)
@@ -113,13 +118,13 @@ func (f *finalizer) handleInst(i isa.Instruction) {
 	case isa.CondJump:
 		f.handleJump(i)
 	case isa.Label:
-		f.handleLabel(i)
+		return f.handleLabel(i)
 	default:
-		if effect := isa.MustGetEffect(oc); effect.Ignore {
-			return
+		if effect := isa.MustGetEffect(oc); !effect.Ignore {
+			f.output = append(f.output, i)
 		}
-		f.output = append(f.output, i)
 	}
+	return nil
 }
 
 func (f *finalizer) handleLocal(i isa.Instruction) {
@@ -135,14 +140,14 @@ func (f *finalizer) handleLocal(i isa.Instruction) {
 func (f *finalizer) handleConst(i isa.Instruction) {
 	op := i.Operand()
 	if idx, ok := f.constMap[op]; ok {
-		ni := isa.New(isa.Const, idx)
+		ni := isa.Const.New(idx)
 		f.output = append(f.output, ni)
 		return
 	}
 	idx := isa.Operand(len(f.constants))
 	f.constants = append(f.constants, f.Constants[op])
 	f.constMap[op] = idx
-	ni := isa.New(isa.Const, idx)
+	ni := isa.Const.New(idx)
 	f.output = append(f.output, ni)
 }
 
@@ -152,23 +157,24 @@ func (f *finalizer) handleJump(i isa.Instruction) {
 	if !lbl.anchored {
 		f.addLabelBackRef(lbl)
 	}
-	ni := isa.New(oc, lbl.offset)
+	ni := oc.New(lbl.offset)
 	f.output = append(f.output, ni)
 }
 
-func (f *finalizer) handleLabel(i isa.Instruction) {
+func (f *finalizer) handleLabel(i isa.Instruction) error {
 	op := i.Operand()
 	lbl := f.getLabel(op)
 	if lbl.anchored {
-		panic(errors.New(ErrLabelAlreadyAnchored))
+		return errors.New(ErrLabelAlreadyAnchored)
 	}
 	lbl.offset = f.nextOutputOffset()
 	lbl.anchored = true
 	for _, off := range lbl.backRefs {
 		oc := f.output[int(off)].Opcode()
-		ni := isa.New(oc, lbl.offset)
+		ni := oc.New(lbl.offset)
 		f.output[int(off)] = ni
 	}
+	return nil
 }
 
 func (f *finalizer) getLabel(idx isa.Operand) *label {

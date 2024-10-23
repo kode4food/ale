@@ -14,11 +14,3 @@ func Verify(code isa.Instructions) error {
 	}
 	return nil
 }
-
-// MustVerify is a wrapper around Verify that will panic if the Instructions
-// provided are invalid
-func MustVerify(code isa.Instructions) {
-	if err := Verify(code); err != nil {
-		panic(err)
-	}
-}

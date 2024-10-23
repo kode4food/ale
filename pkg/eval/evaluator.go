@@ -12,32 +12,41 @@ import (
 )
 
 // String evaluates the specified raw source
-func String(ns env.Namespace, src data.String) data.Value {
+func String(ns env.Namespace, src data.String) (data.Value, error) {
 	r := read.FromString(src)
 	return Block(ns, r)
 }
 
 // Block evaluates a Sequence that a call to FromScanner might produce
-func Block(ns env.Namespace, s data.Sequence) data.Value {
+func Block(ns env.Namespace, s data.Sequence) (data.Value, error) {
 	var res data.Value
+	var err error
 	for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {
-		res = Value(ns, f)
+		res, err = Value(ns, f)
+		if err != nil {
+			return nil, err
+		}
 	}
-	return res
+	return res, nil
 }
 
 // Value evaluates the provided Value
-func Value(ns env.Namespace, v data.Value) data.Value {
+func Value(ns env.Namespace, v data.Value) (data.Value, error) {
 	defer runtime.NormalizeGoRuntimeErrors()
 	e := encoder.NewEncoder(ns)
-	generate.Value(e, v)
+	if err := generate.Value(e, v); err != nil {
+		return nil, err
+	}
 	e.Emit(isa.Return)
 	return encodeAndRun(e)
 }
 
-func encodeAndRun(e encoder.Encoder) data.Value {
+func encodeAndRun(e encoder.Encoder) (data.Value, error) {
 	encoded := e.Encode()
-	fn := procedure.FromEncoded(encoded)
+	fn, err := procedure.FromEncoded(encoded)
+	if err != nil {
+		return nil, err
+	}
 	closure := fn.Call().(data.Procedure)
-	return closure.Call()
+	return closure.Call(), nil
 }
