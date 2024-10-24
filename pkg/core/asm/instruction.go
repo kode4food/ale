@@ -7,7 +7,6 @@ import (
 	"github.com/kode4food/ale/internal/runtime/isa"
 	"github.com/kode4food/ale/internal/strings"
 	"github.com/kode4food/ale/pkg/data"
-	"github.com/kode4food/comb/basics"
 )
 
 func getInstructionCalls() namedAsmParsers {
@@ -41,23 +40,31 @@ func makeOperandEmit(oc isa.Opcode) asmParse {
 	return parseArgs(data.Local(oc.String()), 1,
 		func(p *asmParser, args ...data.Value) (asmEmit, error) {
 			return func(e *asmEncoder) error {
-				e.Emit(oc, e.toOperands(oc, args)...)
+				ops, err := e.toOperands(oc, args)
+				if err != nil {
+					return err
+				}
+				e.Emit(oc, ops...)
 				return nil
 			}, nil
 		},
 	)
 }
 
-func (e *asmEncoder) toOperands(oc isa.Opcode, args data.Vector) []isa.Operand {
-	return basics.Map(args, func(a data.Value) isa.Operand {
+func (e *asmEncoder) toOperands(
+	oc isa.Opcode, args data.Vector,
+) ([]isa.Operand, error) {
+	res := make([]isa.Operand, len(args))
+	for i, a := range args {
 		ao := isa.Effects[oc].Operand
 		toOperand := e.getToOperandFor(ao)
 		r, err := toOperand(e, a)
 		if err != nil {
-			panic(err)
+			return nil, err
 		}
-		return r
-	})
+		res[i] = r
+	}
+	return res, nil
 }
 
 func (e *asmEncoder) getToOperandFor(ao isa.ActOn) asmToOperand {

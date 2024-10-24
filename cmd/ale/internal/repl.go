@@ -152,19 +152,24 @@ func (r *REPL) nsSpace() string {
 }
 
 func (r *REPL) evalBuffer() (completed bool) {
+	handleError := func(err error) bool {
+		if isRecoverable(err) {
+			return false
+		}
+		r.outputError(err)
+		return true
+	}
+
 	defer func() {
 		if err := toError(recover()); err != nil {
-			if isRecoverable(err) {
-				completed = false
-				return
-			}
-			r.outputError(err)
-			completed = true
+			completed = handleError(err)
 		}
 	}()
 
 	seq := r.scanBuffer()
-	r.evalBlock(r.ns, seq)
+	if err := r.evalBlock(r.ns, seq); err != nil {
+		return handleError(err)
+	}
 	return true
 }
 
@@ -173,14 +178,17 @@ func (r *REPL) scanBuffer() data.Sequence {
 	return read.FromString(src)
 }
 
-func (r *REPL) evalBlock(ns env.Namespace, seq data.Sequence) {
+func (r *REPL) evalBlock(ns env.Namespace, seq data.Sequence) error {
 	v := sequence.ToVector(seq) // will trigger early reader error
 	for _, f := range v {
-		r.evalForm(ns, f)
+		if err := r.evalForm(ns, f); err != nil {
+			return err
+		}
 	}
+	return nil
 }
 
-func (r *REPL) evalForm(ns env.Namespace, f data.Value) {
+func (r *REPL) evalForm(ns env.Namespace, f data.Value) error {
 	defer func() {
 		if err := toError(recover()); err != nil {
 			r.outputError(err)
@@ -189,9 +197,10 @@ func (r *REPL) evalForm(ns env.Namespace, f data.Value) {
 
 	res, err := eval.Value(ns, f)
 	if err != nil {
-		panic(err)
+		return err
 	}
 	r.outputResult(res)
+	return nil
 }
 
 func (r *REPL) outputResult(v data.Value) {
