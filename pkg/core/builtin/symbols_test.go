@@ -46,9 +46,9 @@ func TestGenerated(t *testing.T) {
 func TestResolveEval(t *testing.T) {
 	as := assert.New(t)
 
-	as.EvalTo(`(let [x 99] x)`, I(99))
+	as.MustEvalTo(`(let [x 99] x)`, I(99))
 
-	err := fmt.Errorf(env.ErrSymbolNotDeclared, "hello")
+	err := fmt.Errorf(env.ErrNameNotDeclared, "hello")
 	as.PanicWith(`hello`, err)
 	as.PanicWith(`(let [hello 99] hello) hello`, err)
 }

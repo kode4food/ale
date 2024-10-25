@@ -11,7 +11,7 @@ import (
 func TestMacroCall(t *testing.T) {
 	as := assert.New(t)
 
-	d, ok := as.Eval(`define`).(macro.Call)
+	d, ok := as.MustEval(`define`).(macro.Call)
 	as.True(ok)
 	as.NotNil(d)
 
@@ -23,7 +23,7 @@ func TestMacroCall(t *testing.T) {
 func TestExpand(t *testing.T) {
 	as := assert.New(t)
 
-	as.EvalTo(
+	as.MustEvalTo(
 		`(macroexpand '(define (name . _) "hello"))`,
 		read.FromString(
 			`(ale/define* name (ale/label name (ale/lambda _ "hello")))`,
@@ -34,7 +34,7 @@ func TestExpand(t *testing.T) {
 func TestExpand1(t *testing.T) {
 	as := assert.New(t)
 
-	as.EvalTo(
+	as.MustEvalTo(
 		`(macroexpand-1 '(define (name . _) (or false true)))`,
 		read.FromString(
 			`(ale/define* name (ale/label name (ale/lambda _ (or false true))))`,

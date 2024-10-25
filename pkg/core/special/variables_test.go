@@ -13,12 +13,12 @@ import (
 
 func TestDefinitionsEval(t *testing.T) {
 	as := assert.New(t)
-	as.EvalTo(`
+	as.MustEvalTo(`
 		(define foo "bar")
 		foo
 	`, S("bar"))
 
-	as.EvalTo(`
+	as.MustEvalTo(`
 		(define return-local
 			(thunk (let [foo "local"] foo)))
 		(return-local)
@@ -43,7 +43,7 @@ func TestLetBindingErrors(t *testing.T) {
 func TestMutualBindingsEval(t *testing.T) {
 	as := assert.New(t)
 
-	as.EvalTo(`
+	as.MustEvalTo(`
 		(let-rec ([
 			is-even?
 			(lambda (n) (or (= n 0)

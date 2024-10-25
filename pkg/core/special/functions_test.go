@@ -29,21 +29,21 @@ func TestApply(t *testing.T) {
 	as.True(getPredicate(builtin.ProcedureKey).Call(builtin.Vector))
 	as.False(getPredicate(builtin.ProcedureKey).Call(S("55")))
 
-	as.EvalTo(`
+	as.MustEvalTo(`
 		(apply + '(1 2 3))`, I(6))
 
-	as.EvalTo(`
+	as.MustEvalTo(`
 		(apply + 9 8 7 '(1 2 3))`, I(30))
 }
 
 func TestPartialEval(t *testing.T) {
 	as := assert.New(t)
 
-	as.EvalTo(`
+	as.MustEvalTo(`
 		(let [plus3 (partial +)]
 			(plus3 1 1 1))`, I(3))
 
-	as.EvalTo(`
+	as.MustEvalTo(`
 		(let [plus3 (partial + 1 2)]
 			(plus3 1 1 1))`, I(6))
 }
@@ -62,17 +62,17 @@ func TestFunctionPredicates(t *testing.T) {
 
 func TestProcedurePredicatesEval(t *testing.T) {
 	as := assert.New(t)
-	as.EvalTo(`(procedure? if)`, data.False)
-	as.EvalTo(`(!procedure? if)`, data.True)
-	as.EvalTo(`(special? define*)`, data.True)
-	as.EvalTo(`(!special? define*)`, data.False)
-	as.EvalTo(`(procedure? 99)`, data.False)
-	as.EvalTo(`(!procedure? 99)`, data.True)
+	as.MustEvalTo(`(procedure? if)`, data.False)
+	as.MustEvalTo(`(!procedure? if)`, data.True)
+	as.MustEvalTo(`(special? define*)`, data.True)
+	as.MustEvalTo(`(!special? define*)`, data.False)
+	as.MustEvalTo(`(procedure? 99)`, data.False)
+	as.MustEvalTo(`(!procedure? 99)`, data.True)
 }
 
 func TestLambdaEval(t *testing.T) {
 	as := assert.New(t)
-	as.EvalTo(`
+	as.MustEvalTo(`
 		(define call (lambda (func) (func)))
 		(let [greeting "hello"]
 			(let [foo (thunk greeting)]
@@ -92,8 +92,8 @@ func TestBadLambdaEval(t *testing.T) {
 
 func TestApplyEval(t *testing.T) {
 	as := assert.New(t)
-	as.EvalTo(`(apply + [1 2 3])`, F(6))
-	as.EvalTo(`
+	as.MustEvalTo(`(apply + [1 2 3])`, F(6))
+	as.MustEvalTo(`
 		(apply
 			(lambda-rec add (x y z) (+ x y z))
 			[1 2 3])
@@ -105,7 +105,7 @@ func TestApplyEval(t *testing.T) {
 
 func TestRestFunctionsEval(t *testing.T) {
 	as := assert.New(t)
-	as.EvalTo(`
+	as.MustEvalTo(`
 		(define test (lambda (f . r) (apply vector (cons f r))))
 		(test 1 2 3 4 5 6 7)
 	`, S("[1 2 3 4 5 6 7]"))
@@ -125,7 +125,7 @@ func TestRestFunctionsEval(t *testing.T) {
 
 func TestTailCallEval(t *testing.T) {
 	as := assert.New(t)
-	as.EvalTo(`
+	as.MustEvalTo(`
 		(define-lambda to-zero (x)
 			(cond
 				[(> x 1000) (to-zero (- x 1))]

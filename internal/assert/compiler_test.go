@@ -10,7 +10,7 @@ import (
 
 func TestEncodesAs(t *testing.T) {
 	as := assert.New(t)
-	as.EncodesAs(isa.Instructions{
+	as.MustEncodedAs(isa.Instructions{
 		isa.PosInt.New(2),
 	}, `2`)
 }

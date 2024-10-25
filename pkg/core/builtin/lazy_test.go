@@ -31,13 +31,13 @@ func TestLazySequence(t *testing.T) {
 
 func TestRangeEval(t *testing.T) {
 	as := assert.New(t)
-	as.EvalTo(`
+	as.MustEvalTo(`
 		(fold-left
 			(lambda (x y) (+ x y))
 			(range 1 5 1))
 	`, F(10))
 
-	as.EvalTo(`
+	as.MustEvalTo(`
 		(fold-left
 			(lambda (x y) (+ x y))
 			(range 5 1 -1))
@@ -46,7 +46,7 @@ func TestRangeEval(t *testing.T) {
 
 func TestMapAndFilterEval(t *testing.T) {
 	as := assert.New(t)
-	as.EvalTo(`
+	as.MustEvalTo(`
 		(fold-left
 			(lambda (x y) (+ x y))
 			(map
@@ -59,7 +59,7 @@ func TestMapAndFilterEval(t *testing.T) {
 
 func TestMapParallelEval(t *testing.T) {
 	as := assert.New(t)
-	as.EvalTo(`
+	as.MustEvalTo(`
 		(seq->vector
 			(map +
 				[1 2 3 4]
@@ -70,17 +70,17 @@ func TestMapParallelEval(t *testing.T) {
 
 func TestReduceEval(t *testing.T) {
 	as := assert.New(t)
-	as.EvalTo(`
+	as.MustEvalTo(`
 		(define x '(1 2 3 4))
 		(fold-left + x)
 	`, F(10))
 
-	as.EvalTo(`
+	as.MustEvalTo(`
 		(define y (concat '(1 2 3 4) [5 6 7 8]))
 		(fold-left + y)
 	`, F(36))
 
-	as.EvalTo(`
+	as.MustEvalTo(`
 		(define y (concat '(1 2 3 4) [5 6 7 8]))
 		(fold-left + 10 y)
 	`, F(46))
@@ -88,12 +88,12 @@ func TestReduceEval(t *testing.T) {
 
 func TestTakeDropEval(t *testing.T) {
 	as := assert.New(t)
-	as.EvalTo(`
+	as.MustEvalTo(`
 		(define x (concat '(1 2 3 4) [5 6 7 8]))
 		(nth (apply vector (take 6 x)) 5)
 	`, F(6))
 
-	as.EvalTo(`
+	as.MustEvalTo(`
 		(define x (concat '(1 2 3 4) [5 6 7 8]))
 		(nth (apply vector (drop 3 x)) 0)
 	`, F(4))
@@ -110,20 +110,20 @@ func TestTakeDropEval(t *testing.T) {
 
 func TestLazySeqEval(t *testing.T) {
 	as := assert.New(t)
-	as.EvalTo(`
+	as.MustEvalTo(`
 		(fold-left
 			(lambda (x y) (+ x y))
 			(lazy-seq (cons 1 (lazy-seq [2 3]))))
 	`, F(6))
 
-	as.EvalTo(`
+	as.MustEvalTo(`
 		(length (seq->vector (lazy-seq '())))
 	`, F(0))
 }
 
 func TestForEachLoopEval(t *testing.T) {
 	as := assert.New(t)
-	as.EvalTo(`
+	as.MustEvalTo(`
 		(let* ([ch (chan)]
 			   [emit (:emit ch)]
 			   [close (:close ch)]

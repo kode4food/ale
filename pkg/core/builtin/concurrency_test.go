@@ -68,7 +68,7 @@ func TestPromise(t *testing.T) {
 
 func TestGenerateEval(t *testing.T) {
 	as := assert.New(t)
-	as.EvalTo(`
+	as.MustEvalTo(`
 		(define g (generate
 			(emit 99)
 			(emit 100 1000)))
@@ -78,17 +78,17 @@ func TestGenerateEval(t *testing.T) {
 
 func TestDelayEval(t *testing.T) {
 	as := assert.New(t)
-	as.EvalTo(`
+	as.MustEvalTo(`
 		(define p1 (delay "blah"))
 		(promise? p1)
 	`, data.True)
 
-	as.EvalTo(`
+	as.MustEvalTo(`
 		(define p2 (delay "hello"))
 		(p2)
 	`, S("hello"))
 
-	as.EvalTo(`
+	as.MustEvalTo(`
 		(define p3 (delay "nope"))
 		[(promise-forced? p3)
          (promise-forced? "string")]
@@ -97,7 +97,7 @@ func TestDelayEval(t *testing.T) {
 
 func TestFutureEval(t *testing.T) {
 	as := assert.New(t)
-	as.EvalTo(`
+	as.MustEvalTo(`
 		(define p (future "hello"))
 		(p)
 	`, S("hello"))

@@ -12,7 +12,7 @@ import (
 
 func TestAddition(t *testing.T) {
 	as := assert.New(t)
-	as.EvalTo(`
+	as.MustEvalTo(`
 		(define* test
 			(lambda () (asm* pos-int 1 pos-int 2 add)))
 		(test)
@@ -21,7 +21,7 @@ func TestAddition(t *testing.T) {
 
 func TestJump(t *testing.T) {
 	as := assert.New(t)
-	as.EvalTo(`
+	as.MustEvalTo(`
 		(define* test
 			(lambda ()
 				(asm*
@@ -53,7 +53,7 @@ func TestLabelError(t *testing.T) {
 func TestLabelNumbering(t *testing.T) {
 	as := assert.New(t)
 
-	as.EncodesAs(isa.Instructions{
+	as.MustEncodedAs(isa.Instructions{
 		isa.Jump.New(0),
 		isa.NoOp.New(),
 		isa.Jump.New(1),
@@ -73,7 +73,7 @@ func TestLabelNumbering(t *testing.T) {
 
 func TestOperandSizeError(t *testing.T) {
 	as := assert.New(t)
-	as.EvalTo(
+	as.MustEvalTo(
 		fmt.Sprintf("(asm* pos-int %d)", isa.OperandMask),
 		I(int64(isa.OperandMask)),
 	)

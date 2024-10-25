@@ -34,14 +34,14 @@ func TestReachability(t *testing.T) {
 		    [(a b c . d) #f])
 	`, fmt.Errorf(internal.ErrUnreachableCase, "(a b c . d)"))
 
-	as.EvalTo(`
+	as.MustEvalTo(`
 		(define-lambda test
 			[(a b c . d) #t]
 		    [(a b . c) #f])
 		[(test 1 2) (test 1 2 3)]
 	`, V(data.False, data.True))
 
-	as.EvalTo(`
+	as.MustEvalTo(`
 		(define-lambda test
 			[(a) a]
 		    [(a b c d e f g h i) (+ a b c d e f g h i)])

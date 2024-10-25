@@ -9,11 +9,13 @@ import (
 	"github.com/kode4food/ale/pkg/read"
 )
 
-// EncodesAs tests that a string generates the expected set of Instructions
-func (w *Wrapper) EncodesAs(expected isa.Instructions, src data.String) {
+// MustEncodedAs tests that a string generates the expected set of Instructions
+func (w *Wrapper) MustEncodedAs(expected isa.Instructions, src data.String) {
 	e := GetTestEncoder()
 	v := read.FromString(src)
-	generate.Block(e, v)
+	if err := generate.Block(e, v); err != nil {
+		panic(err)
+	}
 	w.Instructions(expected, e.Encode().Code)
 }
 

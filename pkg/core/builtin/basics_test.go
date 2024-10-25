@@ -78,7 +78,7 @@ func TestDefer(t *testing.T) {
 
 func TestBeginEval(t *testing.T) {
 	as := assert.New(t)
-	as.EvalTo(`
+	as.MustEvalTo(`
 		(begin
 			55
 			(if true 99 33))
@@ -87,14 +87,14 @@ func TestBeginEval(t *testing.T) {
 
 func TestTrueFalseEval(t *testing.T) {
 	as := assert.New(t)
-	as.EvalTo(`true`, data.True)
-	as.EvalTo(`false`, data.False)
-	as.EvalTo(`'()`, data.Null)
+	as.MustEvalTo(`true`, data.True)
+	as.MustEvalTo(`false`, data.False)
+	as.MustEvalTo(`'()`, data.Null)
 }
 
 func TestReadEval(t *testing.T) {
 	as := assert.New(t)
-	as.EvalTo(`
+	as.MustEvalTo(`
 		(eval (read "(str \"hello\" \"you\" \"test\")"))
 	`, S("helloyoutest"))
 }

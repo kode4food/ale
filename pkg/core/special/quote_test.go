@@ -13,8 +13,8 @@ import (
 func TestQuoteEval(t *testing.T) {
 	as := assert.New(t)
 
-	r1 := as.Eval("(quote (blah 2 3))").(*data.List)
-	r2 := as.Eval("'(blah 2 3)").(*data.List)
+	r1 := as.MustEval("(quote (blah 2 3))").(*data.List)
+	r2 := as.MustEval("'(blah 2 3)").(*data.List)
 
 	v1, ok := r1.ElementAt(0)
 	v2, _ := r2.ElementAt(0)
@@ -52,7 +52,7 @@ func TestUnquoteEval(t *testing.T) {
 	e := bootstrap.DevNullEnvironment()
 	ns := e.GetAnonymous()
 
-	ns.Declare("foo").Bind(F(456))
+	as.Nil(ns.Declare("foo").Bind(F(456)))
 	r1, err := eval.String(ns, `'[123 ,foo]`)
 	as.Nil(err)
 	as.String("[123 (ale/unquote foo)]", r1)
@@ -60,7 +60,7 @@ func TestUnquoteEval(t *testing.T) {
 
 func TestUnquoteMacroEval(t *testing.T) {
 	as := assert.New(t)
-	as.EvalTo(
+	as.MustEvalTo(
 		"(define-macro test (x . y) `(,x ,@y {:hello 99}))"+
 			"(test vector 1 2 3)",
 		S("[1 2 3 {:hello 99}]"),

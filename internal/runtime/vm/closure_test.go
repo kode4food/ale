@@ -54,7 +54,7 @@ func testPanic(t *testing.T, errStr string, code isa.Instructions) {
 
 func TestClosureEqual(t *testing.T) {
 	as := assert.New(t)
-	as.EvalTo(`
+	as.MustEvalTo(`
 		(define f1 (lambda (x) (* x 2)))
 		(define f2 (lambda (x) (* x 2)))
 		(define f3 (lambda (x) (/ x 2)))

@@ -82,13 +82,13 @@ func TestStringEquality(t *testing.T) {
 
 func TestSubstringCall(t *testing.T) {
 	as := assert.New(t)
-	as.EvalTo(`("hello" 0)`, S("h"))
-	as.EvalTo(`("hello" 1)`, S("e"))
-	as.EvalTo(`("hello" 4)`, S("o"))
-	as.EvalTo(`("hello" 0 1)`, S("h"))
-	as.EvalTo(`("hello" 0 2)`, S("he"))
-	as.EvalTo(`("hello" 0 5)`, S("hello"))
-	as.EvalTo(`("hello" 3 5)`, S("lo"))
+	as.MustEvalTo(`("hello" 0)`, S("h"))
+	as.MustEvalTo(`("hello" 1)`, S("e"))
+	as.MustEvalTo(`("hello" 4)`, S("o"))
+	as.MustEvalTo(`("hello" 0 1)`, S("h"))
+	as.MustEvalTo(`("hello" 0 2)`, S("he"))
+	as.MustEvalTo(`("hello" 0 5)`, S("hello"))
+	as.MustEvalTo(`("hello" 3 5)`, S("lo"))
 
 	as.PanicWith(`("hello" -1)`, fmt.Errorf(data.ErrInvalidStartIndex, -1))
 	as.PanicWith(`("hello" 6)`, fmt.Errorf(data.ErrInvalidStartIndex, 6))
@@ -99,11 +99,11 @@ func TestSubstringCall(t *testing.T) {
 
 func TestReverse(t *testing.T) {
 	as := assert.New(t)
-	as.EvalTo(`(reverse "hello")`, S("olleh"))
-	as.EvalTo(`(reverse "")`, S(""))
-	as.EvalTo(`(reverse "X")`, S("X"))
-	as.EvalTo(`(reverse "😎⚽")`, S("⚽😎"))
-	as.EvalTo(
+	as.MustEvalTo(`(reverse "hello")`, S("olleh"))
+	as.MustEvalTo(`(reverse "")`, S(""))
+	as.MustEvalTo(`(reverse "X")`, S("X"))
+	as.MustEvalTo(`(reverse "😎⚽")`, S("⚽😎"))
+	as.MustEvalTo(
 		`(reverse "The quick bròwn 狐 jumped over the lazy 犬")`,
 		S("犬 yzal eht revo depmuj 狐 nwòrb kciuq ehT"),
 	)

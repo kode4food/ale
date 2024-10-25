@@ -14,7 +14,7 @@ func TestPair(t *testing.T) {
 	as := assert.New(t)
 
 	e1 := assert.GetTestEncoder()
-	generate.Value(e1, data.NewCons(S("left"), S("right")))
+	as.Nil(generate.Value(e1, data.NewCons(S("left"), S("right"))))
 	e1.Emit(isa.Return)
 
 	enc1 := e1.Encode()

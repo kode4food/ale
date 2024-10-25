@@ -18,16 +18,6 @@ type (
 )
 
 const (
-	// ErrSymbolNotDeclared is raised when an attempt to forcefully resolve an
-	// undeclared symbol in the Namespace fails
-	ErrSymbolNotDeclared = "symbol not declared in namespace: %s"
-
-	// ErrSymbolNotBound is raised when an attempt to forcefully resolve an
-	// unbound symbol in the Namespace fails
-	ErrSymbolNotBound = "symbol not bound in namespace: %s"
-)
-
-const (
 	// RootDomain stores built-ins
 	RootDomain = data.Local("ale")
 

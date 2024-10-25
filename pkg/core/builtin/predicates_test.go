@@ -17,29 +17,29 @@ func getPredicate(kwd data.Keyword) data.Procedure {
 
 func TestPredicatesEval(t *testing.T) {
 	as := assert.New(t)
-	as.EvalTo(`(eq true true true)`, data.True)
-	as.EvalTo(`(eq true false true)`, data.False)
-	as.EvalTo(`(eq false false false)`, data.True)
+	as.MustEvalTo(`(eq true true true)`, data.True)
+	as.MustEvalTo(`(eq true false true)`, data.False)
+	as.MustEvalTo(`(eq false false false)`, data.True)
 
-	as.EvalTo(`(!eq true true true)`, data.False)
-	as.EvalTo(`(!eq true false)`, data.True)
-	as.EvalTo(`(!eq false false)`, data.False)
+	as.MustEvalTo(`(!eq true true true)`, data.False)
+	as.MustEvalTo(`(!eq true false)`, data.True)
+	as.MustEvalTo(`(!eq false false)`, data.False)
 
-	as.EvalTo(`(null? '())`, data.True)
-	as.EvalTo(`(null? '() '() '())`, data.True)
-	as.EvalTo(`(null? false)`, data.False)
-	as.EvalTo(`(null? false '())`, data.False)
+	as.MustEvalTo(`(null? '())`, data.True)
+	as.MustEvalTo(`(null? '() '() '())`, data.True)
+	as.MustEvalTo(`(null? false)`, data.False)
+	as.MustEvalTo(`(null? false '())`, data.False)
 
-	as.EvalTo(`(null? "hello")`, data.False)
-	as.EvalTo(`(null? '(1 2 3))`, data.False)
-	as.EvalTo(`(null? '() "hello")`, data.False)
+	as.MustEvalTo(`(null? "hello")`, data.False)
+	as.MustEvalTo(`(null? '(1 2 3))`, data.False)
+	as.MustEvalTo(`(null? '() "hello")`, data.False)
 
-	as.EvalTo(`(keyword? :hello)`, data.True)
-	as.EvalTo(`(!keyword? :hello)`, data.False)
-	as.EvalTo(`(keyword? 99)`, data.False)
-	as.EvalTo(`(!keyword? 99)`, data.True)
+	as.MustEvalTo(`(keyword? :hello)`, data.True)
+	as.MustEvalTo(`(!keyword? :hello)`, data.False)
+	as.MustEvalTo(`(keyword? 99)`, data.False)
+	as.MustEvalTo(`(!keyword? 99)`, data.True)
 
-	as.EvalTo(
+	as.MustEvalTo(
 		`(eq { :name "Ale" :age 3 :colors [:red :green :blue] }
              { :age 3 :colors [:red :green :blue] :name "Ale" })`,
 		data.True,
@@ -54,7 +54,7 @@ func TestPredicatesEval(t *testing.T) {
 
 func TestTypeOf(t *testing.T) {
 	as := assert.New(t)
-	as.EvalTo(`
+	as.MustEvalTo(`
 		(define l-pred (type-of* '(1 2 3)))
 		[(l-pred '(9 8 7))
          (l-pred '())

@@ -18,7 +18,7 @@ func EvaluateStdIn() {
 	defer exitWithError()
 
 	buffer, _ := io.ReadAll(os.Stdin)
-	evalBuffer(buffer)
+	mustEvalBuffer(buffer)
 }
 
 // EvaluateFile reads the specific source file and evaluates it
@@ -30,15 +30,22 @@ func EvaluateFile(filename string) {
 		fmt.Println(fmt.Errorf(ErrFileNotFound, filename))
 		os.Exit(-1)
 	}
-	evalBuffer(buffer)
+	mustEvalBuffer(buffer)
 }
 
-func evalBuffer(src []byte) {
+func mustEvalBuffer(src []byte) {
+	if err := evalBuffer(src); err != nil {
+		panic(err)
+	}
+}
+
+func evalBuffer(src []byte) error {
 	ns := makeUserNamespace()
 	r := read.FromString(data.String(src))
 	if _, err := eval.Block(ns, r); err != nil {
-		panic(err)
+		return err
 	}
+	return nil
 }
 
 func exitWithError() {

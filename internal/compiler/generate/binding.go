@@ -35,7 +35,9 @@ func Locals(e encoder.Encoder, bindings Bindings, body Builder) error {
 		e.Emit(isa.Store, l.Index)
 	}
 
-	body(e)
+	if err := body(e); err != nil {
+		return err
+	}
 	return e.PopLocals()
 }
 
@@ -67,6 +69,8 @@ func MutualLocals(e encoder.Encoder, bindings Bindings, body Builder) error {
 		e.Emit(isa.BindRef)
 	}
 
-	body(e)
+	if err := body(e); err != nil {
+		return err
+	}
 	return e.PopLocals()
 }

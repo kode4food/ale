@@ -12,7 +12,7 @@ import (
 
 func TestLet(t *testing.T) {
 	as := assert.New(t)
-	as.EvalTo(`(let ([x 99][y 1]) (+ x y))`, I(100))
+	as.MustEvalTo(`(let ([x 99][y 1]) (+ x y))`, I(100))
 }
 
 func TestBindingErrors(t *testing.T) {

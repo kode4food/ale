@@ -9,7 +9,7 @@ import (
 
 func TestHelpers(t *testing.T) {
 	as := assert.New(t)
-	as.EvalTo(
+	as.MustEvalTo(
 		`'(1 1/2 hello
 			{ale/hello "string"}
 			{:kwd ["a" "vector"]}

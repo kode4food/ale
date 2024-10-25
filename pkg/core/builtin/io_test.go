@@ -22,13 +22,13 @@ func testOutput(t *testing.T, src, expected string) {
 
 	e := env.NewEnvironment()
 	ns := e.GetRoot()
-	ns.Declare(stdoutName).Bind(O(
+	as.Nil(ns.Declare(stdoutName).Bind(O(
 		C(stream.WriteKey, w),
-	))
+	)))
 	bootstrap.Into(e)
 
 	anon := e.GetAnonymous()
-	eval.String(anon, S(src))
+	as.Nil(eval.String(anon, S(src)))
 
 	as.String(expected, buf.String())
 }

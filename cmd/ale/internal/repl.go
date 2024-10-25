@@ -36,7 +36,7 @@ import (
 type (
 	sentinel struct{}
 
-	// REPL manages a FromLexer-Eval-Print Loop
+	// REPL manages a FromLexer-MustEval-Print Loop
 	REPL struct {
 		ns  env.Namespace
 		rl  *readline.Instance
@@ -88,7 +88,7 @@ func NewREPL() *REPL {
 	return repl
 }
 
-// Run will perform the Eval-Print-Loop
+// Run will perform the MustEval-Print-Loop
 func (r *REPL) Run() {
 	defer func() {
 		_ = r.rl.Close()
@@ -291,7 +291,9 @@ func (r *REPL) makeUse() data.Value {
 		if old != r.ns {
 			fmt.Println()
 		}
-		generate.Literal(e, nothing)
+		if err := generate.Literal(e, nothing); err != nil {
+			panic(err)
+		}
 	})
 }
 
@@ -355,7 +357,9 @@ var doc = special.Call(func(e encoder.Encoder, args ...data.Value) {
 	} else {
 		docSymbol(args[0].(data.Local))
 	}
-	generate.Literal(e, nothing)
+	if err := generate.Literal(e, nothing); err != nil {
+		panic(err)
+	}
 })
 
 func docSymbol(sym data.Symbol) {

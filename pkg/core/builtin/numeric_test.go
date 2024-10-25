@@ -11,37 +11,37 @@ import (
 
 func TestBasicNumberEval(t *testing.T) {
 	as := assert.New(t)
-	as.EvalTo(`(+)`, I(0))
-	as.EvalTo(`(*)`, I(1))
-	as.EvalTo(`(+ 1 1)`, I(2))
-	as.EvalTo(`(* 4 4)`, I(16))
-	as.EvalTo(`(+ 5 4)`, I(9))
-	as.EvalTo(`(* 12 3)`, I(36))
-	as.EvalTo(`(- 10 4)`, I(6))
-	as.EvalTo(`(- 10 4 2)`, I(4))
-	as.EvalTo(`(- 5)`, I(-5))
-	as.EvalTo(`(/ 10 2)`, I(5))
-	as.EvalTo(`(/ 10 2 5)`, I(1))
-	as.EvalTo(`(mod 10 3)`, I(1))
-	as.EvalTo(`(mod 100 8 7)`, I(4))
+	as.MustEvalTo(`(+)`, I(0))
+	as.MustEvalTo(`(*)`, I(1))
+	as.MustEvalTo(`(+ 1 1)`, I(2))
+	as.MustEvalTo(`(* 4 4)`, I(16))
+	as.MustEvalTo(`(+ 5 4)`, I(9))
+	as.MustEvalTo(`(* 12 3)`, I(36))
+	as.MustEvalTo(`(- 10 4)`, I(6))
+	as.MustEvalTo(`(- 10 4 2)`, I(4))
+	as.MustEvalTo(`(- 5)`, I(-5))
+	as.MustEvalTo(`(/ 10 2)`, I(5))
+	as.MustEvalTo(`(/ 10 2 5)`, I(1))
+	as.MustEvalTo(`(mod 10 3)`, I(1))
+	as.MustEvalTo(`(mod 100 8 7)`, I(4))
 }
 
 func TestNestedNumberEval(t *testing.T) {
 	as := assert.New(t)
-	as.EvalTo(`(/ 10 (- 5 3))`, I(5))
-	as.EvalTo(`(* 5 (- 5 3))`, I(10))
-	as.EvalTo(`(/ 10 (/ 6 3))`, I(5))
+	as.MustEvalTo(`(/ 10 (- 5 3))`, I(5))
+	as.MustEvalTo(`(* 5 (- 5 3))`, I(10))
+	as.MustEvalTo(`(/ 10 (/ 6 3))`, I(5))
 }
 
 func TestNonNumberEval(t *testing.T) {
 	as := assert.New(t)
-	as.EvalTo(`(is-pos-inf (/ 99.0 0))`, data.True)
-	as.EvalTo(`(is-pos-inf 99)`, data.False)
+	as.MustEvalTo(`(is-pos-inf (/ 99.0 0))`, data.True)
+	as.MustEvalTo(`(is-pos-inf 99)`, data.False)
 
-	as.EvalTo(`(is-neg-inf (/ -99.0 0))`, data.True)
-	as.EvalTo(`(is-neg-inf -99)`, data.False)
+	as.MustEvalTo(`(is-neg-inf (/ -99.0 0))`, data.True)
+	as.MustEvalTo(`(is-neg-inf -99)`, data.False)
 
-	as.EvalTo(`(is-nan 99)`, data.False)
+	as.MustEvalTo(`(is-nan 99)`, data.False)
 }
 
 func TestBadMathsEval(t *testing.T) {
@@ -68,33 +68,33 @@ func TestBadNumbersEval(t *testing.T) {
 
 func TestCompareEval(t *testing.T) {
 	as := assert.New(t)
-	as.EvalTo(`(= 1 1)`, data.True)
-	as.EvalTo(`(= 1 1 1 1 '1 1 1)`, data.True)
-	as.EvalTo(`(= 1 2)`, data.False)
-	as.EvalTo(`(= 1 1 1 1 2 1 1 1)`, data.False)
+	as.MustEvalTo(`(= 1 1)`, data.True)
+	as.MustEvalTo(`(= 1 1 1 1 '1 1 1)`, data.True)
+	as.MustEvalTo(`(= 1 2)`, data.False)
+	as.MustEvalTo(`(= 1 1 1 1 2 1 1 1)`, data.False)
 
-	as.EvalTo(`(!= 1 1)`, data.False)
-	as.EvalTo(`(!= 1 1 1 1 '1 1 1)`, data.False)
-	as.EvalTo(`(!= 1 2)`, data.True)
-	as.EvalTo(`(!= 1 1 1 1 2 1 1 1)`, data.True)
+	as.MustEvalTo(`(!= 1 1)`, data.False)
+	as.MustEvalTo(`(!= 1 1 1 1 '1 1 1)`, data.False)
+	as.MustEvalTo(`(!= 1 2)`, data.True)
+	as.MustEvalTo(`(!= 1 1 1 1 2 1 1 1)`, data.True)
 
-	as.EvalTo(`(> 1 1)`, data.False)
-	as.EvalTo(`(> 2 1)`, data.True)
-	as.EvalTo(`(> 1 2)`, data.False)
-	as.EvalTo(`(> 1 2 3 4 5)`, data.False)
-	as.EvalTo(`(> 5 4 3 2 1)`, data.True)
-	as.EvalTo(`(>= 1 1)`, data.True)
-	as.EvalTo(`(>= 0 1)`, data.False)
-	as.EvalTo(`(>= 1 0)`, data.True)
+	as.MustEvalTo(`(> 1 1)`, data.False)
+	as.MustEvalTo(`(> 2 1)`, data.True)
+	as.MustEvalTo(`(> 1 2)`, data.False)
+	as.MustEvalTo(`(> 1 2 3 4 5)`, data.False)
+	as.MustEvalTo(`(> 5 4 3 2 1)`, data.True)
+	as.MustEvalTo(`(>= 1 1)`, data.True)
+	as.MustEvalTo(`(>= 0 1)`, data.False)
+	as.MustEvalTo(`(>= 1 0)`, data.True)
 
-	as.EvalTo(`(< 1 1)`, data.False)
-	as.EvalTo(`(< 2 1)`, data.False)
-	as.EvalTo(`(< 1 2)`, data.True)
-	as.EvalTo(`(< 1 2 3 4 5)`, data.True)
-	as.EvalTo(`(< 5 4 3 2 1)`, data.False)
-	as.EvalTo(`(<= 1 1)`, data.True)
-	as.EvalTo(`(<= 0 1)`, data.True)
-	as.EvalTo(`(<= 1 0)`, data.False)
+	as.MustEvalTo(`(< 1 1)`, data.False)
+	as.MustEvalTo(`(< 2 1)`, data.False)
+	as.MustEvalTo(`(< 1 2)`, data.True)
+	as.MustEvalTo(`(< 1 2 3 4 5)`, data.True)
+	as.MustEvalTo(`(< 5 4 3 2 1)`, data.False)
+	as.MustEvalTo(`(<= 1 1)`, data.True)
+	as.MustEvalTo(`(<= 0 1)`, data.True)
+	as.MustEvalTo(`(<= 1 0)`, data.False)
 }
 
 func TestBadCompareEval(t *testing.T) {

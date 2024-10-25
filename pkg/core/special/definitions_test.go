@@ -11,13 +11,13 @@ import (
 
 func TestFunctionEval(t *testing.T) {
 	as := assert.New(t)
-	as.EvalTo(`
+	as.MustEvalTo(`
 		(define-lambda say-hello ()
 		  "Hello, World!")
 		(say-hello)
 	`, S("Hello, World!"))
 
-	as.EvalTo(`
+	as.MustEvalTo(`
 		(define-lambda identity (value) value)
 		(identity "foo")
 	`, S("foo"))

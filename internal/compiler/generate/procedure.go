@@ -9,7 +9,9 @@ import (
 
 func Procedure(e encoder.Encoder, build Builder) (*vm.Procedure, error) {
 	child := e.Child()
-	build(child)
+	if err := build(child); err != nil {
+		return nil, err
+	}
 	enc := child.Encode()
 	fn, err := procedure.FromEncoded(enc)
 	if err != nil {

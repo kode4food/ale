@@ -37,7 +37,9 @@ func makeDefiner[T data.Value](m map[data.Local]T, err string) special.Call {
 			if err := e.Globals().Declare(n).Bind(sf); err != nil {
 				panic(err)
 			}
-			generate.Symbol(e, n)
+			if err := generate.Symbol(e, n); err != nil {
+				panic(err)
+			}
 			return
 		}
 		panic(fmt.Errorf(err, n))

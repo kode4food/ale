@@ -1,9 +1,12 @@
 package assert
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 	"testing"
+
+	"github.com/kode4food/ale/internal/debug"
 
 	"github.com/kode4food/ale/pkg/data"
 	"github.com/stretchr/testify/assert"
@@ -149,8 +152,8 @@ func (w *Wrapper) Compare(c data.Comparison, l data.Number, r data.Number) {
 func (w *Wrapper) ExpectPanic(err any) {
 	w.Helper()
 	if rec := recover(); rec != nil {
-		errStr := w.makeString(rec)
-		pfx := w.makeString(err)
+		errStr := w.mustMakeString(rec)
+		pfx := w.mustMakeString(err)
 		hasPfx := strings.HasPrefix(errStr, pfx)
 		w.True(hasPfx)
 		if rec, ok := rec.(error); ok && !hasPfx {
@@ -189,15 +192,23 @@ func (w *Wrapper) MustGet(m data.Mapped, k data.Value) data.Value {
 	panic(fmt.Errorf(ErrValueNotFound, k))
 }
 
-func (w *Wrapper) makeString(val any) string {
+func (w *Wrapper) mustMakeString(val any) string {
+	res, err := w.makeString(val)
+	if err != nil {
+		panic(debug.ProgrammerError(err.Error()))
+	}
+	return res
+}
+
+func (w *Wrapper) makeString(val any) (string, error) {
 	switch val := val.(type) {
 	case string:
-		return val
+		return val, nil
 	case error:
-		return val.Error()
+		return val.Error(), nil
 	case fmt.Stringer:
-		return val.String()
+		return val.String(), nil
 	default:
-		panic(ErrCannotMakeString)
+		return "", errors.New(ErrCannotMakeString)
 	}
 }

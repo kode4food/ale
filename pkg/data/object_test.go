@@ -127,9 +127,9 @@ func TestObjectCall(t *testing.T) {
 	as.Nil(o1.Call(K("missing")))
 	as.String("defaulted", o1.Call(K("missing"), S("defaulted")))
 
-	as.EvalTo(`({:first 1} :first)`, I(1))
-	as.EvalTo(`({:first 1} :second)`, data.Null)
-	as.EvalTo(`({:first 1} :second 2)`, I(2))
+	as.MustEvalTo(`({:first 1} :first)`, I(1))
+	as.MustEvalTo(`({:first 1} :second)`, data.Null)
+	as.MustEvalTo(`({:first 1} :second 2)`, I(2))
 
 	testSequenceCallInterface(as, o1)
 }

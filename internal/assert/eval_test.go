@@ -10,7 +10,7 @@ import (
 
 func TestEval(t *testing.T) {
 	as := assert.New(t)
-	as.EvalTo(`2`, data.Integer(2))
+	as.MustEvalTo(`2`, data.Integer(2))
 }
 
 func TestPanicWith(t *testing.T) {

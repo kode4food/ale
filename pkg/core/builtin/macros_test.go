@@ -12,17 +12,17 @@ import (
 
 func TestMacroPredicatesEval(t *testing.T) {
 	as := assert.New(t)
-	as.EvalTo(`(macro? cond)`, data.True)
-	as.EvalTo(`(!macro? cond)`, data.False)
-	as.EvalTo(`(macro? if)`, data.False)
-	as.EvalTo(`(!macro? if)`, data.True)
-	as.EvalTo(`(atom? "hello")`, data.True)
-	as.EvalTo(`(!atom? '(1 2 3))`, data.True)
+	as.MustEvalTo(`(macro? cond)`, data.True)
+	as.MustEvalTo(`(!macro? cond)`, data.False)
+	as.MustEvalTo(`(macro? if)`, data.False)
+	as.MustEvalTo(`(!macro? if)`, data.True)
+	as.MustEvalTo(`(atom? "hello")`, data.True)
+	as.MustEvalTo(`(!atom? '(1 2 3))`, data.True)
 }
 
 func TestMacroReplaceEval(t *testing.T) {
 	as := assert.New(t)
-	as.EvalTo(`
+	as.MustEvalTo(`
 		(define-macro foo args
 			(seq->list (cons 'str (cons "hello" args))))
 
@@ -32,14 +32,14 @@ func TestMacroReplaceEval(t *testing.T) {
 
 func TestMacroExpandEval(t *testing.T) {
 	as := assert.New(t)
-	as.EvalTo(`
+	as.MustEvalTo(`
 		(define-macro foo1 args
 			(seq->list (cons 'str (cons "hello" args))))
 
 		(macroexpand-1 '(foo1 1 2 3))
 	`, S(`(str "hello" 1 2 3)`))
 
-	as.EvalTo(`
+	as.MustEvalTo(`
 		(define-macro foo1 args
 			(seq->list (cons 'str (cons "hello" args))))
 

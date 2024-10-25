@@ -13,7 +13,7 @@ func TestBlock(t *testing.T) {
 	as := assert.New(t)
 
 	e1 := assert.GetTestEncoder()
-	generate.Block(e1, V())
+	as.Nil(generate.Block(e1, V()))
 	e1.Emit(isa.Return)
 
 	as.Instructions(isa.Instructions{
@@ -22,10 +22,10 @@ func TestBlock(t *testing.T) {
 	}, e1.Encode().Code)
 
 	e2 := assert.GetTestEncoder()
-	generate.Block(e2, V(
+	as.Nil(generate.Block(e2, V(
 		L(LS("+"), I(1), I(2)),
 		B(true),
-	))
+	)))
 	e2.Emit(isa.Return)
 
 	enc2 := e2.Encode()

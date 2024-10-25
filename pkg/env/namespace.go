@@ -31,6 +31,12 @@ type (
 	}
 )
 
+const (
+	// ErrNameNotDeclared is raised when an attempt to forcefully resolve an
+	// undeclared name in the Namespace fails
+	ErrNameNotDeclared = "name not declared in namespace: %s"
+)
+
 func (ns *namespace) Environment() *Environment {
 	return ns.environment
 }
@@ -85,7 +91,7 @@ func (ns *namespace) Resolve(n data.Local) (Entry, error) {
 		return e, nil
 	}
 	ns.RUnlock()
-	return nil, fmt.Errorf(ErrSymbolNotDeclared, n)
+	return nil, fmt.Errorf(ErrNameNotDeclared, n)
 }
 
 func (ns *namespace) Snapshot(e *Environment) (Namespace, error) {
@@ -111,5 +117,5 @@ func resolvePublic(from, in Namespace, n data.Local) (Entry, error) {
 	if e, err := in.Resolve(n); err == nil && (from == in || !e.IsPrivate()) {
 		return e, nil
 	}
-	return nil, fmt.Errorf(ErrSymbolNotDeclared, n)
+	return nil, fmt.Errorf(ErrNameNotDeclared, n)
 }

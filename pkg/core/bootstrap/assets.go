@@ -51,6 +51,8 @@ func (b *bootstrap) populateAssets() {
 	ns := b.environment.GetRoot()
 	for _, a := range assets {
 		filename = a.name
-		eval.Block(ns, a.block)
+		if _, err := eval.Block(ns, a.block); err != nil {
+			panic(err)
+		}
 	}
 }

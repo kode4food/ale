@@ -11,23 +11,23 @@ import (
 
 func TestCondEval(t *testing.T) {
 	as := assert.New(t)
-	as.EvalTo(`(cond)`, data.Null)
+	as.MustEvalTo(`(cond)`, data.Null)
 
-	as.EvalTo(`
+	as.MustEvalTo(`
 		(cond
 			[false "goodbye"]
 			[true  "hello"]
 			["hi"  "ignored"])
 	`, S("hello"))
 
-	as.EvalTo(`
+	as.MustEvalTo(`
 		(cond
 			[false "goodbye"]
 			[:else "hello"]
 			["hi"  "ignored"])
 	`, S("hello"))
 
-	as.EvalTo(`
+	as.MustEvalTo(`
 		(cond
 			[false "goodbye"]
 			['()   "hello"])

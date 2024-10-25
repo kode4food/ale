@@ -66,22 +66,18 @@ func getDirectiveCalls() namedAsmParsers {
 func constCall(_ *asmParser, args ...data.Value) (asmEmit, error) {
 	return func(e *asmEncoder) error {
 		if v, ok := e.resolveEncoderArg(args[0]); ok {
-			generate.Literal(e, v)
-			return nil
+			return generate.Literal(e, v)
 		}
-		generate.Literal(e, args[0])
-		return nil
+		return generate.Literal(e, args[0])
 	}, nil
 }
 
 func evaluateCall(_ *asmParser, args ...data.Value) (asmEmit, error) {
 	return func(e *asmEncoder) error {
 		if v, ok := e.resolveEncoderArg(args[0]); ok {
-			generate.Value(e, v)
-			return nil
+			return generate.Value(e, v)
 		}
-		generate.Value(e, args[0])
-		return nil
+		return generate.Value(e, args[0])
 	}, nil
 }
 
@@ -122,14 +118,12 @@ func resolveCall(_ *asmParser, args ...data.Value) (asmEmit, error) {
 
 	if l, ok := s.(data.Local); ok {
 		return func(e *asmEncoder) error {
-			generate.Symbol(e, e.resolvePrivate(l))
-			return nil
+			return generate.Symbol(e, e.resolvePrivate(l))
 		}, nil
 	}
 
 	return func(e *asmEncoder) error {
-		generate.Symbol(e, s)
-		return nil
+		return generate.Symbol(e, s)
 	}, nil
 }
 

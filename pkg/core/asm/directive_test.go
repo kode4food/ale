@@ -14,12 +14,12 @@ import (
 
 func TestConstant(t *testing.T) {
 	as := assert.New(t)
-	as.EvalTo(
+	as.MustEvalTo(
 		`(asm* .const ("this is a list" 1 2 3))`,
 		L(S("this is a list"), I(1), I(2), I(3)),
 	)
 
-	as.EvalTo(
+	as.MustEvalTo(
 		`(asm* .const 1 .const 2 .const 3 add add)`,
 		I(6),
 	)
@@ -49,8 +49,8 @@ func TestLocalScopeError(t *testing.T) {
 
 func TestEval(t *testing.T) {
 	as := assert.New(t)
-	as.EvalTo(`(asm* .eval (+ 1 2))`, I(3))
-	as.EncodesAs(isa.Instructions{
+	as.MustEvalTo(`(asm* .eval (+ 1 2))`, I(3))
+	as.MustEncodedAs(isa.Instructions{
 		isa.PosInt.New(2),
 		isa.PosInt.New(1),
 		isa.Const.New(0),

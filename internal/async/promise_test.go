@@ -30,7 +30,7 @@ func TestPromiseFailure(t *testing.T) {
 func TestPromiseEval(t *testing.T) {
 	as := assert.New(t)
 
-	as.EvalTo(`
+	as.MustEvalTo(`
 		(define p (delay "hello"))
 		(let* ([p?  (promise? p)]
 			   [r1? (resolved? p)]

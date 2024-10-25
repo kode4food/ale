@@ -28,21 +28,21 @@ func TestObject(t *testing.T) {
 
 func TestObjectEval(t *testing.T) {
 	as := assert.New(t)
-	as.EvalTo(`(length {:name "Ale" :age 45})`, F(2))
-	as.EvalTo(`(length (object :name "Ale" :age 45))`, F(2))
-	as.EvalTo(`(object? {:name "Ale" :age 45})`, data.True)
-	as.EvalTo(`(object? (object :name "Ale" :age 45))`, data.True)
-	as.EvalTo(`(object? '(:name "Ale" :age 45))`, data.False)
-	as.EvalTo(`(object? [:name "Ale" :age 45])`, data.False)
-	as.EvalTo(`(!object? '(:name "Ale" :age 45))`, data.True)
-	as.EvalTo(`(!object? [:name "Ale" :age 45])`, data.True)
-	as.EvalTo(`(:name {:name "Ale" :age 45})`, S("Ale"))
+	as.MustEvalTo(`(length {:name "Ale" :age 45})`, F(2))
+	as.MustEvalTo(`(length (object :name "Ale" :age 45))`, F(2))
+	as.MustEvalTo(`(object? {:name "Ale" :age 45})`, data.True)
+	as.MustEvalTo(`(object? (object :name "Ale" :age 45))`, data.True)
+	as.MustEvalTo(`(object? '(:name "Ale" :age 45))`, data.False)
+	as.MustEvalTo(`(object? [:name "Ale" :age 45])`, data.False)
+	as.MustEvalTo(`(!object? '(:name "Ale" :age 45))`, data.True)
+	as.MustEvalTo(`(!object? [:name "Ale" :age 45])`, data.True)
+	as.MustEvalTo(`(:name {:name "Ale" :age 45})`, S("Ale"))
 
-	as.EvalTo(`
+	as.MustEvalTo(`
 		(:name (apply object (concat '(:name "Ale") '(:age 45))))
 	`, S("Ale"))
 
-	as.EvalTo(`
+	as.MustEvalTo(`
 		(define x {:name "bob" :age 45})
 		(x :name)
 	`, S("bob"))
@@ -57,7 +57,7 @@ func TestObjectEval(t *testing.T) {
 func TestObjectAssoc(t *testing.T) {
 	as := assert.New(t)
 
-	as.EvalTo(`
+	as.MustEvalTo(`
 		(define o1 {:first "first" :second "second"})
 		(define o2 (assoc o1 :first "first-replaced"))
 		(define o3 (assoc o1 (:first . "also-replaced")))
@@ -86,11 +86,11 @@ func TestObjectAssoc(t *testing.T) {
 
 func TestMappedEval(t *testing.T) {
 	as := assert.New(t)
-	as.EvalTo(`(mapped? {:name "Ale" :age 45})`, data.True)
-	as.EvalTo(`(mapped? (object :name "Ale" :age 45))`, data.True)
-	as.EvalTo(`(mapped? '(:name "Ale" :age 45))`, data.False)
-	as.EvalTo(`(mapped? [:name "Ale" :age 45])`, data.False)
-	as.EvalTo(`(!mapped? '(:name "Ale" :age 45))`, data.True)
-	as.EvalTo(`(!mapped? '(:name "Ale" :age 45))`, data.True)
-	as.EvalTo(`(!mapped? [:name "Ale" :age 45])`, data.True)
+	as.MustEvalTo(`(mapped? {:name "Ale" :age 45})`, data.True)
+	as.MustEvalTo(`(mapped? (object :name "Ale" :age 45))`, data.True)
+	as.MustEvalTo(`(mapped? '(:name "Ale" :age 45))`, data.False)
+	as.MustEvalTo(`(mapped? [:name "Ale" :age 45])`, data.False)
+	as.MustEvalTo(`(!mapped? '(:name "Ale" :age 45))`, data.True)
+	as.MustEvalTo(`(!mapped? '(:name "Ale" :age 45))`, data.True)
+	as.MustEvalTo(`(!mapped? [:name "Ale" :age 45])`, data.True)
 }
