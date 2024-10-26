@@ -64,14 +64,17 @@ func (i Instruction) Operand() Operand {
 	return Operand(i) >> OpcodeSize & OperandMask
 }
 
-func (i Instruction) StackChange() int {
+func (i Instruction) StackChange() (int, error) {
 	oc, op := i.Split()
-	effect := MustGetEffect(oc)
+	effect, err := GetEffect(oc)
+	if err != nil {
+		return 0, err
+	}
 	base := effect.Push - effect.Pop
 	if effect.DPop {
-		return base - int(op)
+		return base - int(op), nil
 	}
-	return base
+	return base, nil
 }
 
 // Equal compares this Instruction to another for equality

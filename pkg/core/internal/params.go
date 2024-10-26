@@ -62,14 +62,6 @@ const (
 
 const arityBits = 8
 
-func MustParseParamCases(s data.Sequence) *ParamCases {
-	res, err := ParseParamCases(s)
-	if err != nil {
-		panic(err)
-	}
-	return res
-}
-
 func ParseParamCases(s data.Sequence) (*ParamCases, error) {
 	if s.IsEmpty() {
 		return nil, errors.New(ErrNoCasesDefined)

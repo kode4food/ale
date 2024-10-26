@@ -47,30 +47,39 @@ func CalculateStackSize(code isa.Instructions) (isa.Operand, error) {
 func (s *stackSizes) calculateNode(n visitor.Node) error {
 	switch n := n.(type) {
 	case visitor.Branches:
-		s.calculateInstructions(n.Prologue())
+		if err := s.calculateInstructions(n.Prologue()); err != nil {
+			return err
+		}
 		t := n.ThenBranch()
 		e := n.ElseBranch()
 		if err := s.calculateBranches(t, e); err != nil {
 			return err
 		}
-		if err := s.calculateNode(n.Epilogue()); err != nil {
+		return s.calculateNode(n.Epilogue())
+	case visitor.Instructions:
+		return s.calculateInstructions(n)
+	default:
+		return nil
+	}
+}
+
+func (s *stackSizes) calculateInstructions(inst visitor.Instructions) error {
+	for _, inst := range inst.Code() {
+		if err := s.calculateInstruction(inst); err != nil {
 			return err
 		}
-	case visitor.Instructions:
-		s.calculateInstructions(n)
 	}
 	return nil
 }
 
-func (s *stackSizes) calculateInstructions(inst visitor.Instructions) {
-	for _, inst := range inst.Code() {
-		s.calculateInstruction(inst)
+func (s *stackSizes) calculateInstruction(inst isa.Instruction) error {
+	c, err := inst.StackChange()
+	if err != nil {
+		return err
 	}
-}
-
-func (s *stackSizes) calculateInstruction(inst isa.Instruction) {
-	s.endSize += inst.StackChange()
+	s.endSize += c
 	s.maxSize = max(s.endSize, s.maxSize)
+	return nil
 }
 
 func (s *stackSizes) calculateBranches(thenNode, elseNode visitor.Node) error {

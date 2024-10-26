@@ -120,7 +120,11 @@ func (f *finalizer) handleInst(i isa.Instruction) error {
 	case isa.Label:
 		return f.handleLabel(i)
 	default:
-		if effect := isa.MustGetEffect(oc); !effect.Ignore {
+		effect, err := isa.GetEffect(oc)
+		if err != nil {
+			return err
+		}
+		if !effect.Ignore {
 			f.output = append(f.output, i)
 		}
 	}
