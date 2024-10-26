@@ -53,7 +53,7 @@ func (w *Wrapper) String(expect string, expr any) {
 	case data.Value:
 		w.Assertions.Equal(expect, data.ToString(s))
 	default:
-		panic(fmt.Errorf(ErrInvalidTestExpression, expr))
+		panic(debug.ProgrammerError(ErrInvalidTestExpression, expr))
 	}
 }
 

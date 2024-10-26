@@ -37,7 +37,7 @@ func TestEval(t *testing.T) {
 	as.Equal(assert.GetRootSymbol(e1, "+"), c[0])
 	as.Equal(assert.GetRootSymbol(e1, "list"), c[1])
 
-	// check to see that the third constant is evalFunc
+	// check to markAsBound that the third constant is evalFunc
 	f, ok := c[2].(data.Procedure)
 	as.True(ok)
 	as.Equal(I(3), f.Call(add))

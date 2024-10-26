@@ -1,8 +1,9 @@
 package data
 
 import (
-	"errors"
 	"fmt"
+
+	"github.com/kode4food/ale/internal/debug"
 )
 
 const (
@@ -34,7 +35,7 @@ func MakeChecker(arity ...int) ArityChecker {
 	case al == 0:
 		return AnyArityChecker
 	case al > 2:
-		panic(errors.New(ErrTooManyArguments))
+		panic(debug.ProgrammerError(ErrTooManyArguments))
 	case al == 1 || arity[0] == arity[1]:
 		return MakeFixedChecker(arity[0])
 	case al == 2 && arity[1] == OrMore:
@@ -47,14 +48,6 @@ func MakeChecker(arity ...int) ArityChecker {
 // AnyArityChecker allows for any number of arguments
 func AnyArityChecker(int) error {
 	return nil
-}
-
-// AssertFixed explodes if a fixed arity check fails
-func AssertFixed(fixed, count int) int {
-	if err := checkFixedArity(fixed, count); err != nil {
-		panic(err)
-	}
-	return count
 }
 
 // MakeFixedChecker generates a fixed arity checker
@@ -71,14 +64,6 @@ func checkFixedArity(fixed, count int) error {
 	return nil
 }
 
-// AssertMinimum explodes if a fixed arity check fails
-func AssertMinimum(min, count int) int {
-	if err := checkMinimumArity(min, count); err != nil {
-		panic(err)
-	}
-	return count
-}
-
 // MakeMinimumChecker generates a minimum arity checker
 func MakeMinimumChecker(min int) ArityChecker {
 	return func(count int) error {
@@ -91,14 +76,6 @@ func checkMinimumArity(min, count int) error {
 		return fmt.Errorf(ErrMinimumArity, min, count)
 	}
 	return nil
-}
-
-// AssertRanged explodes if a fixed arity check fails
-func AssertRanged(min, max, count int) int {
-	if err := checkRangedArity(min, max, count); err != nil {
-		panic(err)
-	}
-	return count
 }
 
 // MakeRangedChecker generates a ranged arity checker

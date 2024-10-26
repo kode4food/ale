@@ -9,27 +9,6 @@ import (
 	"github.com/kode4food/ale/pkg/data"
 )
 
-func TestFixedAsserts(t *testing.T) {
-	as := assert.New(t)
-	as.Equal(10, data.AssertFixed(10, 10))
-	defer as.ExpectPanic(fmt.Errorf(data.ErrFixedArity, 9, 10))
-	data.AssertFixed(9, 10)
-}
-
-func TestMinimumAsserts(t *testing.T) {
-	as := assert.New(t)
-	as.Equal(5, data.AssertMinimum(5, 5))
-	defer as.ExpectPanic(fmt.Errorf(data.ErrMinimumArity, 10, 9))
-	data.AssertMinimum(10, 9)
-}
-
-func TestRangedAsserts(t *testing.T) {
-	as := assert.New(t)
-	as.Equal(5, data.AssertRanged(3, 7, 5))
-	defer as.ExpectPanic(fmt.Errorf(data.ErrRangedArity, 3, 7, 2))
-	data.AssertRanged(3, 7, 2)
-}
-
 func TestMakeChecker(t *testing.T) {
 	as := assert.New(t)
 	fn1 := data.MakeChecker()

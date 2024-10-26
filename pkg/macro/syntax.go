@@ -30,9 +30,13 @@ var (
 	splicingSym = env.RootSymbol("unquote-splicing")
 )
 
+var oneArg = data.MakeFixedChecker(1)
+
 // SyntaxQuote performs syntax quoting on the provided value
 func SyntaxQuote(ns env.Namespace, args ...data.Value) data.Value {
-	data.AssertFixed(1, len(args))
+	if err := oneArg(len(args)); err != nil {
+		panic(err)
+	}
 	value := args[0]
 	sc := &syntaxEnv{
 		namespace: ns,
