@@ -7,7 +7,6 @@ import (
 	"testing"
 
 	"github.com/kode4food/ale/internal/debug"
-
 	"github.com/kode4food/ale/pkg/data"
 	"github.com/stretchr/testify/assert"
 )
@@ -68,7 +67,7 @@ func (w *Wrapper) Number(expect float64, expr any) {
 	case data.Number:
 		w.Compare(data.EqualTo, data.Float(expect), n)
 	default:
-		panic(fmt.Errorf(ErrInvalidTestExpression, expr))
+		panic(debug.ProgrammerError(ErrInvalidTestExpression, expr))
 	}
 }
 
