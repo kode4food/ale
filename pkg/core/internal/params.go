@@ -236,7 +236,10 @@ func (pc *ParamCases) fixedSet() []int {
 
 func parseParamCase(s data.Sequence) (*ParamCase, error) {
 	f, body, _ := s.Split()
-	argNames, restArg := parseParamNames(f)
+	argNames, restArg, err := parseParamNames(f)
+	if err != nil {
+		return nil, err
+	}
 	if body.IsEmpty() {
 		return nil, fmt.Errorf(ErrNoCaseBodyDefined, f)
 	}
@@ -286,16 +289,16 @@ func (c *ParamCase) makeArgFetcher() ArgFetcher {
 	}
 }
 
-func parseParamNames(v data.Value) (data.Locals, bool) {
+func parseParamNames(v data.Value) (data.Locals, bool, error) {
 	switch v := v.(type) {
 	case data.Local:
-		return data.Locals{v}, true
+		return data.Locals{v}, true, nil
 	case *data.List:
-		return parseListParamNames(v), false
+		return parseListParamNames(v), false, nil
 	case *data.Cons:
-		return parseConsParamNames(v), true
+		return parseConsParamNames(v), true, nil
 	default:
-		panic(fmt.Errorf(ErrUnexpectedParamSyntax, v))
+		return nil, false, fmt.Errorf(ErrUnexpectedParamSyntax, v)
 	}
 }
 
