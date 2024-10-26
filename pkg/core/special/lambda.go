@@ -14,7 +14,7 @@ type lambdaEncoder struct {
 }
 
 // Lambda encodes a lambda
-func Lambda(e encoder.Encoder, args ...data.Value) {
+func Lambda(e encoder.Encoder, args ...data.Value) error {
 	var le *lambdaEncoder
 	pc := internal.MustParseParamCases(data.Vector(args))
 	fn, err := generate.Procedure(e, func(c encoder.Encoder) error {
@@ -22,9 +22,10 @@ func Lambda(e encoder.Encoder, args ...data.Value) {
 		return le.encode()
 	})
 	if err != nil {
-		panic(err)
+		return err
 	}
 	fn.ArityChecker = pc.MakeArityChecker()
+	return nil
 }
 
 func makeLambda(e encoder.Encoder, v *internal.ParamCases) *lambdaEncoder {

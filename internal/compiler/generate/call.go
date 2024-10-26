@@ -42,8 +42,7 @@ func callSymbol(e encoder.Encoder, s data.Symbol, args data.Vector) error {
 	if v, err := env.ResolveValue(globals, s); err == nil {
 		switch v := v.(type) {
 		case special.Call:
-			v(e, args...)
-			return nil
+			return v(e, args...)
 		case data.Procedure:
 			return callStatic(e, v, args)
 		}

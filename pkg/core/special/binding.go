@@ -27,25 +27,24 @@ const (
 
 // Let encodes a binding form. Binding values are evaluated first, and are then
 // bound to fresh names, meaning that mutual recursion is not supported
-func Let(e encoder.Encoder, args ...data.Value) {
-	performBinding(e, generate.Locals, args...)
+func Let(e encoder.Encoder, args ...data.Value) error {
+	return performBinding(e, generate.Locals, args...)
 }
 
 // LetMutual encodes a binding form. First fresh names are introduced,
 // and then binding values are evaluated with access to those names via
 // the MutualScope
-func LetMutual(e encoder.Encoder, args ...data.Value) {
-	performBinding(e, generate.MutualLocals, args...)
+func LetMutual(e encoder.Encoder, args ...data.Value) error {
+	return performBinding(e, generate.MutualLocals, args...)
 }
 
-func performBinding(e encoder.Encoder, b generate.Binder, args ...data.Value) {
+func performBinding(
+	e encoder.Encoder, b generate.Binder, args ...data.Value,
+) error {
 	bindings, body := parseLet(args...)
-	err := b(e, bindings, func(e encoder.Encoder) error {
+	return b(e, bindings, func(e encoder.Encoder) error {
 		return generate.Block(e, body)
 	})
-	if err != nil {
-		panic(err)
-	}
 }
 
 func parseLet(args ...data.Value) (generate.Bindings, data.Vector) {

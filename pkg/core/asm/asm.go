@@ -14,17 +14,15 @@ var (
 )
 
 // Asm provides indirect access to the Encoder's methods and generators
-func Asm(e encoder.Encoder, args ...data.Value) {
+func Asm(e encoder.Encoder, args ...data.Value) error {
 	c := getCalls()
 	p := makeAsmParser(c)
 	emit, err := p.parse(data.Vector(args))
 	if err != nil {
-		panic(err)
+		return err
 	}
 	ae := p.wrapEncoder(e)
-	if err := emit(ae); err != nil {
-		panic(err)
-	}
+	return emit(ae)
 }
 
 func getCalls() namedAsmParsers {

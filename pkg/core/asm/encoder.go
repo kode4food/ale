@@ -32,7 +32,7 @@ const (
 
 var gen = data.NewSymbolGenerator()
 
-func noAsmEmit(*asmEncoder) error { return nil }
+func noAsmEmit(_ *asmEncoder) error { return nil }
 
 func (p *asmParser) wrapEncoder(
 	e encoder.Encoder, args ...data.Value,

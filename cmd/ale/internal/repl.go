@@ -63,6 +63,9 @@ var (
 	notPaired   = fmt.Sprintf(parse.ErrPrefixedNotPaired, "")
 	docTemplate = docstring.MustGet("doc")
 	nothing     = new(sentinel)
+
+	oneArg       = data.MakeFixedChecker(1)
+	zeroOrOneArg = data.MakeRangedChecker(0, 1)
 )
 
 // NewREPL instantiates a new REPL instance
@@ -283,17 +286,17 @@ func (r *REPL) registerBuiltIn(n data.Local, v data.Value) {
 }
 
 func (r *REPL) makeUse() data.Value {
-	return special.Call(func(e encoder.Encoder, args ...data.Value) {
-		data.AssertFixed(1, len(args))
+	return special.Call(func(e encoder.Encoder, args ...data.Value) error {
+		if err := oneArg(len(args)); err != nil {
+			return err
+		}
 		n := args[0].(data.Local)
 		old := r.ns
 		r.ns = r.ns.Environment().GetQualified(n)
 		if old != r.ns {
 			fmt.Println()
 		}
-		if err := generate.Literal(e, nothing); err != nil {
-			panic(err)
-		}
+		return generate.Literal(e, nothing)
 	})
 }
 
@@ -350,16 +353,16 @@ func help(...data.Value) data.Value {
 	return nothing
 }
 
-var doc = special.Call(func(e encoder.Encoder, args ...data.Value) {
-	data.AssertRanged(0, 1, len(args))
+var doc = special.Call(func(e encoder.Encoder, args ...data.Value) error {
+	if err := zeroOrOneArg(len(args)); err != nil {
+		return err
+	}
 	if len(args) == 0 {
 		docSymbolList()
 	} else {
 		docSymbol(args[0].(data.Local))
 	}
-	if err := generate.Literal(e, nothing); err != nil {
-		panic(err)
-	}
+	return generate.Literal(e, nothing)
 })
 
 func docSymbol(sym data.Symbol) {

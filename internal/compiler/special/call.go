@@ -7,7 +7,7 @@ import (
 )
 
 // Call represents a code-generating function for the compiler
-type Call func(encoder.Encoder, ...data.Value)
+type Call func(encoder.Encoder, ...data.Value) error
 
 var CallType = types.MakeBasic("special")
 

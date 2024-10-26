@@ -36,7 +36,7 @@ func TestBuiltInUse(t *testing.T) {
 	v := as.IsBound(ns1, "use")
 	use := asEncoder(t, v)
 	nsName := LS("test-ns")
-	use(encoder.NewEncoder(ns1), nsName)
+	as.Nil(use(encoder.NewEncoder(ns1), nsName))
 
 	ns2 := repl.GetNS()
 	as.NotNil(ns2)

@@ -5,22 +5,20 @@ import (
 
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
-	"github.com/kode4food/ale/internal/compiler/encoder"
+	"github.com/kode4food/ale/internal/compiler/special"
 	"github.com/kode4food/ale/internal/runtime/isa"
-	"github.com/kode4food/ale/pkg/core/special"
+	core "github.com/kode4food/ale/pkg/core/special"
 	"github.com/kode4food/ale/pkg/data"
 )
-
-type testEncoder func(encoder.Encoder, ...data.Value)
 
 func TestEval(t *testing.T) {
 	as := assert.New(t)
 
 	add := L(LS("+"), I(1), I(2))
 	e1 := assert.GetTestEncoder()
-	special.Eval(e1,
+	as.Nil(core.Eval(e1,
 		add.Prepend(LS("list")),
-	)
+	))
 	e1.Emit(isa.Return)
 
 	enc1 := e1.Encode()
@@ -46,19 +44,19 @@ func TestEval(t *testing.T) {
 }
 
 func TestMacroExpand(t *testing.T) {
-	testMacroExpandWith(t, special.MacroExpand)
+	testMacroExpandWith(t, core.MacroExpand)
 }
 
 func TestMacroExpand1(t *testing.T) {
-	testMacroExpandWith(t, special.MacroExpand1)
+	testMacroExpandWith(t, core.MacroExpand1)
 }
 
-func testMacroExpandWith(t *testing.T, enc testEncoder) {
+func testMacroExpandWith(t *testing.T, enc special.Call) {
 	as := assert.New(t)
 	e1 := assert.GetTestEncoder()
 
 	neq := L(LS("declare"), LS("some-sym"))
-	enc(e1, neq)
+	as.Nil(enc(e1, neq))
 	e1.Emit(isa.Return)
 
 	c := e1.Encode().Constants

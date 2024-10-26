@@ -3,6 +3,7 @@ package special
 import (
 	"github.com/kode4food/ale/internal/compiler/encoder"
 	"github.com/kode4food/ale/internal/compiler/generate"
+	"github.com/kode4food/ale/internal/compiler/special"
 	"github.com/kode4food/ale/internal/runtime/isa"
 	"github.com/kode4food/ale/pkg/data"
 	"github.com/kode4food/ale/pkg/env"
@@ -21,13 +22,17 @@ var (
 
 	// MacroExpand1 performs a single-step macro expansion of a form
 	MacroExpand1 = makeEvaluator(macro.Expand1)
+
+	oneArg = data.MakeFixedChecker(1)
 )
 
-func makeEvaluator(eval evalFunc) func(encoder.Encoder, ...data.Value) {
-	return func(e encoder.Encoder, args ...data.Value) {
-		data.AssertFixed(1, len(args))
+func makeEvaluator(eval evalFunc) special.Call {
+	return func(e encoder.Encoder, args ...data.Value) error {
+		if err := oneArg(len(args)); err != nil {
+			return err
+		}
 		if err := generate.Value(e, args[0]); err != nil {
-			panic(err)
+			return err
 		}
 		ns := e.Globals()
 		fn := data.MakeProcedure(func(args ...data.Value) data.Value {
@@ -38,8 +43,9 @@ func makeEvaluator(eval evalFunc) func(encoder.Encoder, ...data.Value) {
 			return res
 		}, 1)
 		if err := generate.Literal(e, fn); err != nil {
-			panic(err)
+			return err
 		}
 		e.Emit(isa.Call1)
+		return nil
 	}
 }

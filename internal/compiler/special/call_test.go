@@ -11,7 +11,7 @@ import (
 
 func TestCall(t *testing.T) {
 	as := assert.New(t)
-	f1 := func(encoder.Encoder, ...data.Value) {}
+	f1 := func(encoder.Encoder, ...data.Value) error { return nil }
 	c1 := special.Call(f1)
 	as.String("special", c1.Type().Name())
 	as.Contains(`:type special`, c1)

@@ -30,20 +30,17 @@ func (p *asmParser) specialCall(forms data.Sequence) (asmEmit, error) {
 	ac := pc.MakeArityChecker()
 	fetchers := pc.MakeArgFetchers()
 
-	fn := func(e encoder.Encoder, args ...data.Value) {
+	fn := func(e encoder.Encoder, args ...data.Value) error {
 		if err := ac(len(args)); err != nil {
-			panic(err)
+			return err
 		}
 		for i, f := range fetchers {
 			if a, ok := f(args); ok {
 				ae := ap[i].wrapEncoder(e, a...)
-				if err := emitters[i](ae); err != nil {
-					panic(err)
-				}
-				return
+				return emitters[i](ae)
 			}
 		}
-		panic(errors.New(internal.ErrNoMatchingParamPattern))
+		return errors.New(internal.ErrNoMatchingParamPattern)
 	}
 
 	return func(e *asmEncoder) error {
