@@ -24,18 +24,18 @@ var (
 	uint8zero  = reflect.ValueOf(uint8(0))
 )
 
-func makeWrappedUnsignedInt(t reflect.Type) (Wrapper, error) {
+func makeWrappedUnsignedInt(t reflect.Type) Wrapper {
 	switch k := t.Kind(); k {
 	case reflect.Uint:
-		return uintWrapper(k), nil
+		return uintWrapper(k)
 	case reflect.Uint64:
-		return uint64Wrapper(k), nil
+		return uint64Wrapper(k)
 	case reflect.Uint32:
-		return uint32Wrapper(k), nil
+		return uint32Wrapper(k)
 	case reflect.Uint16:
-		return uint16Wrapper(k), nil
+		return uint16Wrapper(k)
 	case reflect.Uint8:
-		return uint8Wrapper(k), nil
+		return uint8Wrapper(k)
 	default:
 		panic(debug.ProgrammerError("uint kind is incorrect"))
 	}

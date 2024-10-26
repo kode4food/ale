@@ -49,7 +49,7 @@ func (w *inOutWrappers) wrapFunction(fn reflect.Value) data.Procedure {
 
 func (w *inOutWrappers) wrapValueFunction(fn reflect.Value) data.Procedure {
 	return data.MakeProcedure(func(args ...data.Value) data.Value {
-		in := w.in.unwrap(args)
+		in := w.in.mustUnwrap(args)
 		out := fn.Call(in)
 		res, err := w.out[0].Wrap(new(Context), out[0])
 		if err != nil {
@@ -61,7 +61,7 @@ func (w *inOutWrappers) wrapValueFunction(fn reflect.Value) data.Procedure {
 
 func (w *inOutWrappers) wrapVoidFunction(fn reflect.Value) data.Procedure {
 	return data.MakeProcedure(func(args ...data.Value) data.Value {
-		in := w.in.unwrap(args)
+		in := w.in.mustUnwrap(args)
 		fn.Call(in)
 		return data.Null
 	}, len(w.in))
@@ -69,8 +69,8 @@ func (w *inOutWrappers) wrapVoidFunction(fn reflect.Value) data.Procedure {
 
 func (w *inOutWrappers) wrapVectorFunction(fn reflect.Value) data.Procedure {
 	return data.MakeProcedure(func(args ...data.Value) data.Value {
-		in := w.in.unwrap(args)
+		in := w.in.mustUnwrap(args)
 		res := fn.Call(in)
-		return w.out.wrap(res)
+		return w.out.mustWrap(res)
 	}, len(w.in))
 }

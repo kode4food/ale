@@ -28,12 +28,12 @@ var (
 	complex64zero  = reflect.ValueOf(complex64(0 + 0i))
 )
 
-func makeWrappedComplex(t reflect.Type) (Wrapper, error) {
+func makeWrappedComplex(t reflect.Type) Wrapper {
 	switch k := t.Kind(); k {
 	case reflect.Complex128:
-		return complex128Wrapper(k), nil
+		return complex128Wrapper(k)
 	case reflect.Complex64:
-		return complex64Wrapper(k), nil
+		return complex64Wrapper(k)
 	default:
 		panic(debug.ProgrammerError("complex kind is incorrect"))
 	}

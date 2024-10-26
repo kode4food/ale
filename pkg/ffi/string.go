@@ -15,8 +15,8 @@ const ErrValueMustBeString = "value must be a string"
 
 var stringZero = reflect.ValueOf("")
 
-func makeWrappedString(t reflect.Type) (Wrapper, error) {
-	return stringWrapper(t.Kind()), nil
+func makeWrappedString(t reflect.Type) Wrapper {
+	return stringWrapper(t.Kind())
 }
 
 func (stringWrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {

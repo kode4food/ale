@@ -18,8 +18,8 @@ var (
 	boolFalse = reflect.ValueOf(false)
 )
 
-func makeWrappedBool(t reflect.Type) (Wrapper, error) {
-	return boolWrapper(t.Kind()), nil
+func makeWrappedBool(t reflect.Type) Wrapper {
+	return boolWrapper(t.Kind())
 }
 
 func (boolWrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {

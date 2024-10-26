@@ -86,29 +86,29 @@ func makeWrappedType(t reflect.Type) (Wrapper, error) {
 	case reflect.Slice:
 		return makeWrappedSlice(t)
 	case reflect.Bool:
-		return makeWrappedBool(t)
+		return makeWrappedBool(t), nil
 	case reflect.Chan:
 		return makeWrappedChannel(t)
 	case reflect.Complex64, reflect.Complex128:
-		return makeWrappedComplex(t)
+		return makeWrappedComplex(t), nil
 	case reflect.Float32, reflect.Float64:
-		return makeWrappedFloat(t)
+		return makeWrappedFloat(t), nil
 	case reflect.Func:
 		return makeWrappedFunc(t)
 	case reflect.Interface:
 		return makeWrappedInterface(t)
 	case reflect.Int, reflect.Int8, reflect.Int16,
 		reflect.Int32, reflect.Int64:
-		return makeWrappedInt(t)
+		return makeWrappedInt(t), nil
 	case reflect.Uint, reflect.Uint8, reflect.Uint16,
 		reflect.Uint32, reflect.Uint64:
-		return makeWrappedUnsignedInt(t)
+		return makeWrappedUnsignedInt(t), nil
 	case reflect.Map:
 		return makeWrappedMap(t)
 	case reflect.Ptr:
 		return makeWrappedPointer(t)
 	case reflect.String:
-		return makeWrappedString(t)
+		return makeWrappedString(t), nil
 	case reflect.Struct:
 		return makeWrappedStruct(t)
 	default:

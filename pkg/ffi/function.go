@@ -58,7 +58,7 @@ func (w *funcWrapper) unwrapCall(l data.Procedure) reflect.Value {
 
 func (w *funcWrapper) unwrapVoidCall(l data.Procedure) makeFuncType {
 	return func(args []reflect.Value) []reflect.Value {
-		in := w.in.wrap(args)
+		in := w.in.mustWrap(args)
 		l.Call(in...)
 		return []reflect.Value{}
 	}
@@ -66,7 +66,7 @@ func (w *funcWrapper) unwrapVoidCall(l data.Procedure) makeFuncType {
 
 func (w *funcWrapper) unwrapValueCall(l data.Procedure) makeFuncType {
 	return func(args []reflect.Value) []reflect.Value {
-		in := w.in.wrap(args)
+		in := w.in.mustWrap(args)
 		res, err := w.out[0].Unwrap(l.Call(in...))
 		if err != nil {
 			panic(err)
@@ -77,8 +77,8 @@ func (w *funcWrapper) unwrapValueCall(l data.Procedure) makeFuncType {
 
 func (w *funcWrapper) unwrapVectorCall(l data.Procedure) makeFuncType {
 	return func(args []reflect.Value) []reflect.Value {
-		in := w.in.wrap(args)
+		in := w.in.mustWrap(args)
 		res := l.Call(in...).(data.Vector)
-		return w.out.unwrap(res)
+		return w.out.mustUnwrap(res)
 	}
 }

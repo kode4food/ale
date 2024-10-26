@@ -22,12 +22,12 @@ var (
 	float64zero = reflect.ValueOf(float64(0))
 )
 
-func makeWrappedFloat(t reflect.Type) (Wrapper, error) {
+func makeWrappedFloat(t reflect.Type) Wrapper {
 	switch k := t.Kind(); k {
 	case reflect.Float32:
-		return float32Wrapper(k), nil
+		return float32Wrapper(k)
 	case reflect.Float64:
-		return float64Wrapper(k), nil
+		return float64Wrapper(k)
 	default:
 		panic(debug.ProgrammerError("float kind is incorrect"))
 	}

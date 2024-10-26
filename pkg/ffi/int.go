@@ -28,18 +28,18 @@ var (
 	int8zero  = reflect.ValueOf(int8(0))
 )
 
-func makeWrappedInt(t reflect.Type) (Wrapper, error) {
+func makeWrappedInt(t reflect.Type) Wrapper {
 	switch k := t.Kind(); k {
 	case reflect.Int:
-		return intWrapper(k), nil
+		return intWrapper(k)
 	case reflect.Int64:
-		return int64Wrapper(k), nil
+		return int64Wrapper(k)
 	case reflect.Int32:
-		return int32Wrapper(k), nil
+		return int32Wrapper(k)
 	case reflect.Int16:
-		return int16Wrapper(k), nil
+		return int16Wrapper(k)
 	case reflect.Int8:
-		return int8Wrapper(k), nil
+		return int8Wrapper(k)
 	default:
 		panic(debug.ProgrammerError("int kind is incorrect"))
 	}

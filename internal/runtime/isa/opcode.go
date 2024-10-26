@@ -85,16 +85,27 @@ const (
 
 // New creates a new Instruction instance from an Opcode
 func (o Opcode) New(ops ...Operand) Instruction {
-	effect := MustGetEffect(o)
+	res, err := o.new(ops...)
+	if err != nil {
+		panic(err)
+	}
+	return res
+}
+
+func (o Opcode) new(ops ...Operand) (Instruction, error) {
+	effect, err := GetEffect(o)
+	if err != nil {
+		return 0, err
+	}
 	switch {
 	case effect.Operand != Nothing && len(ops) == 1:
 		if !IsValidOperand(int(ops[0])) {
-			panic(fmt.Errorf(ErrExpectedOperand, ops[0]))
+			return 0, fmt.Errorf(ErrExpectedOperand, ops[0])
 		}
-		return Instruction(Opcode(ops[0]<<OpcodeSize) | o)
+		return Instruction(Opcode(ops[0]<<OpcodeSize) | o), nil
 	case effect.Operand == Nothing && len(ops) == 0:
-		return Instruction(o)
+		return Instruction(o), nil
 	default:
-		panic(fmt.Errorf(ErrBadInstruction, o.String()))
+		return 0, fmt.Errorf(ErrBadInstruction, o.String())
 	}
 }
