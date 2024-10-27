@@ -106,7 +106,7 @@ func (v Vector) Call(args ...Value) Value {
 }
 
 func (v Vector) CheckArity(argc int) error {
-	return checkRangedArity(1, 2, argc)
+	return CheckRangedArity(1, 2, argc)
 }
 
 func (v Vector) Equal(other Value) bool {

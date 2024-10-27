@@ -41,7 +41,7 @@ func (t *TypePredicate) Call(args ...Value) Value {
 }
 
 func (t *TypePredicate) CheckArity(argc int) error {
-	return checkFixedArity(1, argc)
+	return CheckFixedArity(1, argc)
 }
 
 func (t *TypePredicate) Equal(other Value) bool {

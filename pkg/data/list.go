@@ -124,7 +124,7 @@ func (l *List) Call(args ...Value) Value {
 }
 
 func (l *List) CheckArity(argc int) error {
-	return checkRangedArity(1, 2, argc)
+	return CheckRangedArity(1, 2, argc)
 }
 
 func (l *List) Equal(other Value) bool {

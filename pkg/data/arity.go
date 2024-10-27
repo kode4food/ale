@@ -33,7 +33,7 @@ func MakeChecker(arity ...int) ArityChecker {
 	al := len(arity)
 	switch {
 	case al == 0:
-		return AnyArityChecker
+		return CheckAnyArity
 	case al > 2:
 		panic(debug.ProgrammerError(ErrTooManyArguments))
 	case al == 1 || arity[0] == arity[1]:
@@ -45,19 +45,20 @@ func MakeChecker(arity ...int) ArityChecker {
 	}
 }
 
-// AnyArityChecker allows for any number of arguments
-func AnyArityChecker(int) error {
+// CheckAnyArity allows for any number of arguments
+func CheckAnyArity(int) error {
 	return nil
 }
 
 // MakeFixedChecker generates a fixed arity checker
 func MakeFixedChecker(fixed int) ArityChecker {
 	return func(count int) error {
-		return checkFixedArity(fixed, count)
+		return CheckFixedArity(fixed, count)
 	}
 }
 
-func checkFixedArity(fixed, count int) error {
+// CheckFixedArity allows for a fixed number of arguments
+func CheckFixedArity(fixed, count int) error {
 	if count != fixed {
 		return fmt.Errorf(ErrFixedArity, fixed, count)
 	}
@@ -67,11 +68,12 @@ func checkFixedArity(fixed, count int) error {
 // MakeMinimumChecker generates a minimum arity checker
 func MakeMinimumChecker(min int) ArityChecker {
 	return func(count int) error {
-		return checkMinimumArity(min, count)
+		return CheckMinimumArity(min, count)
 	}
 }
 
-func checkMinimumArity(min, count int) error {
+// CheckMinimumArity allows for a minimum number of arguments
+func CheckMinimumArity(min, count int) error {
 	if count < min {
 		return fmt.Errorf(ErrMinimumArity, min, count)
 	}
@@ -81,11 +83,12 @@ func checkMinimumArity(min, count int) error {
 // MakeRangedChecker generates a ranged arity checker
 func MakeRangedChecker(min, max int) ArityChecker {
 	return func(count int) error {
-		return checkRangedArity(min, max, count)
+		return CheckRangedArity(min, max, count)
 	}
 }
 
-func checkRangedArity(min, max, count int) error {
+// CheckRangedArity allows for a ranged number of arguments
+func CheckRangedArity(min, max, count int) error {
 	if count < min || count > max {
 		return fmt.Errorf(ErrRangedArity, min, max, count)
 	}

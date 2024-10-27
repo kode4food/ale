@@ -30,15 +30,6 @@ var (
 	_emptyValue = reflect.Value{}
 )
 
-// MustWrap wraps a Go value into a data.Value or explodes violently
-func MustWrap(i any) data.Value {
-	res, err := Wrap(i)
-	if err != nil {
-		panic(err)
-	}
-	return res
-}
-
 // Wrap takes a native Go value, potentially builds a Wrapper for its type, and
 // returns a marshaled data.Value from the Wrapper
 func Wrap(i any) (data.Value, error) {
@@ -48,6 +39,15 @@ func Wrap(i any) (data.Value, error) {
 		return data.Null, err
 	}
 	return w.Wrap(new(Context), v)
+}
+
+// MustWrap wraps a Go value into a data.Value or explodes violently
+func MustWrap(i any) data.Value {
+	res, err := Wrap(i)
+	if err != nil {
+		panic(err)
+	}
+	return res
 }
 
 // WrapType potentially builds a Wrapper for the provided reflected Type

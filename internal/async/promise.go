@@ -24,11 +24,7 @@ const (
 	promiseFailed
 )
 
-var (
-	PromiseType = types.MakeBasic("promise")
-
-	promiseArityChecker = data.MakeFixedChecker(0)
-)
+var PromiseType = types.MakeBasic("promise")
 
 // NewPromise instantiates a new Promise
 func NewPromise(resolver data.Procedure) *Promise {
@@ -58,7 +54,7 @@ func (p *Promise) Call(...data.Value) data.Value {
 }
 
 func (p *Promise) CheckArity(c int) error {
-	return promiseArityChecker(c)
+	return data.CheckFixedArity(0, c)
 }
 
 func (p *Promise) IsResolved() bool {

@@ -132,7 +132,7 @@ func (s String) Call(args ...Value) Value {
 }
 
 func (s String) CheckArity(argc int) error {
-	return checkRangedArity(1, 2, argc)
+	return CheckRangedArity(1, 2, argc)
 }
 
 func (s String) from(index Integer) (String, bool) {

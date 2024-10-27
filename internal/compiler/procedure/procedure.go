@@ -18,5 +18,5 @@ func FromEncoded(e *encoder.Encoded) (*vm.Procedure, error) {
 	if err != nil {
 		return nil, err
 	}
-	return vm.MakeProcedure(run, data.AnyArityChecker), nil
+	return vm.MakeProcedure(run, data.CheckAnyArity), nil
 }

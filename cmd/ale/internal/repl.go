@@ -63,9 +63,6 @@ var (
 	notPaired   = fmt.Sprintf(parse.ErrPrefixedNotPaired, "")
 	docTemplate = docstring.MustGet("doc")
 	nothing     = new(sentinel)
-
-	oneArg       = data.MakeFixedChecker(1)
-	zeroOrOneArg = data.MakeRangedChecker(0, 1)
 )
 
 // NewREPL instantiates a new REPL instance
@@ -287,7 +284,7 @@ func (r *REPL) registerBuiltIn(n data.Local, v data.Value) {
 
 func (r *REPL) makeUse() data.Value {
 	return special.Call(func(e encoder.Encoder, args ...data.Value) error {
-		if err := oneArg(len(args)); err != nil {
+		if err := data.CheckFixedArity(1, len(args)); err != nil {
 			return err
 		}
 		n := args[0].(data.Local)
@@ -354,7 +351,7 @@ func help(...data.Value) data.Value {
 }
 
 var doc = special.Call(func(e encoder.Encoder, args ...data.Value) error {
-	if err := zeroOrOneArg(len(args)); err != nil {
+	if err := data.CheckRangedArity(0, 1, len(args)); err != nil {
 		return err
 	}
 	if len(args) == 0 {

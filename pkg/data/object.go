@@ -222,7 +222,7 @@ func (o *Object) Call(args ...Value) Value {
 }
 
 func (o *Object) CheckArity(argc int) error {
-	return checkRangedArity(1, 2, argc)
+	return CheckRangedArity(1, 2, argc)
 }
 
 func (o *Object) Equal(other Value) bool {

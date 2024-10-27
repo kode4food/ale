@@ -15,8 +15,6 @@ const (
 	defMacroName   = "def-macro"
 )
 
-var oneArg = data.MakeFixedChecker(1)
-
 func (b *bootstrap) populateDefiners() {
 	ns := b.environment.GetRoot()
 
@@ -33,7 +31,7 @@ func (b *bootstrap) populateDefiners() {
 
 func makeDefiner[T data.Value](m map[data.Local]T, errStr string) special.Call {
 	return func(e encoder.Encoder, args ...data.Value) error {
-		if err := oneArg(len(args)); err != nil {
+		if err := data.CheckFixedArity(1, len(args)); err != nil {
 			return err
 		}
 		n := args[0].(data.Local)

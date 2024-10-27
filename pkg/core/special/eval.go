@@ -22,13 +22,11 @@ var (
 
 	// MacroExpand1 performs a single-step macro expansion of a form
 	MacroExpand1 = makeEvaluator(macro.Expand1)
-
-	oneArg = data.MakeFixedChecker(1)
 )
 
 func makeEvaluator(eval evalFunc) special.Call {
 	return func(e encoder.Encoder, args ...data.Value) error {
-		if err := oneArg(len(args)); err != nil {
+		if err := data.CheckFixedArity(1, len(args)); err != nil {
 			return err
 		}
 		if err := generate.Value(e, args[0]); err != nil {

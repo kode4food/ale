@@ -25,8 +25,6 @@ const (
 	ErrNameAlreadyBound = "name is already bound in local scope: %s"
 )
 
-var twoOrMoreArgs = data.MakeMinimumChecker(2)
-
 // Let encodes a binding form. Binding values are evaluated first, and are then
 // bound to fresh names, meaning that mutual recursion is not supported
 func Let(e encoder.Encoder, args ...data.Value) error {
@@ -53,7 +51,7 @@ func performBinding(
 }
 
 func parseLet(args ...data.Value) (generate.Bindings, data.Vector, error) {
-	if err := twoOrMoreArgs(len(args)); err != nil {
+	if err := data.CheckMinimumArity(2, len(args)); err != nil {
 		return nil, nil, err
 	}
 	bindings, err := parseLetBindings(args[0])
