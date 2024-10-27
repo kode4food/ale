@@ -1,9 +1,8 @@
 package data
 
 import (
+	"errors"
 	"fmt"
-
-	"github.com/kode4food/ale/internal/debug"
 )
 
 const (
@@ -24,24 +23,24 @@ const (
 	ErrTooManyArguments = "too many arity check arguments"
 )
 
-// OrMore is the constant used when you want to tell MakeChecker to generate a
-// minimum arity checker
+// OrMore is the constant used when you want to tell MakeArityChecker to
+// generate a minimum arity checker
 const OrMore = -1
 
-// MakeChecker produces an arity checker based on its parameters
-func MakeChecker(arity ...int) ArityChecker {
+// MakeArityChecker produces an arity checker based on its parameters
+func MakeArityChecker(arity ...int) (ArityChecker, error) {
 	al := len(arity)
 	switch {
 	case al == 0:
-		return CheckAnyArity
+		return CheckAnyArity, nil
 	case al > 2:
-		panic(debug.ProgrammerError(ErrTooManyArguments))
+		return nil, errors.New(ErrTooManyArguments)
 	case al == 1 || arity[0] == arity[1]:
-		return MakeFixedChecker(arity[0])
+		return makeFixedChecker(arity[0]), nil
 	case al == 2 && arity[1] == OrMore:
-		return MakeMinimumChecker(arity[0])
+		return makeMinimumChecker(arity[0]), nil
 	default:
-		return MakeRangedChecker(arity[0], arity[1])
+		return makeRangedChecker(arity[0], arity[1]), nil
 	}
 }
 
@@ -50,8 +49,7 @@ func CheckAnyArity(int) error {
 	return nil
 }
 
-// MakeFixedChecker generates a fixed arity checker
-func MakeFixedChecker(fixed int) ArityChecker {
+func makeFixedChecker(fixed int) ArityChecker {
 	return func(count int) error {
 		return CheckFixedArity(fixed, count)
 	}
@@ -65,8 +63,7 @@ func CheckFixedArity(fixed, count int) error {
 	return nil
 }
 
-// MakeMinimumChecker generates a minimum arity checker
-func MakeMinimumChecker(min int) ArityChecker {
+func makeMinimumChecker(min int) ArityChecker {
 	return func(count int) error {
 		return CheckMinimumArity(min, count)
 	}
@@ -80,8 +77,7 @@ func CheckMinimumArity(min, count int) error {
 	return nil
 }
 
-// MakeRangedChecker generates a ranged arity checker
-func MakeRangedChecker(min, max int) ArityChecker {
+func makeRangedChecker(min, max int) ArityChecker {
 	return func(count int) error {
 		return CheckRangedArity(min, max, count)
 	}

@@ -1,6 +1,9 @@
 package data
 
-import "github.com/kode4food/ale/internal/types"
+import (
+	"github.com/kode4food/ale/internal/debug"
+	"github.com/kode4food/ale/internal/types"
+)
 
 type (
 	// ArityChecker is the interface for arity checks
@@ -33,9 +36,13 @@ var _ Procedure = &procedure{}
 // MakeProcedure constructs a Procedure from a func that matches the standard
 // calling signature
 func MakeProcedure(c Call, arity ...int) Procedure {
+	check, err := MakeArityChecker(arity...)
+	if err != nil {
+		panic(debug.ProgrammerError(err.Error()))
+	}
 	return &procedure{
 		call:  c,
-		arity: MakeChecker(arity...),
+		arity: check,
 	}
 }
 
