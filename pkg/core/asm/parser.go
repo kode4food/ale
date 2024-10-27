@@ -6,6 +6,7 @@ import (
 	"slices"
 
 	"github.com/kode4food/ale/internal/runtime/isa"
+	"github.com/kode4food/ale/internal/sequence"
 	"github.com/kode4food/ale/pkg/data"
 )
 
@@ -144,7 +145,7 @@ func (p *asmParser) blockRest(
 
 func parseArgs(inst data.Local, argc int, fn asmArgsParse) asmParse {
 	return func(p *asmParser, s data.Sequence) (asmEmit, data.Sequence, error) {
-		args, rest, ok := take(s, argc)
+		args, rest, ok := sequence.Take(s, argc)
 		if !ok {
 			return nil, nil, fmt.Errorf(ErrTooFewArguments, inst, argc)
 		}
@@ -154,17 +155,4 @@ func parseArgs(inst data.Local, argc int, fn asmArgsParse) asmParse {
 		}
 		return res, rest, nil
 	}
-}
-
-func take(s data.Sequence, count int) (data.Vector, data.Sequence, bool) {
-	var f data.Value
-	var ok bool
-	res := make(data.Vector, count)
-	for i := 0; i < count; i++ {
-		if f, s, ok = s.Split(); !ok {
-			return nil, nil, false
-		}
-		res[i] = f
-	}
-	return res, s, true
 }
