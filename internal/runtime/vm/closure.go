@@ -130,7 +130,7 @@ CurrentPC:
 		SP++
 		SP1 := SP + 1
 		MEM[SP1] = MEM[SP].(data.Procedure).Call(
-			sequence.ToValues(MEM[SP1].(data.Sequence))...,
+			sequence.ToVector(MEM[SP1].(data.Sequence))...,
 		)
 		goto NextPC
 

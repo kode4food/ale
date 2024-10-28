@@ -7,7 +7,7 @@ import (
 )
 
 // ToList takes any sequence and converts it to a List
-func ToList(s data.Sequence) data.Sequence {
+func ToList(s data.Sequence) *data.List {
 	switch s := s.(type) {
 	case *data.List:
 		return s
@@ -24,12 +24,12 @@ func ToList(s data.Sequence) data.Sequence {
 	}
 }
 
-func uncountedToList(s data.Sequence) data.Sequence {
-	return data.NewList(uncountedToValues(s)...)
+func uncountedToList(s data.Sequence) *data.List {
+	return data.NewList(uncountedToVector(s)...)
 }
 
-// ToValues takes any sequence and converts it to a value array
-func ToValues(s data.Sequence) data.Vector {
+// ToVector takes any sequence and converts it to a Vector
+func ToVector(s data.Sequence) data.Vector {
 	switch s := s.(type) {
 	case data.Vector:
 		return s
@@ -42,26 +42,16 @@ func ToValues(s data.Sequence) data.Vector {
 		}
 		return res
 	default:
-		return uncountedToValues(s)
+		return uncountedToVector(s)
 	}
 }
 
-func uncountedToValues(s data.Sequence) data.Vector {
+func uncountedToVector(s data.Sequence) data.Vector {
 	res := data.Vector{}
 	for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {
 		res = append(res, f)
 	}
 	return res
-}
-
-// ToVector takes any sequence and converts it to a vector
-func ToVector(s data.Sequence) data.Vector {
-	switch s := s.(type) {
-	case data.Vector:
-		return s
-	default:
-		return ToValues(s)
-	}
 }
 
 // ToObject takes any sequence and converts it to an Object
@@ -70,7 +60,7 @@ func ToObject(s data.Sequence) (*data.Object, error) {
 	case *data.Object:
 		return s, nil
 	default:
-		v := ToValues(s)
+		v := ToVector(s)
 		return data.ValuesToObject(v...)
 	}
 }

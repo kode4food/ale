@@ -51,7 +51,7 @@ func (w *arrayWrapper) Unwrap(v data.Value) (reflect.Value, error) {
 	if !ok {
 		return _emptyValue, errors.New(ErrValueMustBeSequence)
 	}
-	in := sequence.ToValues(s)
+	in := sequence.ToVector(s)
 	out := reflect.New(w.typ).Elem()
 	for i, e := range in {
 		v, err := w.elem.Unwrap(e)

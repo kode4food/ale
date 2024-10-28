@@ -46,7 +46,7 @@ func (w *sliceWrapper) Unwrap(v data.Value) (reflect.Value, error) {
 	if !ok {
 		return _emptyValue, errors.New(ErrValueMustBeSequence)
 	}
-	in := sequence.ToValues(s)
+	in := sequence.ToVector(s)
 	inLen := len(in)
 	out := reflect.MakeSlice(w.typ, inLen, inLen)
 	for i, e := range in {

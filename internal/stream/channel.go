@@ -25,6 +25,9 @@ type (
 
 var chanSequenceType = types.MakeBasic("channel-sequence")
 
+// compile-time check for interface implementation
+var _ data.Prepender = (*chanSequence)(nil)
+
 // NewChannel produces an Emitter and Sequence pair
 func NewChannel(size int) *data.Object {
 	ch := make(chan data.Value, size)

@@ -118,7 +118,7 @@ func TestMultiLine(t *testing.T) {
 		T(lex.Number, F(99)),
 	})
 
-	v := sequence.ToValues(l)
+	v := sequence.ToVector(l)
 	as.Equal(0, v[0].(*lex.Token).Line())
 	as.Equal(3, v[0].(*lex.Token).Column())
 	as.Equal(1, v[1].(*lex.Token).Line())

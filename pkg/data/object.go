@@ -40,7 +40,7 @@ var (
 		Hashed
 		Mapper
 		Typed
-	} = &Object{}
+	} = (*Object)(nil)
 )
 
 // NewObject instantiates a new Object instance. Based on Phil Bagwell's Hashed

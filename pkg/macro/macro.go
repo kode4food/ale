@@ -30,7 +30,7 @@ func expand1(ns env.Namespace, v data.Value) (data.Value, bool) {
 	if !ok {
 		return v, false
 	}
-	args := sequence.ToValues(r)
+	args := sequence.ToVector(r)
 	rv, err := env.ResolveValue(ns, s) // that actually resolves
 	if err != nil {
 		return v, false

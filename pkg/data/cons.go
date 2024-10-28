@@ -42,7 +42,7 @@ var (
 		Hashed
 		Pair
 		Typed
-	} = &Cons{}
+	} = (*Cons)(nil)
 )
 
 // NewCons returns a new Cons cell instance

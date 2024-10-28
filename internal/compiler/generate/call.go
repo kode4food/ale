@@ -21,7 +21,7 @@ func Call(e encoder.Encoder, l *data.List) error {
 	if !ok {
 		return Literal(e, data.Null)
 	}
-	args := sequence.ToValues(r)
+	args := sequence.ToVector(r)
 	return callValue(e, f, args)
 }
 

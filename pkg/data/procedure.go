@@ -31,7 +31,7 @@ type (
 )
 
 // compile-time check for interface implementation
-var _ Procedure = &procedure{}
+var _ Procedure = (*procedure)(nil)
 
 // MakeProcedure constructs a Procedure from a func that matches the standard
 // calling signature
