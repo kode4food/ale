@@ -61,10 +61,6 @@ InitCode:
 InitState:
 	SP = LP - 1
 	PC = 0
-	goto CurrentPC
-
-NextPC:
-	PC++
 
 CurrentPC:
 	INST = CODE[PC]
@@ -76,17 +72,20 @@ CurrentPC:
 		MEM[SP1] = MEM[SP1].(data.Number).Add(
 			MEM[SP].(data.Number),
 		)
-		goto NextPC
+		PC++
+		goto CurrentPC
 
 	case isa.Arg:
 		MEM[SP] = args[INST.Operand()]
 		SP--
-		goto NextPC
+		PC++
+		goto CurrentPC
 
 	case isa.ArgLen:
 		MEM[SP] = data.Integer(len(args))
 		SP--
-		goto NextPC
+		PC++
+		goto CurrentPC
 
 	case isa.Bind:
 		SP++
@@ -95,25 +94,29 @@ CurrentPC:
 		if err := c.Globals.Declare(name).Bind(MEM[SP]); err != nil {
 			panic(err)
 		}
-		goto NextPC
+		PC++
+		goto CurrentPC
 
 	case isa.BindRef:
 		SP++
 		ref := MEM[SP].(*Ref)
 		SP++
 		ref.Value = MEM[SP]
-		goto NextPC
+		PC++
+		goto CurrentPC
 
 	case isa.Call0:
 		SP1 := SP + 1
 		MEM[SP1] = MEM[SP1].(data.Procedure).Call()
-		goto NextPC
+		PC++
+		goto CurrentPC
 
 	case isa.Call1:
 		SP++
 		SP1 := SP + 1
 		MEM[SP1] = MEM[SP].(data.Procedure).Call(MEM[SP1])
-		goto NextPC
+		PC++
+		goto CurrentPC
 
 	case isa.Call:
 		op := INST.Operand()
@@ -124,7 +127,8 @@ CurrentPC:
 		RES := SP1 + int(op)
 		MEM[RES] = fn.Call(args...)
 		SP = RES - 1
-		goto NextPC
+		PC++
+		goto CurrentPC
 
 	case isa.CallWith:
 		SP++
@@ -132,22 +136,26 @@ CurrentPC:
 		MEM[SP1] = MEM[SP].(data.Procedure).Call(
 			sequence.ToVector(MEM[SP1].(data.Sequence))...,
 		)
-		goto NextPC
+		PC++
+		goto CurrentPC
 
 	case isa.Car:
 		SP1 := SP + 1
 		MEM[SP1] = MEM[SP1].(data.Pair).Car()
-		goto NextPC
+		PC++
+		goto CurrentPC
 
 	case isa.Cdr:
 		SP1 := SP + 1
 		MEM[SP1] = MEM[SP1].(data.Pair).Cdr()
-		goto NextPC
+		PC++
+		goto CurrentPC
 
 	case isa.Closure:
 		MEM[SP] = c.captured[INST.Operand()]
 		SP--
-		goto NextPC
+		PC++
+		goto CurrentPC
 
 	case isa.CondJump:
 		SP++
@@ -155,34 +163,40 @@ CurrentPC:
 			PC = int(INST.Operand())
 			goto CurrentPC
 		}
-		goto NextPC
+		PC++
+		goto CurrentPC
 
 	case isa.Cons:
 		SP++
 		SP1 := SP + 1
 		if p, ok := MEM[SP1].(data.Prepender); ok {
 			MEM[SP1] = p.Prepend(MEM[SP])
-			goto NextPC
+			PC++
+			goto CurrentPC
 		}
 		MEM[SP1] = data.NewCons(MEM[SP], MEM[SP1])
-		goto NextPC
+		PC++
+		goto CurrentPC
 
 	case isa.Const:
 		MEM[SP] = c.Constants[INST.Operand()]
 		SP--
-		goto NextPC
+		PC++
+		goto CurrentPC
 
 	case isa.Declare:
 		SP++
 		c.Globals.Declare(
 			MEM[SP].(data.Local),
 		)
-		goto NextPC
+		PC++
+		goto CurrentPC
 
 	case isa.Deref:
 		SP1 := SP + 1
 		MEM[SP1] = MEM[SP1].(*Ref).Value
-		goto NextPC
+		PC++
+		goto CurrentPC
 
 	case isa.Div:
 		SP++
@@ -190,28 +204,33 @@ CurrentPC:
 		MEM[SP1] = MEM[SP1].(data.Number).Div(
 			MEM[SP].(data.Number),
 		)
-		goto NextPC
+		PC++
+		goto CurrentPC
 
 	case isa.Dup:
 		MEM[SP] = MEM[SP+1]
 		SP--
-		goto NextPC
+		PC++
+		goto CurrentPC
 
 	case isa.Empty:
 		SP1 := SP + 1
 		MEM[SP1] = data.Bool(MEM[SP1].(data.Sequence).IsEmpty())
-		goto NextPC
+		PC++
+		goto CurrentPC
 
 	case isa.Eq:
 		SP++
 		SP1 := SP + 1
 		MEM[SP1] = data.Bool(MEM[SP1].Equal(MEM[SP]))
-		goto NextPC
+		PC++
+		goto CurrentPC
 
 	case isa.False:
 		MEM[SP] = data.False
 		SP--
-		goto NextPC
+		PC++
+		goto CurrentPC
 
 	case isa.Jump:
 		PC = int(INST.Operand())
@@ -220,7 +239,8 @@ CurrentPC:
 	case isa.Load:
 		MEM[SP] = MEM[LP+int(INST.Operand())]
 		SP--
-		goto NextPC
+		PC++
+		goto CurrentPC
 
 	case isa.Mod:
 		SP++
@@ -228,7 +248,8 @@ CurrentPC:
 		MEM[SP1] = MEM[SP1].(data.Number).Mod(
 			MEM[SP].(data.Number),
 		)
-		goto NextPC
+		PC++
+		goto CurrentPC
 
 	case isa.Mul:
 		SP++
@@ -236,37 +257,44 @@ CurrentPC:
 		MEM[SP1] = MEM[SP1].(data.Number).Mul(
 			MEM[SP].(data.Number),
 		)
-		goto NextPC
+		PC++
+		goto CurrentPC
 
 	case isa.Neg:
 		SP1 := SP + 1
 		MEM[SP1] = data.Integer(0).Sub(
 			MEM[SP1].(data.Number),
 		)
-		goto NextPC
+		PC++
+		goto CurrentPC
 
 	case isa.NegInt:
 		MEM[SP] = -data.Integer(INST.Operand())
 		SP--
-		goto NextPC
+		PC++
+		goto CurrentPC
 
 	case isa.NewRef:
 		MEM[SP] = new(Ref)
 		SP--
-		goto NextPC
+		PC++
+		goto CurrentPC
 
 	case isa.NoOp:
-		goto NextPC
+		PC++
+		goto CurrentPC
 
 	case isa.Not:
 		SP1 := SP + 1
 		MEM[SP1] = !MEM[SP1].(data.Bool)
-		goto NextPC
+		PC++
+		goto CurrentPC
 
 	case isa.Null:
 		MEM[SP] = data.Null
 		SP--
-		goto NextPC
+		PC++
+		goto CurrentPC
 
 	case isa.NumEq:
 		SP++
@@ -276,7 +304,8 @@ CurrentPC:
 				MEM[SP].(data.Number),
 			),
 		)
-		goto NextPC
+		PC++
+		goto CurrentPC
 
 	case isa.NumGt:
 		SP++
@@ -286,7 +315,8 @@ CurrentPC:
 				MEM[SP].(data.Number),
 			),
 		)
-		goto NextPC
+		PC++
+		goto CurrentPC
 
 	case isa.NumGte:
 		SP++
@@ -297,7 +327,8 @@ CurrentPC:
 		MEM[SP1] = data.Bool(
 			cmp == data.GreaterThan || cmp == data.EqualTo,
 		)
-		goto NextPC
+		PC++
+		goto CurrentPC
 
 	case isa.NumLt:
 		SP++
@@ -307,7 +338,8 @@ CurrentPC:
 				MEM[SP].(data.Number),
 			),
 		)
-		goto NextPC
+		PC++
+		goto CurrentPC
 
 	case isa.NumLte:
 		SP++
@@ -318,14 +350,16 @@ CurrentPC:
 		MEM[SP1] = data.Bool(
 			cmp == data.LessThan || cmp == data.EqualTo,
 		)
-		goto NextPC
+		PC++
+		goto CurrentPC
 
 	case isa.Panic:
 		panic(errors.New(data.ToString(MEM[SP+1])))
 
 	case isa.Pop:
 		SP++
-		goto NextPC
+		PC++
+		goto CurrentPC
 
 	case isa.PopArgs:
 		if AP == nil {
@@ -333,19 +367,22 @@ CurrentPC:
 		}
 		args = AP.args
 		AP = AP.prev
-		goto NextPC
+		PC++
+		goto CurrentPC
 
 	case isa.PosInt:
 		MEM[SP] = data.Integer(INST.Operand())
 		SP--
-		goto NextPC
+		PC++
+		goto CurrentPC
 
 	case isa.Private:
 		SP++
 		c.Globals.Private(
 			MEM[SP].(data.Local),
 		)
-		goto NextPC
+		PC++
+		goto CurrentPC
 
 	case isa.PushArgs:
 		RES := SP + int(INST.Operand())
@@ -355,7 +392,8 @@ CurrentPC:
 		}
 		args = slices.Clone(MEM[SP+1 : RES+1])
 		SP = RES
-		goto NextPC
+		PC++
+		goto CurrentPC
 
 	case isa.Resolve:
 		SP1 := SP + 1
@@ -363,12 +401,14 @@ CurrentPC:
 			c.Globals,
 			MEM[SP1].(data.Symbol),
 		)
-		goto NextPC
+		PC++
+		goto CurrentPC
 
 	case isa.RestArg:
 		MEM[SP] = data.Vector(args[INST.Operand():])
 		SP--
-		goto NextPC
+		PC++
+		goto CurrentPC
 
 	case isa.RetFalse:
 		return data.False
@@ -385,7 +425,8 @@ CurrentPC:
 	case isa.Store:
 		SP++
 		MEM[LP+int(INST.Operand())] = MEM[SP]
-		goto NextPC
+		PC++
+		goto CurrentPC
 
 	case isa.Sub:
 		SP++
@@ -393,7 +434,8 @@ CurrentPC:
 		MEM[SP1] = MEM[SP1].(data.Number).Sub(
 			MEM[SP].(data.Number),
 		)
-		goto NextPC
+		PC++
+		goto CurrentPC
 
 	case isa.TailCall:
 		op := INST.Operand()
@@ -418,19 +460,22 @@ CurrentPC:
 	case isa.True:
 		MEM[SP] = data.True
 		SP--
-		goto NextPC
+		PC++
+		goto CurrentPC
 
 	case isa.Vector:
 		op := INST.Operand()
 		RES := SP + int(op)
 		MEM[RES] = slices.Clone(MEM[SP+1 : RES+1])
 		SP = RES - 1
-		goto NextPC
+		PC++
+		goto CurrentPC
 
 	case isa.Zero:
 		MEM[SP] = data.Integer(0)
 		SP--
-		goto NextPC
+		PC++
+		goto CurrentPC
 
 	default:
 		panic(debug.ProgrammerError(ErrBadInstruction, INST))
