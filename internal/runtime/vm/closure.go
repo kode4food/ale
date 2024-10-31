@@ -69,9 +69,7 @@ CurrentPC:
 	case isa.Add:
 		SP++
 		SP1 := SP + 1
-		MEM[SP1] = MEM[SP1].(data.Number).Add(
-			MEM[SP].(data.Number),
-		)
+		MEM[SP1] = MEM[SP1].(data.Number).Add(MEM[SP].(data.Number))
 		PC++
 		goto CurrentPC
 
@@ -88,9 +86,9 @@ CurrentPC:
 		goto CurrentPC
 
 	case isa.Bind:
-		SP++
-		name := MEM[SP].(data.Local)
-		SP++
+		SP1 := SP + 1
+		SP += 2
+		name := MEM[SP1].(data.Local)
 		if err := c.Globals.Declare(name).Bind(MEM[SP]); err != nil {
 			panic(err)
 		}
@@ -98,9 +96,9 @@ CurrentPC:
 		goto CurrentPC
 
 	case isa.BindRef:
-		SP++
-		ref := MEM[SP].(*Ref)
-		SP++
+		SP1 := SP + 1
+		SP += 2
+		ref := MEM[SP1].(*Ref)
 		ref.Value = MEM[SP]
 		PC++
 		goto CurrentPC
@@ -112,9 +110,26 @@ CurrentPC:
 		goto CurrentPC
 
 	case isa.Call1:
+		SP2 := SP + 2
 		SP++
+		MEM[SP2] = MEM[SP].(data.Procedure).Call(MEM[SP2])
+		PC++
+		goto CurrentPC
+
+	case isa.Call2:
 		SP1 := SP + 1
-		MEM[SP1] = MEM[SP].(data.Procedure).Call(MEM[SP1])
+		SP3 := SP + 3
+		SP += 2
+		MEM[SP3] = MEM[SP1].(data.Procedure).Call(MEM[SP], MEM[SP3])
+		PC++
+		goto CurrentPC
+
+	case isa.Call3:
+		SP1 := SP + 1
+		SP2 := SP + 2
+		SP4 := SP + 4
+		SP += 3
+		MEM[SP4] = MEM[SP1].(data.Procedure).Call(MEM[SP2], MEM[SP], MEM[SP4])
 		PC++
 		goto CurrentPC
 
@@ -123,19 +138,18 @@ CurrentPC:
 		SP1 := SP + 1
 		SP2 := SP1 + 1
 		fn := MEM[SP1].(data.Procedure)
-		args := slices.Clone(MEM[SP2 : SP2+int(op)])
+		callArgs := slices.Clone(MEM[SP2 : SP2+int(op)])
 		RES := SP1 + int(op)
-		MEM[RES] = fn.Call(args...)
+		MEM[RES] = fn.Call(callArgs...)
 		SP = RES - 1
 		PC++
 		goto CurrentPC
 
 	case isa.CallWith:
+		SP1 := SP + 2
 		SP++
-		SP1 := SP + 1
-		MEM[SP1] = MEM[SP].(data.Procedure).Call(
-			sequence.ToVector(MEM[SP1].(data.Sequence))...,
-		)
+		callArgs := sequence.ToVector(MEM[SP1].(data.Sequence))
+		MEM[SP1] = MEM[SP].(data.Procedure).Call(callArgs...)
 		PC++
 		goto CurrentPC
 
@@ -186,9 +200,7 @@ CurrentPC:
 
 	case isa.Declare:
 		SP++
-		c.Globals.Declare(
-			MEM[SP].(data.Local),
-		)
+		c.Globals.Declare(MEM[SP].(data.Local))
 		PC++
 		goto CurrentPC
 
@@ -201,9 +213,7 @@ CurrentPC:
 	case isa.Div:
 		SP++
 		SP1 := SP + 1
-		MEM[SP1] = MEM[SP1].(data.Number).Div(
-			MEM[SP].(data.Number),
-		)
+		MEM[SP1] = MEM[SP1].(data.Number).Div(MEM[SP].(data.Number))
 		PC++
 		goto CurrentPC
 
@@ -245,26 +255,20 @@ CurrentPC:
 	case isa.Mod:
 		SP++
 		SP1 := SP + 1
-		MEM[SP1] = MEM[SP1].(data.Number).Mod(
-			MEM[SP].(data.Number),
-		)
+		MEM[SP1] = MEM[SP1].(data.Number).Mod(MEM[SP].(data.Number))
 		PC++
 		goto CurrentPC
 
 	case isa.Mul:
 		SP++
 		SP1 := SP + 1
-		MEM[SP1] = MEM[SP1].(data.Number).Mul(
-			MEM[SP].(data.Number),
-		)
+		MEM[SP1] = MEM[SP1].(data.Number).Mul(MEM[SP].(data.Number))
 		PC++
 		goto CurrentPC
 
 	case isa.Neg:
 		SP1 := SP + 1
-		MEM[SP1] = data.Integer(0).Sub(
-			MEM[SP1].(data.Number),
-		)
+		MEM[SP1] = data.Integer(0).Sub(MEM[SP1].(data.Number))
 		PC++
 		goto CurrentPC
 
@@ -299,57 +303,40 @@ CurrentPC:
 	case isa.NumEq:
 		SP++
 		SP1 := SP + 1
-		MEM[SP1] = data.Bool(
-			data.EqualTo == MEM[SP1].(data.Number).Cmp(
-				MEM[SP].(data.Number),
-			),
-		)
+		cmp := MEM[SP1].(data.Number).Cmp(MEM[SP].(data.Number))
+		MEM[SP1] = data.Bool(data.EqualTo == cmp)
 		PC++
 		goto CurrentPC
 
 	case isa.NumGt:
 		SP++
 		SP1 := SP + 1
-		MEM[SP1] = data.Bool(
-			data.GreaterThan == MEM[SP1].(data.Number).Cmp(
-				MEM[SP].(data.Number),
-			),
-		)
+		cmp := MEM[SP1].(data.Number).Cmp(MEM[SP].(data.Number))
+		MEM[SP1] = data.Bool(data.GreaterThan == cmp)
 		PC++
 		goto CurrentPC
 
 	case isa.NumGte:
 		SP++
 		SP1 := SP + 1
-		cmp := MEM[SP1].(data.Number).Cmp(
-			MEM[SP].(data.Number),
-		)
-		MEM[SP1] = data.Bool(
-			cmp == data.GreaterThan || cmp == data.EqualTo,
-		)
+		cmp := MEM[SP1].(data.Number).Cmp(MEM[SP].(data.Number))
+		MEM[SP1] = data.Bool(cmp == data.GreaterThan || cmp == data.EqualTo)
 		PC++
 		goto CurrentPC
 
 	case isa.NumLt:
 		SP++
 		SP1 := SP + 1
-		MEM[SP1] = data.Bool(
-			data.LessThan == MEM[SP1].(data.Number).Cmp(
-				MEM[SP].(data.Number),
-			),
-		)
+		cmp := MEM[SP1].(data.Number).Cmp(MEM[SP].(data.Number))
+		MEM[SP1] = data.Bool(data.LessThan == cmp)
 		PC++
 		goto CurrentPC
 
 	case isa.NumLte:
 		SP++
 		SP1 := SP + 1
-		cmp := MEM[SP1].(data.Number).Cmp(
-			MEM[SP].(data.Number),
-		)
-		MEM[SP1] = data.Bool(
-			cmp == data.LessThan || cmp == data.EqualTo,
-		)
+		cmp := MEM[SP1].(data.Number).Cmp(MEM[SP].(data.Number))
+		MEM[SP1] = data.Bool(cmp == data.LessThan || cmp == data.EqualTo)
 		PC++
 		goto CurrentPC
 
@@ -378,9 +365,7 @@ CurrentPC:
 
 	case isa.Private:
 		SP++
-		c.Globals.Private(
-			MEM[SP].(data.Local),
-		)
+		c.Globals.Private(MEM[SP].(data.Local))
 		PC++
 		goto CurrentPC
 
@@ -397,10 +382,7 @@ CurrentPC:
 
 	case isa.Resolve:
 		SP1 := SP + 1
-		MEM[SP1] = env.MustResolveValue(
-			c.Globals,
-			MEM[SP1].(data.Symbol),
-		)
+		MEM[SP1] = env.MustResolveValue(c.Globals, MEM[SP1].(data.Symbol))
 		PC++
 		goto CurrentPC
 
@@ -431,9 +413,7 @@ CurrentPC:
 	case isa.Sub:
 		SP++
 		SP1 := SP + 1
-		MEM[SP1] = MEM[SP1].(data.Number).Sub(
-			MEM[SP].(data.Number),
-		)
+		MEM[SP1] = MEM[SP1].(data.Number).Sub(MEM[SP].(data.Number))
 		PC++
 		goto CurrentPC
 

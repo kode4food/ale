@@ -17,6 +17,7 @@ var Encoded = compose(
 	inlineCalls,
 	repeatWhenModified(redundantLocals, ineffectivePushes),
 	literalReturns,
+	dedicatedCalls,
 )
 
 func compose(first optimizer, rest ...optimizer) optimizer {

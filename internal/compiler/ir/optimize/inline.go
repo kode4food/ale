@@ -25,10 +25,11 @@ type (
 )
 
 var (
-	inlineCallPattern = visitor.Pattern{
-		{isa.Const},
-		{isa.Call0, isa.Call1, isa.Call},
+	anyCallOpcode = []isa.Opcode{
+		isa.Call0, isa.Call1, isa.Call2, isa.Call3, isa.Call,
 	}
+
+	inlineCallPattern = visitor.Pattern{{isa.Const}, anyCallOpcode}
 
 	mapReturns = map[isa.Opcode]isa.Instruction{
 		isa.RetTrue:  isa.True.New(),
@@ -192,6 +193,10 @@ func getCallArgCount(i isa.Instruction) isa.Operand {
 		return 0
 	case isa.Call1:
 		return 1
+	case isa.Call2:
+		return 2
+	case isa.Call3:
+		return 3
 	case isa.Call:
 		return i.Operand()
 	default:

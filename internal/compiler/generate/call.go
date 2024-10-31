@@ -68,14 +68,7 @@ func callWith(e encoder.Encoder, fn funcEmitter, args argsEmitter) error {
 	if err := fn(); err != nil {
 		return err
 	}
-	switch al {
-	case 0:
-		e.Emit(isa.Call0)
-	case 1:
-		e.Emit(isa.Call1)
-	default:
-		e.Emit(isa.Call, isa.Operand(al))
-	}
+	e.Emit(isa.Call, isa.Operand(al))
 	return nil
 }
 

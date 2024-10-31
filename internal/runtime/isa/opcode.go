@@ -33,6 +33,8 @@ const (
 	Call                   // Call Procedure
 	Call0                  // Zero-Arg Call
 	Call1                  // One-Arg Call
+	Call2                  // Two-Arg Call
+	Call3                  // Three-Arg Call
 	CallWith               // Call with the provided Sequence as Arguments
 	Car                    // Contents of the Address part of the Register
 	Cdr                    // Contents of the Decrement part of the Register
