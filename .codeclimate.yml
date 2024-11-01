@@ -1,0 +1,4 @@
+exclude_patterns:
+  - "**/*_string.go"
+  - "**/*_test.go"
+  - "**/*_gen.go"
