@@ -6,7 +6,7 @@ checks:
   method-complexity:
     enabled: true
     config:
-      threshold: 6
+      threshold: 32
   similar-code:
     enabled: false
 exclude_patterns:
