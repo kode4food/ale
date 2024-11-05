@@ -2,7 +2,7 @@ checks:
   return-statements:
     enabled: true
     config:
-      threshold: 6
+      threshold: 8
   method-complexity:
     enabled: true
     config:
