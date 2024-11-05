@@ -1,3 +1,14 @@
+checks:
+  return-statements:
+    enabled: true
+    config:
+      threshold: 6
+  method-complexity:
+    enabled: true
+    config:
+      threshold: 6
+  similar-code:
+    enabled: false
 exclude_patterns:
   - "**/*_string.go"
   - "**/*_test.go"

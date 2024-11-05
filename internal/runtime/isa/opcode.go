@@ -14,10 +14,8 @@ const (
 	// OpcodeSize are the number of bits required for an Opcode value
 	OpcodeSize = 6
 
-	opcodeMask = Opcode(1<<OpcodeSize - 1)
-
 	// OpcodeMask masks the bits for encoding an Opcode into an Instruction
-	OpcodeMask = opcodeMask
+	OpcodeMask = Opcode(1<<OpcodeSize - 1)
 
 	// OperandMask masks the bits for encoding an Operand into an Instruction
 	OperandMask = ^Operand(OpcodeMask) >> OpcodeSize

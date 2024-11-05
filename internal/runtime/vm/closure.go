@@ -103,6 +103,18 @@ CurrentPC:
 		PC++
 		goto CurrentPC
 
+	case isa.Call:
+		op := INST.Operand()
+		SP1 := SP + 1
+		SP2 := SP1 + 1
+		fn := MEM[SP1].(data.Procedure)
+		callArgs := slices.Clone(MEM[SP2 : SP2+int(op)])
+		RES := SP1 + int(op)
+		MEM[RES] = fn.Call(callArgs...)
+		SP = RES - 1
+		PC++
+		goto CurrentPC
+
 	case isa.Call0:
 		SP1 := SP + 1
 		MEM[SP1] = MEM[SP1].(data.Procedure).Call()
@@ -130,18 +142,6 @@ CurrentPC:
 		SP4 := SP + 4
 		SP += 3
 		MEM[SP4] = MEM[SP1].(data.Procedure).Call(MEM[SP2], MEM[SP], MEM[SP4])
-		PC++
-		goto CurrentPC
-
-	case isa.Call:
-		op := INST.Operand()
-		SP1 := SP + 1
-		SP2 := SP1 + 1
-		fn := MEM[SP1].(data.Procedure)
-		callArgs := slices.Clone(MEM[SP2 : SP2+int(op)])
-		RES := SP1 + int(op)
-		MEM[RES] = fn.Call(callArgs...)
-		SP = RES - 1
 		PC++
 		goto CurrentPC
 
