@@ -151,16 +151,20 @@ func (w *Wrapper) Compare(c data.Comparison, l data.Number, r data.Number) {
 func (w *Wrapper) ExpectPanic(err any) {
 	w.Helper()
 	if rec := recover(); rec != nil {
-		errStr := w.mustMakeString(rec)
-		pfx := w.mustMakeString(err)
-		hasPfx := strings.HasPrefix(errStr, pfx)
-		w.True(hasPfx)
-		if rec, ok := rec.(error); ok && !hasPfx {
-			w.EqualError(rec, pfx)
-		}
+		w.ExpectError(err, rec)
 		return
 	}
 	panic(ErrProperErrorNotRaised)
+}
+
+func (w *Wrapper) ExpectError(expected, err any) {
+	errStr := w.mustMakeString(err)
+	pfx := w.mustMakeString(expected)
+	hasPfx := strings.HasPrefix(errStr, pfx)
+	w.True(hasPfx)
+	if rec, ok := err.(error); ok && !hasPfx {
+		w.EqualError(rec, pfx)
+	}
 }
 
 // ExpectProgrammerError is used with defer to make sure a programmer error

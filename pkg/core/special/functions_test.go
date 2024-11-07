@@ -84,10 +84,10 @@ func TestBadLambdaEval(t *testing.T) {
 	as := assert.New(t)
 
 	eNum := fmt.Errorf(internal.ErrUnexpectedCaseSyntax, "99")
-	as.PanicWith(`(lambda-rec 99 "hello")`, eNum)
+	as.ErrorWith(`(lambda-rec 99 "hello")`, eNum)
 
 	eSym := fmt.Errorf(internal.ErrUnexpectedCaseSyntax, "foo/bar")
-	as.PanicWith(`(lambda-rec foo/bar () "hello")`, eSym)
+	as.ErrorWith(`(lambda-rec foo/bar () "hello")`, eSym)
 }
 
 func TestApplyEval(t *testing.T) {

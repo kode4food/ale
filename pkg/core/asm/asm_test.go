@@ -10,5 +10,5 @@ import (
 
 func TestAsmStackSizeError(t *testing.T) {
 	as := assert.New(t)
-	as.PanicWith(`(asm* pop)`, fmt.Errorf(analysis.ErrBadStackTermination, -2))
+	as.ErrorWith(`(asm* pop)`, fmt.Errorf(analysis.ErrBadStackTermination, -2))
 }

@@ -49,6 +49,6 @@ func TestResolveEval(t *testing.T) {
 	as.MustEvalTo(`(let [x 99] x)`, I(99))
 
 	err := fmt.Errorf(env.ErrNameNotDeclared, "hello")
-	as.PanicWith(`hello`, err)
-	as.PanicWith(`(let [hello 99] hello) hello`, err)
+	as.ErrorWith(`hello`, err)
+	as.ErrorWith(`(let [hello 99] hello) hello`, err)
 }

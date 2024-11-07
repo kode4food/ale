@@ -42,7 +42,7 @@ func TestJump(t *testing.T) {
 func TestLabelError(t *testing.T) {
 	as := assert.New(t)
 
-	as.PanicWith(`
+	as.ErrorWith(`
 		(asm*
 			true
 			cond-jump "not-a-label"
@@ -78,7 +78,7 @@ func TestOperandSizeError(t *testing.T) {
 		I(int64(isa.OperandMask)),
 	)
 
-	as.PanicWith(
+	as.ErrorWith(
 		fmt.Sprintf("(asm* pos-int %d)", isa.OperandMask+1),
 		fmt.Errorf(isa.ErrExpectedOperand, isa.OperandMask+1),
 	)

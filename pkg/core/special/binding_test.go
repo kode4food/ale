@@ -18,15 +18,15 @@ func TestLet(t *testing.T) {
 func TestBindingErrors(t *testing.T) {
 	as := assert.New(t)
 
-	as.PanicWith(`(let ([x 99][y]) (+ x y))`,
+	as.ErrorWith(`(let ([x 99][y]) (+ x y))`,
 		errors.New(special.ErrUnpairedBindings),
 	)
 
-	as.PanicWith(`(let ([x 99][x 99]) (+ x y))`,
+	as.ErrorWith(`(let ([x 99][x 99]) (+ x y))`,
 		fmt.Errorf(special.ErrNameAlreadyBound, "x"),
 	)
 
-	as.PanicWith(`(let (x . 99) (+ x x))`,
+	as.ErrorWith(`(let (x . 99) (+ x x))`,
 		fmt.Errorf(special.ErrUnexpectedLetSyntax, "(x . 99)"),
 	)
 }

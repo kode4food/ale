@@ -28,15 +28,15 @@ func TestLambda(t *testing.T) {
 func TestLambdaErrors(t *testing.T) {
 	as := assert.New(t)
 
-	as.PanicWith(`(lambda :kwd '())`,
+	as.ErrorWith(`(lambda :kwd '())`,
 		fmt.Errorf(internal.ErrUnexpectedCaseSyntax, ":kwd"),
 	)
 
-	as.PanicWith(`(lambda [:kwd] '())`,
+	as.ErrorWith(`(lambda [:kwd] '())`,
 		fmt.Errorf(internal.ErrUnexpectedParamSyntax, ":kwd"),
 	)
 
-	as.PanicWith(`(lambda)`,
+	as.ErrorWith(`(lambda)`,
 		errors.New(internal.ErrNoCasesDefined),
 	)
 }

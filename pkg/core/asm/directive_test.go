@@ -27,7 +27,7 @@ func TestConstant(t *testing.T) {
 
 func TestOutOfScopeError(t *testing.T) {
 	as := assert.New(t)
-	as.PanicWith(`
+	as.ErrorWith(`
 		(asm*
 			.push-locals
 			.local wont-be-found :val
@@ -40,7 +40,7 @@ func TestOutOfScopeError(t *testing.T) {
 
 func TestLocalScopeError(t *testing.T) {
 	as := assert.New(t)
-	as.PanicWith(`
+	as.ErrorWith(`
 		(asm*
 			.pop-locals
 			.local hello :val)

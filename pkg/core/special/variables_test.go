@@ -27,11 +27,11 @@ func TestDefinitionsEval(t *testing.T) {
 
 func TestLetBindingErrors(t *testing.T) {
 	as := assert.New(t)
-	as.PanicWith(`
+	as.ErrorWith(`
 		(let 99 "hello")
 	`, fmt.Errorf(special.ErrUnexpectedLetSyntax, "99"))
 
-	as.PanicWith(`
+	as.ErrorWith(`
 		(let [a blah b] "hello")
 	`, errors.New(special.ErrUnpairedBindings))
 
