@@ -1,6 +1,7 @@
 package generate_test
 
 import (
+	"math"
 	"testing"
 
 	"github.com/kode4food/ale/internal/assert"
@@ -19,13 +20,15 @@ func TestLiteral(t *testing.T) {
 	as.Nil(generate.Literal(e, I(2)))
 	as.Nil(generate.Literal(e, I(3)))
 	as.Nil(generate.Literal(e, I(-1)))
+	as.Nil(generate.Literal(e, I(math.MaxInt64)))
+	as.Nil(generate.Literal(e, I(math.MinInt64)))
 	as.Nil(generate.Literal(e, data.True))
 	as.Nil(generate.Literal(e, data.False))
 	as.Nil(generate.Literal(e, data.Null))
 	as.Nil(generate.Literal(e, S("hello there!")))
 
 	// Because the stack size must remain the same in and out
-	for i := 0; i < 9; i++ {
+	for i := 0; i < 11; i++ {
 		e.Emit(isa.Pop)
 	}
 
@@ -37,10 +40,14 @@ func TestLiteral(t *testing.T) {
 			isa.PosInt.New(2),
 			isa.PosInt.New(3),
 			isa.NegInt.New(1),
+			isa.Const.New(0),
+			isa.Const.New(1),
 			isa.True.New(),
 			isa.False.New(),
 			isa.Null.New(),
-			isa.Const.New(0),
+			isa.Const.New(2),
+			isa.Pop.New(),
+			isa.Pop.New(),
 			isa.Pop.New(),
 			isa.Pop.New(),
 			isa.Pop.New(),
@@ -55,5 +62,8 @@ func TestLiteral(t *testing.T) {
 	)
 
 	c := enc.Constants
-	as.Equal(S("hello there!"), c[0])
+	as.Equal(3, len(c))
+	as.Equal(I(math.MaxInt64), c[0])
+	as.Equal(I(math.MinInt64), c[1])
+	as.Equal(S("hello there!"), c[2])
 }
