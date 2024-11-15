@@ -63,6 +63,13 @@ var (
 	notPaired   = fmt.Sprintf(parse.ErrPrefixedNotPaired, "")
 	docTemplate = docstring.MustGet("doc")
 	nothing     = new(sentinel)
+
+	escapeNames = slices.Map(func(n string) string {
+		if strings.Contains("`*_", n[0:1]) {
+			return "\\" + n
+		}
+		return n
+	}).Must()
 )
 
 // NewREPL instantiates a new REPL instance
@@ -386,13 +393,6 @@ func docSymbolList() {
 	}
 	fmt.Println(out)
 }
-
-var escapeNames = slices.Map(func(n string) string {
-	if strings.Contains("`*_", n[0:1]) {
-		return "\\" + n
-	}
-	return n
-}).Must()
 
 func makeUserNamespace() env.Namespace {
 	return bootstrap.TopLevelEnvironment().GetQualified(UserDomain)

@@ -28,17 +28,17 @@ const (
 	ErrEndIndexTooLow = "ending index is lower than starting index: %d < %d"
 )
 
-var unescapeTable = map[string]string{
-	"\\": "\\\\",
-	"\n": "\\n",
-	"\t": "\\t",
-	"\f": "\\f",
-	"\b": "\\b",
-	"\r": "\\r",
-	"\"": "\\\"",
-}
-
 var (
+	unescapeTable = map[string]string{
+		"\\": "\\\\",
+		"\n": "\\n",
+		"\t": "\\t",
+		"\f": "\\f",
+		"\b": "\\b",
+		"\r": "\\r",
+		"\"": "\\\"",
+	}
+
 	// compile-time checks for interface implementation
 	_ interface {
 		Caller

@@ -27,6 +27,13 @@ type (
 	}
 )
 
+// compile-time checks for interface implementation
+var _ interface {
+	Hashed
+	Pair
+	Typed
+} = (*Cons)(nil)
+
 // sorted returns a sorted set of Pairs
 func (p Pairs) sorted() Pairs {
 	return basics.SortFunc(p, func(l, r Pair) int {
@@ -35,15 +42,6 @@ func (p Pairs) sorted() Pairs {
 		return cmp.Compare(ls, rs)
 	})
 }
-
-// compile-time checks for interface implementation
-var (
-	_ interface {
-		Hashed
-		Pair
-		Typed
-	} = (*Cons)(nil)
-)
 
 // NewCons returns a new Cons cell instance
 func NewCons(car, cdr Value) *Cons {

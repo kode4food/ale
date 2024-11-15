@@ -2,8 +2,13 @@ package docstring
 
 import "embed"
 
-//go:embed *.md
-var assets embed.FS
+var (
+	//go:embed *.md
+	assets embed.FS
+
+	// getAsset exposes the assets FS ReadFile method
+	getAsset = assets.ReadFile
+)
 
 // assetNames returns the names of the available docstring files
 func assetNames() []string {
@@ -14,6 +19,3 @@ func assetNames() []string {
 	}
 	return res
 }
-
-// getAsset exposes the assets FS ReadFile method
-var getAsset = assets.ReadFile

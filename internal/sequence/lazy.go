@@ -20,10 +20,12 @@ type (
 	}
 )
 
-var lazySequenceType = types.MakeBasic("lazy-sequence")
+var (
+	lazySequenceType = types.MakeBasic("lazy-sequence")
 
-// compile-time check for interface implementation
-var _ data.Prepender = (*lazySequence)(nil)
+	// compile-time check for interface implementation
+	_ data.Prepender = (*lazySequence)(nil)
+)
 
 // NewLazy creates a new lazy Sequence based on the provided resolver
 func NewLazy(r LazyResolver) data.Sequence {

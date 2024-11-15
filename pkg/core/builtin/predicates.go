@@ -46,39 +46,41 @@ const (
 	VectorKey    = data.Keyword("vector")
 )
 
-var listType = types.MakeUnion(types.BasicList, types.BasicNull)
+var (
+	listType = types.MakeUnion(types.BasicList, types.BasicNull)
 
-var predicates = map[data.Keyword]data.Procedure{
-	AtomKey:     makePredicate(isAtom),
-	NaNKey:      makePredicate(isNaN),
-	PairKey:     makePredicate(isPair),
-	ResolvedKey: makePredicate(isResolved),
+	predicates = map[data.Keyword]data.Procedure{
+		AtomKey:     makePredicate(isAtom),
+		NaNKey:      makePredicate(isNaN),
+		PairKey:     makePredicate(isPair),
+		ResolvedKey: makePredicate(isResolved),
 
-	AnyKey:       data.MakeTypePredicate(types.BasicAny),
-	BooleanKey:   data.MakeTypePredicate(types.BasicBoolean),
-	ConsKey:      data.MakeTypePredicate(types.BasicCons),
-	ProcedureKey: data.MakeTypePredicate(types.BasicProcedure),
-	KeywordKey:   data.MakeTypePredicate(types.BasicKeyword),
-	ListKey:      data.MakeTypePredicate(listType),
-	MacroKey:     data.MakeTypePredicate(macro.CallType),
-	NullKey:      data.MakeTypePredicate(types.BasicNull),
-	NumberKey:    data.MakeTypePredicate(types.BasicNumber),
-	ObjectKey:    data.MakeTypePredicate(types.BasicObject),
-	PromiseKey:   data.MakeTypePredicate(async.PromiseType),
-	SpecialKey:   data.MakeTypePredicate(special.CallType),
-	StringKey:    data.MakeTypePredicate(types.BasicString),
-	SymbolKey:    data.MakeTypePredicate(types.BasicSymbol),
-	VectorKey:    data.MakeTypePredicate(types.BasicVector),
+		AnyKey:       data.MakeTypePredicate(types.BasicAny),
+		BooleanKey:   data.MakeTypePredicate(types.BasicBoolean),
+		ConsKey:      data.MakeTypePredicate(types.BasicCons),
+		ProcedureKey: data.MakeTypePredicate(types.BasicProcedure),
+		KeywordKey:   data.MakeTypePredicate(types.BasicKeyword),
+		ListKey:      data.MakeTypePredicate(listType),
+		MacroKey:     data.MakeTypePredicate(macro.CallType),
+		NullKey:      data.MakeTypePredicate(types.BasicNull),
+		NumberKey:    data.MakeTypePredicate(types.BasicNumber),
+		ObjectKey:    data.MakeTypePredicate(types.BasicObject),
+		PromiseKey:   data.MakeTypePredicate(async.PromiseType),
+		SpecialKey:   data.MakeTypePredicate(special.CallType),
+		StringKey:    data.MakeTypePredicate(types.BasicString),
+		SymbolKey:    data.MakeTypePredicate(types.BasicSymbol),
+		VectorKey:    data.MakeTypePredicate(types.BasicVector),
 
-	AppenderKey:  makeGoTypePredicate[data.Appender](),
-	CountedKey:   makeGoTypePredicate[data.Counted](),
-	IndexedKey:   makeGoTypePredicate[data.Indexed](),
-	LocalKey:     makeGoTypePredicate[data.Local](),
-	MappedKey:    makeGoTypePredicate[data.Mapper](),
-	QualifiedKey: makeGoTypePredicate[data.Qualified](),
-	ReverserKey:  makeGoTypePredicate[data.Reverser](),
-	SequenceKey:  makeGoTypePredicate[data.Sequence](),
-}
+		AppenderKey:  makeGoTypePredicate[data.Appender](),
+		CountedKey:   makeGoTypePredicate[data.Counted](),
+		IndexedKey:   makeGoTypePredicate[data.Indexed](),
+		LocalKey:     makeGoTypePredicate[data.Local](),
+		MappedKey:    makeGoTypePredicate[data.Mapper](),
+		QualifiedKey: makeGoTypePredicate[data.Qualified](),
+		ReverserKey:  makeGoTypePredicate[data.Reverser](),
+		SequenceKey:  makeGoTypePredicate[data.Sequence](),
+	}
+)
 
 // TypeOf returns a CallType Predicate for the Types of the given Values. If
 // more than one Value is provided, the Union of their Types will be returned

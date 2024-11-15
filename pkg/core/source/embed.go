@@ -7,8 +7,13 @@ import (
 	"github.com/kode4food/comb/basics"
 )
 
-//go:embed *.ale
-var assets embed.FS
+var (
+	//go:embed *.ale
+	assets embed.FS
+
+	// Get exposes the assets FS ReadFile method
+	Get = assets.ReadFile
+)
 
 // Names returns the names of the embedded core scripts
 func Names() []string {
@@ -17,6 +22,3 @@ func Names() []string {
 		return f.Name()
 	})
 }
-
-// Get exposes the assets FS ReadFile method
-var Get = assets.ReadFile

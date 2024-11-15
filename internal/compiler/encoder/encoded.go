@@ -56,13 +56,16 @@ func (e *Encoded) WithConstants(c data.Vector) *Encoded {
 // Runnable takes an Encoded and finalizes it into a Runnable that the abstract
 // machine can execute. Jumps are resolved and unused constants are discarded.
 func (e *Encoded) Runnable() (*isa.Runnable, error) {
-	f := &finalizer{
+	return newFinalizer(e).finalize()
+}
+
+func newFinalizer(e *Encoded) *finalizer {
+	return &finalizer{
 		Encoded:  e,
 		labels:   map[isa.Operand]*label{},
 		constMap: map[isa.Operand]isa.Operand{},
 		localMap: map[isa.Operand]isa.Operand{},
 	}
-	return f.finalize()
 }
 
 func (f *finalizer) finalize() (*isa.Runnable, error) {
@@ -72,39 +75,7 @@ func (f *finalizer) finalize() (*isa.Runnable, error) {
 		}
 	}
 	f.stripAdjacentJumps()
-	stackSize, err := analysis.CalculateStackSize(f.output)
-	if err != nil {
-		return nil, err
-	}
-	return &isa.Runnable{
-		Code:       f.output,
-		Globals:    f.Globals,
-		Constants:  f.constants,
-		LocalCount: isa.Operand(len(f.localMap)),
-		StackSize:  stackSize,
-	}, nil
-}
-
-func (f *finalizer) stripAdjacentJumps() {
-	for i := len(f.output) - 1; i >= 0; {
-		oc, op := f.output[i].Split()
-		if oc == isa.Jump && op == isa.Operand(i+1) {
-			f.output = removeInstruction(f.output, i)
-			continue
-		}
-		i--
-	}
-}
-
-func removeInstruction(inst isa.Instructions, idx int) isa.Instructions {
-	res := slices.Concat(inst[:idx], inst[idx+1:])
-	for j, inst := range res {
-		oc, op := inst.Split()
-		if (oc == isa.Jump || oc == isa.CondJump) && op > isa.Operand(idx) {
-			res[j] = oc.New(op - 1)
-		}
-	}
-	return res
+	return f.makeRunnable()
 }
 
 func (f *finalizer) handleInst(i isa.Instruction) error {
@@ -197,4 +168,40 @@ func (f *finalizer) nextOutputOffset() isa.Operand {
 func (f *finalizer) addLabelBackRef(l *label) {
 	off := f.nextOutputOffset()
 	l.backRefs = append(l.backRefs, off)
+}
+
+func (f *finalizer) stripAdjacentJumps() {
+	for i := len(f.output) - 1; i >= 0; {
+		oc, op := f.output[i].Split()
+		if oc == isa.Jump && op == isa.Operand(i+1) {
+			f.output = removeInstruction(f.output, i)
+			continue
+		}
+		i--
+	}
+}
+
+func removeInstruction(inst isa.Instructions, idx int) isa.Instructions {
+	res := slices.Concat(inst[:idx], inst[idx+1:])
+	for j, inst := range res {
+		oc, op := inst.Split()
+		if (oc == isa.Jump || oc == isa.CondJump) && op > isa.Operand(idx) {
+			res[j] = oc.New(op - 1)
+		}
+	}
+	return res
+}
+
+func (f *finalizer) makeRunnable() (*isa.Runnable, error) {
+	stackSize, err := analysis.CalculateStackSize(f.output)
+	if err != nil {
+		return nil, err
+	}
+	return &isa.Runnable{
+		Code:       f.output,
+		Globals:    f.Globals,
+		Constants:  f.constants,
+		LocalCount: isa.Operand(len(f.localMap)),
+		StackSize:  stackSize,
+	}, nil
 }
