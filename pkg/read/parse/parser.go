@@ -18,7 +18,7 @@ type parser struct {
 
 const (
 	// ErrPrefixedNotPaired is raised when the parser encounters the end of the
-	// stream without being able to completed a paired element, such as a quote
+	// stream without being able to complete a paired element, such as a quote
 	ErrPrefixedNotPaired = "end of file reached before completing %s"
 
 	// ErrUnexpectedDot is raised when the parser encounters a dot in the

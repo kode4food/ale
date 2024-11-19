@@ -8,7 +8,7 @@ import (
 	"github.com/kode4food/ale/internal/console"
 )
 
-// This is *not* a full-featured markdown formatter, or even a compliant one
+// This is *not* a full-featured Markdown formatter, or even a compliant one
 // for that matter. It only supports the productions that are used by the
 // system's documentation strings and will likely not evolve much beyond that
 
@@ -52,7 +52,7 @@ var (
 	escaped = regexp.MustCompile(`\\.`)
 )
 
-// FormatMarkdown formats a markdown asset for REPL display
+// FormatMarkdown formats a Markdown asset for REPL display
 func FormatMarkdown(s string) (string, error) {
 	doc := strings.TrimSpace(s)
 	header, lines, err := Parse(doc)

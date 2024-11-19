@@ -29,7 +29,7 @@ const (
 	// ErrCannotMakeString is raised when a value can't be made into a string
 	ErrCannotMakeString = "can't convert value to string"
 
-	// ErrValueNotFound is raised when a forced retrieval from an Object fails
+	// ErrValueNotFound is raised when forced retrieval from an Object fails
 	ErrValueNotFound = "value not found in object: %s"
 )
 
@@ -147,7 +147,7 @@ func (w *Wrapper) Compare(c data.Comparison, l data.Number, r data.Number) {
 	w.Assertions.Equal(c, l.Cmp(r))
 }
 
-// ExpectPanic is used with a defer to make sure an error was triggered
+// ExpectPanic is used with defer to make sure an error was triggered
 func (w *Wrapper) ExpectPanic(err any) {
 	w.Helper()
 	if rec := recover(); rec != nil {

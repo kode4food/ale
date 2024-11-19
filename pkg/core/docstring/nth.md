@@ -17,7 +17,7 @@ If the sequence is lazily computed, asynchronous, or otherwise incapable of inde
 (nth l 4 "wrong")
 ```
 
-This example returns _"wrong"_ because index 4 (the 5th index) is beyond the end of the specified list.
+This example returns _"wrong"_ because index 4 (the fifth index) is beyond the end of the specified list.
 
 #### Indexed Sequence Application
 

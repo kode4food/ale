@@ -9,7 +9,7 @@ import (
 
 type stringWrapper reflect.Kind
 
-// ErrValueMustBeString is raised when an string Unwrap call can't treat its
+// ErrValueMustBeString is raised when a string Unwrap call can't treat its
 // source as a data.String
 const ErrValueMustBeString = "value must be a string"
 

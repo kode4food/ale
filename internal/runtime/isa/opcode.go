@@ -63,7 +63,7 @@ const (
 	NumGte                 // Greater or Equal To
 	NumLt                  // Less Than Comparison
 	NumLte                 // Less or Equal To
-	Panic                  // Abnormally Halt
+	Panic                  // Halt Abnormally
 	Pop                    // Discard Value
 	PopArgs                // Pop Arguments
 	PosInt                 // Push Positive Integer (in Operand)
