@@ -55,8 +55,8 @@ const (
 	// arguments provided doesn't match any of the declared parameter cases
 	ErrUnmatchedCase = "got %d arguments, expected %s"
 
-	// ErrNoMatchingParamPattern is raised when none of the parameter patterns for
-	// a Lambda were capable of being matched
+	// ErrNoMatchingParamPattern is raised when none of the parameter patterns
+	// for a Lambda were capable of being matched
 	ErrNoMatchingParamPattern = "no matching parameter pattern"
 )
 

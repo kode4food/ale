@@ -32,7 +32,7 @@
 
         (lambda-rec try-parse (clauses)
           (unless (seq? clauses)
-                  {:block '() :catch '() :finally []}
+                  {:block null :catch null :finally []}
                   (let* ([f (first clauses)]
                          [r (rest clauses)]
                          [p (try-parse r)])

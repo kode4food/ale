@@ -174,8 +174,8 @@ func (m *inlineMapper) transformArgs(
 			return c
 		}
 	case 1:
-		if canImmediatelyPop(c) {
-			return immediatelyPop(c)
+		if res, ok := immediatelyPop(c); ok {
+			return res
 		}
 		fallthrough
 	default:
@@ -299,12 +299,14 @@ func argInstructionPred(i isa.Instruction) bool {
 	}
 }
 
-func canImmediatelyPop(c isa.Instructions) bool {
-	return len(c) > 0 && c[0] == isa.Arg.New(0) && !hasAnyArgInstruction(c[1:])
-}
-
-func immediatelyPop(c isa.Instructions) isa.Instructions {
-	return c[1:]
+func immediatelyPop(c isa.Instructions) (isa.Instructions, bool) {
+	if len(c) != 0 || c[0] != isa.Arg.New(0) {
+		return nil, false
+	}
+	if res := c[1:]; !hasAnyArgInstruction(res) {
+		return res, true
+	}
+	return nil, false
 }
 
 func canMapArgsToLocals(c isa.Instructions, argc isa.Operand) bool {

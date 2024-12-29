@@ -84,7 +84,7 @@
                    [r (rest coll)])
                (last-inner r f))
              prev)))
-   coll '()))
+   coll null))
 
 (define-lambda fold-left
   [(func init coll)
@@ -101,7 +101,7 @@
 (define (reverse! coll)
   (if (reversible? coll)
       (reverse coll)
-      (fold-left conj '() coll)))
+      (fold-left conj null coll)))
 
 (define :private (swap-args func)
   (lambda (l r) (func r l)))

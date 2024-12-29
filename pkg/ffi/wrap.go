@@ -60,8 +60,8 @@ func WrapType(t reflect.Type) (Wrapper, error) {
 	s := new(struct{ Wrapper })
 	cache.put(t, s)
 
-	// register the final Wrapper, and wire it into the stub for those
-	// Wrappers that may refer to it
+	// register the final Wrapper, and wire it into the stub for those Wrappers
+	// that may refer to it
 	w, err := makeWrappedType(t)
 	if err != nil {
 		return nil, err
