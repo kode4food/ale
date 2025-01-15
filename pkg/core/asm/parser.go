@@ -40,8 +40,7 @@ const (
 )
 
 const (
-	MakeSpecial = data.Local("!make-special")
-	EndBlock    = data.Local(".end")
+	EndBlock = data.Local(".end")
 )
 
 func makeAsmParser(calls namedAsmParsers) *asmParser {
@@ -61,13 +60,6 @@ func (p *asmParser) copy() *asmParser {
 	res := *p
 	res.params = slices.Clone(res.params)
 	return &res
-}
-
-func (p *asmParser) parse(forms data.Sequence) (asmEmit, error) {
-	if f, r, ok := forms.Split(); ok && f == MakeSpecial {
-		return p.specialCall(r)
-	}
-	return p.sequence(forms)
 }
 
 func (p *asmParser) next(s data.Sequence) (asmEmit, data.Sequence, error) {

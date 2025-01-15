@@ -6,11 +6,8 @@ import (
 	"github.com/kode4food/ale/pkg/data"
 )
 
+// Error messages
 const (
-	// ErrUnexpectedParameter is raised when an encoder parameter is not found.
-	// These are declared using the !make-special directive
-	ErrUnexpectedParameter = "unexpected parameter name: %s"
-
 	// ErrPairExpected is raised when a vector is provided, but does not
 	// contain exactly two elements
 	ErrPairExpected = "binding pair expected, got %d elements"
@@ -18,9 +15,7 @@ const (
 
 const (
 	ForEach = data.Local(".for-each")
-)
 
-const (
 	pairType = "binding pair"
 	seqType  = "sequence"
 )

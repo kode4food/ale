@@ -8,6 +8,8 @@ import (
 	"github.com/kode4food/ale/pkg/data"
 )
 
+type emitParser func(*asmParser, data.Sequence) (asmEmit, error)
+
 var (
 	callsOnce sync.Once
 	calls     namedAsmParsers
@@ -15,9 +17,17 @@ var (
 
 // Asm provides indirect access to the Encoder's methods and generators
 func Asm(e encoder.Encoder, args ...data.Value) error {
+	return encodeForm(e, emitAsm, args...)
+}
+
+func emitAsm(p *asmParser, forms data.Sequence) (asmEmit, error) {
+	return p.sequence(forms)
+}
+
+func encodeForm(e encoder.Encoder, fn emitParser, args ...data.Value) error {
 	c := getCalls()
 	p := makeAsmParser(c)
-	emit, err := p.parse(data.Vector(args))
+	emit, err := fn(p, data.Vector(args))
 	if err != nil {
 		return err
 	}

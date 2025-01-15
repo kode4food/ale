@@ -10,7 +10,19 @@ import (
 	"github.com/kode4food/ale/pkg/data"
 )
 
-func (p *asmParser) specialCall(forms data.Sequence) (asmEmit, error) {
+// Error messages
+const (
+	// ErrUnexpectedParameter is raised when an encoder parameter is not found.
+	// These are declared using the special* built-in
+	ErrUnexpectedParameter = "unexpected parameter name: %s"
+)
+
+// Special emits an encoder function for the provided param cases
+func Special(e encoder.Encoder, args ...data.Value) error {
+	return encodeForm(e, emitSpecial, args...)
+}
+
+func emitSpecial(p *asmParser, forms data.Sequence) (asmEmit, error) {
 	pc, err := internal.ParseParamCases(forms)
 	if err != nil {
 		return nil, err

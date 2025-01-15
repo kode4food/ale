@@ -16,6 +16,7 @@ func (b *bootstrap) populateSpecialForms() {
 		"let-rec":       coreSpecial.LetMutual,
 		"macroexpand-1": coreSpecial.MacroExpand1,
 		"macroexpand":   coreSpecial.MacroExpand,
+		"special*":      asm.Special,
 	})
 }
 

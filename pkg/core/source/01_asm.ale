@@ -1,21 +1,21 @@
 ;;;; ale core: assembler bootstrapping
 
 (asm*
-    .eval (asm* !make-special (name)
+    .eval (special* (name)
         .const name
         dup
         declare)
     .const declare*
     bind
 
-    .eval (asm* !make-special (name)
+    .eval (special* (name)
         .const name
         dup
         private)
     .const private*
     bind
 
-    .eval (asm* !make-special (name value)
+    .eval (special* (name value)
         .eval value
         dup
         .const name
@@ -26,7 +26,7 @@
     null)
 
 (define* quote
-  (asm* !make-special (form)
+  (special* (form)
       .const form))
 
 (define* cons
@@ -64,7 +64,7 @@
         null)))
 
 (define* begin
-  (asm* !make-special body
+  (special* body
       null
       .for-each [val body]
           pop

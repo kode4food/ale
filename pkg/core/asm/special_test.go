@@ -12,7 +12,7 @@ func TestMakeSpecial(t *testing.T) {
 
 	as.MustEvalTo(`
 		(define* if'
-			(asm* !make-special
+			(special*
 				[(predicate consequent alternative)
 					.eval predicate
 					cond-jump :consequent
@@ -39,7 +39,7 @@ func TestMakeRestSpecial(t *testing.T) {
 
 	as.MustEvalTo(`
 		(define* test
-			(asm* !make-special
+			(special*
 				[(head . rest)
 					.eval head]))
 		[(test 1 2 3 4) (test 5 6) (test 7)]
@@ -47,7 +47,7 @@ func TestMakeRestSpecial(t *testing.T) {
 
 	as.MustEvalTo(`
 		(define* test
-			(asm* !make-special
+			(special*
 				[(head . rest)
 					.eval rest]))
 		[(test 1 2 3 4) (test 5 6) (test 7)]

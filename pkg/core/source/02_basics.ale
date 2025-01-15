@@ -32,7 +32,7 @@
 (define* is-seq        (is-a* :sequence))
 
 (define* if
-  (asm* !make-special
+  (special*
     [(predicate consequent alternative)
           .eval predicate
           cond-jump :consequent
