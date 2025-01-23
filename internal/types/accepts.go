@@ -9,21 +9,6 @@ type (
 	AcceptsWith func(*Checker, Type) bool
 )
 
-// types:
-//    * any
-//    * basic (string, list, cons, etc...)
-//    * union
-//    * sequence (vector, cons, list)
-//
-// accept logic:
-//    * any accepts everything ✔
-//    * basic left can accept itself ✔
-//    * basic left can accept extended right ✔
-//    * union left can accept a union subset ✔
-//    * union left can accept extended union subset ✔
-//    * extended left can accept itself
-//    * all other permutations are false
-
 func Accepts(left, right Type) bool {
 	return Check(left).Accepts(right)
 }
