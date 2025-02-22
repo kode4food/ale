@@ -6,7 +6,7 @@ func Take(s data.Sequence, count int) (data.Vector, data.Sequence, bool) {
 	var f data.Value
 	var ok bool
 	res := make(data.Vector, count)
-	for i := 0; i < count; i++ {
+	for i := range count {
 		if f, s, ok = s.Split(); !ok {
 			return data.EmptyVector, data.Null, false
 		}

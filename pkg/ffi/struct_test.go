@@ -60,7 +60,7 @@ func BenchmarkStructWrapper(b *testing.B) {
 	f := ffi.MustWrap(func(i *stateInfo) (string, int) {
 		return i.Name, i.Population
 	}).(data.Procedure)
-	for n := 0; n < b.N; n++ {
+	for range b.N {
 		si := testStructStateInfo()
 		r := f.Call(ffi.MustWrap(si)).(data.Vector)
 		if S("California") != r[0] || I(40) != r[1] {

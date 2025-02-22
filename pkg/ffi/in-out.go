@@ -14,7 +14,7 @@ type inOutWrappers struct {
 func makeInOutWrappers(t reflect.Type) (*inOutWrappers, error) {
 	cIn := t.NumIn()
 	in := make(Wrappers, cIn)
-	for i := 0; i < cIn; i++ {
+	for i := range cIn {
 		w, err := WrapType(t.In(i))
 		if err != nil {
 			return nil, err
@@ -23,7 +23,7 @@ func makeInOutWrappers(t reflect.Type) (*inOutWrappers, error) {
 	}
 	cOut := t.NumOut()
 	out := make(Wrappers, cOut)
-	for i := 0; i < cOut; i++ {
+	for i := range cOut {
 		w, err := WrapType(t.Out(i))
 		if err != nil {
 			return nil, err

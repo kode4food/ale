@@ -35,13 +35,13 @@ func nativeLoopSum(args ...int) int {
 }
 
 func BenchmarkNativeExplicit(b *testing.B) {
-	for n := 0; n < b.N; n++ {
+	for range b.N {
 		_ = nativeExplicitSum(5, 6, 7) + 12
 	}
 }
 
 func BenchmarkNativeLoop(b *testing.B) {
-	for n := 0; n < b.N; n++ {
+	for range b.N {
 		_ = nativeLoopSum(5, 6, 7) + 12
 	}
 }
@@ -51,7 +51,7 @@ func BenchmarkNumberExplicit(b *testing.B) {
 	i2 := I(6)
 	i3 := I(7)
 	i4 := I(12)
-	for n := 0; n < b.N; n++ {
+	for range b.N {
 		_ = numExplicitSum(i1, i2, i3).(data.Integer) + i4
 	}
 }
@@ -61,7 +61,7 @@ func BenchmarkNumberLoop(b *testing.B) {
 	i2 := I(6)
 	i3 := I(7)
 	i4 := I(12)
-	for n := 0; n < b.N; n++ {
+	for range b.N {
 		_ = numLoopSum(i1, i2, i3).(data.Integer) + i4
 	}
 }
@@ -78,7 +78,7 @@ var bCode = makeClosure(isa.Instructions{
 })
 
 func BenchmarkCalls(b *testing.B) {
-	for n := 0; n < b.N; n++ {
+	for range b.N {
 		_ = bCode.Call()
 	}
 }
@@ -107,7 +107,7 @@ func BenchmarkBottles(b *testing.B) {
 		panic(err)
 	}
 	beer := res.(data.Procedure)
-	for n := 0; n < b.N; n++ {
+	for range b.N {
 		_ = beer.Call(data.Integer(99))
 	}
 }
@@ -125,7 +125,7 @@ func BenchmarkTailCalls(b *testing.B) {
 		fib
 	`)
 	fib := res.(data.Procedure)
-	for n := 0; n < b.N; n++ {
+	for range b.N {
 		res := fib.Call(data.Integer(10))
 		if res, ok := res.(data.Integer); !ok || !res.Equal(data.Integer(55)) {
 			b.Fatalf("fib result is incorrect")
@@ -145,7 +145,7 @@ func BenchmarkNonTailCalls(b *testing.B) {
 		fib
 	`)
 	fib := res.(data.Procedure)
-	for n := 0; n < b.N; n++ {
+	for range b.N {
 		res := fib.Call(data.Integer(10))
 		if res, ok := res.(data.Integer); !ok || !res.Equal(data.Integer(55)) {
 			b.Fatalf("fib result is incorrect")

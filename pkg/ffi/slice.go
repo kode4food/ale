@@ -31,7 +31,7 @@ func (w *sliceWrapper) Wrap(c *Context, v reflect.Value) (data.Value, error) {
 	}
 	vLen := v.Len()
 	out := make(data.Vector, vLen)
-	for i := 0; i < vLen; i++ {
+	for i := range vLen {
 		v, err := w.elem.Wrap(c, v.Index(i))
 		if err != nil {
 			return data.Null, err

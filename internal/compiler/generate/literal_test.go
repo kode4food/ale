@@ -28,7 +28,7 @@ func TestLiteral(t *testing.T) {
 	as.Nil(generate.Literal(e, S("hello there!")))
 
 	// Because the stack size must remain the same in and out
-	for i := 0; i < 11; i++ {
+	for range 11 {
 		e.Emit(isa.Pop)
 	}
 

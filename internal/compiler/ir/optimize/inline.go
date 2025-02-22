@@ -332,7 +332,7 @@ func mapArgsToLocals(
 ) isa.Instructions {
 	al := makeArgLocalMap(c, argsBase)
 	res := make(isa.Instructions, 0, len(c)+int(argc))
-	for i := 0; i < int(argc); i++ {
+	for i := range int(argc) {
 		if to, ok := al[isa.Operand(i)]; ok {
 			res = append(res, isa.Store.New(to))
 			continue

@@ -217,7 +217,7 @@ func (pc *ParamCases) fixedRanges() [][2]int {
 
 func (pc *ParamCases) fixedSet() []int {
 	var res []int
-	for i := 0; i < len(pc.Fixed)*arityBits; i++ {
+	for i := range len(pc.Fixed) * arityBits {
 		index, offset := i/arityBits, i%arityBits
 		if pc.Fixed[index]&(1<<offset) != 0 {
 			res = append(res, i)

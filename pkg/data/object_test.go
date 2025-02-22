@@ -85,7 +85,7 @@ func TestObjectRemoval(t *testing.T) {
 
 	// Load it
 	o1 := data.EmptyObject
-	for i := 0; i < 1000; i++ {
+	for i := range 1000 {
 		k := K(fmt.Sprintf("key-%d", i))
 		v := S(fmt.Sprintf("value-%d", i))
 		o1 = o1.Put(C(k, v)).(*data.Object)
@@ -168,7 +168,7 @@ func TestObjectSplitDeterminism(t *testing.T) {
 	f1, r1, ok := o.Split()
 	r1Str := data.ToString(r1)
 	as.True(ok)
-	for i := 0; i < 50; i++ {
+	for range 50 {
 		f2, r2, ok := o.Split()
 		as.True(ok)
 		as.Equal(f1, f2)
@@ -186,7 +186,7 @@ func TestObjectCarCdr(t *testing.T) {
 	a1 := o.Car()
 	d1 := o.Cdr()
 	dStr := data.ToString(d1)
-	for i := 0; i < 50; i++ {
+	for range 50 {
 		a2 := o.Car()
 		d2 := o.Cdr()
 		as.Equal(a1, a2)
@@ -256,10 +256,10 @@ func TestObjectHash(t *testing.T) {
 }
 
 func BenchmarkObjectOperations(b *testing.B) {
-	for n := 0; n < b.N; n++ {
+	for range b.N {
 		// Load it
 		o1 := data.EmptyObject
-		for i := 0; i < 1000; i++ {
+		for i := range 1000 {
 			k := K(fmt.Sprintf("key-%d", i))
 			v := S(fmt.Sprintf("value-%d", i))
 			o1 = o1.Put(C(k, v)).(*data.Object)

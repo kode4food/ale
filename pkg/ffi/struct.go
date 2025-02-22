@@ -28,7 +28,7 @@ const AleTag = "ale"
 func makeWrappedStruct(t reflect.Type) (Wrapper, error) {
 	fLen := t.NumField()
 	var fields []*fieldWrapper
-	for i := 0; i < fLen; i++ {
+	for i := range fLen {
 		f := t.Field(i)
 		if f.PkgPath != "" { // Not exported
 			continue

@@ -45,7 +45,7 @@ func TestBootstrapInto(t *testing.T) {
 }
 
 func BenchmarkBootstrapping(b *testing.B) {
-	for n := 0; n < b.N; n++ {
+	for range b.N {
 		e := env.NewEnvironment()
 		bootstrap.DevNull(e)
 		bootstrap.Into(e)

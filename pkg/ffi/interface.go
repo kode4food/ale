@@ -43,7 +43,7 @@ func makeWrappedInterface(t reflect.Type) (Wrapper, error) {
 		Type:    t,
 		methods: make([]*methodWrapper, 0, mLen),
 	}
-	for i := 0; i < mLen; i++ {
+	for i := range mLen {
 		m := t.Method(i)
 		if m.PkgPath != "" { // Not exported
 			continue
