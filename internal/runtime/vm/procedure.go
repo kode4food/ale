@@ -31,7 +31,7 @@ func MakeProcedure(run *isa.Runnable, arity data.ArityChecker) *Procedure {
 func (p *Procedure) Call(values ...data.Value) data.Value {
 	return &Closure{
 		Procedure: p,
-		captured:  values,
+		captured:  slices.Clone(values),
 	}
 }
 

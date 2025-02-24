@@ -108,7 +108,7 @@ CurrentPC:
 		SP1 := SP + 1
 		SP2 := SP1 + 1
 		fn := MEM[SP1].(data.Procedure)
-		callArgs := slices.Clone(MEM[SP2 : SP2+int(op)])
+		callArgs := MEM[SP2 : SP2+int(op)]
 		RES := SP1 + int(op)
 		MEM[RES] = fn.Call(callArgs...)
 		SP = RES - 1
@@ -422,11 +422,12 @@ CurrentPC:
 		SP1 := SP + 1
 		SP2 := SP1 + 1
 		val := MEM[SP1]
-		args = slices.Clone(MEM[SP2 : SP2+int(op)])
+		callArgs := MEM[SP2 : SP2+int(op)]
 		cl, ok := val.(*Closure)
 		if !ok {
-			return val.(data.Procedure).Call(args...)
+			return val.(data.Procedure).Call(callArgs...)
 		}
+		args = slices.Clone(callArgs)
 		if cl == c {
 			goto InitState
 		}

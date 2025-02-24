@@ -31,7 +31,7 @@ var (
 
 // NewVector creates a new Vector instance
 func NewVector(v ...Value) Vector {
-	return v
+	return slices.Clone(v)
 }
 
 func (v Vector) Count() Integer {

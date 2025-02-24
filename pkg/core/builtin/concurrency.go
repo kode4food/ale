@@ -1,6 +1,8 @@
 package builtin
 
 import (
+	"slices"
+
 	"github.com/kode4food/ale/internal/async"
 	"github.com/kode4food/ale/internal/runtime"
 	"github.com/kode4food/ale/internal/stream"
@@ -10,9 +12,10 @@ import (
 // Go runs the provided function asynchronously
 var Go = data.MakeProcedure(func(args ...data.Value) data.Value {
 	fn := args[0].(data.Procedure)
+	callArgs := slices.Clone(args[1:])
 	go func() {
 		defer runtime.NormalizeGoRuntimeErrors()
-		fn.Call(args[1:]...)
+		fn.Call(callArgs...)
 	}()
 	return data.Null
 }, 1)
