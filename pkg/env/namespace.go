@@ -76,7 +76,6 @@ func (ns *namespace) declare(n data.Local) *entry {
 	e := &entry{
 		owner: ns,
 		name:  n,
-		value: data.Null,
 	}
 	ns.entries[n] = e
 	ns.Unlock()

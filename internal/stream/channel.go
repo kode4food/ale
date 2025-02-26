@@ -68,10 +68,8 @@ func (e *chanEmitter) Close() error {
 // NewChannelSequence produces a new Sequence whose values come from a Go chan
 func NewChannelSequence(ch <-chan data.Value) data.Sequence {
 	return &chanSequence{
-		once:   do.Once(),
-		ch:     ch,
-		result: data.Null,
-		rest:   data.Null,
+		once: do.Once(),
+		ch:   ch,
 	}
 }
 
