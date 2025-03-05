@@ -119,10 +119,10 @@ func StripWhitespace(s data.Sequence) data.Sequence {
 	})
 }
 
-func ExhaustiveMatcher(m ...Matchers) Matcher {
-	entries := makeExhaustive(m...)
+func ExhaustiveMatcher(all ...Matchers) Matcher {
+	matchers := makeExhaustive(all...)
 	return func(input string) (*Token, string) {
-		for _, m := range entries {
+		for _, m := range matchers {
 			if t, rest := m(input); t != nil {
 				return t, rest
 			}
@@ -131,10 +131,11 @@ func ExhaustiveMatcher(m ...Matchers) Matcher {
 	}
 }
 
-func makeExhaustive(m ...Matchers) Matchers {
-	var res Matchers
+func makeExhaustive(all ...Matchers) Matchers {
+	cat := slices.Concat(all...)
+	res := make(Matchers, 0, len(cat)+2)
 	res = append(res, pattern(`$`, endState(endOfFile)))
-	res = append(res, slices.Concat(m...)...)
+	res = append(res, cat...)
 	res = append(res, pattern(lang.AnyChar, errorState))
 	return res
 }
