@@ -12,6 +12,7 @@ type (
 
 	// Token is a lexer value
 	Token struct {
+		input  string
 		value  data.Value
 		typ    TokenType
 		line   int
@@ -50,6 +51,13 @@ func MakeToken(t TokenType, v data.Value) *Token {
 		typ:   t,
 		value: v,
 	}
+}
+
+// withInput returns a copy of the Token with the input string
+func (t *Token) withInput(i string) *Token {
+	res := *t
+	res.input = i
+	return &res
 }
 
 // withLocation returns a copy of the Token with location information

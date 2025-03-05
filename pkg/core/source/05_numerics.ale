@@ -71,3 +71,4 @@
 
 (define +inf *pos-inf*)
 (define -inf *neg-inf*)
+(define nan (- +inf +inf))

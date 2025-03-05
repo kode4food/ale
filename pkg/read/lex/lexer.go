@@ -3,6 +3,7 @@ package lex
 import (
 	"fmt"
 	"regexp"
+	"slices"
 
 	"github.com/kode4food/ale/internal/debug"
 	"github.com/kode4food/ale/internal/lang"
@@ -12,16 +13,11 @@ import (
 )
 
 type (
-	Matcher func(src string) (*Token, string)
+	Matcher func(string) (*Token, string)
+
+	Matchers []Matcher
 
 	tokenizer func([]string) *Token
-
-	matchEntry struct {
-		pattern  *regexp.Regexp
-		function tokenizer
-	}
-
-	matchEntries []matchEntry
 )
 
 const (
@@ -47,13 +43,13 @@ var (
 
 	dotRegex = regexp.MustCompile(`^` + lang.Dot + `$`)
 
-	Ignorable = matchEntries{
+	Ignorable = Matchers{
 		pattern(lang.Comment, tokenState(Comment)),
 		pattern(lang.NewLine, tokenState(NewLine)),
 		pattern(lang.Whitespace, tokenState(Whitespace)),
 	}
 
-	Structure = matchEntries{
+	Structure = Matchers{
 		pattern(lang.ListStart, tokenState(ListStart)),
 		pattern(lang.VectorStart, tokenState(VectorStart)),
 		pattern(lang.ObjectStart, tokenState(ObjectStart)),
@@ -62,34 +58,34 @@ var (
 		pattern(lang.ObjectEnd, tokenState(ObjectEnd)),
 	}
 
-	Quoting = matchEntries{
+	Quoting = Matchers{
 		pattern(lang.Quote, tokenState(QuoteMarker)),
 		pattern(lang.SyntaxQuote, tokenState(SyntaxMarker)),
 		pattern(lang.Splice, tokenState(SpliceMarker)),
 		pattern(lang.Unquote, tokenState(UnquoteMarker)),
 	}
 
-	Values = matchEntries{
+	Values = Matchers{
 		pattern(lang.String, stringState),
 		pattern(lang.Ratio, ratioState),
 		pattern(lang.Float, floatState),
 		pattern(lang.Integer, integerState),
 	}
 
-	Symbols = matchEntries{
+	Symbols = Matchers{
 		pattern(lang.Keyword, tokenState(Keyword)),
 		pattern(lang.Identifier, identifierState),
 	}
 )
 
 // Match tokenizes a String using the provided Matcher
-func Match(src data.String, match Matcher) data.Sequence {
+func Match(src data.String, m Matcher) data.Sequence {
 	var resolver sequence.LazyResolver
 	var line, column int
 	input := string(src)
 
 	resolver = func() (data.Value, data.Sequence, bool) {
-		if t, rest := match(input); t.Type() != endOfFile {
+		if t, rest := m(input); t.Type() != endOfFile {
 			t := t.withLocation(line, column)
 
 			if t.isNewLine() {
@@ -115,42 +111,45 @@ func StripWhitespace(s data.Sequence) data.Sequence {
 	})
 }
 
-func MakeMatcher(m ...matchEntries) Matcher {
-	entries := makeMatchEntries(m...)
-
+func ExhaustiveMatcher(m ...Matchers) Matcher {
+	entries := makeExhaustive(m...)
 	return func(src string) (*Token, string) {
-		for _, s := range entries {
-			if sm := s.pattern.FindStringSubmatch(src); sm != nil {
-				return s.function(sm), src[len(sm[0]):]
+		for _, m := range entries {
+			if t, rest := m(src); t != nil {
+				return t, rest
 			}
 		}
 		panic(debug.ProgrammerError("unmatched lexing state"))
 	}
 }
 
-func makeMatchEntries(m ...matchEntries) matchEntries {
-	var entries matchEntries
-	entries = append(entries, pattern(`$`, endState(endOfFile)))
-	for _, e := range m {
-		entries = append(entries, e...)
-	}
-	entries = append(entries, pattern(lang.AnyChar, errorState))
-	return entries
+func makeExhaustive(m ...Matchers) Matchers {
+	var res Matchers
+	res = append(res, pattern(`$`, endState(endOfFile)))
+	res = append(res, slices.Concat(m...)...)
+	res = append(res, pattern(lang.AnyChar, errorState))
+	return res
 }
 
-func (m matchEntries) Error() matchEntries {
-	return basics.Map(m, func(e matchEntry) matchEntry {
-		return matchEntry{
-			pattern:  e.pattern,
-			function: errorState,
+func (m Matchers) Error() Matchers {
+	return basics.Map(m, func(wrapped Matcher) Matcher {
+		return func(src string) (*Token, string) {
+			if t, rest := wrapped(src); t != nil {
+				err := fmt.Errorf(ErrUnexpectedCharacters, t.input)
+				return MakeToken(Error, data.String(err.Error())), rest
+			}
+			return nil, src
 		}
 	})
 }
 
-func pattern(p string, s tokenizer) matchEntry {
-	return matchEntry{
-		pattern:  regexp.MustCompile("^" + p),
-		function: s,
+func pattern(p string, t tokenizer) Matcher {
+	r := regexp.MustCompile("^" + p)
+	return func(input string) (*Token, string) {
+		if sm := r.FindStringSubmatch(input); sm != nil {
+			return t(sm).withInput(sm[0]), input[len(sm[0]):]
+		}
+		return nil, input
 	}
 }
 

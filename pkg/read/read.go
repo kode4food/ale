@@ -6,7 +6,7 @@ import (
 	"github.com/kode4food/ale/pkg/read/parse"
 )
 
-var matcher = lex.MakeMatcher(
+var matcher = lex.ExhaustiveMatcher(
 	lex.Ignorable,
 	lex.Structure,
 	lex.Quoting,
