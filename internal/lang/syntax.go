@@ -15,6 +15,9 @@ const (
 	Local      = `(/|(` + localStart + localCont + `))`
 	Qualified  = `(` + localStart + localCont + `/` + Local + `)`
 
+	BlockCommentStart = `#\|`
+	BlockCommentEnd   = `\|#`
+
 	Comment     = `;[^\n]*([\n]|$)`
 	NewLine     = `(\r\n|[\n\r])`
 	Whitespace  = `[\t\f ]+`

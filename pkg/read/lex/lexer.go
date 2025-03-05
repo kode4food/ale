@@ -22,8 +22,12 @@ type (
 
 const (
 	// ErrStringNotTerminated is raised when the lexer reaches the end of its
-	// stream while scanning a string, without an encountering a closing quote
+	// stream while scanning a string, without encountering a closing quote
 	ErrStringNotTerminated = "string has no closing quote"
+
+	// ErrCommentNotTerminated is raised when the lexer reaches the end of its
+	// stream while scanning a comment, without encountering an end marker
+	ErrCommentNotTerminated = "comment has no closing comment marker"
 
 	// ErrUnexpectedCharacters is raised when the lexer encounters a set of
 	// characters that don't match any of the defined scanning patterns
@@ -43,7 +47,11 @@ var (
 
 	dotRegex = regexp.MustCompile(`^` + lang.Dot + `$`)
 
+	blockCommentStart = regexp.MustCompile(`^` + lang.BlockCommentStart)
+	blockCommentEnd   = regexp.MustCompile(`^` + lang.BlockCommentEnd)
+
 	Ignorable = Matchers{
+		blockCommentMatcher,
 		pattern(lang.Comment, tokenState(Comment)),
 		pattern(lang.NewLine, tokenState(NewLine)),
 		pattern(lang.Whitespace, tokenState(Whitespace)),
@@ -113,9 +121,9 @@ func StripWhitespace(s data.Sequence) data.Sequence {
 
 func ExhaustiveMatcher(m ...Matchers) Matcher {
 	entries := makeExhaustive(m...)
-	return func(src string) (*Token, string) {
+	return func(input string) (*Token, string) {
 		for _, m := range entries {
-			if t, rest := m(src); t != nil {
+			if t, rest := m(input); t != nil {
 				return t, rest
 			}
 		}
@@ -133,12 +141,12 @@ func makeExhaustive(m ...Matchers) Matchers {
 
 func (m Matchers) Error() Matchers {
 	return basics.Map(m, func(wrapped Matcher) Matcher {
-		return func(src string) (*Token, string) {
-			if t, rest := wrapped(src); t != nil {
+		return func(input string) (*Token, string) {
+			if t, rest := wrapped(input); t != nil {
 				err := fmt.Errorf(ErrUnexpectedCharacters, t.input)
 				return MakeToken(Error, data.String(err.Error())), rest
 			}
-			return nil, src
+			return nil, input
 		}
 	})
 }
@@ -213,4 +221,33 @@ func identifierState(sm []string) *Token {
 func errorState(sm []string) *Token {
 	err := fmt.Errorf(ErrUnexpectedCharacters, sm[0])
 	return MakeToken(Error, data.String(err.Error()))
+}
+
+func blockCommentMatcher(input string) (*Token, string) {
+	start := blockCommentStart.FindStringSubmatch(input)
+	if start == nil {
+		return nil, input
+	}
+
+	stack := 1
+	for i := len(start[0]); i < len(input); {
+		next := input[i:]
+		if sm := blockCommentStart.FindStringSubmatch(next); sm != nil {
+			i += len(sm[0])
+			stack++
+			continue
+		}
+		if sm := blockCommentEnd.FindStringSubmatch(next); sm != nil {
+			i += len(sm[0])
+			stack--
+			if stack == 0 {
+				c := input[:i]
+				rest := input[i:]
+				return MakeToken(Comment, data.String(c)), rest
+			}
+			continue
+		}
+		i++
+	}
+	return MakeToken(Error, data.String(ErrCommentNotTerminated)), input
 }

@@ -129,7 +129,14 @@ func TestMultiLine(t *testing.T) {
 
 func TestComments(t *testing.T) {
 	l := lex.StripWhitespace(
-		read.Tokens(`"hello" ; (this is commented)`),
+		read.Tokens(`
+			#| this is a comment |#
+			"hello"
+			#| nested
+				#| comment is |#
+               here
+            |#  ; with an eol comment
+		`),
 	)
 	assertTokenSequence(t, l, []*lex.Token{
 		T(lex.String, S(`hello`)),

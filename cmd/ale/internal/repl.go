@@ -263,6 +263,7 @@ func isRecoverable(err error) bool {
 		msg == parse.ErrVectorNotClosed ||
 		msg == parse.ErrObjectNotClosed ||
 		msg == lex.ErrStringNotTerminated ||
+		msg == lex.ErrCommentNotTerminated ||
 		strings.HasPrefix(msg, notPaired)
 }
 
