@@ -128,7 +128,7 @@ func TestMultiLine(t *testing.T) {
 }
 
 func TestComments(t *testing.T) {
-	l := lex.StripWhitespace(
+	l1 := lex.StripWhitespace(
 		read.Tokens(`
 			#| this is a comment |#
 			"hello"
@@ -138,8 +138,15 @@ func TestComments(t *testing.T) {
             |#  ; with an eol comment
 		`),
 	)
-	assertTokenSequence(t, l, []*lex.Token{
+	assertTokenSequence(t, l1, []*lex.Token{
 		T(lex.String, S(`hello`)),
+	})
+
+	l2 := lex.StripWhitespace(rdata.Tokens("hello |# there"))
+	assertTokenSequence(t, l2, []*lex.Token{
+		T(lex.Identifier, S("hello")),
+		T(lex.Error, S(lex.ErrUnmatchedComment)),
+		T(lex.Identifier, S("there")),
 	})
 }
 

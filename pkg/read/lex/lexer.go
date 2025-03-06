@@ -29,6 +29,10 @@ const (
 	// stream while scanning a comment, without encountering an end marker
 	ErrCommentNotTerminated = "comment has no closing comment marker"
 
+	// ErrUnmatchedComment is raised when a comment end marker is encountered
+	// in the stream when no open block comment is being parsed
+	ErrUnmatchedComment = "encountered '|#' with no open block comment"
+
 	// ErrUnexpectedCharacters is raised when the lexer encounters a set of
 	// characters that don't match any of the defined scanning patterns
 	ErrUnexpectedCharacters = "unexpected characters: %s"
@@ -227,7 +231,7 @@ func errorState(sm []string) *Token {
 func blockCommentMatcher(input string) (*Token, string) {
 	start := blockCommentStart.FindStringSubmatch(input)
 	if start == nil {
-		return nil, input
+		return blockCommentStrayEndMatcher(input)
 	}
 
 	stack := 1
@@ -251,4 +255,13 @@ func blockCommentMatcher(input string) (*Token, string) {
 		i++
 	}
 	return MakeToken(Error, data.String(ErrCommentNotTerminated)), input
+}
+
+func blockCommentStrayEndMatcher(input string) (*Token, string) {
+	if sm := blockCommentEnd.FindStringSubmatch(input); sm != nil {
+		err := data.String(ErrUnmatchedComment)
+		rest := input[len(sm[0]):]
+		return MakeToken(Error, err), rest
+	}
+	return nil, input
 }
