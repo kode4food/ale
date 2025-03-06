@@ -1,6 +1,7 @@
 module github.com/kode4food/ale
 
-go 1.23
+go 1.23.0
+
 require (
 	github.com/chzyer/readline v1.5.1
 	github.com/google/uuid v1.6.0
