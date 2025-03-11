@@ -80,12 +80,12 @@ func newParser(lexer data.Sequence) *parser {
 func (r *parser) nextValue() (data.Value, bool, error) {
 	t, err := r.nextToken()
 	if err != nil {
-		return nil, false, err
+		return nil, false, r.maybeWrap(err)
 	}
 	if t != nil {
 		v, err := r.value(t)
 		if err != nil {
-			return nil, false, err
+			return nil, false, r.maybeWrap(err)
 
 		}
 		return v, true, nil
@@ -104,6 +104,13 @@ func (r *parser) nextToken() (*lex.Token, error) {
 		return nil, r.error(data.ToString(r.token.Value()))
 	}
 	return r.token, nil
+}
+
+func (r *parser) maybeWrap(err error) error {
+	if t := r.token; t != nil {
+		return t.WrapError(err)
+	}
+	return err
 }
 
 func (r *parser) value(t *lex.Token) (data.Value, error) {
@@ -196,7 +203,7 @@ func (r *parser) object() (data.Value, error) {
 	}
 	res, err := data.ValuesToObject(v...)
 	if err != nil {
-		return nil, r.maybeWrap(err)
+		return nil, err
 	}
 	return res, nil
 }
@@ -224,19 +231,12 @@ func (r *parser) nonDotted(endToken lex.TokenType) (data.Vector, error) {
 	}
 }
 
-func (r *parser) maybeWrap(err error) error {
-	if t := r.token; t != nil {
-		return t.WrapError(err)
-	}
-	return err
-}
-
 func (r *parser) error(text string) error {
-	return r.maybeWrap(errors.New(text))
+	return errors.New(text)
 }
 
 func (r *parser) errorf(text string, a ...any) error {
-	return r.maybeWrap(fmt.Errorf(text, a...))
+	return fmt.Errorf(text, a...)
 }
 
 func (r *parser) keyword() data.Value {
@@ -252,7 +252,7 @@ func (r *parser) identifier() (data.Value, error) {
 
 	sym, err := data.ParseSymbol(n)
 	if err != nil {
-		return nil, r.maybeWrap(err)
+		return nil, err
 	}
 	return sym, nil
 }
