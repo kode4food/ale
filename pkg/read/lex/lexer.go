@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"regexp"
 	"slices"
+	"strings"
 
 	"github.com/kode4food/ale/internal/debug"
 	"github.com/kode4food/ale/internal/lang"
@@ -49,10 +50,10 @@ var (
 		`\r`: "\r",
 	}
 
-	dotRegex = regexp.MustCompile(`^` + lang.Dot + `$`)
-
+	dotRegex          = regexp.MustCompile(`^` + lang.Dot + `$`)
 	blockCommentStart = regexp.MustCompile(`^` + lang.BlockCommentStart)
 	blockCommentEnd   = regexp.MustCompile(`^` + lang.BlockCommentEnd)
+	newLine           = regexp.MustCompile(lang.NewLine)
 
 	Ignorable = Matchers{
 		blockCommentMatcher,
@@ -85,7 +86,7 @@ var (
 	}
 
 	Symbols = Matchers{
-		pattern(lang.Keyword, tokenState(Keyword)),
+		pattern(lang.Keyword, keywordState),
 		pattern(lang.Identifier, identifierState),
 	}
 )
@@ -99,14 +100,7 @@ func Match(src data.String, m Matcher) data.Sequence {
 	resolver = func() (data.Value, data.Sequence, bool) {
 		if t, rest := m(input); t.Type() != endOfFile {
 			t := t.withLocation(line, column)
-
-			if t.isNewLine() {
-				line++
-				column = 0
-			} else {
-				column += len(input) - len(rest)
-			}
-
+			line, column = bumpLocation(t.input, line, column)
 			input = rest
 			return t, sequence.NewLazy(resolver), true
 		}
@@ -116,10 +110,22 @@ func Match(src data.String, m Matcher) data.Sequence {
 	return sequence.NewLazy(resolver)
 }
 
-// StripWhitespace filters away all whitespace LangTokens from a Lexer Sequence
+// StripWhitespace filters away all whitespace Tokens from a Lexer Sequence
 func StripWhitespace(s data.Sequence) data.Sequence {
 	return sequence.Filter(s, func(v data.Value) bool {
 		return !v.(*Token).isWhitespace()
+	})
+}
+
+func (m Matchers) Error() Matchers {
+	return basics.Map(m, func(wrapped Matcher) Matcher {
+		return func(input string) (*Token, string) {
+			if t, rest := wrapped(input); t != nil {
+				err := fmt.Errorf(ErrUnexpectedCharacters, t.input)
+				return MakeToken(Error, data.String(err.Error())), rest
+			}
+			return nil, input
+		}
 	})
 }
 
@@ -144,16 +150,20 @@ func makeExhaustive(all ...Matchers) Matchers {
 	return res
 }
 
-func (m Matchers) Error() Matchers {
-	return basics.Map(m, func(wrapped Matcher) Matcher {
-		return func(input string) (*Token, string) {
-			if t, rest := wrapped(input); t != nil {
-				err := fmt.Errorf(ErrUnexpectedCharacters, t.input)
-				return MakeToken(Error, data.String(err.Error())), rest
-			}
-			return nil, input
-		}
-	})
+func bumpLocation(i string, l, c int) (int, int) {
+	s := newLine.Split(i, -1)
+	dl := len(s) - 1
+	dc := len(s[len(s)-1])
+	if dl > 0 {
+		return l + dl, dc
+	}
+	return l, c + dc
+}
+
+func endState(t TokenType) tokenizer {
+	return func([]string) *Token {
+		return MakeToken(t, nil)
+	}
 }
 
 func pattern(p string, t tokenizer) Matcher {
@@ -167,14 +177,8 @@ func pattern(p string, t tokenizer) Matcher {
 }
 
 func tokenState(t TokenType) tokenizer {
-	return func(sm []string) *Token {
-		return MakeToken(t, data.String(sm[0]))
-	}
-}
-
-func endState(t TokenType) tokenizer {
-	return func([]string) *Token {
-		return MakeToken(t, nil)
+	return func(_ []string) *Token {
+		return MakeToken(t, data.Null)
 	}
 }
 
@@ -215,16 +219,22 @@ func tokenizeNumber(res data.Number, err error) *Token {
 	return MakeToken(Number, res)
 }
 
+func keywordState(sm []string) *Token {
+	s := strings.Clone(sm[0])
+	return MakeToken(Keyword, data.String(s))
+}
+
 func identifierState(sm []string) *Token {
-	s := data.String(sm[0])
-	if dotRegex.MatchString(string(s)) {
-		return MakeToken(Dot, s)
+	s := strings.Clone(sm[0])
+	if dotRegex.MatchString(s) {
+		return MakeToken(Dot, data.String(s))
 	}
-	return MakeToken(Identifier, s)
+	return MakeToken(Identifier, data.String(s))
 }
 
 func errorState(sm []string) *Token {
-	err := fmt.Errorf(ErrUnexpectedCharacters, sm[0])
+	s := strings.Clone(sm[0])
+	err := fmt.Errorf(ErrUnexpectedCharacters, s)
 	return MakeToken(Error, data.String(err.Error()))
 }
 
@@ -246,9 +256,8 @@ func blockCommentMatcher(input string) (*Token, string) {
 			i += len(sm[0])
 			stack--
 			if stack == 0 {
-				c := input[:i]
-				rest := input[i:]
-				return MakeToken(Comment, data.String(c)), rest
+				t := MakeToken(BlockComment, data.Null)
+				return t.withInput(input[:i]), input[i:]
 			}
 			continue
 		}
@@ -261,7 +270,7 @@ func blockCommentStrayEndMatcher(input string) (*Token, string) {
 	if sm := blockCommentEnd.FindStringSubmatch(input); sm != nil {
 		err := data.String(ErrUnmatchedComment)
 		rest := input[len(sm[0]):]
-		return MakeToken(Error, err), rest
+		return MakeToken(Error, err).withInput(sm[0]), rest
 	}
 	return nil, input
 }

@@ -2,6 +2,7 @@ package lex
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/kode4food/ale/pkg/data"
 )
@@ -40,6 +41,7 @@ const (
 	Whitespace
 	NewLine
 	Comment
+	BlockComment
 	endOfFile
 )
 
@@ -56,7 +58,7 @@ func MakeToken(t TokenType, v data.Value) *Token {
 // withInput returns a copy of the Token with the input string
 func (t *Token) withInput(i string) *Token {
 	res := *t
-	res.input = i
+	res.input = strings.Clone(i)
 	return &res
 }
 
@@ -96,12 +98,13 @@ func (t *Token) Equal(other data.Value) bool {
 	return false
 }
 
-func (t *Token) isNewLine() bool {
-	return t.typ == Comment || t.typ == NewLine
-}
-
 func (t *Token) isWhitespace() bool {
-	return t.typ == Comment || t.typ == NewLine || t.typ == Whitespace
+	switch t.typ {
+	case Comment, NewLine, BlockComment, Whitespace:
+		return true
+	default:
+		return false
+	}
 }
 
 func (t *Token) WrapError(e error) error {
