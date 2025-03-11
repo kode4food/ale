@@ -22,6 +22,19 @@ ale somefile.ale
 # or
 
 cat somefile.ale | ale
+
+
+## or
+
+ale <<EOF
+(let [ch (chan)]
+  (go (: ch :emit "Hello")
+      (: ch :emit ", ")
+      (: ch :emit "Ale!")
+      (: ch :close))
+
+  (println (apply str (ch :seq))))
+EOF
 ```
 
 ## How To Start The REPL
