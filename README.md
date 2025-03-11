@@ -23,7 +23,6 @@ ale somefile.ale
 
 cat somefile.ale | ale
 
-
 ## or
 
 ale <<EOF
