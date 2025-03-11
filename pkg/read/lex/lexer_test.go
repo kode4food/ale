@@ -54,6 +54,13 @@ func TestCreateLexer(t *testing.T) {
 	as.Equal(lex.Identifier, tk.Type())
 }
 
+func TestKeyword(t *testing.T) {
+	l := lex.StripWhitespace(read.Tokens("  :hello  "))
+	assertTokenSequence(t, l, []*lex.Token{
+		T(lex.Keyword, K("hello")),
+	})
+}
+
 func TestWhitespace(t *testing.T) {
 	l := lex.StripWhitespace(read.Tokens("   \t "))
 	assertTokenSequence(t, l, []*lex.Token{})

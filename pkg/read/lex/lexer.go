@@ -57,37 +57,37 @@ var (
 
 	Ignorable = Matchers{
 		blockCommentMatcher,
-		pattern(lang.Comment, tokenState(Comment)),
-		pattern(lang.NewLine, tokenState(NewLine)),
-		pattern(lang.Whitespace, tokenState(Whitespace)),
+		patternMatcher(lang.Comment, tokenState(Comment)),
+		patternMatcher(lang.NewLine, tokenState(NewLine)),
+		patternMatcher(lang.Whitespace, tokenState(Whitespace)),
 	}
 
 	Structure = Matchers{
-		pattern(lang.ListStart, tokenState(ListStart)),
-		pattern(lang.VectorStart, tokenState(VectorStart)),
-		pattern(lang.ObjectStart, tokenState(ObjectStart)),
-		pattern(lang.ListEnd, tokenState(ListEnd)),
-		pattern(lang.VectorEnd, tokenState(VectorEnd)),
-		pattern(lang.ObjectEnd, tokenState(ObjectEnd)),
+		patternMatcher(lang.ListStart, tokenState(ListStart)),
+		patternMatcher(lang.VectorStart, tokenState(VectorStart)),
+		patternMatcher(lang.ObjectStart, tokenState(ObjectStart)),
+		patternMatcher(lang.ListEnd, tokenState(ListEnd)),
+		patternMatcher(lang.VectorEnd, tokenState(VectorEnd)),
+		patternMatcher(lang.ObjectEnd, tokenState(ObjectEnd)),
 	}
 
 	Quoting = Matchers{
-		pattern(lang.Quote, tokenState(QuoteMarker)),
-		pattern(lang.SyntaxQuote, tokenState(SyntaxMarker)),
-		pattern(lang.Splice, tokenState(SpliceMarker)),
-		pattern(lang.Unquote, tokenState(UnquoteMarker)),
+		patternMatcher(lang.Quote, tokenState(QuoteMarker)),
+		patternMatcher(lang.SyntaxQuote, tokenState(SyntaxMarker)),
+		patternMatcher(lang.Splice, tokenState(SpliceMarker)),
+		patternMatcher(lang.Unquote, tokenState(UnquoteMarker)),
 	}
 
 	Values = Matchers{
-		pattern(lang.String, stringState),
-		pattern(lang.Ratio, ratioState),
-		pattern(lang.Float, floatState),
-		pattern(lang.Integer, integerState),
+		patternMatcher(lang.String, stringState),
+		patternMatcher(lang.Ratio, ratioState),
+		patternMatcher(lang.Float, floatState),
+		patternMatcher(lang.Integer, integerState),
 	}
 
 	Symbols = Matchers{
-		pattern(lang.Keyword, keywordState),
-		pattern(lang.Identifier, identifierState),
+		patternMatcher(lang.Keyword, keywordState),
+		patternMatcher(lang.Identifier, identifierState),
 	}
 )
 
@@ -144,9 +144,9 @@ func ExhaustiveMatcher(all ...Matchers) Matcher {
 func makeExhaustive(all ...Matchers) Matchers {
 	cat := slices.Concat(all...)
 	res := make(Matchers, 0, len(cat)+2)
-	res = append(res, pattern(`$`, endState(endOfFile)))
+	res = append(res, patternMatcher(`$`, endState(endOfFile)))
 	res = append(res, cat...)
-	res = append(res, pattern(lang.AnyChar, errorState))
+	res = append(res, patternMatcher(lang.AnyChar, errorState))
 	return res
 }
 
@@ -160,19 +160,19 @@ func bumpLocation(i string, l, c int) (int, int) {
 	return l, c + dc
 }
 
-func endState(t TokenType) tokenizer {
-	return func([]string) *Token {
-		return MakeToken(t, nil)
-	}
-}
-
-func pattern(p string, t tokenizer) Matcher {
+func patternMatcher(p string, t tokenizer) Matcher {
 	r := regexp.MustCompile("^" + p)
 	return func(input string) (*Token, string) {
 		if sm := r.FindStringSubmatch(input); sm != nil {
 			return t(sm).withInput(sm[0]), input[len(sm[0]):]
 		}
 		return nil, input
+	}
+}
+
+func endState(t TokenType) tokenizer {
+	return func([]string) *Token {
+		return MakeToken(t, nil)
 	}
 }
 
