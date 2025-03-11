@@ -70,6 +70,11 @@ func (t *Token) withLocation(line, column int) *Token {
 	return &res
 }
 
+// Input returns the slice of input that this Token matched
+func (t *Token) Input() string {
+	return t.input
+}
+
 // Type returns the TokenType for this Token
 func (t *Token) Type() TokenType {
 	return t.typ

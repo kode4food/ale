@@ -119,10 +119,16 @@ func TestMultiLine(t *testing.T) {
 	})
 
 	v := sequence.ToVector(l)
+
+	as.String(`"hello there"`, v[0].(*lex.Token).Input())
 	as.Equal(0, v[0].(*lex.Token).Line())
 	as.Equal(3, v[0].(*lex.Token).Column())
+
+	as.String(`"how's life?"`, v[1].(*lex.Token).Input())
 	as.Equal(1, v[1].(*lex.Token).Line())
 	as.Equal(0, v[1].(*lex.Token).Column())
+
+	as.String("99", v[2].(*lex.Token).Input())
 	as.Equal(3, v[2].(*lex.Token).Line())
 	as.Equal(2, v[2].(*lex.Token).Column())
 }
