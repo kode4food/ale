@@ -28,11 +28,10 @@ cat somefile.ale | ale
 ale <<EOF
 (let [ch (chan)]
   (go (: ch :emit "Hello")
-      (: ch :emit ", ")
       (: ch :emit "Ale!")
       (: ch :close))
 
-  (println (apply str (ch :seq))))
+  (apply println (ch :seq)))
 EOF
 ```
 
