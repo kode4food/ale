@@ -46,23 +46,23 @@ const (
 
 const errTokenWrapped = "%w (line %d, column %d)"
 
-// MakeToken constructs a new scanner Token
-func MakeToken(t TokenType, v data.Value) *Token {
+// From constructs a new scanner Token from this TokenType
+func (t TokenType) From(input string) *Token {
 	return &Token{
 		typ:   t,
-		value: v,
+		input: input,
 	}
 }
 
-// withInput returns a copy of the Token with the input string
-func (t *Token) withInput(i string) *Token {
+// WithValue returns a copy of the Token with an attached value
+func (t *Token) WithValue(v data.Value) *Token {
 	res := *t
-	res.input = i
+	res.value = v
 	return &res
 }
 
-// withLocation returns a copy of the Token with location information
-func (t *Token) withLocation(line, column int) *Token {
+// WithLocation returns a copy of the Token with location information
+func (t *Token) WithLocation(line, column int) *Token {
 	res := *t
 	res.line = line
 	res.column = column
@@ -102,7 +102,7 @@ func (t *Token) Equal(other data.Value) bool {
 	return false
 }
 
-func (t *Token) isWhitespace() bool {
+func (t *Token) IsWhitespace() bool {
 	switch t.typ {
 	case Comment, NewLine, BlockComment, Whitespace:
 		return true

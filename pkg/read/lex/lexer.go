@@ -96,7 +96,7 @@ func Match(src data.String, m Matcher) data.Sequence {
 
 	resolver = func() (data.Value, data.Sequence, bool) {
 		if t, rest := m(input); t.Type() != EOF {
-			t := t.withLocation(line, column)
+			t := t.WithLocation(line, column)
 			line, column = bumpLocation(t.input, line, column)
 			input = rest
 			return t, sequence.NewLazy(resolver), true
@@ -110,7 +110,7 @@ func Match(src data.String, m Matcher) data.Sequence {
 // StripWhitespace filters away all whitespace Tokens from a Lexer Sequence
 func StripWhitespace(s data.Sequence) data.Sequence {
 	return sequence.Filter(s, func(v data.Value) bool {
-		return !v.(*Token).isWhitespace()
+		return !v.(*Token).IsWhitespace()
 	})
 }
 
@@ -119,7 +119,8 @@ func (m Matchers) Error() Matchers {
 		return func(input string) (*Token, string) {
 			if t, rest := wrapped(input); t != nil {
 				err := fmt.Errorf(ErrUnexpectedCharacters, t.input)
-				return MakeToken(Error, data.String(err.Error())), rest
+				s := data.String(err.Error())
+				return Error.From(t.input).WithValue(s), rest
 			}
 			return nil, input
 		}
@@ -161,15 +162,14 @@ func bumpLocation(i string, l, c int) (int, int) {
 func anyCharMatcher(t tokenizer) Matcher {
 	return func(input string) (*Token, string) {
 		if len(input) > 0 {
-			c := strings.Clone(input[:1])
-			return t(c).withInput(c), input[1:]
+			return t(strings.Clone(input[:1])), input[1:]
 		}
 		return nil, input
 	}
 }
 
 func exactMatcher(p string, t tokenizer) Matcher {
-	token := t(p).withInput(p)
+	token := t(p)
 	return func(input string) (*Token, string) {
 		if input == p {
 			return token, ``
@@ -179,7 +179,7 @@ func exactMatcher(p string, t tokenizer) Matcher {
 }
 
 func prefixMatcher(p string, t tokenizer) Matcher {
-	token := t(p).withInput(p)
+	token := t(p)
 	return func(input string) (*Token, string) {
 		if strings.HasPrefix(input, p) {
 			return token, input[len(p):]
@@ -192,17 +192,15 @@ func patternMatcher(p string, t tokenizer) Matcher {
 	r := regexp.MustCompile("^" + p)
 	return func(input string) (*Token, string) {
 		if sm := r.FindStringSubmatch(input); sm != nil {
-			m := strings.Clone(sm[0])
-			return t(m).withInput(m), input[len(m):]
+			return t(strings.Clone(sm[0])), input[len(sm[0]):]
 		}
 		return nil, input
 	}
 }
 
-func tokenState(t TokenType) tokenizer {
-	token := MakeToken(t, nil)
-	return func(string) *Token {
-		return token
+func tokenState(typ TokenType) tokenizer {
+	return func(m string) *Token {
+		return typ.From(m)
 	}
 }
 
@@ -219,48 +217,49 @@ func unescape(s string) string {
 func stringState(m string) *Token {
 	eos := len(m) - 1
 	if len(m) <= 1 || m[eos] != '"' {
-		return MakeToken(Error, data.String(ErrStringNotTerminated))
+		err := data.String(ErrStringNotTerminated)
+		return Error.From(m).WithValue(err)
 	}
 	s := unescape(m[1:eos])
-	return MakeToken(String, data.String(s))
+	return String.From(m).WithValue(data.String(s))
 }
 
 func ratioState(m string) *Token {
-	return tokenizeNumber(data.ParseRatio(m))
+	res, err := data.ParseRatio(m)
+	return tokenizeNumber(m, res, err)
 }
 
 func floatState(m string) *Token {
-	return tokenizeNumber(data.ParseFloat(m))
+	res, err := data.ParseFloat(m)
+	return tokenizeNumber(m, res, err)
 }
 
 func integerState(m string) *Token {
-	return tokenizeNumber(data.ParseInteger(m))
+	res, err := data.ParseInteger(m)
+	return tokenizeNumber(m, res, err)
 }
 
-func tokenizeNumber(res data.Number, err error) *Token {
+func tokenizeNumber(m string, res data.Number, err error) *Token {
 	if err != nil {
-		return MakeToken(Error, data.String(err.Error()))
+		return Error.From(m).WithValue(data.String(err.Error()))
 	}
-	return MakeToken(Number, res)
+	return Number.From(m).WithValue(res)
 }
 
 func keywordState(m string) *Token {
-	s := strings.Clone(m)
-	return MakeToken(Keyword, data.String(s))
+	return Keyword.From(m).WithValue(data.String(m))
 }
 
 func identifierState(m string) *Token {
 	if m == lang.Dot {
-		return MakeToken(Dot, nil)
+		return Dot.From(m)
 	}
-	s := strings.Clone(m)
-	return MakeToken(Identifier, data.String(s))
+	return Identifier.From(m).WithValue(data.String(m))
 }
 
 func errorState(m string) *Token {
-	s := strings.Clone(m)
-	err := fmt.Errorf(ErrUnexpectedCharacters, s)
-	return MakeToken(Error, data.String(err.Error()))
+	err := fmt.Errorf(ErrUnexpectedCharacters, m)
+	return Error.From(m).WithValue(data.String(err.Error()))
 }
 
 func blockCommentMatcher(input string) (*Token, string) {
@@ -280,22 +279,23 @@ func blockCommentMatcher(input string) (*Token, string) {
 			i += len(lang.BlockCommentEnd)
 			stack--
 			if stack == 0 {
-				t := MakeToken(BlockComment, data.Null)
 				m := strings.Clone(input[:i])
-				return t.withInput(m), input[i:]
+				return BlockComment.From(m), input[i:]
 			}
 			continue
 		}
 		i++
 	}
-	return MakeToken(Error, data.String(ErrCommentNotTerminated)), input
+	err := data.String(ErrCommentNotTerminated)
+	return Error.From(input).WithValue(err), input
 }
 
 func blockCommentStrayEndMatcher(input string) (*Token, string) {
 	if strings.HasPrefix(input, lang.BlockCommentEnd) {
 		err := data.String(ErrUnmatchedComment)
+		t := Error.From(lang.BlockCommentEnd).WithValue(err)
 		rest := input[len(lang.BlockCommentEnd):]
-		return MakeToken(Error, err).withInput(lang.BlockCommentEnd), rest
+		return t, rest
 	}
 	return nil, input
 }
