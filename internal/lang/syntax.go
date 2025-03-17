@@ -3,20 +3,21 @@ package lang
 const (
 	// Exact Matches
 
+	Dot         = `.`
+	Quote       = `'`
+	Splice      = `,@`
+	SyntaxQuote = "`"
+	Unquote     = `,`
+
 	BlockCommentStart = `#|`
 	BlockCommentEnd   = `|#`
 
-	ListStart   = `(`
 	ListEnd     = `)`
-	VectorStart = `[`
-	VectorEnd   = `]`
-	ObjectStart = `{`
+	ListStart   = `(`
 	ObjectEnd   = `}`
-	Quote       = `'`
-	SyntaxQuote = "`"
-	Splice      = `,@`
-	Unquote     = `,`
-	Dot         = `\.`
+	ObjectStart = `{`
+	VectorEnd   = `]`
+	VectorStart = `[`
 
 	// Pattern Matches
 
@@ -42,10 +43,10 @@ const (
 
 	numTail = localStart + `*`
 
-	Ratio = `[+-]?(0|[1-9]\d*)/[1-9]\d*` + numTail
-
 	Float = `[+-]?((0|[1-9]\d*)\.\d+([eE][+-]?\d+)?|` +
 		`(0|[1-9]\d*)(\.\d+)?[eE][+-]?\d+)` + numTail
 
 	Integer = `[+-]?(0[bB]\d+|0[xX][\dA-Fa-f]+|0\d*|[1-9]\d*)` + numTail
+
+	Ratio = `[+-]?(0|[1-9]\d*)/[1-9]\d*` + numTail
 )

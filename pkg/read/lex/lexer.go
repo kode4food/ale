@@ -50,8 +50,7 @@ var (
 		`\r`: "\r",
 	}
 
-	dotRegex = regexp.MustCompile(`^` + lang.Dot + `$`)
-	newLine  = regexp.MustCompile(lang.NewLine)
+	newLine = regexp.MustCompile(lang.NewLine)
 
 	Ignorable = Matchers{
 		blockCommentMatcher,
@@ -251,10 +250,10 @@ func keywordState(m string) *Token {
 }
 
 func identifierState(m string) *Token {
-	s := strings.Clone(m)
-	if dotRegex.MatchString(s) {
-		return MakeToken(Dot, data.String(s))
+	if m == lang.Dot {
+		return MakeToken(Dot, nil)
 	}
+	s := strings.Clone(m)
 	return MakeToken(Identifier, data.String(s))
 }
 
