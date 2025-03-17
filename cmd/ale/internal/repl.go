@@ -7,7 +7,6 @@ import (
 	"os"
 	"os/user"
 	"path"
-	"regexp"
 	"runtime"
 	"strings"
 	"time"
@@ -58,7 +57,6 @@ const (
 )
 
 var (
-	anyChar     = regexp.MustCompile(`.`)
 	notPaired   = fmt.Sprintf(parse.ErrPrefixedNotPaired, "")
 	docTemplate = docstring.MustGet("doc")
 	nothing     = new(sentinel)
@@ -154,7 +152,7 @@ func (r *REPL) setPrompt(s string) {
 
 func (r *REPL) nsSpace() string {
 	ns := string(r.ns.Domain())
-	return anyChar.ReplaceAllString(ns, " ")
+	return strings.Repeat(" ", len(ns))
 }
 
 func (r *REPL) evalBuffer() (completed bool) {
