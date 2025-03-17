@@ -19,7 +19,6 @@ import (
 	"github.com/kode4food/ale/internal/compiler/special"
 	"github.com/kode4food/ale/internal/console"
 	"github.com/kode4food/ale/internal/debug"
-	"github.com/kode4food/ale/internal/lang"
 	"github.com/kode4food/ale/internal/markdown"
 	"github.com/kode4food/ale/internal/sequence"
 	"github.com/kode4food/ale/pkg/core/bootstrap"
@@ -59,7 +58,7 @@ const (
 )
 
 var (
-	anyChar     = regexp.MustCompile(lang.AnyChar)
+	anyChar     = regexp.MustCompile(`.`)
 	notPaired   = fmt.Sprintf(parse.ErrPrefixedNotPaired, "")
 	docTemplate = docstring.MustGet("doc")
 	nothing     = new(sentinel)

@@ -50,10 +50,8 @@ var (
 		`\r`: "\r",
 	}
 
-	dotRegex          = regexp.MustCompile(`^` + lang.Dot + `$`)
-	blockCommentStart = regexp.MustCompile(`^` + lang.BlockCommentStart)
-	blockCommentEnd   = regexp.MustCompile(`^` + lang.BlockCommentEnd)
-	newLine           = regexp.MustCompile(lang.NewLine)
+	dotRegex = regexp.MustCompile(`^` + lang.Dot + `$`)
+	newLine  = regexp.MustCompile(lang.NewLine)
 
 	Ignorable = Matchers{
 		blockCommentMatcher,
@@ -63,19 +61,19 @@ var (
 	}
 
 	Structure = Matchers{
-		patternMatcher(lang.ListStart, tokenState(ListStart)),
-		patternMatcher(lang.VectorStart, tokenState(VectorStart)),
-		patternMatcher(lang.ObjectStart, tokenState(ObjectStart)),
-		patternMatcher(lang.ListEnd, tokenState(ListEnd)),
-		patternMatcher(lang.VectorEnd, tokenState(VectorEnd)),
-		patternMatcher(lang.ObjectEnd, tokenState(ObjectEnd)),
+		prefixMatcher(lang.ListStart, tokenState(ListStart)),
+		prefixMatcher(lang.VectorStart, tokenState(VectorStart)),
+		prefixMatcher(lang.ObjectStart, tokenState(ObjectStart)),
+		prefixMatcher(lang.ListEnd, tokenState(ListEnd)),
+		prefixMatcher(lang.VectorEnd, tokenState(VectorEnd)),
+		prefixMatcher(lang.ObjectEnd, tokenState(ObjectEnd)),
 	}
 
 	Quoting = Matchers{
-		patternMatcher(lang.Quote, tokenState(QuoteMarker)),
-		patternMatcher(lang.SyntaxQuote, tokenState(SyntaxMarker)),
-		patternMatcher(lang.Splice, tokenState(SpliceMarker)),
-		patternMatcher(lang.Unquote, tokenState(UnquoteMarker)),
+		prefixMatcher(lang.Quote, tokenState(QuoteMarker)),
+		prefixMatcher(lang.SyntaxQuote, tokenState(SyntaxMarker)),
+		prefixMatcher(lang.Splice, tokenState(SpliceMarker)),
+		prefixMatcher(lang.Unquote, tokenState(UnquoteMarker)),
 	}
 
 	Values = Matchers{
@@ -144,9 +142,9 @@ func ExhaustiveMatcher(all ...Matchers) Matcher {
 func makeExhaustive(all ...Matchers) Matchers {
 	cat := slices.Concat(all...)
 	res := make(Matchers, 0, len(cat)+2)
-	res = append(res, patternMatcher(`$`, endState(endOfFile)))
+	res = append(res, exactMatcher(``, tokenState(endOfFile)))
 	res = append(res, cat...)
-	res = append(res, patternMatcher(lang.AnyChar, errorState))
+	res = append(res, anyCharMatcher(errorState))
 	return res
 }
 
@@ -160,6 +158,36 @@ func bumpLocation(i string, l, c int) (int, int) {
 	return l, c + dc
 }
 
+func anyCharMatcher(t tokenizer) Matcher {
+	return func(input string) (*Token, string) {
+		if len(input) > 0 {
+			c := input[:1]
+			return t([]string{c}).withInput(c), input[1:]
+		}
+		return nil, input
+	}
+}
+
+func exactMatcher(p string, t tokenizer) Matcher {
+	token := t([]string{p}).withInput(p)
+	return func(input string) (*Token, string) {
+		if input == p {
+			return token, ``
+		}
+		return nil, input
+	}
+}
+
+func prefixMatcher(p string, t tokenizer) Matcher {
+	token := t([]string{p}).withInput(p)
+	return func(input string) (*Token, string) {
+		if strings.HasPrefix(input, p) {
+			return token, input[len(p):]
+		}
+		return nil, input
+	}
+}
+
 func patternMatcher(p string, t tokenizer) Matcher {
 	r := regexp.MustCompile("^" + p)
 	return func(input string) (*Token, string) {
@@ -170,15 +198,10 @@ func patternMatcher(p string, t tokenizer) Matcher {
 	}
 }
 
-func endState(t TokenType) tokenizer {
-	return func([]string) *Token {
-		return MakeToken(t, nil)
-	}
-}
-
 func tokenState(t TokenType) tokenizer {
-	return func(_ []string) *Token {
-		return MakeToken(t, data.Null)
+	token := MakeToken(t, nil)
+	return func([]string) *Token {
+		return token
 	}
 }
 
@@ -239,21 +262,20 @@ func errorState(sm []string) *Token {
 }
 
 func blockCommentMatcher(input string) (*Token, string) {
-	start := blockCommentStart.FindStringSubmatch(input)
-	if start == nil {
+	if !strings.HasPrefix(input, lang.BlockCommentStart) {
 		return blockCommentStrayEndMatcher(input)
 	}
 
 	stack := 1
-	for i := len(start[0]); i < len(input); {
+	for i := len(lang.BlockCommentStart); i < len(input); {
 		next := input[i:]
-		if sm := blockCommentStart.FindStringSubmatch(next); sm != nil {
-			i += len(sm[0])
+		if strings.HasPrefix(next, lang.BlockCommentStart) {
+			i += len(lang.BlockCommentStart)
 			stack++
 			continue
 		}
-		if sm := blockCommentEnd.FindStringSubmatch(next); sm != nil {
-			i += len(sm[0])
+		if strings.HasPrefix(next, lang.BlockCommentEnd) {
+			i += len(lang.BlockCommentEnd)
 			stack--
 			if stack == 0 {
 				t := MakeToken(BlockComment, data.Null)
@@ -267,10 +289,10 @@ func blockCommentMatcher(input string) (*Token, string) {
 }
 
 func blockCommentStrayEndMatcher(input string) (*Token, string) {
-	if sm := blockCommentEnd.FindStringSubmatch(input); sm != nil {
+	if strings.HasPrefix(input, lang.BlockCommentEnd) {
 		err := data.String(ErrUnmatchedComment)
-		rest := input[len(sm[0]):]
-		return MakeToken(Error, err).withInput(sm[0]), rest
+		rest := input[len(lang.BlockCommentEnd):]
+		return MakeToken(Error, err).withInput(lang.BlockCommentEnd), rest
 	}
 	return nil, input
 }

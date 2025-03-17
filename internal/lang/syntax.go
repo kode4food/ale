@@ -1,6 +1,25 @@
 package lang
 
 const (
+	// Exact Matches
+
+	BlockCommentStart = `#|`
+	BlockCommentEnd   = `|#`
+
+	ListStart   = `(`
+	ListEnd     = `)`
+	VectorStart = `[`
+	VectorEnd   = `]`
+	ObjectStart = `{`
+	ObjectEnd   = `}`
+	Quote       = `'`
+	SyntaxQuote = "`"
+	Splice      = `,@`
+	Unquote     = `,`
+	Dot         = `\.`
+
+	// Pattern Matches
+
 	structure    = `(){}\[\]\s\"`
 	prefixChar   = "`,@"
 	structPfx    = structure + prefixChar
@@ -15,23 +34,9 @@ const (
 	Local      = `(/|(` + localStart + localCont + `))`
 	Qualified  = `(` + localStart + localCont + `/` + Local + `)`
 
-	BlockCommentStart = `#\|`
-	BlockCommentEnd   = `\|#`
-
-	Comment     = `;[^\n]*([\n]|$)`
-	NewLine     = `(\r\n|[\n\r])`
-	Whitespace  = `[\t\f ]+`
-	ListStart   = `\(`
-	ListEnd     = `\)`
-	VectorStart = `\[`
-	VectorEnd   = `]`
-	ObjectStart = `{`
-	ObjectEnd   = `}`
-	Quote       = `'`
-	SyntaxQuote = "`"
-	Splice      = `,@`
-	Unquote     = `,`
-	Dot         = `\.`
+	Comment    = `;[^\n]*([\n]|$)`
+	NewLine    = `(\r\n|[\n\r])`
+	Whitespace = `[\t\f ]+`
 
 	String = `(")(?P<s>(\\\\|\\"|\\[^\\"]|[^"\\])*)("?)`
 
@@ -43,6 +48,4 @@ const (
 		`(0|[1-9]\d*)(\.\d+)?[eE][+-]?\d+)` + numTail
 
 	Integer = `[+-]?(0[bB]\d+|0[xX][\dA-Fa-f]+|0\d*|[1-9]\d*)` + numTail
-
-	AnyChar = "."
 )
