@@ -18,7 +18,7 @@ type (
 
 	Matchers []Matcher
 
-	tokenizer func([]string) *Token
+	tokenizer func(string) *Token
 )
 
 const (
@@ -162,14 +162,14 @@ func anyCharMatcher(t tokenizer) Matcher {
 	return func(input string) (*Token, string) {
 		if len(input) > 0 {
 			c := input[:1]
-			return t([]string{c}).withInput(c), input[1:]
+			return t(c).withInput(c), input[1:]
 		}
 		return nil, input
 	}
 }
 
 func exactMatcher(p string, t tokenizer) Matcher {
-	token := t([]string{p}).withInput(p)
+	token := t(p).withInput(p)
 	return func(input string) (*Token, string) {
 		if input == p {
 			return token, ``
@@ -179,7 +179,7 @@ func exactMatcher(p string, t tokenizer) Matcher {
 }
 
 func prefixMatcher(p string, t tokenizer) Matcher {
-	token := t([]string{p}).withInput(p)
+	token := t(p).withInput(p)
 	return func(input string) (*Token, string) {
 		if strings.HasPrefix(input, p) {
 			return token, input[len(p):]
@@ -192,7 +192,8 @@ func patternMatcher(p string, t tokenizer) Matcher {
 	r := regexp.MustCompile("^" + p)
 	return func(input string) (*Token, string) {
 		if sm := r.FindStringSubmatch(input); sm != nil {
-			return t(sm).withInput(sm[0]), input[len(sm[0]):]
+			m := sm[0]
+			return t(m).withInput(m), input[len(m):]
 		}
 		return nil, input
 	}
@@ -200,7 +201,7 @@ func patternMatcher(p string, t tokenizer) Matcher {
 
 func tokenState(t TokenType) tokenizer {
 	token := MakeToken(t, nil)
-	return func([]string) *Token {
+	return func(string) *Token {
 		return token
 	}
 }
@@ -215,24 +216,24 @@ func unescape(s string) string {
 	return r
 }
 
-func stringState(sm []string) *Token {
-	if len(sm[4]) == 0 {
+func stringState(m string) *Token {
+	if len(m) == 0 || m[len(m)-1] != '"' {
 		return MakeToken(Error, data.String(ErrStringNotTerminated))
 	}
-	s := unescape(sm[2])
+	s := unescape(m[1 : len(m)-1])
 	return MakeToken(String, data.String(s))
 }
 
-func ratioState(sm []string) *Token {
-	return tokenizeNumber(data.ParseRatio(sm[0]))
+func ratioState(m string) *Token {
+	return tokenizeNumber(data.ParseRatio(m))
 }
 
-func floatState(sm []string) *Token {
-	return tokenizeNumber(data.ParseFloat(sm[0]))
+func floatState(m string) *Token {
+	return tokenizeNumber(data.ParseFloat(m))
 }
 
-func integerState(sm []string) *Token {
-	return tokenizeNumber(data.ParseInteger(sm[0]))
+func integerState(m string) *Token {
+	return tokenizeNumber(data.ParseInteger(m))
 }
 
 func tokenizeNumber(res data.Number, err error) *Token {
@@ -242,21 +243,21 @@ func tokenizeNumber(res data.Number, err error) *Token {
 	return MakeToken(Number, res)
 }
 
-func keywordState(sm []string) *Token {
-	s := strings.Clone(sm[0])
+func keywordState(m string) *Token {
+	s := strings.Clone(m)
 	return MakeToken(Keyword, data.String(s))
 }
 
-func identifierState(sm []string) *Token {
-	s := strings.Clone(sm[0])
+func identifierState(m string) *Token {
+	s := strings.Clone(m)
 	if dotRegex.MatchString(s) {
 		return MakeToken(Dot, data.String(s))
 	}
 	return MakeToken(Identifier, data.String(s))
 }
 
-func errorState(sm []string) *Token {
-	s := strings.Clone(sm[0])
+func errorState(m string) *Token {
+	s := strings.Clone(m)
 	err := fmt.Errorf(ErrUnexpectedCharacters, s)
 	return MakeToken(Error, data.String(err.Error()))
 }
