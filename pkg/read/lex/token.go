@@ -2,7 +2,6 @@ package lex
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/kode4food/ale/pkg/data"
 )
@@ -42,7 +41,7 @@ const (
 	NewLine
 	Comment
 	BlockComment
-	endOfFile
+	EOF
 )
 
 const errTokenWrapped = "%w (line %d, column %d)"
@@ -58,7 +57,7 @@ func MakeToken(t TokenType, v data.Value) *Token {
 // withInput returns a copy of the Token with the input string
 func (t *Token) withInput(i string) *Token {
 	res := *t
-	res.input = strings.Clone(i)
+	res.input = i
 	return &res
 }
 

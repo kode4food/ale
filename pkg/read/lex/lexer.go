@@ -95,7 +95,7 @@ func Match(src data.String, m Matcher) data.Sequence {
 	input := string(src)
 
 	resolver = func() (data.Value, data.Sequence, bool) {
-		if t, rest := m(input); t.Type() != endOfFile {
+		if t, rest := m(input); t.Type() != EOF {
 			t := t.withLocation(line, column)
 			line, column = bumpLocation(t.input, line, column)
 			input = rest
@@ -141,7 +141,7 @@ func ExhaustiveMatcher(all ...Matchers) Matcher {
 func makeExhaustive(all ...Matchers) Matchers {
 	cat := slices.Concat(all...)
 	res := make(Matchers, 0, len(cat)+2)
-	res = append(res, exactMatcher(``, tokenState(endOfFile)))
+	res = append(res, exactMatcher(``, tokenState(EOF)))
 	res = append(res, cat...)
 	res = append(res, anyCharMatcher(errorState))
 	return res
@@ -161,7 +161,7 @@ func bumpLocation(i string, l, c int) (int, int) {
 func anyCharMatcher(t tokenizer) Matcher {
 	return func(input string) (*Token, string) {
 		if len(input) > 0 {
-			c := input[:1]
+			c := strings.Clone(input[:1])
 			return t(c).withInput(c), input[1:]
 		}
 		return nil, input
@@ -192,7 +192,7 @@ func patternMatcher(p string, t tokenizer) Matcher {
 	r := regexp.MustCompile("^" + p)
 	return func(input string) (*Token, string) {
 		if sm := r.FindStringSubmatch(input); sm != nil {
-			m := sm[0]
+			m := strings.Clone(sm[0])
 			return t(m).withInput(m), input[len(m):]
 		}
 		return nil, input
@@ -281,7 +281,8 @@ func blockCommentMatcher(input string) (*Token, string) {
 			stack--
 			if stack == 0 {
 				t := MakeToken(BlockComment, data.Null)
-				return t.withInput(input[:i]), input[i:]
+				m := strings.Clone(input[:i])
+				return t.withInput(m), input[i:]
 			}
 			continue
 		}
