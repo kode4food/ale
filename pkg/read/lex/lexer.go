@@ -151,11 +151,12 @@ func makeExhaustive(all ...Matchers) Matchers {
 func bumpLocation(i string, l, c int) (int, int) {
 	s := newLine.Split(i, -1)
 	dl := len(s) - 1
-	dc := len(s[len(s)-1])
-	if dl > 0 {
-		return l + dl, dc
+	dc := len(s[dl])
+	if dl == 0 { // no newline, only bump column
+		return l, c + dc
 	}
-	return l, c + dc
+	// bump line and reset column
+	return l + dl, dc
 }
 
 func anyCharMatcher(t tokenizer) Matcher {
@@ -217,10 +218,11 @@ func unescape(s string) string {
 }
 
 func stringState(m string) *Token {
-	if len(m) == 0 || m[len(m)-1] != '"' {
+	eos := len(m) - 1
+	if len(m) <= 1 || m[eos] != '"' {
 		return MakeToken(Error, data.String(ErrStringNotTerminated))
 	}
-	s := unescape(m[1 : len(m)-1])
+	s := unescape(m[1:eos])
 	return MakeToken(String, data.String(s))
 }
 
