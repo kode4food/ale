@@ -11,21 +11,10 @@ func ToList(s data.Sequence) *data.List {
 	switch s := s.(type) {
 	case *data.List:
 		return s
-	case data.CountedSequence:
-		res := make(data.Vector, s.Count())
-		idx := 0
-		for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {
-			res[idx] = f
-			idx++
-		}
-		return data.NewList(res...)
 	default:
-		return uncountedToList(s)
+		v := ToVector(s)
+		return data.NewList(v...)
 	}
-}
-
-func uncountedToList(s data.Sequence) *data.List {
-	return data.NewList(uncountedToVector(s)...)
 }
 
 // ToVector takes any sequence and converts it to a Vector
@@ -34,16 +23,20 @@ func ToVector(s data.Sequence) data.Vector {
 	case data.Vector:
 		return s
 	case data.CountedSequence:
-		res := make(data.Vector, s.Count())
-		idx := 0
-		for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {
-			res[idx] = f
-			idx++
-		}
-		return res
+		return countedToVector(s)
 	default:
 		return uncountedToVector(s)
 	}
+}
+
+func countedToVector(s data.CountedSequence) data.Vector {
+	res := make(data.Vector, s.Count())
+	idx := 0
+	for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {
+		res[idx] = f
+		idx++
+	}
+	return res
 }
 
 func uncountedToVector(s data.Sequence) data.Vector {

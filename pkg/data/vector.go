@@ -11,8 +11,8 @@ import (
 // Vector is a fixed-length array of Values
 type Vector []Value
 
-// EmptyVector represents an empty Vector
 var (
+	// EmptyVector represents an empty Vector
 	EmptyVector = Vector{}
 
 	vectorHash = rand.Uint64()
