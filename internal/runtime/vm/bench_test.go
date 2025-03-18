@@ -87,7 +87,7 @@ func BenchmarkBottles(b *testing.B) {
 	env := bootstrap.DevNullEnvironment()
 	ns := env.GetAnonymous()
 	res, err := eval.String(ns, `
-		(define (println . body)) ; bypass the OS
+		(define println no-op) ; bypass the OS
 		(define (bottles n)
 		  (str
 		    (cond [(= n 0) "No more bottles"]
