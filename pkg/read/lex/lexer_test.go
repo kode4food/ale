@@ -14,7 +14,7 @@ import (
 )
 
 func T(t lex.TokenType, v data.Value) *lex.Token {
-	return t.From(``).WithValue(v)
+	return t.FromValue(``, v)
 }
 
 func assertToken(t *testing.T, like *lex.Token, value *lex.Token) {

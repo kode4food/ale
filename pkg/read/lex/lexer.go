@@ -96,10 +96,10 @@ func Match(src data.String, m Matcher) data.Sequence {
 
 	resolver = func() (data.Value, data.Sequence, bool) {
 		if t, rest := m(input); t.Type() != EOF {
-			t := t.WithLocation(line, column)
-			line, column = bumpLocation(t.input, line, column)
+			tl := t.WithLocation(line, column)
+			line, column = bumpLocation(tl.input, line, column)
 			input = rest
-			return t, sequence.NewLazy(resolver), true
+			return tl, sequence.NewLazy(resolver), true
 		}
 		return data.Null, data.Null, false
 	}
@@ -120,7 +120,7 @@ func (m Matchers) Error() Matchers {
 			if t, rest := wrapped(input); t != nil {
 				err := fmt.Errorf(ErrUnexpectedCharacters, t.input)
 				s := data.String(err.Error())
-				return Error.From(t.input).WithValue(s), rest
+				return Error.FromValue(t.input, s), rest
 			}
 			return nil, input
 		}
@@ -218,10 +218,10 @@ func stringState(m string) *Token {
 	eos := len(m) - 1
 	if len(m) <= 1 || m[eos] != '"' {
 		err := data.String(ErrStringNotTerminated)
-		return Error.From(m).WithValue(err)
+		return Error.FromValue(m, err)
 	}
 	s := unescape(m[1:eos])
-	return String.From(m).WithValue(data.String(s))
+	return String.FromValue(m, data.String(s))
 }
 
 func ratioState(m string) *Token {
@@ -241,25 +241,25 @@ func integerState(m string) *Token {
 
 func tokenizeNumber(m string, res data.Number, err error) *Token {
 	if err != nil {
-		return Error.From(m).WithValue(data.String(err.Error()))
+		return Error.FromValue(m, data.String(err.Error()))
 	}
-	return Number.From(m).WithValue(res)
+	return Number.FromValue(m, res)
 }
 
 func keywordState(m string) *Token {
-	return Keyword.From(m).WithValue(data.String(m))
+	return Keyword.FromValue(m, data.String(m))
 }
 
 func identifierState(m string) *Token {
 	if m == lang.Dot {
 		return Dot.From(m)
 	}
-	return Identifier.From(m).WithValue(data.String(m))
+	return Identifier.FromValue(m, data.String(m))
 }
 
 func errorState(m string) *Token {
 	err := fmt.Errorf(ErrUnexpectedCharacters, m)
-	return Error.From(m).WithValue(data.String(err.Error()))
+	return Error.FromValue(m, data.String(err.Error()))
 }
 
 func blockCommentMatcher(input string) (*Token, string) {
@@ -287,13 +287,13 @@ func blockCommentMatcher(input string) (*Token, string) {
 		i++
 	}
 	err := data.String(ErrCommentNotTerminated)
-	return Error.From(input).WithValue(err), input
+	return Error.FromValue(input, err), input
 }
 
 func blockCommentStrayEndMatcher(input string) (*Token, string) {
 	if strings.HasPrefix(input, lang.BlockCommentEnd) {
 		err := data.String(ErrUnmatchedComment)
-		t := Error.From(lang.BlockCommentEnd).WithValue(err)
+		t := Error.FromValue(lang.BlockCommentEnd, err)
 		rest := input[len(lang.BlockCommentEnd):]
 		return t, rest
 	}

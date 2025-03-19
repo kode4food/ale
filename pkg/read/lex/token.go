@@ -46,7 +46,7 @@ const (
 
 const errTokenWrapped = "%w (line %d, column %d)"
 
-// From constructs a new scanner Token from this TokenType
+// From constructs a new Token for this TokenType with its input
 func (t TokenType) From(input string) *Token {
 	return &Token{
 		typ:   t,
@@ -54,11 +54,14 @@ func (t TokenType) From(input string) *Token {
 	}
 }
 
-// WithValue returns a copy of the Token with an attached value
-func (t *Token) WithValue(v data.Value) *Token {
-	res := *t
-	res.value = v
-	return &res
+// FromValue constructs a new Token for this TokenType with its input and an
+// associated Value
+func (t TokenType) FromValue(input string, v data.Value) *Token {
+	return &Token{
+		typ:   t,
+		input: input,
+		value: v,
+	}
 }
 
 // WithLocation returns a copy of the Token with location information

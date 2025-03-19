@@ -51,14 +51,8 @@ func makeAsmParser(calls namedAsmParsers) *asmParser {
 }
 
 func (p *asmParser) withParams(n data.Locals) *asmParser {
-	res := p.copy()
-	res.params = slices.Clone(n)
-	return res
-}
-
-func (p *asmParser) copy() *asmParser {
 	res := *p
-	res.params = slices.Clone(res.params)
+	res.params = slices.Clone(n)
 	return &res
 }
 
