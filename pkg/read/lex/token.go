@@ -64,12 +64,10 @@ func (t TokenType) FromValue(input string, v data.Value) *Token {
 	}
 }
 
-// WithLocation returns a copy of the Token with location information
-func (t *Token) WithLocation(line, column int) *Token {
-	res := *t
-	res.line = line
-	res.column = column
-	return &res
+// SetLocation sets the Token's location information
+func (t *Token) SetLocation(line, column int) {
+	t.line = line
+	t.column = column
 }
 
 // Input returns the slice of input that this Token matched

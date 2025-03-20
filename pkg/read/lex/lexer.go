@@ -92,14 +92,15 @@ var (
 func Match(src data.String, m Matcher) data.Sequence {
 	var resolver sequence.LazyResolver
 	var line, column int
+	var t *Token
 	input := string(src)
 
 	resolver = func() (data.Value, data.Sequence, bool) {
-		if t, rest := m(input); t.Type() != EOF {
-			tl := t.WithLocation(line, column)
-			line, column = bumpLocation(tl.input, line, column)
-			input = rest
-			return tl, sequence.NewLazy(resolver), true
+		t, input = m(input)
+		t.SetLocation(line, column)
+		if t.Type() != EOF {
+			line, column = bumpLocation(t.input, line, column)
+			return t, sequence.NewLazy(resolver), true
 		}
 		return data.Null, data.Null, false
 	}
