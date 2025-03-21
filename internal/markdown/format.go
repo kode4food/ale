@@ -125,7 +125,7 @@ func formatContent(doc string) string {
 		start := sm[0]
 		end := sm[1]
 		fragment := src[start:end]
-		buf.WriteString(src[0:start])
+		buf.WriteString(src[:start])
 		buf.WriteString(f(fragment))
 		src = src[end:]
 	}

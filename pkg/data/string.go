@@ -16,17 +16,13 @@ type String string
 const EmptyString = String("")
 
 const (
+	// ErrInvalidIndexes is raised when an attempt to take a substring receives
+	// invalid start and end indexes
+	ErrInvalidIndexes = "%d and %d are not valid start/end indices"
+
 	// ErrInvalidStartIndex is raised when an attempt to take a substring of a
-	// String would result in a start index outside the String's actual range
-	ErrInvalidStartIndex = "starting index is out of range: %d"
-
-	// ErrInvalidEndIndex is raised when an attempt to take a substring of a
-	// String would result in an end index beyond the String's actual range
-	ErrInvalidEndIndex = "ending index is out of range: %d"
-
-	// ErrEndIndexTooLow is raised when an attempt to take a substring of a
 	// String specifies an ending index that is lower than the starting index
-	ErrEndIndexTooLow = "ending index is lower than starting index: %d < %d"
+	ErrInvalidStartIndex = "%d is an invalid start index"
 )
 
 var (
@@ -89,7 +85,7 @@ func (s String) ElementAt(index Integer) (Value, bool) {
 	if index < 0 {
 		return Null, false
 	}
-	ns, ok := s.from(index)
+	ns, ok := s.from(uint(index))
 	if !ok {
 		return Null, false
 	}
@@ -112,54 +108,66 @@ func (s String) Reverse() Sequence {
 }
 
 func (s String) Call(args ...Value) Value {
-	idx := args[0].(Integer)
 	if len(args) == 1 {
-		return s.Call(idx, idx+1)
-	} else if idx < 0 {
+		return s.callFrom(args[0].(Integer))
+	}
+	return s.callRange(args[0].(Integer), args[1].(Integer))
+}
+
+func (s String) callFrom(idx Integer) Value {
+	if idx < 0 {
 		panic(fmt.Errorf(ErrInvalidStartIndex, idx))
 	}
+	if ns, ok := s.from(uint(idx)); ok {
+		return ns
+	}
+	panic(fmt.Errorf(ErrInvalidStartIndex, idx))
+}
 
-	ns, ok := s.from(idx)
-	if !ok {
-		panic(fmt.Errorf(ErrInvalidStartIndex, idx))
+func (s String) callRange(idx, end Integer) Value {
+	if idx < 0 || end < idx {
+		panic(fmt.Errorf(ErrInvalidIndexes, idx, end))
 	}
 
-	end := args[1].(Integer)
-	if end < idx {
-		panic(fmt.Errorf(ErrEndIndexTooLow, idx, end))
+	ns, ok := s.from(uint(idx))
+	if !ok || len(ns) == 0 && end > idx {
+		panic(fmt.Errorf(ErrInvalidIndexes, idx, end))
 	}
-	if res, ok := ns.take(end - idx); ok {
+
+	if res, ok := ns.take(uint(end - idx)); ok {
 		return res
 	}
-	panic(fmt.Errorf(ErrInvalidEndIndex, end))
+	panic(fmt.Errorf(ErrInvalidIndexes, idx, end))
 }
 
 func (s String) CheckArity(argc int) error {
 	return CheckRangedArity(1, 2, argc)
 }
 
-func (s String) from(index Integer) (String, bool) {
-	ns := string(s)
-	for i := Integer(0); i < index; i++ {
-		_, w := utf8.DecodeRuneInString(ns)
-		if w == 0 {
-			return EmptyString, false
-		}
-		ns = ns[w:]
-	}
-	return String(ns), len(ns) > 0
+func (s String) from(idx uint) (String, bool) {
+	_, r, ok := s.splitAt(idx)
+	return r, ok
 }
 
-func (s String) take(count Integer) (String, bool) {
-	ns := string(s)
-	for i := Integer(0); i < count; i++ {
-		_, w := utf8.DecodeRuneInString(ns)
-		if w == 0 {
-			return EmptyString, false
-		}
-		ns = ns[w:]
+func (s String) take(count uint) (String, bool) {
+	f, _, ok := s.splitAt(count)
+	return f, ok
+}
+
+func (s String) splitAt(idx uint) (String, String, bool) {
+	if idx == 0 {
+		return EmptyString, s, true
 	}
-	return s[0 : len(s)-len(ns)], true
+	ns := string(s)
+	var r int
+	for range idx {
+		if _, w := utf8.DecodeRuneInString(ns[r:]); w > 0 {
+			r += w
+			continue
+		}
+		return EmptyString, EmptyString, false
+	}
+	return s[:r], s[r:], true
 }
 
 // Equal compares this String to another for equality

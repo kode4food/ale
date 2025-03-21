@@ -62,7 +62,7 @@ var (
 	nothing     = new(sentinel)
 
 	escapeNames = slices.Map(func(n string) string {
-		if strings.Contains("`*_", n[0:1]) {
+		if strings.Contains("`*_", n[:1]) {
 			return "\\" + n
 		}
 		return n

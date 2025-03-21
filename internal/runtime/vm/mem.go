@@ -123,7 +123,7 @@ func (b *memBucket) alloc() data.Vector {
 	b.free = next
 	b.spans++
 	b.Unlock()
-	return values[0:b.size]
+	return values[:b.size]
 }
 
 func (b *memBucket) dealloc(v data.Vector) {

@@ -114,7 +114,7 @@ func (b *BranchScanner) splitCondJump(
 	return &branches{
 		code:       code,
 		prologue:   prologue,
-		elseBranch: b.Else(rest[0:elseJumpIdx]),
+		elseBranch: b.Else(rest[:elseJumpIdx]),
 		elseJump:   elseJump,
 		thenLabel:  thenLabel,
 		thenBranch: b.Then(rest[thenIdx+1 : joinIdx]),

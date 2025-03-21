@@ -272,7 +272,7 @@ func (c *ParamCase) makeArgFetcher() ArgFetcher {
 			if len(args) < cl-1 {
 				return args, false
 			}
-			res := append(slices.Clone(args[0:cl-1]), args[cl-1:])
+			res := append(slices.Clone(args[:cl-1]), args[cl-1:])
 			return res, true
 		}
 	}

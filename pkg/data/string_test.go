@@ -82,9 +82,10 @@ func TestStringEquality(t *testing.T) {
 
 func TestSubstringCall(t *testing.T) {
 	as := assert.New(t)
-	as.MustEvalTo(`("hello" 0)`, S("h"))
-	as.MustEvalTo(`("hello" 1)`, S("e"))
+	as.MustEvalTo(`("hello" 0)`, S("hello"))
+	as.MustEvalTo(`("hello" 1)`, S("ello"))
 	as.MustEvalTo(`("hello" 4)`, S("o"))
+	as.MustEvalTo(`("hello" 5)`, S(""))
 	as.MustEvalTo(`("hello" 0 1)`, S("h"))
 	as.MustEvalTo(`("hello" 0 2)`, S("he"))
 	as.MustEvalTo(`("hello" 0 5)`, S("hello"))
@@ -92,9 +93,8 @@ func TestSubstringCall(t *testing.T) {
 
 	as.PanicWith(`("hello" -1)`, fmt.Errorf(data.ErrInvalidStartIndex, -1))
 	as.PanicWith(`("hello" 6)`, fmt.Errorf(data.ErrInvalidStartIndex, 6))
-	as.PanicWith(`("hello" 5)`, fmt.Errorf(data.ErrInvalidStartIndex, 5))
-	as.PanicWith(`("hello" 0 6)`, fmt.Errorf(data.ErrInvalidEndIndex, 6))
-	as.PanicWith(`("hello" 3 2)`, fmt.Errorf(data.ErrEndIndexTooLow, 3, 2))
+	as.PanicWith(`("hello" 0 6)`, fmt.Errorf(data.ErrInvalidIndexes, 0, 6))
+	as.PanicWith(`("hello" 3 2)`, fmt.Errorf(data.ErrInvalidIndexes, 3, 2))
 }
 
 func TestReverse(t *testing.T) {
