@@ -2,6 +2,7 @@ package data
 
 import (
 	"fmt"
+	"slices"
 	"strings"
 	"unicode/utf8"
 
@@ -99,13 +100,15 @@ func (s String) ElementAt(index Integer) (Value, bool) {
 }
 
 func (s String) Reverse() Sequence {
-	n := len(s)
-	runes := make([]rune, n)
-	for _, r := range s {
-		n--
-		runes[n] = r
+	if len(s) == 0 {
+		return s
 	}
-	return String(runes[n:])
+	runes := []rune(s)
+	if len(runes) <= 1 {
+		return s
+	}
+	slices.Reverse(runes)
+	return String(runes)
 }
 
 func (s String) Call(args ...Value) Value {
