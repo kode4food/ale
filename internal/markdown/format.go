@@ -79,7 +79,7 @@ func FormatMarkdown(s string) (string, error) {
 
 func formatCode(lines []string) []string {
 	var res []string
-	for i := range len(lines) {
+	for i := 0; i < len(lines); i++ {
 		if l := lines[i]; !strings.HasPrefix(l, blockPrefix) {
 			res = append(res, l)
 			continue
