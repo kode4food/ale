@@ -39,57 +39,53 @@ func NewEnvironment() *Environment {
 
 func (e *Environment) Domains() data.Locals {
 	e.RLock()
-	defer e.RUnlock()
 	res := make(data.Locals, 0, len(e.data))
 	for k := range e.data {
 		res = append(res, k)
 	}
+	e.RUnlock()
 	return res.Sorted()
 }
 
 func (e *Environment) Snapshot() *Environment {
 	e.RLock()
-	defer e.RUnlock()
 	res := &Environment{
 		data: make(map[data.Local]Namespace, len(e.data)),
 	}
 	for k, v := range e.data {
 		res.data[k] = v.Snapshot(res)
 	}
+	e.RUnlock()
 	return res
-}
-
-// New constructs a new namespace
-func (e *Environment) New(n data.Local) Namespace {
-	return &namespace{
-		environment: e,
-		entries:     entries{},
-		domain:      n,
-	}
 }
 
 // Get returns a mapped namespace or instantiates a new one to be cached
 func (e *Environment) Get(domain data.Local, res Resolver) Namespace {
-	e.RLock()
-	if r, ok := e.data[domain]; ok {
-		e.RUnlock()
+	if r, ok := e.get(domain); ok {
 		return r
 	}
-	e.RUnlock()
 	e.Lock()
-	defer e.Unlock()
 	if r, ok := e.data[domain]; ok {
+		e.Unlock()
 		return r
 	}
 	r := res()
 	e.data[domain] = r
+	e.Unlock()
 	return r
+}
+
+func (e *Environment) get(domain data.Local) (Namespace, bool) {
+	e.RLock()
+	r, ok := e.data[domain]
+	e.RUnlock()
+	return r, ok
 }
 
 // GetRoot returns the root namespace, where built-ins go
 func (e *Environment) GetRoot() Namespace {
 	return e.Get(RootDomain, func() Namespace {
-		return e.New(RootDomain)
+		return e.newNamespace(RootDomain)
 	})
 }
 
@@ -97,7 +93,7 @@ func (e *Environment) GetRoot() Namespace {
 func (e *Environment) GetAnonymous() Namespace {
 	root := e.GetRoot()
 	return chain(root, &anonymous{
-		Namespace: e.New(AnonymousDomain),
+		Namespace: e.newNamespace(AnonymousDomain),
 	})
 }
 
@@ -108,8 +104,16 @@ func (e *Environment) GetQualified(n data.Local) Namespace {
 		return root
 	}
 	return e.Get(n, func() Namespace {
-		return newChild(root, n)
+		return chain(root, e.newNamespace(n))
 	})
+}
+
+func (e *Environment) newNamespace(n data.Local) Namespace {
+	return &namespace{
+		environment: e,
+		entries:     entries{},
+		domain:      n,
+	}
 }
 
 // ResolveSymbol attempts to resolve a symbol. If it's a qualified symbol, it

@@ -59,12 +59,13 @@ func (e *entry) Value() (data.Value, error) {
 
 func (e *entry) Bind(v data.Value) error {
 	e.Lock()
-	defer e.Unlock()
 	if e.hasFlag(bound) {
+		e.Unlock()
 		return fmt.Errorf(ErrNameAlreadyBound, e.name)
 	}
 	e.value = v
 	e.setFlag(bound)
+	e.Unlock()
 	return nil
 }
 

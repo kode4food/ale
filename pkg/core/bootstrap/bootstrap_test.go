@@ -51,3 +51,12 @@ func BenchmarkBootstrapping(b *testing.B) {
 		bootstrap.Into(e)
 	}
 }
+
+func BenchmarkSnapshotting(b *testing.B) {
+	e := env.NewEnvironment()
+	bootstrap.DevNull(e)
+	bootstrap.Into(e)
+	for range b.N {
+		_ = e.Snapshot()
+	}
+}

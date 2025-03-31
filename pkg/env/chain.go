@@ -7,11 +7,6 @@ type chainedNamespace struct {
 	parent Namespace
 }
 
-func newChild(parent Namespace, n data.Local) Namespace {
-	e := parent.Environment()
-	return chain(parent, e.New(n))
-}
-
 func chain(parent Namespace, child Namespace) *chainedNamespace {
 	return &chainedNamespace{
 		parent: parent,

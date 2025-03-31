@@ -51,13 +51,13 @@ func (ns *namespace) Domain() data.Local {
 
 func (ns *namespace) Declared() data.Locals {
 	ns.RLock()
-	defer ns.RUnlock()
 	res := data.Locals{}
 	for _, e := range ns.entries {
 		if !e.IsPrivate() {
 			res = append(res, e.Name())
 		}
 	}
+	ns.RUnlock()
 	return res.Sorted()
 }
 
@@ -71,11 +71,12 @@ func (ns *namespace) Private(n data.Local) (Entry, error) {
 
 func (ns *namespace) declare(n data.Local, f entryFlag) (*entry, error) {
 	ns.Lock()
-	defer ns.Unlock()
 	if e, ok := ns.entries[n]; ok {
 		if e.hasFlag(f) {
+			ns.Unlock()
 			return e, nil
 		}
+		ns.Unlock()
 		return nil, fmt.Errorf(ErrNameAlreadyDeclared, n)
 	}
 	e := &entry{
@@ -83,21 +84,26 @@ func (ns *namespace) declare(n data.Local, f entryFlag) (*entry, error) {
 		flags: f,
 	}
 	ns.entries[n] = e
+	ns.Unlock()
 	return e, nil
 }
 
 func (ns *namespace) Resolve(n data.Local) (Entry, Namespace, error) {
-	ns.RLock()
-	defer ns.RUnlock()
-	if e, ok := ns.entries[n]; ok {
+	if e, ok := ns.resolve(n); ok {
 		return e, ns, nil
 	}
 	return nil, nil, fmt.Errorf(ErrNameNotDeclared, n)
 }
 
+func (ns *namespace) resolve(n data.Local) (*entry, bool) {
+	ns.RLock()
+	e, ok := ns.entries[n]
+	ns.RUnlock()
+	return e, ok
+}
+
 func (ns *namespace) Snapshot(e *Environment) Namespace {
 	ns.RLock()
-	defer ns.RUnlock()
 	res := &namespace{
 		environment: e,
 		domain:      ns.domain,
@@ -106,6 +112,7 @@ func (ns *namespace) Snapshot(e *Environment) Namespace {
 	for k, v := range ns.entries {
 		res.entries[k] = v.snapshot()
 	}
+	ns.RUnlock()
 	return res
 }
 
