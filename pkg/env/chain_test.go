@@ -1,7 +1,6 @@
 package env_test
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/kode4food/ale/internal/assert"
@@ -23,14 +22,12 @@ func TestSnapshot(t *testing.T) {
 	as.Nil(env.BindPrivate(ns1, "private-child", data.True))
 
 	e2 := env.NewEnvironment()
-	ns2, err := ns1.Snapshot(e2)
-	as.Nil(err)
+	ns2 := ns1.Snapshot(e2)
 	as.Equal(LS("some-ns"), ns2.Domain())
 	as.Equal(e2, ns2.Environment())
 
 	as.Nil(env.BindPublic(ns2, "second-child", data.True))
 	as.NotNil(ns2)
-	as.Nil(err)
 
 	d := ns2.Declared()
 	as.Equal(2, len(d))
@@ -51,20 +48,12 @@ func TestChainedSnapshotErrors(t *testing.T) {
 	as.IsNotBound(ns1, sym1)
 	as.Nil(err)
 
-	e2, err := e1.Snapshot()
-	as.Nil(e2)
-	as.EqualError(err, fmt.Sprintf(env.ErrSnapshotIncomplete, sym1))
-
 	as.Nil(e.Bind(data.True))
-	e2, err = e1.Snapshot()
+	e2 := e1.Snapshot()
 	as.NotNil(e2)
-	as.Nil(err)
 
 	sym2 := data.Local("also-unbound-but-resolved")
 	_, err = root.Public(sym2)
 	as.IsNotBound(root, sym2)
 	as.Nil(err)
-
-	_, err = ns1.Snapshot(env.NewEnvironment())
-	as.EqualError(err, fmt.Sprintf(env.ErrSnapshotIncomplete, sym2))
 }

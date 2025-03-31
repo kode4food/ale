@@ -4,7 +4,6 @@ import (
 	"os"
 
 	"github.com/kode4food/ale/internal/compiler/special"
-	"github.com/kode4food/ale/internal/debug"
 	"github.com/kode4food/ale/internal/do"
 	"github.com/kode4food/ale/internal/stream"
 	"github.com/kode4food/ale/pkg/core/builtin"
@@ -89,11 +88,7 @@ func TopLevelEnvironment() *env.Environment {
 		StandardIO(topLevel)
 		Into(topLevel)
 	})
-	res, err := topLevel.Snapshot()
-	if err != nil {
-		panic(debug.ProgrammerError(err.Error()))
-	}
-	return res
+	return topLevel.Snapshot()
 }
 
 // DevNullEnvironment configures a bootstrapped environment completely isolated
@@ -105,9 +100,5 @@ func DevNullEnvironment() *env.Environment {
 		DevNull(devNull)
 		Into(devNull)
 	})
-	res, err := devNull.Snapshot()
-	if err != nil {
-		panic(debug.ProgrammerError(err.Error()))
-	}
-	return res
+	return devNull.Snapshot()
 }

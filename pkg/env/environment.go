@@ -47,20 +47,16 @@ func (e *Environment) Domains() data.Locals {
 	return res.Sorted()
 }
 
-func (e *Environment) Snapshot() (*Environment, error) {
+func (e *Environment) Snapshot() *Environment {
 	e.RLock()
 	defer e.RUnlock()
 	res := &Environment{
 		data: make(map[data.Local]Namespace, len(e.data)),
 	}
 	for k, v := range e.data {
-		s, err := v.Snapshot(res)
-		if err != nil {
-			return nil, err
-		}
-		res.data[k] = s
+		res.data[k] = v.Snapshot(res)
 	}
-	return res, nil
+	return res
 }
 
 // New constructs a new namespace

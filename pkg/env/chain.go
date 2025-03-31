@@ -19,19 +19,11 @@ func chain(parent Namespace, child Namespace) *chainedNamespace {
 	}
 }
 
-func (ns *chainedNamespace) Snapshot(e *Environment) (Namespace, error) {
-	p, err := ns.parent.Snapshot(e)
-	if err != nil {
-		return nil, err
-	}
-	c, err := ns.child.Snapshot(e)
-	if err != nil {
-		return nil, err
-	}
+func (ns *chainedNamespace) Snapshot(e *Environment) Namespace {
 	return &chainedNamespace{
-		parent: p,
-		child:  c,
-	}, nil
+		parent: ns.parent.Snapshot(e),
+		child:  ns.child.Snapshot(e),
+	}
 }
 
 func (ns *chainedNamespace) Environment() *Environment {

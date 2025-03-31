@@ -16,7 +16,7 @@ type (
 		Public(data.Local) (Entry, error)
 		Private(data.Local) (Entry, error)
 		Resolve(data.Local) (Entry, Namespace, error)
-		Snapshot(*Environment) (Namespace, error)
+		Snapshot(*Environment) Namespace
 	}
 
 	namespace struct {
@@ -90,13 +90,12 @@ func (ns *namespace) Resolve(n data.Local) (Entry, Namespace, error) {
 	ns.RLock()
 	defer ns.RUnlock()
 	if e, ok := ns.entries[n]; ok {
-		e.markResolved()
 		return e, ns, nil
 	}
 	return nil, nil, fmt.Errorf(ErrNameNotDeclared, n)
 }
 
-func (ns *namespace) Snapshot(e *Environment) (Namespace, error) {
+func (ns *namespace) Snapshot(e *Environment) Namespace {
 	ns.RLock()
 	defer ns.RUnlock()
 	res := &namespace{
@@ -104,13 +103,10 @@ func (ns *namespace) Snapshot(e *Environment) (Namespace, error) {
 		domain:      ns.domain,
 		entries:     make(entries, len(ns.entries)),
 	}
-	var err error
 	for k, v := range ns.entries {
-		if res.entries[k], err = v.snapshot(); err != nil {
-			return nil, err
-		}
+		res.entries[k] = v.snapshot()
 	}
-	return res, nil
+	return res
 }
 
 func resolvePublic(from, in Namespace, n data.Local) (Entry, Namespace, error) {

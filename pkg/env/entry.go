@@ -22,7 +22,7 @@ type (
 		value data.Value
 		name  data.Local
 		flags entryFlag
-		sync.Mutex
+		sync.RWMutex
 	}
 
 	entries map[data.Local]*entry
@@ -38,19 +38,12 @@ const (
 	// ErrNameNotBound is raised when an attempt is mode to retrieve a value
 	// from a Namespace that hasn't been bound
 	ErrNameNotBound = "name is not bound in namespace: %s"
-
-	// ErrSnapshotIncomplete is raised when an attempt is made to create a
-	// Namespace snapshot in a situation where an unbound entry has been
-	// retrieved
-	ErrSnapshotIncomplete = "can't snapshot environment. entry not bound: %s"
 )
 
 const (
-	public entryFlag = 0
-
-	resolved entryFlag = 1 << iota
+	public  entryFlag = 0
+	private entryFlag = 1 << iota
 	bound
-	private
 )
 
 func (e *entry) Name() data.Local {
@@ -71,7 +64,7 @@ func (e *entry) Bind(v data.Value) error {
 		return fmt.Errorf(ErrNameAlreadyBound, e.name)
 	}
 	e.value = v
-	e.setFlag(bound | resolved)
+	e.setFlag(bound)
 	return nil
 }
 
@@ -83,27 +76,15 @@ func (e *entry) IsPrivate() bool {
 	return e.hasFlag(private)
 }
 
-func (e *entry) snapshot() (*entry, error) {
-	e.Lock()
-	defer e.Unlock()
+func (e *entry) snapshot() *entry {
 	if e.hasFlag(bound) {
-		return e, nil
-	}
-
-	if e.hasFlag(resolved) {
-		return nil, fmt.Errorf(ErrSnapshotIncomplete, e.name)
+		return e
 	}
 
 	return &entry{
 		name:  e.name,
 		value: e.value,
 		flags: e.flags,
-	}, nil
-}
-
-func (e *entry) markResolved() {
-	if !e.hasFlag(resolved) {
-		e.setFlag(resolved)
 	}
 }
 
