@@ -40,7 +40,6 @@ const (
 	CondJump               // Conditional Jump
 	Cons                   // Form a new Cons Cell (or Prepend)
 	Const                  // Retrieve Constant
-	Declare                // Declare a public Namespace entry
 	Deref                  // Pointer Dereference
 	Div                    // Division
 	Dup                    // Duplicate Value
@@ -68,6 +67,7 @@ const (
 	PopArgs                // Pop Arguments
 	PosInt                 // Push Positive Integer (in Operand)
 	Private                // Declare a private Namespace entry
+	Public                 // Declare a public Namespace entry
 	PushArgs               // Push Arguments
 	Resolve                // Resolve Global Symbol
 	RestArg                // Retrieve Arguments Tail

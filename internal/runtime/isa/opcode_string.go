@@ -26,34 +26,34 @@ func _() {
 	_ = x[CondJump-14]
 	_ = x[Cons-15]
 	_ = x[Const-16]
-	_ = x[Declare-17]
-	_ = x[Deref-18]
-	_ = x[Div-19]
-	_ = x[Dup-20]
-	_ = x[Empty-21]
-	_ = x[Eq-22]
-	_ = x[False-23]
-	_ = x[Jump-24]
-	_ = x[Label-25]
-	_ = x[Load-26]
-	_ = x[Mod-27]
-	_ = x[Mul-28]
-	_ = x[Neg-29]
-	_ = x[NegInt-30]
-	_ = x[NewRef-31]
-	_ = x[NoOp-32]
-	_ = x[Not-33]
-	_ = x[Null-34]
-	_ = x[NumEq-35]
-	_ = x[NumGt-36]
-	_ = x[NumGte-37]
-	_ = x[NumLt-38]
-	_ = x[NumLte-39]
-	_ = x[Panic-40]
-	_ = x[Pop-41]
-	_ = x[PopArgs-42]
-	_ = x[PosInt-43]
-	_ = x[Private-44]
+	_ = x[Deref-17]
+	_ = x[Div-18]
+	_ = x[Dup-19]
+	_ = x[Empty-20]
+	_ = x[Eq-21]
+	_ = x[False-22]
+	_ = x[Jump-23]
+	_ = x[Label-24]
+	_ = x[Load-25]
+	_ = x[Mod-26]
+	_ = x[Mul-27]
+	_ = x[Neg-28]
+	_ = x[NegInt-29]
+	_ = x[NewRef-30]
+	_ = x[NoOp-31]
+	_ = x[Not-32]
+	_ = x[Null-33]
+	_ = x[NumEq-34]
+	_ = x[NumGt-35]
+	_ = x[NumGte-36]
+	_ = x[NumLt-37]
+	_ = x[NumLte-38]
+	_ = x[Panic-39]
+	_ = x[Pop-40]
+	_ = x[PopArgs-41]
+	_ = x[PosInt-42]
+	_ = x[Private-43]
+	_ = x[Public-44]
 	_ = x[PushArgs-45]
 	_ = x[Resolve-46]
 	_ = x[RestArg-47]
@@ -70,12 +70,12 @@ func _() {
 }
 
 const (
-	_Opcode_name_0 = "AddArgArgLenBindBindRefCallCall0Call1Call2Call3CallWithCarCdrClosureCondJumpConsConstDeclareDerefDivDupEmptyEqFalseJumpLabelLoadModMulNegNegIntNewRefNoOpNotNullNumEqNumGtNumGteNumLtNumLtePanicPopPopArgsPosIntPrivatePushArgsResolveRestArgRetFalseRetNullRetTrueReturnStoreSubTailCallTrueVectorZero"
+	_Opcode_name_0 = "AddArgArgLenBindBindRefCallCall0Call1Call2Call3CallWithCarCdrClosureCondJumpConsConstDerefDivDupEmptyEqFalseJumpLabelLoadModMulNegNegIntNewRefNoOpNotNullNumEqNumGtNumGteNumLtNumLtePanicPopPopArgsPosIntPrivatePublicPushArgsResolveRestArgRetFalseRetNullRetTrueReturnStoreSubTailCallTrueVectorZero"
 	_Opcode_name_1 = "OpcodeMask"
 )
 
 var (
-	_Opcode_index_0 = [...]uint16{0, 3, 6, 12, 16, 23, 27, 32, 37, 42, 47, 55, 58, 61, 68, 76, 80, 85, 92, 97, 100, 103, 108, 110, 115, 119, 124, 128, 131, 134, 137, 143, 149, 153, 156, 160, 165, 170, 176, 181, 187, 192, 195, 202, 208, 215, 223, 230, 237, 245, 252, 259, 265, 270, 273, 281, 285, 291, 295}
+	_Opcode_index_0 = [...]uint16{0, 3, 6, 12, 16, 23, 27, 32, 37, 42, 47, 55, 58, 61, 68, 76, 80, 85, 90, 93, 96, 101, 103, 108, 112, 117, 121, 124, 127, 130, 136, 142, 146, 149, 153, 158, 163, 169, 174, 180, 185, 188, 195, 201, 208, 214, 222, 229, 236, 244, 251, 258, 264, 269, 272, 280, 284, 290, 294}
 )
 
 func (i Opcode) String() string {

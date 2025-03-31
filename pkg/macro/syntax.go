@@ -166,8 +166,8 @@ func (se *syntaxEnv) qualifySymbol(s data.Symbol) data.Value {
 		return q
 	}
 	name := s.Name()
-	if e, err := se.namespace.Resolve(name); err == nil {
-		return data.NewQualifiedSymbol(name, e.Owner().Domain())
+	if _, in, err := se.namespace.Resolve(name); err == nil {
+		return data.NewQualifiedSymbol(name, in.Domain())
 	}
 	return s
 }

@@ -7,6 +7,7 @@ import (
 	. "github.com/kode4food/ale/internal/assert/helpers"
 	"github.com/kode4food/ale/pkg/core/bootstrap"
 	"github.com/kode4food/ale/pkg/data"
+	"github.com/kode4food/ale/pkg/env"
 	"github.com/kode4food/ale/pkg/eval"
 )
 
@@ -52,7 +53,7 @@ func TestUnquoteEval(t *testing.T) {
 	e := bootstrap.DevNullEnvironment()
 	ns := e.GetAnonymous()
 
-	as.Nil(ns.Declare("foo").Bind(F(456)))
+	as.Nil(env.BindPublic(ns, "foo", F(456)))
 	r1, err := eval.String(ns, `'[123 ,foo]`)
 	as.Nil(err)
 	as.String("[123 (ale/unquote foo)]", r1)

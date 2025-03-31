@@ -18,24 +18,26 @@ func TestDeclarations(t *testing.T) {
 	as.Equal(e, root.Environment())
 	as.Equal(env.RootDomain, root.Domain())
 
-	as.Nil(root.Declare("public2").Bind(data.True))
-	as.Nil(root.Private("private").Bind(data.True))
-	as.Nil(root.Declare("public1").Bind(data.True))
+	as.Nil(env.BindPublic(root, "public2", data.True))
+	as.Nil(env.BindPublic(root, "public1", data.True))
+	as.Nil(env.BindPrivate(root, "private", data.True))
 
 	n := root.Declared()
 	as.Equal(2, len(n))
 	as.Equal(LS("public1"), n[0])
 	as.Equal(LS("public2"), n[1])
 
-	e1, err := root.Resolve(n[0])
-	as.NotNil(e1)
+	e2, in, err := root.Resolve(n[0])
+	as.NotNil(e2)
+	as.NotNil(in)
 	as.Nil(err)
 
-	as.Equal(n[0], e1.Name())
-	as.Equal(root, e1.Owner())
+	as.Equal(n[0], e2.Name())
+	as.Equal(root, in)
 
-	e2 := root.Declare(n[0])
-	as.Equal(e1, e2)
+	e3, err := root.Public(n[0])
+	as.Equal(e2, e3)
+	as.Nil(err)
 }
 
 func TestChaining(t *testing.T) {
@@ -43,10 +45,10 @@ func TestChaining(t *testing.T) {
 
 	e := env.NewEnvironment()
 	root := e.GetRoot()
-	as.Nil(root.Declare("in-parent").Bind(data.True))
+	as.Nil(env.BindPublic(root, "in-parent", data.True))
 
 	ns := e.GetAnonymous()
-	as.Nil(ns.Declare("in-child").Bind(data.True))
+	as.Nil(env.BindPublic(ns, "in-child", data.True))
 
 	as.True(as.IsBound(ns, "in-parent"))
 	as.True(as.IsBound(ns, "in-child"))
@@ -63,7 +65,8 @@ func TestBinding(t *testing.T) {
 
 	e := env.NewEnvironment()
 	root := e.GetRoot()
-	d := root.Declare("some-name")
+	d, err := root.Public("some-name")
+	as.Nil(err)
 
 	v, err := d.Value()
 	as.Nil(v)

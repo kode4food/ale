@@ -4,8 +4,8 @@
     .eval (special* (name)
         .const name
         dup
-        declare)
-    .const declare*
+        public)
+    .const public*
     bind
 
     .eval (special* (name)

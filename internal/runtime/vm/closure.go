@@ -83,7 +83,8 @@ CurrentPC:
 		SP1 := SP + 1
 		SP += 2
 		name := MEM[SP1].(data.Local)
-		if err := c.Globals.Declare(name).Bind(MEM[SP]); err != nil {
+		value := MEM[SP]
+		if err := bindOrShadow(c.Globals, name, value); err != nil {
 			panic(err)
 		}
 
@@ -162,10 +163,6 @@ CurrentPC:
 	case isa.Const:
 		MEM[SP] = c.Constants[INST.Operand()]
 		SP--
-
-	case isa.Declare:
-		SP++
-		c.Globals.Declare(MEM[SP].(data.Local))
 
 	case isa.Deref:
 		SP1 := SP + 1
@@ -283,7 +280,15 @@ CurrentPC:
 
 	case isa.Private:
 		SP++
-		c.Globals.Private(MEM[SP].(data.Local))
+		if _, err := c.Globals.Private(MEM[SP].(data.Local)); err != nil {
+			panic(err)
+		}
+
+	case isa.Public:
+		SP++
+		if _, err := c.Globals.Public(MEM[SP].(data.Local)); err != nil {
+			panic(err)
+		}
 
 	case isa.PushArgs:
 		RES := SP + int(INST.Operand())
@@ -391,4 +396,12 @@ func (c *Closure) HashCode() uint64 {
 	}
 	atomic.StoreUint64(&c.hash, res)
 	return res
+}
+
+func bindOrShadow(ns env.Namespace, n data.Local, v data.Value) error {
+	e, in, err := ns.Resolve(n)
+	if err != nil || in != ns {
+		return env.BindPublic(ns, n, v)
+	}
+	return e.Bind(v)
 }

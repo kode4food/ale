@@ -46,17 +46,17 @@ func (ns *chainedNamespace) Declared() data.Locals {
 	return ns.child.Declared()
 }
 
-func (ns *chainedNamespace) Declare(n data.Local) Entry {
-	return ns.child.Declare(n)
+func (ns *chainedNamespace) Public(n data.Local) (Entry, error) {
+	return ns.child.Public(n)
 }
 
-func (ns *chainedNamespace) Private(n data.Local) Entry {
+func (ns *chainedNamespace) Private(n data.Local) (Entry, error) {
 	return ns.child.Private(n)
 }
 
-func (ns *chainedNamespace) Resolve(n data.Local) (Entry, error) {
-	if e, err := ns.child.Resolve(n); err == nil {
-		return e, nil
+func (ns *chainedNamespace) Resolve(n data.Local) (Entry, Namespace, error) {
+	if e, in, err := ns.child.Resolve(n); err == nil {
+		return e, in, nil
 	}
 	return resolvePublic(ns, ns.parent, n)
 }

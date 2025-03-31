@@ -7,6 +7,7 @@ import (
 	. "github.com/kode4food/ale/internal/assert/helpers"
 	"github.com/kode4food/ale/pkg/core/bootstrap"
 	"github.com/kode4food/ale/pkg/data"
+	"github.com/kode4food/ale/pkg/env"
 	"github.com/kode4food/ale/pkg/eval"
 	"github.com/kode4food/ale/pkg/read"
 )
@@ -46,7 +47,7 @@ func TestBuiltIns(t *testing.T) {
 	b := e.GetAnonymous()
 	ns := e.GetRoot()
 
-	as.Nil(ns.Declare("hello").Bind(
+	as.Nil(env.BindPublic(ns, "hello",
 		data.MakeProcedure(func(...data.Value) data.Value {
 			return S("there")
 		}, 0),

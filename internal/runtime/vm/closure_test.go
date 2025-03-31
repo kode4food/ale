@@ -342,7 +342,7 @@ func TestRefs(t *testing.T) {
 func TestGlobals(t *testing.T) {
 	testResult(t, I(3), isa.Instructions{
 		isa.Const.New(4),
-		isa.Declare.New(),
+		isa.Public.New(),
 		isa.PosInt.New(2),
 		isa.Const.New(4),
 		isa.Bind.New(),

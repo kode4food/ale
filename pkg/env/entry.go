@@ -3,6 +3,7 @@ package env
 import (
 	"fmt"
 	"sync"
+	"sync/atomic"
 
 	"github.com/kode4food/ale/pkg/data"
 )
@@ -10,7 +11,6 @@ import (
 type (
 	// Entry represents a namespace entry
 	Entry interface {
-		Owner() Namespace
 		Name() data.Local
 		Value() (data.Value, error)
 		Bind(data.Value) error
@@ -19,16 +19,15 @@ type (
 	}
 
 	entry struct {
-		owner Namespace
 		value data.Value
 		name  data.Local
 		flags entryFlag
-		sync.RWMutex
+		sync.Mutex
 	}
 
 	entries map[data.Local]*entry
 
-	entryFlag uint
+	entryFlag uint64
 )
 
 const (
@@ -47,88 +46,71 @@ const (
 )
 
 const (
+	public entryFlag = 0
+
 	resolved entryFlag = 1 << iota
 	bound
 	private
 )
-
-func (e *entry) snapshot(owner Namespace) (*entry, error) {
-	e.RLock()
-	if e.hasFlag(resolved) && !e.hasFlag(bound) {
-		e.RUnlock()
-		return nil, fmt.Errorf(ErrSnapshotIncomplete, e.name)
-	}
-	res := &entry{
-		owner: owner,
-		name:  e.name,
-		value: e.value,
-		flags: e.flags,
-	}
-	e.RUnlock()
-	return res, nil
-}
-
-func (e *entry) markResolved() {
-	e.Lock()
-	e.setFlag(resolved)
-	e.Unlock()
-}
-
-func (e *entry) markPrivate() {
-	e.Lock()
-	e.setFlag(private)
-	e.Unlock()
-}
-
-func (e *entry) Owner() Namespace {
-	return e.owner
-}
 
 func (e *entry) Name() data.Local {
 	return e.name
 }
 
 func (e *entry) Value() (data.Value, error) {
-	e.RLock()
 	if e.hasFlag(bound) {
-		res := e.value
-		e.RUnlock()
-		return res, nil
+		return e.value, nil
 	}
-	e.RUnlock()
 	return nil, fmt.Errorf(ErrNameNotBound, e.name)
 }
 
 func (e *entry) Bind(v data.Value) error {
 	e.Lock()
+	defer e.Unlock()
 	if e.hasFlag(bound) {
-		e.Unlock()
 		return fmt.Errorf(ErrNameAlreadyBound, e.name)
 	}
 	e.value = v
-	e.setFlag(bound)
-	e.Unlock()
+	e.setFlag(bound | resolved)
 	return nil
 }
 
 func (e *entry) IsBound() bool {
-	e.RLock()
-	res := e.hasFlag(bound)
-	e.RUnlock()
-	return res
+	return e.hasFlag(bound)
 }
 
 func (e *entry) IsPrivate() bool {
-	e.RLock()
-	res := e.hasFlag(private)
-	e.RUnlock()
-	return res
+	return e.hasFlag(private)
+}
+
+func (e *entry) snapshot() (*entry, error) {
+	e.Lock()
+	defer e.Unlock()
+	if e.hasFlag(bound) {
+		return e, nil
+	}
+
+	if e.hasFlag(resolved) {
+		return nil, fmt.Errorf(ErrSnapshotIncomplete, e.name)
+	}
+
+	return &entry{
+		name:  e.name,
+		value: e.value,
+		flags: e.flags,
+	}, nil
+}
+
+func (e *entry) markResolved() {
+	if !e.hasFlag(resolved) {
+		e.setFlag(resolved)
+	}
 }
 
 func (e *entry) hasFlag(flag entryFlag) bool {
-	return e.flags&flag != 0
+	return flag == 0 || atomic.LoadUint64((*uint64)(&e.flags))&uint64(flag) != 0
 }
 
 func (e *entry) setFlag(flag entryFlag) {
-	e.flags |= flag
+	atomic.OrUint64((*uint64)(&e.flags), uint64(flag))
 }

@@ -51,23 +51,21 @@ func Into(e *env.Environment) {
 
 // ProcessEnv binds *env* to the operating system's environment variables
 func ProcessEnv(e *env.Environment) {
-	ns := e.GetRoot()
-	_ = ns.Declare("*env*").Bind(builtin.Env())
+	mustBindPublic(e.GetRoot(), "*env*", builtin.Env())
 }
 
 // ProcessArgs binds *args* to the current Go app's command line arguments
 func ProcessArgs(e *env.Environment) {
-	ns := e.GetRoot()
-	_ = ns.Declare("*args*").Bind(builtin.Args())
+	mustBindPublic(e.GetRoot(), "*args*", builtin.Args())
 }
 
 // StandardIO binds *in*, *out*, and *err* to the operating system's standard
 // input and output facilities
 func StandardIO(e *env.Environment) {
 	ns := e.GetRoot()
-	_ = ns.Declare("*in*").Bind(stream.NewReader(os.Stdin, stream.LineInput))
-	_ = ns.Declare("*out*").Bind(stream.NewWriter(os.Stdout, stream.StrOutput))
-	_ = ns.Declare("*err*").Bind(stream.NewWriter(os.Stderr, stream.StrOutput))
+	mustBindPublic(ns, "*in*", stream.NewReader(os.Stdin, stream.LineInput))
+	mustBindPublic(ns, "*out*", stream.NewWriter(os.Stdout, stream.StrOutput))
+	mustBindPublic(ns, "*err*", stream.NewWriter(os.Stderr, stream.StrOutput))
 }
 
 // DevNull binds *in*, *out*, and *err* to the operating system's bit bucket
@@ -75,9 +73,9 @@ func StandardIO(e *env.Environment) {
 func DevNull(e *env.Environment) {
 	ns := e.GetRoot()
 	devNull, _ := os.OpenFile(os.DevNull, os.O_RDWR, 0666)
-	_ = ns.Declare("*in*").Bind(stream.NewReader(devNull, stream.LineInput))
-	_ = ns.Declare("*out*").Bind(stream.NewWriter(devNull, stream.StrOutput))
-	_ = ns.Declare("*err*").Bind(stream.NewWriter(devNull, stream.StrOutput))
+	mustBindPublic(ns, "*in*", stream.NewReader(devNull, stream.LineInput))
+	mustBindPublic(ns, "*out*", stream.NewWriter(devNull, stream.StrOutput))
+	mustBindPublic(ns, "*err*", stream.NewWriter(devNull, stream.StrOutput))
 }
 
 // TopLevelEnvironment configures an environment that could be used at the

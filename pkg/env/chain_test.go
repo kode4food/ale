@@ -15,12 +15,12 @@ func TestSnapshot(t *testing.T) {
 
 	e1 := env.NewEnvironment()
 	root := e1.GetRoot()
-	as.Nil(root.Declare("public-parent").Bind(data.True))
-	as.Nil(root.Private("private-parent").Bind(data.True))
+	as.Nil(env.BindPublic(root, "public-parent", data.True))
+	as.Nil(env.BindPrivate(root, "private-parent", data.True))
 
 	ns1 := e1.GetQualified("some-ns")
-	as.Nil(ns1.Declare("public-child").Bind(data.True))
-	as.Nil(ns1.Private("private-child").Bind(data.True))
+	as.Nil(env.BindPublic(ns1, "public-child", data.True))
+	as.Nil(env.BindPrivate(ns1, "private-child", data.True))
 
 	e2 := env.NewEnvironment()
 	ns2, err := ns1.Snapshot(e2)
@@ -28,7 +28,7 @@ func TestSnapshot(t *testing.T) {
 	as.Equal(LS("some-ns"), ns2.Domain())
 	as.Equal(e2, ns2.Environment())
 
-	as.Nil(ns2.Declare("second-child").Bind(data.True))
+	as.Nil(env.BindPublic(ns2, "second-child", data.True))
 	as.NotNil(ns2)
 	as.Nil(err)
 
@@ -47,8 +47,9 @@ func TestChainedSnapshotErrors(t *testing.T) {
 	ns1 := e1.GetQualified("some-ns")
 
 	sym1 := data.Local("was-unbound-but-resolved")
-	e := ns1.Declare(sym1)
+	e, err := ns1.Public(sym1)
 	as.IsNotBound(ns1, sym1)
+	as.Nil(err)
 
 	e2, err := e1.Snapshot()
 	as.Nil(e2)
@@ -60,8 +61,9 @@ func TestChainedSnapshotErrors(t *testing.T) {
 	as.Nil(err)
 
 	sym2 := data.Local("also-unbound-but-resolved")
-	root.Declare(sym2)
+	_, err = root.Public(sym2)
 	as.IsNotBound(root, sym2)
+	as.Nil(err)
 
 	_, err = ns1.Snapshot(env.NewEnvironment())
 	as.EqualError(err, fmt.Sprintf(env.ErrSnapshotIncomplete, sym2))

@@ -66,5 +66,5 @@ func testMacroExpandWith(t *testing.T, enc special.Call) {
 	as.Equal("some-sym", s.String())
 	f, ok := c[1].(data.Procedure)
 	as.True(ok)
-	as.Equal("(ale/declare* some-sym)", data.ToString(f.Call(neq)))
+	as.Equal("(ale/public* some-sym)", data.ToString(f.Call(neq)))
 }

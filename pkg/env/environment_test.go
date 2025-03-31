@@ -11,7 +11,7 @@ import (
 )
 
 func mustResolveSymbol(ns env.Namespace, s data.Symbol) env.Entry {
-	entry, err := env.ResolveSymbol(ns, s)
+	entry, _, err := env.ResolveSymbol(ns, s)
 	if err != nil {
 		panic(err)
 	}
@@ -23,20 +23,20 @@ func TestResolveSymbol(t *testing.T) {
 
 	e := env.NewEnvironment()
 	root := e.GetRoot()
-	as.Nil(root.Declare("public-parent").Bind(data.True))
-	as.Nil(root.Private("private-parent").Bind(data.True))
+	as.Nil(env.BindPublic(root, "public-parent", data.True))
+	as.Nil(env.BindPrivate(root, "private-parent", data.True))
 
 	ns := e.GetAnonymous()
-	as.Nil(ns.Declare("public-child").Bind(data.True))
-	as.Nil(ns.Private("private-child").Bind(data.True))
+	as.Nil(env.BindPublic(ns, "public-child", data.True))
+	as.Nil(env.BindPrivate(ns, "private-child", data.True))
 
-	_, err := env.ResolveSymbol(ns, LS("public-child"))
+	_, _, err := env.ResolveSymbol(ns, LS("public-child"))
 	as.Nil(err)
 
 	ent := mustResolveSymbol(ns, LS("private-child"))
 	as.NotNil(ent)
 
-	_, err = env.ResolveSymbol(ns, LS("public-parent"))
+	_, _, err = env.ResolveSymbol(ns, LS("public-parent"))
 	as.Nil(err)
 
 	ls := LS("private-parent")
@@ -49,12 +49,12 @@ func TestResolveValue(t *testing.T) {
 
 	e := env.NewEnvironment()
 	root := e.GetRoot()
-	as.Nil(root.Declare("public-parent").Bind(data.True))
-	as.Nil(root.Private("private-parent").Bind(data.True))
+	as.Nil(env.BindPublic(root, "public-parent", data.True))
+	as.Nil(env.BindPrivate(root, "private-parent", data.True))
 
 	ns := e.GetAnonymous()
-	as.Nil(ns.Declare("public-child").Bind(data.True))
-	as.Nil(ns.Private("private-child").Bind(data.True))
+	as.Nil(env.BindPublic(ns, "public-child", data.True))
+	as.Nil(env.BindPrivate(ns, "private-child", data.True))
 
 	res, err := env.ResolveValue(ns, LS("public-child"))
 	as.True(res)

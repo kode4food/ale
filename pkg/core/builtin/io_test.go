@@ -22,7 +22,7 @@ func testOutput(t *testing.T, src, expected string) {
 
 	e := env.NewEnvironment()
 	ns := e.GetRoot()
-	as.Nil(ns.Declare(stdoutName).Bind(O(
+	as.Nil(env.BindPublic(ns, stdoutName, O(
 		C(stream.WriteKey, w),
 	)))
 	bootstrap.Into(e)

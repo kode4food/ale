@@ -10,7 +10,7 @@ type (
 	// Environment maintains a mapping of domain names to namespaces
 	Environment struct {
 		data map[data.Local]Namespace
-		sync.Mutex
+		sync.RWMutex
 	}
 
 	// Resolver resolves a namespace instance
@@ -38,6 +38,8 @@ func NewEnvironment() *Environment {
 }
 
 func (e *Environment) Domains() data.Locals {
+	e.RLock()
+	defer e.RUnlock()
 	res := make(data.Locals, 0, len(e.data))
 	for k := range e.data {
 		res = append(res, k)
@@ -46,19 +48,18 @@ func (e *Environment) Domains() data.Locals {
 }
 
 func (e *Environment) Snapshot() (*Environment, error) {
-	e.Lock()
+	e.RLock()
+	defer e.RUnlock()
 	res := &Environment{
 		data: make(map[data.Local]Namespace, len(e.data)),
 	}
 	for k, v := range e.data {
 		s, err := v.Snapshot(res)
 		if err != nil {
-			e.Unlock()
 			return nil, err
 		}
 		res.data[k] = s
 	}
-	e.Unlock()
 	return res, nil
 }
 
@@ -73,14 +74,19 @@ func (e *Environment) New(n data.Local) Namespace {
 
 // Get returns a mapped namespace or instantiates a new one to be cached
 func (e *Environment) Get(domain data.Local, res Resolver) Namespace {
-	e.Lock()
+	e.RLock()
 	if r, ok := e.data[domain]; ok {
-		e.Unlock()
+		e.RUnlock()
+		return r
+	}
+	e.RUnlock()
+	e.Lock()
+	defer e.Unlock()
+	if r, ok := e.data[domain]; ok {
 		return r
 	}
 	r := res()
 	e.data[domain] = r
-	e.Unlock()
 	return r
 }
 
@@ -113,7 +119,7 @@ func (e *Environment) GetQualified(n data.Local) Namespace {
 // ResolveSymbol attempts to resolve a symbol. If it's a qualified symbol, it
 // will be retrieved directly from the identified namespace. Otherwise, it will
 // be searched in the current namespace
-func ResolveSymbol(ns Namespace, s data.Symbol) (Entry, error) {
+func ResolveSymbol(ns Namespace, s data.Symbol) (Entry, Namespace, error) {
 	if q, ok := s.(data.Qualified); ok {
 		e := ns.Environment()
 		qns := e.GetQualified(q.Domain())
@@ -124,7 +130,7 @@ func ResolveSymbol(ns Namespace, s data.Symbol) (Entry, error) {
 
 // ResolveValue attempts to resolve a symbol to a bound value
 func ResolveValue(ns Namespace, s data.Symbol) (data.Value, error) {
-	e, err := ResolveSymbol(ns, s)
+	e, _, err := ResolveSymbol(ns, s)
 	if err != nil {
 		return nil, err
 	}

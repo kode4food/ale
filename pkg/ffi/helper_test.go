@@ -6,6 +6,7 @@ import (
 	"github.com/kode4food/ale/internal/assert"
 	"github.com/kode4food/ale/pkg/core/bootstrap"
 	"github.com/kode4food/ale/pkg/data"
+	"github.com/kode4food/ale/pkg/env"
 	"github.com/kode4food/ale/pkg/eval"
 	"github.com/kode4food/ale/pkg/ffi"
 )
@@ -26,13 +27,13 @@ func NewWrapped(t *testing.T) *EvalWrapped {
 	}
 }
 
-func (e *EvalWrapped) EvalTo(src string, env Env, expect data.Value) {
+func (e *EvalWrapped) EvalTo(src string, en Env, expect data.Value) {
 	e.Helper()
 	ns := testEnv.GetAnonymous()
-	for n, v := range env {
+	for n, v := range en {
 		v, err := ffi.Wrap(v)
 		e.Nil(err)
-		e.Nil(ns.Declare(n).Bind(v))
+		e.Nil(env.BindPublic(ns, n, v))
 	}
 	res, err := eval.String(ns, data.String(src))
 	e.Nil(err)

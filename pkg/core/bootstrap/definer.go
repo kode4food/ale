@@ -7,6 +7,7 @@ import (
 	"github.com/kode4food/ale/internal/compiler/generate"
 	"github.com/kode4food/ale/internal/compiler/special"
 	"github.com/kode4food/ale/pkg/data"
+	"github.com/kode4food/ale/pkg/env"
 )
 
 const (
@@ -18,13 +19,13 @@ const (
 func (b *bootstrap) populateDefiners() {
 	ns := b.environment.GetRoot()
 
-	_ = ns.Private(defBuiltInName).Bind(
+	mustBindPrivate(ns, defBuiltInName,
 		makeDefiner(b.procMap, ErrBuiltInNotFound),
 	)
-	_ = ns.Private(defSpecialName).Bind(
+	mustBindPrivate(ns, defSpecialName,
 		makeDefiner(b.specialMap, ErrSpecialNotFound),
 	)
-	_ = ns.Private(defMacroName).Bind(
+	mustBindPrivate(ns, defMacroName,
 		makeDefiner(b.macroMap, ErrMacroNotFound),
 	)
 }
@@ -36,11 +37,23 @@ func makeDefiner[T data.Value](m map[data.Local]T, errStr string) special.Call {
 		}
 		n := args[0].(data.Local)
 		if sf, ok := m[n]; ok {
-			if err := e.Globals().Declare(n).Bind(sf); err != nil {
+			if err := env.BindPublic(e.Globals(), n, sf); err != nil {
 				return err
 			}
 			return generate.Symbol(e, n)
 		}
 		return fmt.Errorf(errStr, n)
+	}
+}
+
+func mustBindPublic(ns env.Namespace, n data.Local, v data.Value) {
+	if err := env.BindPublic(ns, n, v); err != nil {
+		panic(err)
+	}
+}
+
+func mustBindPrivate(ns env.Namespace, n data.Local, v data.Value) {
+	if err := env.BindPrivate(ns, n, v); err != nil {
+		panic(err)
 	}
 }

@@ -30,7 +30,7 @@ func getInlineTestNamespace() env.Namespace {
 		enc := encoder.NewEncoder(ns)
 		fn(enc)
 		proc := mustFromEncoded(enc.Encode())
-		_ = ns.Declare(n).Bind(proc.Call(a...))
+		_ = env.BindPublic(ns, n, proc.Call(a...))
 	}
 
 	// only uses args, no jumps

@@ -5,19 +5,22 @@ import (
 
 	"github.com/kode4food/ale/internal/assert"
 	"github.com/kode4food/ale/pkg/data"
+	"github.com/kode4food/ale/pkg/env"
 )
 
 func TestIsBound(t *testing.T) {
 	as := assert.New(t)
 	ns := assert.GetTestNamespace()
-	as.Nil(ns.Declare("found").Bind(data.True))
+	as.Nil(env.BindPublic(ns, "found", data.True))
 	as.True(as.IsBound(ns, "found"))
 }
 
 func TestIsNotBound(t *testing.T) {
 	as := assert.New(t)
 	ns := assert.GetTestNamespace()
-	as.NotNil(ns.Declare("not-bound"))
+	e, err := ns.Public("not-bound")
+	as.NotNil(e)
+	as.Nil(err)
 	as.IsNotBound(ns, "not-bound")
 }
 

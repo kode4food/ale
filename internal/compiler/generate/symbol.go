@@ -61,7 +61,7 @@ func resolveLocal(
 }
 
 func resolveGlobal(e encoder.Encoder, s data.Symbol) error {
-	entry, err := env.ResolveSymbol(e.Globals(), s)
+	entry, _, err := env.ResolveSymbol(e.Globals(), s)
 	if err != nil {
 		return err
 	}

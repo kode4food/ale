@@ -38,7 +38,7 @@ func TestMakeRestSpecial(t *testing.T) {
 	as := assert.New(t)
 
 	as.MustEvalTo(`
-		(define* test
+        (define* test
 			(special*
 				[(head . rest)
 					.eval head]))

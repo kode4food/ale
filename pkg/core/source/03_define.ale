@@ -58,8 +58,8 @@
           (map! func (cdr coll)))))
 
 (define-macro declare
-  [(name) `(declare* ,name)]
-  [names `(begin ,@(map! (lambda (n) (list 'ale/declare* n)) names))])
+  [(name) `(public* ,name)]
+  [names `(begin ,@(map! (lambda (n) (list 'ale/public* n)) names))])
 
 (define-macro private
   [(name) `(private* ,name)]

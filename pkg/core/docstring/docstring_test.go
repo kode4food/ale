@@ -27,15 +27,16 @@ func TestDocString(t *testing.T) {
 func TestDocumentedBuiltinsExist(t *testing.T) {
 	as := assert.New(t)
 	ns := assert.GetTestNamespace()
-	as.Nil(ns.Declare("doc").Bind(data.Null)) // special case for REPL
+	as.Nil(env.BindPublic(ns, "doc", data.Null)) // special case for REPL
 
 	for _, name := range docstring.Names() {
 		d, _ := docstring.Get(name)
 		if strings.Contains(d, "draft: true") {
 			continue
 		}
-		res, err := env.ResolveSymbol(ns, LS(name))
+		res, in, err := env.ResolveSymbol(ns, LS(name))
 		as.NotNil(res)
+		as.NotNil(in)
 		as.Nil(err)
 	}
 }
