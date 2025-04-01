@@ -25,10 +25,6 @@ type (
 		domain      data.Local
 		sync.RWMutex
 	}
-
-	anonymous struct {
-		Namespace
-	}
 )
 
 const (

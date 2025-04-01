@@ -91,10 +91,7 @@ func (e *Environment) GetRoot() Namespace {
 
 // GetAnonymous returns an anonymous (non-resolvable) namespace
 func (e *Environment) GetAnonymous() Namespace {
-	root := e.GetRoot()
-	return chain(root, &anonymous{
-		Namespace: e.newNamespace(AnonymousDomain),
-	})
+	return chain(e.GetRoot(), e.newNamespace(AnonymousDomain))
 }
 
 // GetQualified returns the namespace for the specified domain.
