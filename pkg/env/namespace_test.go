@@ -81,3 +81,32 @@ func TestBinding(t *testing.T) {
 	as.Nil(err)
 	as.String("some-value", v)
 }
+
+func TestRedeclaration(t *testing.T) {
+	as := assert.New(t)
+	e := env.NewEnvironment()
+	root := e.GetRoot()
+	d1, err := root.Public("some-name")
+	as.NotNil(d1)
+	as.Nil(err)
+
+	d2, err := root.Public("some-name")
+	as.NotNil(d2)
+	as.Nil(err)
+	as.Equal(d1, d2)
+
+	_, err = root.Private("some-name")
+	as.EqualError(err, fmt.Sprintf(env.ErrNameAlreadyDeclared, "some-name"))
+
+	d3, err := root.Private("other-name")
+	as.NotNil(d3)
+	as.Nil(err)
+
+	d4, err := root.Private("other-name")
+	as.NotNil(d4)
+	as.Nil(err)
+	as.Equal(d3, d4)
+
+	_, err = root.Public("other-name")
+	as.EqualError(err, fmt.Sprintf(env.ErrNameAlreadyDeclared, "other-name"))
+}

@@ -62,26 +62,26 @@ func (ns *namespace) Declared() data.Locals {
 }
 
 func (ns *namespace) Public(n data.Local) (Entry, error) {
-	return ns.declare(n, public)
+	return ns.declare(n, false)
 }
 
 func (ns *namespace) Private(n data.Local) (Entry, error) {
-	return ns.declare(n, private)
+	return ns.declare(n, true)
 }
 
-func (ns *namespace) declare(n data.Local, f entryFlag) (*entry, error) {
+func (ns *namespace) declare(n data.Local, makePrivate bool) (*entry, error) {
 	ns.Lock()
 	if e, ok := ns.entries[n]; ok {
-		if e.hasFlag(f) {
+		if e.hasFlag(private) == makePrivate {
 			ns.Unlock()
 			return e, nil
 		}
 		ns.Unlock()
 		return nil, fmt.Errorf(ErrNameAlreadyDeclared, n)
 	}
-	e := &entry{
-		name:  n,
-		flags: f,
+	e := &entry{name: n}
+	if makePrivate {
+		e.flags = private
 	}
 	ns.entries[n] = e
 	ns.Unlock()
