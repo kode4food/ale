@@ -10,22 +10,12 @@ import (
 
 type (
 	// Entry represents a namespace entry
-	Entry interface {
-		Name() data.Local
-		Value() (data.Value, error)
-		Bind(data.Value) error
-		IsBound() bool
-		IsPrivate() bool
-	}
-
-	entry struct {
+	Entry struct {
 		value data.Value
 		name  data.Local
 		flags entryFlag
 		sync.RWMutex
 	}
-
-	entries map[data.Local]*entry
 
 	entryFlag uint64
 )
@@ -46,18 +36,18 @@ const (
 	bound
 )
 
-func (e *entry) Name() data.Local {
+func (e *Entry) Name() data.Local {
 	return e.name
 }
 
-func (e *entry) Value() (data.Value, error) {
+func (e *Entry) Value() (data.Value, error) {
 	if e.hasFlag(bound) {
 		return e.value, nil
 	}
 	return nil, fmt.Errorf(ErrNameNotBound, e.name)
 }
 
-func (e *entry) Bind(v data.Value) error {
+func (e *Entry) Bind(v data.Value) error {
 	e.Lock()
 	if e.hasFlag(bound) {
 		e.Unlock()
@@ -69,30 +59,30 @@ func (e *entry) Bind(v data.Value) error {
 	return nil
 }
 
-func (e *entry) IsBound() bool {
+func (e *Entry) IsBound() bool {
 	return e.hasFlag(bound)
 }
 
-func (e *entry) IsPrivate() bool {
+func (e *Entry) IsPrivate() bool {
 	return e.hasFlag(private)
 }
 
-func (e *entry) snapshot() *entry {
+func (e *Entry) snapshot() *Entry {
 	if e.hasFlag(bound) {
 		return e
 	}
 
-	return &entry{
+	return &Entry{
 		name:  e.name,
 		value: e.value,
 		flags: e.flags,
 	}
 }
 
-func (e *entry) hasFlag(flag entryFlag) bool {
+func (e *Entry) hasFlag(flag entryFlag) bool {
 	return flag == 0 || atomic.LoadUint64((*uint64)(&e.flags))&uint64(flag) != 0
 }
 
-func (e *entry) setFlag(flag entryFlag) {
+func (e *Entry) setFlag(flag entryFlag) {
 	atomic.OrUint64((*uint64)(&e.flags), uint64(flag))
 }

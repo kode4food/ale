@@ -21,7 +21,7 @@ func (ns *chainedNamespace) Snapshot(e *Environment) Namespace {
 	}
 }
 
-func (ns *chainedNamespace) Resolve(n data.Local) (Entry, Namespace, error) {
+func (ns *chainedNamespace) Resolve(n data.Local) (*Entry, Namespace, error) {
 	if e, in, err := ns.Namespace.Resolve(n); err == nil {
 		return e, in, nil
 	}

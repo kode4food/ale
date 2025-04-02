@@ -116,7 +116,7 @@ func (e *Environment) newNamespace(n data.Local) Namespace {
 // ResolveSymbol attempts to resolve a symbol. If it's a qualified symbol, it
 // will be retrieved directly from the identified namespace. Otherwise, it will
 // be searched in the current namespace
-func ResolveSymbol(ns Namespace, s data.Symbol) (Entry, Namespace, error) {
+func ResolveSymbol(ns Namespace, s data.Symbol) (*Entry, Namespace, error) {
 	if q, ok := s.(data.Qualified); ok {
 		e := ns.Environment()
 		qns := e.GetQualified(q.Domain())

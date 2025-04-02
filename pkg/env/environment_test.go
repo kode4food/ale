@@ -10,7 +10,7 @@ import (
 	"github.com/kode4food/ale/pkg/env"
 )
 
-func mustResolveSymbol(ns env.Namespace, s data.Symbol) env.Entry {
+func mustResolveSymbol(ns env.Namespace, s data.Symbol) *env.Entry {
 	entry, _, err := env.ResolveSymbol(ns, s)
 	if err != nil {
 		panic(err)
