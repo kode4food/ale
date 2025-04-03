@@ -31,7 +31,6 @@ const (
 )
 
 const (
-	public  entryFlag = 0
 	private entryFlag = 1 << iota
 	bound
 )
