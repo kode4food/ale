@@ -162,8 +162,8 @@ func (o *Object) copyWithChildAt(idx int, child *Object) *Object {
 }
 
 func (o *Object) promote() *Object {
-	if o.children.IsEmpty() {
-		return nil
+	if o == nil || o.children.IsEmpty() {
+		return EmptyObject
 	}
 
 	low := o.children.LowIndex()
@@ -178,33 +178,18 @@ func (o *Object) Car() Value {
 	if o == nil {
 		return Null
 	}
-	if f := o.pair; f != nil {
-		return f
-	}
-	return Null
+	return o.pair
 }
 
 func (o *Object) Cdr() Value {
-	if o == nil {
-		return EmptyObject
-	}
-	if r := o.promote(); r != nil {
-		return r
-	}
-	return EmptyObject
+	return o.promote()
 }
 
 func (o *Object) Split() (Value, Sequence, bool) {
 	if o == nil {
 		return Null, EmptyObject, false
 	}
-	if f := o.pair; f != nil {
-		if r := o.promote(); r != nil {
-			return f, r, true
-		}
-		return f, EmptyObject, true
-	}
-	return Null, EmptyObject, false
+	return o.pair, o.promote(), true
 }
 
 func (o *Object) Count() Integer {
