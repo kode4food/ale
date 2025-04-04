@@ -280,3 +280,19 @@ func BenchmarkObjectOperations(b *testing.B) {
 		}
 	}
 }
+
+func BenchmarkObjectGet(b *testing.B) {
+	o1 := data.EmptyObject
+	var k [1000]data.Keyword
+	for i := range 1000 {
+		k[i] = K(fmt.Sprintf("key-%d", i))
+		v := S(fmt.Sprintf("value-%d", i))
+		o1 = o1.Put(C(k[i], v)).(*data.Object)
+	}
+
+	for range b.N {
+		for i := range 1000 {
+			_, _ = o1.Get(k[i])
+		}
+	}
+}

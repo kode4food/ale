@@ -13,6 +13,7 @@ import (
 // Object maps a set of Values, known as keys, to another set of Values
 type Object struct {
 	pair     Pair
+	keyHash  uint64
 	children *data.SparseSlice[*Object]
 	hash     uint64
 }
@@ -71,44 +72,47 @@ func (o *Object) Get(k Value) (Value, bool) {
 		return Null, false
 	}
 	h := HashCode(k)
-	return o.get(k, h)
+	return o.get(k, h, h)
 }
 
-func (o *Object) get(k Value, hash uint64) (Value, bool) {
-	if o.pair.Car().Equal(k) {
+func (o *Object) get(k Value, kh, shifted uint64) (Value, bool) {
+	if o.keyHash == kh && o.pair.Car().Equal(k) {
 		return o.pair.Cdr(), true
 	}
-	idx := int(hash & bucketMask)
+
+	idx := int(shifted & bucketMask)
 	if bucket, ok := o.children.Get(idx); ok {
-		return bucket.get(k, hash>>bucketBits)
+		return bucket.get(k, kh, shifted>>bucketBits)
 	}
 	return Null, false
 }
 
 func (o *Object) Put(p Pair) Sequence {
+	h := HashCode(p.Car())
 	if o == nil {
 		return &Object{
-			pair: p,
+			pair:    p,
+			keyHash: h,
 		}
 	}
-	h := HashCode(p.Car())
-	return o.put(p, h)
+	return o.put(p, h, h)
 }
 
-func (o *Object) put(p Pair, hash uint64) *Object {
-	if o.pair.Car().Equal(p.Car()) {
+func (o *Object) put(p Pair, kh, shifted uint64) *Object {
+	if o.keyHash == kh && o.pair.Car().Equal(p.Car()) {
 		return &Object{
 			pair:     p,
+			keyHash:  kh,
 			children: o.children,
 		}
 	}
 
-	idx := int(hash & bucketMask)
+	idx := int(shifted & bucketMask)
 	bucket, ok := o.children.Get(idx)
 	if ok {
-		bucket = bucket.put(p, hash>>bucketBits)
+		bucket = bucket.put(p, kh, shifted>>bucketBits)
 	} else {
-		bucket = &Object{pair: p}
+		bucket = &Object{pair: p, keyHash: kh}
 	}
 
 	// return a copy with the new bucket
@@ -123,7 +127,7 @@ func (o *Object) Remove(k Value) (Value, Sequence, bool) {
 		return Null, EmptyObject, false
 	}
 	h := HashCode(k)
-	if v, r, ok := o.remove(k, h); ok {
+	if v, r, ok := o.remove(k, h, h); ok {
 		if r != nil {
 			return v, r, true
 		}
@@ -132,14 +136,14 @@ func (o *Object) Remove(k Value) (Value, Sequence, bool) {
 	return Null, o, false
 }
 
-func (o *Object) remove(k Value, hash uint64) (Value, *Object, bool) {
-	if o.pair.Car().Equal(k) {
+func (o *Object) remove(k Value, kh, shifted uint64) (Value, *Object, bool) {
+	if o.keyHash == kh && o.pair.Car().Equal(k) {
 		return o.pair.Cdr(), o.promote(), true
 	}
 
-	idx := int(hash & bucketMask)
+	idx := int(shifted & bucketMask)
 	if bucket, ok := o.children.Get(idx); ok {
-		if v, r, ok := bucket.remove(k, hash>>bucketBits); ok {
+		if v, r, ok := bucket.remove(k, kh, shifted>>bucketBits); ok {
 			return v, o.copyWithChildAt(idx, r), true
 		}
 	}
@@ -166,6 +170,7 @@ func (o *Object) promote() *Object {
 	c, _ := o.children.Get(low)
 	res := o.copyWithChildAt(low, c.promote())
 	res.pair = c.pair
+	res.keyHash = c.keyHash
 	return res
 }
 
@@ -266,7 +271,7 @@ func (o *Object) hashCode() uint64 {
 	if h := atomic.LoadUint64(&o.hash); h != 0 {
 		return h
 	}
-	res := HashCode(o.pair.Car()) ^ HashCode(o.pair.Cdr())
+	res := o.keyHash ^ HashCode(o.pair.Cdr())
 	for _, c := range o.childObjects() {
 		res ^= c.hashCode()
 	}
