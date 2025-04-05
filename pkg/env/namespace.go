@@ -67,19 +67,19 @@ func (ns *namespace) Private(n data.Local) (*Entry, error) {
 	return ns.declare(n, true)
 }
 
-func (ns *namespace) declare(n data.Local, makePrivate bool) (*Entry, error) {
+func (ns *namespace) declare(n data.Local, asPrivate bool) (*Entry, error) {
 	ns.Lock()
 	if e, ok := ns.entries[n]; ok {
-		if e.hasFlag(private) == makePrivate {
+		if e.private == asPrivate {
 			ns.Unlock()
 			return e, nil
 		}
 		ns.Unlock()
 		return nil, fmt.Errorf(ErrNameAlreadyDeclared, n)
 	}
-	e := &Entry{name: n}
-	if makePrivate {
-		e.flags = private
+	e := &Entry{
+		name:    n,
+		private: asPrivate,
 	}
 	ns.entries[n] = e
 	ns.Unlock()

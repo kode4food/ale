@@ -11,13 +11,12 @@ import (
 type (
 	// Entry represents a namespace entry
 	Entry struct {
-		value data.Value
-		name  data.Local
-		flags entryFlag
-		sync.RWMutex
+		value   data.Value
+		name    data.Local
+		private bool
+		bound   atomic.Bool
+		sync.Mutex
 	}
-
-	entryFlag uint64
 )
 
 const (
@@ -30,17 +29,12 @@ const (
 	ErrNameNotBound = "name is not bound in namespace: %s"
 )
 
-const (
-	private entryFlag = 1 << iota
-	bound
-)
-
 func (e *Entry) Name() data.Local {
 	return e.name
 }
 
 func (e *Entry) Value() (data.Value, error) {
-	if e.hasFlag(bound) {
+	if e.bound.Load() {
 		return e.value, nil
 	}
 	return nil, fmt.Errorf(ErrNameNotBound, e.name)
@@ -48,40 +42,31 @@ func (e *Entry) Value() (data.Value, error) {
 
 func (e *Entry) Bind(v data.Value) error {
 	e.Lock()
-	if e.hasFlag(bound) {
+	if e.bound.Load() {
 		e.Unlock()
 		return fmt.Errorf(ErrNameAlreadyBound, e.name)
 	}
 	e.value = v
-	e.setFlag(bound)
+	e.bound.Store(true)
 	e.Unlock()
 	return nil
 }
 
 func (e *Entry) IsBound() bool {
-	return e.hasFlag(bound)
+	return e.bound.Load()
 }
 
 func (e *Entry) IsPrivate() bool {
-	return e.hasFlag(private)
+	return e.private
 }
 
 func (e *Entry) snapshot() *Entry {
-	if e.hasFlag(bound) {
+	if e.bound.Load() {
 		return e
 	}
 
 	return &Entry{
-		name:  e.name,
-		value: e.value,
-		flags: e.flags,
+		name:    e.name,
+		private: e.private,
 	}
-}
-
-func (e *Entry) hasFlag(flag entryFlag) bool {
-	return flag == 0 || atomic.LoadUint64((*uint64)(&e.flags))&uint64(flag) != 0
-}
-
-func (e *Entry) setFlag(flag entryFlag) {
-	atomic.OrUint64((*uint64)(&e.flags), uint64(flag))
 }
