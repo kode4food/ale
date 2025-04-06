@@ -15,21 +15,21 @@ const (
 
 // Once creates a Do instance for performing an action only once
 func Once() Action {
-	var state = doneNever
+	var state atomic.Uint32
 	var mutex sync.Mutex
 
 	execLocked := func(f func()) {
 		mutex.Lock()
 		defer mutex.Unlock()
 
-		if state == doneNever {
-			defer atomic.StoreUint32(&state, doneOnce)
+		if state.Load() == doneNever {
+			defer state.Store(doneOnce)
 			f()
 		}
 	}
 
 	return func(f func()) {
-		if atomic.LoadUint32(&state) == doneNever {
+		if state.Load() == doneNever {
 			execLocked(f)
 		}
 	}

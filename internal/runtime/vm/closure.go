@@ -16,7 +16,7 @@ type (
 	Closure struct {
 		*Procedure
 		captured data.Vector
-		hash     uint64
+		hash     atomic.Uint64
 	}
 
 	argStack struct {
@@ -386,7 +386,7 @@ func (c *Closure) Equal(other data.Value) bool {
 }
 
 func (c *Closure) HashCode() uint64 {
-	if h := atomic.LoadUint64(&c.hash); h != 0 {
+	if h := c.hash.Load(); h != 0 {
 		return h
 	}
 	res := c.Procedure.HashCode()
@@ -394,7 +394,7 @@ func (c *Closure) HashCode() uint64 {
 		res ^= data.HashCode(v)
 		res ^= data.HashInt(i)
 	}
-	atomic.StoreUint64(&c.hash, res)
+	c.hash.Store(res)
 	return res
 }
 

@@ -14,7 +14,7 @@ import (
 type Procedure struct {
 	ArityChecker data.ArityChecker
 	isa.Runnable
-	hash uint64
+	hash atomic.Uint64
 }
 
 var procedureHash = rand.Uint64()
@@ -63,7 +63,7 @@ func (p *Procedure) Equal(other data.Value) bool {
 }
 
 func (p *Procedure) HashCode() uint64 {
-	if h := atomic.LoadUint64(&p.hash); h != 0 {
+	if h := p.hash.Load(); h != 0 {
 		return h
 	}
 	res := procedureHash
@@ -75,6 +75,6 @@ func (p *Procedure) HashCode() uint64 {
 		res ^= data.HashCode(c)
 		res ^= data.HashInt(i)
 	}
-	atomic.StoreUint64(&p.hash, res)
+	p.hash.Store(res)
 	return res
 }

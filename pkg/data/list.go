@@ -12,7 +12,7 @@ type List struct {
 	first Value
 	rest  *List
 	count Integer
-	hash  uint64
+	hash  atomic.Uint64
 }
 
 var (
@@ -139,8 +139,8 @@ func (l *List) Equal(other Value) bool {
 			if cl == other {
 				return true
 			}
-			lh := atomic.LoadUint64(&l.hash)
-			rh := atomic.LoadUint64(&other.hash)
+			lh := l.hash.Load()
+			rh := other.hash.Load()
 			if lh != 0 && rh != 0 && lh != rh {
 				return false
 			}
@@ -168,20 +168,20 @@ func (l *List) HashCode() uint64 {
 	if l == nil {
 		return nullHash
 	}
-	if h := atomic.LoadUint64(&l.hash); h != 0 {
+	if h := l.hash.Load(); h != 0 {
 		return h
 	}
 	var res uint64 = 0
 	for c := l; c != nil; c = c.rest {
-		if ch := atomic.LoadUint64(&c.hash); ch != 0 {
+		if ch := c.hash.Load(); ch != 0 {
 			res ^= ch
-			atomic.StoreUint64(&l.hash, res)
+			l.hash.Store(res)
 			return res
 		}
 		res ^= HashCode(c.first)
 		res ^= c.count.HashCode()
 	}
 	res ^= nullHash
-	atomic.StoreUint64(&l.hash, res)
+	l.hash.Store(res)
 	return res
 }

@@ -15,7 +15,7 @@ type Object struct {
 	pair     Pair
 	keyHash  uint64
 	children *data.SparseSlice[*Object]
-	hash     uint64
+	hash     atomic.Uint64
 }
 
 const (
@@ -115,11 +115,11 @@ func (o *Object) put(p Pair, kh, shifted uint64) *Object {
 		bucket = &Object{pair: p, keyHash: kh}
 	}
 
-	// return a copy with the new bucket
-	res := *o
-	res.children = res.children.Set(idx, bucket)
-	res.hash = 0
-	return &res
+	return &Object{
+		pair:     o.pair,
+		keyHash:  o.keyHash,
+		children: o.children.Set(idx, bucket),
+	}
 }
 
 func (o *Object) Remove(k Value) (Value, Sequence, bool) {
@@ -151,14 +151,17 @@ func (o *Object) remove(k Value, kh, shifted uint64) (Value, *Object, bool) {
 }
 
 func (o *Object) copyWithChildAt(idx int, child *Object) *Object {
-	res := *o
-	res.hash = 0
+	var children *data.SparseSlice[*Object]
 	if child != nil {
-		res.children = res.children.Set(idx, child)
+		children = o.children.Set(idx, child)
 	} else {
-		res.children = res.children.Unset(idx)
+		children = o.children.Unset(idx)
 	}
-	return &res
+	return &Object{
+		pair:     o.pair,
+		keyHash:  o.keyHash,
+		children: children,
+	}
 }
 
 func (o *Object) promote() *Object {
@@ -220,8 +223,8 @@ func (o *Object) Equal(other Value) bool {
 		if o == nil || other == nil || o == other {
 			return o == other
 		}
-		lh := atomic.LoadUint64(&o.hash)
-		rh := atomic.LoadUint64(&other.hash)
+		lh := o.hash.Load()
+		rh := other.hash.Load()
 		if lh != 0 && rh != 0 && lh != rh {
 			return false
 		}
@@ -253,14 +256,14 @@ func (o *Object) HashCode() uint64 {
 }
 
 func (o *Object) hashCode() uint64 {
-	if h := atomic.LoadUint64(&o.hash); h != 0 {
+	if h := o.hash.Load(); h != 0 {
 		return h
 	}
 	res := o.keyHash ^ HashCode(o.pair.Cdr())
 	for _, c := range o.childObjects() {
 		res ^= c.hashCode()
 	}
-	atomic.StoreUint64(&o.hash, res)
+	o.hash.Store(res)
 	return res
 }
 
