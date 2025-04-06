@@ -10,8 +10,11 @@
                  (thunk ,@body)
                  ,monitor))))
 
-(define-macro (go . body)
+(define-macro (go! . body)
   `(go-with-monitor raise ,@body))
+
+(define-macro (go . body)
+  `(go-with-monitor no-op ,@body))
 
 (define-macro (delay . body)
   `(promise* (thunk ,@body)))

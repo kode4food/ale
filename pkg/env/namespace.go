@@ -49,11 +49,12 @@ func (ns *namespace) Domain() data.Local {
 
 func (ns *namespace) Declared() data.Locals {
 	ns.RLock()
-	res := data.Locals{}
+	res := make(data.Locals, 0, len(ns.entries))
 	for _, e := range ns.entries {
-		if !e.IsPrivate() {
-			res = append(res, e.Name())
+		if e.IsPrivate() {
+			continue
 		}
+		res = append(res, e.Name())
 	}
 	ns.RUnlock()
 	return res.Sorted()

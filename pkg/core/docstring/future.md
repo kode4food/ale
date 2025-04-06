@@ -6,7 +6,7 @@ usage: "(future form*)"
 tags: ["concurrency"]
 ---
 
-Returns a future in the form of a function. The provided forms will be evaluated in a separate thread of execution, and any calls to the function **will block** until the forms have been completely evaluated.
+Returns a promise whose expressions are immediately evaluated in another thread of execution. 
 
 #### An Example
 
@@ -20,4 +20,4 @@ Returns a future in the form of a function. The provided forms will be evaluated
 (fut)
 ```
 
-This example produces a future called _fut_ that converts the results of an asynchronous block into a vector. The `(fut)` call will block until the future returns a value.
+This example produces a promise called _fut_ that converts the results of an asynchronous block into a vector. The `(fut)` call will block until the future returns a value.
