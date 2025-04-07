@@ -2,7 +2,6 @@ package async
 
 import (
 	"github.com/kode4food/ale/internal/do"
-	"github.com/kode4food/ale/internal/runtime"
 	"github.com/kode4food/ale/internal/types"
 	"github.com/kode4food/ale/pkg/data"
 )
@@ -40,7 +39,7 @@ func (p *Promise) Call(...data.Value) data.Value {
 	p.once(func() {
 		defer func() {
 			if rec := recover(); rec != nil {
-				p.result = runtime.NormalizeGoRuntimeError(rec)
+				p.result = rec
 				p.status = promiseFailed
 			}
 		}()

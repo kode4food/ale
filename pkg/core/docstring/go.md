@@ -2,7 +2,7 @@
 title: "go"
 description: "asynchronously evaluates a block"
 names: ["go"]
-usage: "(go form*) (go! form*) (go-with-monitor proc form*)"
+usage: "(go form*) (go! form*) (go-with-monitor func form*)"
 tags: ["concurrency"]
 ---
 
