@@ -7,6 +7,7 @@ import (
 	"sync/atomic"
 
 	"github.com/kode4food/ale/internal/data"
+	"github.com/kode4food/ale/internal/lang"
 	"github.com/kode4food/ale/internal/types"
 )
 
@@ -284,16 +285,16 @@ func (o *Object) pairs(p Pairs) Pairs {
 
 func (o *Object) String() string {
 	var buf strings.Builder
-	buf.WriteString("{")
+	buf.WriteString(lang.ObjectStart)
 	for i, p := range o.Pairs().sorted() {
 		if i > 0 {
-			buf.WriteString(" ")
+			buf.WriteString(lang.Space)
 		}
 		buf.WriteString(ToQuotedString(p.Car()))
-		buf.WriteString(" ")
+		buf.WriteString(lang.Space)
 		buf.WriteString(ToQuotedString(p.Cdr()))
 	}
-	buf.WriteString("}")
+	buf.WriteString(lang.ObjectEnd)
 	return buf.String()
 }
 

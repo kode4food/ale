@@ -5,6 +5,7 @@ import (
 	"slices"
 	"strings"
 
+	"github.com/kode4food/ale/internal/lang"
 	"github.com/kode4food/ale/internal/types"
 )
 
@@ -118,14 +119,14 @@ func (v Vector) Equal(other Value) bool {
 
 func (v Vector) String() string {
 	var b strings.Builder
-	b.WriteString("[")
+	b.WriteString(lang.VectorStart)
 	for i, e := range v {
 		if i > 0 {
-			b.WriteString(" ")
+			b.WriteString(lang.Space)
 		}
 		b.WriteString(ToQuotedString(e))
 	}
-	b.WriteString("]")
+	b.WriteString(lang.VectorEnd)
 	return b.String()
 }
 

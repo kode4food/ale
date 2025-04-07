@@ -4,6 +4,7 @@ import (
 	"cmp"
 	"strings"
 
+	"github.com/kode4food/ale/internal/lang"
 	"github.com/kode4food/ale/internal/types"
 	"github.com/kode4food/comb/basics"
 )
@@ -71,13 +72,13 @@ func (c *Cons) Equal(other Value) bool {
 
 func (c *Cons) String() string {
 	var buf strings.Builder
-	buf.WriteByte('(')
+	buf.WriteString(lang.ListStart)
 	var next Pair = c
 	for {
 		buf.WriteString(ToQuotedString(next.Car()))
 		cdr := next.Cdr()
 		if s, ok := cdr.(String); ok {
-			buf.WriteString(" . ")
+			buf.WriteString(lang.Space + lang.Dot + lang.Space)
 			buf.WriteString(ToQuotedString(s))
 			break
 		}
@@ -85,15 +86,15 @@ func (c *Cons) String() string {
 			break
 		}
 		if p, ok := cdr.(Pair); ok {
-			buf.WriteByte(' ')
+			buf.WriteString(lang.Space)
 			next = p
 			continue
 		}
-		buf.WriteString(" . ")
+		buf.WriteString(lang.Space + lang.Dot + lang.Space)
 		buf.WriteString(ToQuotedString(cdr))
 		break
 	}
-	buf.WriteByte(')')
+	buf.WriteString(lang.ListEnd)
 	return buf.String()
 }
 

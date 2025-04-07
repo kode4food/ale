@@ -54,10 +54,6 @@ type (
 )
 
 const (
-	// DomainSeparator is the character used to separate a domain from
-	// the local component of a qualified symbol
-	DomainSeparator = '/'
-
 	decimal         = "0123456789"
 	lower           = "abcdefghijklmnopqrstuvwxyz"
 	upper           = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -87,8 +83,8 @@ func NewGeneratedSymbol(name Local) Symbol {
 func ParseSymbol(s String) (Symbol, error) {
 	n := string(s)
 	if qualifiedRegex.MatchString(n) {
-		i := strings.IndexRune(n, DomainSeparator)
-		name := Local(n[i+1:])
+		i := strings.Index(n, lang.DomainSeparator)
+		name := Local(n[i+len(lang.DomainSeparator):])
 		domain := Local(n[:i])
 		res := NewQualifiedSymbol(name, domain)
 		return res, nil
@@ -210,11 +206,7 @@ func (qualified) Type() types.Type {
 }
 
 func (s qualified) String() string {
-	var buf strings.Builder
-	buf.WriteString(string(s.domain))
-	buf.WriteRune(DomainSeparator)
-	buf.WriteString(string(s.name))
-	return buf.String()
+	return string(s.domain) + lang.DomainSeparator + string(s.name)
 }
 
 func (s qualified) HashCode() uint64 {

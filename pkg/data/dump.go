@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/kode4food/ale/internal/lang"
 	"github.com/kode4food/comb/basics"
 )
 
@@ -54,7 +55,7 @@ func (d dumped) Get(key Value) (Value, bool) {
 
 func (d dumped) String() string {
 	var buf strings.Builder
-	buf.WriteString("{")
+	buf.WriteString(lang.ObjectStart)
 	i := 0
 	for _, k := range dumpKeys {
 		v, ok := d.Get(k)
@@ -62,14 +63,14 @@ func (d dumped) String() string {
 			continue
 		}
 		if i > 0 {
-			buf.WriteString(" ")
+			buf.WriteString(lang.Space)
 		}
 		buf.WriteString(ToQuotedString(k))
-		buf.WriteString(" ")
+		buf.WriteString(lang.Space)
 		buf.WriteString(ToQuotedString(v))
 		i++
 	}
-	buf.WriteString("}")
+	buf.WriteString(lang.ObjectEnd)
 	return buf.String()
 }
 

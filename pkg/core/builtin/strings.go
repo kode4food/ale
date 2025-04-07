@@ -3,6 +3,7 @@ package builtin
 import (
 	"strings"
 
+	"github.com/kode4food/ale/internal/lang"
 	"github.com/kode4food/ale/internal/sequence"
 	"github.com/kode4food/ale/pkg/data"
 )
@@ -24,7 +25,7 @@ var ReaderStr = data.MakeProcedure(func(args ...data.Value) data.Value {
 	var b strings.Builder
 	b.WriteString(data.ToQuotedString(args[0]))
 	for _, f := range args[1:] {
-		b.WriteString(" ")
+		b.WriteString(lang.Space)
 		b.WriteString(data.ToQuotedString(f))
 	}
 	return data.String(b.String())

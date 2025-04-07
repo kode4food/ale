@@ -8,6 +8,7 @@ const (
 	Splice      = `,@`
 	SyntaxQuote = "`"
 	Unquote     = `,`
+	Space       = ` `
 
 	BlockCommentStart = `#|`
 	BlockCommentEnd   = `|#`
@@ -30,10 +31,14 @@ const (
 	Keyword    = `:` + notStruct + `+`
 	Identifier = notStructPfx + notStruct + `*`
 
-	localStart = `[^` + structPfx + `/]`
-	localCont  = `[^` + structure + `/]*`
-	Local      = `(/|(` + localStart + localCont + `))`
-	Qualified  = `(` + localStart + localCont + `/` + Local + `)`
+	// DomainSeparator is the character used to separate a domain from the
+	// local component of a qualified symbol
+	DomainSeparator = `/`
+
+	localStart = `[^` + structPfx + DomainSeparator + `]`
+	localCont  = `[^` + structure + DomainSeparator + `]*`
+	Local      = `(` + DomainSeparator + `|(` + localStart + localCont + `))`
+	Qualified  = `(` + localStart + localCont + DomainSeparator + Local + `)`
 
 	Comment    = `;[^\n]*([\n]|$)`
 	NewLine    = `(\r\n|[\n\r])`

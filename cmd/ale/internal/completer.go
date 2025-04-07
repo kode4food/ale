@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"github.com/kode4food/ale/internal/debug"
+	"github.com/kode4food/ale/internal/lang"
 	"github.com/kode4food/ale/pkg/data"
 	"github.com/kode4food/ale/pkg/read"
 	"github.com/kode4food/ale/pkg/read/lex"
@@ -76,7 +77,7 @@ func (r *REPL) prefixedDomains(res []string, s data.Local) []string {
 			},
 		),
 		func(d data.Local) string {
-			return string(d) + "/"
+			return string(d) + lang.DomainSeparator
 		},
 	)...)
 }
@@ -93,7 +94,7 @@ func (r *REPL) prefixedQualified(s data.Qualified) []string {
 		),
 		func(n data.Local) string {
 			qs := data.NewQualifiedSymbol(n, domain)
-			return data.ToString(qs) + " "
+			return data.ToString(qs) + lang.Space
 		},
 	)
 }
@@ -103,7 +104,7 @@ func addPrefixed(res []string, pfx string, names data.Locals) []string {
 		basics.Filter(names, func(n data.Local) bool {
 			return strings.HasPrefix(string(n), pfx)
 		}), func(n data.Local) string {
-			return string(n) + " "
+			return string(n) + lang.Space
 		},
 	)...)
 }

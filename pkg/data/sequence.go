@@ -1,6 +1,10 @@
 package data
 
-import "strings"
+import (
+	"strings"
+
+	"github.com/kode4food/ale/internal/lang"
+)
 
 type (
 	// Sequence interfaces expose a lazily resolved sequence
@@ -60,16 +64,16 @@ type (
 func MakeSequenceStr(s Sequence) string {
 	f, r, ok := s.Split()
 	if !ok {
-		return "()"
+		return lang.ListStart + lang.ListEnd
 	}
 	var b strings.Builder
-	b.WriteString("(")
+	b.WriteString(lang.ListStart)
 	b.WriteString(ToQuotedString(f))
 	for f, r, ok = r.Split(); ok; f, r, ok = r.Split() {
-		b.WriteString(" ")
+		b.WriteString(lang.Space)
 		b.WriteString(ToQuotedString(f))
 	}
-	b.WriteString(")")
+	b.WriteString(lang.ListEnd)
 	return b.String()
 }
 
