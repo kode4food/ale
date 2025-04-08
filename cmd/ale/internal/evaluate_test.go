@@ -1,9 +1,11 @@
 package internal
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/kode4food/ale/internal/assert"
+	"github.com/kode4food/ale/pkg/env"
 	"github.com/kode4food/ale/pkg/read/parse"
 )
 
@@ -42,6 +44,10 @@ func TestEvalBuffer(t *testing.T) {
 	as := assert.New(t)
 
 	as.Nil(evalBuffer([]byte(`"hello world"`)))
+	as.EqualError(
+		evalBuffer([]byte(`(unknown)`)),
+		fmt.Sprintf(env.ErrNameNotDeclared, "unknown"),
+	)
 
 	panicWith(t, "boom", func() {
 		mustEvalBuffer([]byte(`(raise "boom")`))
