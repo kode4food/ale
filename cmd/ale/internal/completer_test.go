@@ -1,16 +1,15 @@
-package internal_test
+package internal
 
 import (
 	"testing"
 
-	main "github.com/kode4food/ale/cmd/ale/internal"
 	"github.com/kode4food/ale/internal/assert"
 )
 
 func TestREPLDoBasic(t *testing.T) {
 	as := assert.New(t)
 
-	r := main.NewREPL()
+	r := NewREPL()
 	res, idx := r.Do([]rune("(seq->v'(1 2 3 4)"), 7)
 	as.Equal(0, idx)
 	as.Equal(1, len(res))
@@ -32,7 +31,7 @@ func TestREPLDoBasic(t *testing.T) {
 func TestREPLDoNamespaced(t *testing.T) {
 	as := assert.New(t)
 
-	r := main.NewREPL()
+	r := NewREPL()
 	res, idx := r.Do([]rune("(al'(1 2 3 4)"), 3)
 	as.Equal(0, idx)
 	as.Equal(1, len(res))
@@ -49,7 +48,7 @@ func TestREPLDoNamespaced(t *testing.T) {
 func TestREPLDoEmptyResults(t *testing.T) {
 	as := assert.New(t)
 
-	r := main.NewREPL()
+	r := NewREPL()
 	res, idx := r.Do([]rune("(37'(1 2 3 4)"), 3)
 	as.Equal(0, idx)
 	as.Equal(0, len(res))
