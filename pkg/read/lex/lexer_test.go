@@ -105,7 +105,7 @@ func TestBadNumbers(t *testing.T) {
 
 func TestStrings(t *testing.T) {
 	l := lex.StripWhitespace(
-		read.Tokens(` "hello there" "how's \"life\"?"  `),
+		read.Tokens(` "hello there" "how's \"life\"?"`),
 	)
 	assertTokenSequence(t, l, []*lex.Token{
 		T(lex.String, S(`hello there`)),

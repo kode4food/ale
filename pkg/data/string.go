@@ -27,13 +27,13 @@ const (
 
 var (
 	unescapeTable = map[string]string{
-		"\\": "\\\\",
-		"\n": "\\n",
-		"\t": "\\t",
-		"\f": "\\f",
-		"\b": "\\b",
-		"\r": "\\r",
-		"\"": "\\\"",
+		"\b": `\b`,
+		"\f": `\f`,
+		"\n": `\n`,
+		"\r": `\r`,
+		"\t": `\t`,
+		"\\": `\\`,
+		"\"": `\"`,
 	}
 
 	// compile-time checks for interface implementation

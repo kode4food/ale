@@ -42,12 +42,12 @@ const (
 var (
 	escaped    = regexp.MustCompile(`\\\\|\\"|\\[^\\"]`)
 	escapedMap = map[string]string{
+		`\b`: "\b",
+		`\f`: "\f",
 		`\n`: "\n",
+		`\r`: "\r",
 		`\s`: " ",
 		`\t`: "\t",
-		`\f`: "\f",
-		`\b`: "\b",
-		`\r`: "\r",
 	}
 
 	newLine = regexp.MustCompile(lang.NewLine)

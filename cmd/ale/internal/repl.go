@@ -63,7 +63,7 @@ var (
 
 	escapeNames = slices.Map(func(n string) string {
 		if strings.Contains("`*_", n[:1]) {
-			return "\\" + n
+			return `\` + n
 		}
 		return n
 	}).Must()
@@ -225,7 +225,7 @@ func (r *REPL) outputError(err error) {
 func (r *REPL) saveHistory() {
 	defer func() { _ = recover() }()
 	seq := r.scanBuffer()
-	hist := string(sequence.ToString(seq))
+	hist := toHistory(seq)
 	_ = r.rl.SaveHistory(hist)
 }
 
@@ -401,4 +401,15 @@ func getHistoryFile() string {
 		return path.Join(usr.HomeDir, ".ale-history")
 	}
 	return ""
+}
+
+func toHistory(s data.Sequence) string {
+	var buf strings.Builder
+	for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {
+		if buf.Len() > 0 {
+			buf.WriteString(" ")
+		}
+		buf.WriteString(data.ToQuotedString(f))
+	}
+	return buf.String()
 }
