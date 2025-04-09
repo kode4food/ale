@@ -17,7 +17,7 @@
   `(go-with-monitor no-op ,@body))
 
 (define-macro (delay . body)
-  `(promise* (thunk ,@body)))
+  `(delay* (thunk ,@body)))
 
 (define-macro (future . body)
   `(let [promise# (delay ,@body)]

@@ -5,7 +5,7 @@ import (
 
 	"github.com/kode4food/ale/cmd/ale/internal/markdown"
 	"github.com/kode4food/ale/internal/debug"
-	"github.com/kode4food/ale/internal/do"
+	"github.com/kode4food/ale/internal/sync"
 	"github.com/kode4food/comb/basics"
 )
 
@@ -16,7 +16,7 @@ const extension = ".md"
 
 var (
 	docStringCache     = map[string][]byte{}
-	docStringCacheOnce = do.Once()
+	docStringCacheOnce = sync.Once()
 )
 
 // Get resolves a registered docstring entry by name

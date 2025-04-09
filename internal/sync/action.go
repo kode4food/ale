@@ -1,4 +1,4 @@
-package do
+package sync
 
 import "sync"
 

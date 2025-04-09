@@ -25,7 +25,7 @@ func (b *bootstrap) populateBuiltins() {
 		"current-time": builtin.CurrentTime,
 		"defer*":       builtin.Defer,
 		"dissoc":       builtin.Dissoc,
-		"promise*":     builtin.Promise,
+		"delay*":       builtin.Delay,
 		"gensym":       builtin.GenSym,
 		"get":          builtin.Get,
 		"go*":          builtin.Go,

@@ -17,7 +17,7 @@
 (def-builtin macro*)
 (def-builtin nth)
 (def-builtin object)
-(def-builtin promise*)
+(def-builtin delay*)
 (def-builtin read)
 (def-builtin recover)
 (def-builtin reverse)

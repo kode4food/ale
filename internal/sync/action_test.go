@@ -1,10 +1,10 @@
-package do_test
+package sync_test
 
 import (
 	"testing"
 
 	"github.com/kode4food/ale/internal/assert"
-	"github.com/kode4food/ale/internal/do"
+	"github.com/kode4food/ale/internal/sync"
 )
 
 func TestConditionals(t *testing.T) {
@@ -15,9 +15,9 @@ func TestConditionals(t *testing.T) {
 		i++
 	}
 
-	once := do.Once()
-	never := do.Never()
-	always := do.Always()
+	once := sync.Once()
+	never := sync.Never()
+	always := sync.Always()
 
 	as.Number(0, i)
 	once(inc)

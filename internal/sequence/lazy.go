@@ -1,7 +1,7 @@
 package sequence
 
 import (
-	"github.com/kode4food/ale/internal/do"
+	"github.com/kode4food/ale/internal/sync"
 	"github.com/kode4food/ale/internal/types"
 	"github.com/kode4food/ale/pkg/data"
 )
@@ -11,7 +11,7 @@ type (
 	LazyResolver func() (data.Value, data.Sequence, bool)
 
 	lazySequence struct {
-		once     do.Action
+		once     sync.Action
 		resolver LazyResolver
 
 		result data.Value
@@ -30,7 +30,7 @@ var (
 // NewLazy creates a new lazy Sequence based on the provided resolver
 func NewLazy(r LazyResolver) data.Sequence {
 	return &lazySequence{
-		once:     do.Once(),
+		once:     sync.Once(),
 		resolver: r,
 	}
 }
@@ -62,7 +62,7 @@ func (l *lazySequence) Split() (data.Value, data.Sequence, bool) {
 
 func (l *lazySequence) Prepend(v data.Value) data.Sequence {
 	return &lazySequence{
-		once:   do.Never(),
+		once:   sync.Never(),
 		ok:     true,
 		result: v,
 		rest:   l,

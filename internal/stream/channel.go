@@ -3,7 +3,7 @@ package stream
 import (
 	"runtime"
 
-	"github.com/kode4food/ale/internal/do"
+	"github.com/kode4food/ale/internal/sync"
 	"github.com/kode4food/ale/internal/types"
 	"github.com/kode4food/ale/pkg/data"
 )
@@ -14,7 +14,7 @@ type (
 	}
 
 	chanSequence struct {
-		once do.Action
+		once sync.Action
 		ch   <-chan data.Value
 
 		result data.Value
@@ -68,7 +68,7 @@ func (e *chanEmitter) Close() error {
 // NewChannelSequence produces a new Sequence whose values come from a Go chan
 func NewChannelSequence(ch <-chan data.Value) data.Sequence {
 	return &chanSequence{
-		once: do.Once(),
+		once: sync.Once(),
 		ch:   ch,
 	}
 }
@@ -106,7 +106,7 @@ func (c *chanSequence) Split() (data.Value, data.Sequence, bool) {
 
 func (c *chanSequence) Prepend(v data.Value) data.Sequence {
 	return &chanSequence{
-		once:   do.Never(),
+		once:   sync.Never(),
 		ok:     true,
 		result: v,
 		rest:   c,

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/kode4food/ale/internal/do"
+	"github.com/kode4food/ale/internal/sync"
 	"github.com/kode4food/ale/pkg/core/source"
 	"github.com/kode4food/ale/pkg/data"
 	"github.com/kode4food/ale/pkg/eval"
@@ -17,7 +17,7 @@ type asset struct {
 }
 
 var (
-	readAssetsOnce = do.Once()
+	readAssetsOnce = sync.Once()
 
 	assets []asset
 )

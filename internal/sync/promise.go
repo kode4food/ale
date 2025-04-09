@@ -1,7 +1,6 @@
-package async
+package sync
 
 import (
-	"github.com/kode4food/ale/internal/do"
 	"github.com/kode4food/ale/internal/types"
 	"github.com/kode4food/ale/pkg/data"
 )
@@ -9,7 +8,7 @@ import (
 type (
 	// A Promise represents a Value that will eventually be resolved
 	Promise struct {
-		once     do.Action
+		once     Action
 		resolver data.Procedure
 		result   any
 		status   promiseStatus
@@ -29,7 +28,7 @@ var PromiseType = types.MakeBasic("promise")
 // NewPromise instantiates a new Promise
 func NewPromise(resolver data.Procedure) *Promise {
 	return &Promise{
-		once:     do.Once(),
+		once:     Once(),
 		resolver: resolver,
 		status:   promisePending,
 	}

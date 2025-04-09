@@ -1,4 +1,4 @@
-package async_test
+package sync_test
 
 import (
 	"errors"
@@ -6,13 +6,13 @@ import (
 
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
-	"github.com/kode4food/ale/internal/async"
+	"github.com/kode4food/ale/internal/sync"
 	"github.com/kode4food/ale/pkg/data"
 )
 
 func TestPromiseCaller(t *testing.T) {
 	as := assert.New(t)
-	p1 := async.NewPromise(data.MakeProcedure(func(...data.Value) data.Value {
+	p1 := sync.NewPromise(data.MakeProcedure(func(...data.Value) data.Value {
 		return S("hello")
 	}, 0))
 	as.String("hello", p1.Call())
@@ -20,7 +20,7 @@ func TestPromiseCaller(t *testing.T) {
 
 func TestPromiseFailure(t *testing.T) {
 	as := assert.New(t)
-	p1 := async.NewPromise(data.MakeProcedure(func(...data.Value) data.Value {
+	p1 := sync.NewPromise(data.MakeProcedure(func(...data.Value) data.Value {
 		panic(errors.New("explosion"))
 	}, 0))
 	defer as.ExpectPanic(errors.New("explosion"))

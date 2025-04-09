@@ -4,8 +4,8 @@ import (
 	"os"
 
 	"github.com/kode4food/ale/internal/compiler/special"
-	"github.com/kode4food/ale/internal/do"
 	"github.com/kode4food/ale/internal/stream"
+	"github.com/kode4food/ale/internal/sync"
 	"github.com/kode4food/ale/pkg/core/builtin"
 	"github.com/kode4food/ale/pkg/data"
 	"github.com/kode4food/ale/pkg/env"
@@ -26,9 +26,9 @@ type (
 )
 
 var (
-	topLevelOnce = do.Once()
+	topLevelOnce = sync.Once()
 	topLevel     *env.Environment
-	devNullOnce  = do.Once()
+	devNullOnce  = sync.Once()
 	devNull      *env.Environment
 )
 

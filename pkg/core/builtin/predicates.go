@@ -3,8 +3,8 @@ package builtin
 import (
 	"fmt"
 
-	"github.com/kode4food/ale/internal/async"
 	"github.com/kode4food/ale/internal/compiler/special"
+	"github.com/kode4food/ale/internal/sync"
 	"github.com/kode4food/ale/internal/types"
 	"github.com/kode4food/ale/pkg/data"
 	"github.com/kode4food/ale/pkg/macro"
@@ -65,7 +65,7 @@ var (
 		NullKey:      data.MakeTypePredicate(types.BasicNull),
 		NumberKey:    data.MakeTypePredicate(types.BasicNumber),
 		ObjectKey:    data.MakeTypePredicate(types.BasicObject),
-		PromiseKey:   data.MakeTypePredicate(async.PromiseType),
+		PromiseKey:   data.MakeTypePredicate(sync.PromiseType),
 		SpecialKey:   data.MakeTypePredicate(special.CallType),
 		StringKey:    data.MakeTypePredicate(types.BasicString),
 		SymbolKey:    data.MakeTypePredicate(types.BasicSymbol),

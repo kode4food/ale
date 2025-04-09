@@ -3,9 +3,9 @@ package builtin
 import (
 	"slices"
 
-	"github.com/kode4food/ale/internal/async"
 	"github.com/kode4food/ale/internal/runtime"
 	"github.com/kode4food/ale/internal/stream"
+	"github.com/kode4food/ale/internal/sync"
 	"github.com/kode4food/ale/pkg/data"
 )
 
@@ -29,15 +29,15 @@ var Chan = data.MakeProcedure(func(args ...data.Value) data.Value {
 	return stream.NewChannel(size)
 }, 0, 1)
 
-// Promise instantiates a new eventually fulfilled promise
-var Promise = data.MakeProcedure(func(args ...data.Value) data.Value {
+// Delay instantiates a new eventually fulfilled promise
+var Delay = data.MakeProcedure(func(args ...data.Value) data.Value {
 	resolver := args[0].(data.Procedure)
-	return async.NewPromise(resolver)
+	return sync.NewPromise(resolver)
 }, 1)
 
 // isResolved returns whether the specified promise has been resolved
 func isResolved(v data.Value) bool {
-	if p, ok := v.(*async.Promise); ok {
+	if p, ok := v.(*sync.Promise); ok {
 		return p.IsResolved()
 	}
 	return true

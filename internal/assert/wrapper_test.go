@@ -6,7 +6,7 @@ import (
 
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
-	"github.com/kode4food/ale/internal/async"
+	"github.com/kode4food/ale/internal/sync"
 	"github.com/kode4food/ale/pkg/data"
 )
 
@@ -65,7 +65,7 @@ func TestContains(t *testing.T) {
 	as.Contains("New York", S("A New York State of Mind"))
 	as.NotContains("Boston", S("A New York State of Mind"))
 
-	as.Contains(":type promise", async.NewPromise(nil))
+	as.Contains(":type promise", sync.NewPromise(nil))
 }
 
 func TestIdentical(t *testing.T) {

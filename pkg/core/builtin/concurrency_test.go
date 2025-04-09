@@ -58,7 +58,7 @@ func makeWrapperFunc(v data.Value) data.Procedure {
 func TestPromise(t *testing.T) {
 	as := assert.New(t)
 
-	p1 := builtin.Promise.Call(makeWrapperFunc(S("with initial")))
+	p1 := builtin.Delay.Call(makeWrapperFunc(S("with initial")))
 	as.True(getPredicate(builtin.PromiseKey).Call(p1))
 	as.False(getPredicate(builtin.ResolvedKey).Call(p1))
 	res := p1.(data.Procedure).Call()
