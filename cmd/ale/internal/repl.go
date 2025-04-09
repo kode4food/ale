@@ -43,7 +43,7 @@ func NewREPL() *REPL {
 	return repl
 }
 
-// Run will perform the MustEval-Print-Loop
+// Run will perform the Read-Eval-Print-Loop
 func (r *REPL) Run() {
 	defer func() {
 		_ = r.rl.Close()

@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/kode4food/ale/internal/lang"
 	"github.com/kode4food/ale/pkg/data"
 	"github.com/kode4food/ale/pkg/env"
 	"github.com/kode4food/ale/pkg/read/lex"
@@ -23,7 +24,7 @@ const (
 
 	// ErrUnexpectedDot is raised when the parser encounters a dot in the
 	// stream when it isn't part of an open list
-	ErrUnexpectedDot = "encountered '.' with no open list"
+	ErrUnexpectedDot = "encountered '" + lang.Dot + "' with no open list"
 
 	// ErrInvalidListSyntax is raised when the parse encounters a misplaced dot
 	// when parsing an open list
@@ -35,7 +36,8 @@ const (
 
 	// ErrUnmatchedListEnd is raised when a list-end character is encountered
 	// in the stream when no open list is being parsed
-	ErrUnmatchedListEnd = "encountered ')' with no open list"
+	ErrUnmatchedListEnd = "encountered '" + lang.ListEnd +
+		"' with no open list"
 
 	// ErrVectorNotClosed is raised when the parser encounters the end of the
 	// stream while an open vector is still being parsed
@@ -43,7 +45,8 @@ const (
 
 	// ErrUnmatchedVectorEnd is raised when a vector-end character is
 	// encountered in the stream when no open vector is being parsed
-	ErrUnmatchedVectorEnd = "encountered ']' with no open vector"
+	ErrUnmatchedVectorEnd = "encountered '" + lang.VectorEnd +
+		"' with no open vector"
 
 	// ErrObjectNotClosed is raised when the parser encounters the end of the
 	// stream while an open object is still being parsed
@@ -51,7 +54,8 @@ const (
 
 	// ErrUnmatchedObjectEnd is raised when an object-end character is
 	// encountered in the stream when no open object is being parsed
-	ErrUnmatchedObjectEnd = "encountered '}' with no open object"
+	ErrUnmatchedObjectEnd = "encountered '" + lang.ObjectEnd +
+		"' with no open object"
 )
 
 var (

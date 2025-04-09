@@ -2,7 +2,11 @@
 
 package console
 
-import "github.com/chzyer/readline"
+import (
+	"github.com/chzyer/readline"
+	"github.com/kode4food/ale/internal/debug"
+	"github.com/kode4food/ale/internal/lang"
+)
 
 // Terminal codes
 const (
@@ -27,8 +31,13 @@ const (
 type painter struct{}
 
 var (
-	openers = map[rune]rune{')': '(', ']': '[', '}': '{'}
-	closers = map[rune]rune{'(': ')', '[': ']', '{': '}'}
+	openers = makeRuneMap(map[string]string{
+		lang.ListEnd:   lang.ListStart,
+		lang.ObjectEnd: lang.ObjectStart,
+		lang.VectorEnd: lang.VectorStart,
+	})
+
+	closers = invertMap(openers)
 )
 
 // Painter implements the Painter interface for readline
@@ -42,10 +51,7 @@ func (*painter) Paint(line []rune, pos int) []rune {
 	}
 
 	l := len(line)
-	npos := pos
-	if npos < 0 {
-		npos = 0
-	}
+	npos := max(pos, 0)
 	if npos >= l {
 		npos = l - 1
 	}
@@ -102,4 +108,23 @@ func markMatch(line []rune, pos int) []rune {
 		m = append(m, line[pos+1:]...)
 	}
 	return m
+}
+
+func makeRuneMap(m map[string]string) map[rune]rune {
+	res := make(map[rune]rune, len(m))
+	for k, v := range m {
+		if len(k) != 1 || len(v) != 1 {
+			panic(debug.ProgrammerError("input strings must be single runes"))
+		}
+		res[rune(k[0])] = rune(v[0])
+	}
+	return res
+}
+
+func invertMap[K, V comparable](m map[K]V) map[V]K {
+	res := make(map[V]K, len(m))
+	for k, v := range m {
+		res[v] = k
+	}
+	return res
 }
