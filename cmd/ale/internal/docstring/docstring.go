@@ -3,9 +3,9 @@ package docstring
 import (
 	"fmt"
 
+	"github.com/kode4food/ale/cmd/ale/internal/markdown"
 	"github.com/kode4food/ale/internal/debug"
 	"github.com/kode4food/ale/internal/do"
-	"github.com/kode4food/ale/internal/markdown"
 	"github.com/kode4food/comb/basics"
 )
 

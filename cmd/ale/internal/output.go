@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/kode4food/ale/internal/console"
+	"github.com/kode4food/ale/cmd/ale/internal/console"
 	"github.com/kode4food/ale/pkg/data"
 )
 

@@ -5,9 +5,9 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/kode4food/ale/cmd/ale/internal/docstring"
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
-	"github.com/kode4food/ale/pkg/core/docstring"
 	"github.com/kode4food/ale/pkg/data"
 	"github.com/kode4food/ale/pkg/env"
 )

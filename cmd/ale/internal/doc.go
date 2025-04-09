@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/kode4food/ale/cmd/ale/internal/docstring"
+	"github.com/kode4food/ale/cmd/ale/internal/markdown"
 	"github.com/kode4food/ale/internal/compiler/encoder"
 	"github.com/kode4food/ale/internal/compiler/generate"
 	"github.com/kode4food/ale/internal/compiler/special"
 	"github.com/kode4food/ale/internal/debug"
-	"github.com/kode4food/ale/internal/markdown"
-	"github.com/kode4food/ale/pkg/core/docstring"
 	"github.com/kode4food/ale/pkg/data"
 	"github.com/kode4food/comb/slices"
 )

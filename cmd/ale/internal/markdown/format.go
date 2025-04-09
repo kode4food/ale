@@ -5,7 +5,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/kode4food/ale/internal/console"
+	"github.com/kode4food/ale/cmd/ale/internal/console"
 )
 
 // This is *not* a full-featured Markdown formatter, or even a compliant one

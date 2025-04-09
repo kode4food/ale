@@ -7,10 +7,10 @@ import (
 	"runtime"
 	"time"
 
+	"github.com/kode4food/ale/cmd/ale/internal/console"
 	"github.com/kode4food/ale/internal/compiler/encoder"
 	"github.com/kode4food/ale/internal/compiler/generate"
 	"github.com/kode4food/ale/internal/compiler/special"
-	"github.com/kode4food/ale/internal/console"
 	"github.com/kode4food/ale/pkg/data"
 	"github.com/kode4food/ale/pkg/env"
 )

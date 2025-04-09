@@ -5,8 +5,8 @@ package console_test
 import (
 	"testing"
 
+	"github.com/kode4food/ale/cmd/ale/internal/console"
 	"github.com/kode4food/ale/internal/assert"
-	"github.com/kode4food/ale/internal/console"
 )
 
 func TestREPLPaint(t *testing.T) {

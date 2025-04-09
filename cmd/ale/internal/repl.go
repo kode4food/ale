@@ -7,7 +7,7 @@ import (
 
 	"github.com/chzyer/readline"
 	"github.com/kode4food/ale"
-	"github.com/kode4food/ale/internal/console"
+	"github.com/kode4food/ale/cmd/ale/internal/console"
 	"github.com/kode4food/ale/internal/debug"
 	"github.com/kode4food/ale/pkg/env"
 )
