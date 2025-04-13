@@ -17,7 +17,7 @@ type (
 	receiver reflect.Value
 
 	methodWrapper struct {
-		*inOutWrappers
+		inOutWrappers
 		name string
 	}
 )
@@ -58,14 +58,8 @@ func makeWrappedInterface(t reflect.Type) (Wrapper, error) {
 }
 
 func makeWrappedMethod(m reflect.Method) (*methodWrapper, error) {
-	io, err := makeInOutWrappers(m.Type)
-	if err != nil {
-		return nil, err
-	}
-	return &methodWrapper{
-		name:          m.Name,
-		inOutWrappers: io,
-	}, nil
+	res := &methodWrapper{name: m.Name}
+	return res, res.wrap(m.Type)
 }
 
 func (w *intfWrapper) Wrap(c *Context, v reflect.Value) (data.Value, error) {

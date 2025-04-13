@@ -11,66 +11,59 @@ type inOutWrappers struct {
 	out Wrappers
 }
 
-func makeInOutWrappers(t reflect.Type) (*inOutWrappers, error) {
+func (io *inOutWrappers) wrap(t reflect.Type) (err error) {
 	cIn := t.NumIn()
-	in := make(Wrappers, cIn)
+	io.in = make(Wrappers, cIn)
 	for i := range cIn {
-		w, err := WrapType(t.In(i))
-		if err != nil {
-			return nil, err
+		if io.in[i], err = WrapType(t.In(i)); err != nil {
+			return
 		}
-		in[i] = w
 	}
 	cOut := t.NumOut()
-	out := make(Wrappers, cOut)
+	io.out = make(Wrappers, cOut)
 	for i := range cOut {
-		w, err := WrapType(t.Out(i))
-		if err != nil {
-			return nil, err
+		if io.out[i], err = WrapType(t.Out(i)); err != nil {
+			return
 		}
-		out[i] = w
 	}
-	return &inOutWrappers{
-		in:  in,
-		out: out,
-	}, nil
+	return nil
 }
 
-func (w *inOutWrappers) wrapFunction(fn reflect.Value) data.Procedure {
-	switch len(w.out) {
+func (io *inOutWrappers) wrapFunction(fn reflect.Value) data.Procedure {
+	switch len(io.out) {
 	case 0:
-		return w.wrapVoidFunction(fn)
+		return io.wrapVoidFunction(fn)
 	case 1:
-		return w.wrapValueFunction(fn)
+		return io.wrapValueFunction(fn)
 	default:
-		return w.wrapVectorFunction(fn)
+		return io.wrapVectorFunction(fn)
 	}
 }
 
-func (w *inOutWrappers) wrapValueFunction(fn reflect.Value) data.Procedure {
+func (io *inOutWrappers) wrapValueFunction(fn reflect.Value) data.Procedure {
 	return data.MakeProcedure(func(args ...data.Value) data.Value {
-		in := w.in.mustUnwrap(args)
+		in := io.in.mustUnwrap(args)
 		out := fn.Call(in)
-		res, err := w.out[0].Wrap(new(Context), out[0])
+		res, err := io.out[0].Wrap(new(Context), out[0])
 		if err != nil {
 			panic(err)
 		}
 		return res
-	}, len(w.in))
+	}, len(io.in))
 }
 
-func (w *inOutWrappers) wrapVoidFunction(fn reflect.Value) data.Procedure {
+func (io *inOutWrappers) wrapVoidFunction(fn reflect.Value) data.Procedure {
 	return data.MakeProcedure(func(args ...data.Value) data.Value {
-		in := w.in.mustUnwrap(args)
+		in := io.in.mustUnwrap(args)
 		fn.Call(in)
 		return data.Null
-	}, len(w.in))
+	}, len(io.in))
 }
 
-func (w *inOutWrappers) wrapVectorFunction(fn reflect.Value) data.Procedure {
+func (io *inOutWrappers) wrapVectorFunction(fn reflect.Value) data.Procedure {
 	return data.MakeProcedure(func(args ...data.Value) data.Value {
-		in := w.in.mustUnwrap(args)
+		in := io.in.mustUnwrap(args)
 		res := fn.Call(in)
-		return w.out.mustWrap(res)
-	}, len(w.in))
+		return io.out.mustWrap(res)
+	}, len(io.in))
 }

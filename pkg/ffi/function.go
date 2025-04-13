@@ -9,7 +9,7 @@ import (
 
 type (
 	funcWrapper struct {
-		*inOutWrappers
+		inOutWrappers
 		typ reflect.Type
 	}
 
@@ -22,14 +22,8 @@ type (
 const ErrValueMustBeProcedure = "value must be a procedure"
 
 func makeWrappedFunc(t reflect.Type) (Wrapper, error) {
-	io, err := makeInOutWrappers(t)
-	if err != nil {
-		return nil, err
-	}
-	return &funcWrapper{
-		typ:           t,
-		inOutWrappers: io,
-	}, nil
+	res := &funcWrapper{typ: t}
+	return res, res.wrap(t)
 }
 
 func (w *funcWrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
