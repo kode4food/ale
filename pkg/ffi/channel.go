@@ -29,21 +29,27 @@ func makeWrappedChannel(t reflect.Type) (Wrapper, error) {
 }
 
 func (w *channelWrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
-	o := data.NewObject()
-	if w.dir&reflect.RecvDir != 0 {
-		o = o.Put(data.NewCons(
-			stream.SequenceKey, w.makeSequence(v),
-		)).(*data.Object)
+	r := w.dir&reflect.RecvDir != 0
+	s := w.dir&reflect.SendDir != 0
+	switch {
+	case r && s:
+		return data.NewObject(
+			data.NewCons(stream.SequenceKey, w.makeSequence(v)),
+			data.NewCons(stream.EmitKey, w.makeEmitter(v)),
+			data.NewCons(stream.CloseKey, w.makeClose(v)),
+		), nil
+	case r:
+		return data.NewObject(
+			data.NewCons(stream.SequenceKey, w.makeSequence(v)),
+		), nil
+	case s:
+		return data.NewObject(
+			data.NewCons(stream.EmitKey, w.makeEmitter(v)),
+			data.NewCons(stream.CloseKey, w.makeClose(v)),
+		), nil
+	default:
+		return data.EmptyObject, nil
 	}
-	if w.dir&reflect.SendDir != 0 {
-		o = o.Put(data.NewCons(
-			stream.EmitKey, w.makeEmitter(v),
-		)).(*data.Object)
-		o = o.Put(data.NewCons(
-			stream.CloseKey, w.makeClose(v),
-		)).(*data.Object)
-	}
-	return o, nil
 }
 
 func (w *channelWrapper) makeClose(v reflect.Value) data.Procedure {
