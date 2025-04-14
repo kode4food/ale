@@ -7,6 +7,7 @@ import (
 	. "github.com/kode4food/ale/internal/assert/helpers"
 	"github.com/kode4food/ale/pkg/data"
 	"github.com/kode4food/ale/pkg/ffi"
+	"github.com/kode4food/ale/pkg/read"
 	"github.com/kode4food/comb/basics"
 )
 
@@ -27,9 +28,23 @@ func TestSliceUnwrap(t *testing.T) {
 			return i * 2
 		})
 	}).(data.Procedure)
+
 	out := f.Call(data.NewVector(I(1), I(2), I(3))).(data.Vector)
 	as.Equal(3, len(out))
 	as.Equal(I(2), out[0])
 	as.Equal(I(4), out[1])
 	as.Equal(I(6), out[2])
+
+	out = f.Call(data.NewList(I(3), I(7), I(11), I(25))).(data.Vector)
+	as.Equal(4, len(out))
+	as.Equal(I(6), out[0])
+	as.Equal(I(14), out[1])
+	as.Equal(I(22), out[2])
+	as.Equal(I(50), out[3])
+
+	out = f.Call(read.FromString("5 8 13")).(data.Vector)
+	as.Equal(3, len(out))
+	as.Equal(I(10), out[0])
+	as.Equal(I(16), out[1])
+	as.Equal(I(26), out[2])
 }

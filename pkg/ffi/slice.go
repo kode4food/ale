@@ -4,7 +4,6 @@ import (
 	"errors"
 	"reflect"
 
-	"github.com/kode4food/ale/internal/sequence"
 	"github.com/kode4food/ale/pkg/data"
 )
 
@@ -42,11 +41,19 @@ func (w *sliceWrapper) Wrap(c *Context, v reflect.Value) (data.Value, error) {
 }
 
 func (w *sliceWrapper) Unwrap(v data.Value) (reflect.Value, error) {
-	s, ok := v.(data.Sequence)
-	if !ok {
+	switch in := v.(type) {
+	case data.Vector:
+		return w.unwrapVector(in)
+	case data.CountedSequence:
+		return w.unwrapCounted(in)
+	case data.Sequence:
+		return w.unwrapUncounted(in)
+	default:
 		return _emptyValue, errors.New(ErrValueMustBeSequence)
 	}
-	in := sequence.ToVector(s)
+}
+
+func (w *sliceWrapper) unwrapVector(in data.Vector) (reflect.Value, error) {
 	inLen := len(in)
 	out := reflect.MakeSlice(w.typ, inLen, inLen)
 	for i, e := range in {
@@ -55,6 +62,34 @@ func (w *sliceWrapper) Unwrap(v data.Value) (reflect.Value, error) {
 			return _emptyValue, err
 		}
 		out.Index(i).Set(v)
+	}
+	return out, nil
+}
+
+func (w *sliceWrapper) unwrapCounted(in data.CountedSequence) (reflect.Value, error) {
+	inLen := int(in.Count())
+	out := reflect.MakeSlice(w.typ, inLen, inLen)
+	var r data.Sequence = in
+	for i := range inLen {
+		var f data.Value
+		f, r, _ = r.Split()
+		v, err := w.elem.Unwrap(f)
+		if err != nil {
+			return _emptyValue, err
+		}
+		out.Index(i).Set(v)
+	}
+	return out, nil
+}
+
+func (w *sliceWrapper) unwrapUncounted(in data.Sequence) (reflect.Value, error) {
+	out := reflect.MakeSlice(w.typ, 0, 0)
+	for f, r, ok := in.Split(); ok; f, r, ok = r.Split() {
+		v, err := w.elem.Unwrap(f)
+		if err != nil {
+			return _emptyValue, err
+		}
+		out = reflect.Append(out, v)
 	}
 	return out, nil
 }
