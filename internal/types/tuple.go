@@ -4,8 +4,8 @@ import "fmt"
 
 var makeTupleBase = [...]*Basic{BasicCons, BasicList, BasicVector}
 
-// MakeTuple declares a new TupleType that will only allow a MakeListOf or MakeVectorOf
-// with positional elements of the provided Types
+// MakeTuple declares a new TupleType that will only allow a MakeListOf or
+// MakeVectorOf with positional elements of the provided Types
 func MakeTuple(elems ...Type) Type {
 	res := make([]Type, 3)
 	for idx, t := range makeTupleBase {

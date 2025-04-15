@@ -32,9 +32,9 @@ var (
 	devNull      *env.Environment
 )
 
-// Into sets up initial built-ins and populateAssets. This call is useful if you're
-// wiring up your own Environments. Otherwise, calls to TopLevelEnvironment and
-// DevNullEnvironment will perform this action for you.
+// Into sets up initial built-ins and populateAssets. This call is useful if
+// you're wiring up your own Environments. Otherwise, calls to
+// TopLevelEnvironment and DevNullEnvironment will perform this action for you.
 func Into(e *env.Environment) {
 	b := &bootstrap{
 		environment: e,

@@ -41,7 +41,10 @@ func TestApplicableAccepts(t *testing.T) {
 		},
 	)
 
-	as.Equal(`procedure(symbol,boolean->boolean,->number,number->boolean,number,number->boolean)`, a2.Name())
+	as.Equal(
+		`procedure(symbol,boolean->boolean,->number,number->boolean,number,number->boolean)`,
+		a2.Name(),
+	)
 
 	as.True(types.Accepts(a1, a1))
 	as.True(types.Accepts(a1, a2))

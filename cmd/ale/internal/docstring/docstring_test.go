@@ -21,7 +21,9 @@ func TestDocString(t *testing.T) {
 
 	s, err := docstring.Get("no-way-this-exists")
 	as.Empty(s)
-	as.EqualError(err, fmt.Sprintf(docstring.ErrSymbolNotDocumented, "no-way-this-exists"))
+	as.EqualError(err,
+		fmt.Sprintf(docstring.ErrSymbolNotDocumented, "no-way-this-exists"),
+	)
 }
 
 func TestDocumentedBuiltinsExist(t *testing.T) {

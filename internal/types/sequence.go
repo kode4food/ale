@@ -8,8 +8,8 @@ func MakeListOf(elem Type) Type {
 	return sequenceOf(BasicList, elem)
 }
 
-// MakeVectorOf declares a new VectorType that will only allow a BasicVector with
-// elements of the provided elem Type
+// MakeVectorOf declares a new VectorType that will only allow a BasicVector
+// with elements of the provided elem Type
 func MakeVectorOf(elem Type) Type {
 	return sequenceOf(BasicVector, elem)
 }

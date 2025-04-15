@@ -1,7 +1,6 @@
 ---
 title: "thread first (->)"
 description: "threads value through calls as their first argument"
-
 names: ["->"]
 usage: "(-> expr forms*)"
 tags: ["function"]

@@ -1,7 +1,6 @@
 ---
 title: "take"
 description: "takes the first elements of a sequence"
-
 names: ["take"]
 usage: "(take count seq)"
 tags: ["sequence", "comprehension"]

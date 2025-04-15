@@ -8,8 +8,8 @@ type Pair struct {
 	name string
 }
 
-// MakeCons declares a new PairType that will only allow a MakeListOf with elements of
-// the provided elem Type
+// MakeCons declares a new PairType that will only allow a MakeListOf with
+// elements of the provided elem Type
 func MakeCons(left, right Type) Type {
 	return &Pair{
 		basic: BasicCons,

@@ -66,7 +66,9 @@ func (w *sliceWrapper) unwrapVector(in data.Vector) (reflect.Value, error) {
 	return out, nil
 }
 
-func (w *sliceWrapper) unwrapCounted(in data.CountedSequence) (reflect.Value, error) {
+func (w *sliceWrapper) unwrapCounted(
+	in data.CountedSequence,
+) (reflect.Value, error) {
 	inLen := int(in.Count())
 	out := reflect.MakeSlice(w.typ, inLen, inLen)
 	var r data.Sequence = in
@@ -82,7 +84,9 @@ func (w *sliceWrapper) unwrapCounted(in data.CountedSequence) (reflect.Value, er
 	return out, nil
 }
 
-func (w *sliceWrapper) unwrapUncounted(in data.Sequence) (reflect.Value, error) {
+func (w *sliceWrapper) unwrapUncounted(
+	in data.Sequence,
+) (reflect.Value, error) {
 	out := reflect.MakeSlice(w.typ, 0, 0)
 	for f, r, ok := in.Split(); ok; f, r, ok = r.Split() {
 		v, err := w.elem.Unwrap(f)

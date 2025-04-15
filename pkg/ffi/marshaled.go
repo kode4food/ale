@@ -31,7 +31,9 @@ func wrapMarshaledByteArray(t reflect.Type) (Wrapper, error) {
 	}, nil
 }
 
-func (w *byteArrayWrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
+func (w *byteArrayWrapper) Wrap(
+	_ *Context, v reflect.Value,
+) (data.Value, error) {
 	m := v.Interface().(encoding.TextMarshaler)
 	s, err := m.MarshalText()
 	if err != nil {

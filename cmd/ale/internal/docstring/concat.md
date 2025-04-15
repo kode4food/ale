@@ -1,7 +1,7 @@
 ---
 title: "concat"
 description: "concatenates sequences"
-names: ["concat"]
+names: ["concat", "concat!"]
 usage: "(concat seq+) (concat! seq+)"
 tags: ["sequence", "comprehension"]
 ---

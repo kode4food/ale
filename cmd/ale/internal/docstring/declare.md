@@ -1,12 +1,14 @@
 ---
 title: "declare"
 description: "forward declares a binding"
-names: ["declare"]
-usage: "(declare <name>+)"
+names: ["declare", "private"]
+usage: "(declare <name>+) (private <name>+)"
 tags: ["binding"]
 ---
 
 Forward declares bindings. This means that the names will be known in the current namespace, but not yet assigned. This can be useful when two functions refer to one another.
+
+The `private` variant makes the binding private to the current namespace.
 
 #### An Example
 

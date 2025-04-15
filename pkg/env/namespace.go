@@ -115,7 +115,9 @@ func (ns *namespace) Snapshot(e *Environment) Namespace {
 	return res
 }
 
-func resolvePublic(from, in Namespace, n data.Local) (*Entry, Namespace, error) {
+func resolvePublic(
+	from Namespace, in Namespace, n data.Local,
+) (*Entry, Namespace, error) {
 	if e, ns, err := in.Resolve(n); err == nil {
 		if !e.IsPrivate() || from == in && in == ns {
 			return e, ns, nil

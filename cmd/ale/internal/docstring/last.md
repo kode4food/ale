@@ -1,7 +1,7 @@
 ---
 title: "last"
 description: "returns the last element of the sequence"
-names: ["last"]
+names: ["last", "last!"]
 usage: "(last seq) (last! seq)"
 tags: ["sequence"]
 ---

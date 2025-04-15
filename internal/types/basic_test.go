@@ -28,7 +28,9 @@ func TestBasicAccepts(t *testing.T) {
 
 	as.True(types.Accepts(i99, i99))
 	as.False(types.Accepts(i99, types.BasicAny))
-	as.False(types.Accepts(i99, types.MakeUnion(types.BasicSymbol, types.BasicCons)))
+	as.False(
+		types.Accepts(i99, types.MakeUnion(types.BasicSymbol, types.BasicCons)),
+	)
 	as.False(types.Accepts(types.BasicBoolean, notABasic{}))
 	as.True(types.Accepts(types.BasicAny, notABasic{}))
 }
