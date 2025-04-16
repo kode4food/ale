@@ -35,13 +35,13 @@ func TestNestedNumberEval(t *testing.T) {
 
 func TestNonNumberEval(t *testing.T) {
 	as := assert.New(t)
-	as.MustEvalTo(`(is-pos-inf (/ 99.0 0))`, data.True)
-	as.MustEvalTo(`(is-pos-inf 99)`, data.False)
+	as.MustEvalTo(`(inf? (/ 99.0 0))`, data.True)
+	as.MustEvalTo(`(inf? 99)`, data.False)
 
-	as.MustEvalTo(`(is-neg-inf (/ -99.0 0))`, data.True)
-	as.MustEvalTo(`(is-neg-inf -99)`, data.False)
+	as.MustEvalTo(`(-inf? (/ -99.0 0))`, data.True)
+	as.MustEvalTo(`(-inf? -99)`, data.False)
 
-	as.MustEvalTo(`(is-nan 99)`, data.False)
+	as.MustEvalTo(`(nan? 99)`, data.False)
 }
 
 func TestBadMathsEval(t *testing.T) {

@@ -1,8 +1,8 @@
 ---
 title: "list?"
 description: "tests whether the provided forms are lists"
-names: ["list?", "!list?", "is-list"]
-usage: "(list? form+) (!list? form+) (is-list form)"
+names: ["list?", "!list?"]
+usage: "(list? form+) (!list? form+)"
 tags: ["sequence", "predicate"]
 ---
 

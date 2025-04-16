@@ -1,8 +1,8 @@
 ---
 title: "vector?"
 description: "tests whether the provided forms are vectors"
-names: ["vector?", "!vector?", "is-vector"]
-usage: "(vector? form+) (!vector? form+) (is-vector form)"
+names: ["vector?", "!vector?"]
+usage: "(vector? form+) (!vector? form+)"
 tags: ["sequence", "predicate"]
 ---
 

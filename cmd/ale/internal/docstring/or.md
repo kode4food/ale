@@ -1,7 +1,7 @@
 ---
 title: "or"
 description: "performs a short-circuiting or"
-names: ["or"]
+names: ["or", "!or"]
 usage: "(or form*)"
 tags: ["conditional", "logic"]
 ---

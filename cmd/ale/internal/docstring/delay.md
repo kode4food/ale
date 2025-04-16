@@ -1,7 +1,7 @@
 ---
 title: "delay"
 description: "produces a delayed evaluation"
-names: ["delay"]
+names: ["delay", "force", "force!", "delay-force"]
 usage: "(delay expr*)"
 tags: ["concurrency"]
 ---

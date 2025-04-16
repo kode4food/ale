@@ -8,8 +8,8 @@
 (define first car)
 (define rest cdr)
 
-(private* predicate-inst)
-(define* predicate-inst (macro* (lambda (f r inst)
+(private* make-comparator)
+(define* make-comparator (macro* (lambda (f r inst)
   (apply list (concat!
     '(ale/asm*
          .private prev :val
@@ -42,10 +42,10 @@
      :end))))))
 
 (define (eq f . r)
-  (predicate-inst f r eq))
+  (make-comparator f r eq))
 
 (define (!eq f . r)
-  (asm* .eval (predicate-inst f r eq) not))
+  (asm* .eval (make-comparator f r eq) not))
 
 (define (not value)
   (if value false true))

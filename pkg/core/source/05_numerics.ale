@@ -1,7 +1,7 @@
 ;;;; ale core: numerics
 
-(private* reduce-inst)
-(define* reduce-inst (macro* (lambda (args init inst)
+(private* make-reducer)
+(define* make-reducer (macro* (lambda (args init inst)
   (apply list (concat!
     '(ale/asm*
         .private accum :val
@@ -26,11 +26,11 @@
     :end
         load accum))))))
 
-(define (+ . args) (reduce-inst args 0 add))
-(define (* . args) (reduce-inst args 1 mul))
+(define (+ . args) (make-reducer args 0 add))
+(define (* . args) (make-reducer args 1 mul))
 
 (define (mod num den . more)
-  (reduce-inst more
+  (make-reducer more
                (asm*
                    .resolve num
                    .resolve den
@@ -39,26 +39,26 @@
 
 (define-lambda /
   [(x) (asm* .const 1 .resolve x div)]
-  [(f . r) (reduce-inst r f div)])
+  [(f . r) (make-reducer r f div)])
 
 (define-lambda -
   [(x) (asm* zero .resolve x sub)]
-  [(f . r) (reduce-inst r f sub)])
+  [(f . r) (make-reducer r f sub)])
 
 (define modulo mod)
 
-(define (= f . r) (predicate-inst f r num-eq))
-(define (< f . r) (predicate-inst f r num-lt))
-(define (<= f . r) (predicate-inst f r num-lte))
-(define (> f . r) (predicate-inst f r num-gt))
-(define (>= f . r) (predicate-inst f r num-gte))
+(define (= f . r) (make-comparator f r num-eq))
+(define (< f . r) (make-comparator f r num-lt))
+(define (<= f . r) (make-comparator f r num-lte))
+(define (> f . r) (make-comparator f r num-gt))
+(define (>= f . r) (make-comparator f r num-gte))
 
 (define (!= f . r)
-  (asm* .eval (predicate-inst f r num-eq) not))
+  (asm* .eval (make-comparator f r num-eq) not))
 
-(define (is-zero value) (= value 0))
-(define (is-even value) (= (mod value 2) 0))
-(define (is-odd value) (= (mod value 2) 1))
+(define :private (is-zero value) (= value 0))
+(define :private (is-even value) (= (mod value 2) 0))
+(define :private (is-odd value) (= (mod value 2) 1))
 
 (define (inc value) (+ value 1))
 (define (dec value) (- value 1))
@@ -66,8 +66,8 @@
 (define *pos-inf* (/ 1.0 0.0))
 (define *neg-inf* (/ -1.0 0.0))
 
-(define (is-pos-inf value) (= value *pos-inf*))
-(define (is-neg-inf value) (= value *neg-inf*))
+(define :private (is-pos-inf value) (= value *pos-inf*))
+(define :private (is-neg-inf value) (= value *neg-inf*))
 
 (define +inf *pos-inf*)
 (define -inf *neg-inf*)

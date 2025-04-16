@@ -48,12 +48,6 @@
         .resolve cons
         cdr)))
 
-(define* is-empty
-  (lambda (seq)
-    (asm*
-        .resolve seq
-        empty)))
-
 (define* raise
   (lambda strs
     (asm*

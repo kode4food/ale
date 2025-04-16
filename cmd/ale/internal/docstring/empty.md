@@ -1,8 +1,8 @@
 ---
 title: "empty?"
 description: "tests whether the provided forms are empty sequences"
-names: ["empty?", "!empty?", "is-empty"]
-usage: "(empty? form+) (!empty? form+) (is-empty form)"
+names: ["empty?", "!empty?"]
+usage: "(empty? form+) (!empty? form+)"
 tags: ["predicate"]
 ---
 

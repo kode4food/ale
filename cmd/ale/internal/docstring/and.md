@@ -1,7 +1,7 @@
 ---
 title: "and"
 description: "performs a short-circuiting and"
-names: ["and"]
+names: ["and", "!and"]
 usage: "(and form*)"
 tags: ["conditional", "logic"]
 ---

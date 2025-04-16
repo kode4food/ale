@@ -1,7 +1,7 @@
 ;;;; ale core: predicates
 
-(define (is-true value) (eq true value))
-(define (is-false value) (eq false value))
+(define :private (is-true value) (eq true value))
+(define :private (is-false value) (eq false value))
 
 (define :private (pred-apply func args)
   (if (is-empty args)

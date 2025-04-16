@@ -1,8 +1,8 @@
 ---
 title: "object?"
 description: "tests whether the provided forms are objects"
-names: ["object?", "!object?", "is-object"]
-usage: "(object? form+) (!object? form+) (is-object form)"
+names: ["object?", "!object?"]
+usage: "(object? form+) (!object? form+)"
 tags: ["sequence", "predicate"]
 ---
 

@@ -1,7 +1,7 @@
 ---
 title: "lambda"
 description: "creates a lambda"
-names: ["lambda", "lambda-rec"]
+names: ["lambda", "λ", "lambda-rec"]
 usage: "(lambda (param*) form*) (lambda-rec name (param*) form*)"
 tags: ["function"]
 ---

@@ -6,7 +6,8 @@ usage: "(eq form form+) (!eq form form+)"
 tags: ["comparison"]
 ---
 
-Return _#f_ (false) as soon as it encounters a form that is not identical to the first. Otherwise, will return _#t_ (true).
+Return _#f_ (false) as soon as it encounters a form that is not identical to the
+first. Otherwise, will return _#t_ (true).
 
 #### An Example
 
@@ -15,4 +16,6 @@ Return _#f_ (false) as soon as it encounters a form that is not identical to the
 (eq "hello" h)
 ```
 
-Like most predicates, this function can also be negated by prepending the `!` character. In this case, _#t_ (true) will be returned if not all forms are equal.
+Like most predicates, this function can also be negated by prepending the `!`
+character. In this case, _#t_ (true) will be returned if not all forms are
+equal.

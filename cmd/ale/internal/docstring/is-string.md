@@ -1,8 +1,8 @@
 ---
 title: "str?"
 description: "tests whether the provided forms are strings"
-names: ["string?", "!string?", "is-string"]
-usage: "(string? form+) (!string? form+) (is-string form)"
+names: ["string?", "!string?"]
+usage: "(string? form+) (!string? form+)"
 tags: ["sequence", "predicate"]
 ---
 

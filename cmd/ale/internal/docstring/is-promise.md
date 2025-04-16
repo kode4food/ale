@@ -1,8 +1,8 @@
 ---
 title: "promise?"
 description: "tests whether the provided forms are promises"
-names: ["promise?", "!promise?", "is-promise"]
-usage: "(promise? form+) (!promise? form+) (is-promise form)"
+names: ["promise?", "!promise?"]
+usage: "(promise? form+) (!promise? form+)"
 tags: ["concurrency", "predicate"]
 ---
 

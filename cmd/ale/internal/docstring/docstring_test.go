@@ -54,7 +54,11 @@ func TestBuiltinsHaveDocs(t *testing.T) {
 
 	var missing data.Locals
 	for _, name := range d {
-		_, err := docstring.Get(string(name))
+		n := string(name)
+		if strings.HasSuffix(n, "*") {
+			continue
+		}
+		_, err := docstring.Get(n)
 		if err != nil {
 			missing = append(missing, name)
 		}

@@ -1,36 +1,5 @@
 ;;;; ale core: basics
 
-;; type-based predicates
-(define* is-any       (is-a* :any))
-(define* is-boolean   (is-a* :boolean))
-(define* is-cons      (is-a* :cons))
-(define* is-keyword   (is-a* :keyword))
-(define* is-macro     (is-a* :macro))
-(define* is-null      (is-a* :null))
-(define* is-number    (is-a* :number))
-(define* is-object    (is-a* :object))
-(define* is-procedure (is-a* :procedure))
-(define* is-special   (is-a* :special))
-(define* is-string    (is-a* :string))
-(define* is-symbol    (is-a* :symbol))
-(define* is-vector    (is-a* :vector))
-
-;; derived predicates
-(define* is-atom       (is-a* :atom))
-(define* is-appendable (is-a* :appender))
-(define* is-counted    (is-a* :counted))
-(define* is-indexed    (is-a* :indexed))
-(define* is-list       (is-a* :list))
-(define* is-local      (is-a* :local))
-(define* is-mapped     (is-a* :mapped))
-(define* is-nan        (is-a* :nan))
-(define* is-pair       (is-a* :pair))
-(define* is-promise    (is-a* :promise))
-(define* is-qualified  (is-a* :qualified))
-(define* is-resolved   (is-a* :resolved))
-(define* is-reversible (is-a* :reverser))
-(define* is-seq        (is-a* :sequence))
-
 (define* if
   (special*
     [(predicate consequent alternative)
@@ -58,6 +27,13 @@
           (raise "got " (:name (type-of* value))
                  ", expected " (cdr (str type))
                  ": " (str! value))))))
+
+(private* is-empty)
+(define* is-empty
+  (lambda (seq)
+    (asm*
+        .resolve seq
+        empty)))
 
 (define* apply
   (lambda (func . args)
@@ -115,3 +91,40 @@
             (if or#
                 or#
                 (or ,@(cdr clauses))))])))
+
+(private* make-predicate)
+(define* make-predicate (macro* (lambda (name type)
+  `(begin
+     (private* ,name)
+     (define* ,name (is-a* ,type))))))
+
+;; type-based predicates
+(make-predicate is-any       :any)
+(make-predicate is-boolean   :boolean)
+(make-predicate is-cons      :cons)
+(make-predicate is-keyword   :keyword)
+(make-predicate is-macro     :macro)
+(make-predicate is-null      :null)
+(make-predicate is-number    :number)
+(make-predicate is-object    :object)
+(make-predicate is-procedure :procedure)
+(make-predicate is-special   :special)
+(make-predicate is-string    :string)
+(make-predicate is-symbol    :symbol)
+(make-predicate is-vector    :vector)
+
+;; derived predicates
+(make-predicate is-atom       :atom)
+(make-predicate is-appendable :appender)
+(make-predicate is-counted    :counted)
+(make-predicate is-indexed    :indexed)
+(make-predicate is-list       :list)
+(make-predicate is-local      :local)
+(make-predicate is-mapped     :mapped)
+(make-predicate is-nan        :nan)
+(make-predicate is-pair       :pair)
+(make-predicate is-promise    :promise)
+(make-predicate is-qualified  :qualified)
+(make-predicate is-resolved   :resolved)
+(make-predicate is-reversible :reverser)
+(make-predicate is-seq        :sequence)

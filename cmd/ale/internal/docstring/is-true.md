@@ -1,8 +1,8 @@
 ---
 title: "true?"
 description: "tests whether the provided forms are boolean true"
-names: ["true?", "!true?", "is-true"]
-usage: "(true? form+) (!true? form+) (is-true form)"
+names: ["true?", "!true?"]
+usage: "(true? form+) (!true? form+)"
 tags: ["predicate"]
 ---
 

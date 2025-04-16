@@ -1,8 +1,8 @@
 ---
 title: "indexed?"
 description: "tests whether the provided forms are indexed sequences"
-names: ["indexed?", "!indexed?", "is-indexed"]
-usage: "(indexed? form+) (!indexed? form+) (is-indexed form)"
+names: ["indexed?", "!indexed?"]
+usage: "(indexed? form+) (!indexed? form+)"
 tags: ["sequence", "predicate"]
 ---
 

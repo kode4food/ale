@@ -1,8 +1,8 @@
 ---
 title: "false?"
 description: "tests whether the provided forms are boolean false"
-names: ["false?", "!false?", "is-false"]
-usage: "(false? form+) (!false? form+) (is-false form)"
+names: ["false?", "!false?"]
+usage: "(false? form+) (!false? form+)"
 tags: ["predicate"]
 ---
 

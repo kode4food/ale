@@ -1,8 +1,8 @@
 ---
 title: "zero?"
 description: "tests whether the provided forms are numeric zero"
-names: ["zero?", "!zero?", "is-zero"]
-usage: "(zero? form+) (!zero? form+) (is-zero form)"
+names: ["zero?", "!zero?"]
+usage: "(zero? form+) (!zero? form+)"
 tags: ["predicate"]
 ---
 

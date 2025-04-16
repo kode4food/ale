@@ -1,8 +1,8 @@
 ---
 title: "keyword?"
 description: "tests whether the provided forms are keywords"
-names: ["keyword?", "!keyword?", "is-keyword"]
-usage: "(keyword? form+) (!keyword? form+) (is-keyword form)"
+names: ["keyword?", "!keyword?"]
+usage: "(keyword? form+) (!keyword? form+)"
 tags: ["predicate"]
 ---
 

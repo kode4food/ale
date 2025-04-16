@@ -1,8 +1,8 @@
 ---
 title: "mapped?"
 description: "tests whether the provided forms are mapped"
-names: ["mapped?", "!mapped?", "is-mapped"]
-usage: "(mapped? form+) (!mapped? form+) (is-mapped form)"
+names: ["mapped?", "!mapped?"]
+usage: "(mapped? form+) (!mapped? form+)"
 tags: ["sequence", "predicate"]
 ---
 

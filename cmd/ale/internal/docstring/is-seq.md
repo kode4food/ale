@@ -1,8 +1,8 @@
 ---
 title: "seq?"
 description: "tests whether the provided forms are sequences"
-names: ["seq?", "!seq?", "is-seq"]
-usage: "(seq? form+) (!seq? form+) (is-seq form)"
+names: ["seq?", "!seq?"]
+usage: "(seq? form+) (!seq? form+)"
 tags: ["sequence", "predicate"]
 ---
 
