@@ -6,9 +6,7 @@ usage: "(<accessor> seq)"
 tags: ["function", "sequence"]
 ---
 
-These are compound sequence accessors that combine multiple `car` and `cdr`
-operations. The name of each function describes which operations to perform from
-right to left:
+These are compound sequence accessors that combine multiple `car` and `cdr` operations. The name of each function describes which operations to perform from  right to left:
 
 - `a` represents `car` (get first element)
 - `d` represents `cdr` (get rest of list)
@@ -31,6 +29,4 @@ Given a nested list structure:
 (caadr y)  ; car of (car of (cdr y)) -> (3 4)
 ```
 
-The functions can access up to 4 levels deep in a nested list structure. Reading
-from right to left helps understand the access pattern - for example, `caddr`
-means "get the first element (car) of the rest of the rest (cddr) of the list".
+The functions can access up to 4 levels deep in a nested list structure. Reading from right to left helps understand the access pattern - for example, `caddr` means "get the first element (car) of the rest of the rest (cddr) of the list".

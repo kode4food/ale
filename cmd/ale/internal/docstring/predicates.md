@@ -6,9 +6,7 @@ usage: "(<predicate> value)"
 tags: ["function", "predicate"]
 ---
 
-These predicates test values for specific types or properties. Each predicate
-has a corresponding negated version prefixed with "!". For example, `number?`
-tests if a value is a number, while `!number?` tests if it is not a number.
+These predicates test values for specific types or properties. Each predicate has a corresponding negated version prefixed with "!". For example, `number?` tests if a value is a number, while `!number?` tests if it is not a number.
 
 #### Examples
 
@@ -47,9 +45,7 @@ tests if a value is a number, while `!number?` tests if it is not a number.
 (resolved? p)     ; -> true   ; now computed
 ```
 
-Note that each negated predicate (`!predicate?`) returns the opposite of its
-corresponding positive predicate. For example, `(!even? 3)` is equivalent to
-`(not (even? 3))`.
+Note that each negated predicate (`!predicate?`) returns the opposite of its corresponding positive predicate. For example, `(!even? 3)` is equivalent to `(not (even? 3))`.
 
 Some key predicate categories:
 
