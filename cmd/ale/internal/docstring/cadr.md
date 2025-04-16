@@ -18,10 +18,10 @@ Given a nested list structure:
 ```scheme
 (define x '((1 2) (3 4)))
 
-(caar x)   ; gets car of (car x) -> 1
-(cadr x)   ; gets car of (cdr x) -> (3 4)
-(cdar x)   ; gets cdr of (car x) -> (2)
-(cddr x)   ; gets cdr of (cdr x) -> ()
+(caar x)  ; gets car of (car x) -> 1
+(cadr x)  ; gets car of (cdr x) -> (3 4)
+(cdar x)  ; gets cdr of (car x) -> (2)
+(cddr x)  ; gets cdr of (cdr x) -> ()
 
 ;; More deeply nested examples
 (define y '((1 2) ((3 4) 5)))
