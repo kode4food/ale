@@ -12,37 +12,37 @@ These predicates test values for specific types or properties. Each predicate ha
 
 ```scheme
 ;; Type checking
-(number? 42)      ; -> true
-(boolean? true)   ; -> true
-(symbol? 'abc)    ; -> true
-(procedure? +)    ; -> true
+(number? 42)      ; -> #t
+(boolean? true)   ; -> #t
+(symbol? 'abc)    ; -> #t
+(procedure? +)    ; -> #t
 
 ;; Value properties
-(nan? (/ 0.0 0)) ; -> true
-(inf? +inf)      ; -> true
-(-inf? -inf)     ; -> true
-(even? 2)        ; -> true
-(odd? 3)         ; -> true
+(nan? (/ 0.0 0)) ; -> #t
+(inf? +inf)      ; -> #t
+(-inf? -inf)     ; -> #t
+(even? 2)        ; -> #t
+(odd? 3)         ; -> #t
 
 ;; Sequences
-(pair? '(1 . 2)) ; -> true
-(appendable? [1 2 3])    ; -> true ; vectors are appendable
-(reversible? [1 2 3])    ; -> true ; vectors can be reversed
-(!appendable? '(1 2 3))  ; -> true ; lists are not appendable
+(pair? '(1 . 2))         ; -> #t
+(appendable? [1 2 3])    ; -> #t ; vectors are appendable
+(reversible? [1 2 3])    ; -> #t ; vectors can be reversed
+(!appendable? '(1 2 3))  ; -> #t ; lists are not appendable
 
 ;; Symbols
-(local? 'x)        ; -> true ; for non-qualified symbols
-(qualified? 'ns/x) ; -> true ; for namespace-qualified symbols
+(local? 'x)        ; -> #t ; for non-qualified symbols
+(qualified? 'ns/x) ; -> #t ; for namespace-qualified symbols
 
 ;; Special forms and macros
-(special? lambda) ; -> true  ; lambda is a special form
-(macro? when)     ; -> true  ; when is a macro
+(special? lambda) ; -> #t  ; lambda is a special form
+(macro? when)     ; -> #t  ; when is a macro
 
 ;; Promise state
 (define p (delay (+ 1 2)))
-(resolved? p)     ; -> false  ; not yet computed
+(resolved? p)     ; -> #f  ; not yet computed
 (force p)
-(resolved? p)     ; -> true   ; now computed
+(resolved? p)     ; -> #t  ; now computed
 ```
 
 Note that each negated predicate (`!predicate?`) returns the opposite of its corresponding positive predicate. For example, `(!even? 3)` is equivalent to `(not (even? 3))`.
