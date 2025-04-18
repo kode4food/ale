@@ -6,6 +6,7 @@ import (
 
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
+	"github.com/kode4food/ale/internal/lang"
 	"github.com/kode4food/ale/internal/types"
 	"github.com/kode4food/ale/pkg/data"
 )
@@ -34,7 +35,7 @@ func TestStr(t *testing.T) {
 	s3 := data.ToQuotedString(s2)
 	r1 := []rune(s3)
 	as.Number(10, len(r1))
-	as.String(`"`, string(r1[0]))
+	as.String(lang.StringQuote, string(r1[0]))
 
 	c, ok := s1.ElementAt(1)
 	as.True(ok)

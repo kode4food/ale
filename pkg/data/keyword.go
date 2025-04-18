@@ -3,6 +3,7 @@ package data
 import (
 	"math/rand"
 
+	"github.com/kode4food/ale/internal/lang"
 	"github.com/kode4food/ale/internal/types"
 )
 
@@ -38,7 +39,7 @@ func (k Keyword) Equal(other Value) bool {
 
 // String converts Keyword into a string
 func (k Keyword) String() string {
-	return ":" + string(k)
+	return lang.KeywordPrefix + string(k)
 }
 
 // Type returns the Type for this Keyword Value

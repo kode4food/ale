@@ -9,8 +9,8 @@ import (
 )
 
 type (
-	// Record describes an Object that allows a fixed set of fields,
-	// each of which has a keyword
+	// Record describes an Object that allows a fixed set of fields, each of
+	// which has a keyword
 	Record struct {
 		basic
 		fields

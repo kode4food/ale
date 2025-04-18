@@ -28,8 +28,9 @@ const (
 	notStruct    = `[^` + structure + `]`
 	notStructPfx = `[^` + structPfx + `]`
 
-	Keyword    = `:` + notStruct + `+`
-	Identifier = notStructPfx + notStruct + `*`
+	KeywordPrefix = `:`
+	Keyword       = `:` + notStruct + `+`
+	Identifier    = notStructPfx + notStruct + `*`
 
 	// DomainSeparator is the character used to separate a domain from the
 	// local component of a qualified symbol
@@ -44,7 +45,8 @@ const (
 	NewLine    = `(\r\n|[\n\r])`
 	Whitespace = `[\t\f ]+`
 
-	String = `(")(?P<s>(\\\\|\\"|\\[^\\"]|[^"\\])*)("?)`
+	StringQuote = `"`
+	String      = `(")(?P<s>(\\\\|\\"|\\[^\\"]|[^"\\])*)("?)`
 
 	numTail = localStart + `*`
 

@@ -6,6 +6,7 @@ import (
 	"strings"
 	"unicode/utf8"
 
+	"github.com/kode4food/ale/internal/lang"
 	"github.com/kode4food/ale/internal/types"
 )
 
@@ -27,13 +28,14 @@ const (
 
 var (
 	unescapeTable = map[string]string{
+		lang.StringQuote: `\` + lang.StringQuote,
+
 		"\b": `\b`,
 		"\f": `\f`,
 		"\n": `\n`,
 		"\r": `\r`,
 		"\t": `\t`,
 		"\\": `\\`,
-		"\"": `\"`,
 	}
 
 	// compile-time checks for interface implementation
@@ -193,7 +195,7 @@ func (s String) HashCode() uint64 {
 // Quote quotes and escapes a string
 func (s String) Quote() string {
 	var buf strings.Builder
-	buf.WriteString(`"`)
+	buf.WriteString(lang.StringQuote)
 	for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {
 		ch := string(f.(String))
 		if res, ok := unescapeTable[ch]; ok {
@@ -202,7 +204,7 @@ func (s String) Quote() string {
 			buf.WriteString(ch)
 		}
 	}
-	buf.WriteString(`"`)
+	buf.WriteString(lang.StringQuote)
 	return buf.String()
 }
 
