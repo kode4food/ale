@@ -97,16 +97,6 @@ func TestSymbolGeneration(t *testing.T) {
 	as.String(fmt.Sprintf(prefix, gen.Prefix(), "10"), gen.Local("hello"))
 }
 
-func TestLocalsSorted(t *testing.T) {
-	as := assert.New(t)
-
-	l := data.Locals{"hello", "another", "test", "not", "sorted"}
-	s := l.Sorted()
-	as.NotIdentical(l, s)
-	as.NotEqual(l, s)
-	as.Equal(data.Locals{"another", "hello", "not", "sorted", "test"}, s)
-}
-
 func TestSymbolHashing(t *testing.T) {
 	as := assert.New(t)
 

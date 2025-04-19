@@ -42,13 +42,7 @@ func TestSortedMap(t *testing.T) {
 	as.Equal([]string{"a-mapped", "b-mapped", "c-mapped", "r-mapped"}, sm)
 }
 
-func TestSort(t *testing.T) {
-	as := assert.New(t)
-	sm := basics.Sorted([]string{"c", "r", "b", "a"})
-	as.Equal([]string{"a", "b", "c", "r"}, sm)
-}
-
-func TestSortFunc(t *testing.T) {
+func TestSortedFunc(t *testing.T) {
 	as := assert.New(t)
 	sm := basics.SortedFunc(
 		[]string{"c", "r", "b", "a"},

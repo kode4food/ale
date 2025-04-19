@@ -16,13 +16,6 @@ func Find[T any](s []T, f func(T) bool) (T, bool) {
 	return zero, false
 }
 
-// Sorted returns a sorted copy of the slice
-func Sorted[T cmp.Ordered](s []T) []T {
-	res := slices.Clone(s)
-	slices.Sort(res)
-	return res
-}
-
 // SortedFunc returns a sorted copy of the slice using the provided comparison
 // function
 func SortedFunc[T any](s []T, cmp func(l, r T) int) []T {

@@ -2,6 +2,7 @@ package env
 
 import (
 	"fmt"
+	"slices"
 	"sync"
 
 	"github.com/kode4food/ale/pkg/data"
@@ -57,7 +58,8 @@ func (ns *namespace) Declared() data.Locals {
 		res = append(res, e.Name())
 	}
 	ns.RUnlock()
-	return res.Sorted()
+	slices.Sort(res)
+	return res
 }
 
 func (ns *namespace) Public(n data.Local) (*Entry, error) {

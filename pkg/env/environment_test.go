@@ -81,5 +81,5 @@ func TestDomains(t *testing.T) {
 		e.GetRoot().Domain(),
 		ns1.Domain(),
 		ns2.Domain(),
-	}, e.Domains().Sorted())
+	}, e.Domains())
 }

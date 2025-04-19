@@ -1,8 +1,10 @@
 package env
 
 import (
+	"slices"
 	"sync"
 
+	"github.com/kode4food/ale/internal/basics"
 	"github.com/kode4food/ale/pkg/data"
 )
 
@@ -39,12 +41,10 @@ func NewEnvironment() *Environment {
 
 func (e *Environment) Domains() data.Locals {
 	e.RLock()
-	res := make(data.Locals, 0, len(e.data))
-	for k := range e.data {
-		res = append(res, k)
-	}
+	res := basics.MapKeys(e.data)
 	e.RUnlock()
-	return res.Sorted()
+	slices.Sort(res)
+	return res
 }
 
 func (e *Environment) Snapshot() *Environment {
