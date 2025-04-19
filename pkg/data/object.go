@@ -15,10 +15,11 @@ import (
 
 // Object maps a set of Values, known as keys, to another set of Values
 type Object struct {
-	pair     Pair
-	keyHash  uint64
-	children *data.SparseSlice[*Object]
-	hash     atomic.Uint64
+	pair       Pair
+	keyHash    uint64
+	children   *data.SparseSlice[*Object]
+	childCount Integer
+	hash       atomic.Uint64
 }
 
 const (
@@ -104,9 +105,10 @@ func (o *Object) Put(p Pair) Sequence {
 func (o *Object) put(p Pair, kh, shifted uint64) *Object {
 	if o.keyHash == kh && o.pair.Car().Equal(p.Car()) {
 		return &Object{
-			pair:     p,
-			keyHash:  kh,
-			children: o.children,
+			pair:       p,
+			keyHash:    kh,
+			children:   o.children,
+			childCount: o.childCount,
 		}
 	}
 
@@ -118,10 +120,12 @@ func (o *Object) put(p Pair, kh, shifted uint64) *Object {
 		bucket = &Object{pair: p, keyHash: kh}
 	}
 
+	children := o.children.Set(idx, bucket)
 	return &Object{
-		pair:     o.pair,
-		keyHash:  o.keyHash,
-		children: o.children.Set(idx, bucket),
+		pair:       o.pair,
+		keyHash:    o.keyHash,
+		children:   children,
+		childCount: objectChildCount(children),
 	}
 }
 
@@ -160,10 +164,12 @@ func (o *Object) copyWithChildAt(idx int, child *Object) *Object {
 	} else {
 		children = o.children.Unset(idx)
 	}
+
 	return &Object{
-		pair:     o.pair,
-		keyHash:  o.keyHash,
-		children: children,
+		pair:       o.pair,
+		keyHash:    o.keyHash,
+		children:   children,
+		childCount: objectChildCount(children),
 	}
 }
 
@@ -202,11 +208,7 @@ func (o *Object) Count() Integer {
 	if o == nil {
 		return 0
 	}
-	res := Integer(1)
-	for _, c := range o.childObjects() {
-		res += c.Count()
-	}
-	return res
+	return 1 + o.childCount
 }
 
 func (o *Object) IsEmpty() bool {
@@ -226,12 +228,12 @@ func (o *Object) Equal(other Value) bool {
 		if o == nil || other == nil || o == other {
 			return o == other
 		}
+		if o.childCount != other.childCount {
+			return false
+		}
 		lh := o.hash.Load()
 		rh := other.hash.Load()
 		if lh != 0 && rh != 0 && lh != rh {
-			return false
-		}
-		if o.Count() != other.Count() {
 			return false
 		}
 		return o.isIn(other)
@@ -319,5 +321,17 @@ func (o *Object) childObjects() []*Object {
 		return nil
 	}
 	res, _ := o.children.RawData()
+	return res
+}
+
+func objectChildCount(c *data.SparseSlice[*Object]) Integer {
+	if c == nil {
+		return 0
+	}
+	raw, _ := c.RawData()
+	var res Integer
+	for _, r := range raw {
+		res += r.Count()
+	}
 	return res
 }
