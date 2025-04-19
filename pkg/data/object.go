@@ -1,8 +1,10 @@
 package data
 
 import (
+	"cmp"
 	"errors"
 	"math/rand"
+	"slices"
 	"strings"
 	"sync/atomic"
 
@@ -229,20 +231,24 @@ func (o *Object) Equal(other Value) bool {
 		if lh != 0 && rh != 0 && lh != rh {
 			return false
 		}
-		lp := o.Pairs()
-		rp := other.Pairs()
-		if len(lp) != len(rp) {
+		if o.Count() != other.Count() {
 			return false
 		}
-		rs := rp.sorted()
-		for i, l := range lp.sorted() {
-			if !l.Equal(rs[i]) {
-				return false
-			}
-		}
-		return true
+		return o.isIn(other)
 	}
 	return false
+}
+
+func (o *Object) isIn(other *Object) bool {
+	if v, ok := other.Get(o.pair.Car()); !ok || !o.pair.Cdr().Equal(v) {
+		return false
+	}
+	for _, c := range o.childObjects() {
+		if !c.isIn(other) {
+			return false
+		}
+	}
+	return true
 }
 
 func (*Object) Type() types.Type {
@@ -272,7 +278,7 @@ func (o *Object) Pairs() Pairs {
 	if o == nil {
 		return emptyPairs
 	}
-	return o.pairs(Pairs{})
+	return o.pairs(make(Pairs, 0, o.Count()))
 }
 
 func (o *Object) pairs(p Pairs) Pairs {
@@ -283,10 +289,20 @@ func (o *Object) pairs(p Pairs) Pairs {
 	return p
 }
 
+func (o *Object) sortedPairs() Pairs {
+	p := o.Pairs()
+	slices.SortFunc(p, func(l, r Pair) int {
+		ls := ToString(l.Car())
+		rs := ToString(r.Car())
+		return cmp.Compare(ls, rs)
+	})
+	return p
+}
+
 func (o *Object) String() string {
 	var buf strings.Builder
 	buf.WriteString(lang.ObjectStart)
-	for i, p := range o.Pairs().sorted() {
+	for i, p := range o.sortedPairs() {
 		if i > 0 {
 			buf.WriteString(lang.Space)
 		}

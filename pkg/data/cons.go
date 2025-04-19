@@ -1,12 +1,10 @@
 package data
 
 import (
-	"cmp"
 	"strings"
 
 	"github.com/kode4food/ale/internal/lang"
 	"github.com/kode4food/ale/internal/types"
-	"github.com/kode4food/comb/basics"
 )
 
 type (
@@ -34,15 +32,6 @@ var _ interface {
 	Pair
 	Typed
 } = (*Cons)(nil)
-
-// sorted returns a sorted set of Pairs
-func (p Pairs) sorted() Pairs {
-	return basics.SortFunc(p, func(l, r Pair) int {
-		ls := ToString(l.Car())
-		rs := ToString(r.Car())
-		return cmp.Compare(ls, rs)
-	})
-}
 
 // NewCons returns a new Cons cell instance
 func NewCons(car, cdr Value) *Cons {
