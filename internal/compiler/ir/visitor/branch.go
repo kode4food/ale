@@ -1,8 +1,7 @@
 package visitor
 
 import (
-	"slices"
-
+	"github.com/kode4food/ale/internal/basics"
 	"github.com/kode4food/ale/internal/runtime/isa"
 )
 
@@ -124,7 +123,7 @@ func (b *BranchScanner) splitCondJump(
 }
 
 func (i *instructions) Set(code isa.Instructions) {
-	if !i.dirty && !slices.Equal(i.code, code) {
+	if !i.dirty && !basics.Equal(i.code, code) {
 		i.dirty = true
 	}
 	i.code = code

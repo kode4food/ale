@@ -10,6 +10,44 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestEqual(t *testing.T) {
+	as := assert.New(t)
+
+	var s0 []string
+	s1 := []string{"is", "Upper", "not", "lower"}
+	s2 := []string{"is", "Upper", "not", "lower"}
+	s3 := []string{"is", "Upper", "not", "lower", "extra"}
+
+	as.True(basics.Equal(s0, s0))
+	as.False(basics.Equal(s0, s1))
+	as.True(basics.Equal(s0, s1[:0]))
+	as.True(basics.Equal(s1, s1))
+	as.True(basics.Equal(s1, s2))
+	as.False(basics.Equal(s1, s3))
+	as.True(basics.Equal(s1, s3[:4]))
+}
+
+func TestEqualFunc(t *testing.T) {
+	as := assert.New(t)
+
+	var s0 []string
+	s1 := []string{"is", "Upper", "not", "lower"}
+	s2 := []string{"is", "Upper", "not", "lower"}
+	s3 := []string{"is", "Upper", "not", "lower", "extra"}
+
+	se := func(l, r string) bool {
+		return l == r
+	}
+
+	as.True(basics.EqualFunc(s0, s0, se))
+	as.False(basics.EqualFunc(s0, s1, se))
+	as.True(basics.EqualFunc(s0, s1[:0], se))
+	as.True(basics.EqualFunc(s1, s1, se))
+	as.True(basics.EqualFunc(s1, s2, se))
+	as.False(basics.EqualFunc(s1, s3, se))
+	as.True(basics.EqualFunc(s1, s3[:4], se))
+}
+
 func TestMap(t *testing.T) {
 	as := assert.New(t)
 	m := basics.Map(

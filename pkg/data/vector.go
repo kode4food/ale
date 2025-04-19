@@ -5,6 +5,7 @@ import (
 	"slices"
 	"strings"
 
+	"github.com/kode4food/ale/internal/basics"
 	"github.com/kode4food/ale/internal/lang"
 	"github.com/kode4food/ale/internal/types"
 )
@@ -112,7 +113,7 @@ func (v Vector) CheckArity(argc int) error {
 
 func (v Vector) Equal(other Value) bool {
 	if o, ok := other.(Vector); ok {
-		return slices.EqualFunc(v, o, Equal)
+		return basics.EqualFunc(v, o, Equal)
 	}
 	return false
 }

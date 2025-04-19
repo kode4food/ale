@@ -5,6 +5,7 @@ import (
 	"slices"
 	"sync/atomic"
 
+	"github.com/kode4food/ale/internal/basics"
 	"github.com/kode4food/ale/internal/runtime/isa"
 	"github.com/kode4food/ale/internal/types"
 	"github.com/kode4food/ale/pkg/data"
@@ -56,7 +57,7 @@ func (p *Procedure) Equal(other data.Value) bool {
 			p.Globals == other.Globals &&
 				p.StackSize == other.StackSize &&
 				p.LocalCount == other.LocalCount &&
-				slices.Equal(p.Code, other.Code) &&
+				basics.Equal(p.Code, other.Code) &&
 				p.Constants.Equal(other.Constants)
 	}
 	return false

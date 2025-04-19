@@ -3,7 +3,30 @@ package basics
 import (
 	"cmp"
 	"slices"
+	"unsafe"
 )
+
+// Equal compares two slices of the same type for equality
+func Equal[T comparable](l, r []T) bool {
+	if len(l) != len(r) {
+		return false
+	}
+	if len(l) == 0 || unsafe.Pointer(&l[0]) == unsafe.Pointer(&r[0]) {
+		return true
+	}
+	return slices.Equal(l, r)
+}
+
+// EqualFunc compares two slices of the same type using a custom comparison
+func EqualFunc[T any](l, r []T, cmp func(T, T) bool) bool {
+	if len(l) != len(r) {
+		return false
+	}
+	if len(l) == 0 || unsafe.Pointer(&l[0]) == unsafe.Pointer(&r[0]) {
+		return true
+	}
+	return slices.EqualFunc(l, r, cmp)
+}
 
 // Find returns the first element in the slice that satisfies the predicate
 func Find[T any](s []T, f func(T) bool) (T, bool) {

@@ -2,7 +2,6 @@ package types
 
 import (
 	"cmp"
-	"slices"
 	"strings"
 
 	"github.com/kode4food/ale/internal/basics"
@@ -100,7 +99,7 @@ func (t typeList) basicType() (basic, bool) {
 func (t typeList) equal(other typeList) bool {
 	tf := t.flatten()
 	of := other.flatten()
-	return slices.EqualFunc(tf, of, func(l, r Type) bool {
+	return basics.EqualFunc(tf, of, func(l, r Type) bool {
 		return l.Equal(r)
 	})
 }

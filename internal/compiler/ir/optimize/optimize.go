@@ -1,8 +1,7 @@
 package optimize
 
 import (
-	"slices"
-
+	"github.com/kode4food/ale/internal/basics"
 	"github.com/kode4food/ale/internal/compiler/encoder"
 	"github.com/kode4food/ale/internal/compiler/ir/visitor"
 	"github.com/kode4food/ale/internal/runtime/isa"
@@ -41,7 +40,7 @@ func repeatWhenModified(first optimizer, rest ...optimizer) optimizer {
 		for {
 			prev := res.Code
 			res = o(res)
-			if slices.Equal(prev, res.Code) {
+			if basics.Equal(prev, res.Code) {
 				return res
 			}
 		}

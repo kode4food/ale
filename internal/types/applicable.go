@@ -2,8 +2,9 @@ package types
 
 import (
 	"fmt"
-	"slices"
 	"strings"
+
+	"github.com/kode4food/ale/internal/basics"
 )
 
 type (
@@ -113,11 +114,11 @@ func (s Signature) equal(other Signature) bool {
 	if s.TakesRest != other.TakesRest || !s.Result.Equal(other.Result) {
 		return false
 	}
-	return slices.EqualFunc(s.Params, other.Params, Equal)
+	return basics.EqualFunc(s.Params, other.Params, Equal)
 }
 
 func (s signatures) equal(other signatures) bool {
-	return slices.EqualFunc(s, other, func(l, r Signature) bool {
+	return basics.EqualFunc(s, other, func(l, r Signature) bool {
 		return l.equal(r)
 	})
 }
