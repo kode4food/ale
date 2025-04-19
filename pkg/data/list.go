@@ -135,16 +135,16 @@ func (l *List) Equal(other Value) bool {
 		if l.count != other.count {
 			return false
 		}
-		for cl := l; cl != nil; cl, other = cl.rest, other.rest {
-			if cl == other {
+		for cl, co := l, other; cl != nil; cl, co = cl.rest, co.rest {
+			if cl == co {
 				return true
 			}
-			lh := l.hash.Load()
-			rh := other.hash.Load()
+			lh := cl.hash.Load()
+			rh := co.hash.Load()
 			if lh != 0 && rh != 0 && lh != rh {
 				return false
 			}
-			if !cl.first.Equal(other.first) {
+			if !cl.first.Equal(co.first) {
 				return false
 			}
 		}
