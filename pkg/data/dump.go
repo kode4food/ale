@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/kode4food/ale/internal/basics"
 	"github.com/kode4food/ale/internal/lang"
-	"github.com/kode4food/comb/basics"
 )
 
 type dumped struct{ Value }

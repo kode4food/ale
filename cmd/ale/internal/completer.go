@@ -3,12 +3,12 @@ package internal
 import (
 	"strings"
 
+	"github.com/kode4food/ale/internal/basics"
 	"github.com/kode4food/ale/internal/debug"
 	"github.com/kode4food/ale/internal/lang"
 	"github.com/kode4food/ale/pkg/data"
 	"github.com/kode4food/ale/pkg/read"
 	"github.com/kode4food/ale/pkg/read/lex"
-	"github.com/kode4food/comb/basics"
 )
 
 var emptyStrings []string

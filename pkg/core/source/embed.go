@@ -4,7 +4,7 @@ import (
 	"embed"
 	"io/fs"
 
-	"github.com/kode4food/comb/basics"
+	"github.com/kode4food/ale/internal/basics"
 )
 
 var (

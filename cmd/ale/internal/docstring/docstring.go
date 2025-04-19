@@ -4,9 +4,9 @@ import (
 	"fmt"
 
 	"github.com/kode4food/ale/cmd/ale/internal/markdown"
+	"github.com/kode4food/ale/internal/basics"
 	"github.com/kode4food/ale/internal/debug"
 	"github.com/kode4food/ale/internal/sync"
-	"github.com/kode4food/comb/basics"
 )
 
 // ErrSymbolNotDocumented is raised when a call to doc can't resolve a name

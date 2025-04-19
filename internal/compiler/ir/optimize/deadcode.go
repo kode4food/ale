@@ -3,10 +3,10 @@ package optimize
 import (
 	"slices"
 
+	"github.com/kode4food/ale/internal/basics"
 	"github.com/kode4food/ale/internal/compiler/encoder"
 	"github.com/kode4food/ale/internal/compiler/ir/visitor"
 	"github.com/kode4food/ale/internal/runtime/isa"
-	"github.com/kode4food/comb/basics"
 )
 
 // ineffectivePushes deletes values pushed to the stack for no reason,
@@ -89,17 +89,15 @@ func replaceRedundantLocals(c isa.Instructions) (isa.Instructions, bool) {
 func hasConflictingLoadStore(c isa.Instructions, op isa.Operand) bool {
 	load := isa.Load.New(op)
 	store := isa.Store.New(op)
-	_, ok := basics.Find(c, func(i isa.Instruction) bool {
+	return slices.ContainsFunc(c, func(i isa.Instruction) bool {
 		return i == load || i == store
 	})
-	return ok
 }
 
 func hasConflictingStore(c isa.Instructions, op ...isa.Operand) bool {
-	_, ok := basics.Find(c, func(i isa.Instruction) bool {
+	return slices.ContainsFunc(c, func(i isa.Instruction) bool {
 		return i.Opcode() == isa.Store && slices.Contains(op, i.Operand())
 	})
-	return ok
 }
 
 func mapIneffectiveLoads(

@@ -4,13 +4,13 @@ import (
 	"cmp"
 	"slices"
 
+	"github.com/kode4food/ale/internal/basics"
 	"github.com/kode4food/ale/internal/compiler/encoder"
 	"github.com/kode4food/ale/internal/compiler/ir/visitor"
 	"github.com/kode4food/ale/internal/debug"
 	"github.com/kode4food/ale/internal/runtime/isa"
 	"github.com/kode4food/ale/internal/runtime/vm"
 	"github.com/kode4food/ale/pkg/data"
-	"github.com/kode4food/comb/basics"
 )
 
 type (
@@ -275,15 +275,13 @@ func isParamCase(b visitor.Branches) (isa.Opcode, isa.Operand, bool) {
 }
 
 func hasTailCallInstruction(c isa.Instructions) bool {
-	_, ok := basics.Find(c, func(i isa.Instruction) bool {
+	return slices.ContainsFunc(c, func(i isa.Instruction) bool {
 		return i.Opcode() == isa.TailCall
 	})
-	return ok
 }
 
 func hasAnyArgInstruction(c isa.Instructions) bool {
-	_, ok := basics.Find(c, argInstructionPred)
-	return ok
+	return slices.ContainsFunc(c, argInstructionPred)
 }
 
 func filterArgInstructions(c isa.Instructions) isa.Instructions {

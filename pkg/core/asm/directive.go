@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/kode4food/ale/internal/basics"
 	"github.com/kode4food/ale/internal/compiler/encoder"
 	"github.com/kode4food/ale/internal/compiler/generate"
 	"github.com/kode4food/ale/pkg/data"
-	"github.com/kode4food/comb/basics"
 )
 
 const (

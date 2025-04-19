@@ -5,8 +5,8 @@ import (
 	"regexp"
 	"time"
 
+	"github.com/kode4food/ale/internal/basics"
 	"github.com/kode4food/ale/pkg/data"
-	"github.com/kode4food/comb/basics"
 )
 
 var envPairRegex = regexp.MustCompile("^(?P<Key>[^=]+)=(?P<Value>.*)$")

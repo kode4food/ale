@@ -6,24 +6,15 @@ import (
 
 	"github.com/kode4food/ale/cmd/ale/internal/docstring"
 	"github.com/kode4food/ale/cmd/ale/internal/markdown"
+	"github.com/kode4food/ale/internal/basics"
 	"github.com/kode4food/ale/internal/compiler/encoder"
 	"github.com/kode4food/ale/internal/compiler/generate"
 	"github.com/kode4food/ale/internal/compiler/special"
 	"github.com/kode4food/ale/internal/debug"
 	"github.com/kode4food/ale/pkg/data"
-	"github.com/kode4food/comb/slices"
 )
 
-var (
-	docTemplate = docstring.MustGet("doc")
-
-	escapeNames = slices.Map(func(n string) string {
-		if strings.Contains("`*_", n[:1]) {
-			return `\` + n
-		}
-		return n
-	}).Must()
-)
+var docTemplate = docstring.MustGet("doc")
 
 var doc = special.Call(func(e encoder.Encoder, args ...data.Value) error {
 	if err := data.CheckRangedArity(0, 1, len(args)); err != nil {
@@ -92,4 +83,13 @@ func formatForREPL(s string) (string, error) {
 	}
 	out = append(out, "")
 	return strings.Join(out, "\n"), nil
+}
+
+func escapeNames(names []string) []string {
+	return basics.Map(names, func(n string) string {
+		if strings.Contains("`*_", n[:1]) {
+			return `\` + n
+		}
+		return n
+	})
 }

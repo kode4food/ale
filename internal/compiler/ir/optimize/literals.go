@@ -1,9 +1,9 @@
 package optimize
 
 import (
+	"github.com/kode4food/ale/internal/basics"
 	"github.com/kode4food/ale/internal/compiler/ir/visitor"
 	"github.com/kode4food/ale/internal/runtime/isa"
-	"github.com/kode4food/comb/basics"
 )
 
 var (

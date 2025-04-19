@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/kode4food/ale/internal/basics"
 	str "github.com/kode4food/ale/internal/strings"
 	"github.com/kode4food/ale/pkg/data"
 	"github.com/kode4food/ale/pkg/env"
-	"github.com/kode4food/comb/basics"
 )
 
 type (

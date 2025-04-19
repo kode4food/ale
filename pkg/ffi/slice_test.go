@@ -5,10 +5,10 @@ import (
 
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
+	"github.com/kode4food/ale/internal/basics"
 	"github.com/kode4food/ale/pkg/data"
 	"github.com/kode4food/ale/pkg/ffi"
 	"github.com/kode4food/ale/pkg/read"
-	"github.com/kode4food/comb/basics"
 )
 
 func TestSliceWrap(t *testing.T) {

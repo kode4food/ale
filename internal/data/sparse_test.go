@@ -3,8 +3,8 @@ package data_test
 import (
 	"testing"
 
+	"github.com/kode4food/ale/internal/basics"
 	"github.com/kode4food/ale/internal/data"
-	"github.com/kode4food/comb/basics"
 	"github.com/stretchr/testify/assert"
 )
 

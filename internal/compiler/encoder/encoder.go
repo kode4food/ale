@@ -3,10 +3,10 @@ package encoder
 import (
 	"slices"
 
+	"github.com/kode4food/ale/internal/basics"
 	"github.com/kode4food/ale/internal/runtime/isa"
 	"github.com/kode4food/ale/pkg/data"
 	"github.com/kode4food/ale/pkg/env"
-	"github.com/kode4food/comb/basics"
 )
 
 type (
