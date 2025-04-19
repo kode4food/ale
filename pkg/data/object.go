@@ -15,11 +15,11 @@ import (
 
 // Object maps a set of Values, known as keys, to another set of Values
 type Object struct {
-	pair       Pair
-	keyHash    uint64
-	children   *data.SparseSlice[*Object]
-	childCount Integer
-	hash       atomic.Uint64
+	pair     Pair
+	keyHash  uint64
+	children *data.SparseSlice[*Object]
+	count    Integer
+	hash     atomic.Uint64
 }
 
 const (
@@ -97,6 +97,7 @@ func (o *Object) Put(p Pair) Sequence {
 		return &Object{
 			pair:    p,
 			keyHash: h,
+			count:   1,
 		}
 	}
 	return o.put(p, h, h)
@@ -105,10 +106,10 @@ func (o *Object) Put(p Pair) Sequence {
 func (o *Object) put(p Pair, kh, shifted uint64) *Object {
 	if o.keyHash == kh && o.pair.Car().Equal(p.Car()) {
 		return &Object{
-			pair:       p,
-			keyHash:    kh,
-			children:   o.children,
-			childCount: o.childCount,
+			pair:     p,
+			keyHash:  kh,
+			children: o.children,
+			count:    o.count,
 		}
 	}
 
@@ -117,15 +118,15 @@ func (o *Object) put(p Pair, kh, shifted uint64) *Object {
 	if ok {
 		bucket = bucket.put(p, kh, shifted>>bucketBits)
 	} else {
-		bucket = &Object{pair: p, keyHash: kh}
+		bucket = &Object{pair: p, keyHash: kh, count: 1}
 	}
 
 	children := o.children.Set(idx, bucket)
 	return &Object{
-		pair:       o.pair,
-		keyHash:    o.keyHash,
-		children:   children,
-		childCount: objectChildCount(children),
+		pair:     o.pair,
+		keyHash:  o.keyHash,
+		children: children,
+		count:    1 + sumObjectCount(children),
 	}
 }
 
@@ -166,10 +167,10 @@ func (o *Object) copyWithChildAt(idx int, child *Object) *Object {
 	}
 
 	return &Object{
-		pair:       o.pair,
-		keyHash:    o.keyHash,
-		children:   children,
-		childCount: objectChildCount(children),
+		pair:     o.pair,
+		keyHash:  o.keyHash,
+		children: children,
+		count:    1 + sumObjectCount(children),
 	}
 }
 
@@ -208,7 +209,7 @@ func (o *Object) Count() Integer {
 	if o == nil {
 		return 0
 	}
-	return 1 + o.childCount
+	return o.count
 }
 
 func (o *Object) IsEmpty() bool {
@@ -228,7 +229,7 @@ func (o *Object) Equal(other Value) bool {
 		if o == nil || other == nil || o == other {
 			return o == other
 		}
-		if o.childCount != other.childCount {
+		if o.count != other.count {
 			return false
 		}
 		lh := o.hash.Load()
@@ -280,7 +281,7 @@ func (o *Object) Pairs() Pairs {
 	if o == nil {
 		return emptyPairs
 	}
-	return o.pairs(make(Pairs, 0, o.Count()))
+	return o.pairs(make(Pairs, 0, o.count))
 }
 
 func (o *Object) pairs(p Pairs) Pairs {
@@ -324,14 +325,14 @@ func (o *Object) childObjects() []*Object {
 	return res
 }
 
-func objectChildCount(c *data.SparseSlice[*Object]) Integer {
+func sumObjectCount(c *data.SparseSlice[*Object]) Integer {
 	if c == nil {
 		return 0
 	}
-	raw, _ := c.RawData()
 	var res Integer
+	raw, _ := c.RawData()
 	for _, r := range raw {
-		res += r.Count()
+		res += r.count
 	}
 	return res
 }
