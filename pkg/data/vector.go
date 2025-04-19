@@ -83,7 +83,9 @@ func (v Vector) Prepend(e Value) Sequence {
 }
 
 func (v Vector) Append(e Value) Sequence {
-	return append(v, e)
+	res := make(Vector, 0, len(v)+1)
+	res = append(res, v...)
+	return append(res, e)
 }
 
 func (v Vector) Reverse() Sequence {

@@ -3,7 +3,6 @@ package basics
 import (
 	"cmp"
 	"slices"
-	"unsafe"
 )
 
 // Equal compares two slices of the same type for equality
@@ -11,7 +10,7 @@ func Equal[T comparable](l, r []T) bool {
 	if len(l) != len(r) {
 		return false
 	}
-	if len(l) == 0 || unsafe.Pointer(&l[0]) == unsafe.Pointer(&r[0]) {
+	if len(l) == 0 || &l[0] == &r[0] {
 		return true
 	}
 	return slices.Equal(l, r)
@@ -22,7 +21,7 @@ func EqualFunc[T any](l, r []T, cmp func(T, T) bool) bool {
 	if len(l) != len(r) {
 		return false
 	}
-	if len(l) == 0 || unsafe.Pointer(&l[0]) == unsafe.Pointer(&r[0]) {
+	if len(l) == 0 || &l[0] == &r[0] {
 		return true
 	}
 	return slices.EqualFunc(l, r, cmp)
