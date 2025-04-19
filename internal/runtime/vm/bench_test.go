@@ -107,6 +107,8 @@ func BenchmarkBottles(b *testing.B) {
 		panic(err)
 	}
 	beer := res.(data.Procedure)
+
+	b.ResetTimer()
 	for range b.N {
 		_ = beer.Call(data.Integer(99))
 	}
@@ -125,6 +127,8 @@ func BenchmarkTailCalls(b *testing.B) {
 		fib
 	`)
 	fib := res.(data.Procedure)
+
+	b.ResetTimer()
 	for range b.N {
 		res := fib.Call(data.Integer(10))
 		if res, ok := res.(data.Integer); !ok || !res.Equal(data.Integer(55)) {
@@ -145,6 +149,8 @@ func BenchmarkNonTailCalls(b *testing.B) {
 		fib
 	`)
 	fib := res.(data.Procedure)
+
+	b.ResetTimer()
 	for range b.N {
 		res := fib.Call(data.Integer(10))
 		if res, ok := res.(data.Integer); !ok || !res.Equal(data.Integer(55)) {

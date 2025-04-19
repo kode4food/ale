@@ -56,6 +56,8 @@ func BenchmarkSnapshotting(b *testing.B) {
 	e := env.NewEnvironment()
 	bootstrap.DevNull(e)
 	bootstrap.Into(e)
+
+	b.ResetTimer()
 	for range b.N {
 		_ = e.Snapshot()
 	}

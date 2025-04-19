@@ -113,3 +113,20 @@ func TestFind(t *testing.T) {
 	as.True(ok)
 	as.Equal("Upper", f)
 }
+
+func BenchmarkEqualFunc(b *testing.B) {
+	largeSlice1 := make([]int, 1_000_000)
+	for i := range largeSlice1 {
+		largeSlice1[i] = i
+	}
+	largeSlice2 := largeSlice1
+
+	cmpFunc := func(a, b int) bool {
+		return a == b
+	}
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		_ = basics.EqualFunc(largeSlice1, largeSlice2, cmpFunc)
+	}
+}

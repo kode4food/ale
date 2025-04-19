@@ -290,6 +290,7 @@ func BenchmarkObjectGet(b *testing.B) {
 		o1 = o1.Put(C(k[i], v)).(*data.Object)
 	}
 
+	b.ResetTimer()
 	for range b.N {
 		for i := range 1000 {
 			_, _ = o1.Get(k[i])

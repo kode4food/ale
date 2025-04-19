@@ -60,6 +60,8 @@ func BenchmarkStructWrapper(b *testing.B) {
 	f := ffi.MustWrap(func(i *stateInfo) (string, int) {
 		return i.Name, i.Population
 	}).(data.Procedure)
+
+	b.ResetTimer()
 	for range b.N {
 		si := testStructStateInfo()
 		r := f.Call(ffi.MustWrap(si)).(data.Vector)
