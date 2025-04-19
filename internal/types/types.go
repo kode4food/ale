@@ -4,6 +4,8 @@ import (
 	"cmp"
 	"slices"
 	"strings"
+
+	"github.com/kode4food/ale/internal/basics"
 )
 
 type (
@@ -30,11 +32,9 @@ func Equal(l, r Type) bool {
 }
 
 func (t typeList) sorted() typeList {
-	res := slices.Clone(t)
-	slices.SortFunc(res, func(l, r Type) int {
+	return basics.SortedFunc(t, func(l, r Type) int {
 		return cmp.Compare(l.Name(), r.Name())
 	})
-	return res
 }
 
 func (t typeList) deduplicated() typeList {

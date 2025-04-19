@@ -2,41 +2,82 @@ package basics_test
 
 import (
 	"cmp"
-	"slices"
+	"fmt"
+	"strings"
 	"testing"
 
 	"github.com/kode4food/ale/internal/basics"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestMapKeys(t *testing.T) {
+func TestMap(t *testing.T) {
 	as := assert.New(t)
-	k := basics.MapKeys(map[string]any{
-		"age":  42,
-		"name": "bob",
-	})
-	slices.Sort(k)
-	as.Equal([]string{"age", "name"}, k)
+	m := basics.Map(
+		[]string{"is", "Upper", "not", "lower"},
+		func(in string) bool {
+			return strings.ToLower(in) != in
+		},
+	)
+	as.Equal([]bool{false, true, false, false}, m)
 }
 
-func TestSortedKeys(t *testing.T) {
+func TestIndexedMap(t *testing.T) {
 	as := assert.New(t)
-	sk := basics.SortedKeys(map[string]any{
-		"occupation": "worker bee",
-		"name":       "bob",
-		"age":        42,
-	})
-	as.Equal([]string{"age", "name", "occupation"}, sk)
+	m := basics.IndexedMap(
+		[]string{"is", "Upper", "not", "lower"},
+		func(in string, idx int) string {
+			return fmt.Sprintf("%d-%s", idx, in)
+		},
+	)
+	as.Equal([]string{"0-is", "1-Upper", "2-not", "3-lower"}, m)
 }
 
-func TestSortedKeysFunc(t *testing.T) {
+func TestSortedMap(t *testing.T) {
 	as := assert.New(t)
-	sk := basics.SortedKeysFunc(map[string]any{
-		"occupation": "worker bee",
-		"name":       "bob",
-		"age":        42,
-	}, func(l, r string) int {
-		return -cmp.Compare(l, r)
-	})
-	as.Equal([]string{"occupation", "name", "age"}, sk)
+	sm := basics.SortedMap([]string{"c", "r", "b", "a"},
+		func(in string) string {
+			return in + "-mapped"
+		},
+	)
+	as.Equal([]string{"a-mapped", "b-mapped", "c-mapped", "r-mapped"}, sm)
+}
+
+func TestSort(t *testing.T) {
+	as := assert.New(t)
+	sm := basics.Sorted([]string{"c", "r", "b", "a"})
+	as.Equal([]string{"a", "b", "c", "r"}, sm)
+}
+
+func TestSortFunc(t *testing.T) {
+	as := assert.New(t)
+	sm := basics.SortedFunc(
+		[]string{"c", "r", "b", "a"},
+		func(l, r string) int {
+			return -cmp.Compare(l, r)
+		},
+	)
+	as.Equal([]string{"r", "c", "b", "a"}, sm)
+}
+
+func TestFilter(t *testing.T) {
+	as := assert.New(t)
+	f := basics.Filter(
+		[]string{"is", "Upper", "not", "Lower"},
+		func(in string) bool {
+			return strings.ToLower(in) != in
+		},
+	)
+	as.Equal([]string{"Upper", "Lower"}, f)
+}
+
+func TestFind(t *testing.T) {
+	as := assert.New(t)
+	f, ok := basics.Find(
+		[]string{"is", "Upper", "not", "Lower"},
+		func(in string) bool {
+			return strings.ToLower(in) != in
+		},
+	)
+	as.True(ok)
+	as.Equal("Upper", f)
 }

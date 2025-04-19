@@ -3,8 +3,9 @@ package types
 import (
 	"cmp"
 	"fmt"
-	"slices"
 	"strings"
+
+	"github.com/kode4food/ale/internal/basics"
 )
 
 type (
@@ -78,11 +79,9 @@ func (f fields) toMap() map[string]Type {
 }
 
 func (f fields) sorted() fields {
-	res := slices.Clone(f)
-	slices.SortFunc(res, func(l, r Field) int {
+	return basics.SortedFunc(f, func(l, r Field) int {
 		return cmp.Compare(l.Name, r.Name)
 	})
-	return res
 }
 
 func (f fields) name() string {
