@@ -77,15 +77,17 @@ func (v Vector) Split() (Value, Sequence, bool) {
 }
 
 func (v Vector) Prepend(e Value) Sequence {
-	res := make(Vector, 1, len(v)+1)
+	res := make(Vector, len(v)+1)
 	res[0] = e
-	return append(res, v...)
+	copy(res[1:], v)
+	return res
 }
 
 func (v Vector) Append(e Value) Sequence {
-	res := make(Vector, 0, len(v)+1)
-	res = append(res, v...)
-	return append(res, e)
+	res := make(Vector, len(v)+1)
+	copy(res, v)
+	res[len(v)] = e
+	return res
 }
 
 func (v Vector) Reverse() Sequence {
