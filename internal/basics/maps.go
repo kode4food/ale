@@ -7,9 +7,11 @@ import (
 
 // MapKeys returns the keys of the provided map as a slice
 func MapKeys[K comparable, V any](m map[K]V) []K {
-	s := make([]K, 0, len(m))
+	s := make([]K, len(m))
+	var i int
 	for k := range m {
-		s = append(s, k)
+		s[i] = k
+		i++
 	}
 	return s
 }
