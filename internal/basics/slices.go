@@ -13,7 +13,12 @@ func Equal[T comparable](l, r []T) bool {
 	if len(l) == 0 || &l[0] == &r[0] {
 		return true
 	}
-	return slices.Equal(l, r)
+	for i, e := range l {
+		if e != r[i] {
+			return false
+		}
+	}
+	return true
 }
 
 // EqualFunc compares two slices of the same type using a custom comparison
@@ -24,7 +29,12 @@ func EqualFunc[T any](l, r []T, cmp func(T, T) bool) bool {
 	if len(l) == 0 || &l[0] == &r[0] {
 		return true
 	}
-	return slices.EqualFunc(l, r, cmp)
+	for i, e := range l {
+		if !cmp(e, r[i]) {
+			return false
+		}
+	}
+	return true
 }
 
 // Find returns the first element in the slice that satisfies the predicate

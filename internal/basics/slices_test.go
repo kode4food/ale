@@ -17,6 +17,7 @@ func TestEqual(t *testing.T) {
 	s1 := []string{"is", "Upper", "not", "lower"}
 	s2 := []string{"is", "Upper", "not", "lower"}
 	s3 := []string{"is", "Upper", "not", "lower", "extra"}
+	s4 := []string{"is", "Lower", "not", "upper"}
 
 	as.True(basics.Equal(s0, s0))
 	as.False(basics.Equal(s0, s1))
@@ -25,6 +26,7 @@ func TestEqual(t *testing.T) {
 	as.True(basics.Equal(s1, s2))
 	as.False(basics.Equal(s1, s3))
 	as.True(basics.Equal(s1, s3[:4]))
+	as.False(basics.Equal(s1, s4))
 }
 
 func TestEqualFunc(t *testing.T) {
@@ -34,6 +36,7 @@ func TestEqualFunc(t *testing.T) {
 	s1 := []string{"is", "Upper", "not", "lower"}
 	s2 := []string{"is", "Upper", "not", "lower"}
 	s3 := []string{"is", "Upper", "not", "lower", "extra"}
+	s4 := []string{"is", "Lower", "not", "upper"}
 
 	se := func(l, r string) bool {
 		return l == r
@@ -46,6 +49,7 @@ func TestEqualFunc(t *testing.T) {
 	as.True(basics.EqualFunc(s1, s2, se))
 	as.False(basics.EqualFunc(s1, s3, se))
 	as.True(basics.EqualFunc(s1, s3[:4], se))
+	as.False(basics.EqualFunc(s1, s4, se))
 }
 
 func TestMap(t *testing.T) {
