@@ -88,13 +88,13 @@ func IndexedMap[In, Out any](s []In, fn func(elem In, idx int) Out) []Out {
 // Filter returns a new slice containing only the elements that satisfy the
 // provided predicate function
 func Filter[T any](s []T, f func(T) bool) []T {
-	res := make([]T, len(s))
-	var i int
+	var res []T
 	for _, v := range s {
-		if f(v) {
-			res[i] = v
-			i++
+		if !f(v) {
+			continue
 		}
+		res = append(res, v)
 	}
-	return res[:i:i]
+	l := len(res)
+	return res[:l:l]
 }

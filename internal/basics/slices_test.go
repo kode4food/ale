@@ -97,13 +97,20 @@ func TestSortedFunc(t *testing.T) {
 
 func TestFilter(t *testing.T) {
 	as := assert.New(t)
-	f := basics.Filter(
-		[]string{"is", "Upper", "not", "Lower"},
-		func(in string) bool {
-			return strings.ToLower(in) != in
+	input := []int{1, 2, 3, 5, 7, 9, 11, 12, 13, 15, 16, 17, 19}
+	f1 := basics.Filter(input,
+		func(i int) bool {
+			return i%2 == 0
 		},
 	)
-	as.Equal([]string{"Upper", "Lower"}, f)
+	as.Equal([]int{2, 12, 16}, f1)
+
+	f2 := basics.Filter(input,
+		func(i int) bool {
+			return i%2 == 1
+		},
+	)
+	as.Equal([]int{1, 3, 5, 7, 9, 11, 13, 15, 17, 19}, f2)
 }
 
 func TestFind(t *testing.T) {
