@@ -64,23 +64,25 @@ func _() {
 	_ = x[Store-52]
 	_ = x[Sub-53]
 	_ = x[TailCall-54]
-	_ = x[True-55]
-	_ = x[Vector-56]
-	_ = x[Zero-57]
+	_ = x[TailDiff-55]
+	_ = x[TailSelf-56]
+	_ = x[True-57]
+	_ = x[Vector-58]
+	_ = x[Zero-59]
 }
 
 const (
-	_Opcode_name_0 = "AddArgArgLenBindBindRefCallCall0Call1Call2Call3CallWithCarCdrClosureCondJumpConsConstDerefDivDupEmptyEqFalseJumpLabelLoadModMulNegNegIntNewRefNoOpNotNullNumEqNumGtNumGteNumLtNumLtePanicPopPopArgsPosIntPrivatePublicPushArgsResolveRestArgRetFalseRetNullRetTrueReturnStoreSubTailCallTrueVectorZero"
+	_Opcode_name_0 = "AddArgArgLenBindBindRefCallCall0Call1Call2Call3CallWithCarCdrClosureCondJumpConsConstDerefDivDupEmptyEqFalseJumpLabelLoadModMulNegNegIntNewRefNoOpNotNullNumEqNumGtNumGteNumLtNumLtePanicPopPopArgsPosIntPrivatePublicPushArgsResolveRestArgRetFalseRetNullRetTrueReturnStoreSubTailCallTailDiffTailSelfTrueVectorZero"
 	_Opcode_name_1 = "OpcodeMask"
 )
 
 var (
-	_Opcode_index_0 = [...]uint16{0, 3, 6, 12, 16, 23, 27, 32, 37, 42, 47, 55, 58, 61, 68, 76, 80, 85, 90, 93, 96, 101, 103, 108, 112, 117, 121, 124, 127, 130, 136, 142, 146, 149, 153, 158, 163, 169, 174, 180, 185, 188, 195, 201, 208, 214, 222, 229, 236, 244, 251, 258, 264, 269, 272, 280, 284, 290, 294}
+	_Opcode_index_0 = [...]uint16{0, 3, 6, 12, 16, 23, 27, 32, 37, 42, 47, 55, 58, 61, 68, 76, 80, 85, 90, 93, 96, 101, 103, 108, 112, 117, 121, 124, 127, 130, 136, 142, 146, 149, 153, 158, 163, 169, 174, 180, 185, 188, 195, 201, 208, 214, 222, 229, 236, 244, 251, 258, 264, 269, 272, 280, 288, 296, 300, 306, 310}
 )
 
 func (i Opcode) String() string {
 	switch {
-	case i <= 57:
+	case i <= 59:
 		return _Opcode_name_0[_Opcode_index_0[i]:_Opcode_index_0[i+1]]
 	case i == 63:
 		return _Opcode_name_1
