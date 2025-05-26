@@ -77,7 +77,9 @@ const (
 	Return                 // Return Value
 	Store                  // Store Local
 	Sub                    // Subtraction
-	TailCall               // Tail Call
+	TailCall               // Dynamic Tail Call
+	TailDiff               // Tail Call to Different Closure
+	TailSelf               // Tail Call to Self
 	True                   // Push True
 	Vector                 // Make a new Vector from the Stack
 	Zero                   // Push Zero

@@ -20,7 +20,7 @@ const (
 	bad    = domain + console.Error + "[%d]! " + output
 )
 
-var nothing = new(sentinel)
+var nothing = sentinel{}
 
 func (r *REPL) setInitialPrompt() {
 	name := r.ns.Domain()
@@ -55,6 +55,6 @@ func (r *REPL) outputError(err error) {
 	fmt.Println(res)
 }
 
-func (*sentinel) Equal(data.Value) bool {
+func (sentinel) Equal(data.Value) bool {
 	return false
 }

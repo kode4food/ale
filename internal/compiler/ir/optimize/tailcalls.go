@@ -21,19 +21,24 @@ func makeTailCalls(e *encoder.Encoded) *encoder.Encoded {
 }
 
 func (m tailCallMapper) perform(i isa.Instructions) isa.Instructions {
-	if !m.canTailCall(i[0]) {
+	c, ok := m.canTailCall(i[0])
+	if !ok {
 		return i
+	}
+	inst := isa.TailCall
+	if c != nil {
+		inst = isa.TailDiff
 	}
 	return isa.Instructions{
 		i[0],
-		isa.TailCall.New(getCallArgCount(i[1])),
+		inst.New(getCallArgCount(i[1])),
 	}
 }
 
-func (m tailCallMapper) canTailCall(i isa.Instruction) bool {
+func (m tailCallMapper) canTailCall(i isa.Instruction) (*vm.Closure, bool) {
 	if oc, op := i.Split(); oc == isa.Const {
-		_, ok := m.Constants[op].(*vm.Closure)
-		return ok
+		c, ok := m.Constants[op].(*vm.Closure)
+		return c, ok
 	}
-	return true
+	return nil, true
 }

@@ -94,6 +94,8 @@ var Effects = map[Opcode]*Effect{
 	Store:    {Pop: 1, Operand: Locals},
 	Sub:      {Pop: 2, Push: 1},
 	TailCall: {Pop: 1, DPop: true, Operand: Stack},
+	TailDiff: {Pop: 1, DPop: true, Operand: Stack},
+	TailSelf: {DPop: true, Operand: Stack},
 	True:     {Push: 1},
 	Vector:   {Push: 1, DPop: true, Operand: Stack},
 	Zero:     {Push: 1},

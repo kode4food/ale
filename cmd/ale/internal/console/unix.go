@@ -42,10 +42,10 @@ var (
 
 // Painter implements the Painter interface for readline
 func Painter() readline.Painter {
-	return new(painter)
+	return painter{}
 }
 
-func (*painter) Paint(line []rune, pos int) []rune {
+func (painter) Paint(line []rune, pos int) []rune {
 	if len(line) == 0 {
 		return line
 	}

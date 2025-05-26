@@ -328,7 +328,7 @@ CurrentPC:
 		SP1 := SP + 1
 		MEM[SP1] = MEM[SP1].(data.Number).Sub(MEM[SP].(data.Number))
 
-	case isa.TailCall:
+	case isa.TailCall: // Fully dynamic tail call
 		op := INST.Operand()
 		SP1 := SP + 1
 		SP2 := SP1 + 1
@@ -348,6 +348,25 @@ CurrentPC:
 			goto InitMem
 		}
 		goto InitCode
+
+	case isa.TailDiff:
+		op := INST.Operand()
+		SP1 := SP + 1
+		SP2 := SP1 + 1
+		val := MEM[SP1]
+		c = val.(*Closure)
+		args = slices.Clone(MEM[SP2 : SP2+int(op)])
+		if len(MEM) < int(c.StackSize+c.LocalCount) {
+			free(MEM)
+			goto InitMem
+		}
+		goto InitCode
+
+	case isa.TailSelf:
+		op := INST.Operand()
+		SP1 := SP + 1
+		args = slices.Clone(MEM[SP1 : SP1+int(op)])
+		goto InitState
 
 	case isa.True:
 		MEM[SP] = data.True

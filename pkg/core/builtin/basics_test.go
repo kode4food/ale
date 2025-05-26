@@ -53,7 +53,7 @@ func TestRecover(t *testing.T) {
 	testRecover(as, errors.New(errStr), errStr)
 
 	defer as.ExpectProgrammerError("recover returned invalid result")
-	testRecover(as, &struct{}{}, "won't be needed")
+	testRecover(as, struct{}{}, "won't be needed")
 }
 
 func TestDefer(t *testing.T) {
