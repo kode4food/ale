@@ -353,8 +353,7 @@ CurrentPC:
 		op := INST.Operand()
 		SP1 := SP + 1
 		SP2 := SP1 + 1
-		val := MEM[SP1]
-		c = val.(*Closure)
+		c = MEM[SP1].(*Closure)
 		args = slices.Clone(MEM[SP2 : SP2+int(op)])
 		if len(MEM) < int(c.StackSize+c.LocalCount) {
 			free(MEM)

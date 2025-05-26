@@ -276,7 +276,12 @@ func isParamCase(b visitor.Branches) (isa.Opcode, isa.Operand, bool) {
 
 func hasTailCallInstruction(c isa.Instructions) bool {
 	return slices.ContainsFunc(c, func(i isa.Instruction) bool {
-		return i.Opcode() == isa.TailCall
+		switch i.Opcode() {
+		case isa.TailCall, isa.TailDiff, isa.TailSelf:
+			return true
+		default:
+			return false
+		}
 	})
 }
 
