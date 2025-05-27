@@ -21,6 +21,6 @@ func TestTailCalls(t *testing.T) {
 		isa.PosInt.New(2),
 		isa.PosInt.New(1),
 		isa.Const.New(0),
-		isa.TailDiff.New(2),
+		isa.TailClos.New(2),
 	}, optimize.Encoded(e1.Encode()).Code)
 }

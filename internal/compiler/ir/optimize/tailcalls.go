@@ -42,7 +42,7 @@ func (m tailCallMapper) perform(i isa.Instructions) isa.Instructions {
 	}
 	inst := isa.TailCall
 	if c != nil {
-		inst = isa.TailDiff
+		inst = isa.TailClos
 	}
 	return isa.Instructions{
 		i[0],

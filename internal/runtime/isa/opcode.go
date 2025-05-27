@@ -79,7 +79,7 @@ const (
 	Store                  // Store Local
 	Sub                    // Subtraction
 	TailCall               // Dynamic Tail Call
-	TailDiff               // Tail Call to Different Closure
+	TailClos               // Tail Call to a Closure
 	TailSelf               // Tail Call to Self
 	True                   // Push True
 	Vector                 // Make a new Vector from the Stack

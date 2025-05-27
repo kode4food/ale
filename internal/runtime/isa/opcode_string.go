@@ -65,7 +65,7 @@ func _() {
 	_ = x[Store-53]
 	_ = x[Sub-54]
 	_ = x[TailCall-55]
-	_ = x[TailDiff-56]
+	_ = x[TailClos-56]
 	_ = x[TailSelf-57]
 	_ = x[True-58]
 	_ = x[Vector-59]
@@ -73,7 +73,7 @@ func _() {
 }
 
 const (
-	_Opcode_name_0 = "AddArgArgLenBindBindRefCallCall0Call1Call2Call3CallSelfCallWithCarCdrClosureCondJumpConsConstDerefDivDupEmptyEqFalseJumpLabelLoadModMulNegNegIntNewRefNoOpNotNullNumEqNumGtNumGteNumLtNumLtePanicPopPopArgsPosIntPrivatePublicPushArgsResolveRestArgRetFalseRetNullRetTrueReturnStoreSubTailCallTailDiffTailSelfTrueVectorZero"
+	_Opcode_name_0 = "AddArgArgLenBindBindRefCallCall0Call1Call2Call3CallSelfCallWithCarCdrClosureCondJumpConsConstDerefDivDupEmptyEqFalseJumpLabelLoadModMulNegNegIntNewRefNoOpNotNullNumEqNumGtNumGteNumLtNumLtePanicPopPopArgsPosIntPrivatePublicPushArgsResolveRestArgRetFalseRetNullRetTrueReturnStoreSubTailCallTailClosTailSelfTrueVectorZero"
 	_Opcode_name_1 = "OpcodeMask"
 )
 

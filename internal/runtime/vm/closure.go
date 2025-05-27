@@ -357,7 +357,7 @@ CurrentPC:
 		}
 		goto InitCode
 
-	case isa.TailDiff:
+	case isa.TailClos:
 		op := INST.Operand()
 		SP1 := SP + 1
 		SP2 := SP1 + 1
