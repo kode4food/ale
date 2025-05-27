@@ -28,7 +28,8 @@ var (
 	)
 )
 
-// callsInTailPosition replaces calls in tail position with a tail-call instruction
+// callsInTailPosition replaces calls in tail position that are not self-calls
+// with a tail-call instruction
 func callsInTailPosition(e *encoder.Encoded) *encoder.Encoded {
 	m := &tailCallMapper{e}
 	r := visitor.Replace(tailCallPattern, m.perform)
