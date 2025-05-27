@@ -7,8 +7,15 @@ import (
 	"github.com/kode4food/ale/internal/runtime/vm"
 )
 
+type procEncoder struct {
+	encoder.Encoder
+}
+
 func Procedure(e encoder.Encoder, build Builder) (*vm.Procedure, error) {
-	child := e.Child()
+	pe := &procEncoder{
+		Encoder: e,
+	}
+	child := pe.Child()
 	if err := build(child); err != nil {
 		return nil, err
 	}
@@ -37,4 +44,14 @@ func Procedure(e encoder.Encoder, build Builder) (*vm.Procedure, error) {
 	e.Emit(isa.Const, e.AddConstant(fn))
 	e.Emit(isa.Call, isa.Operand(clen))
 	return fn, nil
+}
+
+func (le *procEncoder) Wrapped() encoder.Encoder {
+	return le.Encoder
+}
+
+func (le *procEncoder) Child() encoder.Encoder {
+	res := *le
+	res.Encoder = le.Encoder.Child()
+	return &res
 }
