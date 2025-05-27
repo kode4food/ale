@@ -94,15 +94,6 @@ func staticLiteral(e encoder.Encoder, fn data.Value) funcEmitter {
 	}
 }
 
-func callSelf(e encoder.Encoder, args data.Vector) error {
-	al, err := makeArgs(e, args)()
-	if err != nil {
-		return err
-	}
-	e.Emit(isa.CallSelf, isa.Operand(al))
-	return nil
-}
-
 func callDynamic(e encoder.Encoder, v data.Value, args data.Vector) error {
 	emitFunc := dynamicEval(e, v)
 	emitArgs := makeArgs(e, args)
@@ -113,6 +104,15 @@ func dynamicEval(e encoder.Encoder, v data.Value) funcEmitter {
 	return func() error {
 		return Value(e, v)
 	}
+}
+
+func callSelf(e encoder.Encoder, args data.Vector) error {
+	al, err := makeArgs(e, args)()
+	if err != nil {
+		return err
+	}
+	e.Emit(isa.CallSelf, isa.Operand(al))
+	return nil
 }
 
 func makeArgs(e encoder.Encoder, args data.Vector) argsEmitter {
@@ -152,19 +152,19 @@ func isSelfCalling(e encoder.Encoder, s *encoder.ScopedCell) bool {
 }
 
 func makeEncoderPath(e encoder.Encoder) []encoder.Encoder {
-	var res []encoder.Encoder
-	var last encoder.Encoder
+	res := []encoder.Encoder{e}
+	last := e
 	for {
-		if last != e {
-			res = append(res, e)
-			last = e
-		}
 		w, ok := e.(encoder.WrappedEncoder)
 		if !ok {
 			break
 		}
 		if e = w.Wrapped(); e == nil {
 			break
+		}
+		if e != last {
+			res = append(res, e)
+			last = e
 		}
 	}
 	return res
