@@ -129,18 +129,18 @@ func makeArgs(e encoder.Encoder, args data.Vector) argsEmitter {
 
 func isSelfCalling(e encoder.Encoder, s *encoder.ScopedCell) bool {
 	path := makeEncoderPath(e)
-	for len(path) > 0 {
+	for len(path) > 0 { // walk up to the nearest procEncoder
 		pe := path[0]
 		path = path[1:]
 		if _, ok := pe.(*procEncoder); ok {
 			break
 		}
 	}
-	for len(path) > 0 {
+	for len(path) > 0 { // we should find out bindEncoder after that
 		pe := path[0]
 		path = path[1:]
 		switch pe := pe.(type) {
-		case *procEncoder:
+		case *procEncoder: // if we see another procEncoder, can't self-call
 			return false
 		case *bindEncoder:
 			if pe.cell.Name == s.Cell.Name {
