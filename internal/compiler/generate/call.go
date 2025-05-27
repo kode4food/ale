@@ -34,8 +34,15 @@ func callValue(e encoder.Encoder, v data.Value, args data.Vector) error {
 
 func callSymbol(e encoder.Encoder, s data.Symbol, args data.Vector) error {
 	if l, ok := s.(data.Local); ok {
-		if _, ok := e.ResolveLocal(l); ok {
-			return callDynamic(e, l, args)
+		if s, ok := e.ResolveScoped(l); ok {
+			switch s.Scope {
+			case encoder.LocalScope, encoder.ArgScope:
+				return callDynamic(e, l, args)
+			case encoder.ClosureScope:
+				if isSelfCalling(e, s) {
+					return callSelf(e, args)
+				}
+			}
 		}
 	}
 	globals := e.Globals()
@@ -87,6 +94,15 @@ func staticLiteral(e encoder.Encoder, fn data.Value) funcEmitter {
 	}
 }
 
+func callSelf(e encoder.Encoder, args data.Vector) error {
+	al, err := makeArgs(e, args)()
+	if err != nil {
+		return err
+	}
+	e.Emit(isa.CallSelf, isa.Operand(al))
+	return nil
+}
+
 func callDynamic(e encoder.Encoder, v data.Value, args data.Vector) error {
 	emitFunc := dynamicEval(e, v)
 	emitArgs := makeArgs(e, args)
@@ -109,4 +125,47 @@ func makeArgs(e encoder.Encoder, args data.Vector) argsEmitter {
 		}
 		return al, nil
 	}
+}
+
+func isSelfCalling(e encoder.Encoder, s *encoder.ScopedCell) bool {
+	path := makeEncoderPath(e)
+	for len(path) > 0 {
+		pe := path[0]
+		path = path[1:]
+		if _, ok := pe.(*procEncoder); ok {
+			break
+		}
+	}
+	for len(path) > 0 {
+		pe := path[0]
+		path = path[1:]
+		switch pe := pe.(type) {
+		case *procEncoder:
+			return false
+		case *bindEncoder:
+			if pe.cell.Name == s.Cell.Name {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+func makeEncoderPath(e encoder.Encoder) []encoder.Encoder {
+	var res []encoder.Encoder
+	var last encoder.Encoder
+	for {
+		if last != e {
+			res = append(res, e)
+			last = e
+		}
+		w, ok := e.(encoder.WrappedEncoder)
+		if !ok {
+			break
+		}
+		if e = w.Wrapped(); e == nil {
+			break
+		}
+	}
+	return res
 }

@@ -17,6 +17,15 @@ var (
 	tailCallPattern = visitor.Pattern{
 		{visitor.AnyOpcode}, tailCallOpcode, {isa.Return},
 	}
+
+	selfCallsInTailPosition = globalReplace(
+		visitor.Pattern{{isa.CallSelf}, {isa.Return}},
+		func(i isa.Instructions) isa.Instructions {
+			return isa.Instructions{
+				isa.TailSelf.New(getCallArgCount(i[0])),
+			}
+		},
+	)
 )
 
 // callsInTailPosition replaces calls in tail position with a tail-call instruction

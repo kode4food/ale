@@ -197,7 +197,7 @@ func getCallArgCount(i isa.Instruction) isa.Operand {
 		return 2
 	case isa.Call3:
 		return 3
-	case isa.Call:
+	case isa.Call, isa.CallSelf:
 		return i.Operand()
 	default:
 		panic(debug.ProgrammerError("invalid call instruction matched"))

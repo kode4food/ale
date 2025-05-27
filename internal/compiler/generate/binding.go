@@ -80,16 +80,6 @@ func MutualLocals(e encoder.Encoder, bindings Bindings, body Builder) error {
 	return e.PopLocals()
 }
 
-func (b *bindEncoder) Wrapped() encoder.Encoder {
-	return b.Encoder
-}
-
-func (b *bindEncoder) Child() encoder.Encoder {
-	res := *b
-	res.Encoder = b.Encoder.Child()
-	return &res
-}
-
 func BoundValue(e encoder.Encoder, c *encoder.IndexedCell, v data.Value) error {
 	be := &bindEncoder{
 		Encoder: e,
@@ -99,4 +89,14 @@ func BoundValue(e encoder.Encoder, c *encoder.IndexedCell, v data.Value) error {
 		return err
 	}
 	return nil
+}
+
+func (b *bindEncoder) Wrapped() encoder.Encoder {
+	return b.Encoder
+}
+
+func (b *bindEncoder) Child() encoder.Encoder {
+	res := *b
+	res.Encoder = b.Encoder.Child()
+	return &res
 }

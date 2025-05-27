@@ -13,6 +13,7 @@ type optimizer func(*encoder.Encoded) *encoder.Encoded
 var Encoded = compose(
 	splitReturns,
 	callsInTailPosition,
+	selfCallsInTailPosition,
 	inlineCalls,
 	repeatWhenModified(redundantLocals, ineffectivePushes),
 	literalReturns,

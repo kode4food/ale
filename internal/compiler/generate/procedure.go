@@ -12,10 +12,7 @@ type procEncoder struct {
 }
 
 func Procedure(e encoder.Encoder, build Builder) (*vm.Procedure, error) {
-	pe := &procEncoder{
-		Encoder: e,
-	}
-	child := pe.Child()
+	child := makeProcEncoder(e).Child()
 	if err := build(child); err != nil {
 		return nil, err
 	}
@@ -46,12 +43,18 @@ func Procedure(e encoder.Encoder, build Builder) (*vm.Procedure, error) {
 	return fn, nil
 }
 
-func (le *procEncoder) Wrapped() encoder.Encoder {
-	return le.Encoder
+func makeProcEncoder(e encoder.Encoder) *procEncoder {
+	return &procEncoder{
+		Encoder: e,
+	}
 }
 
-func (le *procEncoder) Child() encoder.Encoder {
-	res := *le
-	res.Encoder = le.Encoder.Child()
+func (e *procEncoder) Wrapped() encoder.Encoder {
+	return e.Encoder
+}
+
+func (e *procEncoder) Child() encoder.Encoder {
+	res := *e
+	res.Encoder = e.Encoder.Child()
 	return &res
 }

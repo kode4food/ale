@@ -126,6 +126,14 @@ CurrentPC:
 		SP += 3
 		MEM[SP4] = MEM[SP1].(data.Procedure).Call(MEM[SP2], MEM[SP], MEM[SP4])
 
+	case isa.CallSelf:
+		op := INST.Operand()
+		SP1 := SP + 1
+		callArgs := MEM[SP1 : SP1+int(op)]
+		RES := SP + int(op)
+		MEM[RES] = c.Call(callArgs...)
+		SP = RES - 1
+
 	case isa.CallWith:
 		SP1 := SP + 2
 		SP++
@@ -342,7 +350,7 @@ CurrentPC:
 		if cl == c {
 			goto InitState
 		}
-		c = cl // intentional
+		c = cl
 		if len(MEM) < int(c.StackSize+c.LocalCount) {
 			free(MEM)
 			goto InitMem
@@ -360,6 +368,12 @@ CurrentPC:
 			goto InitMem
 		}
 		goto InitCode
+
+	case isa.TailSelf:
+		op := INST.Operand()
+		SP1 := SP + 1
+		args = slices.Clone(MEM[SP1 : SP1+int(op)])
+		goto InitState
 
 	case isa.True:
 		MEM[SP] = data.True

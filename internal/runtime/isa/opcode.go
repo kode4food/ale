@@ -33,6 +33,7 @@ const (
 	Call1                  // One-Arg Call
 	Call2                  // Two-Arg Call
 	Call3                  // Three-Arg Call
+	CallSelf               // Call Self
 	CallWith               // Call with the provided Sequence as Arguments
 	Car                    // Contents of the Address part of the Register
 	Cdr                    // Contents of the Decrement part of the Register
@@ -79,6 +80,7 @@ const (
 	Sub                    // Subtraction
 	TailCall               // Dynamic Tail Call
 	TailDiff               // Tail Call to Different Closure
+	TailSelf               // Tail Call to Self
 	True                   // Push True
 	Vector                 // Make a new Vector from the Stack
 	Zero                   // Push Zero
