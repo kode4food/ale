@@ -9,12 +9,18 @@ import (
 
 type tailCallMapper struct{ *encoder.Encoded }
 
-var tailCallPattern = visitor.Pattern{
-	{visitor.AnyOpcode}, anyCallOpcode, {isa.Return},
-}
+var (
+	tailCallOpcode = []isa.Opcode{
+		isa.Call0, isa.Call1, isa.Call2, isa.Call3, isa.Call,
+	}
 
-// makeTailCalls replaces calls in tail position with a tail-call instruction
-func makeTailCalls(e *encoder.Encoded) *encoder.Encoded {
+	tailCallPattern = visitor.Pattern{
+		{visitor.AnyOpcode}, tailCallOpcode, {isa.Return},
+	}
+)
+
+// callsInTailPosition replaces calls in tail position with a tail-call instruction
+func callsInTailPosition(e *encoder.Encoded) *encoder.Encoded {
 	m := &tailCallMapper{e}
 	r := visitor.Replace(tailCallPattern, m.perform)
 	return performReplace(e, r)

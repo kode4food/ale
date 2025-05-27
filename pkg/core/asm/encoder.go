@@ -50,6 +50,16 @@ func (p *asmParser) wrapEncoder(
 	}
 }
 
+func (e *asmEncoder) Wrapped() encoder.Encoder {
+	return e.Encoder
+}
+
+func (e *asmEncoder) Child() encoder.Encoder {
+	res := *e
+	res.Encoder = e.Encoder.Child()
+	return &res
+}
+
 func (e *asmEncoder) getLabelIndex(n data.Local) isa.Operand {
 	if idx, ok := e.labels[n]; ok {
 		return idx

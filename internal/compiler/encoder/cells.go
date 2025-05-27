@@ -26,6 +26,7 @@ type (
 
 	// ScopedCell attaches a Scope to a Cell
 	ScopedCell struct {
+		Encoder
 		*Cell
 		Scope
 	}
@@ -52,9 +53,10 @@ func newIndexedCell(i isa.Operand, c *Cell) *IndexedCell {
 	}
 }
 
-func newScopedCell(s Scope, c *Cell) *ScopedCell {
+func newScopedCell(e Encoder, s Scope, c *Cell) *ScopedCell {
 	return &ScopedCell{
-		Scope: s,
-		Cell:  c,
+		Encoder: e,
+		Scope:   s,
+		Cell:    c,
 	}
 }

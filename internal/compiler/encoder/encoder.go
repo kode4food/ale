@@ -34,6 +34,11 @@ type (
 		ResolveLocal(data.Local) (*IndexedCell, bool)
 	}
 
+	WrappedEncoder interface {
+		Encoder
+		Wrapped() Encoder
+	}
+
 	encoder struct {
 		locals    []Locals
 		code      isa.Instructions

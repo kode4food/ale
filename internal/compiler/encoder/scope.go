@@ -14,16 +14,16 @@ const (
 
 func (e *encoder) ResolveScoped(n data.Local) (*ScopedCell, bool) {
 	if i, ok := e.ResolveLocal(n); ok {
-		return newScopedCell(LocalScope, i.Cell), true
+		return newScopedCell(e, LocalScope, i.Cell), true
 	}
 	if _, ok := e.ResolveParam(n); ok {
-		return newScopedCell(ArgScope, newCell(ValueCell, n)), true
+		return newScopedCell(e, ArgScope, newCell(ValueCell, n)), true
 	}
 	if e.parent == nil {
 		return nil, false
 	}
 	if s, ok := e.parent.ResolveScoped(n); ok {
-		return newScopedCell(ClosureScope, s.Cell), true
+		return newScopedCell(s.Encoder, ClosureScope, s.Cell), true
 	}
 	return nil, false
 }

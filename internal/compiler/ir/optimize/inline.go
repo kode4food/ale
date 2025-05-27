@@ -25,11 +25,11 @@ type (
 )
 
 var (
-	anyCallOpcode = []isa.Opcode{
+	inlineCallOpcode = []isa.Opcode{
 		isa.Call0, isa.Call1, isa.Call2, isa.Call3, isa.Call,
 	}
 
-	inlineCallPattern = visitor.Pattern{{isa.Const}, anyCallOpcode}
+	inlineCallPattern = visitor.Pattern{{isa.Const}, inlineCallOpcode}
 
 	mapReturns = map[isa.Opcode]isa.Instruction{
 		isa.RetTrue:  isa.True.New(),
@@ -277,7 +277,7 @@ func isParamCase(b visitor.Branches) (isa.Opcode, isa.Operand, bool) {
 func hasTailCallInstruction(c isa.Instructions) bool {
 	return slices.ContainsFunc(c, func(i isa.Instruction) bool {
 		switch i.Opcode() {
-		case isa.TailCall, isa.TailDiff, isa.TailSelf:
+		case isa.TailCall, isa.TailDiff:
 			return true
 		default:
 			return false

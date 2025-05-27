@@ -14,6 +14,11 @@ type (
 
 	Bindings []*Binding
 	Binder   func(encoder.Encoder, Bindings, Builder) error
+
+	bindEncoder struct {
+		encoder.Encoder
+		cell *encoder.IndexedCell
+	}
 )
 
 func Locals(e encoder.Encoder, bindings Bindings, body Builder) error {
@@ -56,8 +61,8 @@ func MutualLocals(e encoder.Encoder, bindings Bindings, body Builder) error {
 	}
 
 	// Push the evaluated expressions to be bound
-	for _, b := range bindings {
-		if err := Value(e, b.Value); err != nil {
+	for i, b := range bindings {
+		if err := BoundValue(e, cells[i], b.Value); err != nil {
 			return err
 		}
 	}
@@ -73,4 +78,25 @@ func MutualLocals(e encoder.Encoder, bindings Bindings, body Builder) error {
 		return err
 	}
 	return e.PopLocals()
+}
+
+func (b *bindEncoder) Wrapped() encoder.Encoder {
+	return b.Encoder
+}
+
+func (b *bindEncoder) Child() encoder.Encoder {
+	res := *b
+	res.Encoder = b.Encoder.Child()
+	return &res
+}
+
+func BoundValue(e encoder.Encoder, c *encoder.IndexedCell, v data.Value) error {
+	be := &bindEncoder{
+		Encoder: e,
+		cell:    c,
+	}
+	if err := Value(be, v); err != nil {
+		return err
+	}
+	return nil
 }

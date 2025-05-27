@@ -361,12 +361,6 @@ CurrentPC:
 		}
 		goto InitCode
 
-	case isa.TailSelf:
-		op := INST.Operand()
-		SP1 := SP + 1
-		args = slices.Clone(MEM[SP1 : SP1+int(op)])
-		goto InitState
-
 	case isa.True:
 		MEM[SP] = data.True
 		SP--

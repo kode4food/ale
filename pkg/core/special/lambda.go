@@ -39,6 +39,16 @@ func makeLambda(e encoder.Encoder, v *internal.ParamCases) *lambdaEncoder {
 	return res
 }
 
+func (le *lambdaEncoder) Wrapped() encoder.Encoder {
+	return le.Encoder
+}
+
+func (le *lambdaEncoder) Child() encoder.Encoder {
+	res := *le
+	res.Encoder = le.Encoder.Child()
+	return &res
+}
+
 func (le *lambdaEncoder) encode() error {
 	cases := le.cases.Cases
 	if len(cases) == 0 {
