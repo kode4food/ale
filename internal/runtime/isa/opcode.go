@@ -23,67 +23,67 @@ const (
 
 //go:generate go run golang.org/x/tools/cmd/stringer -type=Opcode
 const (
-	Add      Opcode = iota // Addition
-	Arg                    // Retrieve Argument Value
-	ArgLen                 // Retrieve Argument Count
-	Bind                   // Bind Global
-	BindRef                // Bind Reference
-	Call                   // Call Procedure
-	Call0                  // Zero-Arg Call
-	Call1                  // One-Arg Call
-	Call2                  // Two-Arg Call
-	Call3                  // Three-Arg Call
-	CallSelf               // Call Self
-	CallWith               // Call with the provided Sequence as Arguments
-	Car                    // Contents of the Address part of the Register
-	Cdr                    // Contents of the Decrement part of the Register
-	Closure                // Retrieve Closure Value
-	CondJump               // Conditional Jump
-	Cons                   // Form a new Cons Cell (or Prepend)
-	Const                  // Retrieve Constant
-	Deref                  // Pointer Dereference
-	Div                    // Division
-	Dup                    // Duplicate Value
-	Empty                  // Tests Empty Sequence
-	Eq                     // Value Equality
-	False                  // Push False
-	Jump                   // Absolute Jump
-	Label                  // Internal Label
-	Load                   // Retrieve Local Value
-	Mod                    // Remainder
-	Mul                    // Multiplication
-	Neg                    // Negation
-	NegInt                 // Push Negative Integer (in Operand)
-	NewRef                 // New Reference
-	NoOp                   // Error-Operator
-	Not                    // Boolean Negation
-	Null                   // Push Null
-	NumEq                  // Numeric Equality
-	NumGt                  // Greater Than
-	NumGte                 // Greater or Equal To
-	NumLt                  // Less Than Comparison
-	NumLte                 // Less or Equal To
-	Panic                  // Halt Abnormally
-	Pop                    // Discard Value
-	PopArgs                // Pop Arguments
-	PosInt                 // Push Positive Integer (in Operand)
-	Private                // Declare a private Namespace entry
-	Public                 // Declare a public Namespace entry
-	PushArgs               // Push Arguments
-	Resolve                // Resolve Global Symbol
-	RestArg                // Retrieve Arguments Tail
-	RetFalse               // Return False
-	RetNull                // Return Null (Empty List)
-	RetTrue                // Return True
-	Return                 // Return Value
-	Store                  // Store Local
-	Sub                    // Subtraction
-	TailCall               // Dynamic Tail Call
-	TailClos               // Tail Call to a Closure
-	TailSelf               // Tail Call to Self
-	True                   // Push True
-	Vector                 // Make a new Vector from the Stack
-	Zero                   // Push Zero
+	Add      Opcode = iota // Pop two numbers, push their sum
+	Arg                    // Push the Nth argument (op = index)
+	ArgLen                 // Push the number of arguments
+	Bind                   // Pop name and value, binds value to global symbol
+	BindRef                // Pop ref and value, sets ref.Value to value
+	Call                   // Calls proc with N args (op = count)
+	Call0                  // Calls proc with zero arguments
+	Call1                  // Calls proc with one argument
+	Call2                  // Calls proc with two arguments
+	Call3                  // Calls proc with three arguments
+	CallSelf               // Calls current closure with N args (op = count)
+	CallWith               // Calls proc with args from a sequence
+	Car                    // Pop pair, push its Address (car) part
+	Cdr                    // Pop pair, push its Decrement (cdr) part
+	Closure                // Push captured value (op = index)
+	CondJump               // If top of stack is true, jumps to operand
+	Cons                   // Pop two values, push a new cons cell
+	Const                  // Push constant (op = index)
+	Deref                  // Loads ref.Value from ref at top of stack
+	Div                    // Pop two numbers, push their quotient
+	Dup                    // Duplicates the top of the stack
+	Empty                  // Push true if sequence at top is empty
+	Eq                     // Pop two values, push true if equal
+	False                  // Push the boolean false
+	Jump                   // Jumps to operand
+	Label                  // Marks a label (not executed)
+	Load                   // Push local value (op = index)
+	Mod                    // Pop two numbers, push remainder
+	Mul                    // Pop two numbers, push their product
+	Neg                    // Negates the number at top of stack
+	NegInt                 // Push negative integer (operand)
+	NewRef                 // Push a new Ref
+	NoOp                   // No operation
+	Not                    // Boolean negation of top of stack
+	Null                   // Push the null value
+	NumEq                  // Pop two numbers, push true if equal
+	NumGt                  // Pop two numbers, push true if second > first
+	NumGte                 // Pop two numbers, push true if second >= first
+	NumLt                  // Pop two numbers, push true if second < first
+	NumLte                 // Pop two numbers, push true if second <= first
+	Panic                  // Raises error with value at top of stack
+	Pop                    // Discards the top of the stack
+	PopArgs                // Pop argument stack frame
+	PosInt                 // Push positive integer (operand)
+	Private                // Pop symbol, marks as private in namespace
+	Public                 // Pop symbol, marks as public in namespace
+	PushArgs               // Push N arguments (op = count)
+	Resolve                // Resolves global symbol at top of stack
+	RestArg                // Push rest of arguments as a vector
+	RetFalse               // Returns the boolean false
+	RetNull                // Returns the null value
+	RetTrue                // Returns the boolean true
+	Return                 // Returns value at top of stack
+	Store                  // Pop value, stores in local (op = index)
+	Sub                    // Pop two numbers, push their difference
+	TailCall               // Dynamic tail call
+	TailClos               // Tail call to a closure
+	TailSelf               // Tail call to self with N args
+	True                   // Push the boolean true
+	Vector                 // Pop N values, push as a vector (op = count)
+	Zero                   // Push the integer zero
 )
 
 // New creates a new Instruction instance from an Opcode
