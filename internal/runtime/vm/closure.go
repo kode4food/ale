@@ -34,6 +34,14 @@ const (
 	// ErrEmptyArgStack is raised when the VM encounters an instruction to pop
 	// the argument stack, but the head of the stack is empty
 	ErrEmptyArgStack = "attempt to pop empty argument stack"
+
+	// ErrUnexpectedLabel is raised when the VM encounters a label that should
+	// have otherwise been stripped when the instructions were made Runnable
+	ErrUnexpectedLabel = "unexpected label encountered: %d"
+
+	// ErrUnexpectedNoOp is raised when the VM encounters a NoOp instruction
+	// that should have been stripped when the instructions were made Runnable
+	ErrUnexpectedNoOp = "unexpected no-op encountered"
 )
 
 // Captured returns the captured values of a Closure
@@ -202,6 +210,10 @@ CurrentPC:
 		PC = int(INST.Operand())
 		goto CurrentPC
 
+	case isa.Label:
+		// Labels should be stripped out by the compiler when made Runnable
+		panic(debug.ProgrammerError(ErrUnexpectedLabel, INST.Operand()))
+
 	case isa.Load:
 		MEM[SP] = MEM[LP+int(INST.Operand())]
 		SP--
@@ -229,7 +241,8 @@ CurrentPC:
 		SP--
 
 	case isa.NoOp:
-		// Simply advance the PC
+		// NoOp should be stripped out by the compiler when made Runnable
+		panic(debug.ProgrammerError(ErrUnexpectedNoOp))
 
 	case isa.Not:
 		SP1 := SP + 1

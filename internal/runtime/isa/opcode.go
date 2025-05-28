@@ -44,17 +44,17 @@ const (
 	Deref                  // Loads ref.Value from ref at top of stack
 	Div                    // Pop two numbers, push their quotient
 	Dup                    // Duplicates the top of the stack
-	Empty                  // Push true if sequence at top is empty
+	Empty                  // Push true if sequence at top of stack is empty
 	Eq                     // Pop two values, push true if equal
 	False                  // Push the boolean false
 	Jump                   // Jumps to operand
 	Label                  // Marks a label (not executed)
 	Load                   // Push local value (op = index)
-	Mod                    // Pop two numbers, push remainder
+	Mod                    // Pop two numbers, push remainder of division
 	Mul                    // Pop two numbers, push their product
 	Neg                    // Negates the number at top of stack
 	NegInt                 // Push negative integer (operand)
-	NewRef                 // Push a new Ref
+	NewRef                 // Push a new unbound Ref
 	NoOp                   // No operation
 	Not                    // Boolean negation of top of stack
 	Null                   // Push the null value
@@ -78,9 +78,9 @@ const (
 	Return                 // Returns value at top of stack
 	Store                  // Pop value, stores in local (op = index)
 	Sub                    // Pop two numbers, push their difference
-	TailCall               // Dynamic tail call
-	TailClos               // Tail call to a closure
-	TailSelf               // Tail call to self with N args
+	TailCall               // Dynamic tail call with N args (op = count)
+	TailClos               // Tail call to a closure with N args (op = count)
+	TailSelf               // Tail call to self with N args (op = count)
 	True                   // Push the boolean true
 	Vector                 // Pop N values, push as a vector (op = count)
 	Zero                   // Push the integer zero

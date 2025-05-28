@@ -94,7 +94,6 @@ func TestPopAndDup(t *testing.T) {
 	testResult(t, I(4), isa.Instructions{
 		isa.PosInt.New(2),
 		isa.Dup.New(),
-		isa.NoOp.New(),
 		isa.Add.New(),
 		isa.Return.New(),
 	})
@@ -159,7 +158,6 @@ func TestReturns(t *testing.T) {
 func TestUnary(t *testing.T) {
 	testResult(t, I(-1), isa.Instructions{
 		isa.PosInt.New(1),
-		isa.NoOp.New(),
 		isa.Neg.New(),
 		isa.Return.New(),
 	})
@@ -453,7 +451,21 @@ func TestForUnimplementedOpcodes(t *testing.T) {
 func TestBadOpcode(t *testing.T) {
 	as := assert.New(t)
 	defer as.ExpectProgrammerError(
-		fmt.Sprintf(vm.ErrBadInstruction, isa.Instruction(isa.Label)),
+		fmt.Sprintf(vm.ErrBadInstruction, isa.Instruction(isa.OpcodeMask-1)),
+	)
+	runCode(isa.Instructions{isa.Instruction(isa.OpcodeMask - 1)})
+}
+
+func TestUnexpectedLabel(t *testing.T) {
+	as := assert.New(t)
+	defer as.ExpectProgrammerError(
+		fmt.Sprintf(vm.ErrUnexpectedLabel, 0),
 	)
 	runCode(isa.Instructions{isa.Instruction(isa.Label)})
+}
+
+func TestUnexpectedNoOp(t *testing.T) {
+	as := assert.New(t)
+	defer as.ExpectProgrammerError(vm.ErrUnexpectedNoOp)
+	runCode(isa.Instructions{isa.Instruction(isa.NoOp)})
 }
