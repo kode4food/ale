@@ -98,7 +98,7 @@ func Last(s Sequence) (Value, bool) {
 
 func indexedCall(s IndexedSequence, args Vector) Value {
 	idx := args[0].(Integer)
-	res, ok := s.ElementAt(idx)
+	res, ok := s.ElementAt(int(idx))
 	if !ok && len(args) > 1 {
 		return args[1]
 	}

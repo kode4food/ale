@@ -18,7 +18,7 @@ type Object struct {
 	pair     Pair
 	keyHash  uint64
 	children *data.SparseSlice[*Object]
-	count    Integer
+	count    int
 	hash     atomic.Uint64
 }
 
@@ -205,7 +205,7 @@ func (o *Object) Split() (Value, Sequence, bool) {
 	return o.pair, o.promote(), true
 }
 
-func (o *Object) Count() Integer {
+func (o *Object) Count() int {
 	if o == nil {
 		return 0
 	}
@@ -325,11 +325,11 @@ func (o *Object) childObjects() []*Object {
 	return res
 }
 
-func sumObjectCount(c *data.SparseSlice[*Object]) Integer {
+func sumObjectCount(c *data.SparseSlice[*Object]) int {
 	if c == nil {
 		return 0
 	}
-	var res Integer
+	var res int
 	raw, _ := c.RawData()
 	for _, r := range raw {
 		res += r.count

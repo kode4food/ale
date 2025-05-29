@@ -25,7 +25,7 @@ func testWrap(as *assert.Wrapper) *data.Object {
 		return testReceiver(true)
 	}).(data.Procedure)
 	r := f.Call().(*data.Object)
-	as.Equal(I(4), r.Count())
+	as.Equal(4, r.Count())
 	return r
 }
 

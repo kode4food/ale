@@ -36,12 +36,12 @@ func NewVector(v ...Value) Vector {
 	return slices.Clone(v)
 }
 
-func (v Vector) Count() Integer {
-	return Integer(len(v))
+func (v Vector) Count() int {
+	return len(v)
 }
 
-func (v Vector) ElementAt(index Integer) (Value, bool) {
-	if index >= 0 && index < Integer(len(v)) {
+func (v Vector) ElementAt(index int) (Value, bool) {
+	if index >= 0 && index < len(v) {
 		return v[index], true
 	}
 	return Null, false

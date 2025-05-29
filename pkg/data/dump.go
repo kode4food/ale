@@ -76,7 +76,7 @@ func (d dumped) String() string {
 
 func dumpCount(v Value) (Value, bool) {
 	if c, ok := v.(Counted); ok {
-		return c.Count(), true
+		return Integer(c.Count()), true
 	}
 	return Null, false
 }

@@ -78,16 +78,16 @@ func (s String) IsEmpty() bool {
 }
 
 // Count returns the length of the String
-func (s String) Count() Integer {
-	return Integer(utf8.RuneCountInString(string(s)))
+func (s String) Count() int {
+	return utf8.RuneCountInString(string(s))
 }
 
 // ElementAt returns the Character at the indexed position in the String
-func (s String) ElementAt(index Integer) (Value, bool) {
+func (s String) ElementAt(index int) (Value, bool) {
 	if index < 0 {
 		return Null, false
 	}
-	ns, ok := s.from(uint(index))
+	ns, ok := s.from(index)
 	if !ok {
 		return Null, false
 	}
@@ -111,32 +111,32 @@ func (s String) Reverse() Sequence {
 
 func (s String) Call(args ...Value) Value {
 	if len(args) == 1 {
-		return s.callFrom(args[0].(Integer))
+		return s.callFrom(int(args[0].(Integer)))
 	}
-	return s.callRange(args[0].(Integer), args[1].(Integer))
+	return s.callRange(int(args[0].(Integer)), int(args[1].(Integer)))
 }
 
-func (s String) callFrom(idx Integer) Value {
+func (s String) callFrom(idx int) Value {
 	if idx < 0 {
 		panic(fmt.Errorf(ErrInvalidStartIndex, idx))
 	}
-	if ns, ok := s.from(uint(idx)); ok {
+	if ns, ok := s.from(idx); ok {
 		return ns
 	}
 	panic(fmt.Errorf(ErrInvalidStartIndex, idx))
 }
 
-func (s String) callRange(idx, end Integer) Value {
+func (s String) callRange(idx, end int) Value {
 	if idx < 0 || end < idx {
 		panic(fmt.Errorf(ErrInvalidIndexes, idx, end))
 	}
 
-	ns, ok := s.from(uint(idx))
+	ns, ok := s.from(idx)
 	if !ok || len(ns) == 0 && end > idx {
 		panic(fmt.Errorf(ErrInvalidIndexes, idx, end))
 	}
 
-	if res, ok := ns.take(uint(end - idx)); ok {
+	if res, ok := ns.take(end - idx); ok {
 		return res
 	}
 	panic(fmt.Errorf(ErrInvalidIndexes, idx, end))
@@ -146,17 +146,17 @@ func (s String) CheckArity(argc int) error {
 	return CheckRangedArity(1, 2, argc)
 }
 
-func (s String) from(idx uint) (String, bool) {
+func (s String) from(idx int) (String, bool) {
 	_, r, ok := s.splitAt(idx)
 	return r, ok
 }
 
-func (s String) take(count uint) (String, bool) {
+func (s String) take(count int) (String, bool) {
 	f, _, ok := s.splitAt(count)
 	return f, ok
 }
 
-func (s String) splitAt(idx uint) (String, String, bool) {
+func (s String) splitAt(idx int) (String, String, bool) {
 	if idx == 0 {
 		return EmptyString, s, true
 	}

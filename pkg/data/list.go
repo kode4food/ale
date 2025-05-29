@@ -11,7 +11,7 @@ import (
 type List struct {
 	first Value
 	rest  *List
-	count Integer
+	count int
 	hash  atomic.Uint64
 }
 
@@ -35,7 +35,7 @@ var (
 // NewList creates a new List instance
 func NewList(v ...Value) *List {
 	var res *List
-	for i, u := len(v)-1, Integer(1); i >= 0; i, u = i-1, u+1 {
+	for i, u := len(v)-1, 1; i >= 0; i, u = i-1, u+1 {
 		f := v[i]
 		res = &List{
 			first: f,
@@ -72,7 +72,7 @@ func (l *List) Split() (Value, Sequence, bool) {
 }
 
 func (l *List) Prepend(v Value) Sequence {
-	c := Integer(1)
+	c := 1
 	if l != nil {
 		c += l.count
 	}
@@ -90,7 +90,7 @@ func (l *List) Reverse() Sequence {
 
 	var res *List
 	e := l
-	for d, u := e.count, Integer(1); d > 0; e, d, u = e.rest, d-1, u+1 {
+	for d, u := e.count, 1; d > 0; e, d, u = e.rest, d-1, u+1 {
 		res = &List{
 			first: e.Car(),
 			rest:  res,
@@ -100,20 +100,20 @@ func (l *List) Reverse() Sequence {
 	return res
 }
 
-func (l *List) Count() Integer {
+func (l *List) Count() int {
 	if l == nil {
 		return 0
 	}
 	return l.count
 }
 
-func (l *List) ElementAt(index Integer) (Value, bool) {
+func (l *List) ElementAt(index int) (Value, bool) {
 	if l == nil || index > l.count-1 || index < 0 {
 		return Null, false
 	}
 
 	e := l
-	for i := Integer(0); i < index; i++ {
+	for range index {
 		e = e.rest
 	}
 	return e.Car(), true
@@ -179,7 +179,7 @@ func (l *List) HashCode() uint64 {
 			return res
 		}
 		res ^= HashCode(c.first)
-		res ^= c.count.HashCode()
+		res ^= HashInt(c.count)
 	}
 	res ^= nullHash
 	l.hash.Store(res)

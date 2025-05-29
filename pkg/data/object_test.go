@@ -90,7 +90,7 @@ func TestObjectRemoval(t *testing.T) {
 		v := S(fmt.Sprintf("value-%d", i))
 		o1 = o1.Put(C(k, v)).(*data.Object)
 	}
-	as.Equal(I(1000), o1.Count())
+	as.Equal(1000, o1.Count())
 
 	// Remove half of it
 	for i := 0; i < 1000; i += 2 {
@@ -101,7 +101,7 @@ func TestObjectRemoval(t *testing.T) {
 		as.String(fmt.Sprintf("value-%d", i), v)
 	}
 	as.False(o1 == data.EmptyObject)
-	as.Equal(I(500), o1.Count())
+	as.Equal(500, o1.Count())
 
 	// Remove the other half
 	for i := 1; i < 1000; i += 2 {
@@ -112,7 +112,7 @@ func TestObjectRemoval(t *testing.T) {
 		as.String(fmt.Sprintf("value-%d", i), v)
 	}
 	as.True(o1 == data.EmptyObject)
-	as.Equal(I(0), o1.Count())
+	as.Equal(0, o1.Count())
 }
 
 func TestObjectCall(t *testing.T) {
@@ -141,13 +141,13 @@ func TestObjectIterate(t *testing.T) {
 		C(K("first"), S("first value")),
 		C(K("second"), S("second value")),
 	)
-	as.Equal(I(2), o1.Count())
+	as.Equal(2, o1.Count())
 
 	f1, r1, ok := o1.Split()
 	as.True(ok)
 	as.Equal(K("first"), f1.(*data.Cons).Car())
 	as.Equal(S("first value"), f1.(*data.Cons).Cdr())
-	as.Equal(I(1), r1.(*data.Object).Count())
+	as.Equal(1, r1.(*data.Object).Count())
 
 	f2, r2, ok := r1.Split()
 	as.True(ok)

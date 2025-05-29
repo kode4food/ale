@@ -11,13 +11,13 @@ import (
 )
 
 func numExplicitSum(n1, n2, n3 data.Integer) data.Value {
-	return n1 + n2 + n3
+	return n1.Add(n2).Add(n3)
 }
 
 func numLoopSum(args ...data.Value) data.Value {
-	var sum = I(0)
+	var sum data.Number = I(0)
 	for _, a := range args {
-		sum = sum + a.(data.Integer)
+		sum = sum.Add(a.(data.Integer))
 	}
 	return sum
 }
