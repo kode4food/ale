@@ -136,16 +136,9 @@ func isSelfCalling(e encoder.Encoder, s *encoder.ScopedCell) bool {
 			break
 		}
 	}
-	for len(path) > 0 { // we should find out bindEncoder after that
-		pe := path[0]
-		path = path[1:]
-		switch pe := pe.(type) {
-		case *procEncoder: // if we see another procEncoder, can't self-call
-			return false
-		case *bindEncoder:
-			if pe.cell.Name == s.Cell.Name {
-				return true
-			}
+	if len(path) > 0 { // we should find our bindEncoder after that
+		if b, ok := path[0].(*bindEncoder); ok {
+			return b.cell.Name == s.Cell.Name
 		}
 	}
 	return false
