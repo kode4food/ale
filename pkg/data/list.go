@@ -2,8 +2,10 @@ package data
 
 import (
 	"math/rand"
+	"strings"
 	"sync/atomic"
 
+	"github.com/kode4food/ale/internal/lang"
 	"github.com/kode4food/ale/internal/types"
 )
 
@@ -154,7 +156,18 @@ func (l *List) Equal(other Value) bool {
 }
 
 func (l *List) String() string {
-	return MakeSequenceStr(l)
+	if l == nil {
+		return lang.ListStart + lang.ListEnd
+	}
+	var b strings.Builder
+	b.WriteString(lang.ListStart)
+	b.WriteString(ToQuotedString(l.first))
+	for r := l.rest; r != nil; r = r.rest {
+		b.WriteString(lang.Space)
+		b.WriteString(ToQuotedString(r.first))
+	}
+	b.WriteString(lang.ListEnd)
+	return b.String()
 }
 
 func (l *List) Type() types.Type {

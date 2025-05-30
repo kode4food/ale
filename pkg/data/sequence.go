@@ -1,11 +1,5 @@
 package data
 
-import (
-	"strings"
-
-	"github.com/kode4food/ale/internal/lang"
-)
-
 type (
 	// Sequence interfaces expose a lazily resolved sequence
 	Sequence interface {
@@ -59,23 +53,6 @@ type (
 		Counted
 	}
 )
-
-// MakeSequenceStr converts a Sequence to a String
-func MakeSequenceStr(s Sequence) string {
-	f, r, ok := s.Split()
-	if !ok {
-		return lang.ListStart + lang.ListEnd
-	}
-	var b strings.Builder
-	b.WriteString(lang.ListStart)
-	b.WriteString(ToQuotedString(f))
-	for f, r, ok = r.Split(); ok; f, r, ok = r.Split() {
-		b.WriteString(lang.Space)
-		b.WriteString(ToQuotedString(f))
-	}
-	b.WriteString(lang.ListEnd)
-	return b.String()
-}
 
 // Last returns the final element of a Sequence, possibly by scanning
 func Last(s Sequence) (Value, bool) {

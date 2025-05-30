@@ -5,6 +5,7 @@ import (
 
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
+	"github.com/kode4food/ale/internal/sequence"
 	"github.com/kode4food/ale/pkg/core/builtin"
 	"github.com/kode4food/ale/pkg/data"
 )
@@ -26,7 +27,7 @@ func TestLazySequence(t *testing.T) {
 	}, 0)
 
 	s := builtin.LazySequence.Call(p).(data.Sequence)
-	as.String(`(0 1 2 3 4 5 6 7 8 9)`, data.MakeSequenceStr(s))
+	as.String(`[0 1 2 3 4 5 6 7 8 9]`, sequence.ToVector(s))
 }
 
 func TestRangeEval(t *testing.T) {
