@@ -1,9 +1,9 @@
 package parse
 
 import (
+	"github.com/kode4food/ale/internal/lang/lex"
 	"github.com/kode4food/ale/internal/sequence"
 	"github.com/kode4food/ale/pkg/data"
-	"github.com/kode4food/ale/pkg/read/lex"
 )
 
 // FromLexer returns a Lazy Sequence of scanned data structures

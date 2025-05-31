@@ -28,8 +28,8 @@ func makeEmitCall(oc isa.Opcode, actOn isa.ActOn) asmParse {
 }
 
 func makeStandaloneEmit(oc isa.Opcode) asmParse {
-	return func(p *asmParser, s data.Sequence) (asmEmit, data.Sequence, error) {
-		return func(e *asmEncoder) error {
+	return func(p *Parser, s data.Sequence) (Emit, data.Sequence, error) {
+		return func(e *Encoder) error {
 			e.Emit(oc)
 			return nil
 		}, s, nil
@@ -38,8 +38,8 @@ func makeStandaloneEmit(oc isa.Opcode) asmParse {
 
 func makeOperandEmit(oc isa.Opcode) asmParse {
 	return parseArgs(data.Local(oc.String()), 1,
-		func(p *asmParser, args ...data.Value) (asmEmit, error) {
-			return func(e *asmEncoder) error {
+		func(p *Parser, args ...data.Value) (Emit, error) {
+			return func(e *Encoder) error {
 				ops, err := e.toOperands(oc, args)
 				if err != nil {
 					return err
@@ -51,7 +51,7 @@ func makeOperandEmit(oc isa.Opcode) asmParse {
 	)
 }
 
-func (e *asmEncoder) toOperands(
+func (e *Encoder) toOperands(
 	oc isa.Opcode, args data.Vector,
 ) ([]isa.Operand, error) {
 	res := make([]isa.Operand, len(args))
@@ -67,7 +67,7 @@ func (e *asmEncoder) toOperands(
 	return res, nil
 }
 
-func (e *asmEncoder) getToOperandFor(ao isa.ActOn) asmToOperand {
+func (e *Encoder) getToOperandFor(ao isa.ActOn) asmToOperand {
 	switch ao {
 	case isa.Locals:
 		return e.makeNameToWord()
@@ -78,9 +78,9 @@ func (e *asmEncoder) getToOperandFor(ao isa.ActOn) asmToOperand {
 	}
 }
 
-func (e *asmEncoder) makeNameToWord() asmToOperand {
+func (e *Encoder) makeNameToWord() asmToOperand {
 	return wrapToOperandError(ErrUnexpectedName,
-		func(e *asmEncoder, val data.Value) (isa.Operand, error) {
+		func(e *Encoder, val data.Value) (isa.Operand, error) {
 			if v, ok := e.resolveEncoderArg(val); ok {
 				val = v
 			}
@@ -96,9 +96,9 @@ func (e *asmEncoder) makeNameToWord() asmToOperand {
 	)
 }
 
-func (e *asmEncoder) makeLabelToWord() asmToOperand {
+func (e *Encoder) makeLabelToWord() asmToOperand {
 	return wrapToOperandError(ErrUnexpectedLabel,
-		func(e *asmEncoder, val data.Value) (isa.Operand, error) {
+		func(e *Encoder, val data.Value) (isa.Operand, error) {
 			if v, ok := e.resolveEncoderArg(val); ok {
 				val = v
 			}
@@ -111,7 +111,7 @@ func (e *asmEncoder) makeLabelToWord() asmToOperand {
 }
 
 func wrapToOperandError(errStr string, toOperand asmToOperand) asmToOperand {
-	return func(e *asmEncoder, val data.Value) (isa.Operand, error) {
+	return func(e *Encoder, val data.Value) (isa.Operand, error) {
 		res, err := toOperand(e, val)
 		if err != nil {
 			return 0, errors.Join(fmt.Errorf(errStr, val), err)
@@ -120,7 +120,7 @@ func wrapToOperandError(errStr string, toOperand asmToOperand) asmToOperand {
 	}
 }
 
-func toOperand(_ *asmEncoder, val data.Value) (isa.Operand, error) {
+func toOperand(_ *Encoder, val data.Value) (isa.Operand, error) {
 	if val, ok := val.(data.Integer); ok {
 		if isa.IsValidOperand(int(val)) {
 			return isa.Operand(val), nil

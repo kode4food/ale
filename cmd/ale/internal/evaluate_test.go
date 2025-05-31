@@ -5,8 +5,8 @@ import (
 	"testing"
 
 	"github.com/kode4food/ale/internal/assert"
+	"github.com/kode4food/ale/internal/lang/parse"
 	"github.com/kode4food/ale/pkg/env"
-	"github.com/kode4food/ale/pkg/read/parse"
 )
 
 func panicWithRec(t *testing.T, recoverable bool, msg string, fn func()) {

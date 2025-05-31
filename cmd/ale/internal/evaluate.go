@@ -8,14 +8,14 @@ import (
 	"strings"
 
 	"github.com/kode4food/ale/internal/debug"
+	"github.com/kode4food/ale/internal/lang/lex"
+	"github.com/kode4food/ale/internal/lang/parse"
 	"github.com/kode4food/ale/internal/sequence"
 	"github.com/kode4food/ale/pkg/core/bootstrap"
 	"github.com/kode4food/ale/pkg/data"
 	"github.com/kode4food/ale/pkg/env"
 	"github.com/kode4food/ale/pkg/eval"
 	"github.com/kode4food/ale/pkg/read"
-	"github.com/kode4food/ale/pkg/read/lex"
-	"github.com/kode4food/ale/pkg/read/parse"
 )
 
 const (

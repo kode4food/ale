@@ -6,8 +6,8 @@ import (
 
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
+	"github.com/kode4food/ale/internal/lang/lex"
 	"github.com/kode4food/ale/pkg/read/data"
-	"github.com/kode4food/ale/pkg/read/lex"
 )
 
 func TestFromString(t *testing.T) {

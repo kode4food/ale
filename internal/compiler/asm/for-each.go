@@ -21,8 +21,8 @@ const (
 )
 
 func parseForEachCall(
-	p *asmParser, s data.Sequence,
-) (asmEmit, data.Sequence, error) {
+	p *Parser, s data.Sequence,
+) (Emit, data.Sequence, error) {
 	f, r, ok := s.Split()
 	if !ok {
 		return nil, nil, typeError(pairType, f)
@@ -37,7 +37,7 @@ func parseForEachCall(
 		return nil, nil, err
 	}
 
-	return func(e *asmEncoder) error {
+	return func(e *Encoder) error {
 		s, ok := e.resolveEncoderArg(v)
 		if !ok {
 			return fmt.Errorf(ErrUnexpectedParameter, v)

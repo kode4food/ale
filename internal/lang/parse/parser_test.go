@@ -6,10 +6,10 @@ import (
 
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
+	"github.com/kode4food/ale/internal/lang/lex"
+	"github.com/kode4food/ale/internal/lang/parse"
 	"github.com/kode4food/ale/pkg/data"
 	"github.com/kode4food/ale/pkg/read"
-	"github.com/kode4food/ale/pkg/read/lex"
-	"github.com/kode4food/ale/pkg/read/parse"
 )
 
 func TestReadList(t *testing.T) {

@@ -7,12 +7,12 @@ import (
 
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
+	"github.com/kode4food/ale/internal/lang/params"
+	"github.com/kode4food/ale/internal/lang/parse"
 	"github.com/kode4food/ale/internal/runtime"
 	"github.com/kode4food/ale/pkg/core/bootstrap"
 	"github.com/kode4food/ale/pkg/core/builtin"
-	"github.com/kode4food/ale/pkg/core/internal"
 	"github.com/kode4food/ale/pkg/data"
-	"github.com/kode4food/ale/pkg/read/parse"
 )
 
 func unexpectedTypeError(got, expected string) error {
@@ -83,10 +83,10 @@ func TestLambdaEval(t *testing.T) {
 func TestBadLambdaEval(t *testing.T) {
 	as := assert.New(t)
 
-	eNum := fmt.Errorf(internal.ErrUnexpectedCaseSyntax, "99")
+	eNum := fmt.Errorf(params.ErrUnexpectedCaseSyntax, "99")
 	as.ErrorWith(`(lambda-rec 99 "hello")`, eNum)
 
-	eSym := fmt.Errorf(internal.ErrUnexpectedCaseSyntax, "foo/bar")
+	eSym := fmt.Errorf(params.ErrUnexpectedCaseSyntax, "foo/bar")
 	as.ErrorWith(`(lambda-rec foo/bar () "hello")`, eSym)
 }
 

@@ -7,7 +7,7 @@ import (
 
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
-	"github.com/kode4food/ale/pkg/core/internal"
+	"github.com/kode4food/ale/internal/lang/params"
 )
 
 func TestLambda(t *testing.T) {
@@ -29,14 +29,14 @@ func TestLambdaErrors(t *testing.T) {
 	as := assert.New(t)
 
 	as.ErrorWith(`(lambda :kwd '())`,
-		fmt.Errorf(internal.ErrUnexpectedCaseSyntax, ":kwd"),
+		fmt.Errorf(params.ErrUnexpectedCaseSyntax, ":kwd"),
 	)
 
 	as.ErrorWith(`(lambda [:kwd] '())`,
-		fmt.Errorf(internal.ErrUnexpectedParamSyntax, ":kwd"),
+		fmt.Errorf(params.ErrUnexpectedParamSyntax, ":kwd"),
 	)
 
 	as.ErrorWith(`(lambda)`,
-		errors.New(internal.ErrNoCasesDefined),
+		errors.New(params.ErrNoCasesDefined),
 	)
 }

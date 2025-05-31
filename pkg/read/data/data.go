@@ -1,9 +1,9 @@
 package data
 
 import (
+	"github.com/kode4food/ale/internal/lang/lex"
+	"github.com/kode4food/ale/internal/lang/parse"
 	"github.com/kode4food/ale/pkg/data"
-	"github.com/kode4food/ale/pkg/read/lex"
-	"github.com/kode4food/ale/pkg/read/parse"
 )
 
 var matcher = lex.ExhaustiveMatcher(

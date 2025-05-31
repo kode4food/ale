@@ -63,8 +63,8 @@ func getDirectiveCalls() namedAsmParsers {
 	}
 }
 
-func constCall(_ *asmParser, args ...data.Value) (asmEmit, error) {
-	return func(e *asmEncoder) error {
+func constCall(_ *Parser, args ...data.Value) (Emit, error) {
+	return func(e *Encoder) error {
 		if v, ok := e.resolveEncoderArg(args[0]); ok {
 			return generate.Literal(e, v)
 		}
@@ -72,8 +72,8 @@ func constCall(_ *asmParser, args ...data.Value) (asmEmit, error) {
 	}, nil
 }
 
-func evaluateCall(_ *asmParser, args ...data.Value) (asmEmit, error) {
-	return func(e *asmEncoder) error {
+func evaluateCall(_ *Parser, args ...data.Value) (Emit, error) {
+	return func(e *Encoder) error {
 		if v, ok := e.resolveEncoderArg(args[0]); ok {
 			return generate.Value(e, v)
 		}
@@ -81,7 +81,7 @@ func evaluateCall(_ *asmParser, args ...data.Value) (asmEmit, error) {
 	}, nil
 }
 
-func publicNamer(e *asmEncoder, l data.Local) (data.Local, error) {
+func publicNamer(e *Encoder, l data.Local) (data.Local, error) {
 	if v, ok := e.resolveEncoderArg(l); ok {
 		if res, ok := v.(data.Local); ok {
 			return res, nil
@@ -91,45 +91,45 @@ func publicNamer(e *asmEncoder, l data.Local) (data.Local, error) {
 	return l, nil
 }
 
-func popLocalsCall(*asmParser, ...data.Value) (asmEmit, error) {
-	return func(e *asmEncoder) error {
+func popLocalsCall(*Parser, ...data.Value) (Emit, error) {
+	return func(e *Encoder) error {
 		return e.PopLocals()
 	}, nil
 }
 
-func privateNamer(e *asmEncoder, l data.Local) (data.Local, error) {
+func privateNamer(e *Encoder, l data.Local) (data.Local, error) {
 	p := gen.Local(l)
 	e.private[l] = p
 	return p, nil
 }
 
-func pushLocalsCall(*asmParser, ...data.Value) (asmEmit, error) {
-	return func(e *asmEncoder) error {
+func pushLocalsCall(*Parser, ...data.Value) (Emit, error) {
+	return func(e *Encoder) error {
 		e.PushLocals()
 		return nil
 	}, nil
 }
 
-func resolveCall(_ *asmParser, args ...data.Value) (asmEmit, error) {
+func resolveCall(_ *Parser, args ...data.Value) (Emit, error) {
 	s, err := assertType[data.Symbol](symType, args[0])
 	if err != nil {
 		return nil, err
 	}
 
 	if l, ok := s.(data.Local); ok {
-		return func(e *asmEncoder) error {
+		return func(e *Encoder) error {
 			return generate.Symbol(e, e.resolvePrivate(l))
 		}, nil
 	}
 
-	return func(e *asmEncoder) error {
+	return func(e *Encoder) error {
 		return generate.Symbol(e, s)
 	}, nil
 }
 
 func parseLocalEncoder(inst data.Local, toName asmToName) asmParse {
 	return parseArgs(inst, 2,
-		func(p *asmParser, args ...data.Value) (asmEmit, error) {
+		func(p *Parser, args ...data.Value) (Emit, error) {
 			l, err := assertType[data.Local](nameType, args[0])
 			if err != nil {
 				return nil, err
@@ -143,7 +143,7 @@ func parseLocalEncoder(inst data.Local, toName asmToName) asmParse {
 				return nil, err
 			}
 
-			return func(e *asmEncoder) error {
+			return func(e *Encoder) error {
 				name, err := toName(e, l)
 				if err != nil {
 					return err

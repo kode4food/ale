@@ -7,17 +7,16 @@ import (
 )
 
 type (
-	asmEncoder struct {
+	Encoder struct {
 		encoder.Encoder
-		*asmParser
+		*Parser
 		args    map[data.Local]data.Value
 		labels  map[data.Local]isa.Operand
 		private map[data.Local]data.Local
 	}
 
-	asmEmit      func(*asmEncoder) error
-	asmToOperand func(*asmEncoder, data.Value) (isa.Operand, error)
-	asmToName    func(*asmEncoder, data.Local) (data.Local, error)
+	asmToOperand func(*Encoder, data.Value) (isa.Operand, error)
+	asmToName    func(*Encoder, data.Local) (data.Local, error)
 )
 
 const (
@@ -32,35 +31,35 @@ const (
 
 var gen = data.NewSymbolGenerator()
 
-func noAsmEmit(_ *asmEncoder) error { return nil }
+func noAsmEmit(_ *Encoder) error { return nil }
 
-func (p *asmParser) wrapEncoder(
+func (p *Parser) wrapEncoder(
 	e encoder.Encoder, args ...data.Value,
-) *asmEncoder {
+) *Encoder {
 	a := make(map[data.Local]data.Value, len(args))
 	for i, k := range p.params {
 		a[k] = args[i]
 	}
-	return &asmEncoder{
-		asmParser: p,
-		Encoder:   e,
-		args:      a,
-		labels:    map[data.Local]isa.Operand{},
-		private:   map[data.Local]data.Local{},
+	return &Encoder{
+		Parser:  p,
+		Encoder: e,
+		args:    a,
+		labels:  map[data.Local]isa.Operand{},
+		private: map[data.Local]data.Local{},
 	}
 }
 
-func (e *asmEncoder) Wrapped() encoder.Encoder {
+func (e *Encoder) Wrapped() encoder.Encoder {
 	return e.Encoder
 }
 
-func (e *asmEncoder) Child() encoder.Encoder {
+func (e *Encoder) Child() encoder.Encoder {
 	res := *e
 	res.Encoder = e.Encoder.Child()
 	return &res
 }
 
-func (e *asmEncoder) getLabelIndex(n data.Local) isa.Operand {
+func (e *Encoder) getLabelIndex(n data.Local) isa.Operand {
 	if idx, ok := e.labels[n]; ok {
 		return idx
 	}
@@ -69,20 +68,20 @@ func (e *asmEncoder) getLabelIndex(n data.Local) isa.Operand {
 	return idx
 }
 
-func (e *asmEncoder) resolvePrivate(l data.Local) data.Local {
+func (e *Encoder) resolvePrivate(l data.Local) data.Local {
 	if g, ok := e.private[l]; ok {
 		return g
 	}
 	return l
 }
 
-func (e *asmEncoder) resolveEncoderArg(v data.Value) (data.Value, bool) {
+func (e *Encoder) resolveEncoderArg(v data.Value) (data.Value, bool) {
 	if v, ok := v.(data.Local); ok {
 		if res, ok := e.args[v]; ok {
 			return res, true
 		}
 	}
-	if p, ok := e.Encoder.(*asmEncoder); ok {
+	if p, ok := e.Encoder.(*Encoder); ok {
 		return p.resolveEncoderArg(v)
 	}
 	return nil, false

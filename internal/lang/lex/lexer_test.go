@@ -6,11 +6,11 @@ import (
 
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
+	"github.com/kode4food/ale/internal/lang/lex"
 	"github.com/kode4food/ale/internal/sequence"
 	"github.com/kode4food/ale/pkg/data"
 	"github.com/kode4food/ale/pkg/read"
 	rdata "github.com/kode4food/ale/pkg/read/data"
-	"github.com/kode4food/ale/pkg/read/lex"
 )
 
 func T(t lex.TokenType, v data.Value) *lex.Token {

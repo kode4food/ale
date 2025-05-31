@@ -2,21 +2,20 @@ package bootstrap
 
 import (
 	"github.com/kode4food/ale/internal/compiler/special"
-	"github.com/kode4food/ale/pkg/core/asm"
-	coreSpecial "github.com/kode4food/ale/pkg/core/special"
+	core "github.com/kode4food/ale/pkg/core/special"
 	"github.com/kode4food/ale/pkg/data"
 )
 
 func (b *bootstrap) populateSpecialForms() {
 	b.specials(map[data.Local]special.Call{
-		"asm*":          asm.Asm,
-		"eval":          coreSpecial.Eval,
-		"lambda":        coreSpecial.Lambda,
-		"let":           coreSpecial.Let,
-		"let-rec":       coreSpecial.LetMutual,
-		"macroexpand-1": coreSpecial.MacroExpand1,
-		"macroexpand":   coreSpecial.MacroExpand,
-		"special*":      asm.Special,
+		"asm*":          core.Asm,
+		"eval":          core.Eval,
+		"lambda":        core.Lambda,
+		"let":           core.Let,
+		"let-rec":       core.LetMutual,
+		"macroexpand-1": core.MacroExpand1,
+		"macroexpand":   core.MacroExpand,
+		"special*":      core.Special,
 	})
 }
 

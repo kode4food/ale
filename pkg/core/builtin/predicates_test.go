@@ -6,8 +6,8 @@ import (
 
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
+	"github.com/kode4food/ale/internal/lang/params"
 	"github.com/kode4food/ale/pkg/core/builtin"
-	"github.com/kode4food/ale/pkg/core/internal"
 	"github.com/kode4food/ale/pkg/data"
 )
 
@@ -45,7 +45,7 @@ func TestPredicatesEval(t *testing.T) {
 		data.True,
 	)
 
-	as.PanicWith(`(null?)`, fmt.Errorf(internal.ErrUnmatchedCase, 0, "1 or more"))
+	as.PanicWith(`(null?)`, fmt.Errorf(params.ErrUnmatchedCase, 0, "1 or more"))
 
 	as.PanicWith(`(is-a :dog "woof!")`,
 		fmt.Errorf(builtin.ErrUnknownPredicate, data.Keyword("dog")),

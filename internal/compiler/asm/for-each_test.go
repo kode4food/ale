@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/kode4food/ale/internal/assert"
-	"github.com/kode4food/ale/pkg/core/asm"
+	"github.com/kode4food/ale/internal/compiler/asm"
 )
 
 func TestForEachParsingErrors(t *testing.T) {

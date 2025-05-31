@@ -1,4 +1,4 @@
-package internal
+package params
 
 import (
 	"errors"
@@ -62,7 +62,7 @@ const (
 
 const arityBits = 8
 
-func ParseParamCases(s data.Sequence) (*ParamCases, error) {
+func ParseCases(s data.Sequence) (*ParamCases, error) {
 	if s.IsEmpty() {
 		return nil, errors.New(ErrNoCasesDefined)
 	}

@@ -11,15 +11,15 @@ import (
 )
 
 type (
-	asmParser struct {
+	Parser struct {
 		calls  namedAsmParsers
 		params data.Locals
 	}
 
 	namedAsmParsers map[data.Local]asmParse
 
-	asmParse     func(*asmParser, data.Sequence) (asmEmit, data.Sequence, error)
-	asmArgsParse func(*asmParser, ...data.Value) (asmEmit, error)
+	asmParse     func(*Parser, data.Sequence) (Emit, data.Sequence, error)
+	asmArgsParse func(*Parser, ...data.Value) (Emit, error)
 )
 
 const (
@@ -43,24 +43,24 @@ const (
 	EndBlock = data.Local(".end")
 )
 
-func makeAsmParser(calls namedAsmParsers) *asmParser {
-	return &asmParser{
+func makeAsmParser(calls namedAsmParsers) *Parser {
+	return &Parser{
 		calls:  calls,
 		params: data.Locals{},
 	}
 }
 
-func (p *asmParser) withParams(n data.Locals) *asmParser {
+func (p *Parser) withParams(n data.Locals) *Parser {
 	res := *p
 	res.params = slices.Clone(n)
 	return &res
 }
 
-func (p *asmParser) next(s data.Sequence) (asmEmit, data.Sequence, error) {
+func (p *Parser) next(s data.Sequence) (Emit, data.Sequence, error) {
 	f, r, _ := s.Split()
 	switch t := f.(type) {
 	case data.Keyword:
-		return func(e *asmEncoder) error {
+		return func(e *Encoder) error {
 			e.Emit(isa.Label, e.getLabelIndex(t.Name()))
 			return nil
 		}, r, nil
@@ -75,7 +75,7 @@ func (p *asmParser) next(s data.Sequence) (asmEmit, data.Sequence, error) {
 	}
 }
 
-func (p *asmParser) sequence(s data.Sequence) (asmEmit, error) {
+func (p *Parser) sequence(s data.Sequence) (Emit, error) {
 	if s.IsEmpty() {
 		return noAsmEmit, nil
 	}
@@ -86,12 +86,12 @@ func (p *asmParser) sequence(s data.Sequence) (asmEmit, error) {
 	return p.rest(next, rest)
 }
 
-func (p *asmParser) rest(emit asmEmit, r data.Sequence) (asmEmit, error) {
+func (p *Parser) rest(emit Emit, r data.Sequence) (Emit, error) {
 	next, err := p.sequence(r)
 	if err != nil {
 		return nil, err
 	}
-	return func(e *asmEncoder) error {
+	return func(e *Encoder) error {
 		if err := emit(e); err != nil {
 			return err
 		}
@@ -99,7 +99,7 @@ func (p *asmParser) rest(emit asmEmit, r data.Sequence) (asmEmit, error) {
 	}, nil
 }
 
-func (p *asmParser) block(s data.Sequence) (asmEmit, data.Sequence, error) {
+func (p *Parser) block(s data.Sequence) (Emit, data.Sequence, error) {
 	if s.IsEmpty() {
 		return nil, nil, errors.New(ErrExpectedEndOfBlock)
 	}
@@ -114,14 +114,14 @@ func (p *asmParser) block(s data.Sequence) (asmEmit, data.Sequence, error) {
 	return p.blockRest(next, rest)
 }
 
-func (p *asmParser) blockRest(
-	emit asmEmit, r data.Sequence,
-) (asmEmit, data.Sequence, error) {
+func (p *Parser) blockRest(
+	emit Emit, r data.Sequence,
+) (Emit, data.Sequence, error) {
 	next, rest, err := p.block(r)
 	if err != nil {
 		return nil, nil, err
 	}
-	return func(e *asmEncoder) error {
+	return func(e *Encoder) error {
 		if err := emit(e); err != nil {
 			return err
 		}
@@ -130,7 +130,7 @@ func (p *asmParser) blockRest(
 }
 
 func parseArgs(inst data.Local, argc int, fn asmArgsParse) asmParse {
-	return func(p *asmParser, s data.Sequence) (asmEmit, data.Sequence, error) {
+	return func(p *Parser, s data.Sequence) (Emit, data.Sequence, error) {
 		args, rest, ok := sequence.Take(s, argc)
 		if !ok {
 			return nil, nil, fmt.Errorf(ErrTooFewArguments, inst, argc)

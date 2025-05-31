@@ -3,14 +3,14 @@ package special
 import (
 	"github.com/kode4food/ale/internal/compiler/encoder"
 	"github.com/kode4food/ale/internal/compiler/generate"
+	"github.com/kode4food/ale/internal/lang/params"
 	"github.com/kode4food/ale/internal/runtime/isa"
-	"github.com/kode4food/ale/pkg/core/internal"
 	"github.com/kode4food/ale/pkg/data"
 )
 
 // Lambda encodes a lambda
 func Lambda(e encoder.Encoder, args ...data.Value) error {
-	pc, err := internal.ParseParamCases(data.Vector(args))
+	pc, err := params.ParseCases(data.Vector(args))
 	if err != nil {
 		return err
 	}
@@ -24,7 +24,7 @@ func Lambda(e encoder.Encoder, args ...data.Value) error {
 	return nil
 }
 
-func makeLambda(e encoder.Encoder, pc *internal.ParamCases) error {
+func makeLambda(e encoder.Encoder, pc *params.ParamCases) error {
 	if len(pc.Cases) == 0 {
 		e.Emit(isa.RetNull)
 		return nil
@@ -33,10 +33,10 @@ func makeLambda(e encoder.Encoder, pc *internal.ParamCases) error {
 
 }
 
-func encodeCases(e encoder.Encoder, cases []*internal.ParamCase) error {
+func encodeCases(e encoder.Encoder, cases []*params.ParamCase) error {
 	switch len(cases) {
 	case 0:
-		noMatch := data.String(internal.ErrNoMatchingParamPattern)
+		noMatch := data.String(params.ErrNoMatchingParamPattern)
 		if err := generate.Literal(e, noMatch); err != nil {
 			return err
 		}
@@ -57,7 +57,7 @@ func encodeCases(e encoder.Encoder, cases []*internal.ParamCase) error {
 	}
 }
 
-func encodePredicate(e encoder.Encoder, c *internal.ParamCase) error {
+func encodePredicate(e encoder.Encoder, c *params.ParamCase) error {
 	e.Emit(isa.ArgLen)
 	cl := len(c.Params)
 	if c.Rest {
@@ -74,7 +74,7 @@ func encodePredicate(e encoder.Encoder, c *internal.ParamCase) error {
 	return nil
 }
 
-func encodeConsequent(e encoder.Encoder, c *internal.ParamCase) error {
+func encodeConsequent(e encoder.Encoder, c *params.ParamCase) error {
 	e.PushParams(c.Params, c.Rest)
 	e.PushLocals()
 	if err := generate.Block(e, c.Body); err != nil {

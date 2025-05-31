@@ -5,9 +5,9 @@ import (
 	"fmt"
 
 	"github.com/kode4food/ale/internal/lang"
+	"github.com/kode4food/ale/internal/lang/lex"
 	"github.com/kode4food/ale/pkg/data"
 	"github.com/kode4food/ale/pkg/env"
-	"github.com/kode4food/ale/pkg/read/lex"
 )
 
 // parser is a stateful iteration interface for a Token stream that is piloted
