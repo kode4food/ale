@@ -3,7 +3,7 @@ package bootstrap
 import (
 	"os"
 
-	"github.com/kode4food/ale/internal/compiler/special"
+	"github.com/kode4food/ale/internal/compiler"
 	"github.com/kode4food/ale/internal/stream"
 	"github.com/kode4food/ale/internal/sync"
 	"github.com/kode4food/ale/pkg/core/builtin"
@@ -21,7 +21,7 @@ type (
 	}
 
 	macroMap   map[data.Local]macro.Call
-	specialMap map[data.Local]special.Call
+	specialMap map[data.Local]compiler.Call
 	procMap    map[data.Local]data.Procedure
 )
 

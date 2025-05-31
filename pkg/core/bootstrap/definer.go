@@ -3,9 +3,9 @@ package bootstrap
 import (
 	"fmt"
 
+	"github.com/kode4food/ale/internal/compiler"
 	"github.com/kode4food/ale/internal/compiler/encoder"
 	"github.com/kode4food/ale/internal/compiler/generate"
-	"github.com/kode4food/ale/internal/compiler/special"
 	"github.com/kode4food/ale/pkg/data"
 	"github.com/kode4food/ale/pkg/env"
 )
@@ -30,7 +30,9 @@ func (b *bootstrap) populateDefiners() {
 	)
 }
 
-func makeDefiner[T data.Value](m map[data.Local]T, errStr string) special.Call {
+func makeDefiner[T data.Value](
+	m map[data.Local]T, errStr string,
+) compiler.Call {
 	return func(e encoder.Encoder, args ...data.Value) error {
 		if err := data.CheckFixedArity(1, len(args)); err != nil {
 			return err

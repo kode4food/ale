@@ -6,8 +6,8 @@ import (
 	main "github.com/kode4food/ale/cmd/ale/internal"
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
+	"github.com/kode4food/ale/internal/compiler"
 	"github.com/kode4food/ale/internal/compiler/encoder"
-	"github.com/kode4food/ale/internal/compiler/special"
 	"github.com/kode4food/ale/pkg/data"
 )
 
@@ -18,9 +18,9 @@ func TestREPL(t *testing.T) {
 	as.NotNil(r)
 }
 
-func asEncoder(t *testing.T, v data.Value) special.Call {
+func asEncoder(t *testing.T, v data.Value) compiler.Call {
 	t.Helper()
-	if f, ok := v.(special.Call); ok {
+	if f, ok := v.(compiler.Call); ok {
 		return f
 	}
 	as := assert.New(t)

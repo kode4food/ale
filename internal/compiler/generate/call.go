@@ -3,7 +3,6 @@ package generate
 import (
 	"github.com/kode4food/ale/internal/compiler"
 	"github.com/kode4food/ale/internal/compiler/encoder"
-	"github.com/kode4food/ale/internal/compiler/special"
 	"github.com/kode4food/ale/internal/runtime/isa"
 	"github.com/kode4food/ale/internal/sequence"
 	"github.com/kode4food/ale/pkg/data"
@@ -48,7 +47,7 @@ func callSymbol(e encoder.Encoder, s data.Symbol, args data.Vector) error {
 	globals := e.Globals()
 	if v, err := env.ResolveValue(globals, s); err == nil {
 		switch v := v.(type) {
-		case special.Call:
+		case compiler.Call:
 			return v(e, args...)
 		case data.Procedure:
 			return callStatic(e, v, args)

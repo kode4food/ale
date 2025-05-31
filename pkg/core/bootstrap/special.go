@@ -1,30 +1,30 @@
 package bootstrap
 
 import (
-	"github.com/kode4food/ale/internal/compiler/special"
-	core "github.com/kode4food/ale/pkg/core/special"
+	"github.com/kode4food/ale/internal/compiler"
+	"github.com/kode4food/ale/pkg/core/special"
 	"github.com/kode4food/ale/pkg/data"
 )
 
 func (b *bootstrap) populateSpecialForms() {
-	b.specials(map[data.Local]special.Call{
-		"asm*":          core.Asm,
-		"eval":          core.Eval,
-		"lambda":        core.Lambda,
-		"let":           core.Let,
-		"let-rec":       core.LetMutual,
-		"macroexpand-1": core.MacroExpand1,
-		"macroexpand":   core.MacroExpand,
-		"special*":      core.Special,
+	b.specials(map[data.Local]compiler.Call{
+		"asm*":          special.Asm,
+		"eval":          special.Eval,
+		"lambda":        special.Lambda,
+		"let":           special.Let,
+		"let-rec":       special.LetMutual,
+		"macroexpand-1": special.MacroExpand1,
+		"macroexpand":   special.MacroExpand,
+		"special*":      special.Special,
 	})
 }
 
-func (b *bootstrap) specials(s map[data.Local]special.Call) {
+func (b *bootstrap) specials(s map[data.Local]compiler.Call) {
 	for k, v := range s {
 		b.special(k, v)
 	}
 }
 
-func (b *bootstrap) special(name data.Local, call special.Call) {
+func (b *bootstrap) special(name data.Local, call compiler.Call) {
 	b.specialMap[name] = call
 }

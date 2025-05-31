@@ -7,16 +7,16 @@ import (
 	"github.com/kode4food/ale/cmd/ale/internal/docstring"
 	"github.com/kode4food/ale/cmd/ale/internal/markdown"
 	"github.com/kode4food/ale/internal/basics"
+	"github.com/kode4food/ale/internal/compiler"
 	"github.com/kode4food/ale/internal/compiler/encoder"
 	"github.com/kode4food/ale/internal/compiler/generate"
-	"github.com/kode4food/ale/internal/compiler/special"
 	"github.com/kode4food/ale/internal/debug"
 	"github.com/kode4food/ale/pkg/data"
 )
 
 var docTemplate = docstring.MustGet("doc")
 
-var doc = special.Call(func(e encoder.Encoder, args ...data.Value) error {
+var doc = compiler.Call(func(e encoder.Encoder, args ...data.Value) error {
 	if err := data.CheckRangedArity(0, 1, len(args)); err != nil {
 		return err
 	}

@@ -3,8 +3,8 @@ package asm
 import (
 	"errors"
 
+	"github.com/kode4food/ale/internal/compiler"
 	"github.com/kode4food/ale/internal/compiler/encoder"
-	"github.com/kode4food/ale/internal/compiler/special"
 	"github.com/kode4food/ale/internal/lang/params"
 	"github.com/kode4food/ale/internal/runtime/isa"
 	"github.com/kode4food/ale/pkg/data"
@@ -48,7 +48,7 @@ func MakeSpecial(pc *params.ParamCases) EmitBuilder {
 		}
 
 		return func(e *Encoder) error {
-			e.Emit(isa.Const, e.AddConstant(special.Call(fn)))
+			e.Emit(isa.Const, e.AddConstant(compiler.Call(fn)))
 			return nil
 		}, nil
 	}

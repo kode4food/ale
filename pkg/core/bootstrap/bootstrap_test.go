@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/kode4food/ale/internal/assert"
-	"github.com/kode4food/ale/internal/compiler/special"
+	"github.com/kode4food/ale/internal/compiler"
 	"github.com/kode4food/ale/pkg/core/bootstrap"
 	"github.com/kode4food/ale/pkg/data"
 	"github.com/kode4food/ale/pkg/env"
@@ -40,7 +40,7 @@ func TestBootstrapInto(t *testing.T) {
 	e := bootstrap.TopLevelEnvironment()
 	ns := e.GetRoot()
 
-	_, ok := as.IsBound(ns, "define*").(special.Call)
+	_, ok := as.IsBound(ns, "define*").(compiler.Call)
 	as.True(ok)
 }
 

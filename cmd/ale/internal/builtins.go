@@ -8,9 +8,9 @@ import (
 	"time"
 
 	"github.com/kode4food/ale/cmd/ale/internal/console"
+	"github.com/kode4food/ale/internal/compiler"
 	"github.com/kode4food/ale/internal/compiler/encoder"
 	"github.com/kode4food/ale/internal/compiler/generate"
-	"github.com/kode4food/ale/internal/compiler/special"
 	"github.com/kode4food/ale/pkg/data"
 	"github.com/kode4food/ale/pkg/env"
 )
@@ -34,7 +34,7 @@ func (r *REPL) getBuiltInsNamespace() env.Namespace {
 }
 
 func (r *REPL) makeUse() data.Value {
-	return special.Call(func(e encoder.Encoder, args ...data.Value) error {
+	return compiler.Call(func(e encoder.Encoder, args ...data.Value) error {
 		if err := data.CheckFixedArity(1, len(args)); err != nil {
 			return err
 		}

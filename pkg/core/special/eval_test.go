@@ -5,7 +5,7 @@ import (
 
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
-	"github.com/kode4food/ale/internal/compiler/special"
+	"github.com/kode4food/ale/internal/compiler"
 	"github.com/kode4food/ale/internal/runtime/isa"
 	core "github.com/kode4food/ale/pkg/core/special"
 	"github.com/kode4food/ale/pkg/data"
@@ -51,7 +51,7 @@ func TestMacroExpand1(t *testing.T) {
 	testMacroExpandWith(t, core.MacroExpand1)
 }
 
-func testMacroExpandWith(t *testing.T, enc special.Call) {
+func testMacroExpandWith(t *testing.T, enc compiler.Call) {
 	as := assert.New(t)
 	e1 := assert.GetTestEncoder()
 

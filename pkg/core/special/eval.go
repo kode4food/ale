@@ -1,9 +1,9 @@
 package special
 
 import (
+	"github.com/kode4food/ale/internal/compiler"
 	"github.com/kode4food/ale/internal/compiler/encoder"
 	"github.com/kode4food/ale/internal/compiler/generate"
-	"github.com/kode4food/ale/internal/compiler/special"
 	"github.com/kode4food/ale/internal/runtime/isa"
 	"github.com/kode4food/ale/pkg/data"
 	"github.com/kode4food/ale/pkg/env"
@@ -24,7 +24,7 @@ var (
 	MacroExpand1 = makeEvaluator(macro.Expand1)
 )
 
-func makeEvaluator(eval evalFunc) special.Call {
+func makeEvaluator(eval evalFunc) compiler.Call {
 	return func(e encoder.Encoder, args ...data.Value) error {
 		if err := data.CheckFixedArity(1, len(args)); err != nil {
 			return err
