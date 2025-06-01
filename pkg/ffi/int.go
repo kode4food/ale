@@ -14,19 +14,15 @@ type (
 	int32Wrapper reflect.Kind
 	int16Wrapper reflect.Kind
 	int8Wrapper  reflect.Kind
+
+	wrappableInts interface {
+		~int | ~uint8 | ~int8 | ~uint16 | ~int16 | ~uint32 | ~int32 | ~int64
+	}
 )
 
 // ErrValueMustBeInteger is raised when an integer Unwrap call can't treat its
 // source as a data.Integer
 const ErrValueMustBeInteger = "value must be an integer"
-
-var (
-	intZero   = reflect.ValueOf(0)
-	int64zero = reflect.ValueOf(int64(0))
-	int32zero = reflect.ValueOf(int32(0))
-	int16zero = reflect.ValueOf(int16(0))
-	int8zero  = reflect.ValueOf(int8(0))
-)
 
 func makeWrappedInt(t reflect.Type) Wrapper {
 	switch k := t.Kind(); k {
@@ -50,10 +46,7 @@ func (intWrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
 }
 
 func (intWrapper) Unwrap(v data.Value) (reflect.Value, error) {
-	if i, ok := v.(data.Integer); ok {
-		return reflect.ValueOf(int(i)), nil
-	}
-	return intZero, errors.New(ErrValueMustBeInteger)
+	return unwrapInt[int](v)
 }
 
 func (int64Wrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
@@ -61,10 +54,7 @@ func (int64Wrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
 }
 
 func (int64Wrapper) Unwrap(v data.Value) (reflect.Value, error) {
-	if i, ok := v.(data.Integer); ok {
-		return reflect.ValueOf(int64(i)), nil
-	}
-	return int64zero, errors.New(ErrValueMustBeInteger)
+	return unwrapInt[int64](v)
 }
 
 func (int32Wrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
@@ -72,10 +62,7 @@ func (int32Wrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
 }
 
 func (int32Wrapper) Unwrap(v data.Value) (reflect.Value, error) {
-	if i, ok := v.(data.Integer); ok {
-		return reflect.ValueOf(int32(i)), nil
-	}
-	return int32zero, errors.New(ErrValueMustBeInteger)
+	return unwrapInt[int32](v)
 }
 
 func (int16Wrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
@@ -83,10 +70,7 @@ func (int16Wrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
 }
 
 func (int16Wrapper) Unwrap(v data.Value) (reflect.Value, error) {
-	if i, ok := v.(data.Integer); ok {
-		return reflect.ValueOf(int16(i)), nil
-	}
-	return int16zero, errors.New(ErrValueMustBeInteger)
+	return unwrapInt[int16](v)
 }
 
 func (int8Wrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
@@ -94,8 +78,12 @@ func (int8Wrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
 }
 
 func (int8Wrapper) Unwrap(v data.Value) (reflect.Value, error) {
-	if i, ok := v.(data.Integer); ok {
-		return reflect.ValueOf(int8(i)), nil
+	return unwrapInt[int8](v)
+}
+
+func unwrapInt[T wrappableInts](v data.Value) (reflect.Value, error) {
+	if v, ok := v.(data.Integer); ok {
+		return reflect.ValueOf(T(v)), nil
 	}
-	return int8zero, errors.New(ErrValueMustBeInteger)
+	return zero[T](), errors.New(ErrValueMustBeInteger)
 }

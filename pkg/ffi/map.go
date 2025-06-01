@@ -62,7 +62,7 @@ func (w *mapWrapper) Unwrap(v data.Value) (reflect.Value, error) {
 	if err != nil {
 		return _emptyValue, err
 	}
-	out := reflect.MakeMapWithSize(w.typ, int(in.Count()))
+	out := reflect.MakeMapWithSize(w.typ, in.Count())
 	for f, r, ok := in.Split(); ok; f, r, ok = r.Split() {
 		p := f.(data.Pair)
 		k := p.Car()

@@ -134,3 +134,8 @@ func (c *typeCache) put(t reflect.Type, w Wrapper) {
 	c.entries[t] = w
 	c.Unlock()
 }
+
+func zero[T any]() reflect.Value {
+	var z T
+	return reflect.ValueOf(z)
+}

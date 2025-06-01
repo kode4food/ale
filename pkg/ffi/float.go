@@ -17,11 +17,6 @@ type (
 // source as a data.Integer or data.Float
 const ErrValueMustBeFloat = "value must be a float"
 
-var (
-	float32zero = reflect.ValueOf(float32(0))
-	float64zero = reflect.ValueOf(float64(0))
-)
-
 func makeWrappedFloat(t reflect.Type) Wrapper {
 	switch k := t.Kind(); k {
 	case reflect.Float32:
@@ -38,10 +33,7 @@ func (float32Wrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
 }
 
 func (float32Wrapper) Unwrap(v data.Value) (reflect.Value, error) {
-	if f, ok := makeFloat64(v); ok {
-		return reflect.ValueOf(float32(f)), nil
-	}
-	return float32zero, errors.New(ErrValueMustBeFloat)
+	return unwrapFloat[float32](v)
 }
 
 func (float64Wrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
@@ -49,10 +41,7 @@ func (float64Wrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
 }
 
 func (float64Wrapper) Unwrap(v data.Value) (reflect.Value, error) {
-	if f, ok := makeFloat64(v); ok {
-		return reflect.ValueOf(f), nil
-	}
-	return float64zero, errors.New(ErrValueMustBeFloat)
+	return unwrapFloat[float64](v)
 }
 
 func makeFloat64(v data.Value) (float64, bool) {
@@ -64,4 +53,11 @@ func makeFloat64(v data.Value) (float64, bool) {
 	default:
 		return 0, false
 	}
+}
+
+func unwrapFloat[T ~float32 | ~float64](v data.Value) (reflect.Value, error) {
+	if f, ok := makeFloat64(v); ok {
+		return reflect.ValueOf(T(f)), nil
+	}
+	return reflect.Value{}, errors.New(ErrValueMustBeFloat)
 }

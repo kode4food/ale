@@ -69,7 +69,7 @@ func (w *sliceWrapper) unwrapVector(in data.Vector) (reflect.Value, error) {
 func (w *sliceWrapper) unwrapCounted(
 	in data.CountedSequence,
 ) (reflect.Value, error) {
-	inLen := int(in.Count())
+	inLen := in.Count()
 	out := reflect.MakeSlice(w.typ, inLen, inLen)
 	var r data.Sequence = in
 	for i := range inLen {
