@@ -51,7 +51,7 @@ func (b boxedWrapper[T]) Unwrap(v data.Value) (reflect.Value, error) {
 
 func (b *Boxed[T]) Equal(other data.Value) bool {
 	if o, ok := other.(*Boxed[T]); ok {
-		return b == o || b.Value.Equal(o.Value)
+		return b == o || b.Value == o.Value || b.Value.Equal(o.Value)
 	}
 	return false
 }
