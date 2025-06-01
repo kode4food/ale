@@ -11,8 +11,8 @@ import (
 )
 
 type (
-	bigUintWrapper[T ~uint | ~uint64 | ~uintptr]   struct{}
-	smallUintWrapper[T ~uint8 | ~uint16 | ~uint32] struct{}
+	uint64Wrapper[T ~uint | ~uint64 | ~uintptr]   struct{}
+	uintWrapper[T ~uint8 | ~uint16 | ~uint32]     struct{}
 )
 
 const (
@@ -23,34 +23,34 @@ const (
 func makeWrappedUnsignedInt(t reflect.Type) Wrapper {
 	switch k := t.Kind(); k {
 	case reflect.Uint:
-		return bigUintWrapper[uint]{}
+		return uint64Wrapper[uint]{}
 	case reflect.Uintptr:
-		return bigUintWrapper[uintptr]{}
+		return uint64Wrapper[uintptr]{}
 	case reflect.Uint64:
-		return bigUintWrapper[uint64]{}
+		return uint64Wrapper[uint64]{}
 	case reflect.Uint32:
-		return smallUintWrapper[uint32]{}
+		return uintWrapper[uint32]{}
 	case reflect.Uint16:
-		return smallUintWrapper[uint16]{}
+		return uintWrapper[uint16]{}
 	case reflect.Uint8:
-		return smallUintWrapper[uint8]{}
+		return uintWrapper[uint8]{}
 	default:
 		panic(debug.ProgrammerError("uint kind is incorrect"))
 	}
 }
 
-func (smallUintWrapper[T]) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
+func (uintWrapper[_]) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
 	return data.Integer(v.Uint()), nil
 }
 
-func (smallUintWrapper[T]) Unwrap(v data.Value) (reflect.Value, error) {
+func (uintWrapper[T]) Unwrap(v data.Value) (reflect.Value, error) {
 	if v, ok := v.(data.Integer); ok {
 		return reflect.ValueOf(T(v)), nil
 	}
 	return zero[T](), errors.New(ErrValueMustBeInteger)
 }
 
-func (bigUintWrapper[T]) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
+func (uint64Wrapper[_]) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
 	u := v.Uint()
 	if u <= math.MaxInt64 {
 		return data.Integer(u), nil
@@ -59,7 +59,7 @@ func (bigUintWrapper[T]) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
 	return (*data.BigInt)(bi), nil
 }
 
-func (bigUintWrapper[T]) Unwrap(v data.Value) (reflect.Value, error) {
+func (uint64Wrapper[T]) Unwrap(v data.Value) (reflect.Value, error) {
 	switch i := v.(type) {
 	case data.Integer:
 		if i < 0 {
