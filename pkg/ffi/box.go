@@ -44,7 +44,7 @@ func (b boxedWrapper[T]) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
 
 func (b boxedWrapper[T]) Unwrap(v data.Value) (reflect.Value, error) {
 	if box, ok := v.(*Boxed[T]); ok {
-		return reflect.ValueOf(box.Value), nil
+		return box.Value, nil
 	}
 	return zero[reflect.Value](), errors.New(ErrValueMustBeBoxed)
 }
