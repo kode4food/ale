@@ -73,7 +73,6 @@ func WrapType(t reflect.Type) (Wrapper, error) {
 
 /*
 Unsupported Kinds:
-  - Uintptr
   - UnsafePointer
 */
 func makeWrappedType(t reflect.Type) (Wrapper, error) {
@@ -86,7 +85,7 @@ func makeWrappedType(t reflect.Type) (Wrapper, error) {
 	case reflect.Slice:
 		return makeWrappedSlice(t)
 	case reflect.Bool:
-		return makeWrappedBool(t), nil
+		return boolWrapper{}, nil
 	case reflect.Chan:
 		return makeWrappedChannel(t)
 	case reflect.Complex64, reflect.Complex128:
@@ -101,14 +100,14 @@ func makeWrappedType(t reflect.Type) (Wrapper, error) {
 		reflect.Int32, reflect.Int64:
 		return makeWrappedInt(t), nil
 	case reflect.Uint, reflect.Uint8, reflect.Uint16,
-		reflect.Uint32, reflect.Uint64:
+		reflect.Uint32, reflect.Uint64, reflect.Uintptr:
 		return makeWrappedUnsignedInt(t), nil
 	case reflect.Map:
 		return makeWrappedMap(t)
 	case reflect.Ptr:
 		return makeWrappedPointer(t)
 	case reflect.String:
-		return makeWrappedString(t), nil
+		return stringWrapper{}, nil
 	case reflect.Struct:
 		return makeWrappedStruct(t)
 	default:

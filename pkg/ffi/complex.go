@@ -8,10 +8,7 @@ import (
 	"github.com/kode4food/ale/pkg/data"
 )
 
-type (
-	complex128Wrapper reflect.Kind
-	complex64Wrapper  reflect.Kind
-)
+type complexWrapper[T ~complex128 | ~complex64] struct{}
 
 const (
 	// ErrValueMustBeCons is raised when a complex Unwrap call can't treat its
@@ -26,37 +23,22 @@ const (
 func makeWrappedComplex(t reflect.Type) Wrapper {
 	switch k := t.Kind(); k {
 	case reflect.Complex128:
-		return complex128Wrapper(k)
+		return complexWrapper[complex128]{}
 	case reflect.Complex64:
-		return complex64Wrapper(k)
+		return complexWrapper[complex64]{}
 	default:
 		panic(debug.ProgrammerError("complex kind is incorrect"))
 	}
 }
 
-func (complex128Wrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
-	return wrapComplex(v.Complex()), nil
-}
-
-func (complex128Wrapper) Unwrap(v data.Value) (reflect.Value, error) {
-	return unwrapComplex[complex128](v)
-}
-
-func (complex64Wrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
-	return wrapComplex(v.Complex()), nil
-}
-
-func (complex64Wrapper) Unwrap(v data.Value) (reflect.Value, error) {
-	return unwrapComplex[complex64](v)
-}
-
-func wrapComplex(c complex128) data.Value {
+func (complexWrapper[_]) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
+	c := v.Complex()
 	r := data.Float(real(c))
 	i := data.Float(imag(c))
-	return data.NewCons(r, i)
+	return data.NewCons(r, i), nil
 }
 
-func unwrapComplex[T ~complex64 | ~complex128](v data.Value) (reflect.Value, error) {
+func (complexWrapper[T]) Unwrap(v data.Value) (reflect.Value, error) {
 	if c, ok := v.(*data.Cons); ok {
 		r, rok := c.Car().(data.Float)
 		i, iok := c.Cdr().(data.Float)

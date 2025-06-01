@@ -11,16 +11,8 @@ import (
 )
 
 type (
-	uintWrapper    reflect.Kind
-	uint64Wrapper  reflect.Kind
-	uintptrWrapper reflect.Kind
-	uint32Wrapper  reflect.Kind
-	uint16Wrapper  reflect.Kind
-	uint8Wrapper   reflect.Kind
-
-	unwrappableInts interface {
-		~uint | ~uint64 | ~uintptr
-	}
+	bigUintWrapper[T ~uint | ~uint64 | ~uintptr]   struct{}
+	smallUintWrapper[T ~uint8 | ~uint16 | ~uint32] struct{}
 )
 
 const (
@@ -31,79 +23,43 @@ const (
 func makeWrappedUnsignedInt(t reflect.Type) Wrapper {
 	switch k := t.Kind(); k {
 	case reflect.Uint:
-		return uintWrapper(k)
+		return bigUintWrapper[uint]{}
 	case reflect.Uintptr:
-		return uintptrWrapper(k)
+		return bigUintWrapper[uintptr]{}
 	case reflect.Uint64:
-		return uint64Wrapper(k)
+		return bigUintWrapper[uint64]{}
 	case reflect.Uint32:
-		return uint32Wrapper(k)
+		return smallUintWrapper[uint32]{}
 	case reflect.Uint16:
-		return uint16Wrapper(k)
+		return smallUintWrapper[uint16]{}
 	case reflect.Uint8:
-		return uint8Wrapper(k)
+		return smallUintWrapper[uint8]{}
 	default:
 		panic(debug.ProgrammerError("uint kind is incorrect"))
 	}
 }
 
-func (uintWrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
-	return wrapUint64(v.Uint()), nil
-}
-
-func (uintWrapper) Unwrap(v data.Value) (reflect.Value, error) {
-	return unwrapUint64[uint](v)
-}
-
-func (uintptrWrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
-	return wrapUint64(v.Uint()), nil
-}
-
-func (uintptrWrapper) Unwrap(v data.Value) (reflect.Value, error) {
-	return unwrapUint64[uintptr](v)
-}
-
-func (uint64Wrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
-	return wrapUint64(v.Uint()), nil
-}
-
-func (uint64Wrapper) Unwrap(v data.Value) (reflect.Value, error) {
-	return unwrapUint64[uint64](v)
-}
-
-func (uint32Wrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
+func (smallUintWrapper[T]) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
 	return data.Integer(v.Uint()), nil
 }
 
-func (uint32Wrapper) Unwrap(v data.Value) (reflect.Value, error) {
-	return unwrapInt[uint32](v)
+func (smallUintWrapper[T]) Unwrap(v data.Value) (reflect.Value, error) {
+	if v, ok := v.(data.Integer); ok {
+		return reflect.ValueOf(T(v)), nil
+	}
+	return zero[T](), errors.New(ErrValueMustBeInteger)
 }
 
-func (uint16Wrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
-	return data.Integer(v.Uint()), nil
-}
-
-func (uint16Wrapper) Unwrap(v data.Value) (reflect.Value, error) {
-	return unwrapInt[uint16](v)
-}
-
-func (uint8Wrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
-	return data.Integer(v.Uint()), nil
-}
-
-func (uint8Wrapper) Unwrap(v data.Value) (reflect.Value, error) {
-	return unwrapInt[uint8](v)
-}
-
-func wrapUint64(u uint64) data.Value {
+func (bigUintWrapper[T]) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
+	u := v.Uint()
 	if u <= math.MaxInt64 {
-		return data.Integer(u)
+		return data.Integer(u), nil
 	}
 	bi := new(big.Int).SetUint64(u)
-	return (*data.BigInt)(bi)
+	return (*data.BigInt)(bi), nil
 }
 
-func unwrapUint64[T unwrappableInts](v data.Value) (reflect.Value, error) {
+func (bigUintWrapper[T]) Unwrap(v data.Value) (reflect.Value, error) {
 	switch i := v.(type) {
 	case data.Integer:
 		if i < 0 {

@@ -7,7 +7,7 @@ import (
 	"github.com/kode4food/ale/pkg/data"
 )
 
-type boolWrapper reflect.Kind
+type boolWrapper struct{}
 
 // ErrValueMustBeBool is raised when a boolean Unwrap call can't treat its
 // source as a data.Bool
@@ -17,10 +17,6 @@ var (
 	boolTrue  = reflect.ValueOf(true)
 	boolFalse = reflect.ValueOf(false)
 )
-
-func makeWrappedBool(t reflect.Type) Wrapper {
-	return boolWrapper(t.Kind())
-}
 
 func (boolWrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
 	return data.Bool(v.Bool()), nil
