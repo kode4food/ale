@@ -10,9 +10,8 @@ import (
 )
 
 type (
-	// Boxed is a wrapper for reflected values that are not directly
-	// addressable in Go, such as unsafe pointers or uintptrs
-	// value
+	// Boxed is a wrapper for reflected values that are not addressable in Go,
+	// such as unsafe pointers or uintptrs
 	Boxed[T boxedTypes] struct {
 		Value reflect.Value
 	}
