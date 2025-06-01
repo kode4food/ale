@@ -11,7 +11,7 @@ import (
 )
 
 type (
-	uint64Wrapper[T ~uint | ~uint64 | ~uintptr]   struct{}
+	uint64Wrapper[T ~uint | ~uint64]              struct{}
 	uintWrapper[T ~uint8 | ~uint16 | ~uint32]     struct{}
 )
 
@@ -24,8 +24,6 @@ func makeWrappedUnsignedInt(t reflect.Type) Wrapper {
 	switch k := t.Kind(); k {
 	case reflect.Uint:
 		return uint64Wrapper[uint]{}
-	case reflect.Uintptr:
-		return uint64Wrapper[uintptr]{}
 	case reflect.Uint64:
 		return uint64Wrapper[uint64]{}
 	case reflect.Uint32:
