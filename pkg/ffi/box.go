@@ -5,7 +5,6 @@ import (
 	"reflect"
 	"unsafe"
 
-	"github.com/kode4food/ale/internal/debug"
 	"github.com/kode4food/ale/pkg/data"
 )
 
@@ -26,17 +25,6 @@ type (
 const (
 	ErrValueMustBeBoxed = "value must be a boxed value"
 )
-
-func makeBoxedWrapper(t reflect.Type) Wrapper {
-	switch k := t.Kind(); k {
-	case reflect.Uintptr:
-		return boxedWrapper[uintptr]{}
-	case reflect.UnsafePointer:
-		return boxedWrapper[unsafe.Pointer]{}
-	default:
-		panic(debug.ProgrammerError("boxed kind is incorrect"))
-	}
-}
 
 func (b boxedWrapper[T]) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
 	return &Boxed[T]{Value: v}, nil

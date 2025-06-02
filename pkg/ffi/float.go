@@ -4,7 +4,6 @@ import (
 	"errors"
 	"reflect"
 
-	"github.com/kode4food/ale/internal/debug"
 	"github.com/kode4food/ale/pkg/data"
 )
 
@@ -13,17 +12,6 @@ type floatWrapper[T ~float32 | ~float64] struct{}
 // ErrValueMustBeFloat is raised when a float Unwrap call can't treat its
 // source as a data.Integer or data.Float
 const ErrValueMustBeFloat = "value must be a float"
-
-func makeWrappedFloat(t reflect.Type) Wrapper {
-	switch k := t.Kind(); k {
-	case reflect.Float32:
-		return floatWrapper[float32]{}
-	case reflect.Float64:
-		return floatWrapper[float64]{}
-	default:
-		panic(debug.ProgrammerError("float kind is incorrect"))
-	}
-}
 
 func (floatWrapper[_]) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
 	return data.Float(v.Float()), nil

@@ -4,7 +4,6 @@ import (
 	"errors"
 	"reflect"
 
-	"github.com/kode4food/ale/internal/debug"
 	"github.com/kode4food/ale/pkg/data"
 )
 
@@ -19,17 +18,6 @@ const (
 	// its source's components as data.Floats
 	ErrConsMustContainFloat = "components must be float values"
 )
-
-func makeWrappedComplex(t reflect.Type) Wrapper {
-	switch k := t.Kind(); k {
-	case reflect.Complex128:
-		return complexWrapper[complex128]{}
-	case reflect.Complex64:
-		return complexWrapper[complex64]{}
-	default:
-		panic(debug.ProgrammerError("complex kind is incorrect"))
-	}
-}
 
 func (complexWrapper[_]) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
 	c := v.Complex()

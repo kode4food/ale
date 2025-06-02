@@ -6,7 +6,6 @@ import (
 	"math/big"
 	"reflect"
 
-	"github.com/kode4food/ale/internal/debug"
 	"github.com/kode4food/ale/pkg/data"
 )
 
@@ -19,23 +18,6 @@ const (
 	ErrValueMustBePositiveInteger = "value must be a positive integer"
 	ErrValueMustBe64BitInteger    = "value must be a 64-bit integer"
 )
-
-func makeWrappedUnsignedInt(t reflect.Type) Wrapper {
-	switch k := t.Kind(); k {
-	case reflect.Uint:
-		return uint64Wrapper[uint]{}
-	case reflect.Uint64:
-		return uint64Wrapper[uint64]{}
-	case reflect.Uint32:
-		return uintWrapper[uint32]{}
-	case reflect.Uint16:
-		return uintWrapper[uint16]{}
-	case reflect.Uint8:
-		return uintWrapper[uint8]{}
-	default:
-		panic(debug.ProgrammerError("uint kind is incorrect"))
-	}
-}
 
 func (uintWrapper[_]) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
 	return data.Integer(v.Uint()), nil

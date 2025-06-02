@@ -4,6 +4,7 @@ import (
 	"errors"
 	"reflect"
 	"sync"
+	"unsafe"
 
 	"github.com/kode4food/ale/pkg/data"
 )
@@ -76,38 +77,58 @@ func makeWrappedType(t reflect.Type) (Wrapper, error) {
 		return wrapDataValue(t)
 	}
 	switch t.Kind() {
-	case reflect.Array:
-		return makeWrappedArray(t)
-	case reflect.Slice:
-		return makeWrappedSlice(t)
 	case reflect.Bool:
 		return boolWrapper{}, nil
+	case reflect.Int:
+		return intWrapper[int]{}, nil
+	case reflect.Int8:
+		return intWrapper[int8]{}, nil
+	case reflect.Int16:
+		return intWrapper[int16]{}, nil
+	case reflect.Int32:
+		return intWrapper[int32]{}, nil
+	case reflect.Int64:
+		return intWrapper[int64]{}, nil
+	case reflect.Uint:
+		return uint64Wrapper[uint]{}, nil
+	case reflect.Uint8:
+		return uintWrapper[uint8]{}, nil
+	case reflect.Uint16:
+		return uintWrapper[uint16]{}, nil
+	case reflect.Uint32:
+		return uintWrapper[uint32]{}, nil
+	case reflect.Uint64:
+		return uint64Wrapper[uint64]{}, nil
+	case reflect.Uintptr:
+		return boxedWrapper[uintptr]{}, nil
+	case reflect.Float32:
+		return floatWrapper[float32]{}, nil
+	case reflect.Float64:
+		return floatWrapper[float64]{}, nil
+	case reflect.Complex64:
+		return complexWrapper[complex64]{}, nil
+	case reflect.Complex128:
+		return complexWrapper[complex128]{}, nil
+	case reflect.Array:
+		return makeWrappedArray(t)
 	case reflect.Chan:
 		return makeWrappedChannel(t)
-	case reflect.Complex64, reflect.Complex128:
-		return makeWrappedComplex(t), nil
-	case reflect.Float32, reflect.Float64:
-		return makeWrappedFloat(t), nil
 	case reflect.Func:
 		return makeWrappedFunc(t)
 	case reflect.Interface:
 		return makeWrappedInterface(t)
-	case reflect.Int, reflect.Int8, reflect.Int16,
-		reflect.Int32, reflect.Int64:
-		return makeWrappedInt(t), nil
-	case reflect.Uint, reflect.Uint8, reflect.Uint16,
-		reflect.Uint32, reflect.Uint64:
-		return makeWrappedUnsignedInt(t), nil
 	case reflect.Map:
 		return makeWrappedMap(t)
 	case reflect.Ptr:
 		return makeWrappedPointer(t)
+	case reflect.Slice:
+		return makeWrappedSlice(t)
 	case reflect.String:
 		return stringWrapper{}, nil
 	case reflect.Struct:
 		return makeWrappedStruct(t)
-	case reflect.Uintptr, reflect.UnsafePointer:
-		return makeBoxedWrapper(t), nil
+	case reflect.UnsafePointer:
+		return boxedWrapper[unsafe.Pointer]{}, nil
 	default:
 		return nil, errors.New(ErrUnsupportedType)
 	}
