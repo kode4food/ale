@@ -28,13 +28,13 @@ type (
 )
 
 const (
-	// ErrValueMustBeSignedInteger is raised when an int Unwrap call can't
-	// properly size its source as a signed integer
-	ErrValueMustBeSignedInteger = "value must be a %d-bit signed integer"
+	// ErrValueMustBeSigned is raised when an int Unwrap call can't properly
+	// size its source as a signed integer
+	ErrValueMustBeSigned = "value must be a %d-bit signed integer"
 
-	// ErrValueMustBeUnsignedInteger is raised when a uint Unwrap call
-	// can't properly size its source as an unsigned integer
-	ErrValueMustBeUnsignedInteger = "value must be a %d-bit unsigned integer"
+	// ErrValueMustBeUnsigned is raised when a uint Unwrap call can't properly
+	// size its source as an unsigned integer
+	ErrValueMustBeUnsigned = "value must be a %d-bit unsigned integer"
 
 	// ErrValueMustBeCons is raised when a complex Unwrap call can't treat its
 	// source as a data.Cons
@@ -77,7 +77,7 @@ func (intWrapper[T]) Unwrap(v data.Value) (reflect.Value, error) {
 		}
 	}
 	bits := int(unsafe.Sizeof(T(0))) * 8
-	return zero[T](), fmt.Errorf(ErrValueMustBeSignedInteger, bits)
+	return zero[T](), fmt.Errorf(ErrValueMustBeSigned, bits)
 }
 
 func (uintWrapper[_]) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
@@ -117,7 +117,7 @@ func (uintWrapper[T]) Unwrap(v data.Value) (reflect.Value, error) {
 		}
 	}
 	bits := int(unsafe.Sizeof(T(0))) * 8
-	return zero[T](), fmt.Errorf(ErrValueMustBeUnsignedInteger, bits)
+	return zero[T](), fmt.Errorf(ErrValueMustBeUnsigned, bits)
 }
 
 func (floatWrapper[_]) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
