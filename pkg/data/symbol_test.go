@@ -50,7 +50,7 @@ func TestSymbolParsing(t *testing.T) {
 	as := assert.New(t)
 
 	s, err := data.ParseSymbol("domain/name1")
-	as.Nil(err)
+	as.NoError(err)
 	as.String("domain", s.(data.Qualified).Domain())
 	as.String("name1", s.(data.Qualified).Name())
 

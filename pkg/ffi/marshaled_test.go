@@ -15,14 +15,14 @@ func TestByteArrayWrapper(t *testing.T) {
 
 	id1 := uuid.New()
 	s, err := ffi.Wrap(id1)
-	as.Nil(err)
+	as.NoError(err)
 	as.Equal(id1.String(), string(s.(data.String)))
 
 	w, err := ffi.WrapType(reflect.TypeOf(id1))
 	as.NotNil(w)
-	as.Nil(err)
+	as.NoError(err)
 
 	id2, err := w.Unwrap(s.(data.String))
-	as.Nil(err)
+	as.NoError(err)
 	as.Equal(id1, id2.Interface())
 }

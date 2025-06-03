@@ -90,7 +90,7 @@ func makeWrappedType(t reflect.Type) (Wrapper, error) {
 	case reflect.Int64:
 		return intWrapper[int64]{}, nil
 	case reflect.Uint:
-		return uint64Wrapper[uint]{}, nil
+		return uintWrapper[uint]{}, nil
 	case reflect.Uint8:
 		return uintWrapper[uint8]{}, nil
 	case reflect.Uint16:
@@ -98,7 +98,7 @@ func makeWrappedType(t reflect.Type) (Wrapper, error) {
 	case reflect.Uint32:
 		return uintWrapper[uint32]{}, nil
 	case reflect.Uint64:
-		return uint64Wrapper[uint64]{}, nil
+		return uintWrapper[uint64]{}, nil
 	case reflect.Uintptr:
 		return boxedWrapper[uintptr]{}, nil
 	case reflect.Float32:

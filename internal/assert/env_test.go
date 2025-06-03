@@ -20,7 +20,7 @@ func TestIsNotBound(t *testing.T) {
 	ns := assert.GetTestNamespace()
 	e, err := ns.Public("not-bound")
 	as.NotNil(e)
-	as.Nil(err)
+	as.NoError(err)
 	as.IsNotBound(ns, "not-bound")
 }
 

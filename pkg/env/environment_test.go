@@ -31,13 +31,13 @@ func TestResolveSymbol(t *testing.T) {
 	as.Nil(env.BindPrivate(ns, "private-child", data.True))
 
 	_, _, err := env.ResolveSymbol(ns, LS("public-child"))
-	as.Nil(err)
+	as.NoError(err)
 
 	ent := mustResolveSymbol(ns, LS("private-child"))
 	as.NotNil(ent)
 
 	_, _, err = env.ResolveSymbol(ns, LS("public-parent"))
-	as.Nil(err)
+	as.NoError(err)
 
 	ls := LS("private-parent")
 	defer as.ExpectPanic(fmt.Errorf(env.ErrNameNotDeclared, ls))
@@ -58,12 +58,12 @@ func TestResolveValue(t *testing.T) {
 
 	res, err := env.ResolveValue(ns, LS("public-child"))
 	as.True(res)
-	as.Nil(err)
+	as.NoError(err)
 
 	as.True(env.MustResolveValue(ns, LS("private-child")))
 	res, err = env.ResolveValue(ns, LS("public-parent"))
 	as.True(res)
-	as.Nil(err)
+	as.NoError(err)
 
 	ls := LS("private-parent")
 	defer as.ExpectPanic(fmt.Errorf(env.ErrNameNotDeclared, ls))

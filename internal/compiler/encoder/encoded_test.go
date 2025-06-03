@@ -22,7 +22,7 @@ func TestRunnableJump(t *testing.T) {
 		isa.Label.New(0),
 		isa.Jump.New(0),
 	}).Runnable()
-	as.Nil(err)
+	as.NoError(err)
 
 	as.Equal(isa.Instructions{
 		isa.Jump.New(0),
@@ -41,7 +41,7 @@ func TestRunnableCondJump(t *testing.T) {
 		isa.CondJump.New(0),
 		isa.NoOp.New(),
 	}).Runnable()
-	as.Nil(err)
+	as.NoError(err)
 
 	as.Equal(isa.Instructions{
 		isa.False.New(),
@@ -62,7 +62,7 @@ func TestRunnableForwardJump(t *testing.T) {
 		isa.NoOp.New(),
 		isa.Jump.New(0),
 	}).Runnable()
-	as.Nil(err)
+	as.NoError(err)
 
 	as.Equal(isa.Instructions{
 		isa.Jump.New(0),

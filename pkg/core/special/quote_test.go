@@ -55,7 +55,7 @@ func TestUnquoteEval(t *testing.T) {
 
 	as.Nil(env.BindPublic(ns, "foo", F(456)))
 	r1, err := eval.String(ns, `'[123 ,foo]`)
-	as.Nil(err)
+	as.NoError(err)
 	as.String("[123 (ale/unquote foo)]", r1)
 }
 

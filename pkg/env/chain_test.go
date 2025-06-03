@@ -46,7 +46,7 @@ func TestChainedSnapshotErrors(t *testing.T) {
 	sym1 := data.Local("was-unbound-but-resolved")
 	e, err := ns1.Public(sym1)
 	as.IsNotBound(ns1, sym1)
-	as.Nil(err)
+	as.NoError(err)
 
 	as.Nil(e.Bind(data.True))
 	e2 := e1.Snapshot()
@@ -55,5 +55,5 @@ func TestChainedSnapshotErrors(t *testing.T) {
 	sym2 := data.Local("also-unbound-but-resolved")
 	_, err = root.Public(sym2)
 	as.IsNotBound(root, sym2)
-	as.Nil(err)
+	as.NoError(err)
 }

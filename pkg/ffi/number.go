@@ -2,33 +2,26 @@ package ffi
 
 import (
 	"errors"
+	"fmt"
 	"math"
 	"math/big"
 	"reflect"
+	"unsafe"
 
 	"github.com/kode4food/ale/pkg/data"
 )
 
 type (
-	intWrapper[T wrappableInts] struct{}
-
-	wrappableInts interface {
-		~int | ~uint8 | ~int8 | ~uint16 | ~int16 | ~uint32 | ~int32 | ~int64
-	}
-
-	uint64Wrapper[T ~uint | ~uint64]           struct{}
-	uintWrapper[T ~uint8 | ~uint16 | ~uint32]  struct{}
-	floatWrapper[T ~float32 | ~float64]        struct{}
-	complexWrapper[T ~complex128 | ~complex64] struct{}
+	intWrapper[T ~int | ~int8 | ~int16 | ~int32 | ~int64]       struct{}
+	uintWrapper[T ~uint | ~uint8 | ~uint16 | ~uint32 | ~uint64] struct{}
+	floatWrapper[T ~float32 | ~float64]                         struct{}
+	complexWrapper[T ~complex128 | ~complex64]                  struct{}
 )
 
 const (
-	// ErrValueMustBeInteger is raised when an integer Unwrap call can't treat
-	// its source as a data.Integer
-	ErrValueMustBeInteger = "value must be an integer"
+	ErrValueMustBeSignedInteger = "value must be a %d-bit signed integer"
 
-	ErrValueMustBePositiveInteger = "value must be a positive integer"
-	ErrValueMustBe64BitInteger    = "value must be a 64-bit integer"
+	ErrValueMustBeUnsignedInteger = "value must be a %d-bit unsigned integer"
 
 	// ErrValueMustBeCons is raised when a complex Unwrap call can't treat its
 	// source as a data.Cons
@@ -43,29 +36,28 @@ const (
 	ErrConsMustContainFloat = "components must be float values"
 )
 
-func (intWrapper[_]) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
+func (intWrapper[T]) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
 	return data.Integer(v.Int()), nil
 }
 
 func (intWrapper[T]) Unwrap(v data.Value) (reflect.Value, error) {
-	if v, ok := v.(data.Integer); ok {
-		return reflect.ValueOf(T(v)), nil
+	bits := int(unsafe.Sizeof(T(0))) * 8
+	switch i := v.(type) {
+	case data.Integer:
+		res := T(i)
+		if data.Integer(res) == i {
+			return reflect.ValueOf(res), nil
+		}
+	case *data.BigInt:
+		bi := (*big.Int)(i)
+		if bi.BitLen() <= bits-1 {
+			return reflect.ValueOf(T(bi.Int64())), nil
+		}
 	}
-	return zero[T](), errors.New(ErrValueMustBeInteger)
+	return zero[T](), fmt.Errorf(ErrValueMustBeSignedInteger, bits)
 }
 
 func (uintWrapper[_]) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
-	return data.Integer(v.Uint()), nil
-}
-
-func (uintWrapper[T]) Unwrap(v data.Value) (reflect.Value, error) {
-	if v, ok := v.(data.Integer); ok {
-		return reflect.ValueOf(T(v)), nil
-	}
-	return zero[T](), errors.New(ErrValueMustBeInteger)
-}
-
-func (uint64Wrapper[_]) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
 	u := v.Uint()
 	if u <= math.MaxInt64 {
 		return data.Integer(u), nil
@@ -74,24 +66,21 @@ func (uint64Wrapper[_]) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
 	return (*data.BigInt)(bi), nil
 }
 
-func (uint64Wrapper[T]) Unwrap(v data.Value) (reflect.Value, error) {
+func (uintWrapper[T]) Unwrap(v data.Value) (reflect.Value, error) {
+	bits := int(unsafe.Sizeof(T(0))) * 8
 	switch i := v.(type) {
 	case data.Integer:
-		if i < 0 {
-			return zero[T](), errors.New(ErrValueMustBePositiveInteger)
+		res := T(i)
+		if data.Integer(res) == i {
+			return reflect.ValueOf(res), nil
 		}
-		return reflect.ValueOf(T(uint64(i))), nil
 	case *data.BigInt:
 		bi := (*big.Int)(i)
-		if bi.Sign() < 0 {
-			return zero[T](), errors.New(ErrValueMustBePositiveInteger)
+		if bi.Sign() >= 0 && bi.BitLen() <= bits {
+			return reflect.ValueOf(T(bi.Uint64())), nil
 		}
-		if bi.BitLen() > 64 {
-			return zero[T](), errors.New(ErrValueMustBe64BitInteger)
-		}
-		return reflect.ValueOf(T(bi.Uint64())), nil
 	}
-	return zero[T](), errors.New(ErrValueMustBeInteger)
+	return zero[T](), fmt.Errorf(ErrValueMustBeUnsignedInteger, bits)
 }
 
 func (floatWrapper[_]) Wrap(_ *Context, v reflect.Value) (data.Value, error) {

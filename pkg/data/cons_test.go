@@ -51,7 +51,7 @@ func TestConsAsKey(t *testing.T) {
 		C(S("there"), S("there")), I(128),
 	)
 
-	as.Nil(err)
+	as.NoError(err)
 	v, ok := o1.Get(C(S("hello"), S("you")))
 	as.True(ok)
 	as.Equal(I(96), v)

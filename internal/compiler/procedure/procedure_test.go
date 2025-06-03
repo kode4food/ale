@@ -18,7 +18,7 @@ func TestFromEncoder(t *testing.T) {
 	e1.Emit(isa.Return)
 
 	l, err := procedure.FromEncoded(e1.Encode())
-	as.Nil(err)
+	as.NoError(err)
 	as.NotNil(l)
 	as.Nil(l.CheckArity(-1))
 

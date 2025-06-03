@@ -64,13 +64,13 @@ func TestValuesToObject(t *testing.T) {
 
 	o, err := data.ValuesToObject()
 	as.Nil(o)
-	as.Nil(err)
+	as.NoError(err)
 	as.Number(0, o.Count())
 	as.True(o.IsEmpty())
 
 	o, err = data.ValuesToObject(K("kwd"), S("value"))
 	as.NotNil(o)
-	as.Nil(err)
+	as.NoError(err)
 	as.Number(1, o.Count())
 	as.False(o.IsEmpty())
 

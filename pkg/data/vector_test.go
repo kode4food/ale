@@ -116,7 +116,7 @@ func TestVectorAsKey(t *testing.T) {
 		V(S("there")), I(128),
 	)
 
-	as.Nil(err)
+	as.NoError(err)
 	v, ok := o1.Get(V(S("hello")))
 	as.True(ok)
 	as.Equal(I(96), v)

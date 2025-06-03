@@ -17,7 +17,7 @@ func TestDocString(t *testing.T) {
 
 	ifStr, err := docstring.Get("if")
 	as.Contains("---", S(ifStr))
-	as.Nil(err)
+	as.NoError(err)
 
 	s, err := docstring.Get("no-way-this-exists")
 	as.Empty(s)
@@ -39,7 +39,7 @@ func TestDocumentedBuiltinsExist(t *testing.T) {
 		res, in, err := env.ResolveSymbol(ns, LS(name))
 		as.NotNil(res)
 		as.NotNil(in)
-		as.Nil(err)
+		as.NoError(err)
 	}
 }
 
