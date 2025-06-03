@@ -58,7 +58,7 @@ func (intWrapper[T]) Unwrap(v data.Value) (reflect.Value, error) {
 			return reflect.ValueOf(res), nil
 		}
 	case data.Float:
-		if res, ok := dataFloatToInt[T](i); ok {
+		if res, ok := floatToInt[T](float64(i)); ok {
 			return reflect.ValueOf(res), nil
 		}
 	case *data.BigInt:
@@ -96,7 +96,7 @@ func (uintWrapper[T]) Unwrap(v data.Value) (reflect.Value, error) {
 			}
 		}
 	case data.Float:
-		if res, ok := dataFloatToUint[T](i); ok {
+		if res, ok := floatToUint[T](float64(i)); ok {
 			return reflect.ValueOf(res), nil
 		}
 	case *data.BigInt:
@@ -166,25 +166,24 @@ func makeFloat64(v data.Value) (float64, bool) {
 	}
 }
 
-func int64ToInt[T intType](v int64) (T, bool) {
-	if res := T(v); int64(res) == v {
+func int64ToInt[T intType](i int64) (T, bool) {
+	if res := T(i); int64(res) == i {
 		return res, true
 	}
 	return T(0), false
 }
 
-func uint64ToUint[T uintType](v uint64) (T, bool) {
-	if res := T(v); uint64(res) == v {
+func uint64ToUint[T uintType](i uint64) (T, bool) {
+	if res := T(i); uint64(res) == i {
 		return res, true
 	}
 	return T(0), false
 }
 
-func dataFloatToInt[T intType](v data.Float) (T, bool) {
-	if v.IsNaN() || v.IsPosInf() || v.IsNegInf() {
+func floatToInt[T intType](f float64) (T, bool) {
+	if math.IsNaN(f) || math.IsInf(f, 0) {
 		return T(0), false
 	}
-	f := float64(v)
 	w, r := math.Modf(f)
 	if r != 0 {
 		return T(0), false
@@ -195,11 +194,10 @@ func dataFloatToInt[T intType](v data.Float) (T, bool) {
 	return T(0), false
 }
 
-func dataFloatToUint[T uintType](v data.Float) (T, bool) {
-	if v < 0 || v.IsNaN() || v.IsPosInf() || v.IsNegInf() {
+func floatToUint[T uintType](f float64) (T, bool) {
+	if f < 0 || math.IsNaN(f) || math.IsInf(f, 0) {
 		return T(0), false
 	}
-	f := float64(v)
 	w, r := math.Modf(f)
 	if r != 0 || w < 0 {
 		return T(0), false
