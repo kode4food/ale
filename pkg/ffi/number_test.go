@@ -33,9 +33,9 @@ func TestInt16Wrapper(t *testing.T) {
 	f := ffi.MustWrap(func(i1 int16, i2 int8) (int16, int8) {
 		return i1 * 2, i2 * 3
 	}).(data.Procedure)
-	r := f.Call(I(9), I(15)).(data.Vector)
+	r := f.Call(I(9), I(50)).(data.Vector)
 	as.Equal(I(18), r[0])
-	as.Equal(I(45), r[1])
+	as.Equal(I(-106), r[1])
 }
 
 func TestUIntWrapper(t *testing.T) {
