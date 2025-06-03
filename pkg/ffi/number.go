@@ -12,14 +12,16 @@ import (
 )
 
 type (
-	intWrapper[T intType]                      struct{}
-	uintWrapper[T uintType]                    struct{}
+	intWrapper[T intType]   struct{}
+	uintWrapper[T uintType] struct{}
+
 	floatWrapper[T ~float32 | ~float64]        struct{}
 	complexWrapper[T ~complex128 | ~complex64] struct{}
 
 	intType interface {
 		~int | ~int8 | ~int16 | ~int32 | ~int64
 	}
+
 	uintType interface {
 		~uint | ~uint8 | ~uint16 | ~uint32 | ~uint64
 	}
