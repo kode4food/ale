@@ -40,7 +40,7 @@ const (
 	ErrConsMustContainFloat = "components must be float values"
 )
 
-func (intWrapper[T]) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
+func (intWrapper[_]) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
 	return data.Integer(v.Int()), nil
 }
 
