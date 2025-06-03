@@ -19,8 +19,12 @@ type (
 )
 
 const (
+	// ErrValueMustBeSignedInteger is raised when an int Unwrap call can't
+	// properly size its source as a signed integer
 	ErrValueMustBeSignedInteger = "value must be a %d-bit signed integer"
 
+	// ErrValueMustBeUnsignedInteger is raised when a uint Unwrap call
+	// can't properly size its source as an unsigned integer
 	ErrValueMustBeUnsignedInteger = "value must be a %d-bit unsigned integer"
 
 	// ErrValueMustBeCons is raised when a complex Unwrap call can't treat its
