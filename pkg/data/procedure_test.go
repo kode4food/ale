@@ -16,7 +16,7 @@ func TestMakeProcedure(t *testing.T) {
 	})
 
 	as.Contains(":type procedure", f1)
-	as.Nil(f1.CheckArity(99))
+	as.NoError(f1.CheckArity(99))
 }
 
 func TestProcedureEquality(t *testing.T) {

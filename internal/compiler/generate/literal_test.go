@@ -15,17 +15,17 @@ func TestLiteral(t *testing.T) {
 	as := assert.New(t)
 
 	e := assert.GetTestEncoder()
-	as.Nil(generate.Literal(e, I(0)))
-	as.Nil(generate.Literal(e, I(1)))
-	as.Nil(generate.Literal(e, I(2)))
-	as.Nil(generate.Literal(e, I(3)))
-	as.Nil(generate.Literal(e, I(-1)))
-	as.Nil(generate.Literal(e, I(math.MaxInt64)))
-	as.Nil(generate.Literal(e, I(math.MinInt64)))
-	as.Nil(generate.Literal(e, data.True))
-	as.Nil(generate.Literal(e, data.False))
-	as.Nil(generate.Literal(e, data.Null))
-	as.Nil(generate.Literal(e, S("hello there!")))
+	as.NoError(generate.Literal(e, I(0)))
+	as.NoError(generate.Literal(e, I(1)))
+	as.NoError(generate.Literal(e, I(2)))
+	as.NoError(generate.Literal(e, I(3)))
+	as.NoError(generate.Literal(e, I(-1)))
+	as.NoError(generate.Literal(e, I(math.MaxInt64)))
+	as.NoError(generate.Literal(e, I(math.MinInt64)))
+	as.NoError(generate.Literal(e, data.True))
+	as.NoError(generate.Literal(e, data.False))
+	as.NoError(generate.Literal(e, data.Null))
+	as.NoError(generate.Literal(e, S("hello there!")))
 
 	// Because the stack size must remain the same in and out
 	for range 11 {

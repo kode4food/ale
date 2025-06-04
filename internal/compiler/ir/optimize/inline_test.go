@@ -240,7 +240,7 @@ func TestDiff(t *testing.T) {
 	as.Equal(I(2), diff.Call(I(7), I(5)))
 
 	enc := encoder.NewEncoder(ns)
-	as.Nil(generate.Branch(enc, func(_ encoder.Encoder) error {
+	as.NoError(generate.Branch(enc, func(_ encoder.Encoder) error {
 		enc.Emit(isa.Arg, 0)
 		enc.Emit(isa.Arg, 1)
 		enc.Emit(isa.NumEq)

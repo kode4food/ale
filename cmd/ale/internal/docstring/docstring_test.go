@@ -16,8 +16,9 @@ func TestDocString(t *testing.T) {
 	as := assert.New(t)
 
 	ifStr, err := docstring.Get("if")
-	as.Contains("---", S(ifStr))
-	as.NoError(err)
+	if as.NoError(err) {
+		as.Contains("---", S(ifStr))
+	}
 
 	s, err := docstring.Get("no-way-this-exists")
 	as.Empty(s)
@@ -29,7 +30,7 @@ func TestDocString(t *testing.T) {
 func TestDocumentedBuiltinsExist(t *testing.T) {
 	as := assert.New(t)
 	ns := assert.GetTestNamespace()
-	as.Nil(env.BindPublic(ns, "doc", data.Null)) // special case for REPL
+	as.NoError(env.BindPublic(ns, "doc", data.Null)) // special case for REPL
 
 	for _, name := range docstring.Names() {
 		d, _ := docstring.Get(name)
@@ -37,9 +38,10 @@ func TestDocumentedBuiltinsExist(t *testing.T) {
 			continue
 		}
 		res, in, err := env.ResolveSymbol(ns, LS(name))
-		as.NotNil(res)
-		as.NotNil(in)
-		as.NoError(err)
+		if as.NoError(err) {
+			as.NotNil(res)
+			as.NotNil(in)
+		}
 	}
 }
 

@@ -22,11 +22,12 @@ func TestRunnableJump(t *testing.T) {
 		isa.Label.New(0),
 		isa.Jump.New(0),
 	}).Runnable()
-	as.NoError(err)
 
-	as.Equal(isa.Instructions{
-		isa.Jump.New(0),
-	}, i1.Code)
+	if as.NoError(err) {
+		as.Equal(isa.Instructions{
+			isa.Jump.New(0),
+		}, i1.Code)
+	}
 }
 
 func TestRunnableCondJump(t *testing.T) {
@@ -41,12 +42,13 @@ func TestRunnableCondJump(t *testing.T) {
 		isa.CondJump.New(0),
 		isa.NoOp.New(),
 	}).Runnable()
-	as.NoError(err)
 
-	as.Equal(isa.Instructions{
-		isa.False.New(),
-		isa.CondJump.New(0),
-	}, i1.Code)
+	if as.NoError(err) {
+		as.Equal(isa.Instructions{
+			isa.False.New(),
+			isa.CondJump.New(0),
+		}, i1.Code)
+	}
 }
 
 func TestRunnableForwardJump(t *testing.T) {
@@ -62,11 +64,12 @@ func TestRunnableForwardJump(t *testing.T) {
 		isa.NoOp.New(),
 		isa.Jump.New(0),
 	}).Runnable()
-	as.NoError(err)
 
-	as.Equal(isa.Instructions{
-		isa.Jump.New(0),
-	}, i1.Code)
+	if as.NoError(err) {
+		as.Equal(isa.Instructions{
+			isa.Jump.New(0),
+		}, i1.Code)
+	}
 }
 
 func TestRunnableDoubleAnchor(t *testing.T) {

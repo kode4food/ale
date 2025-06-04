@@ -14,7 +14,7 @@ func TestSplitReturns(t *testing.T) {
 	as := assert.New(t)
 
 	e1 := assert.GetTestEncoder()
-	as.Nil(generate.Branch(e1,
+	as.NoError(generate.Branch(e1,
 		func(encoder.Encoder) error { e1.Emit(isa.True); return nil },
 		func(encoder.Encoder) error { e1.Emit(isa.PosInt, 1); return nil },
 		func(encoder.Encoder) error { e1.Emit(isa.Zero); return nil },

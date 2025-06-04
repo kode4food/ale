@@ -43,7 +43,7 @@ func TestReplEvalBuffer(t *testing.T) {
 func TestEvalBuffer(t *testing.T) {
 	as := assert.New(t)
 
-	as.Nil(evalBuffer([]byte(`"hello world"`)))
+	as.NoError(evalBuffer([]byte(`"hello world"`)))
 	as.EqualError(
 		evalBuffer([]byte(`(unknown)`)),
 		fmt.Sprintf(env.ErrNameNotDeclared, "unknown"),

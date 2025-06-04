@@ -18,9 +18,9 @@ func TestDeclarations(t *testing.T) {
 	as.Equal(e, root.Environment())
 	as.Equal(env.RootDomain, root.Domain())
 
-	as.Nil(env.BindPublic(root, "public2", data.True))
-	as.Nil(env.BindPublic(root, "public1", data.True))
-	as.Nil(env.BindPrivate(root, "private", data.True))
+	as.NoError(env.BindPublic(root, "public2", data.True))
+	as.NoError(env.BindPublic(root, "public1", data.True))
+	as.NoError(env.BindPrivate(root, "private", data.True))
 
 	n := root.Declared()
 	as.Equal(2, len(n))
@@ -28,16 +28,18 @@ func TestDeclarations(t *testing.T) {
 	as.Equal(LS("public2"), n[1])
 
 	e2, in, err := root.Resolve(n[0])
-	as.NotNil(e2)
-	as.NotNil(in)
-	as.NoError(err)
+	if as.NoError(err) {
+		as.NotNil(e2)
+		as.NotNil(in)
+	}
 
 	as.Equal(n[0], e2.Name())
 	as.Equal(root, in)
 
 	e3, err := root.Public(n[0])
-	as.Equal(e2, e3)
-	as.NoError(err)
+	if as.NoError(err) {
+		as.Equal(e2, e3)
+	}
 }
 
 func TestChaining(t *testing.T) {
@@ -45,10 +47,10 @@ func TestChaining(t *testing.T) {
 
 	e := env.NewEnvironment()
 	root := e.GetRoot()
-	as.Nil(env.BindPublic(root, "in-parent", data.True))
+	as.NoError(env.BindPublic(root, "in-parent", data.True))
 
 	ns := e.GetAnonymous()
-	as.Nil(env.BindPublic(ns, "in-child", data.True))
+	as.NoError(env.BindPublic(ns, "in-child", data.True))
 
 	as.True(as.IsBound(ns, "in-parent"))
 	as.True(as.IsBound(ns, "in-child"))
@@ -56,8 +58,9 @@ func TestChaining(t *testing.T) {
 	as.IsNotDeclared(root, "in-child")
 	s3 := env.RootSymbol("in-parent")
 	v8, err := env.ResolveValue(ns, s3)
-	as.True(v8)
-	as.NoError(err)
+	if as.NoError(err) {
+		as.True(v8)
+	}
 }
 
 func TestBinding(t *testing.T) {
@@ -66,20 +69,22 @@ func TestBinding(t *testing.T) {
 	e := env.NewEnvironment()
 	root := e.GetRoot()
 	d, err := root.Public("some-name")
-	as.NoError(err)
+	if as.NoError(err) {
+		v, err := d.Value()
+		as.Nil(v)
+		as.EqualError(err, fmt.Sprintf(env.ErrNameNotBound, d.Name()))
 
-	v, err := d.Value()
-	as.Nil(v)
-	as.EqualError(err, fmt.Sprintf(env.ErrNameNotBound, d.Name()))
+		err = d.Bind(S("some-value"))
+		if as.NoError(err) {
+			err = d.Bind(S("some-other-value"))
+			as.EqualError(err, fmt.Sprintf(env.ErrNameAlreadyBound, d.Name()))
+		}
 
-	err = d.Bind(S("some-value"))
-	as.NoError(err)
-	err = d.Bind(S("some-other-value"))
-	as.EqualError(err, fmt.Sprintf(env.ErrNameAlreadyBound, d.Name()))
-
-	v, err = d.Value()
-	as.NoError(err)
-	as.String("some-value", v)
+		v, err = d.Value()
+		if as.NoError(err) {
+			as.String("some-value", v)
+		}
+	}
 }
 
 func TestRedeclaration(t *testing.T) {
@@ -87,25 +92,29 @@ func TestRedeclaration(t *testing.T) {
 	e := env.NewEnvironment()
 	root := e.GetRoot()
 	d1, err := root.Public("some-name")
-	as.NotNil(d1)
-	as.NoError(err)
+	if as.NoError(err) {
+		as.NotNil(d1)
+	}
 
 	d2, err := root.Public("some-name")
-	as.NotNil(d2)
-	as.NoError(err)
-	as.Equal(d1, d2)
+	if as.NoError(err) {
+		as.NotNil(d2)
+		as.Equal(d1, d2)
+	}
 
 	_, err = root.Private("some-name")
 	as.EqualError(err, fmt.Sprintf(env.ErrNameAlreadyDeclared, "some-name"))
 
 	d3, err := root.Private("other-name")
-	as.NotNil(d3)
-	as.NoError(err)
+	if as.NoError(err) {
+		as.NotNil(d3)
+	}
 
 	d4, err := root.Private("other-name")
-	as.NotNil(d4)
-	as.NoError(err)
-	as.Equal(d3, d4)
+	if as.NoError(err) {
+		as.NotNil(d4)
+		as.Equal(d3, d4)
+	}
 
 	_, err = root.Public("other-name")
 	as.EqualError(err, fmt.Sprintf(env.ErrNameAlreadyDeclared, "other-name"))

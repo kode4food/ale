@@ -15,12 +15,14 @@ func TestFormatMarkdown(t *testing.T) {
 	as := assert.New(t)
 
 	s, err := docstring.Get("if")
-	as.NotEmpty(s)
-	as.NoError(err)
+	if as.NoError(err) {
+		as.NotEmpty(s)
+	}
 
 	res, err := markdown.FormatMarkdown(s)
-	as.NoError(err)
-	r := S(res)
-	as.NotContains("---", r)
-	as.Contains("\x1b[35m\x1b[1mperforms simple branching\x1b[0m\n\n", r)
+	if as.NoError(err) {
+		r := S(res)
+		as.NotContains("---", r)
+		as.Contains("\x1b[35m\x1b[1mperforms simple branching\x1b[0m\n\n", r)
+	}
 }

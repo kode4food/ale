@@ -96,14 +96,15 @@ func TestListAsKey(t *testing.T) {
 		L(S("there")), I(128),
 	)
 
-	as.NoError(err)
-	v, ok := o1.Get(L(S("hello")))
-	as.True(ok)
-	as.Equal(I(96), v)
+	if as.NoError(err) {
+		v, ok := o1.Get(L(S("hello")))
+		as.True(ok)
+		as.Equal(I(96), v)
 
-	v, ok = o1.Get(L(S("hello"), S("there")))
-	as.True(ok)
-	as.Equal(I(42), v)
+		v, ok = o1.Get(L(S("hello"), S("there")))
+		as.True(ok)
+		as.Equal(I(42), v)
+	}
 }
 
 func TestEmptyList(t *testing.T) {

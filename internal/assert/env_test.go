@@ -11,7 +11,7 @@ import (
 func TestIsBound(t *testing.T) {
 	as := assert.New(t)
 	ns := assert.GetTestNamespace()
-	as.Nil(env.BindPublic(ns, "found", data.True))
+	as.NoError(env.BindPublic(ns, "found", data.True))
 	as.True(as.IsBound(ns, "found"))
 }
 
@@ -19,9 +19,10 @@ func TestIsNotBound(t *testing.T) {
 	as := assert.New(t)
 	ns := assert.GetTestNamespace()
 	e, err := ns.Public("not-bound")
-	as.NotNil(e)
-	as.NoError(err)
-	as.IsNotBound(ns, "not-bound")
+	if as.NoError(err) {
+		as.NotNil(e)
+		as.IsNotBound(ns, "not-bound")
+	}
 }
 
 func TestIsNotDeclared(t *testing.T) {

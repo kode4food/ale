@@ -14,18 +14,22 @@ func TestUintptrBoxing(t *testing.T) {
 
 	four2 := uintptr(42)
 	w, err := ffi.WrapType(reflect.TypeOf(four2))
-	as.NoError(err)
-	b1, err := w.Wrap(nil, reflect.ValueOf(four2))
-	as.NoError(err)
-	as.Equal(uint64(42), b1.(*ffi.Boxed[uintptr]).Value.Uint())
+	if as.NoError(err) {
+		b1, err := w.Wrap(nil, reflect.ValueOf(four2))
+		if as.NoError(err) {
+			as.Equal(uint64(42), b1.(*ffi.Boxed[uintptr]).Value.Uint())
+		}
 
-	u, err := w.Unwrap(b1)
-	as.NoError(err)
-	as.Equal(reflect.ValueOf(four2), u)
+		u, err := w.Unwrap(b1)
+		if as.NoError(err) {
+			as.Equal(reflect.ValueOf(four2), u)
+		}
 
-	b2, err := w.Wrap(nil, reflect.ValueOf(uintptr(42)))
-	as.NoError(err)
-	as.True(b1.(*ffi.Boxed[uintptr]).Equal(b2))
+		b2, err := w.Wrap(nil, reflect.ValueOf(uintptr(42)))
+		if as.NoError(err) {
+			as.True(b1.(*ffi.Boxed[uintptr]).Equal(b2))
+		}
+	}
 }
 
 func TestUnsafePointerBoxing(t *testing.T) {
@@ -34,19 +38,23 @@ func TestUnsafePointerBoxing(t *testing.T) {
 	four2 := 42
 	p := unsafe.Pointer(&four2)
 	w, err := ffi.WrapType(reflect.TypeOf(p))
-	as.NoError(err)
-	b1, err := w.Wrap(nil, reflect.ValueOf(p))
-	as.NoError(err)
-	as.Equal(
-		unsafe.Pointer(&four2),
-		b1.(*ffi.Boxed[unsafe.Pointer]).Value.UnsafePointer(),
-	)
+	if as.NoError(err) {
+		b1, err := w.Wrap(nil, reflect.ValueOf(p))
+		if as.NoError(err) {
+			as.Equal(
+				unsafe.Pointer(&four2),
+				b1.(*ffi.Boxed[unsafe.Pointer]).Value.UnsafePointer(),
+			)
+		}
 
-	u, err := w.Unwrap(b1)
-	as.NoError(err)
-	as.Equal(reflect.ValueOf(p), u)
+		u, err := w.Unwrap(b1)
+		if as.NoError(err) {
+			as.Equal(reflect.ValueOf(p), u)
+		}
 
-	b2, err := w.Wrap(nil, reflect.ValueOf(unsafe.Pointer(&four2)))
-	as.NoError(err)
-	as.True(b1.(*ffi.Boxed[unsafe.Pointer]).Equal(b2))
+		b2, err := w.Wrap(nil, reflect.ValueOf(unsafe.Pointer(&four2)))
+		if as.NoError(err) {
+			as.True(b1.(*ffi.Boxed[unsafe.Pointer]).Equal(b2))
+		}
+	}
 }

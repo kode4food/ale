@@ -53,10 +53,11 @@ func TestUnquoteEval(t *testing.T) {
 	e := bootstrap.DevNullEnvironment()
 	ns := e.GetAnonymous()
 
-	as.Nil(env.BindPublic(ns, "foo", F(456)))
+	as.NoError(env.BindPublic(ns, "foo", F(456)))
 	r1, err := eval.String(ns, `'[123 ,foo]`)
-	as.NoError(err)
-	as.String("[123 (ale/unquote foo)]", r1)
+	if as.NoError(err) {
+		as.String("[123 (ale/unquote foo)]", r1)
+	}
 }
 
 func TestUnquoteMacroEval(t *testing.T) {

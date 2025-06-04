@@ -23,12 +23,12 @@ func TestResolveSymbol(t *testing.T) {
 
 	e := env.NewEnvironment()
 	root := e.GetRoot()
-	as.Nil(env.BindPublic(root, "public-parent", data.True))
-	as.Nil(env.BindPrivate(root, "private-parent", data.True))
+	as.NoError(env.BindPublic(root, "public-parent", data.True))
+	as.NoError(env.BindPrivate(root, "private-parent", data.True))
 
 	ns := e.GetAnonymous()
-	as.Nil(env.BindPublic(ns, "public-child", data.True))
-	as.Nil(env.BindPrivate(ns, "private-child", data.True))
+	as.NoError(env.BindPublic(ns, "public-child", data.True))
+	as.NoError(env.BindPrivate(ns, "private-child", data.True))
 
 	_, _, err := env.ResolveSymbol(ns, LS("public-child"))
 	as.NoError(err)
@@ -49,21 +49,23 @@ func TestResolveValue(t *testing.T) {
 
 	e := env.NewEnvironment()
 	root := e.GetRoot()
-	as.Nil(env.BindPublic(root, "public-parent", data.True))
-	as.Nil(env.BindPrivate(root, "private-parent", data.True))
+	as.NoError(env.BindPublic(root, "public-parent", data.True))
+	as.NoError(env.BindPrivate(root, "private-parent", data.True))
 
 	ns := e.GetAnonymous()
-	as.Nil(env.BindPublic(ns, "public-child", data.True))
-	as.Nil(env.BindPrivate(ns, "private-child", data.True))
+	as.NoError(env.BindPublic(ns, "public-child", data.True))
+	as.NoError(env.BindPrivate(ns, "private-child", data.True))
 
 	res, err := env.ResolveValue(ns, LS("public-child"))
-	as.True(res)
-	as.NoError(err)
+	if as.NoError(err) {
+		as.True(res)
+	}
 
 	as.True(env.MustResolveValue(ns, LS("private-child")))
 	res, err = env.ResolveValue(ns, LS("public-parent"))
-	as.True(res)
-	as.NoError(err)
+	if as.NoError(err) {
+		as.True(res)
+	}
 
 	ls := LS("private-parent")
 	defer as.ExpectPanic(fmt.Errorf(env.ErrNameNotDeclared, ls))

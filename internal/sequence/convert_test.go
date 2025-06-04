@@ -18,12 +18,14 @@ func TestSequenceConversions(t *testing.T) {
 	l3 := sequence.ToList(l2)
 
 	a1, err := sequence.ToObject(l3)
-	as.NotNil(a1)
-	as.NoError(err)
+	if as.NoError(err) {
+		as.NotNil(a1)
+	}
 
 	a2, err := sequence.ToObject(a1)
-	as.NotNil(a2)
-	as.NoError(err)
+	if as.NoError(err) {
+		as.NotNil(a2)
+	}
 
 	l4 := L(S("hello"), data.Null, S("there"), v1)
 	s1 := sequence.ToString(l4)
@@ -52,12 +54,14 @@ func TestUncountedConversions(t *testing.T) {
 	l3 := sequence.ToList(l2)
 
 	a1, err := sequence.ToObject(sequence.Filter(l3, alwaysTrue))
-	as.NotNil(a1)
-	as.NoError(err)
+	if as.NoError(err) {
+		as.NotNil(a1)
+	}
 
 	a2, err := sequence.ToObject(a1)
-	as.NotNil(a1)
-	as.NoError(err)
+	if as.NoError(err) {
+		as.NotNil(a1)
+	}
 
 	l4 := sequence.Filter(L(S("hello"), data.Null, S("there"), v1), alwaysTrue)
 	s1 := sequence.ToString(l4)

@@ -50,9 +50,10 @@ func TestSymbolParsing(t *testing.T) {
 	as := assert.New(t)
 
 	s, err := data.ParseSymbol("domain/name1")
-	as.NoError(err)
-	as.String("domain", s.(data.Qualified).Domain())
-	as.String("name1", s.(data.Qualified).Name())
+	if as.NoError(err) {
+		as.String("domain", s.(data.Qualified).Domain())
+		as.String("name1", s.(data.Qualified).Name())
+	}
 
 	s, err = data.ParseSymbol("some space")
 	as.Nil(s)

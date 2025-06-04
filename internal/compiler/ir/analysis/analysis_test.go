@@ -15,21 +15,21 @@ func TestVerifyGoodStack(t *testing.T) {
 	as := assert.New(t)
 
 	e := assert.GetTestEncoder()
-	as.Nil(generate.Branch(e,
+	as.NoError(generate.Branch(e,
 		func(encoder.Encoder) error { e.Emit(isa.True); return nil },
 		func(encoder.Encoder) error { e.Emit(isa.PosInt, 1); return nil },
 		func(encoder.Encoder) error { e.Emit(isa.Zero); return nil },
 	))
 	e.Emit(isa.Return)
 
-	as.Nil(analysis.Verify(e.Encode().Code))
+	as.NoError(analysis.Verify(e.Encode().Code))
 }
 
 func TestVerifyBadBranchStack(t *testing.T) {
 	as := assert.New(t)
 
 	e := assert.GetTestEncoder()
-	as.Nil(generate.Branch(e,
+	as.NoError(generate.Branch(e,
 		func(encoder.Encoder) error { e.Emit(isa.True); return nil },
 		func(encoder.Encoder) error {
 			e.Emit(isa.PosInt, 1)
@@ -64,7 +64,7 @@ func TestVerifyGoodJump(t *testing.T) {
 	e.Emit(isa.Pop)
 	e.Emit(isa.Jump, lbl)
 
-	as.Nil(analysis.Verify(e.Encode().Code))
+	as.NoError(analysis.Verify(e.Encode().Code))
 }
 
 func TestVerifyBadJump(t *testing.T) {
