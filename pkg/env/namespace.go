@@ -2,7 +2,6 @@ package env
 
 import (
 	"fmt"
-	"slices"
 	"sync"
 
 	"github.com/kode4food/ale/pkg/data"
@@ -50,6 +49,7 @@ func (ns *namespace) Domain() data.Local {
 
 func (ns *namespace) Declared() data.Locals {
 	ns.RLock()
+	defer ns.RUnlock()
 	res := make(data.Locals, 0, len(ns.entries))
 	for _, e := range ns.entries {
 		if e.IsPrivate() {
@@ -57,8 +57,6 @@ func (ns *namespace) Declared() data.Locals {
 		}
 		res = append(res, e.Name())
 	}
-	ns.RUnlock()
-	slices.Sort(res)
 	return res
 }
 
@@ -72,12 +70,11 @@ func (ns *namespace) Private(n data.Local) (*Entry, error) {
 
 func (ns *namespace) declare(n data.Local, asPrivate bool) (*Entry, error) {
 	ns.Lock()
+	defer ns.Unlock()
 	if e, ok := ns.entries[n]; ok {
 		if e.private == asPrivate {
-			ns.Unlock()
 			return e, nil
 		}
-		ns.Unlock()
 		return nil, fmt.Errorf(ErrNameAlreadyDeclared, n)
 	}
 	e := &Entry{
@@ -85,7 +82,6 @@ func (ns *namespace) declare(n data.Local, asPrivate bool) (*Entry, error) {
 		private: asPrivate,
 	}
 	ns.entries[n] = e
-	ns.Unlock()
 	return e, nil
 }
 
@@ -98,13 +94,14 @@ func (ns *namespace) Resolve(n data.Local) (*Entry, Namespace, error) {
 
 func (ns *namespace) resolve(n data.Local) (*Entry, bool) {
 	ns.RLock()
+	defer ns.RUnlock()
 	e, ok := ns.entries[n]
-	ns.RUnlock()
 	return e, ok
 }
 
 func (ns *namespace) Snapshot(e *Environment) Namespace {
 	ns.RLock()
+	defer ns.RUnlock()
 	res := &namespace{
 		environment: e,
 		domain:      ns.domain,
@@ -113,7 +110,6 @@ func (ns *namespace) Snapshot(e *Environment) Namespace {
 	for k, v := range ns.entries {
 		res.entries[k] = v.snapshot()
 	}
-	ns.RUnlock()
 	return res
 }
 

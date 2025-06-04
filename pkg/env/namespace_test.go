@@ -2,6 +2,7 @@ package env_test
 
 import (
 	"fmt"
+	"slices"
 	"testing"
 
 	"github.com/kode4food/ale/internal/assert"
@@ -23,6 +24,7 @@ func TestDeclarations(t *testing.T) {
 	as.NoError(env.BindPrivate(root, "private", data.True))
 
 	n := root.Declared()
+	slices.Sort(n)
 	as.Equal(2, len(n))
 	as.Equal(LS("public1"), n[0])
 	as.Equal(LS("public2"), n[1])

@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"slices"
 	"strings"
 
 	"github.com/kode4food/ale/internal/basics"
@@ -65,6 +66,7 @@ func (r *REPL) prefixedLocals(s data.Local) []string {
 	if current != root {
 		res = addPrefixed(res, name, current.Declared())
 	}
+	slices.Sort(res)
 	return res
 }
 
@@ -86,7 +88,7 @@ func (r *REPL) prefixedQualified(s data.Qualified) []string {
 	domain := s.Domain()
 	name := s.Name().String()
 	ns := r.ns.Environment().GetQualified(s.Domain())
-	return basics.Map(
+	res := basics.Map(
 		basics.Filter(ns.Declared(),
 			func(n data.Local) bool {
 				return strings.HasPrefix(string(n), name)
@@ -97,6 +99,8 @@ func (r *REPL) prefixedQualified(s data.Qualified) []string {
 			return data.ToString(qs) + lang.Space
 		},
 	)
+	slices.Sort(res)
+	return res
 }
 
 func addPrefixed(res []string, pfx string, names data.Locals) []string {

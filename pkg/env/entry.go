@@ -42,13 +42,12 @@ func (e *Entry) Value() (data.Value, error) {
 
 func (e *Entry) Bind(v data.Value) error {
 	e.Lock()
+	defer e.Unlock()
 	if e.bound.Load() {
-		e.Unlock()
 		return fmt.Errorf(ErrNameAlreadyBound, e.name)
 	}
 	e.value = v
 	e.bound.Store(true)
-	e.Unlock()
 	return nil
 }
 

@@ -2,6 +2,7 @@ package env_test
 
 import (
 	"fmt"
+	"slices"
 	"testing"
 
 	"github.com/kode4food/ale/internal/assert"
@@ -79,9 +80,13 @@ func TestDomains(t *testing.T) {
 	ns1 := e.GetQualified("domain1")
 	ns2 := e.GetQualified("domain2")
 
-	as.Equal(data.Locals{
+	l := data.Locals{
 		e.GetRoot().Domain(),
 		ns1.Domain(),
 		ns2.Domain(),
-	}, e.Domains())
+	}
+	slices.Sort(l)
+	r := e.Domains()
+	slices.Sort(r)
+	as.Equal(l, r)
 }

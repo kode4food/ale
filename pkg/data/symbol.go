@@ -118,9 +118,9 @@ func (g *SymbolGenerator) Prefix() string {
 // Local returns a newly generated local symbol
 func (g *SymbolGenerator) Local(name Local) Local {
 	g.Lock()
+	defer g.Unlock()
 	idx := g.str()
 	g.inc(0)
-	g.Unlock()
 	q := fmt.Sprintf(genSymTemplate, name, g.prefix, idx)
 	return Local(q)
 }

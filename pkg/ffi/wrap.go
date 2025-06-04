@@ -142,15 +142,15 @@ func makeTypeCache() *typeCache {
 
 func (c *typeCache) get(t reflect.Type) (Wrapper, bool) {
 	c.RLock()
+	defer c.RUnlock()
 	w, ok := c.entries[t]
-	c.RUnlock()
 	return w, ok
 }
 
 func (c *typeCache) put(t reflect.Type, w Wrapper) {
 	c.Lock()
+	defer c.Unlock()
 	c.entries[t] = w
-	c.Unlock()
 }
 
 func zero[T any]() reflect.Value {

@@ -1,7 +1,6 @@
 package env
 
 import (
-	"slices"
 	"sync"
 
 	"github.com/kode4food/ale/internal/basics"
@@ -41,21 +40,19 @@ func NewEnvironment() *Environment {
 
 func (e *Environment) Domains() data.Locals {
 	e.RLock()
-	res := basics.MapKeys(e.data)
-	e.RUnlock()
-	slices.Sort(res)
-	return res
+	defer e.RUnlock()
+	return basics.MapKeys(e.data)
 }
 
 func (e *Environment) Snapshot() *Environment {
 	e.RLock()
+	defer e.RUnlock()
 	res := &Environment{
 		data: make(map[data.Local]Namespace, len(e.data)),
 	}
 	for k, v := range e.data {
 		res.data[k] = v.Snapshot(res)
 	}
-	e.RUnlock()
 	return res
 }
 
@@ -65,20 +62,19 @@ func (e *Environment) Get(domain data.Local, res Resolver) Namespace {
 		return r
 	}
 	e.Lock()
+	defer e.Unlock()
 	if r, ok := e.data[domain]; ok {
-		e.Unlock()
 		return r
 	}
 	r := res()
 	e.data[domain] = r
-	e.Unlock()
 	return r
 }
 
 func (e *Environment) get(domain data.Local) (Namespace, bool) {
 	e.RLock()
+	defer e.RUnlock()
 	r, ok := e.data[domain]
-	e.RUnlock()
 	return r, ok
 }
 
