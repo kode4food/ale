@@ -125,7 +125,7 @@ func (floatWrapper[_]) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
 }
 
 func (floatWrapper[T]) Unwrap(v data.Value) (reflect.Value, error) {
-	if f, ok := makeFloat64(v); ok {
+	if f, ok := valueToFloat(v); ok {
 		return reflect.ValueOf(T(f)), nil
 	}
 	return reflect.Value{}, errors.New(ErrValueMustBeFloat)
@@ -140,8 +140,8 @@ func (complexWrapper[_]) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
 
 func (complexWrapper[T]) Unwrap(v data.Value) (reflect.Value, error) {
 	if c, ok := v.(*data.Cons); ok {
-		r, rok := makeFloat64(c.Car())
-		i, iok := makeFloat64(c.Cdr())
+		r, rok := valueToFloat(c.Car())
+		i, iok := valueToFloat(c.Cdr())
 		if rok && iok {
 			out := (T)(complex(r, i))
 			return reflect.ValueOf(out), nil
@@ -151,7 +151,7 @@ func (complexWrapper[T]) Unwrap(v data.Value) (reflect.Value, error) {
 	return zero[T](), errors.New(ErrValueMustBeCons)
 }
 
-func makeFloat64(v data.Value) (float64, bool) {
+func valueToFloat(v data.Value) (float64, bool) {
 	switch v := v.(type) {
 	case data.Integer:
 		return float64(v), true
