@@ -33,13 +33,13 @@ func makeEvaluator(eval evalFunc) compiler.Call {
 			return err
 		}
 		ns := e.Globals()
-		fn := data.MakeProcedure(func(args ...data.Value) data.Value {
+		fn := data.Call(func(args ...data.Value) data.Value {
 			res, err := eval(ns, args[0])
 			if err != nil {
 				panic(err)
 			}
 			return res
-		}, 1)
+		})
 		if err := generate.Literal(e, fn); err != nil {
 			return err
 		}

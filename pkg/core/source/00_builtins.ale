@@ -33,6 +33,8 @@
 ;; encoders
 (def-special asm*)
 (def-special eval)
+(def-special eval-in*)
+(def-special import)
 (def-special lambda)
 (def-special let)
 (def-special let-rec)

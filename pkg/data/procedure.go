@@ -65,3 +65,15 @@ func (p *procedure) Equal(other Value) bool {
 func (p *procedure) Get(key Value) (Value, bool) {
 	return DumpMapped(p).Get(key)
 }
+
+func (c Call) Call(args ...Value) Value {
+	return c(args...)
+}
+
+func (Call) CheckArity(int) error {
+	return nil
+}
+
+func (Call) Equal(Value) bool {
+	return false
+}

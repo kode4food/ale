@@ -10,6 +10,8 @@ func (b *bootstrap) populateSpecialForms() {
 	b.specials(map[data.Local]compiler.Call{
 		"asm*":          special.Asm,
 		"eval":          special.Eval,
+		"eval-in*":      special.InNamespace,
+		"import":        special.Import,
 		"lambda":        special.Lambda,
 		"let":           special.Let,
 		"let-rec":       special.LetMutual,

@@ -31,9 +31,8 @@ func Let(e encoder.Encoder, args ...data.Value) error {
 	return performBinding(e, generate.Locals, args...)
 }
 
-// LetMutual encodes a binding form. First fresh names are introduced,
-// and then binding values are evaluated with access to those names via
-// the MutualScope
+// LetMutual encodes a binding form. First fresh names are introduced, and then
+// binding values are evaluated with access to those names via the MutualScope
 func LetMutual(e encoder.Encoder, args ...data.Value) error {
 	return performBinding(e, generate.MutualLocals, args...)
 }

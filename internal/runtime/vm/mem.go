@@ -56,10 +56,10 @@ func (a *Allocator) Malloc(size int) data.Vector {
 	switch {
 	case size > 0 && size <= bucketCount:
 		return a.getBucket(size).alloc()
-	case size == 0:
-		return data.EmptyVector
 	case size > bucketCount:
 		return make(data.Vector, size)
+	case size == 0:
+		return data.EmptyVector
 	default:
 		panic(debug.ProgrammerError("invalid malloc: %d", size))
 	}

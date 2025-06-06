@@ -76,7 +76,7 @@ func getInlineTestNamespace() env.Namespace {
 	}, I(6))
 
 	bind("diff", func(enc encoder.Encoder) {
-		_ = generate.Branch(enc, func(_ encoder.Encoder) error {
+		_ = generate.Branch(enc, func(encoder.Encoder) error {
 			enc.Emit(isa.Arg, 0)
 			enc.Emit(isa.Dup)
 			enc.Emit(isa.Store, 0)
@@ -85,11 +85,11 @@ func getInlineTestNamespace() env.Namespace {
 			enc.Emit(isa.Store, 1)
 			enc.Emit(isa.NumLt)
 			return nil
-		}, func(_ encoder.Encoder) error {
+		}, func(encoder.Encoder) error {
 			enc.Emit(isa.Load, 1)
 			enc.Emit(isa.Load, 0)
 			return nil
-		}, func(_ encoder.Encoder) error {
+		}, func(encoder.Encoder) error {
 			enc.Emit(isa.Load, 0)
 			enc.Emit(isa.Load, 1)
 			return nil
@@ -240,15 +240,15 @@ func TestDiff(t *testing.T) {
 	as.Equal(I(2), diff.Call(I(7), I(5)))
 
 	enc := encoder.NewEncoder(ns)
-	as.NoError(generate.Branch(enc, func(_ encoder.Encoder) error {
+	as.NoError(generate.Branch(enc, func(encoder.Encoder) error {
 		enc.Emit(isa.Arg, 0)
 		enc.Emit(isa.Arg, 1)
 		enc.Emit(isa.NumEq)
 		return nil
-	}, func(_ encoder.Encoder) error {
+	}, func(encoder.Encoder) error {
 		enc.Emit(isa.Zero)
 		return nil
-	}, func(_ encoder.Encoder) error {
+	}, func(encoder.Encoder) error {
 		enc.Emit(isa.Arg, 0)
 		enc.Emit(isa.Arg, 1)
 		enc.Emit(isa.Const, enc.AddConstant(diff))
