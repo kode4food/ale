@@ -67,6 +67,4 @@
 
 (define-macro (define-namespace name . forms)
   `(in-ns* ,name
-     (begin
-       (begin ,@forms)
-       (declared*))))
+     (begin ,@forms (declared*))))
