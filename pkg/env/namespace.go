@@ -17,6 +17,7 @@ type (
 		Private(data.Local) (*Entry, error)
 		Resolve(data.Local) (*Entry, Namespace, error)
 		Snapshot(*Environment) Namespace
+		Import(e *Entry, as data.Local) (*Entry, error)
 	}
 
 	namespace struct {
@@ -78,8 +79,9 @@ func (ns *namespace) declare(n data.Local, asPrivate bool) (*Entry, error) {
 		return nil, fmt.Errorf(ErrNameAlreadyDeclared, n)
 	}
 	e := &Entry{
-		name:    n,
-		private: asPrivate,
+		name:       n,
+		private:    asPrivate,
+		entryValue: &entryValue{},
 	}
 	ns.entries[n] = e
 	return e, nil
@@ -111,6 +113,21 @@ func (ns *namespace) Snapshot(e *Environment) Namespace {
 		res.entries[k] = v.snapshot()
 	}
 	return res
+}
+
+func (ns *namespace) Import(e *Entry, as data.Local) (*Entry, error) {
+	ns.Lock()
+	defer ns.Unlock()
+	if _, ok := ns.entries[as]; ok {
+		return nil, fmt.Errorf(ErrNameAlreadyDeclared, as)
+	}
+	res := &Entry{
+		name:       as,
+		private:    true,
+		entryValue: e.entryValue,
+	}
+	ns.entries[as] = res
+	return res, nil
 }
 
 func resolvePublic(

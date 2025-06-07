@@ -77,7 +77,7 @@ func getImporter(from, to env.Namespace, args ...data.Value) (data.Call, error) 
 func importAll(from, to env.Namespace) data.Call {
 	return func(...data.Value) data.Value {
 		for _, n := range from.Declared() {
-			if err := copyEntry(from, to, n, n); err != nil {
+			if err := importEntry(from, to, n, n); err != nil {
 				panic(err)
 			}
 		}
@@ -96,7 +96,7 @@ func importNamed(from, to env.Namespace, vals data.Vector) (data.Call, error) {
 	}
 	return func(...data.Value) data.Value {
 		for _, n := range names {
-			if err := copyEntry(from, to, n, n); err != nil {
+			if err := importEntry(from, to, n, n); err != nil {
 				panic(err)
 			}
 		}
@@ -119,7 +119,7 @@ func importAliased(from, to env.Namespace, a *data.Object) (data.Call, error) {
 	}
 	return func(...data.Value) data.Value {
 		for name, alias := range aliases {
-			if err := copyEntry(from, to, name, alias); err != nil {
+			if err := importEntry(from, to, name, alias); err != nil {
 				panic(err)
 			}
 		}
@@ -127,21 +127,13 @@ func importAliased(from, to env.Namespace, a *data.Object) (data.Call, error) {
 	}, nil
 }
 
-func copyEntry(from, to env.Namespace, name, alias data.Local) error {
+func importEntry(from, to env.Namespace, name, alias data.Local) error {
 	f, _, err := from.Resolve(name)
 	if err != nil {
 		return err
 	}
-	if !f.IsBound() {
-		return nil
-	}
-	t, err := to.Public(alias)
-	if err != nil {
+	if _, err := to.Import(f, alias); err != nil {
 		return err
 	}
-	v, err := f.Value()
-	if err != nil {
-		return err
-	}
-	return t.Bind(v)
+	return nil
 }

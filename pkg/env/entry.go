@@ -11,10 +11,14 @@ import (
 type (
 	// Entry represents a namespace entry
 	Entry struct {
-		value   data.Value
 		name    data.Local
 		private bool
-		bound   atomic.Bool
+		*entryValue
+	}
+
+	entryValue struct {
+		value data.Value
+		bound atomic.Bool
 		sync.Mutex
 	}
 )
@@ -65,7 +69,8 @@ func (e *Entry) snapshot() *Entry {
 	}
 
 	return &Entry{
-		name:    e.name,
-		private: e.private,
+		name:       e.name,
+		private:    e.private,
+		entryValue: &entryValue{},
 	}
 }
