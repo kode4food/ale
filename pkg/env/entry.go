@@ -13,10 +13,10 @@ type (
 	Entry struct {
 		name    data.Local
 		private bool
-		*entryValue
+		*binding
 	}
 
-	entryValue struct {
+	binding struct {
 		value data.Value
 		bound atomic.Bool
 		sync.Mutex
@@ -69,8 +69,8 @@ func (e *Entry) snapshot() *Entry {
 	}
 
 	return &Entry{
-		name:       e.name,
-		private:    e.private,
-		entryValue: &entryValue{},
+		name:    e.name,
+		private: e.private,
+		binding: &binding{},
 	}
 }

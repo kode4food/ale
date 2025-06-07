@@ -66,7 +66,11 @@ func parseLetBindings(v data.Value) (generate.Bindings, error) {
 		names := uniqueNames{}
 		res := generate.Bindings{}
 		for f, r, ok := v.Split(); ok; f, r, ok = r.Split() {
-			b, err := parseLetBinding(f.(data.Vector))
+			v, ok := f.(data.Vector)
+			if !ok {
+				return nil, fmt.Errorf(ErrUnexpectedLetSyntax, f)
+			}
+			b, err := parseLetBinding(v)
 			if err != nil {
 				return nil, err
 			}
@@ -91,8 +95,12 @@ func parseLetBinding(v data.Vector) (*generate.Binding, error) {
 	if len(v) != 2 {
 		return nil, errors.New(ErrUnpairedBindings)
 	}
+	n, ok := v[0].(data.Local)
+	if !ok {
+		return nil, fmt.Errorf(ErrExpectedName, v[0])
+	}
 	return &generate.Binding{
-		Name:  v[0].(data.Local),
+		Name:  n,
 		Value: v[1],
 	}, nil
 }

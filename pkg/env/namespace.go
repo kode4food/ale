@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"sync"
 
+	"github.com/kode4food/ale/internal/basics"
 	"github.com/kode4food/ale/pkg/data"
 )
 
@@ -17,7 +18,7 @@ type (
 		Private(data.Local) (*Entry, error)
 		Resolve(data.Local) (*Entry, Namespace, error)
 		Snapshot(*Environment) Namespace
-		Import(e *Entry, as data.Local) (*Entry, error)
+		Import(map[data.Local]*Entry) error
 	}
 
 	namespace struct {
@@ -79,9 +80,9 @@ func (ns *namespace) declare(n data.Local, asPrivate bool) (*Entry, error) {
 		return nil, fmt.Errorf(ErrNameAlreadyDeclared, n)
 	}
 	e := &Entry{
-		name:       n,
-		private:    asPrivate,
-		entryValue: &entryValue{},
+		name:    n,
+		private: asPrivate,
+		binding: &binding{},
 	}
 	ns.entries[n] = e
 	return e, nil
@@ -115,19 +116,35 @@ func (ns *namespace) Snapshot(e *Environment) Namespace {
 	return res
 }
 
-func (ns *namespace) Import(e *Entry, as data.Local) (*Entry, error) {
+func (ns *namespace) Import(imports map[data.Local]*Entry) error {
 	ns.Lock()
 	defer ns.Unlock()
-	if _, ok := ns.entries[as]; ok {
-		return nil, fmt.Errorf(ErrNameAlreadyDeclared, as)
+	names := basics.MapKeys(imports)
+	if err := ns.checkDuplicates(names); err != nil {
+		return err
 	}
-	res := &Entry{
-		name:       as,
-		private:    true,
-		entryValue: e.entryValue,
+	for as, e := range imports {
+		res := &Entry{
+			name:    as,
+			private: true,
+			binding: e.binding,
+		}
+		ns.entries[as] = res
 	}
-	ns.entries[as] = res
-	return res, nil
+	return nil
+}
+
+func (ns *namespace) checkDuplicates(names data.Locals) error {
+	duped := data.Locals{}
+	for _, n := range names {
+		if _, ok := ns.entries[n]; ok {
+			duped = append(duped, n)
+		}
+	}
+	if len(duped) > 0 {
+		return fmt.Errorf(ErrNameAlreadyDeclared, duped)
+	}
+	return nil
 }
 
 func resolvePublic(

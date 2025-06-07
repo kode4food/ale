@@ -1,8 +1,10 @@
 package special
 
 import (
+	"errors"
 	"fmt"
 
+	"github.com/kode4food/ale/internal/basics"
 	"github.com/kode4food/ale/internal/compiler/encoder"
 	"github.com/kode4food/ale/internal/compiler/generate"
 	"github.com/kode4food/ale/internal/runtime/isa"
@@ -11,26 +13,52 @@ import (
 	"github.com/kode4food/ale/pkg/eval"
 )
 
+type imports map[data.Local]data.Local
+
 const (
-	ErrExpectedName = "name expected, got %s"
+	ErrExpectedName     = "name expected, got %s"
+	ErrUnexpectedImport = "unexpected import pattern: %s"
+	ErrDuplicateName    = "duplicate name(s) in import: %s"
 )
 
 func InNamespace(e encoder.Encoder, args ...data.Value) error {
-	if err := data.CheckMinimumArity(2, len(args)); err != nil {
+	if err := data.CheckFixedArity(2, len(args)); err != nil {
 		return err
 	}
 	name, ok := args[0].(data.Local)
 	if !ok {
 		return fmt.Errorf(ErrExpectedName, args[0])
 	}
-	expr := data.Vector(args[1:])
+	expr := args[1]
 	ns := e.Globals().Environment().GetQualified(name)
 	fn := data.Call(func(...data.Value) data.Value {
-		res, err := eval.Block(ns, expr)
+		res, err := eval.Value(ns, expr)
 		if err != nil {
 			panic(err)
 		}
 		return res
+	})
+	if err := generate.Literal(e, fn); err != nil {
+		return err
+	}
+	e.Emit(isa.Call0)
+	return nil
+}
+
+func Declared(e encoder.Encoder, args ...data.Value) error {
+	if err := data.CheckRangedArity(0, 1, len(args)); err != nil {
+		return err
+	}
+	ns := e.Globals()
+	if len(args) > 0 {
+		name, ok := args[0].(data.Local)
+		if !ok {
+			return fmt.Errorf(ErrExpectedName, args[0])
+		}
+		ns = ns.Environment().GetQualified(name)
+	}
+	fn := data.Call(func(...data.Value) data.Value {
+		return localsToVector(ns.Declared())
 	})
 	if err := generate.Literal(e, fn); err != nil {
 		return err
@@ -65,75 +93,103 @@ func getImporter(from, to env.Namespace, args ...data.Value) (data.Call, error) 
 		return importAll(from, to), nil
 	}
 	switch v := args[0].(type) {
+	case data.Local:
+		return importNamed(from, to, data.NewList(v))
 	case data.Vector:
+		return importNamed(from, to, data.NewList(v))
+	case *data.List:
 		return importNamed(from, to, v)
-	case *data.Object:
-		return importAliased(from, to, v)
 	default:
-		return nil, fmt.Errorf("nah, you can't do that")
+		return nil, fmt.Errorf(ErrUnexpectedImport, args[0])
 	}
 }
 
 func importAll(from, to env.Namespace) data.Call {
 	return func(...data.Value) data.Value {
-		for _, n := range from.Declared() {
-			if err := importEntry(from, to, n, n); err != nil {
-				panic(err)
-			}
+		names := localsToVector(from.Declared())
+		i, err := buildImports(data.NewList(names...))
+		if err != nil {
+			panic(err)
 		}
-		return data.Null
+		if err := performImports(from, to, i); err != nil {
+			panic(err)
+		}
+		return localsToVector(basics.MapValues(i))
 	}
 }
 
-func importNamed(from, to env.Namespace, vals data.Vector) (data.Call, error) {
-	names := make(data.Locals, len(vals))
-	for i, v := range vals {
-		if n, ok := v.(data.Local); ok {
-			names[i] = n
-			continue
-		}
-		return nil, fmt.Errorf(ErrExpectedName, v)
-	}
-	return func(...data.Value) data.Value {
-		for _, n := range names {
-			if err := importEntry(from, to, n, n); err != nil {
-				panic(err)
-			}
-		}
-		return data.Null
-	}, nil
-}
-
-func importAliased(from, to env.Namespace, a *data.Object) (data.Call, error) {
-	aliases := map[data.Local]data.Local{}
-	for _, p := range a.Pairs() {
-		k, ok := p.Car().(data.Local)
-		if !ok {
-			return nil, fmt.Errorf(ErrExpectedName, p.Car())
-		}
-		v, ok := p.Cdr().(data.Local)
-		if !ok {
-			return nil, fmt.Errorf(ErrExpectedName, p.Cdr())
-		}
-		aliases[k] = v
-	}
-	return func(...data.Value) data.Value {
-		for name, alias := range aliases {
-			if err := importEntry(from, to, name, alias); err != nil {
-				panic(err)
-			}
-		}
-		return data.Null
-	}, nil
-}
-
-func importEntry(from, to env.Namespace, name, alias data.Local) error {
-	f, _, err := from.Resolve(name)
+func importNamed(from, to env.Namespace, a *data.List) (data.Call, error) {
+	i, err := buildImports(a)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	if _, err := to.Import(f, alias); err != nil {
-		return err
+	return func(...data.Value) data.Value {
+		err := performImports(from, to, i)
+		if err != nil {
+			panic(err)
+		}
+		return localsToVector(basics.MapValues(i))
+	}, nil
+}
+
+func buildImports(a *data.List) (imports, error) {
+	res := imports{}
+	for f, r, ok := a.Split(); ok; f, r, ok = r.Split() {
+		switch f := f.(type) {
+		case data.Local:
+			if _, ok := res[f]; ok {
+				return nil, fmt.Errorf(ErrDuplicateName, f)
+			}
+			res[f] = f
+		case data.Vector:
+			if len(f) != 2 {
+				return nil, errors.New(ErrUnpairedBindings)
+			}
+			k, ok := f[0].(data.Local)
+			if !ok {
+				return nil, fmt.Errorf(ErrExpectedName, f[0])
+			}
+			v, ok := f[1].(data.Local)
+			if !ok {
+				return nil, fmt.Errorf(ErrExpectedName, f[1])
+			}
+			if _, ok := res[k]; ok {
+				return nil, fmt.Errorf(ErrDuplicateName, k)
+			}
+			res[k] = v
+		default:
+			return nil, fmt.Errorf(ErrUnexpectedImport, f)
+		}
 	}
-	return nil
+	return res, nil
+}
+
+func performImports(from, to env.Namespace, i imports) error {
+	if len(i) == 0 {
+		return nil
+	}
+
+	le := map[data.Local]*env.Entry{}
+	for name, alias := range i {
+		e, _, err := from.Resolve(name)
+		if err != nil {
+			return err
+		}
+		if e.IsPrivate() {
+			return fmt.Errorf(env.ErrNameNotDeclared, name)
+		}
+		le[alias] = e
+	}
+	return to.Import(le)
+}
+
+func localsToVector(locals data.Locals) data.Vector {
+	if len(locals) == 0 {
+		return data.EmptyVector
+	}
+	res := make(data.Vector, len(locals))
+	for i, n := range locals {
+		res[i] = n
+	}
+	return res
 }

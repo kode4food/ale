@@ -16,6 +16,17 @@ func MapKeys[K comparable, V any](m map[K]V) []K {
 	return s
 }
 
+// MapValues returns the values of the provided map as a slice
+func MapValues[K comparable, V any](m map[K]V) []V {
+	s := make([]V, len(m))
+	var i int
+	for _, v := range m {
+		s[i] = v
+		i++
+	}
+	return s
+}
+
 // SortedKeys returns the keys of the provided map as a sorted slice
 func SortedKeys[K cmp.Ordered, V any](m map[K]V) []K {
 	s := MapKeys(m)
