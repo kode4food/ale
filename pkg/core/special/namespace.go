@@ -165,10 +165,6 @@ func buildImports(a *data.List) (imports, error) {
 }
 
 func performImports(from, to env.Namespace, i imports) error {
-	if len(i) == 0 {
-		return nil
-	}
-
 	le := map[data.Local]*env.Entry{}
 	for name, alias := range i {
 		e, _, err := from.Resolve(name)
@@ -184,9 +180,6 @@ func performImports(from, to env.Namespace, i imports) error {
 }
 
 func localsToVector(locals data.Locals) data.Vector {
-	if len(locals) == 0 {
-		return data.EmptyVector
-	}
 	res := make(data.Vector, len(locals))
 	for i, n := range locals {
 		res[i] = n
