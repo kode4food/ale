@@ -76,8 +76,7 @@ func getImporter(from, to env.Namespace, args ...data.Value) (data.Call, error) 
 
 func importAll(from, to env.Namespace) data.Call {
 	return func(...data.Value) data.Value {
-		names := from.Declared()
-		for _, n := range names {
+		for _, n := range from.Declared() {
 			if err := copyEntry(from, to, n, n); err != nil {
 				panic(err)
 			}
