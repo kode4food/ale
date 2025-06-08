@@ -19,6 +19,16 @@ func TestMapKeys(t *testing.T) {
 	as.Equal([]string{"age", "name"}, k)
 }
 
+func TestMapValues(t *testing.T) {
+	as := assert.New(t)
+	v := basics.MapValues(map[string]string{
+		"age":  "forty-two",
+		"name": "bob",
+	})
+	slices.Sort(v)
+	as.Equal([]string{"bob", "forty-two"}, v)
+}
+
 func TestSortedKeys(t *testing.T) {
 	as := assert.New(t)
 	sk := basics.SortedKeys(map[string]any{

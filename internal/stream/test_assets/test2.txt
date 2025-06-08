@@ -1,0 +1,2 @@
+test file 2 in root
+has multiple lines
