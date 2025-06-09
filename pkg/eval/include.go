@@ -12,8 +12,11 @@ import (
 )
 
 const (
-	ErrExpectedPath    = "expected a string path, got: %s"
+	ErrExpectedPath    = "expected string path, got: %s"
 	ErrOpenUnsupported = "file system does not support opening files: %s"
+	ErrExpectedString  = "expected string result from open, got: %s"
+	ErrExpectedObject  = "expected file system to be an object, got: %s"
+	ErrExpectedCaller  = "expected open to be proc, got: %s"
 )
 
 type Include data.Sequence
@@ -32,21 +35,45 @@ func processInclude(ns env.Namespace, v data.Value) (Include, error) {
 }
 
 func readInclude(ns env.Namespace, args ...data.Value) (Include, error) {
-	data.MustCheckFixedArity(1, len(args))
+	if err := data.CheckFixedArity(1, len(args)); err != nil {
+		return nil, err
+	}
 	path, ok := args[0].(data.String)
 	if !ok {
-		panic(fmt.Errorf(ErrExpectedPath, args[0]))
+		return nil, fmt.Errorf(ErrExpectedPath, args[0])
 	}
-	c := mustFetchOpenCall(ns)
-	res := c.Call(path, stream.ReadAll).(data.String)
-	return read.FromString(res), nil
+	c, err := fetchOpenCall(ns)
+	if err != nil {
+		return nil, err
+	}
+	res := c.Call(path, stream.ReadAll)
+	str, ok := res.(data.String)
+	if !ok {
+		return nil, fmt.Errorf(ErrExpectedString, res)
+	}
+	return read.FromString(str), nil
 }
 
-func mustFetchOpenCall(ns env.Namespace) data.Caller {
-	fs := env.MustResolveValue(ns, lang.FS).(*data.Object)
-	v, ok := fs.Get(stream.OpenKey)
-	if !ok {
-		panic(fmt.Errorf(ErrOpenUnsupported, fs))
+func fetchOpenCall(ns env.Namespace) (data.Caller, error) {
+	e, _, err := ns.Resolve(lang.FS)
+	if err != nil {
+		return nil, err
 	}
-	return v.(data.Caller)
+	v, err := e.Value()
+	if err != nil {
+		return nil, err
+	}
+	fs, ok := v.(*data.Object)
+	if !ok {
+		return nil, fmt.Errorf(ErrExpectedObject, v)
+	}
+	v, ok = fs.Get(stream.OpenKey)
+	if !ok {
+		return nil, fmt.Errorf(ErrOpenUnsupported, fs)
+	}
+	c, ok := v.(data.Caller)
+	if !ok {
+		return nil, fmt.Errorf(ErrExpectedCaller, v)
+	}
+	return c, nil
 }
