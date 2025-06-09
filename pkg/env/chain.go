@@ -22,8 +22,8 @@ func (ns *chainedNamespace) Snapshot(e *Environment) Namespace {
 }
 
 func (ns *chainedNamespace) Resolve(n data.Local) (*Entry, Namespace, error) {
-	if e, in, err := ns.Namespace.Resolve(n); err == nil {
-		return e, in, nil
+	if e, _, err := ns.Namespace.Resolve(n); err == nil {
+		return e, ns, nil
 	}
 	return resolvePublic(ns, ns.parent, n)
 }

@@ -3,12 +3,11 @@
 
 ;; namespace management
 (def-special :private in-ns*)
-(def-special :private declared*)
+(def-special declared*)
 
-; in-ns* and declared* are private, so a macroexpand will actually leak them to
-; the calling code, which is not what we want, but it's better than nothing
+; in-ns* is private, so a macroexpand will actually leak it to the caller.
+; This is not what we want, but it's better than nothing. At some point we will
+; add the ability to seal a namespace, which will prevent such evaluation
 (define-macro (define-namespace name . forms)
-  (let ([in-ns in-ns*]
-         [declared declared*])
-    `(,in-ns ,name
-       (begin ,@forms (,declared)))))
+  (let [in-ns in-ns*]
+    `(,in-ns ,name ,@forms (declared*))))

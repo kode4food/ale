@@ -22,17 +22,17 @@ const (
 )
 
 func InNamespace(e encoder.Encoder, args ...data.Value) error {
-	if err := data.CheckFixedArity(2, len(args)); err != nil {
+	if err := data.CheckMinimumArity(2, len(args)); err != nil {
 		return err
 	}
 	name, ok := args[0].(data.Local)
 	if !ok {
 		return fmt.Errorf(ErrExpectedName, args[0])
 	}
-	expr := args[1]
+	block := data.Vector(args[1:])
 	ns := e.Globals().Environment().GetQualified(name)
 	fn := data.MakeProcedure(func(...data.Value) data.Value {
-		res, err := eval.Value(ns, expr)
+		res, err := eval.Block(ns, block)
 		if err != nil {
 			panic(err)
 		}

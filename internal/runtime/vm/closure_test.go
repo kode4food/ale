@@ -62,6 +62,16 @@ func TestClosureEqual(t *testing.T) {
 
 		[(eq f1 f1) (eq f1 f2) (eq f1 f3) (eq f1 f4)]
 	`, V(data.True, data.True, data.False, data.True))
+
+}
+
+func TestClosureBindOrShadow(t *testing.T) {
+	as := assert.New(t)
+	as.MustEvalTo(`
+		(private* is-99)
+		(define* is-99 99)
+        is-99
+	`, I(99))
 }
 
 func TestSimple(t *testing.T) {
