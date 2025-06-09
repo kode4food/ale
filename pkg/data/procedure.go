@@ -12,16 +12,11 @@ type (
 	// Call is the type of function that can be turned into a Procedure
 	Call func(...Value) Value
 
-	// Caller provides the necessary methods for performing a runtime call
-	Caller interface {
-		Call(...Value) Value
-		CheckArity(int) error
-	}
-
-	// Procedure is a Value that provides a Caller interface
+	// Procedure is any Value that provides a calling interface
 	Procedure interface {
 		Value
-		Caller
+		Call(...Value) Value
+		CheckArity(int) error
 	}
 
 	procedure struct {
@@ -64,16 +59,4 @@ func (p *procedure) Equal(other Value) bool {
 
 func (p *procedure) Get(key Value) (Value, bool) {
 	return DumpMapped(p).Get(key)
-}
-
-func (c Call) Call(args ...Value) Value {
-	return c(args...)
-}
-
-func (Call) CheckArity(int) error {
-	return nil
-}
-
-func (Call) Equal(Value) bool {
-	return false
 }

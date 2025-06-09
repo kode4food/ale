@@ -25,9 +25,9 @@ var (
 
 	// compile-time checks for interface implementation
 	_ interface {
-		Caller
 		Hashed
 		Prepender
+		Procedure
 		RandomAccess
 		Reverser
 		Typed

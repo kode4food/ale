@@ -5,6 +5,7 @@
 (#include "asm.ale")
 (#include "basics.ale")
 (#include "define.ale")
+(#include "namespaces.ale")
 (#include "convenience.ale")
 (#include "numerics.ale")
 (#include "binding.ale")

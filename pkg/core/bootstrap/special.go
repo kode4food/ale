@@ -9,9 +9,7 @@ import (
 func (b *bootstrap) populateSpecialForms() {
 	b.specials(map[data.Local]compiler.Call{
 		"asm*":          special.Asm,
-		"declared*":     special.Declared,
 		"eval":          special.Eval,
-		"in-ns*":        special.InNamespace,
 		"import":        special.Import,
 		"lambda":        special.Lambda,
 		"let":           special.Let,
@@ -19,6 +17,9 @@ func (b *bootstrap) populateSpecialForms() {
 		"macroexpand-1": special.MacroExpand1,
 		"macroexpand":   special.MacroExpand,
 		"special*":      special.Special,
+
+		"declared*": special.Declared,
+		"in-ns*":    special.InNamespace,
 	})
 }
 

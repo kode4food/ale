@@ -21,6 +21,8 @@ type (
 		Import(map[data.Local]*Entry) error
 	}
 
+	Binder func(ns Namespace, n data.Local, v data.Value) error
+
 	namespace struct {
 		entries     entries
 		environment *Environment

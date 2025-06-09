@@ -33,7 +33,7 @@ func bindWriter(w Writer) data.Procedure {
 }
 
 func bindCloser(c io.Closer) data.Procedure {
-	return data.MakeProcedure(func(...data.Value) data.Value {
+	return data.MakeProcedure(func(args ...data.Value) data.Value {
 		_ = c.Close()
 		return data.Null
 	}, 0)

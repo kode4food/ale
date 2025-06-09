@@ -60,7 +60,10 @@ func callNonSymbol(e encoder.Encoder, v data.Value, args data.Vector) error {
 	if compiler.IsEvaluable(v) {
 		return callDynamic(e, v, args)
 	}
-	if v, ok := v.(data.Procedure); ok {
+	switch v := v.(type) {
+	case compiler.Call:
+		return v(e, args...)
+	case data.Procedure:
 		return callStatic(e, v, args)
 	}
 	return callDynamic(e, v, args)

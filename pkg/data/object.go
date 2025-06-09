@@ -40,10 +40,10 @@ var (
 
 	// compile-time checks for interface implementation
 	_ interface {
-		Caller
 		CountedSequence
 		Hashed
 		Mapper
+		Procedure
 		Typed
 	} = (*Object)(nil)
 )

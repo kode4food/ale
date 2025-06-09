@@ -21,7 +21,7 @@ func TestWrapFileSystemList(t *testing.T) {
 
 	c, ok := fs.Get(stream.ListKey)
 	as.True(ok)
-	res := c.(data.Caller).Call(S("test_assets"))
+	res := c.(data.Procedure).Call(S("test_assets"))
 	as.NotNil(res)
 	as.Equal(O(
 		C(S("test1.txt"), stream.File),
@@ -39,7 +39,7 @@ func TestWrapFileSystemReadAll(t *testing.T) {
 	c, ok := fs.Get(stream.OpenKey)
 	as.True(ok)
 
-	res := c.(data.Caller).Call(S("test_assets/test1.txt"), stream.ReadAll)
+	res := c.(data.Procedure).Call(S("test_assets/test1.txt"), stream.ReadAll)
 	as.String("test file 1 in root\n", res)
 }
 
@@ -51,7 +51,7 @@ func TestWrapFileSystemReadLines(t *testing.T) {
 	c, ok := fs.Get(stream.OpenKey)
 	as.True(ok)
 
-	r := c.(data.Caller).Call(S("test_assets/test2.txt"), stream.ReadLines)
+	r := c.(data.Procedure).Call(S("test_assets/test2.txt"), stream.ReadLines)
 	res := sequence.ToVector(r.(data.Sequence))
 	as.Equal(2, res.Count())
 	as.String("test file 2 in root", res[0])

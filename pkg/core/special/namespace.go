@@ -31,7 +31,7 @@ func InNamespace(e encoder.Encoder, args ...data.Value) error {
 	}
 	expr := args[1]
 	ns := e.Globals().Environment().GetQualified(name)
-	fn := data.Call(func(...data.Value) data.Value {
+	fn := data.MakeProcedure(func(...data.Value) data.Value {
 		res, err := eval.Value(ns, expr)
 		if err != nil {
 			panic(err)
@@ -57,7 +57,7 @@ func Declared(e encoder.Encoder, args ...data.Value) error {
 		}
 		ns = ns.Environment().GetQualified(name)
 	}
-	fn := data.Call(func(...data.Value) data.Value {
+	fn := data.MakeProcedure(func(...data.Value) data.Value {
 		return localsToVector(ns.Declared())
 	})
 	if err := generate.Literal(e, fn); err != nil {
@@ -81,7 +81,8 @@ func Import(e encoder.Encoder, args ...data.Value) error {
 	if err != nil {
 		return err
 	}
-	if err := generate.Literal(e, fn); err != nil {
+	proc := data.MakeProcedure(fn)
+	if err := generate.Literal(e, proc); err != nil {
 		return err
 	}
 	e.Emit(isa.Call0)

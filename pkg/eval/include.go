@@ -12,11 +12,8 @@ import (
 )
 
 const (
-	ErrExpectedPath    = "expected string path, got: %s"
-	ErrOpenUnsupported = "file system does not support opening files: %s"
-	ErrExpectedString  = "expected string result from open, got: %s"
-	ErrExpectedObject  = "expected file system to be an object, got: %s"
-	ErrExpectedCaller  = "expected open to be proc, got: %s"
+	ErrExpectedPath       = "expected string path, got: %s"
+	ErrExpectedFileSystem = "expected file system, got: %s"
 )
 
 type Include data.Sequence
@@ -47,14 +44,10 @@ func readInclude(ns env.Namespace, args ...data.Value) (Include, error) {
 		return nil, err
 	}
 	res := c.Call(path, stream.ReadAll)
-	str, ok := res.(data.String)
-	if !ok {
-		return nil, fmt.Errorf(ErrExpectedString, res)
-	}
-	return read.FromString(str), nil
+	return read.FromString(res.(data.String)), nil
 }
 
-func fetchOpenCall(ns env.Namespace) (data.Caller, error) {
+func fetchOpenCall(ns env.Namespace) (data.Procedure, error) {
 	e, _, err := ns.Resolve(lang.FS)
 	if err != nil {
 		return nil, err
@@ -63,17 +56,9 @@ func fetchOpenCall(ns env.Namespace) (data.Caller, error) {
 	if err != nil {
 		return nil, err
 	}
-	fs, ok := v.(*data.Object)
+	fs, ok := v.(*stream.FileSystem)
 	if !ok {
-		return nil, fmt.Errorf(ErrExpectedObject, v)
+		return nil, fmt.Errorf(ErrExpectedFileSystem, v)
 	}
-	v, ok = fs.Get(stream.OpenKey)
-	if !ok {
-		return nil, fmt.Errorf(ErrOpenUnsupported, fs)
-	}
-	c, ok := v.(data.Caller)
-	if !ok {
-		return nil, fmt.Errorf(ErrExpectedCaller, v)
-	}
-	return c, nil
+	return fs.Open, nil
 }

@@ -4,8 +4,15 @@ import (
 	"fmt"
 	"io/fs"
 
+	"github.com/kode4food/ale/internal/types"
 	"github.com/kode4food/ale/pkg/data"
 )
+
+type FileSystem struct {
+	fs   fs.FS
+	List data.Procedure
+	Open data.Procedure
+}
 
 const (
 	ListKey = data.Keyword("list")
@@ -26,16 +33,38 @@ const (
 	ErrExpectedBlockSize    = "expected a block size, got: %s"
 )
 
-func WrapFileSystem(fileSystem fs.FS) *data.Object {
-	return data.NewObject(
-		data.NewCons(ListKey, bindList(fileSystem)),
-		data.NewCons(OpenKey, bindOpen(fileSystem)),
-	)
+var fileSystemType = types.MakeBasic("file-system")
+
+func WrapFileSystem(fileSystem fs.FS) *FileSystem {
+	return &FileSystem{
+		fs:   fileSystem,
+		List: bindList(fileSystem),
+		Open: bindOpen(fileSystem),
+	}
 }
 
-func bindList(fileSystem fs.FS) data.Call {
-	return func(args ...data.Value) data.Value {
-		data.MustCheckFixedArity(1, len(args))
+func (f *FileSystem) Type() types.Type {
+	return fileSystemType
+}
+
+// Get returns the value associated with the specified key, if it exists.
+func (f *FileSystem) Get(key data.Value) (data.Value, bool) {
+	switch key {
+	case ListKey:
+		return f.List, true
+	case OpenKey:
+		return f.Open, true
+	default:
+		return nil, false
+	}
+}
+
+func (f *FileSystem) Equal(other data.Value) bool {
+	return f == other
+}
+
+func bindList(fileSystem fs.FS) data.Procedure {
+	return data.MakeProcedure(func(args ...data.Value) data.Value {
 		path := args[0].(data.String)
 		f, err := fileSystem.Open(path.String())
 		if err != nil {
@@ -51,7 +80,7 @@ func bindList(fileSystem fs.FS) data.Call {
 			return res
 		}
 		panic(fmt.Errorf(ErrExpectedDirectory, path))
-	}
+	}, 1)
 }
 
 func listDirectory(f fs.File) (*data.Object, error) {
@@ -78,16 +107,15 @@ func getDirEntryType(s fs.DirEntry) data.Keyword {
 	return File
 }
 
-func bindOpen(fs fs.FS) data.Call {
-	return func(args ...data.Value) data.Value {
-		data.MustCheckRangedArity(1, 3, len(args))
+func bindOpen(fs fs.FS) data.Procedure {
+	return data.MakeProcedure(func(args ...data.Value) data.Value {
 		path := args[0].(data.String)
 		f, s, err := openFile(fs, path.String())
 		if err != nil {
 			panic(err)
 		}
 		return createReader(f, s, args[1:]...)
-	}
+	}, 1, 3)
 }
 
 func createReader(f fs.File, s fs.FileInfo, args ...data.Value) data.Value {

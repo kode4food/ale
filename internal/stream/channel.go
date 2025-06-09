@@ -9,6 +9,12 @@ import (
 )
 
 type (
+	Channel struct {
+		Emit     data.Procedure
+		Close    data.Procedure
+		Sequence data.Sequence
+	}
+
 	chanEmitter struct {
 		ch chan<- data.Value
 	}
@@ -24,6 +30,7 @@ type (
 )
 
 var (
+	chanType         = types.MakeBasic("channel")
 	chanSequenceType = types.MakeBasic("channel-sequence")
 
 	// compile-time check for interface implementation
@@ -31,16 +38,37 @@ var (
 )
 
 // NewChannel produces an Emitter and Sequence pair
-func NewChannel(size int) *data.Object {
+func NewChannel(size int) *Channel {
 	ch := make(chan data.Value, size)
 	e := newEmitter(ch)
 	s := NewChannelSequence(ch)
 
-	return data.NewObject(
-		data.NewCons(EmitKey, bindWriter(e.Write)),
-		data.NewCons(CloseKey, bindCloser(e)),
-		data.NewCons(SequenceKey, s),
-	)
+	return &Channel{
+		Emit:     bindWriter(e.Write),
+		Close:    bindCloser(e),
+		Sequence: s,
+	}
+}
+
+func (c *Channel) Type() types.Type {
+	return chanType
+}
+
+func (c *Channel) Get(key data.Value) (data.Value, bool) {
+	switch key {
+	case EmitKey:
+		return c.Emit, true
+	case CloseKey:
+		return c.Close, true
+	case SequenceKey:
+		return c.Sequence, true
+	default:
+		return nil, false
+	}
+}
+
+func (c *Channel) Equal(other data.Value) bool {
+	return c == other
 }
 
 // newEmitter produces an Emitter for sending values to a Go chan

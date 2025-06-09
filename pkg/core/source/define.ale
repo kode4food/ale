@@ -64,7 +64,3 @@
 (define-macro private
   [(name) `(private* ,name)]
   [names `(begin ,@(map! (lambda (n) (list 'ale/private* n)) names))])
-
-(define-macro (define-namespace name . forms)
-  `(in-ns* ,name
-     (begin ,@forms (declared*))))
