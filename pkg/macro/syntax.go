@@ -32,9 +32,7 @@ var (
 
 // SyntaxQuote performs syntax quoting on the provided value
 func SyntaxQuote(ns env.Namespace, args ...data.Value) data.Value {
-	if err := data.CheckFixedArity(1, len(args)); err != nil {
-		panic(err)
-	}
+	data.MustCheckFixedArity(1, len(args))
 	value := args[0]
 	sc := &syntaxEnv{
 		namespace: ns,

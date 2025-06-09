@@ -1,0 +1,20 @@
+
+;;;; ale core: bootstrap
+
+(#include "builtins.ale")
+(#include "asm.ale")
+(#include "basics.ale")
+(#include "define.ale")
+(#include "convenience.ale")
+(#include "numerics.ale")
+(#include "binding.ale")
+(#include "branching.ale")
+(#include "predicates.ale")
+(#include "concurrency.ale")
+(#include "sequences.ale")
+(#include "lazy-seq.ale")
+(#include "threading.ale")
+(#include "functions.ale")
+(#include "exceptions.ale")
+(#include "io.ale")
+(#include "os.ale")

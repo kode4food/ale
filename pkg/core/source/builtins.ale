@@ -1,4 +1,5 @@
-;;;; ale core: builtin
+
+;;;; ale core: builtins
 
 ;; procedures
 (def-builtin append)

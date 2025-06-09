@@ -5,6 +5,7 @@ import (
 
 	"github.com/kode4food/ale/internal/assert"
 	"github.com/kode4food/ale/internal/compiler"
+	lang "github.com/kode4food/ale/internal/lang/env"
 	"github.com/kode4food/ale/pkg/core/bootstrap"
 	"github.com/kode4food/ale/pkg/data"
 	"github.com/kode4food/ale/pkg/env"
@@ -18,8 +19,8 @@ func TestDevNullEnvironment(t *testing.T) {
 
 	// It's okay to snapshot an environment if nobody has attempted to resolve
 	// an unbound namespace value
-	as.IsNotBound(ns, "*args*")
-	v, ok := as.IsBound(ns, "*in*").(data.Sequence)
+	as.IsNotBound(ns, lang.Args)
+	v, ok := as.IsBound(ns, lang.In).(data.Sequence)
 	as.True(ok)
 	as.True(v.IsEmpty())
 }
@@ -30,7 +31,7 @@ func TestTopLevelEnvironment(t *testing.T) {
 	e := bootstrap.TopLevelEnvironment()
 	ns := e.GetRoot()
 
-	_, ok := as.IsBound(ns, "*args*").(data.Vector)
+	_, ok := as.IsBound(ns, lang.Args).(data.Vector)
 	as.True(ok)
 }
 

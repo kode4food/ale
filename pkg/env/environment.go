@@ -4,6 +4,7 @@ import (
 	"sync"
 
 	"github.com/kode4food/ale/internal/basics"
+	lang "github.com/kode4food/ale/internal/lang/env"
 	"github.com/kode4food/ale/pkg/data"
 )
 
@@ -18,17 +19,9 @@ type (
 	Resolver func() Namespace
 )
 
-const (
-	// RootDomain stores built-ins
-	RootDomain = data.Local("ale")
-
-	// AnonymousDomain identifies an anonymous namespace
-	AnonymousDomain = data.Local("*anon*")
-)
-
 // RootSymbol returns a symbol qualified by the root domain
 func RootSymbol(name data.Local) data.Symbol {
-	return data.NewQualifiedSymbol(name, RootDomain)
+	return data.NewQualifiedSymbol(name, lang.RootDomain)
 }
 
 // NewEnvironment creates a new synchronous namespace map
@@ -80,20 +73,20 @@ func (e *Environment) get(domain data.Local) (Namespace, bool) {
 
 // GetRoot returns the root namespace, where built-ins go
 func (e *Environment) GetRoot() Namespace {
-	return e.Get(RootDomain, func() Namespace {
-		return e.newNamespace(RootDomain)
+	return e.Get(lang.RootDomain, func() Namespace {
+		return e.newNamespace(lang.RootDomain)
 	})
 }
 
 // GetAnonymous returns an anonymous (non-resolvable) namespace
 func (e *Environment) GetAnonymous() Namespace {
-	return chain(e.GetRoot(), e.newNamespace(AnonymousDomain))
+	return chain(e.GetRoot(), e.newNamespace(lang.AnonymousDomain))
 }
 
 // GetQualified returns the namespace for the specified domain.
 func (e *Environment) GetQualified(n data.Local) Namespace {
 	root := e.GetRoot()
-	if n == RootDomain {
+	if n == lang.RootDomain {
 		return root
 	}
 	return e.Get(n, func() Namespace {

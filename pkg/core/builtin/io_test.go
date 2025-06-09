@@ -6,13 +6,12 @@ import (
 
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
+	lang "github.com/kode4food/ale/internal/lang/env"
 	"github.com/kode4food/ale/internal/stream"
 	"github.com/kode4food/ale/pkg/core/bootstrap"
 	"github.com/kode4food/ale/pkg/env"
 	"github.com/kode4food/ale/pkg/eval"
 )
-
-const stdoutName = "*out*"
 
 func testOutput(t *testing.T, src, expected string) {
 	as := assert.New(t)
@@ -22,7 +21,7 @@ func testOutput(t *testing.T, src, expected string) {
 
 	e := env.NewEnvironment()
 	ns := e.GetRoot()
-	as.NoError(env.BindPublic(ns, stdoutName, O(
+	as.NoError(env.BindPublic(ns, lang.Out, O(
 		C(stream.WriteKey, w),
 	)))
 	bootstrap.Into(e)

@@ -7,6 +7,7 @@ import (
 
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
+	lang "github.com/kode4food/ale/internal/lang/env"
 	"github.com/kode4food/ale/pkg/data"
 	"github.com/kode4food/ale/pkg/env"
 )
@@ -17,7 +18,7 @@ func TestDeclarations(t *testing.T) {
 	e := env.NewEnvironment()
 	root := e.GetRoot()
 	as.Equal(e, root.Environment())
-	as.Equal(env.RootDomain, root.Domain())
+	as.Equal(lang.RootDomain, root.Domain())
 
 	as.NoError(env.BindPublic(root, "public2", data.True))
 	as.NoError(env.BindPublic(root, "public1", data.True))

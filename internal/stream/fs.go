@@ -35,9 +35,7 @@ func WrapFileSystem(fileSystem fs.FS) *data.Object {
 
 func bindList(fileSystem fs.FS) data.Call {
 	return func(args ...data.Value) data.Value {
-		if err := data.CheckFixedArity(1, len(args)); err != nil {
-			panic(err)
-		}
+		data.MustCheckFixedArity(1, len(args))
 		path := args[0].(data.String)
 		f, err := fileSystem.Open(path.String())
 		if err != nil {
@@ -82,9 +80,7 @@ func getDirEntryType(s fs.DirEntry) data.Keyword {
 
 func bindOpen(fs fs.FS) data.Call {
 	return func(args ...data.Value) data.Value {
-		if err := data.CheckRangedArity(1, 3, len(args)); err != nil {
-			panic(err)
-		}
+		data.MustCheckRangedArity(1, 3, len(args))
 		path := args[0].(data.String)
 		f, s, err := openFile(fs, path.String())
 		if err != nil {
@@ -136,6 +132,7 @@ func openFile(fs fs.FS, path string) (fs.File, fs.FileInfo, error) {
 }
 
 func readAll(f fs.File, size int64) data.Value {
+	defer func() { _ = f.Close() }()
 	buf := make([]byte, size)
 	l, err := f.Read(buf)
 	if err != nil {
@@ -144,6 +141,5 @@ func readAll(f fs.File, size int64) data.Value {
 	if int64(l) != size {
 		panic(fmt.Errorf(ErrUnexpectedReadLength, size, l))
 	}
-	_ = f.Close()
 	return data.String(buf[:l])
 }

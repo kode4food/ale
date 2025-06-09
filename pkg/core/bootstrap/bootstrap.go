@@ -4,6 +4,7 @@ import (
 	"os"
 
 	"github.com/kode4food/ale/internal/compiler"
+	lang "github.com/kode4food/ale/internal/lang/env"
 	"github.com/kode4food/ale/internal/stream"
 	"github.com/kode4food/ale/internal/sync"
 	"github.com/kode4food/ale/pkg/core/builtin"
@@ -50,21 +51,21 @@ func Into(e *env.Environment) {
 
 // ProcessEnv binds *env* to the operating system's environment variables
 func ProcessEnv(e *env.Environment) {
-	mustBindPublic(e.GetRoot(), "*env*", builtin.Env())
+	mustBindPublic(e.GetRoot(), lang.Env, builtin.Env())
 }
 
 // ProcessArgs binds *args* to the current Go app's command line arguments
 func ProcessArgs(e *env.Environment) {
-	mustBindPublic(e.GetRoot(), "*args*", builtin.Args())
+	mustBindPublic(e.GetRoot(), lang.Args, builtin.Args())
 }
 
 // StandardIO binds *in*, *out*, and *err* to the operating system's standard
 // input and output facilities
 func StandardIO(e *env.Environment) {
 	ns := e.GetRoot()
-	mustBindPublic(ns, "*in*", stream.NewReader(os.Stdin, stream.LineInput))
-	mustBindPublic(ns, "*out*", stream.NewWriter(os.Stdout, stream.StrOutput))
-	mustBindPublic(ns, "*err*", stream.NewWriter(os.Stderr, stream.StrOutput))
+	mustBindPublic(ns, lang.In, stream.NewReader(os.Stdin, stream.LineInput))
+	mustBindPublic(ns, lang.Out, stream.NewWriter(os.Stdout, stream.StrOutput))
+	mustBindPublic(ns, lang.Err, stream.NewWriter(os.Stderr, stream.StrOutput))
 }
 
 // DevNull binds *in*, *out*, and *err* to the operating system's bit bucket
@@ -72,9 +73,9 @@ func StandardIO(e *env.Environment) {
 func DevNull(e *env.Environment) {
 	ns := e.GetRoot()
 	devNull, _ := os.OpenFile(os.DevNull, os.O_RDWR, 0666)
-	mustBindPublic(ns, "*in*", stream.NewReader(devNull, stream.LineInput))
-	mustBindPublic(ns, "*out*", stream.NewWriter(devNull, stream.StrOutput))
-	mustBindPublic(ns, "*err*", stream.NewWriter(devNull, stream.StrOutput))
+	mustBindPublic(ns, lang.In, stream.NewReader(devNull, stream.LineInput))
+	mustBindPublic(ns, lang.Out, stream.NewWriter(devNull, stream.StrOutput))
+	mustBindPublic(ns, lang.Err, stream.NewWriter(devNull, stream.StrOutput))
 }
 
 // TopLevelEnvironment configures an environment that could be used at the
