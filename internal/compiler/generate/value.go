@@ -2,7 +2,6 @@ package generate
 
 import (
 	"github.com/kode4food/ale/internal/compiler/encoder"
-	"github.com/kode4food/ale/internal/debug"
 	"github.com/kode4food/ale/pkg/data"
 	"github.com/kode4food/ale/pkg/env"
 	"github.com/kode4food/ale/pkg/macro"
@@ -13,26 +12,32 @@ var consSym = env.RootSymbol("cons")
 // Value encodes an expression
 func Value(e encoder.Encoder, v data.Value) error {
 	ns := e.Globals()
-	expanded, err := macro.Expand(ns, v)
+	ex, err := macro.Expand(ns, v)
 	if err != nil {
 		return err
 	}
-	switch expanded := expanded.(type) {
-	case data.Sequence:
-		return Sequence(e, expanded)
-	case data.Pair:
-		return Pair(e, expanded)
+	return expanded(e, ex)
+}
+
+func expanded(e encoder.Encoder, v data.Value) error {
+	switch v := v.(type) {
+	case *data.List:
+		return Call(e, v)
 	case data.Symbol:
-		return ReferenceSymbol(e, expanded)
-	case data.Keyword, data.Number, data.Bool, data.Procedure:
-		return Literal(e, expanded)
+		return Reference(e, v)
+	case *data.Object:
+		return Object(e, v)
+	case data.Vector:
+		return Vector(e, v)
+	case *data.Cons:
+		return Cons(e, v)
 	default:
-		panic(debug.ProgrammerError("unknown value type: %s", v))
+		return Literal(e, v)
 	}
 }
 
-// Pair encodes a pair
-func Pair(e encoder.Encoder, c data.Pair) error {
+// Cons encodes a cons pair
+func Cons(e encoder.Encoder, c *data.Cons) error {
 	f, err := resolveBuiltIn(e, consSym)
 	if err != nil {
 		return err

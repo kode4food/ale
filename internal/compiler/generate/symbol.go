@@ -17,8 +17,8 @@ func Symbol(e encoder.Encoder, s data.Symbol) error {
 	return resolveGlobal(e, s)
 }
 
-// ReferenceSymbol encodes a potential symbol retrieval and dereference
-func ReferenceSymbol(e encoder.Encoder, s data.Symbol) error {
+// Reference encodes a potential symbol retrieval and dereference
+func Reference(e encoder.Encoder, s data.Symbol) error {
 	switch s := s.(type) {
 	case data.Local:
 		c, err := resolveLocal(e, s)

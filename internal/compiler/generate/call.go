@@ -18,7 +18,7 @@ type (
 func Call(e encoder.Encoder, l *data.List) error {
 	f, r, ok := l.Split()
 	if !ok {
-		return Literal(e, data.Null)
+		return Null(e)
 	}
 	args := sequence.ToVector(r)
 	return callValue(e, f, args)
@@ -69,18 +69,6 @@ func callNonSymbol(e encoder.Encoder, v data.Value, args data.Vector) error {
 	return callDynamic(e, v, args)
 }
 
-func callWith(e encoder.Encoder, fn funcEmitter, args argsEmitter) error {
-	al, err := args()
-	if err != nil {
-		return err
-	}
-	if err := fn(); err != nil {
-		return err
-	}
-	e.Emit(isa.Call, isa.Operand(al))
-	return nil
-}
-
 func callStatic(e encoder.Encoder, p data.Procedure, args data.Vector) error {
 	if err := p.CheckArity(len(args)); err != nil {
 		return err
@@ -108,6 +96,18 @@ func dynamicEval(e encoder.Encoder, v data.Value) funcEmitter {
 	}
 }
 
+func callWith(e encoder.Encoder, fn funcEmitter, args argsEmitter) error {
+	al, err := args()
+	if err != nil {
+		return err
+	}
+	if err := fn(); err != nil {
+		return err
+	}
+	e.Emit(isa.Call, isa.Operand(al))
+	return nil
+}
+
 func callSelf(e encoder.Encoder, args data.Vector) error {
 	al, err := makeArgs(e, args)()
 	if err != nil {
@@ -115,18 +115,6 @@ func callSelf(e encoder.Encoder, args data.Vector) error {
 	}
 	e.Emit(isa.CallSelf, isa.Operand(al))
 	return nil
-}
-
-func makeArgs(e encoder.Encoder, args data.Vector) argsEmitter {
-	return func() (int, error) {
-		al := len(args)
-		for i := al - 1; i >= 0; i-- {
-			if err := Value(e, args[i]); err != nil {
-				return 0, err
-			}
-		}
-		return al, nil
-	}
 }
 
 func isSelfCalling(e encoder.Encoder, s *encoder.ScopedCell) bool {
@@ -144,6 +132,18 @@ func isSelfCalling(e encoder.Encoder, s *encoder.ScopedCell) bool {
 		}
 	}
 	return false
+}
+
+func makeArgs(e encoder.Encoder, args data.Vector) argsEmitter {
+	return func() (int, error) {
+		al := len(args)
+		for i := al - 1; i >= 0; i-- {
+			if err := Value(e, args[i]); err != nil {
+				return 0, err
+			}
+		}
+		return al, nil
+	}
 }
 
 func makeEncoderPath(e encoder.Encoder) []encoder.Encoder {
