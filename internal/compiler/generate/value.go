@@ -21,14 +21,14 @@ func Value(e encoder.Encoder, v data.Value) error {
 
 func expanded(e encoder.Encoder, v data.Value) error {
 	switch v := v.(type) {
-	case *data.List:
-		return Call(e, v)
 	case data.Symbol:
 		return Reference(e, v)
-	case *data.Object:
-		return Object(e, v)
+	case *data.List:
+		return Call(e, v)
 	case data.Vector:
 		return Vector(e, v)
+	case *data.Object:
+		return Object(e, v)
 	case *data.Cons:
 		return Cons(e, v)
 	default:
