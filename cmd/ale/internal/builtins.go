@@ -40,7 +40,7 @@ func (r *REPL) makeUse() data.Value {
 		}
 		n := args[0].(data.Local)
 		old := r.ns
-		r.ns = r.ns.Environment().GetQualified(n)
+		r.ns = env.MustGetQualified(r.ns.Environment(), n)
 		if old != r.ns {
 			fmt.Println()
 		}

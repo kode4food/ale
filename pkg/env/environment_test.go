@@ -77,8 +77,8 @@ func TestDomains(t *testing.T) {
 	as := assert.New(t)
 
 	e := env.NewEnvironment()
-	ns1 := e.GetQualified("domain1")
-	ns2 := e.GetQualified("domain2")
+	ns1 := env.MustGetQualified(e, "domain1")
+	ns2 := env.MustGetQualified(e, "domain2")
 
 	l := data.Locals{
 		e.GetRoot().Domain(),

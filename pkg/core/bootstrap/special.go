@@ -19,7 +19,7 @@ func (b *bootstrap) populateSpecialForms() {
 		"special*":      special.Special,
 
 		"declared*": special.Declared,
-		"in-ns*":    special.InNamespace,
+		"mk-ns*":    special.MakeNamespace,
 	})
 }
 

@@ -1,6 +1,7 @@
 package env
 
 import (
+	"fmt"
 	"sync"
 
 	"github.com/kode4food/ale/internal/basics"
@@ -8,15 +9,16 @@ import (
 	"github.com/kode4food/ale/pkg/data"
 )
 
-type (
-	// Environment maintains a mapping of domain names to namespaces
-	Environment struct {
-		data map[data.Local]Namespace
-		sync.RWMutex
-	}
+// Environment maintains a mapping of domain names to namespaces
+type Environment struct {
+	root Namespace
+	data map[data.Local]Namespace
+	sync.RWMutex
+}
 
-	// Resolver resolves a namespace instance
-	Resolver func() Namespace
+const (
+	ErrNamespaceNotFound = "namespace not found: %s"
+	ErrNamespaceExists   = "namespace already exists: %s"
 )
 
 // RootSymbol returns a symbol qualified by the root domain
@@ -26,15 +28,17 @@ func RootSymbol(name data.Local) data.Symbol {
 
 // NewEnvironment creates a new synchronous namespace map
 func NewEnvironment() *Environment {
-	return &Environment{
+	res := &Environment{
 		data: map[data.Local]Namespace{},
 	}
+	res.root = res.newNamespace(lang.RootDomain)
+	return res
 }
 
 func (e *Environment) Domains() data.Locals {
 	e.RLock()
 	defer e.RUnlock()
-	return basics.MapKeys(e.data)
+	return append(basics.MapKeys(e.data), lang.RootDomain)
 }
 
 func (e *Environment) Snapshot() *Environment {
@@ -43,55 +47,50 @@ func (e *Environment) Snapshot() *Environment {
 	res := &Environment{
 		data: make(map[data.Local]Namespace, len(e.data)),
 	}
+	res.root = e.root.Snapshot(res)
 	for k, v := range e.data {
 		res.data[k] = v.Snapshot(res)
 	}
 	return res
 }
 
-// Get returns a mapped namespace or instantiates a new one to be cached
-func (e *Environment) Get(domain data.Local, res Resolver) Namespace {
-	if r, ok := e.get(domain); ok {
-		return r
-	}
-	e.Lock()
-	defer e.Unlock()
-	if r, ok := e.data[domain]; ok {
-		return r
-	}
-	r := res()
-	e.data[domain] = r
-	return r
-}
-
-func (e *Environment) get(domain data.Local) (Namespace, bool) {
-	e.RLock()
-	defer e.RUnlock()
-	r, ok := e.data[domain]
-	return r, ok
-}
-
 // GetRoot returns the root namespace, where built-ins go
 func (e *Environment) GetRoot() Namespace {
-	return e.Get(lang.RootDomain, func() Namespace {
-		return e.newNamespace(lang.RootDomain)
-	})
+	return e.root
 }
 
 // GetAnonymous returns an anonymous (non-resolvable) namespace
 func (e *Environment) GetAnonymous() Namespace {
-	return chain(e.GetRoot(), e.newNamespace(lang.AnonymousDomain))
+	return chain(e.root, e.newNamespace(lang.AnonymousDomain))
+}
+
+// NewQualified creates a new namespace for the specified domain if it doesn't
+// already exist.
+func (e *Environment) NewQualified(n data.Local) (Namespace, error) {
+	if n == lang.RootDomain {
+		return nil, fmt.Errorf(ErrNamespaceExists, lang.RootDomain)
+	}
+	e.Lock()
+	defer e.Unlock()
+	if _, ok := e.data[n]; ok {
+		return nil, fmt.Errorf(ErrNamespaceExists, n)
+	}
+	ns := chain(e.root, e.newNamespace(n))
+	e.data[n] = ns
+	return ns, nil
 }
 
 // GetQualified returns the namespace for the specified domain.
-func (e *Environment) GetQualified(n data.Local) Namespace {
-	root := e.GetRoot()
+func (e *Environment) GetQualified(n data.Local) (Namespace, error) {
 	if n == lang.RootDomain {
-		return root
+		return e.root, nil
 	}
-	return e.Get(n, func() Namespace {
-		return chain(root, e.newNamespace(n))
-	})
+	e.RLock()
+	defer e.RUnlock()
+	if ns, ok := e.data[n]; ok {
+		return ns, nil
+	}
+	return nil, fmt.Errorf(ErrNamespaceNotFound, n)
 }
 
 func (e *Environment) newNamespace(n data.Local) Namespace {
@@ -108,7 +107,10 @@ func (e *Environment) newNamespace(n data.Local) Namespace {
 func ResolveSymbol(ns Namespace, s data.Symbol) (*Entry, Namespace, error) {
 	if q, ok := s.(data.Qualified); ok {
 		e := ns.Environment()
-		qns := e.GetQualified(q.Domain())
+		qns, err := e.GetQualified(q.Domain())
+		if err != nil {
+			return nil, nil, err
+		}
 		return resolvePublic(ns, qns, q.Name())
 	}
 	return ns.Resolve(s.Name())
@@ -130,4 +132,18 @@ func MustResolveValue(ns Namespace, s data.Symbol) data.Value {
 		panic(err)
 	}
 	return v
+}
+
+// MustGetQualified attempts to retrieve a namespace for the specified
+// domain. If the namespace does not exist, it will create it, or panic.
+func MustGetQualified(e *Environment, n data.Local) Namespace {
+	ns, err := e.GetQualified(n)
+	if err == nil {
+		return ns
+	}
+	ns, err = e.NewQualified(n)
+	if err != nil {
+		panic(err)
+	}
+	return ns
 }

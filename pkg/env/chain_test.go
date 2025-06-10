@@ -17,7 +17,7 @@ func TestSnapshot(t *testing.T) {
 	as.NoError(env.BindPublic(root, "public-parent", data.True))
 	as.NoError(env.BindPrivate(root, "private-parent", data.True))
 
-	ns1 := e1.GetQualified("some-ns")
+	ns1 := env.MustGetQualified(e1, "some-ns")
 	as.NoError(env.BindPublic(ns1, "public-child", data.True))
 	as.NoError(env.BindPrivate(ns1, "private-child", data.True))
 
@@ -41,7 +41,7 @@ func TestChainedSnapshotErrors(t *testing.T) {
 
 	e1 := env.NewEnvironment()
 	root := e1.GetRoot()
-	ns1 := e1.GetQualified("some-ns")
+	ns1 := env.MustGetQualified(e1, "some-ns")
 
 	sym1 := data.Local("was-unbound-but-resolved")
 	e, err := ns1.Public(sym1)

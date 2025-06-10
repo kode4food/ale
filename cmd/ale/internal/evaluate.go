@@ -143,7 +143,7 @@ func evalBuffer(src []byte) error {
 }
 
 func makeUserNamespace() env.Namespace {
-	return bootstrap.TopLevelEnvironment().GetQualified(UserDomain)
+	return env.MustGetQualified(bootstrap.TopLevelEnvironment(), UserDomain)
 }
 
 func exitWithError() {

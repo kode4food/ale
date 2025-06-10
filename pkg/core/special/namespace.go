@@ -21,7 +21,7 @@ const (
 	ErrDuplicateName    = "duplicate name(s) in import: %s"
 )
 
-func InNamespace(e encoder.Encoder, args ...data.Value) error {
+func MakeNamespace(e encoder.Encoder, args ...data.Value) error {
 	if err := data.CheckMinimumArity(2, len(args)); err != nil {
 		return err
 	}
@@ -30,7 +30,10 @@ func InNamespace(e encoder.Encoder, args ...data.Value) error {
 		return fmt.Errorf(ErrExpectedName, args[0])
 	}
 	block := data.Vector(args[1:])
-	ns := e.Globals().Environment().GetQualified(name)
+	ns, err := e.Globals().Environment().NewQualified(name)
+	if err != nil {
+		return err
+	}
 	fn := data.MakeProcedure(func(...data.Value) data.Value {
 		res, err := eval.Block(ns, block)
 		if err != nil {
@@ -55,7 +58,11 @@ func Declared(e encoder.Encoder, args ...data.Value) error {
 		if !ok {
 			return fmt.Errorf(ErrExpectedName, args[0])
 		}
-		ns = ns.Environment().GetQualified(name)
+		var err error
+		ns, err = ns.Environment().GetQualified(name)
+		if err != nil {
+			return err
+		}
 	}
 	fn := data.MakeProcedure(func(...data.Value) data.Value {
 		return localsToVector(ns.Declared())
@@ -75,7 +82,10 @@ func Import(e encoder.Encoder, args ...data.Value) error {
 	if !ok {
 		return fmt.Errorf(ErrExpectedName, args[0])
 	}
-	from := e.Globals().Environment().GetQualified(name)
+	from, err := e.Globals().Environment().GetQualified(name)
+	if err != nil {
+		return err
+	}
 	to := e.Globals()
 	fn, err := getImporter(from, to, args[1:]...)
 	if err != nil {
