@@ -1,5 +1,7 @@
 ;;;; ale core: lazy sequences
 
+(def-builtin lazy-seq*)
+
 (define-macro (lazy-seq . body)
   `(lazy-seq* (thunk ,@body)))
 

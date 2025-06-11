@@ -1,5 +1,7 @@
 ;;;; ale core: os
 
+(def-builtin current-time)
+
 (declare *env* *args*)
 
 (define-macro (time . forms)

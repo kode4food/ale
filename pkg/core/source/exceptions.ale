@@ -1,5 +1,8 @@
 ;;;; ale core: exceptions
 
+(def-builtin defer*)
+(def-builtin recover)
+
 (letfn [(lambda-rec is-call (sym clause)
           (and (local? sym)
                (list? clause)

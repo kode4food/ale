@@ -4,6 +4,7 @@
 ;; namespace management
 (def-special mk-ns*)
 (def-special declared*)
+(def-special import)
 
 (define-macro (define-namespace name . forms)
   (let [in-ns (gensym 'in-ns)]

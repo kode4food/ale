@@ -1,9 +1,10 @@
 ;;;; ale core: concurrency
 
-(declare *err*)
+(def-builtin chan)
+(def-builtin delay*)
+(def-builtin go*)
 
-(define-macro (thunk . forms)
-  `(lambda () ,@forms))
+(declare *err*)
 
 (define-macro (go-with-monitor monitor . body)
   `(go* (thunk (recover

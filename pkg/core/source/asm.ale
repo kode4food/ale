@@ -1,5 +1,8 @@
 ;;;; ale core: assembler bootstrapping
 
+(def-special asm*)
+(def-special special*)
+
 (asm*
     .eval (special* (name)
         .const name
