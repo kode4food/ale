@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/kode4food/ale/internal/basics"
+	"github.com/kode4food/ale/internal/compiler"
 	"github.com/kode4food/ale/internal/compiler/encoder"
 	"github.com/kode4food/ale/internal/compiler/generate"
 	"github.com/kode4food/ale/internal/runtime/isa"
@@ -22,30 +23,42 @@ const (
 )
 
 func MakeNamespace(e encoder.Encoder, args ...data.Value) error {
-	if err := data.CheckMinimumArity(2, len(args)); err != nil {
+	if err := data.CheckFixedArity(1, len(args)); err != nil {
 		return err
 	}
 	name, ok := args[0].(data.Local)
 	if !ok {
 		return fmt.Errorf(ErrExpectedName, args[0])
 	}
-	block := data.Vector(args[1:])
-	ns, err := e.Globals().Environment().NewQualified(name)
-	if err != nil {
-		return err
-	}
 	fn := data.MakeProcedure(func(...data.Value) data.Value {
-		res, err := eval.Block(ns, block)
+		ns, err := e.Globals().Environment().NewQualified(name)
 		if err != nil {
 			panic(err)
 		}
-		return res
+		return makeInNamespaceCall(ns)
 	})
 	if err := generate.Literal(e, fn); err != nil {
 		return err
 	}
 	e.Emit(isa.Call0)
 	return nil
+}
+
+func makeInNamespaceCall(ns env.Namespace) compiler.Call {
+	return func(e encoder.Encoder, args ...data.Value) error {
+		fn := data.MakeProcedure(func(...data.Value) data.Value {
+			res, err := eval.Block(ns, data.Vector(args))
+			if err != nil {
+				panic(err)
+			}
+			return res
+		})
+		if err := generate.Literal(e, fn); err != nil {
+			return err
+		}
+		e.Emit(isa.Call0)
+		return nil
+	}
 }
 
 func Declared(e encoder.Encoder, args ...data.Value) error {

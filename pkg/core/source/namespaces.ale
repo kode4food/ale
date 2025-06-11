@@ -5,8 +5,9 @@
 (def-special mk-ns*)
 (def-special declared*)
 
-; in-ns* is private, so a macroexpand will actually leak it to the caller.
-; This is not what we want, but it's better than nothing. At some point we will
-; add the ability to seal a namespace, which will prevent such evaluation
 (define-macro (define-namespace name . forms)
-  `(mk-ns* ,name ,@forms (declared*)))
+  (let [in-ns (gensym 'in-ns)]
+    `(begin
+      (eval '(define ,in-ns (mk-ns* ,name)))
+      ,@(map! (lambda (f) `(eval '(,in-ns ,f))) forms)
+      (eval '(declared* ,name)))))
