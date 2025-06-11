@@ -96,7 +96,7 @@ func (e *Environment) GetQualified(n data.Local) (Namespace, error) {
 func (e *Environment) newNamespace(n data.Local) Namespace {
 	return &namespace{
 		environment: e,
-		entries:     entries{},
+		entries:     Entries{},
 		domain:      n,
 	}
 }

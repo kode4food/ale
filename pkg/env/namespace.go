@@ -18,19 +18,19 @@ type (
 		Private(data.Local) (*Entry, error)
 		Resolve(data.Local) (*Entry, Namespace, error)
 		Snapshot(*Environment) Namespace
-		Import(map[data.Local]*Entry) error
+		Import(Entries) error
 	}
 
 	Binder func(ns Namespace, n data.Local, v data.Value) error
 
 	namespace struct {
-		entries     entries
+		entries     Entries
 		environment *Environment
 		domain      data.Local
 		sync.RWMutex
 	}
 
-	entries map[data.Local]*Entry
+	Entries map[data.Local]*Entry
 )
 
 const (
@@ -110,7 +110,7 @@ func (ns *namespace) Snapshot(e *Environment) Namespace {
 	res := &namespace{
 		environment: e,
 		domain:      ns.domain,
-		entries:     make(entries, len(ns.entries)),
+		entries:     make(Entries, len(ns.entries)),
 	}
 	for k, v := range ns.entries {
 		res.entries[k] = v.snapshot()
@@ -118,7 +118,7 @@ func (ns *namespace) Snapshot(e *Environment) Namespace {
 	return res
 }
 
-func (ns *namespace) Import(imports map[data.Local]*Entry) error {
+func (ns *namespace) Import(imports Entries) error {
 	ns.Lock()
 	defer ns.Unlock()
 	names := basics.MapKeys(imports)
