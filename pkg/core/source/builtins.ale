@@ -1,6 +1,14 @@
 
 ;;;; ale core: builtins
 
+;; encoders
+(def-special eval)
+(def-special lambda)
+(def-special let)
+(def-special let-rec)
+(def-special macroexpand-1)
+(def-special macroexpand)
+
 ;; procedures
 (def-builtin gensym)
 (def-builtin is-a*)
@@ -25,11 +33,3 @@
 
 ;; macros
 (def-macro syntax-quote)
-
-;; encoders
-(def-special eval)
-(def-special lambda)
-(def-special let)
-(def-special let-rec)
-(def-special macroexpand-1)
-(def-special macroexpand)
