@@ -18,7 +18,7 @@ type Procedure struct {
 	hash atomic.Uint64
 }
 
-var procedureHash = rand.Uint64()
+var procSalt = rand.Uint64()
 
 func MakeProcedure(run *isa.Runnable, arity data.ArityChecker) *Procedure {
 	return &Procedure{
@@ -67,7 +67,7 @@ func (p *Procedure) HashCode() uint64 {
 	if h := p.hash.Load(); h != 0 {
 		return h
 	}
-	res := procedureHash
+	res := procSalt
 	for i, inst := range p.Code {
 		res ^= uint64(inst + 1)
 		res ^= data.HashInt(i)

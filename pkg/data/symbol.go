@@ -69,8 +69,11 @@ const ErrInvalidSymbol = "invalid symbol: %s"
 var (
 	gen = NewSymbolGenerator()
 
-	qualifiedRegex = regexp.MustCompile("^" + lang.Qualified + "$")
-	localRegex     = regexp.MustCompile("^" + lang.Local + "$")
+	lclSalt  = rand.Uint64()
+	qualSalt = rand.Uint64()
+
+	qualRegex = regexp.MustCompile("^" + lang.Qualified + "$")
+	lclRegex  = regexp.MustCompile("^" + lang.Local + "$")
 )
 
 // NewGeneratedSymbol creates a generated Symbol
@@ -81,14 +84,14 @@ func NewGeneratedSymbol(name Local) Symbol {
 // ParseSymbol parses a qualified Name and produces a Symbol
 func ParseSymbol(s String) (Symbol, error) {
 	n := string(s)
-	if qualifiedRegex.MatchString(n) {
+	if qualRegex.MatchString(n) {
 		i := strings.Index(n, lang.DomainSeparator)
 		name := Local(n[i+len(lang.DomainSeparator):])
 		domain := Local(n[:i])
 		res := NewQualifiedSymbol(name, domain)
 		return res, nil
 	}
-	if localRegex.MatchString(n) {
+	if lclRegex.MatchString(n) {
 		return Local(s), nil
 	}
 	return nil, fmt.Errorf(ErrInvalidSymbol, n)
@@ -170,7 +173,7 @@ func (l Local) String() string {
 }
 
 func (l Local) HashCode() uint64 {
-	return HashString(string(l))
+	return lclSalt ^ HashString(string(l))
 }
 
 // NewQualifiedSymbol returns a Qualified Symbol for a specific domain
@@ -204,5 +207,5 @@ func (s qualified) String() string {
 }
 
 func (s qualified) HashCode() uint64 {
-	return HashString(string(s.name)) ^ HashString(string(s.domain))
+	return qualSalt ^ HashString(string(s.name)) ^ HashString(string(s.domain))
 }

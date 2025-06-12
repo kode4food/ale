@@ -10,7 +10,7 @@ import (
 // Keyword is a Value that represents a Name that resolves to itself
 type Keyword string
 
-var keywordHash = rand.Uint64()
+var kwdSalt = rand.Uint64()
 
 // Name returns the name of the Keyword
 func (k Keyword) Name() Local {
@@ -49,5 +49,5 @@ func (Keyword) Type() types.Type {
 
 // HashCode returns the hash code for this Keyword
 func (k Keyword) HashCode() uint64 {
-	return keywordHash ^ HashString(string(k))
+	return kwdSalt ^ HashString(string(k))
 }

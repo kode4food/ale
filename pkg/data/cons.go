@@ -1,6 +1,7 @@
 package data
 
 import (
+	"math/rand"
 	"strings"
 
 	"github.com/kode4food/ale/internal/lang"
@@ -26,12 +27,16 @@ type (
 	}
 )
 
-// compile-time checks for interface implementation
-var _ interface {
-	Hashed
-	Pair
-	Typed
-} = (*Cons)(nil)
+var (
+	consSalt = rand.Uint64()
+
+	// compile-time checks for interface implementation
+	_ interface {
+		Hashed
+		Pair
+		Typed
+	} = (*Cons)(nil)
+)
 
 // NewCons returns a new Cons cell instance
 func NewCons(car, cdr Value) *Cons {
@@ -93,5 +98,5 @@ func (*Cons) Type() types.Type {
 
 // HashCode returns the hash code for this Cons
 func (c *Cons) HashCode() uint64 {
-	return HashCode(c.car) ^ HashCode(c.cdr)
+	return consSalt ^ HashCode(c.car) ^ HashCode(c.cdr)
 }

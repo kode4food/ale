@@ -32,11 +32,12 @@ const (
 // number of args, meaning it won't be capable of zipping them into an Object
 const ErrMapNotPaired = "map does not contain an even number of elements"
 
-// EmptyObject represents an empty Object
 var (
+	// EmptyObject represents an empty Object
 	EmptyObject *Object
-	emptyPairs  = Pairs{}
-	objectHash  = rand.Uint64()
+
+	emptyPairs = Pairs{}
+	objSalt    = rand.Uint64()
 
 	// compile-time checks for interface implementation
 	_ interface {
@@ -260,9 +261,9 @@ func (*Object) Type() types.Type {
 
 func (o *Object) HashCode() uint64 {
 	if o == nil {
-		return objectHash
+		return objSalt
 	}
-	return o.hashCode() ^ objectHash
+	return objSalt ^ o.hashCode()
 }
 
 func (o *Object) hashCode() uint64 {

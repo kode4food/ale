@@ -17,7 +17,7 @@ var (
 	// EmptyVector represents an empty Vector
 	EmptyVector = Vector{}
 
-	vectorHash = rand.Uint64()
+	vectorSalt = rand.Uint64()
 
 	// compile-time checks for interface implementation
 	_ interface {
@@ -140,7 +140,7 @@ func (Vector) Type() types.Type {
 }
 
 func (v Vector) HashCode() uint64 {
-	res := vectorHash
+	res := vectorSalt
 	for i, e := range v {
 		res ^= HashCode(e)
 		res ^= HashInt(i)

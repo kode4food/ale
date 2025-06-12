@@ -2,6 +2,7 @@ package data
 
 import (
 	"fmt"
+	"math/rand"
 	"slices"
 	"strings"
 	"unicode/utf8"
@@ -27,6 +28,8 @@ const (
 )
 
 var (
+	strSalt = rand.Uint64()
+
 	unescapeTable = map[string]string{
 		lang.StringQuote: `\` + lang.StringQuote,
 
@@ -189,7 +192,7 @@ func (String) Type() types.Type {
 
 // HashCode returns a hash code for the String
 func (s String) HashCode() uint64 {
-	return HashString(string(s))
+	return strSalt ^ HashString(string(s))
 }
 
 // Quote quotes and escapes a string

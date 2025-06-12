@@ -21,7 +21,7 @@ var (
 	// Null represents the absence of a Value (the empty List)
 	Null *List
 
-	nullHash = rand.Uint64()
+	listSalt = rand.Uint64()
 
 	// compile-time checks for interface implementation
 	_ interface {
@@ -179,7 +179,7 @@ func (l *List) Type() types.Type {
 
 func (l *List) HashCode() uint64 {
 	if l == nil {
-		return nullHash
+		return listSalt
 	}
 	if h := l.hash.Load(); h != 0 {
 		return h
@@ -194,7 +194,7 @@ func (l *List) HashCode() uint64 {
 		res ^= HashCode(c.first)
 		res ^= HashInt(c.count)
 	}
-	res ^= nullHash
+	res ^= listSalt
 	l.hash.Store(res)
 	return res
 }

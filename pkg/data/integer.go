@@ -29,7 +29,7 @@ const (
 	ErrDivideByZero = "divide by zero"
 )
 
-var intHash = rand.Uint64()
+var intSalt = rand.Uint64()
 
 // ParseInteger attempts to parse a string representing an integer
 func ParseInteger(s string) (Number, error) {
@@ -155,7 +155,7 @@ func (l Integer) Equal(r Value) bool {
 
 // HashCode returns a hash code for this Integer
 func (l Integer) HashCode() uint64 {
-	return intHash ^ HashInt64(int64(l))
+	return intSalt ^ HashInt64(int64(l))
 }
 
 // String converts this Integer to a string
@@ -299,7 +299,7 @@ func (*BigInt) Type() types.Type {
 
 // HashCode returns a hash code for this BigInt
 func (l *BigInt) HashCode() uint64 {
-	return intHash ^ HashBytes((*big.Int)(l).Bytes())
+	return intSalt ^ HashBytes((*big.Int)(l).Bytes())
 }
 
 func (l *BigInt) float() Float {
