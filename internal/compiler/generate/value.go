@@ -21,7 +21,9 @@ func Value(e encoder.Encoder, v data.Value) error {
 
 func expanded(e encoder.Encoder, v data.Value) error {
 	switch v := v.(type) {
-	case data.Symbol:
+	case data.Qualified:
+		return Global(e, v)
+	case data.Local:
 		return Reference(e, v)
 	case *data.List:
 		return Call(e, v)

@@ -34,7 +34,7 @@ func Procedure(e encoder.Encoder, build Builder) (*vm.Procedure, error) {
 	}
 
 	for i := clen - 1; i >= 0; i-- {
-		if err := Symbol(e, cells[i]); err != nil {
+		if err := Local(e, cells[i]); err != nil {
 			return nil, err
 		}
 	}

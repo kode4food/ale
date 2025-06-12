@@ -49,7 +49,7 @@ func makeDefiner[T data.Value](
 			if err := bind(e.Globals(), n, sf); err != nil {
 				return err
 			}
-			return generate.Symbol(e, n)
+			return generate.Local(e, n)
 		}
 		return fmt.Errorf(errStr, n)
 	}

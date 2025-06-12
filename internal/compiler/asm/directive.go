@@ -118,12 +118,12 @@ func resolveCall(_ *Parser, args ...data.Value) (Emit, error) {
 
 	if l, ok := s.(data.Local); ok {
 		return func(e *Encoder) error {
-			return generate.Symbol(e, e.resolvePrivate(l))
+			return generate.Local(e, e.resolvePrivate(l))
 		}, nil
 	}
 
 	return func(e *Encoder) error {
-		return generate.Symbol(e, s)
+		return generate.Global(e, s)
 	}, nil
 }
 

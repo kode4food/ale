@@ -8,30 +8,40 @@ import (
 	"github.com/kode4food/ale/pkg/env"
 )
 
-// Symbol encodes a symbol retrieval
-func Symbol(e encoder.Encoder, s data.Symbol) error {
-	if l, ok := s.(data.Local); ok {
-		_, err := resolveLocal(e, l)
+// Global encodes a global symbol constant or retrieval, depending on whether
+// the symbol is already bound in the environment
+func Global(e encoder.Encoder, s data.Symbol) error {
+	entry, _, err := env.ResolveSymbol(e.Globals(), s)
+	if err != nil {
 		return err
 	}
-	return resolveGlobal(e, s)
+	if entry.IsBound() {
+		v, _ := entry.Value()
+		return Literal(e, v)
+	}
+	if err := Literal(e, s); err != nil {
+		return err
+	}
+	e.Emit(isa.Resolve)
+	return nil
 }
 
-// Reference encodes a potential symbol retrieval and dereference
-func Reference(e encoder.Encoder, s data.Symbol) error {
-	switch s := s.(type) {
-	case data.Local:
-		c, err := resolveLocal(e, s)
-		if err != nil {
-			return err
-		}
-		if c != nil && c.Type == encoder.ReferenceCell {
-			e.Emit(isa.Deref)
-		}
-	default:
-		return resolveGlobal(e, s)
+// Reference encodes a potential retrieval and dereference
+func Reference(e encoder.Encoder, l data.Local) error {
+	c, err := resolveLocal(e, l)
+	if err != nil {
+		return err
+	}
+	if c != nil && c.Type == encoder.ReferenceCell {
+		e.Emit(isa.Deref)
 	}
 	return nil
+}
+
+// Local encodes a local retrieval, but not dereference
+func Local(e encoder.Encoder, l data.Local) error {
+	_, err := resolveLocal(e, l)
+	return err
 }
 
 func resolveLocal(
@@ -57,21 +67,5 @@ func resolveLocal(
 		}
 		return s, nil
 	}
-	return nil, resolveGlobal(e, l)
-}
-
-func resolveGlobal(e encoder.Encoder, s data.Symbol) error {
-	entry, _, err := env.ResolveSymbol(e.Globals(), s)
-	if err != nil {
-		return err
-	}
-	if entry.IsBound() {
-		v, _ := entry.Value()
-		return Literal(e, v)
-	}
-	if err := Literal(e, s); err != nil {
-		return err
-	}
-	e.Emit(isa.Resolve)
-	return nil
+	return nil, Global(e, l)
 }
