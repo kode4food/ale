@@ -1,4 +1,4 @@
-package macro_test
+package builtin_test
 
 import (
 	"testing"

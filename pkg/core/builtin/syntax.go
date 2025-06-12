@@ -1,4 +1,4 @@
-package macro
+package builtin
 
 import (
 	"fmt"
