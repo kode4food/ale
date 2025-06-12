@@ -9,8 +9,8 @@ import (
 )
 
 type syntaxEnv struct {
-	namespace env.Namespace
-	genSyms   map[string]data.Symbol
+	ns      env.Namespace
+	genSyms map[string]data.Symbol
 }
 
 // ErrUnsupportedSyntaxQuote is raised when an attempt to syntax quote an
@@ -35,8 +35,8 @@ func SyntaxQuote(ns env.Namespace, args ...data.Value) data.Value {
 	data.MustCheckFixedArity(1, len(args))
 	value := args[0]
 	sc := &syntaxEnv{
-		namespace: ns,
-		genSyms:   map[string]data.Symbol{},
+		ns:      ns,
+		genSyms: map[string]data.Symbol{},
 	}
 	res, err := sc.quote(value)
 	if err != nil {
@@ -164,7 +164,7 @@ func (se *syntaxEnv) qualifySymbol(s data.Symbol) data.Value {
 		return q
 	}
 	name := s.Name()
-	if _, in, err := se.namespace.Resolve(name); err == nil {
+	if _, in, err := se.ns.Resolve(name); err == nil {
 		return data.NewQualifiedSymbol(name, in.Domain())
 	}
 	return s

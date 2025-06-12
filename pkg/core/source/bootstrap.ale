@@ -1,6 +1,8 @@
 
 ;;;; ale core: bootstrap
 
+(def-macro #include)
+
 (#include "builtins.ale")
 (#include "asm.ale")
 (#include "basics.ale")

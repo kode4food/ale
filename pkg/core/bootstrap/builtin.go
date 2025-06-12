@@ -3,6 +3,7 @@ package bootstrap
 import (
 	"github.com/kode4food/ale/pkg/core/builtin"
 	"github.com/kode4food/ale/pkg/data"
+	"github.com/kode4food/ale/pkg/eval"
 	"github.com/kode4food/ale/pkg/macro"
 )
 
@@ -47,6 +48,7 @@ func (b *bootstrap) populateBuiltins() {
 	})
 
 	b.macros(map[data.Local]macro.Call{
+		"#include":     eval.Include,
 		"syntax-quote": macro.SyntaxQuote,
 	})
 }

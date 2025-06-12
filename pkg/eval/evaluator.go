@@ -32,12 +32,14 @@ func Block(ns env.Namespace, s data.Sequence) (data.Value, error) {
 
 // Value evaluates the provided Value
 func Value(ns env.Namespace, v data.Value) (data.Value, error) {
-	if inc, err := processInclude(ns, v); err != nil {
+	v, err := value(ns, v)
+	if err != nil {
 		return nil, err
-	} else if inc != nil {
-		return Block(ns, inc)
 	}
-	return value(ns, v)
+	if i, ok := v.(*include); ok {
+		return Block(ns, i.forms)
+	}
+	return v, nil
 }
 
 func value(ns env.Namespace, v data.Value) (data.Value, error) {
