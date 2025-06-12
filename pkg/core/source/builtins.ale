@@ -2,23 +2,25 @@
 ;;;; ale core: builtins
 
 ;; procedures
+(def-builtin gensym)
+(def-builtin is-a*)
+(def-builtin macro*)
+(def-builtin read)
+(def-builtin sym)
+(def-builtin type-of*)
+
+;; sequence
 (def-builtin append)
 (def-builtin assoc)
 (def-builtin dissoc)
-(def-builtin gensym)
 (def-builtin get)
-(def-builtin is-a*)
 (def-builtin length)
 (def-builtin list)
-(def-builtin macro*)
 (def-builtin nth)
 (def-builtin object)
-(def-builtin read)
 (def-builtin reverse)
 (def-builtin str!)
 (def-builtin str)
-(def-builtin sym)
-(def-builtin type-of*)
 (def-builtin vector)
 
 ;; macros
