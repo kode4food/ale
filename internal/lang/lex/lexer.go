@@ -9,6 +9,7 @@ import (
 	"github.com/kode4food/ale/internal/basics"
 	"github.com/kode4food/ale/internal/debug"
 	"github.com/kode4food/ale/internal/lang"
+	"github.com/kode4food/ale/internal/lang/env"
 	"github.com/kode4food/ale/internal/sequence"
 	"github.com/kode4food/ale/pkg/data"
 )
@@ -17,6 +18,8 @@ type (
 	Matcher func(string) (*Token, string)
 
 	Matchers []Matcher
+
+	Include struct{}
 
 	tokenizer func(string) *Token
 )
@@ -83,6 +86,12 @@ var (
 		patternMatcher(lang.Integer, integerState),
 	}
 
+	Preprocessors = Matchers{
+		patternMatcher(lang.Keyword, keywordState),
+		patternMatcher(lang.Preprocessor, preprocessorState),
+		patternMatcher(lang.Identifier, identifierState),
+	}
+
 	Symbols = Matchers{
 		patternMatcher(lang.Keyword, keywordState),
 		patternMatcher(lang.Identifier, identifierState),
@@ -127,6 +136,11 @@ func (m Matchers) Error() Matchers {
 			return nil, input
 		}
 	})
+}
+
+func (i Include) Equal(other data.Value) bool {
+	_, ok := other.(Include)
+	return ok
 }
 
 func ExhaustiveMatcher(all ...Matchers) Matcher {
@@ -250,6 +264,15 @@ func tokenizeNumber(m string, res data.Number, err error) *Token {
 
 func keywordState(m string) *Token {
 	return Keyword.FromValue(m, data.String(m))
+}
+
+func preprocessorState(m string) *Token {
+	switch data.Local(m) {
+	case env.Include:
+		return Preprocessor.FromValue(m, Include{})
+	default:
+		return identifierState(m)
+	}
 }
 
 func identifierState(m string) *Token {

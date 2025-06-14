@@ -13,9 +13,10 @@ import (
 func TestFromString(t *testing.T) {
 	as := assert.New(t)
 
-	d1 := data.FromString(`(1 2 3)`)
+	ns := assert.GetTestNamespace()
+	d1 := data.FromString(ns, `(1 2 3)`)
 	as.Equal(L(I(1), I(2), I(3)), d1.Car())
 
 	defer as.ExpectPanic(fmt.Errorf(lex.ErrUnexpectedCharacters, "'"))
-	data.FromString(`(1 2 '3)`).Car()
+	data.FromString(ns, `(1 2 '3)`).Car()
 }

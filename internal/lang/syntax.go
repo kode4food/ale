@@ -28,9 +28,11 @@ const (
 	notStruct    = `[^` + structure + `]`
 	notStructPfx = `[^` + structPfx + `]`
 
-	KeywordPrefix = `:`
-	Keyword       = `:` + notStruct + `+`
-	Identifier    = notStructPfx + notStruct + `*`
+	KwdPrefix    = `:`
+	Keyword      = KwdPrefix + notStruct + `+`
+	PrePrefix    = `#`
+	Preprocessor = PrePrefix + notStruct + `*`
+	Identifier   = notStructPfx + notStruct + `*`
 
 	// DomainSeparator is the character used to separate a domain from the
 	// local component of a qualified symbol

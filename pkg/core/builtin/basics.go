@@ -5,8 +5,11 @@ import (
 	"github.com/kode4food/ale/internal/runtime"
 	"github.com/kode4food/ale/internal/sequence"
 	"github.com/kode4food/ale/pkg/data"
+	"github.com/kode4food/ale/pkg/env"
 	"github.com/kode4food/ale/pkg/read"
 )
+
+var emptyNamespace = env.NewEnvironment().GetRoot()
 
 // Recover invokes a function and runs a recovery function if Go panics
 var Recover = data.MakeProcedure(func(args ...data.Value) (res data.Value) {
@@ -42,7 +45,8 @@ var Defer = data.MakeProcedure(func(args ...data.Value) (res data.Value) {
 var Read = data.MakeProcedure(func(args ...data.Value) data.Value {
 	v := args[0]
 	s := v.(data.Sequence)
-	if v, ok := data.Last(read.FromString(sequence.ToString(s))); ok {
+	res := read.FromString(emptyNamespace, sequence.ToString(s))
+	if v, ok := data.Last(res); ok {
 		return v
 	}
 	return data.Null

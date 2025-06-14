@@ -47,7 +47,6 @@ func (b *bootstrap) populateBuiltins() {
 	})
 
 	b.macros(map[data.Local]macro.Call{
-		"#include":     builtin.Include,
 		"syntax-quote": builtin.SyntaxQuote,
 	})
 }

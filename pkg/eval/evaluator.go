@@ -13,11 +13,11 @@ import (
 
 // String evaluates the specified raw source
 func String(ns env.Namespace, src data.String) (data.Value, error) {
-	r := read.FromString(src)
+	r := read.FromString(ns, src)
 	return Block(ns, r)
 }
 
-// Block evaluates a Sequence that a call to FromScanner might produce
+// Block evaluates a Sequence that a call to eval.String might produce
 func Block(ns env.Namespace, s data.Sequence) (data.Value, error) {
 	var res data.Value
 	var err error
@@ -32,17 +32,6 @@ func Block(ns env.Namespace, s data.Sequence) (data.Value, error) {
 
 // Value evaluates the provided Value
 func Value(ns env.Namespace, v data.Value) (data.Value, error) {
-	v, err := value(ns, v)
-	if err != nil {
-		return nil, err
-	}
-	if i, ok := v.(*include); ok {
-		return Block(ns, i.forms)
-	}
-	return v, nil
-}
-
-func value(ns env.Namespace, v data.Value) (data.Value, error) {
 	defer runtime.NormalizeGoRuntimeErrors()
 	e := encoder.NewEncoder(ns)
 	if err := generate.Value(e, v); err != nil {

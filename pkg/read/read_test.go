@@ -10,7 +10,8 @@ import (
 
 func TestFromString(t *testing.T) {
 	as := assert.New(t)
-	tr := read.FromString("99")
+	ns := assert.GetTestNamespace()
+	tr := read.FromString(ns, "99")
 	as.NotNil(tr)
 	as.Equal(I(99), tr.Car())
 }

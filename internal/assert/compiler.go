@@ -12,7 +12,7 @@ import (
 // MustEncodedAs tests that a string generates the expected set of Instructions
 func (w *Wrapper) MustEncodedAs(expected isa.Instructions, src data.String) {
 	e := GetTestEncoder()
-	v := read.FromString(src)
+	v := read.FromString(e.Globals(), src)
 	if err := generate.Block(e, v); err != nil {
 		panic(err)
 	}

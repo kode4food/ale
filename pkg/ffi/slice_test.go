@@ -42,7 +42,8 @@ func TestSliceUnwrap(t *testing.T) {
 	as.Equal(I(22), out[2])
 	as.Equal(I(50), out[3])
 
-	out = f.Call(read.FromString("5 8 13")).(data.Vector)
+	ns := assert.GetTestNamespace()
+	out = f.Call(read.FromString(ns, "5 8 13")).(data.Vector)
 	as.Equal(3, len(out))
 	as.Equal(I(10), out[0])
 	as.Equal(I(16), out[1])

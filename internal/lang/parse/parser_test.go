@@ -14,7 +14,8 @@ import (
 
 func TestReadList(t *testing.T) {
 	as := assert.New(t)
-	tr := read.FromString(`(99 "hello" 55.12)`)
+	ns := assert.GetTestNamespace()
+	tr := read.FromString(ns, `(99 "hello" 55.12)`)
 	v := tr.Car()
 	list, ok := v.(*data.List)
 	as.True(ok)
@@ -38,12 +39,13 @@ func TestReadList(t *testing.T) {
 func TestReadDotted(t *testing.T) {
 	as := assert.New(t)
 
-	tr := read.FromString(`(99 . 100)`)
+	ns := assert.GetTestNamespace()
+	tr := read.FromString(ns, `(99 . 100)`)
 	c1 := tr.Car().(*data.Cons)
 	as.Number(99, c1.Car())
 	as.Number(100, c1.Cdr())
 
-	tr = read.FromString(`(99 . (100 101))`)
+	tr = read.FromString(ns, `(99 . (100 101))`)
 	l1 := tr.Car().(*data.List)
 	as.Number(99, l1.Car())
 	as.Number(100, l1.Cdr().(data.Pair).Car())
@@ -52,7 +54,9 @@ func TestReadDotted(t *testing.T) {
 
 func TestReadVector(t *testing.T) {
 	as := assert.New(t)
-	tr := read.FromString(`[99 "hello" 55.12]`)
+
+	ns := assert.GetTestNamespace()
+	tr := read.FromString(ns, `[99 "hello" 55.12]`)
 	v := tr.Car()
 	vector, ok := v.(data.Vector)
 	as.True(ok)
@@ -72,7 +76,9 @@ func TestReadVector(t *testing.T) {
 
 func TestReadMap(t *testing.T) {
 	as := assert.New(t)
-	tr := read.FromString(`{:name "blah" :age 99}`)
+
+	ns := assert.GetTestNamespace()
+	tr := read.FromString(ns, `{:name "blah" :age 99}`)
 	v := tr.Car()
 	m, ok := v.(*data.Object)
 	as.True(ok)
@@ -81,7 +87,9 @@ func TestReadMap(t *testing.T) {
 
 func TestReadNestedList(t *testing.T) {
 	as := assert.New(t)
-	tr := read.FromString(`(99 ("hello" "there") 55.12)`)
+
+	ns := assert.GetTestNamespace()
+	tr := read.FromString(ns, `(99 ("hello" "there") 55.12)`)
 	v := tr.Car()
 	list, ok := v.(*data.List)
 	as.True(ok)
@@ -122,7 +130,8 @@ func testReaderError(t *testing.T, src, err string, args ...any) {
 
 	defer as.ExpectPanic(fmt.Errorf(err, args...))
 
-	tr := read.FromString(S(src))
+	ns := assert.GetTestNamespace()
+	tr := read.FromString(ns, S(src))
 	data.Last(tr)
 }
 

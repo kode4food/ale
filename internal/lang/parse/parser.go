@@ -13,8 +13,10 @@ import (
 // parser is a stateful iteration interface for a Token stream that is piloted
 // by the FromLexer function and exposed as a LazySequence
 type parser struct {
-	seq   data.Sequence
-	token *lex.Token
+	ns       env.Namespace
+	tokenize Tokenizer
+	seq      data.Sequence
+	token    *lex.Token
 }
 
 const (
@@ -75,9 +77,11 @@ var (
 	}
 )
 
-func newParser(lexer data.Sequence) *parser {
+func newParser(ns env.Namespace, t Tokenizer, lexer data.Sequence) *parser {
 	return &parser{
-		seq: lexer,
+		ns:       ns,
+		tokenize: t,
+		seq:      lexer,
 	}
 }
 
@@ -128,7 +132,7 @@ func (r *parser) value(t *lex.Token) (data.Value, error) {
 	case lex.SpliceMarker:
 		return r.prefixed(splicingSym)
 	case lex.ListStart:
-		return r.list()
+		return r.processInclude(r.list())
 	case lex.VectorStart:
 		return r.vector()
 	case lex.ObjectStart:

@@ -39,7 +39,7 @@ func (k Keyword) Equal(other Value) bool {
 
 // String converts Keyword into a string
 func (k Keyword) String() string {
-	return lang.KeywordPrefix + string(k)
+	return lang.KwdPrefix + string(k)
 }
 
 // Type returns the Type for this Keyword Value

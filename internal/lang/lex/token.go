@@ -41,6 +41,7 @@ const (
 	NewLine
 	Comment
 	BlockComment
+	Preprocessor
 	EOF
 )
 

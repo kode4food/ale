@@ -32,7 +32,7 @@ func (r *REPL) Do(line []rune, pos int) ([][]rune, int) {
 
 func (r *REPL) autoComplete(buf string) ([]string, int) {
 	src := data.String(buf)
-	seq := read.Tokens(src)
+	seq := read.MustTokenize(src)
 	if l, ok := data.Last(seq); ok {
 		if l, ok := l.(*lex.Token); ok && l.Type() == lex.Identifier {
 			pfx := string(l.Value().(data.String))
