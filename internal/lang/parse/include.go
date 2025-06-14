@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	ErrExpectedPath       = "expected include path, got: %s"
+	ErrExpectedPathString = "expected include path as string, got: %s"
 	ErrExpectedFileSystem = "expected file system, got: %s"
 )
 
@@ -50,13 +50,13 @@ func parseInclude(v data.Value) (string, bool, error) {
 	}
 
 	args := sequence.ToVector(r)
-	if len(args) != 1 {
-		return "", false, fmt.Errorf(ErrExpectedPath, data.Null)
+	if err := data.CheckFixedArity(1, len(args)); err != nil {
+		return "", false, err
 	}
 	if path, ok := args[0].(data.String); ok {
 		return string(path), true, nil
 	}
-	return "", false, fmt.Errorf(ErrExpectedPath, args[0])
+	return "", false, fmt.Errorf(ErrExpectedPathString, args[0])
 }
 
 func (r *parser) readInclude(path string) (data.Sequence, error) {
