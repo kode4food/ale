@@ -11,8 +11,6 @@ const (
 )
 
 const (
-	Include = data.Local("#include")
-
 	Args = data.Local("*args*")
 	Env  = data.Local("*env*")
 	FS   = data.Local("*fs*")

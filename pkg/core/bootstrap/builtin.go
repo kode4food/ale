@@ -1,6 +1,7 @@
 package bootstrap
 
 import (
+	"github.com/kode4food/ale/internal/lang/env"
 	"github.com/kode4food/ale/pkg/core/builtin"
 	"github.com/kode4food/ale/pkg/data"
 	"github.com/kode4food/ale/pkg/macro"
@@ -19,35 +20,35 @@ const (
 
 func (b *bootstrap) populateBuiltins() {
 	b.functions(map[data.Local]data.Procedure{
-		"append":       builtin.Append,
-		"assoc":        builtin.Assoc,
-		"chan":         builtin.Chan,
-		"current-time": builtin.CurrentTime,
-		"defer*":       builtin.Defer,
-		"dissoc":       builtin.Dissoc,
-		"delay*":       builtin.Delay,
-		"gensym":       builtin.GenSym,
-		"get":          builtin.Get,
-		"go*":          builtin.Go,
-		"is-a*":        builtin.IsA,
-		"lazy-seq*":    builtin.LazySequence,
-		"length":       builtin.Length,
-		"list":         builtin.List,
-		"macro*":       builtin.Macro,
-		"nth":          builtin.Nth,
-		"object":       builtin.Object,
-		"read":         builtin.Read,
-		"recover":      builtin.Recover,
-		"reverse":      builtin.Reverse,
-		"str!":         builtin.ReaderStr,
-		"str":          builtin.Str,
-		"sym":          builtin.Sym,
-		"type-of*":     builtin.TypeOf,
-		"vector":       builtin.Vector,
+		env.Append:       builtin.Append,
+		env.Assoc:        builtin.Assoc,
+		env.Chan:         builtin.Chan,
+		env.CurrentTime:  builtin.CurrentTime,
+		env.Defer:        builtin.Defer,
+		env.Dissoc:       builtin.Dissoc,
+		env.Delay:        builtin.Delay,
+		env.GenSym:       builtin.GenSym,
+		env.Get:          builtin.Get,
+		env.Go:           builtin.Go,
+		env.IsA:          builtin.IsA,
+		env.LazySequence: builtin.LazySequence,
+		env.Length:       builtin.Length,
+		env.List:         builtin.List,
+		env.Macro:        builtin.Macro,
+		env.Nth:          builtin.Nth,
+		env.Object:       builtin.Object,
+		env.Read:         builtin.Read,
+		env.Recover:      builtin.Recover,
+		env.Reverse:      builtin.Reverse,
+		env.ReaderStr:    builtin.ReaderStr,
+		env.Str:          builtin.Str,
+		env.Sym:          builtin.Sym,
+		env.TypeOf:       builtin.TypeOf,
+		env.Vector:       builtin.Vector,
 	})
 
 	b.macros(map[data.Local]macro.Call{
-		"syntax-quote": builtin.SyntaxQuote,
+		env.SyntaxQuote: builtin.SyntaxQuote,
 	})
 }
 
