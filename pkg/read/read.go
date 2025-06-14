@@ -18,7 +18,7 @@ var matcher = lex.ExhaustiveMatcher(
 
 var (
 	MustFromString = internal.MakeMustFromString(FromString)
-	MustTokenize   = internal.MakeMustTokenize(Tokenize)
+	MustTokenize   = internal.MakeMustTokenizer(Tokenize)
 )
 
 // FromString converts the raw source into unexpanded data structures
