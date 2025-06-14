@@ -62,7 +62,7 @@ func parseInclude(v data.Value) (string, bool, error) {
 func (r *parser) readInclude(path string) (data.Sequence, error) {
 	c, err := fetchOpenCall(r.ns)
 	if err != nil {
-		panic(err)
+		return data.Null, err
 	}
 	str := c.Call(data.String(path), stream.ReadAll).(data.String)
 	return r.tokenize(str)
