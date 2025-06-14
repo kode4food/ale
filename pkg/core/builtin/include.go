@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	lang "github.com/kode4food/ale/internal/lang/env"
+	"github.com/kode4food/ale/internal/sequence"
 	"github.com/kode4food/ale/internal/stream"
 	"github.com/kode4food/ale/pkg/data"
 	"github.com/kode4food/ale/pkg/env"
@@ -17,17 +18,22 @@ const (
 )
 
 func Include(ns env.Namespace, args ...data.Value) data.Value {
-	data.MustCheckFixedArity(1, len(args))
-	path, ok := args[0].(data.String)
-	if !ok {
-		panic(fmt.Errorf(ErrExpectedPath, args[0]))
-	}
+	data.MustCheckMinimumArity(1, len(args))
 	c, err := fetchOpenCall(ns)
 	if err != nil {
 		panic(err)
 	}
-	res := c.Call(path, stream.ReadAll)
-	return eval.Include(read.FromString(res.(data.String)))
+	var res []data.Sequence
+	for _, arg := range args {
+		path, ok := arg.(data.String)
+		if !ok {
+			panic(fmt.Errorf(ErrExpectedPath, arg))
+		}
+		str := c.Call(path, stream.ReadAll).(data.String)
+		seq := read.FromString(str)
+		res = append(res, seq)
+	}
+	return eval.Include(sequence.Concat(res...))
 }
 
 func fetchOpenCall(ns env.Namespace) (data.Procedure, error) {

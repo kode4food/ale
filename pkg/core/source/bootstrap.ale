@@ -3,21 +3,22 @@
 
 (def-macro #include)
 
-(#include "builtins.ale")
-(#include "asm.ale")
-(#include "basics.ale")
-(#include "define.ale")
-(#include "convenience.ale")
-(#include "numerics.ale")
-(#include "binding.ale")
-(#include "branching.ale")
-(#include "predicates.ale")
-(#include "sequences.ale")
-(#include "functions.ale")
-(#include "lazy-seq.ale")
-(#include "threading.ale")
-(#include "exceptions.ale")
-(#include "concurrency.ale")
-(#include "namespaces.ale")
-(#include "io.ale")
-(#include "os.ale")
+(#include
+  "builtins.ale"
+  "asm.ale"
+  "basics.ale"
+  "define.ale"
+  "convenience.ale"
+  "numerics.ale"
+  "binding.ale"
+  "branching.ale"
+  "predicates.ale"
+  "sequences.ale"
+  "functions.ale"
+  "lazy-seq.ale"
+  "threading.ale"
+  "exceptions.ale"
+  "concurrency.ale"
+  "namespaces.ale"
+  "io.ale"
+  "os.ale")
