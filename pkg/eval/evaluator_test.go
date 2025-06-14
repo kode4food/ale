@@ -58,7 +58,7 @@ func TestBuiltIns(t *testing.T) {
 		}, 0),
 	))
 
-	tr := read.FromString(ns, `(hello)`)
+	tr := read.MustFromString(ns, `(hello)`)
 	res, err := eval.Block(b, tr)
 	if as.NoError(err) {
 		as.String("there", res)

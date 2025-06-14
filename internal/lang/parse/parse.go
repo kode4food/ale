@@ -9,12 +9,17 @@ import (
 
 type Tokenizer func(data.String) (data.Sequence, error)
 
-// FromLexer returns a Lazy Sequence of scanned data structures
-func FromLexer(
-	ns env.Namespace, t Tokenizer, lexer data.Sequence,
-) data.Sequence {
+// FromString returns a Lazy Sequence of scanned data structures
+func FromString(
+	ns env.Namespace, tokenize Tokenizer, str data.String,
+) (data.Sequence, error) {
+	lexer, err := tokenize(str)
+	if err != nil {
+		return nil, err
+	}
+
 	var res sequence.LazyResolver
-	r := newParser(ns, t, lex.StripWhitespace(lexer))
+	r := newParser(ns, tokenize, lex.StripWhitespace(lexer))
 
 	res = func() (data.Value, data.Sequence, bool) {
 		f, ok, err := r.nextValue()
@@ -27,5 +32,5 @@ func FromLexer(
 		return data.Null, data.Null, false
 	}
 
-	return sequence.NewLazy(res)
+	return sequence.NewLazy(res), nil
 }

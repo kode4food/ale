@@ -26,7 +26,7 @@ func TestExpand(t *testing.T) {
 	ns := assert.GetTestNamespace()
 	as.MustEvalTo(
 		`(macroexpand '(define (name . _) "hello"))`,
-		read.FromString(ns,
+		read.MustFromString(ns,
 			`(ale/define* name (ale/label name (ale/lambda _ "hello")))`,
 		).Car(),
 	)
@@ -38,7 +38,7 @@ func TestExpand1(t *testing.T) {
 	ns := assert.GetTestNamespace()
 	as.MustEvalTo(
 		`(macroexpand-1 '(define (name . _) (or false true)))`,
-		read.FromString(ns,
+		read.MustFromString(ns,
 			`(ale/define* name (ale/label name (ale/lambda _ (or false true))))`,
 		).Car(),
 	)

@@ -72,7 +72,7 @@ func (r *REPL) handleError(err error) bool {
 
 func (r *REPL) scanBuffer() data.Sequence {
 	src := data.String(r.buf.String())
-	return read.FromString(r.ns, src)
+	return read.MustFromString(r.ns, src)
 }
 
 func (r *REPL) evalBlock(ns env.Namespace, seq data.Sequence) error {
@@ -135,7 +135,7 @@ func mustEvalBuffer(src []byte) {
 
 func evalBuffer(src []byte) error {
 	ns := makeUserNamespace()
-	r := read.FromString(ns, data.String(src))
+	r := read.MustFromString(ns, data.String(src))
 	if _, err := eval.Block(ns, r); err != nil {
 		return err
 	}

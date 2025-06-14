@@ -38,7 +38,7 @@ func (b *bootstrap) populateAssets() {
 		panic(err)
 	}
 
-	seq := read.FromString(ns, data.String(src))
+	seq := read.MustFromString(ns, data.String(src))
 	if _, err := eval.Block(ns, seq); err != nil {
 		panic(err)
 	}

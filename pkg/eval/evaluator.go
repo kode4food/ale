@@ -13,7 +13,7 @@ import (
 
 // String evaluates the specified raw source
 func String(ns env.Namespace, src data.String) (data.Value, error) {
-	r := read.FromString(ns, src)
+	r := read.MustFromString(ns, src)
 	return Block(ns, r)
 }
 

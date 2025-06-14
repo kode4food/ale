@@ -11,7 +11,7 @@ import (
 func TestFromString(t *testing.T) {
 	as := assert.New(t)
 	ns := assert.GetTestNamespace()
-	tr := read.FromString(ns, "99")
+	tr := read.MustFromString(ns, "99")
 	as.NotNil(tr)
 	as.Equal(I(99), tr.Car())
 }
