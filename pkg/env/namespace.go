@@ -84,7 +84,7 @@ func (ns *namespace) declare(n data.Local, asPrivate bool) (*Entry, error) {
 	e := &Entry{
 		name:    n,
 		private: asPrivate,
-		binding: &binding{},
+		binding: new(binding),
 	}
 	ns.entries[n] = e
 	return e, nil

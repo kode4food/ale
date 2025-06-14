@@ -66,7 +66,7 @@ func ParseCases(s data.Sequence) (*ParamCases, error) {
 	if s.IsEmpty() {
 		return nil, errors.New(ErrNoCasesDefined)
 	}
-	res := &ParamCases{}
+	res := new(ParamCases)
 	f := s.Car()
 	switch f.(type) {
 	case *data.List, *data.Cons, data.Local:

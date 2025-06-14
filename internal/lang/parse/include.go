@@ -45,7 +45,7 @@ func parseInclude(v data.Value) (string, bool, error) {
 		return "", false, nil
 	}
 	f, r, _ := l.Split()
-	if _, ok := f.(lex.Include); !ok {
+	if _, ok := f.(*lex.Include); !ok {
 		return "", false, nil
 	}
 

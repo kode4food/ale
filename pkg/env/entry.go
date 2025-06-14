@@ -71,6 +71,6 @@ func (e *Entry) snapshot() *Entry {
 	return &Entry{
 		name:    e.name,
 		private: e.private,
-		binding: &binding{},
+		binding: new(binding),
 	}
 }

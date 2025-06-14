@@ -44,7 +44,7 @@ func free(vals data.Vector) {
 }
 
 func NewAllocator() *Allocator {
-	res := &Allocator{}
+	res := new(Allocator)
 	for i := range len(res.buckets) {
 		b := &res.buckets[i]
 		b.size = i + 1

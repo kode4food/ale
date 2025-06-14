@@ -11,6 +11,7 @@ import (
 	"github.com/kode4food/ale/internal/lang"
 	"github.com/kode4food/ale/internal/lang/env"
 	"github.com/kode4food/ale/internal/sequence"
+	"github.com/kode4food/ale/internal/types"
 	"github.com/kode4food/ale/pkg/data"
 )
 
@@ -55,6 +56,8 @@ var (
 	}
 
 	newLine = regexp.MustCompile(lang.NewLine)
+
+	includeType = types.MakeBasic("include")
 
 	Ignorable = Matchers{
 		blockCommentMatcher,
@@ -138,9 +141,13 @@ func (m Matchers) Error() Matchers {
 	})
 }
 
-func (i Include) Equal(other data.Value) bool {
-	_, ok := other.(Include)
+func (i *Include) Equal(other data.Value) bool {
+	_, ok := other.(*Include)
 	return ok
+}
+
+func (i *Include) Type() types.Type {
+	return includeType
 }
 
 func ExhaustiveMatcher(all ...Matchers) Matcher {
@@ -269,7 +276,7 @@ func keywordState(m string) *Token {
 func preprocessorState(m string) *Token {
 	switch data.Local(m) {
 	case env.Include:
-		return Preprocessor.FromValue(m, Include{})
+		return Preprocessor.FromValue(m, new(Include))
 	default:
 		return identifierState(m)
 	}

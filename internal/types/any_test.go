@@ -21,6 +21,6 @@ func TestAnyEqual(t *testing.T) {
 	as := assert.New(t)
 
 	as.True(types.BasicAny.Equal(types.BasicAny))
-	as.True(types.BasicAny.Equal(&types.Any{}))
+	as.True(types.BasicAny.Equal(new(types.Any)))
 	as.False(types.BasicAny.Equal(types.BasicBoolean))
 }
