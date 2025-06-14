@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"github.com/kode4food/ale/internal/lang/lex"
 	"github.com/kode4food/ale/internal/lang/parse"
 	"github.com/kode4food/ale/pkg/data"
 	"github.com/kode4food/ale/pkg/env"
@@ -9,9 +10,21 @@ import (
 type (
 	FromString     func(env.Namespace, data.String) (data.Sequence, error)
 	MustFromString func(env.Namespace, data.String) data.Sequence
-
-	MustTokenizer func(data.String) data.Sequence
+	MustTokenizer  func(data.String) data.Sequence
 )
+
+func MakeTokenizer(matcher lex.Matcher) parse.Tokenizer {
+	return func(src data.String) (data.Sequence, error) {
+		return lex.Match(src, matcher), nil
+	}
+}
+
+func MakeFromString(fn parse.Tokenizer) FromString {
+	return func(ns env.Namespace, src data.String) (data.Sequence, error) {
+		return parse.FromString(ns, fn, src)
+	}
+
+}
 
 func MakeMustFromString(fn FromString) MustFromString {
 	return func(ns env.Namespace, str data.String) data.Sequence {
