@@ -9,7 +9,7 @@ import (
 type (
 	// Effect captures how an Instruction impacts the state of the machine
 	Effect struct {
-		Operand ActOn // Describe elements the operands act on
+		Operand ActOn // Describe element the operand acts on
 
 		Pop  int // A fixed number of items to be popped from the stack
 		Push int // A fixed number of items to be pushed onto the stack
