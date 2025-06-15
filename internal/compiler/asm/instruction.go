@@ -10,21 +10,29 @@ import (
 	"github.com/kode4food/ale/pkg/data"
 )
 
-var noAsm = []isa.Opcode{
+var asmEffects = excludeEffects([]isa.Opcode{
 	isa.Call0, isa.Call1, isa.Call2, isa.Call3, isa.CallSelf, isa.Const,
 	isa.TailCall, isa.TailClos, isa.TailSelf,
-}
+})
 
 func getInstructionCalls() namedAsmParsers {
-	res := make(namedAsmParsers, len(isa.Effects))
-	for oc, effect := range isa.Effects {
-		if slices.Contains(noAsm, oc) {
-			continue
-		}
+	res := make(namedAsmParsers, len(asmEffects))
+	for oc, effect := range asmEffects {
 		name := data.Local(strings.CamelToSnake(oc.String()))
 		res[name] = func(oc isa.Opcode, ao isa.ActOn) asmParse {
 			return makeEmitCall(oc, ao)
 		}(oc, effect.Operand)
+	}
+	return res
+}
+
+func excludeEffects(exclude []isa.Opcode) map[isa.Opcode]*isa.Effect {
+	res := make(map[isa.Opcode]*isa.Effect, len(isa.Effects)-len(exclude))
+	for oc, effect := range isa.Effects {
+		if slices.Contains(exclude, oc) {
+			continue
+		}
+		res[oc] = effect
 	}
 	return res
 }
