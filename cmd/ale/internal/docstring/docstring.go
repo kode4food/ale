@@ -50,7 +50,7 @@ func ensureDocStringCache() {
 			doc, _ := getAsset(filename)
 			meta, err := markdown.ParseHeader(string(doc))
 			if err != nil {
-				panic(debug.ProgrammerError(err.Error()))
+				panic(debug.ProgrammerErrorf("%w", err))
 			}
 			if names := meta.Names; len(names) > 0 {
 				for _, name := range names {

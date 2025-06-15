@@ -34,7 +34,7 @@ var (
 
 func MakeBasic(name string) *Basic {
 	return &Basic{
-		kind: newKind(),
+		kind: Kind(uuid.New()),
 		name: name,
 	}
 }
@@ -59,8 +59,4 @@ func (b *Basic) Equal(other Type) bool {
 		return b == other || b.kind == other.kind && b.name == other.name
 	}
 	return false
-}
-
-func newKind() Kind {
-	return Kind(uuid.New())
 }

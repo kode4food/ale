@@ -33,7 +33,7 @@ var _ Procedure = (*procedure)(nil)
 func MakeProcedure(c Call, arity ...int) Procedure {
 	check, err := MakeArityChecker(arity...)
 	if err != nil {
-		panic(debug.ProgrammerError(err.Error()))
+		panic(debug.ProgrammerErrorf("%w", err))
 	}
 	return &procedure{
 		call:  c,

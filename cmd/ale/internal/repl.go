@@ -34,7 +34,7 @@ func NewREPL() *REPL {
 		AutoComplete:           repl,
 	})
 	if err != nil {
-		panic(debug.ProgrammerError(err.Error()))
+		panic(debug.ProgrammerErrorf("%w", err))
 	}
 
 	repl.rl = rl

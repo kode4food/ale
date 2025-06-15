@@ -56,16 +56,13 @@ func (e *Encoded) WithConstants(c data.Vector) *Encoded {
 // Runnable takes an Encoded and finalizes it into a Runnable that the abstract
 // machine can execute. Jumps are resolved and unused constants are discarded.
 func (e *Encoded) Runnable() (*isa.Runnable, error) {
-	return newFinalizer(e).finalize()
-}
-
-func newFinalizer(e *Encoded) *finalizer {
-	return &finalizer{
+	f := &finalizer{
 		Encoded:  e,
 		labels:   map[isa.Operand]*label{},
 		constMap: map[isa.Operand]isa.Operand{},
 		localMap: map[isa.Operand]isa.Operand{},
 	}
+	return f.finalize()
 }
 
 func (f *finalizer) finalize() (*isa.Runnable, error) {

@@ -77,23 +77,15 @@ var (
 	}
 )
 
-func newParser(ns env.Namespace, t Tokenizer, lexer data.Sequence) *parser {
-	return &parser{
-		ns:       ns,
-		tokenize: t,
-		seq:      lexer,
-	}
-}
-
-func (r *parser) nextValue() (data.Value, bool, error) {
-	t, err := r.nextToken()
+func (p *parser) nextValue() (data.Value, bool, error) {
+	t, err := p.nextToken()
 	if err != nil {
-		return nil, false, r.maybeWrap(err)
+		return nil, false, p.maybeWrap(err)
 	}
 	if t != nil {
-		v, err := r.value(t)
+		v, err := p.value(t)
 		if err != nil {
-			return nil, false, r.maybeWrap(err)
+			return nil, false, p.maybeWrap(err)
 
 		}
 		return v, true, nil
@@ -101,75 +93,75 @@ func (r *parser) nextValue() (data.Value, bool, error) {
 	return nil, false, nil
 }
 
-func (r *parser) nextToken() (*lex.Token, error) {
-	token, seq, ok := r.seq.Split()
+func (p *parser) nextToken() (*lex.Token, error) {
+	token, seq, ok := p.seq.Split()
 	if !ok {
 		return nil, nil
 	}
-	r.token = token.(*lex.Token)
-	r.seq = seq
-	if r.token.Type() == lex.Error {
-		return nil, r.error(data.ToString(r.token.Value()))
+	p.token = token.(*lex.Token)
+	p.seq = seq
+	if p.token.Type() == lex.Error {
+		return nil, p.error(data.ToString(p.token.Value()))
 	}
-	return r.token, nil
+	return p.token, nil
 }
 
-func (r *parser) maybeWrap(err error) error {
-	if t := r.token; t != nil {
+func (p *parser) maybeWrap(err error) error {
+	if t := p.token; t != nil {
 		return t.WrapError(err)
 	}
 	return err
 }
 
-func (r *parser) value(t *lex.Token) (data.Value, error) {
+func (p *parser) value(t *lex.Token) (data.Value, error) {
 	switch t.Type() {
 	case lex.QuoteMarker:
-		return r.prefixed(quoteSym)
+		return p.prefixed(quoteSym)
 	case lex.SyntaxMarker:
-		return r.prefixed(syntaxSym)
+		return p.prefixed(syntaxSym)
 	case lex.UnquoteMarker:
-		return r.prefixed(unquoteSym)
+		return p.prefixed(unquoteSym)
 	case lex.SpliceMarker:
-		return r.prefixed(splicingSym)
+		return p.prefixed(splicingSym)
 	case lex.ListStart:
-		return r.processInclude(r.list())
+		return p.processInclude(p.list())
 	case lex.VectorStart:
-		return r.vector()
+		return p.vector()
 	case lex.ObjectStart:
-		return r.object()
+		return p.object()
 	case lex.Keyword:
-		return r.keyword(), nil
+		return p.keyword(), nil
 	case lex.Identifier:
-		return r.identifier()
+		return p.identifier()
 	case lex.ListEnd:
-		return nil, r.error(ErrUnmatchedListEnd)
+		return nil, p.error(ErrUnmatchedListEnd)
 	case lex.VectorEnd:
-		return nil, r.error(ErrUnmatchedVectorEnd)
+		return nil, p.error(ErrUnmatchedVectorEnd)
 	case lex.ObjectEnd:
-		return nil, r.error(ErrUnmatchedObjectEnd)
+		return nil, p.error(ErrUnmatchedObjectEnd)
 	case lex.Dot:
-		return nil, r.error(ErrUnexpectedDot)
+		return nil, p.error(ErrUnexpectedDot)
 	default:
 		return t.Value(), nil
 	}
 }
 
-func (r *parser) prefixed(s data.Symbol) (data.Value, error) {
-	v, ok, err := r.nextValue()
+func (p *parser) prefixed(s data.Symbol) (data.Value, error) {
+	v, ok, err := p.nextValue()
 	if err != nil {
 		return nil, err
 	}
 	if ok {
 		return data.NewList(s, v), nil
 	}
-	return nil, r.errorf(ErrPrefixedNotPaired, s)
+	return nil, p.errorf(ErrPrefixedNotPaired, s)
 }
 
-func (r *parser) list() (data.Value, error) {
+func (p *parser) list() (data.Value, error) {
 	res := data.Vector{}
 	var sawDotAt = -1
 	for pos := 0; ; pos++ {
-		t, err := r.nextToken()
+		t, err := p.nextToken()
 		if err != nil {
 			return nil, err
 		}
@@ -179,33 +171,33 @@ func (r *parser) list() (data.Value, error) {
 		switch t.Type() {
 		case lex.Dot:
 			if pos == 0 || sawDotAt != -1 {
-				return nil, r.error(ErrInvalidListSyntax)
+				return nil, p.error(ErrInvalidListSyntax)
 			}
 			sawDotAt = pos
 		case lex.ListEnd:
 			if sawDotAt == -1 {
 				return data.NewList(res...), nil
 			} else if sawDotAt != len(res)-1 {
-				return nil, r.error(ErrInvalidListSyntax)
+				return nil, p.error(ErrInvalidListSyntax)
 			}
 			return makeDottedList(res...), nil
 		default:
-			v, err := r.value(t)
+			v, err := p.value(t)
 			if err != nil {
 				return nil, err
 			}
 			res = append(res, v)
 		}
 	}
-	return nil, r.error(ErrListNotClosed)
+	return nil, p.error(ErrListNotClosed)
 }
 
-func (r *parser) vector() (data.Value, error) {
-	return r.nonDotted(lex.VectorEnd)
+func (p *parser) vector() (data.Value, error) {
+	return p.nonDotted(lex.VectorEnd)
 }
 
-func (r *parser) object() (data.Value, error) {
-	v, err := r.nonDotted(lex.ObjectEnd)
+func (p *parser) object() (data.Value, error) {
+	v, err := p.nonDotted(lex.ObjectEnd)
 	if err != nil {
 		return nil, err
 	}
@@ -216,21 +208,21 @@ func (r *parser) object() (data.Value, error) {
 	return res, nil
 }
 
-func (r *parser) nonDotted(endToken lex.TokenType) (data.Vector, error) {
+func (p *parser) nonDotted(endToken lex.TokenType) (data.Vector, error) {
 	res := data.Vector{}
 	for {
-		t, err := r.nextToken()
+		t, err := p.nextToken()
 		if err != nil {
 			return nil, err
 		}
 		if t == nil {
-			return nil, r.error(collectionErrors[endToken])
+			return nil, p.error(collectionErrors[endToken])
 		}
 		switch t.Type() {
 		case endToken:
 			return res, nil
 		default:
-			v, err := r.value(t)
+			v, err := p.value(t)
 			if err != nil {
 				return nil, err
 			}
@@ -239,21 +231,21 @@ func (r *parser) nonDotted(endToken lex.TokenType) (data.Vector, error) {
 	}
 }
 
-func (r *parser) error(text string) error {
+func (p *parser) error(text string) error {
 	return errors.New(text)
 }
 
-func (r *parser) errorf(text string, a ...any) error {
+func (p *parser) errorf(text string, a ...any) error {
 	return fmt.Errorf(text, a...)
 }
 
-func (r *parser) keyword() data.Value {
-	n := r.token.Value().(data.String)
+func (p *parser) keyword() data.Value {
+	n := p.token.Value().(data.String)
 	return data.Keyword(n[1:])
 }
 
-func (r *parser) identifier() (data.Value, error) {
-	n := r.token.Value().(data.String)
+func (p *parser) identifier() (data.Value, error) {
+	n := p.token.Value().(data.String)
 	if v, ok := specialNames[n]; ok {
 		return v, nil
 	}

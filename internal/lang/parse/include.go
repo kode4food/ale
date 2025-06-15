@@ -16,7 +16,7 @@ const (
 	ErrExpectedFileSystem = "expected file system, got: %s"
 )
 
-func (r *parser) processInclude(v data.Value, err error) (data.Value, error) {
+func (p *parser) processInclude(v data.Value, err error) (data.Value, error) {
 	if err != nil {
 		return v, err
 	}
@@ -27,16 +27,16 @@ func (r *parser) processInclude(v data.Value, err error) (data.Value, error) {
 	if !ok {
 		return v, nil
 	}
-	inc, err := r.readInclude(path)
+	inc, err := p.readInclude(path)
 	if err != nil {
 		return data.Null, err
 	}
-	r.seq = sequence.Concat(lex.StripWhitespace(inc), r.seq)
-	t, err := r.nextToken()
+	p.seq = sequence.Concat(lex.StripWhitespace(inc), p.seq)
+	t, err := p.nextToken()
 	if err != nil {
-		return data.Null, r.maybeWrap(err)
+		return data.Null, p.maybeWrap(err)
 	}
-	return r.value(t)
+	return p.value(t)
 }
 
 func parseInclude(v data.Value) (string, bool, error) {
@@ -59,13 +59,13 @@ func parseInclude(v data.Value) (string, bool, error) {
 	return "", false, fmt.Errorf(ErrExpectedPathString, args[0])
 }
 
-func (r *parser) readInclude(path string) (data.Sequence, error) {
-	c, err := fetchOpenCall(r.ns)
+func (p *parser) readInclude(path string) (data.Sequence, error) {
+	c, err := fetchOpenCall(p.ns)
 	if err != nil {
 		return data.Null, err
 	}
 	str := c.Call(data.String(path), stream.ReadAll).(data.String)
-	return r.tokenize(str)
+	return p.tokenize(str)
 }
 
 func fetchOpenCall(ns env.Namespace) (data.Procedure, error) {

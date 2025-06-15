@@ -31,11 +31,11 @@ var doc = compiler.Call(func(e encoder.Encoder, args ...data.Value) error {
 func help(...data.Value) data.Value {
 	md, err := docstring.Get("help")
 	if err != nil {
-		panic(debug.ProgrammerError(err.Error()))
+		panic(debug.ProgrammerErrorf("%w", err))
 	}
 	out, err := formatForREPL(md)
 	if err != nil {
-		panic(debug.ProgrammerError(err.Error()))
+		panic(debug.ProgrammerErrorf("%w", err))
 	}
 	fmt.Println(out)
 	return nothing
@@ -50,7 +50,7 @@ func docSymbol(sym data.Symbol) {
 	docStr := docstring.MustGet(name)
 	out, err := formatForREPL(docStr)
 	if err != nil {
-		panic(debug.ProgrammerError(err.Error()))
+		panic(debug.ProgrammerErrorf("%w", err))
 	}
 	fmt.Println(out)
 }
@@ -61,7 +61,7 @@ func docSymbolList() {
 	joined := strings.Join(names, ", ")
 	out, err := formatForREPL(fmt.Sprintf(docTemplate, joined))
 	if err != nil {
-		panic(debug.ProgrammerError(err.Error()))
+		panic(debug.ProgrammerErrorf("%w", err))
 	}
 	fmt.Println(out)
 }

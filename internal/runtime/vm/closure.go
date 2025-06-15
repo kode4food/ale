@@ -212,7 +212,7 @@ CurrentPC:
 
 	case isa.Label:
 		// Labels should be stripped out by the compiler when made Runnable
-		panic(debug.ProgrammerError(ErrUnexpectedLabel, INST.Operand()))
+		panic(debug.ProgrammerErrorf(ErrUnexpectedLabel, INST.Operand()))
 
 	case isa.Load:
 		MEM[SP] = MEM[LP+int(INST.Operand())]
@@ -403,7 +403,7 @@ CurrentPC:
 		SP--
 
 	default:
-		panic(debug.ProgrammerError(ErrBadInstruction, INST))
+		panic(debug.ProgrammerErrorf(ErrBadInstruction, INST))
 	}
 
 	PC++

@@ -60,5 +60,5 @@ func purify(l, r Number) (Number, Number) {
 			return l, r.ratio()
 		}
 	}
-	panic(debug.ProgrammerError("could not purify: %v and %v", l, r))
+	panic(debug.ProgrammerErrorf("could not purify: %v and %v", l, r))
 }

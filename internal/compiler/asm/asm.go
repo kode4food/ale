@@ -51,7 +51,7 @@ func mergeCalls(maps ...namedAsmParsers) namedAsmParsers {
 	for _, m := range maps {
 		for k, v := range m {
 			if _, ok := res[k]; ok {
-				panic(debug.ProgrammerError("duplicate entry: %s", k))
+				panic(debug.ProgrammerErrorf("duplicate entry: %s", k))
 			}
 			res[k] = v
 		}

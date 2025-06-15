@@ -17,6 +17,7 @@ type (
 
 	chanEmitter struct {
 		ch chan<- data.Value
+		cl runtime.Cleanup
 	}
 
 	chanSequence struct {
@@ -74,10 +75,10 @@ func (c *Channel) Equal(other data.Value) bool {
 // newEmitter produces an Emitter for sending values to a Go chan
 func newEmitter(ch chan<- data.Value) *chanEmitter {
 	r := &chanEmitter{ch: ch}
-	runtime.SetFinalizer(r, func(e *chanEmitter) {
+	r.cl = runtime.AddCleanup(r, func(c chan<- data.Value) {
 		defer func() { _ = recover() }()
-		close(ch)
-	})
+		close(c)
+	}, r.ch)
 	return r
 }
 
@@ -87,8 +88,9 @@ func (e *chanEmitter) Write(v data.Value) {
 }
 
 // Close will Close the Go chan
-func (e *chanEmitter) Close() error {
-	runtime.SetFinalizer(e, nil)
+func (e *chanEmitter) Close() (err error) {
+	defer func() { _ = recover() }()
+	e.cl.Stop()
 	close(e.ch)
 	return nil
 }

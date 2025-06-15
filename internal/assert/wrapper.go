@@ -52,7 +52,7 @@ func (w *Wrapper) String(expect string, expr any) {
 	case data.Value:
 		w.Assertions.Equal(expect, data.ToString(s))
 	default:
-		panic(debug.ProgrammerError(ErrInvalidTestExpression, expr))
+		panic(debug.ProgrammerErrorf(ErrInvalidTestExpression, expr))
 	}
 }
 
@@ -67,7 +67,7 @@ func (w *Wrapper) Number(expect float64, expr any) {
 	case data.Number:
 		w.Compare(data.EqualTo, data.Float(expect), n)
 	default:
-		panic(debug.ProgrammerError(ErrInvalidTestExpression, expr))
+		panic(debug.ProgrammerErrorf(ErrInvalidTestExpression, expr))
 	}
 }
 
@@ -198,7 +198,7 @@ func (w *Wrapper) MustGet(m data.Mapped, k data.Value) data.Value {
 func (w *Wrapper) mustMakeString(val any) string {
 	res, err := w.makeString(val)
 	if err != nil {
-		panic(debug.ProgrammerError(err.Error()))
+		panic(debug.ProgrammerErrorf("%w", err))
 	}
 	return res
 }

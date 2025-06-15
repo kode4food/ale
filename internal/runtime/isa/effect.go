@@ -113,7 +113,7 @@ func GetEffect(oc Opcode) (*Effect, error) {
 func MustGetEffect(oc Opcode) *Effect {
 	e, err := GetEffect(oc)
 	if err != nil {
-		panic(debug.ProgrammerError(err.Error()))
+		panic(debug.ProgrammerErrorf("%w", err))
 	}
 	return e
 }

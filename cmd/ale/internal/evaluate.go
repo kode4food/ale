@@ -110,7 +110,7 @@ func toError(i any) error {
 	case data.Value:
 		return errors.New(data.ToString(i))
 	default:
-		panic(debug.ProgrammerError("non-standard error: %s", i))
+		panic(debug.ProgrammerErrorf("non-standard error: %s", i))
 	}
 }
 

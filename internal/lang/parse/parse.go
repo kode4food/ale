@@ -19,10 +19,14 @@ func FromString(
 	}
 
 	var res sequence.LazyResolver
-	r := newParser(ns, tokenize, lex.StripWhitespace(lexer))
+	p := &parser{
+		ns:       ns,
+		tokenize: tokenize,
+		seq:      lex.StripWhitespace(lexer),
+	}
 
 	res = func() (data.Value, data.Sequence, bool) {
-		f, ok, err := r.nextValue()
+		f, ok, err := p.nextValue()
 		if err != nil {
 			panic(err)
 		}

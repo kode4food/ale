@@ -61,7 +61,7 @@ func (a *Allocator) Malloc(size int) data.Vector {
 	case size == 0:
 		return data.EmptyVector
 	default:
-		panic(debug.ProgrammerError("invalid malloc: %d", size))
+		panic(debug.ProgrammerErrorf("invalid malloc: %d", size))
 	}
 }
 
