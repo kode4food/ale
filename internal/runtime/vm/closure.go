@@ -103,6 +103,10 @@ CurrentPC:
 		args = slices.Clone(MEM[SP+1 : RES+1])
 		SP = RES
 
+	case isa.ArgsRest:
+		MEM[SP] = data.Vector(args[INST.Operand():])
+		SP--
+
 	case isa.Call:
 		op := INST.Operand()
 		SP1 := SP + 1
@@ -323,10 +327,6 @@ CurrentPC:
 	case isa.RefValue:
 		SP1 := SP + 1
 		MEM[SP1] = MEM[SP1].(*Ref).Value
-
-	case isa.RestArg:
-		MEM[SP] = data.Vector(args[INST.Operand():])
-		SP--
 
 	case isa.RetFalse:
 		return data.False

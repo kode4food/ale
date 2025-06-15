@@ -295,7 +295,7 @@ func filterArgInstructions(c isa.Instructions) isa.Instructions {
 
 func argInstructionPred(i isa.Instruction) bool {
 	switch i.Opcode() {
-	case isa.ArgsPush, isa.ArgsPop, isa.Arg, isa.ArgsLen, isa.RestArg:
+	case isa.ArgsPush, isa.ArgsPop, isa.Arg, isa.ArgsLen, isa.ArgsRest:
 		return true
 	default:
 		return false
@@ -321,7 +321,7 @@ func canMapArgsToLocals(c isa.Instructions, argc isa.Operand) bool {
 			if idx > highArg {
 				highArg = idx
 			}
-		case isa.ArgsPush, isa.ArgsPop, isa.ArgsLen, isa.RestArg:
+		case isa.ArgsPush, isa.ArgsPop, isa.ArgsLen, isa.ArgsRest:
 			return false
 		default:
 			// no-op

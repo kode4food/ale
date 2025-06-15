@@ -3,16 +3,22 @@ package asm
 import (
 	"errors"
 	"fmt"
+	"slices"
 
 	"github.com/kode4food/ale/internal/runtime/isa"
 	"github.com/kode4food/ale/internal/strings"
 	"github.com/kode4food/ale/pkg/data"
 )
 
+var noAsm = []isa.Opcode{
+	isa.Call0, isa.Call1, isa.Call2, isa.Call3, isa.CallSelf, isa.Const,
+	isa.TailCall, isa.TailClos, isa.TailSelf,
+}
+
 func getInstructionCalls() namedAsmParsers {
 	res := make(namedAsmParsers, len(isa.Effects))
 	for oc, effect := range isa.Effects {
-		if effect.NoAsm {
+		if slices.Contains(noAsm, oc) {
 			continue
 		}
 		name := data.Local(strings.CamelToSnake(oc.String()))

@@ -416,7 +416,7 @@ func TestArgs(t *testing.T) {
 	as.Equal(S("arg2"), r2)
 
 	c3 := makeClosure(isa.Instructions{
-		isa.RestArg.New(2),
+		isa.ArgsRest.New(2),
 		isa.Return.New(),
 	})
 	r3 := c3.Call(args...)

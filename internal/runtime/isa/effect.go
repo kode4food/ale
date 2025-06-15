@@ -17,8 +17,6 @@ type (
 		DPop   bool // Dynamic number of items to be popped (in operand)
 		Ignore bool // Skip this instruction (ex: Labels and NoOps)
 		Exit   bool // Results in a termination of the abstract machine
-
-		NoAsm bool // The assembler does not expose this instruction
 	}
 
 	ActOn int
@@ -46,19 +44,20 @@ var Effects = map[Opcode]*Effect{
 	ArgsLen:    {Push: 1},
 	ArgsPop:    {},
 	ArgsPush:   {DPop: true, Operand: Arguments},
+	ArgsRest:   {Push: 1, Operand: Arguments},
 	Call:       {Pop: 1, Push: 1, DPop: true, Operand: Stack},
-	Call0:      {Pop: 1, Push: 1, NoAsm: true},
-	Call1:      {Pop: 2, Push: 1, NoAsm: true},
-	Call2:      {Pop: 3, Push: 1, NoAsm: true},
-	Call3:      {Pop: 4, Push: 1, NoAsm: true},
-	CallSelf:   {Push: 1, DPop: true, Operand: Stack, NoAsm: true},
+	Call0:      {Pop: 1, Push: 1},
+	Call1:      {Pop: 2, Push: 1},
+	Call2:      {Pop: 3, Push: 1},
+	Call3:      {Pop: 4, Push: 1},
+	CallSelf:   {Push: 1, DPop: true, Operand: Stack},
 	CallWith:   {Pop: 2, Push: 1},
 	Car:        {Pop: 1, Push: 1},
 	Cdr:        {Pop: 1, Push: 1},
 	Closure:    {Push: 1, Operand: Values},
 	CondJump:   {Pop: 1, Operand: Labels},
 	Cons:       {Pop: 2, Push: 1},
-	Const:      {Push: 1, Operand: Constants, NoAsm: true},
+	Const:      {Push: 1, Operand: Constants},
 	Div:        {Pop: 2, Push: 1},
 	Dup:        {Pop: 1, Push: 2},
 	Empty:      {Pop: 1, Push: 1},
@@ -89,16 +88,15 @@ var Effects = map[Opcode]*Effect{
 	PosInt:     {Push: 1, Operand: Integer},
 	RefBind:    {Pop: 2},
 	RefValue:   {Pop: 1, Push: 1},
-	RestArg:    {Push: 1, Operand: Arguments},
 	RetFalse:   {Exit: true},
 	RetNull:    {Exit: true},
 	RetTrue:    {Exit: true},
 	Return:     {Pop: 1, Exit: true},
 	Store:      {Pop: 1, Operand: Locals},
 	Sub:        {Pop: 2, Push: 1},
-	TailCall:   {Pop: 1, DPop: true, Operand: Stack, NoAsm: true},
-	TailClos:   {Pop: 1, DPop: true, Operand: Stack, NoAsm: true},
-	TailSelf:   {DPop: true, Operand: Stack, NoAsm: true},
+	TailCall:   {Pop: 1, DPop: true, Operand: Stack},
+	TailClos:   {Pop: 1, DPop: true, Operand: Stack},
+	TailSelf:   {DPop: true, Operand: Stack},
 	True:       {Push: 1},
 	Vector:     {Push: 1, DPop: true, Operand: Stack},
 	Zero:       {Push: 1},

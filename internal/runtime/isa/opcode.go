@@ -28,6 +28,7 @@ const (
 	ArgsLen                  // Push the number of arguments
 	ArgsPop                  // Pop argument stack frame
 	ArgsPush                 // Push N arguments (op = count)
+	ArgsRest                 // Push rest of arguments as a vector
 	Call                     // Calls proc with N args (op = count)
 	Call0                    // Calls proc with zero arguments
 	Call1                    // Calls proc with one argument
@@ -71,7 +72,6 @@ const (
 	PosInt                   // Push positive integer (operand)
 	RefBind                  // Pop ref and value, sets ref.Value to value
 	RefValue                 // Loads ref.Value from ref at top of stack
-	RestArg                  // Push rest of arguments as a vector
 	RetFalse                 // Returns the boolean false
 	RetNull                  // Returns the null value
 	RetTrue                  // Returns the boolean true

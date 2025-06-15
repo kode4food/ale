@@ -55,7 +55,7 @@ func resolveLocal(
 		case encoder.ArgScope:
 			c, _ := e.ResolveParam(l)
 			if c.Type == encoder.RestCell {
-				e.Emit(isa.RestArg, c.Index)
+				e.Emit(isa.ArgsRest, c.Index)
 			} else {
 				e.Emit(isa.Arg, c.Index)
 			}
