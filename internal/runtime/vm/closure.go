@@ -27,8 +27,8 @@ type (
 
 // Error messages
 const (
-	// ErrBadInstruction is raised when the VM encounters an Opcode that has not
-	// been properly mapped
+	// ErrBadInstruction is raised when the VM encounters an Opcode that has
+	// not been properly mapped
 	ErrBadInstruction = "unknown instruction encountered: %s"
 
 	// ErrEmptyArgStack is raised when the VM encounters an instruction to pop
