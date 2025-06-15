@@ -29,11 +29,11 @@ func TestOutOfScopeError(t *testing.T) {
 	as := assert.New(t)
 	as.ErrorWith(`
 		(asm*
-			.push-locals
-			.local wont-be-found :val
+			locals-push
+			local wont-be-found :val
 			const "hello"
 			store wont-be-found
-			.pop-locals
+			locals-pop
 			load wont-be-found)
     `, fmt.Errorf(asm.ErrUnexpectedName, "wont-be-found"))
 }
@@ -42,14 +42,14 @@ func TestLocalScopeError(t *testing.T) {
 	as := assert.New(t)
 	as.ErrorWith(`
 		(asm*
-			.pop-locals
-			.local hello :val)
+			locals-pop
+			local hello :val)
 	`, errors.New(encoder.ErrNoLocalScope))
 }
 
 func TestEval(t *testing.T) {
 	as := assert.New(t)
-	as.MustEvalTo(`(asm* .eval (+ 1 2))`, I(3))
+	as.MustEvalTo(`(asm* eval (+ 1 2))`, I(3))
 	as.MustEncodedAs(isa.Instructions{
 		isa.PosInt.New(2),
 		isa.PosInt.New(1),
@@ -58,7 +58,7 @@ func TestEval(t *testing.T) {
 		isa.Return.New(),
 	}, `
 	(asm*
-		.eval (+ 1 2)
+		eval (+ 1 2)
 		return)
 	`)
 }

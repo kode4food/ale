@@ -3,20 +3,20 @@
 (define* if
   (special*
     [(predicate consequent alternative)
-          .eval predicate
+          eval predicate
           cond-jump :consequent
-          .eval alternative
+          eval alternative
           jump :end
       :consequent
-          .eval consequent
+          eval consequent
       :end]
     [(predicate consequent)
-          .eval predicate
+          eval predicate
           cond-jump :consequent
           null
           jump :end
       :consequent
-          .eval consequent
+          eval consequent
       :end]))
 
 (define* assert-type
@@ -32,7 +32,7 @@
 (define* is-empty
   (lambda (seq)
     (asm*
-        .resolve seq
+        resolve seq
         empty)))
 
 (define* apply
@@ -45,8 +45,8 @@
               (cons (car args) (flatten-args (cdr args)))))]
       (let [flat-args (flatten-args args)]
         (asm*
-            .resolve flat-args
-            .resolve func
+            resolve flat-args
+            resolve func
             call-with)))))
 
 ;; syntax-quoting requires it

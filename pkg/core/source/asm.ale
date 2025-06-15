@@ -4,22 +4,22 @@
 (def-special special*)
 
 (asm*
-    .eval (special* (name)
+    eval (special* (name)
         const name
         dup
         env-public)
     const public*
     env-bind
 
-    .eval (special* (name)
+    eval (special* (name)
         const name
         dup
         env-private)
     const private*
     env-bind
 
-    .eval (special* (name value)
-        .eval value
+    eval (special* (name value)
+        eval value
         dup
         const name
         env-bind)
@@ -35,27 +35,27 @@
 (define* cons
   (lambda (car cdr)
     (asm*
-        .resolve cdr
-        .resolve car
+        resolve cdr
+        resolve car
         cons)))
 
 (define* car
   (lambda (cons)
     (asm*
-        .resolve cons
+        resolve cons
         car)))
 
 (define* cdr
   (lambda (cons)
     (asm*
-        .resolve cons
+        resolve cons
         cdr)))
 
 (define* raise
   (lambda strs
     (asm*
-        .resolve strs
-        .resolve ale/str
+        resolve strs
+        resolve ale/str
         call-with
         panic
         null)))
@@ -63,7 +63,7 @@
 (define* begin
   (special* body
       null
-      .for-each [val body]
+      for-each [val body]
           pop
-          .eval val
-      .end))
+          eval val
+      end))

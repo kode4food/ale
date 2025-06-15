@@ -4,11 +4,11 @@
 (define* make-reducer (macro* (lambda (args init inst)
   (apply list (concat!
     '(ale/asm*
-        .private accum :val
-        .eval) [init] '(
+        private accum :val
+        eval) [init] '(
         store accum
-        .private rest :val
-        .resolve) [args] '(
+        private rest :val
+        resolve) [args] '(
         store rest
     :loop
         load rest
@@ -32,17 +32,17 @@
 (define (mod num den . more)
   (make-reducer more
                (asm*
-                   .resolve num
-                   .resolve den
+                   resolve num
+                   resolve den
                    mod)
                mod))
 
 (define-lambda /
-  [(x) (asm* const 1 .resolve x div)]
+  [(x) (asm* const 1 resolve x div)]
   [(f . r) (make-reducer r f div)])
 
 (define-lambda -
-  [(x) (asm* zero .resolve x sub)]
+  [(x) (asm* zero resolve x sub)]
   [(f . r) (make-reducer r f sub)])
 
 (define modulo mod)
@@ -54,7 +54,7 @@
 (define (>= f . r) (make-comparator f r num-gte))
 
 (define (!= f . r)
-  (asm* .eval (make-comparator f r num-eq) not))
+  (asm* eval (make-comparator f r num-eq) not))
 
 (define :private (is-zero value) (= value 0))
 (define :private (is-even value) (= (mod value 2) 0))

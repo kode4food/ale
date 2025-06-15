@@ -25,7 +25,7 @@ func TestJump(t *testing.T) {
 		(define* test
 			(lambda ()
 				(asm*
-					.local some-value :val
+					local some-value :val
 					true
 					store some-value
 					load some-value

@@ -12,11 +12,11 @@
 (define* make-comparator (macro* (lambda (f r inst)
   (apply list (concat!
     '(ale/asm*
-         .private prev :val
-         .resolve) [f] '(
+         private prev :val
+         resolve) [f] '(
          store prev
-         .private rest :val
-         .resolve) [r] '(
+         private rest :val
+         resolve) [r] '(
          store rest
      :loop
          load rest
@@ -45,7 +45,7 @@
   (make-comparator f r eq))
 
 (define (!eq f . r)
-  (asm* .eval (make-comparator f r eq) not))
+  (asm* eval (make-comparator f r eq) not))
 
 (define (not value)
   (if value false true))

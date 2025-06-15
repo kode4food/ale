@@ -14,7 +14,7 @@ const (
 )
 
 const (
-	ForEach = data.Local(".for-each")
+	ForEach = data.Local("for-each")
 
 	pairType = "binding pair"
 	seqType  = "sequence"

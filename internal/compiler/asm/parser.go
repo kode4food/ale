@@ -40,7 +40,7 @@ const (
 )
 
 const (
-	EndBlock = data.Local(".end")
+	EndBlock = data.Local("end")
 )
 
 func makeAsmParser(calls namedAsmParsers) *Parser {

@@ -25,14 +25,14 @@ const (
 )
 
 const (
-	Const = data.Local("const")
+	Const    = data.Local("const")
+	Evaluate = data.Local("eval")
+	Local    = data.Local("local")
+	Private  = data.Local("private")
+	Resolve  = data.Local("resolve")
 
-	Resolve    = data.Local(".resolve")
-	Evaluate   = data.Local(".eval")
-	Local      = data.Local(".local")
-	Private    = data.Local(".private")
-	PushLocals = data.Local(".push-locals")
-	PopLocals  = data.Local(".pop-locals")
+	PopLocals  = data.Local("locals-pop")
+	PushLocals = data.Local("locals-push")
 )
 
 const (
