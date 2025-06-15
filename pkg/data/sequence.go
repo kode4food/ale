@@ -41,12 +41,6 @@ type (
 		Counted
 	}
 
-	// IndexedSequence is a Sequence that has indexed elements
-	IndexedSequence interface {
-		Sequence
-		Indexed
-	}
-
 	// CountedSequence is a Sequence that returns a count of its items
 	CountedSequence interface {
 		Sequence
