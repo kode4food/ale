@@ -83,24 +83,25 @@ CurrentPC:
 		MEM[SP] = args[INST.Operand()]
 		SP--
 
-	case isa.ArgLen:
+	case isa.ArgsLen:
 		MEM[SP] = data.Integer(len(args))
 		SP--
 
-	case isa.Bind:
-		SP1 := SP + 1
-		SP += 2
-		name := MEM[SP1].(data.Local)
-		value := MEM[SP]
-		if err := bindOrShadow(c.Globals, name, value); err != nil {
-			panic(err)
+	case isa.ArgsPop:
+		if AP == nil {
+			panic(debug.ProgrammerError(ErrEmptyArgStack))
 		}
+		args = AP.args
+		AP = AP.prev
 
-	case isa.BindRef:
-		SP1 := SP + 1
-		SP += 2
-		ref := MEM[SP1].(*Ref)
-		ref.Value = MEM[SP]
+	case isa.ArgsPush:
+		RES := SP + int(INST.Operand())
+		AP = &argStack{
+			args: args,
+			prev: AP,
+		}
+		args = slices.Clone(MEM[SP+1 : RES+1])
+		SP = RES
 
 	case isa.Call:
 		op := INST.Operand()
@@ -180,10 +181,6 @@ CurrentPC:
 		MEM[SP] = c.Constants[INST.Operand()]
 		SP--
 
-	case isa.Deref:
-		SP1 := SP + 1
-		MEM[SP1] = MEM[SP1].(*Ref).Value
-
 	case isa.Div:
 		SP++
 		SP1 := SP + 1
@@ -196,6 +193,31 @@ CurrentPC:
 	case isa.Empty:
 		SP1 := SP + 1
 		MEM[SP1] = data.Bool(MEM[SP1].(data.Sequence).IsEmpty())
+
+	case isa.EnvBind:
+		SP1 := SP + 1
+		SP += 2
+		name := MEM[SP1].(data.Local)
+		value := MEM[SP]
+		if err := bindOrShadow(c.Globals, name, value); err != nil {
+			panic(err)
+		}
+
+	case isa.EnvPrivate:
+		SP++
+		if _, err := c.Globals.Private(MEM[SP].(data.Local)); err != nil {
+			panic(err)
+		}
+
+	case isa.EnvPublic:
+		SP++
+		if _, err := c.Globals.Public(MEM[SP].(data.Local)); err != nil {
+			panic(err)
+		}
+
+	case isa.EnvValue:
+		SP1 := SP + 1
+		MEM[SP1] = env.MustResolveValue(c.Globals, MEM[SP1].(data.Symbol))
 
 	case isa.Eq:
 		SP++
@@ -288,41 +310,19 @@ CurrentPC:
 	case isa.Pop:
 		SP++
 
-	case isa.PopArgs:
-		if AP == nil {
-			panic(debug.ProgrammerError(ErrEmptyArgStack))
-		}
-		args = AP.args
-		AP = AP.prev
-
 	case isa.PosInt:
 		MEM[SP] = data.Integer(INST.Operand())
 		SP--
 
-	case isa.Private:
-		SP++
-		if _, err := c.Globals.Private(MEM[SP].(data.Local)); err != nil {
-			panic(err)
-		}
-
-	case isa.Public:
-		SP++
-		if _, err := c.Globals.Public(MEM[SP].(data.Local)); err != nil {
-			panic(err)
-		}
-
-	case isa.PushArgs:
-		RES := SP + int(INST.Operand())
-		AP = &argStack{
-			args: args,
-			prev: AP,
-		}
-		args = slices.Clone(MEM[SP+1 : RES+1])
-		SP = RES
-
-	case isa.Resolve:
+	case isa.RefBind:
 		SP1 := SP + 1
-		MEM[SP1] = env.MustResolveValue(c.Globals, MEM[SP1].(data.Symbol))
+		SP += 2
+		ref := MEM[SP1].(*Ref)
+		ref.Value = MEM[SP]
+
+	case isa.RefValue:
+		SP1 := SP + 1
+		MEM[SP1] = MEM[SP1].(*Ref).Value
 
 	case isa.RestArg:
 		MEM[SP] = data.Vector(args[INST.Operand():])

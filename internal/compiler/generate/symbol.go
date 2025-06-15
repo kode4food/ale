@@ -22,7 +22,7 @@ func Global(e encoder.Encoder, s data.Symbol) error {
 	if err := Literal(e, s); err != nil {
 		return err
 	}
-	e.Emit(isa.Resolve)
+	e.Emit(isa.EnvValue)
 	return nil
 }
 
@@ -33,7 +33,7 @@ func Reference(e encoder.Encoder, l data.Local) error {
 		return err
 	}
 	if c != nil && c.Type == encoder.ReferenceCell {
-		e.Emit(isa.Deref)
+		e.Emit(isa.RefValue)
 	}
 	return nil
 }

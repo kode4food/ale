@@ -21,8 +21,8 @@ func TestUnknownDirective(t *testing.T) {
 func TestBadArgs(t *testing.T) {
 	as := assert.New(t)
 	as.ErrorWith(`
-		(asm* .const)
-	`, fmt.Errorf(asm.ErrTooFewArguments, ".const", 1))
+		(asm* const)
+	`, fmt.Errorf(asm.ErrTooFewArguments, "const", 1))
 
 	as.ErrorWith(`
 		(asm* .resolve 99)

@@ -263,7 +263,7 @@ func isParamCase(b visitor.Branches) (isa.Opcode, isa.Operand, bool) {
 	if len(p) != 4 {
 		return isa.NoOp, 0, false
 	}
-	if p[0].Opcode() != isa.ArgLen || p[3].Opcode() != isa.CondJump {
+	if p[0].Opcode() != isa.ArgsLen || p[3].Opcode() != isa.CondJump {
 		return isa.NoOp, 0, false
 	}
 	if p[1].Opcode() != isa.PosInt {
@@ -295,7 +295,7 @@ func filterArgInstructions(c isa.Instructions) isa.Instructions {
 
 func argInstructionPred(i isa.Instruction) bool {
 	switch i.Opcode() {
-	case isa.PushArgs, isa.PopArgs, isa.Arg, isa.ArgLen, isa.RestArg:
+	case isa.ArgsPush, isa.ArgsPop, isa.Arg, isa.ArgsLen, isa.RestArg:
 		return true
 	default:
 		return false
@@ -321,7 +321,7 @@ func canMapArgsToLocals(c isa.Instructions, argc isa.Operand) bool {
 			if idx > highArg {
 				highArg = idx
 			}
-		case isa.PushArgs, isa.PopArgs, isa.ArgLen, isa.RestArg:
+		case isa.ArgsPush, isa.ArgsPop, isa.ArgsLen, isa.RestArg:
 			return false
 		default:
 			// no-op
@@ -370,8 +370,8 @@ func makeArgLocalMap(c isa.Instructions, argsBase isa.Operand) operandMap {
 
 func stackArgs(c isa.Instructions, argc isa.Operand) isa.Instructions {
 	res := make(isa.Instructions, 0, len(c)+2)
-	res = append(res, isa.PushArgs.New(argc))
+	res = append(res, isa.ArgsPush.New(argc))
 	res = append(res, c...)
-	res = append(res, isa.PopArgs.New())
+	res = append(res, isa.ArgsPop.New())
 	return res
 }

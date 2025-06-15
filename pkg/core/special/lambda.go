@@ -58,7 +58,7 @@ func encodeCases(e encoder.Encoder, cases []*params.ParamCase) error {
 }
 
 func encodePredicate(e encoder.Encoder, c *params.ParamCase) error {
-	e.Emit(isa.ArgLen)
+	e.Emit(isa.ArgsLen)
 	cl := len(c.Params)
 	if c.Rest {
 		if err := generate.Literal(e, data.Integer(cl-1)); err != nil {

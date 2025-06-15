@@ -38,7 +38,7 @@
                mod))
 
 (define-lambda /
-  [(x) (asm* .const 1 .resolve x div)]
+  [(x) (asm* const 1 .resolve x div)]
   [(f . r) (make-reducer r f div)])
 
 (define-lambda -

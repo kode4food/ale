@@ -12,6 +12,9 @@ import (
 func getInstructionCalls() namedAsmParsers {
 	res := make(namedAsmParsers, len(isa.Effects))
 	for oc, effect := range isa.Effects {
+		if effect.NoAsm {
+			continue
+		}
 		name := data.Local(strings.CamelToSnake(oc.String()))
 		res[name] = func(oc isa.Opcode, ao isa.ActOn) asmParse {
 			return makeEmitCall(oc, ao)

@@ -338,10 +338,10 @@ func TestRefs(t *testing.T) {
 		isa.Store.New(2),
 		isa.Load.New(1),
 		isa.Load.New(2),
-		isa.BindRef.New(),
+		isa.RefBind.New(),
 		isa.PosInt.New(1),
 		isa.Load.New(2),
-		isa.Deref.New(),
+		isa.RefValue.New(),
 		isa.Sub.New(),
 		isa.Return.New(),
 	})
@@ -350,13 +350,13 @@ func TestRefs(t *testing.T) {
 func TestGlobals(t *testing.T) {
 	testResult(t, I(3), isa.Instructions{
 		isa.Const.New(4),
-		isa.Public.New(),
+		isa.EnvPublic.New(),
 		isa.PosInt.New(2),
 		isa.Const.New(4),
-		isa.Bind.New(),
+		isa.EnvBind.New(),
 		isa.PosInt.New(1),
 		isa.Const.New(4),
-		isa.Resolve.New(),
+		isa.EnvValue.New(),
 		isa.Add.New(),
 		isa.Return.New(),
 	})
@@ -402,7 +402,7 @@ func TestArgs(t *testing.T) {
 	args := data.Vector{S("arg1"), S("arg2"), S("arg3"), S("arg4")}
 
 	c1 := makeClosure(isa.Instructions{
-		isa.ArgLen.New(),
+		isa.ArgsLen.New(),
 		isa.Return.New(),
 	})
 	r1 := c1.Call(args...)

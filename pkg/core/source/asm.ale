@@ -5,32 +5,32 @@
 
 (asm*
     .eval (special* (name)
-        .const name
+        const name
         dup
-        public)
-    .const public*
-    bind
+        env-public)
+    const public*
+    env-bind
 
     .eval (special* (name)
-        .const name
+        const name
         dup
-        private)
-    .const private*
-    bind
+        env-private)
+    const private*
+    env-bind
 
     .eval (special* (name value)
         .eval value
         dup
-        .const name
-        bind)
-    .const define*
-    bind
+        const name
+        env-bind)
+    const define*
+    env-bind
     ; block evaluator will pop this
     null)
 
 (define* quote
   (special* (form)
-      .const form))
+      const form))
 
 (define* cons
   (lambda (car cdr)

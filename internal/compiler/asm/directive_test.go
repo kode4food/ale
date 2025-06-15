@@ -15,12 +15,12 @@ import (
 func TestConstant(t *testing.T) {
 	as := assert.New(t)
 	as.MustEvalTo(
-		`(asm* .const ("this is a list" 1 2 3))`,
+		`(asm* const ("this is a list" 1 2 3))`,
 		L(S("this is a list"), I(1), I(2), I(3)),
 	)
 
 	as.MustEvalTo(
-		`(asm* .const 1 .const 2 .const 3 add add)`,
+		`(asm* const 1 const 2 const 3 add add)`,
 		I(6),
 	)
 }
@@ -31,7 +31,7 @@ func TestOutOfScopeError(t *testing.T) {
 		(asm*
 			.push-locals
 			.local wont-be-found :val
-			.const "hello"
+			const "hello"
 			store wont-be-found
 			.pop-locals
 			load wont-be-found)

@@ -25,9 +25,10 @@ const (
 )
 
 const (
+	Const = data.Local("const")
+
 	Resolve    = data.Local(".resolve")
 	Evaluate   = data.Local(".eval")
-	Const      = data.Local(".const")
 	Local      = data.Local(".local")
 	Private    = data.Local(".private")
 	PushLocals = data.Local(".push-locals")

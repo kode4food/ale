@@ -14,7 +14,7 @@ func TestFromEncoder(t *testing.T) {
 	as := assert.New(t)
 
 	e1 := assert.GetTestEncoder()
-	e1.Emit(isa.ArgLen)
+	e1.Emit(isa.ArgsLen)
 	e1.Emit(isa.Return)
 
 	l, err := procedure.FromEncoded(e1.Encode())
