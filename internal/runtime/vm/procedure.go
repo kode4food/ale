@@ -1,7 +1,7 @@
 package vm
 
 import (
-	"math/rand"
+	"math/rand/v2"
 	"slices"
 	"sync/atomic"
 

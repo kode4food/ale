@@ -1,7 +1,7 @@
 package data
 
 import (
-	"math/rand"
+	"math/rand/v2"
 	"strings"
 
 	"github.com/kode4food/ale/internal/lang"

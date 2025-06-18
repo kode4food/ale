@@ -2,10 +2,9 @@ package internal
 
 import (
 	"fmt"
-	"math/rand"
+	"math/rand/v2"
 	"os"
 	"runtime"
-	"time"
 
 	"github.com/kode4food/ale/cmd/ale/internal/console"
 	"github.com/kode4food/ale/internal/compiler"
@@ -49,10 +48,7 @@ func (r *REPL) makeUse() data.Value {
 }
 
 func shutdown(...data.Value) data.Value {
-	t := time.Now().UTC().UnixNano()
-	rs := rand.NewSource(t)
-	rg := rand.New(rs)
-	idx := rg.Intn(len(farewells))
+	idx := rand.IntN(len(farewells))
 	fmt.Println(farewells[idx])
 	os.Exit(0)
 	return nothing

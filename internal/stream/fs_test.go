@@ -40,7 +40,9 @@ func TestWrapFileSystemReadAll(t *testing.T) {
 	as.True(ok)
 
 	res := c.(data.Procedure).Call(S("test_assets/test1.txt"), stream.ReadAll)
-	as.String("test file 1 in root\n", res)
+	b, ok := res.(data.Bytes)
+	as.True(ok)
+	as.String("test file 1 in root\n", data.String(b))
 }
 
 func TestWrapFileSystemReadLines(t *testing.T) {

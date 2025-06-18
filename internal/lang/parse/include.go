@@ -64,7 +64,7 @@ func (p *parser) readInclude(path string) (data.Sequence, error) {
 	if err != nil {
 		return data.Null, err
 	}
-	str := c.Call(data.String(path), stream.ReadAll).(data.String)
+	str := c.Call(data.String(path), stream.ReadString).(data.String)
 	return p.tokenize(str)
 }
 

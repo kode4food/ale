@@ -20,10 +20,13 @@ const (
 	File    = data.Keyword("file")
 
 	OpenKey    = data.Keyword("open")
-	ReadLines  = data.Keyword("read-lines")
-	ReadAll    = data.Keyword("read-all")
-	ReadBlocks = data.Keyword("read-blocks")
+	ReadString = data.Keyword("read-string") // String
+	ReadLines  = data.Keyword("read-lines")  // String
+	ReadAll    = data.Keyword("read-all")    // Bytes
+	ReadBlocks = data.Keyword("read-blocks") // Bytes
 )
+
+const defaultBlockSize = 4096
 
 const (
 	ErrExpectedDirectory    = "expected a directory, got a file: %s"
@@ -31,6 +34,7 @@ const (
 	ErrUnexpectedReadLength = "expected to read %d bytes, got %d"
 	ErrExpectedFile         = "expected a file, got a directory: %s"
 	ErrExpectedBlockSize    = "expected a block size, got: %s"
+	ErrUnexpectedArguments  = "unexpected additional arguments: %s"
 )
 
 var fileSystemType = types.MakeBasic("file-system")
@@ -123,22 +127,32 @@ func createReader(f fs.File, s fs.FileInfo, args ...data.Value) data.Value {
 		return NewReader(f, RuneInput)
 	}
 	switch args[0] {
-	case ReadLines:
-		return NewReader(f, LineInput)
 	case ReadAll:
 		return readAll(f, s.Size())
 	case ReadBlocks:
-		if len(args) < 2 {
-			panic(fmt.Errorf(ErrExpectedBlockSize, data.Null))
-		}
-		size := args[1].(data.Integer)
-		input, err := BlockInput(int(size))
+		size := getBlockSize(defaultBlockSize, args[1:]...)
+		input, err := BlockInput(size)
 		if err != nil {
 			panic(err)
 		}
 		return NewReader(f, input)
+	case ReadString:
+		return data.String(readAll(f, s.Size()))
+	case ReadLines:
+		return NewReader(f, LineInput)
 	default:
 		panic(fmt.Errorf(ErrUnknownOpenMode, args[0]))
+	}
+}
+
+func getBlockSize(def int, args ...data.Value) int {
+	switch len(args) {
+	case 0:
+		return def
+	case 1:
+		return int(args[0].(data.Integer))
+	default:
+		panic(fmt.Errorf(ErrUnexpectedArguments, args[1:]))
 	}
 }
 
@@ -159,9 +173,9 @@ func openFile(fs fs.FS, path string) (fs.File, fs.FileInfo, error) {
 	return f, s, nil
 }
 
-func readAll(f fs.File, size int64) data.Value {
+func readAll(f fs.File, size int64) data.Bytes {
 	defer func() { _ = f.Close() }()
-	buf := make([]byte, size)
+	buf := make(data.Bytes, size)
 	l, err := f.Read(buf)
 	if err != nil {
 		panic(err)
@@ -169,5 +183,5 @@ func readAll(f fs.File, size int64) data.Value {
 	if int64(l) != size {
 		panic(fmt.Errorf(ErrUnexpectedReadLength, size, l))
 	}
-	return data.String(buf[:l])
+	return buf[:l]
 }

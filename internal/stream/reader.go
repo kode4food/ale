@@ -42,10 +42,10 @@ func BlockInput(size int) (InputFunc, error) {
 		return nil, fmt.Errorf(ErrInvalidBlockSize, size)
 	}
 	return func(r *bufio.Reader) (data.Value, bool) {
-		b := make([]byte, size)
+		b := make(data.Bytes, size)
 		n, err := r.Read(b)
 		if err == nil || errors.Is(err, io.EOF) && n > 0 {
-			return data.String(b[0:n]), true
+			return b[0:n], true
 		}
 		return data.Null, false
 	}, nil
