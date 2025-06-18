@@ -420,7 +420,7 @@ func TestArgs(t *testing.T) {
 		isa.Return.New(),
 	})
 	r3 := c3.Call(args...)
-	as.Equal(data.NewVector(S("arg3"), S("arg4")), r3)
+	as.Equal(V(S("arg3"), S("arg4")), r3)
 }
 
 func TestErrors(t *testing.T) {

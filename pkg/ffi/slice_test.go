@@ -29,13 +29,13 @@ func TestSliceUnwrap(t *testing.T) {
 		})
 	}).(data.Procedure)
 
-	out := f.Call(data.NewVector(I(1), I(2), I(3))).(data.Vector)
+	out := f.Call(V(I(1), I(2), I(3))).(data.Vector)
 	as.Equal(3, len(out))
 	as.Equal(I(2), out[0])
 	as.Equal(I(4), out[1])
 	as.Equal(I(6), out[2])
 
-	out = f.Call(data.NewList(I(3), I(7), I(11), I(25))).(data.Vector)
+	out = f.Call(L(I(3), I(7), I(11), I(25))).(data.Vector)
 	as.Equal(4, len(out))
 	as.Equal(I(6), out[0])
 	as.Equal(I(14), out[1])

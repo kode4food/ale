@@ -15,9 +15,9 @@ func TestConcat(t *testing.T) {
 	c0 := sequence.Concat()
 	as.Equal(data.Null, c0)
 
-	l1 := data.NewList(I(1), I(2), I(3))
-	l2 := data.NewList(I(4), I(5), I(6))
-	l3 := data.NewList(I(7), I(8), I(9))
+	l1 := L(I(1), I(2), I(3))
+	l2 := L(I(4), I(5), I(6))
+	l3 := L(I(7), I(8), I(9))
 
 	c1 := sequence.Concat(l1)
 	as.True(c1 == l1)
