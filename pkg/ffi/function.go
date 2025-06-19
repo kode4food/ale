@@ -34,7 +34,7 @@ func (w *funcWrapper) Unwrap(v data.Value) (reflect.Value, error) {
 	if v, ok := v.(data.Procedure); ok {
 		return w.unwrapCall(v), nil
 	}
-	return _emptyValue, errors.New(ErrValueMustBeProcedure)
+	return _zero, errors.New(ErrValueMustBeProcedure)
 }
 
 func (w *funcWrapper) unwrapCall(l data.Procedure) reflect.Value {

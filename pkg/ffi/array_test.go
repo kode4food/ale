@@ -72,3 +72,20 @@ func TestArrayEval(t *testing.T) {
 		V(I(2), I(4), I(6)),
 	)
 }
+
+func TestByteArrayUnwrap(t *testing.T) {
+	as := assert.New(t)
+	f := ffi.MustWrap(func(a [3]byte) [3]byte {
+		res := [3]byte{}
+		for i, v := range a {
+			res[i] = v * 2
+		}
+		return res
+	}).(data.Procedure)
+	out := f.Call(data.Bytes{1, 2, 3}).(data.Bytes)
+	as.NotNil(out)
+	as.Equal(3, len(out))
+	as.Equal(byte(2), out[0])
+	as.Equal(byte(4), out[1])
+	as.Equal(byte(6), out[2])
+}

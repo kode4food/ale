@@ -28,7 +28,7 @@ const ErrUnsupportedType = "unsupported type"
 var (
 	cache = makeTypeCache()
 
-	_emptyValue = reflect.Value{}
+	_zero = reflect.Value{}
 )
 
 // Wrap takes a native Go value, potentially builds a Wrapper for its type, and
@@ -151,9 +151,4 @@ func (c *typeCache) put(t reflect.Type, w Wrapper) {
 	c.Lock()
 	defer c.Unlock()
 	c.entries[t] = w
-}
-
-func zero[T any]() reflect.Value {
-	var z T
-	return reflect.ValueOf(z)
 }

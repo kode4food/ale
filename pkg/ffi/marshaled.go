@@ -8,7 +8,7 @@ import (
 	"github.com/kode4food/ale/pkg/data"
 )
 
-type byteArrayWrapper struct {
+type marshaledWrapper struct {
 	typ reflect.Type
 }
 
@@ -17,23 +17,18 @@ var (
 	textUnmarshaler = reflect.TypeOf((*encoding.TextUnmarshaler)(nil)).Elem()
 )
 
-func isMarshaledByteArray(t reflect.Type) bool {
-	if t.Kind() != reflect.Array || t.Elem().Kind() != reflect.Uint8 {
-		return false
-	}
+func isMarshaledArray(t reflect.Type) bool {
 	p := reflect.PointerTo(t)
-	return p.Implements(textUnmarshaler) && p.Implements(textMarshaler)
+	return p.Implements(textMarshaler) && p.Implements(textUnmarshaler)
 }
 
-func wrapMarshaledByteArray(t reflect.Type) (Wrapper, error) {
-	return &byteArrayWrapper{
+func wrapMarshaled(t reflect.Type) (Wrapper, error) {
+	return &marshaledWrapper{
 		typ: t,
 	}, nil
 }
 
-func (w *byteArrayWrapper) Wrap(
-	_ *Context, v reflect.Value,
-) (data.Value, error) {
+func (w *marshaledWrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
 	m := v.Interface().(encoding.TextMarshaler)
 	s, err := m.MarshalText()
 	if err != nil {
@@ -42,16 +37,16 @@ func (w *byteArrayWrapper) Wrap(
 	return data.String(s), nil
 }
 
-func (w *byteArrayWrapper) Unwrap(v data.Value) (reflect.Value, error) {
+func (w *marshaledWrapper) Unwrap(v data.Value) (reflect.Value, error) {
 	s, ok := v.(data.String)
 	if !ok {
-		return _emptyValue, errors.New(ErrValueMustBeString)
+		return _zero, errors.New(ErrValueMustBeString)
 	}
 	out := reflect.New(w.typ)
 	m := out.Interface().(encoding.TextUnmarshaler)
 	err := m.UnmarshalText([]byte(s))
 	if err != nil {
-		return _emptyValue, err
+		return _zero, err
 	}
 	return out.Elem(), nil
 }

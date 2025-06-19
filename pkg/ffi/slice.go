@@ -18,14 +18,14 @@ type (
 	}
 )
 
-var bytesZero = reflect.ValueOf([]byte{})
-
 func makeWrappedSlice(t reflect.Type) (Wrapper, error) {
-	te := t.Elem()
-	if te.Kind() == reflect.Uint8 {
+	if t.Elem().Kind() == reflect.Uint8 {
+		if isMarshaledArray(t) {
+			return wrapMarshaled(t)
+		}
 		return wrapByteSlice(t)
 	}
-	w, err := WrapType(te)
+	w, err := WrapType(t.Elem())
 	if err != nil {
 		return nil, err
 	}
@@ -67,7 +67,7 @@ func (w *sliceWrapper) Unwrap(v data.Value) (reflect.Value, error) {
 	case data.Sequence:
 		return w.unwrapUncounted(in)
 	default:
-		return _emptyValue, errors.New(ErrValueMustBeSequence)
+		return _zero, errors.New(ErrValueMustBeSequence)
 	}
 }
 
@@ -77,7 +77,7 @@ func (w *sliceWrapper) unwrapVector(in data.Vector) (reflect.Value, error) {
 	for i, e := range in {
 		v, err := w.elem.Unwrap(e)
 		if err != nil {
-			return _emptyValue, err
+			return _zero, err
 		}
 		out.Index(i).Set(v)
 	}
@@ -95,7 +95,7 @@ func (w *sliceWrapper) unwrapCounted(
 		f, r, _ = r.Split()
 		v, err := w.elem.Unwrap(f)
 		if err != nil {
-			return _emptyValue, err
+			return _zero, err
 		}
 		out.Index(i).Set(v)
 	}
@@ -109,7 +109,7 @@ func (w *sliceWrapper) unwrapUncounted(
 	for f, r, ok := in.Split(); ok; f, r, ok = r.Split() {
 		v, err := w.elem.Unwrap(f)
 		if err != nil {
-			return _emptyValue, err
+			return _zero, err
 		}
 		out = reflect.Append(out, v)
 	}
@@ -124,12 +124,5 @@ func (w *byteSliceWrapper) Wrap(
 }
 
 func (w *byteSliceWrapper) Unwrap(v data.Value) (reflect.Value, error) {
-	switch v := v.(type) {
-	case data.Bytes:
-		return reflect.ValueOf([]byte(v)), nil
-	case data.String:
-		return reflect.ValueOf([]byte(v)), nil
-	default:
-		return bytesZero, errors.New(ErrValueMustBeString)
-	}
+	return asValueOf[[]byte](v)
 }

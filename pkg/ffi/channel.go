@@ -91,5 +91,5 @@ func (w *channelWrapper) makeEmitter(v reflect.Value) data.Procedure {
 }
 
 func (*channelWrapper) Unwrap(data.Value) (reflect.Value, error) {
-	return _emptyValue, errors.New(ErrChannelCoercionNotSupported)
+	return _zero, errors.New(ErrChannelCoercionNotSupported)
 }

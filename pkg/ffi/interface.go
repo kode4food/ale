@@ -94,13 +94,13 @@ func (w *intfWrapper) Unwrap(v data.Value) (reflect.Value, error) {
 			if r, ok := r.(receiver); ok {
 				res := reflect.Value(r)
 				if w.Type != res.Type() {
-					return _emptyValue, errors.New(ErrInterfaceTypeMismatch)
+					return _zero, errors.New(ErrInterfaceTypeMismatch)
 				}
 				return res, nil
 			}
 		}
 	}
-	return _emptyValue, errors.New(ErrInterfaceCoercionNotSupported)
+	return _zero, errors.New(ErrInterfaceCoercionNotSupported)
 }
 
 func (receiver) Equal(data.Value) bool {

@@ -13,19 +13,21 @@ type stringWrapper struct{}
 // source as a data.String
 const ErrValueMustBeString = "value must be a byte slice or string"
 
-var stringZero = reflect.ValueOf("")
-
 func (stringWrapper) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
 	return data.String(v.String()), nil
 }
 
 func (stringWrapper) Unwrap(v data.Value) (reflect.Value, error) {
+	return asValueOf[string](v)
+}
+
+func asValueOf[T string | []byte](v data.Value) (reflect.Value, error) {
 	switch v := v.(type) {
 	case data.String:
-		return reflect.ValueOf(string(v)), nil
+		return reflect.ValueOf(T(v)), nil
 	case data.Bytes:
-		return reflect.ValueOf(string(v)), nil
+		return reflect.ValueOf(T(v)), nil
 	default:
-		return stringZero, errors.New(ErrValueMustBeString)
+		return _zero, errors.New(ErrValueMustBeString)
 	}
 }

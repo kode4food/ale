@@ -77,7 +77,7 @@ func (intWrapper[T]) Unwrap(v data.Value) (reflect.Value, error) {
 		}
 	}
 	bits := int(unsafe.Sizeof(T(0))) * 8
-	return zero[T](), fmt.Errorf(ErrValueMustBeSigned, bits)
+	return _zero, fmt.Errorf(ErrValueMustBeSigned, bits)
 }
 
 func (uintWrapper[_]) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
@@ -117,7 +117,7 @@ func (uintWrapper[T]) Unwrap(v data.Value) (reflect.Value, error) {
 		}
 	}
 	bits := int(unsafe.Sizeof(T(0))) * 8
-	return zero[T](), fmt.Errorf(ErrValueMustBeUnsigned, bits)
+	return _zero, fmt.Errorf(ErrValueMustBeUnsigned, bits)
 }
 
 func (floatWrapper[_]) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
@@ -128,7 +128,7 @@ func (floatWrapper[T]) Unwrap(v data.Value) (reflect.Value, error) {
 	if f, ok := valueToFloat(v); ok {
 		return reflect.ValueOf(T(f)), nil
 	}
-	return reflect.Value{}, errors.New(ErrValueMustBeFloat)
+	return _zero, errors.New(ErrValueMustBeFloat)
 }
 
 func (complexWrapper[_]) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
@@ -146,9 +146,9 @@ func (complexWrapper[T]) Unwrap(v data.Value) (reflect.Value, error) {
 			out := (T)(complex(r, i))
 			return reflect.ValueOf(out), nil
 		}
-		return zero[T](), errors.New(ErrConsMustContainFloat)
+		return _zero, errors.New(ErrConsMustContainFloat)
 	}
-	return zero[T](), errors.New(ErrValueMustBeCons)
+	return _zero, errors.New(ErrValueMustBeCons)
 }
 
 func valueToFloat(v data.Value) (float64, bool) {

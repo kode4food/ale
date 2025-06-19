@@ -52,15 +52,27 @@ func TestSliceUnwrap(t *testing.T) {
 
 func TestByteSliceUnwrap(t *testing.T) {
 	as := assert.New(t)
-	f := ffi.MustWrap(func(a []byte) []byte {
+	f1 := ffi.MustWrap(func(a []byte) []byte {
 		return basics.Map(a, func(i byte) byte {
 			return i + 1
 		})
 	}).(data.Procedure)
 
-	out := f.Call(data.Bytes{1, 2, 3}).(data.Bytes)
+	out := f1.Call(data.Bytes{1, 2, 3}).(data.Bytes)
 	as.Equal(3, len(out))
 	as.Equal(byte(2), out[0])
 	as.Equal(byte(3), out[1])
 	as.Equal(byte(4), out[2])
+
+	f2 := ffi.MustWrap(func(in string) []byte {
+		return []byte(in)
+	}).(data.Procedure)
+
+	out = f2.Call(S("hello")).(data.Bytes)
+	as.Equal(5, len(out))
+	as.Equal(byte(0x68), out[0])
+	as.Equal(byte(0x65), out[1])
+	as.Equal(byte(0x6c), out[2])
+	as.Equal(byte(0x6c), out[3])
+	as.Equal(byte(0x6f), out[4])
 }

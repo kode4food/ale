@@ -34,7 +34,7 @@ func (b boxedWrapper[T]) Unwrap(v data.Value) (reflect.Value, error) {
 	if box, ok := v.(*Boxed[T]); ok {
 		return box.Value, nil
 	}
-	return zero[reflect.Value](), errors.New(ErrValueMustBeBoxed)
+	return _zero, errors.New(ErrValueMustBeBoxed)
 }
 
 func (b *Boxed[T]) Equal(other data.Value) bool {

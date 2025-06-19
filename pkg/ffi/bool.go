@@ -29,5 +29,5 @@ func (boolWrapper) Unwrap(v data.Value) (reflect.Value, error) {
 		}
 		return boolFalse, nil
 	}
-	return boolFalse, errors.New(ErrValueMustBeBool)
+	return _zero, errors.New(ErrValueMustBeBool)
 }

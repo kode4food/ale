@@ -56,11 +56,11 @@ func (w *mapWrapper) Wrap(c *Context, v reflect.Value) (data.Value, error) {
 func (w *mapWrapper) Unwrap(v data.Value) (reflect.Value, error) {
 	s, ok := v.(data.Sequence)
 	if !ok {
-		return _emptyValue, errors.New(ErrValueMustBeSequence)
+		return _zero, errors.New(ErrValueMustBeSequence)
 	}
 	in, err := sequence.ToObject(s)
 	if err != nil {
-		return _emptyValue, err
+		return _zero, err
 	}
 	out := reflect.MakeMapWithSize(w.typ, in.Count())
 	for f, r, ok := in.Split(); ok; f, r, ok = r.Split() {
@@ -69,11 +69,11 @@ func (w *mapWrapper) Unwrap(v data.Value) (reflect.Value, error) {
 		v := p.Cdr()
 		uk, err := w.key.Unwrap(k)
 		if err != nil {
-			return _emptyValue, err
+			return _zero, err
 		}
 		uv, err := w.value.Unwrap(v)
 		if err != nil {
-			return _emptyValue, err
+			return _zero, err
 		}
 		out.SetMapIndex(uk, uv)
 	}

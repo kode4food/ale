@@ -76,18 +76,18 @@ func (w *structWrapper) Wrap(c *Context, v reflect.Value) (data.Value, error) {
 func (w *structWrapper) Unwrap(v data.Value) (reflect.Value, error) {
 	s, ok := v.(data.Sequence)
 	if !ok {
-		return _emptyValue, errors.New(ErrValueMustBeSequence)
+		return _zero, errors.New(ErrValueMustBeSequence)
 	}
 	in, err := sequence.ToObject(s)
 	if err != nil {
-		return _emptyValue, err
+		return _zero, err
 	}
 	out := reflect.New(w.typ).Elem()
 	for _, w := range w.fields {
 		if v, ok := in.Get(w.kwd); ok {
 			v, err := w.Unwrap(v)
 			if err != nil {
-				return _emptyValue, err
+				return _zero, err
 			}
 			out.Field(w.idx).Set(v)
 		}
