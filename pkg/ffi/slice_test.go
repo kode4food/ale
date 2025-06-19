@@ -49,3 +49,18 @@ func TestSliceUnwrap(t *testing.T) {
 	as.Equal(I(16), out[1])
 	as.Equal(I(26), out[2])
 }
+
+func TestByteSliceUnwrap(t *testing.T) {
+	as := assert.New(t)
+	f := ffi.MustWrap(func(a []byte) []byte {
+		return basics.Map(a, func(i byte) byte {
+			return i + 1
+		})
+	}).(data.Procedure)
+
+	out := f.Call(data.Bytes{1, 2, 3}).(data.Bytes)
+	as.Equal(3, len(out))
+	as.Equal(byte(2), out[0])
+	as.Equal(byte(3), out[1])
+	as.Equal(byte(4), out[2])
+}

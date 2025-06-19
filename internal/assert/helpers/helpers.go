@@ -7,8 +7,12 @@ import (
 )
 
 // B constructs a Bool
-func B(value bool) data.Bool {
-	return data.Bool(value)
+func B(v bool) data.Bool {
+	return data.Bool(v)
+}
+
+func BT(v byte) data.Byte {
+	return data.Byte(v)
 }
 
 // C constructs a Cons
