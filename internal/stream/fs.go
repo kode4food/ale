@@ -3,6 +3,7 @@ package stream
 import (
 	"fmt"
 	"io/fs"
+	"unsafe"
 
 	"github.com/kode4food/ale/internal/types"
 	"github.com/kode4food/ale/pkg/data"
@@ -137,7 +138,9 @@ func createReader(f fs.File, s fs.FileInfo, args ...data.Value) data.Value {
 		}
 		return NewReader(f, input)
 	case ReadString:
-		return data.String(readAll(f, s.Size()))
+		b := readAll(f, s.Size())
+		s := unsafe.String(&b[0], len(b))
+		return data.String(s)
 	case ReadLines:
 		return NewReader(f, LineInput)
 	default:

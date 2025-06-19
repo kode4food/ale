@@ -32,6 +32,17 @@ func (b Byte) String() string {
 	return fmt.Sprintf("%d", b)
 }
 
+func NewBytes(v ...Value) Bytes {
+	if len(v) == 0 {
+		return EmptyBytes
+	}
+	res := make(Bytes, len(v))
+	for i, b := range v {
+		res[i] = byte(mustToByte(b))
+	}
+	return res
+}
+
 func (b Bytes) Count() int {
 	return len(b)
 }

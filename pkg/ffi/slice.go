@@ -7,19 +7,37 @@ import (
 	"github.com/kode4food/ale/pkg/data"
 )
 
-type sliceWrapper struct {
-	typ  reflect.Type
-	elem Wrapper
-}
+type (
+	sliceWrapper struct {
+		typ  reflect.Type
+		elem Wrapper
+	}
+
+	byteSliceWrapper struct {
+		typ reflect.Type
+	}
+)
+
+var bytesZero = reflect.ValueOf([]byte{})
 
 func makeWrappedSlice(t reflect.Type) (Wrapper, error) {
-	w, err := WrapType(t.Elem())
+	te := t.Elem()
+	if te.Kind() == reflect.Uint8 {
+		return wrapByteSlice(t)
+	}
+	w, err := WrapType(te)
 	if err != nil {
 		return nil, err
 	}
 	return &sliceWrapper{
 		typ:  t,
 		elem: w,
+	}, nil
+}
+
+func wrapByteSlice(t reflect.Type) (Wrapper, error) {
+	return &byteSliceWrapper{
+		typ: t,
 	}, nil
 }
 
@@ -96,4 +114,22 @@ func (w *sliceWrapper) unwrapUncounted(
 		out = reflect.Append(out, v)
 	}
 	return out, nil
+}
+
+func (w *byteSliceWrapper) Wrap(
+	_ *Context, v reflect.Value,
+) (data.Value, error) {
+	m := v.Interface().([]byte)
+	return data.Bytes(m), nil
+}
+
+func (w *byteSliceWrapper) Unwrap(v data.Value) (reflect.Value, error) {
+	switch v := v.(type) {
+	case data.Bytes:
+		return reflect.ValueOf([]byte(v)), nil
+	case data.String:
+		return reflect.ValueOf([]byte(v)), nil
+	default:
+		return bytesZero, errors.New(ErrValueMustBeString)
+	}
 }
