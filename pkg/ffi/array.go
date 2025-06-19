@@ -112,6 +112,9 @@ func (b *byteArrayWrapper) Unwrap(v data.Value) (reflect.Value, error) {
 	if err != nil {
 		return _zero, err
 	}
+	if len(in) != b.len {
+		return _zero, fmt.Errorf(ErrBadSliceLength, b.len, len(in))
+	}
 	copy(out.Bytes(), in)
 	return out, nil
 }
