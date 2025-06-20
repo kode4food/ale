@@ -32,10 +32,12 @@ func (e *EvalWrapped) EvalTo(src string, en Env, expect data.Value) {
 	ns := testEnv.GetAnonymous()
 	for n, v := range en {
 		v, err := ffi.Wrap(v)
-		e.Nil(err)
-		e.Nil(env.BindPublic(ns, n, v))
+		if e.NoError(err) {
+			e.NoError(env.BindPublic(ns, n, v))
+		}
 	}
 	res, err := eval.String(ns, data.String(src))
-	e.Nil(err)
-	e.Equal(expect, res)
+	if e.NoError(err) {
+		e.Equal(expect, res)
+	}
 }

@@ -16,23 +16,28 @@ func (w *Wrapper) IsNotDeclared(ns env.Namespace, n data.Local) {
 func (w *Wrapper) IsNotBound(ns env.Namespace, n data.Local) {
 	w.Helper()
 	e, in, err := ns.Resolve(n)
-	w.NotNil(e)
-	w.NotNil(in)
-	w.Nil(err)
-	w.False(e.IsBound())
-	v, err := e.Value()
-	w.Nil(v)
-	w.NotNil(err)
+	if w.NoError(err) {
+		w.NotNil(e)
+		w.NotNil(in)
+		w.False(e.IsBound())
+
+		v, err := e.Value()
+		w.Nil(v)
+		w.NotNil(err)
+	}
 }
 
 func (w *Wrapper) IsBound(ns env.Namespace, n data.Local) data.Value {
 	w.Helper()
 	e, in, err := ns.Resolve(n)
-	w.NotNil(e)
-	w.NotNil(in)
-	w.Nil(err)
-	w.True(e.IsBound())
-	v, err := e.Value()
-	w.Nil(err)
-	return v
+	if w.NoError(err) {
+		w.NotNil(e)
+		w.NotNil(in)
+
+		w.True(e.IsBound())
+		v, err := e.Value()
+		w.NoError(err)
+		return v
+	}
+	return nil
 }
