@@ -1,6 +1,7 @@
 package ffi_test
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/kode4food/ale/internal/assert"
@@ -8,6 +9,11 @@ import (
 	"github.com/kode4food/ale/pkg/data"
 	"github.com/kode4food/ale/pkg/ffi"
 )
+
+type ArrayTest struct {
+	Bytes [3]byte `ale:"bytes"`
+	Ints  [3]int  `ale:"ints"`
+}
 
 func TestArrayWrap(t *testing.T) {
 	as := assert.New(t)
@@ -75,17 +81,54 @@ func TestArrayEval(t *testing.T) {
 
 func TestByteArrayUnwrap(t *testing.T) {
 	as := assert.New(t)
-	f := ffi.MustWrap(func(a [3]byte) [3]byte {
+	f1 := ffi.MustWrap(func(a [3]byte) [3]byte {
 		res := [3]byte{}
 		for i, v := range a {
 			res[i] = v * 2
 		}
 		return res
 	}).(data.Procedure)
-	out := f.Call(data.Bytes{1, 2, 3}).(data.Bytes)
-	as.NotNil(out)
-	as.Equal(3, len(out))
-	as.Equal(byte(2), out[0])
-	as.Equal(byte(4), out[1])
-	as.Equal(byte(6), out[2])
+	out1 := f1.Call(data.Bytes{1, 2, 3}).(data.Bytes)
+	as.NotNil(out1)
+	as.Equal(3, len(out1))
+	as.Equal(byte(2), out1[0])
+	as.Equal(byte(4), out1[1])
+	as.Equal(byte(6), out1[2])
+
+	f2 := ffi.MustWrap(func(a [3]byte) string {
+		res := ""
+		for _, v := range a {
+			res += fmt.Sprintf("%d", v)
+		}
+		return res
+	}).(data.Procedure)
+
+	out2 := f2.Call(data.Bytes{1, 2, 3}).(data.String)
+	as.NotNil(out2)
+	as.Equal(3, len(out2))
+	as.Equal("123", string(out2))
+
+	out3 := f2.Call(S("123")).(data.String)
+	as.NotNil(out3)
+	as.Equal(6, len(out3))
+	as.Equal("495051", string(out3))
+}
+
+func TestByteArrayStruct(t *testing.T) {
+	as := NewWrapped(t)
+	as.EvalTo(
+		`(d {:bytes "123"})`,
+		Env{
+			"d": func(in ArrayTest) (res ArrayTest) {
+				for i, x := range in.Bytes {
+					res.Bytes[i] = x * 2
+				}
+				return
+			},
+		},
+		O(
+			C(K("bytes"), data.Bytes{98, 100, 102}),
+			C(K("ints"), V(I(0), I(0), I(0))),
+		),
+	)
 }
