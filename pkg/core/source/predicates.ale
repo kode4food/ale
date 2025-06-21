@@ -29,6 +29,7 @@
 (define-predicate is-appendable "appendable")
 (define-predicate is-atom "atom")
 (define-predicate is-boolean "boolean")
+(define-predicate is-bytes "bytes")
 (define-predicate is-cons "cons")
 (define-predicate is-counted "counted")
 (define-predicate is-empty "empty")

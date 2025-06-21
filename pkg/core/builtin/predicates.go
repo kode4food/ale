@@ -21,6 +21,7 @@ const (
 	AtomKey      = data.Keyword("atom")
 	AppenderKey  = data.Keyword("appender")
 	BooleanKey   = data.Keyword("boolean")
+	BytesKey     = data.Keyword("bytes")
 	ConsKey      = data.Keyword("cons")
 	CountedKey   = data.Keyword("counted")
 	ProcedureKey = data.Keyword("procedure")
@@ -57,6 +58,7 @@ var (
 
 		AnyKey:       data.MakeTypePredicate(types.BasicAny),
 		BooleanKey:   data.MakeTypePredicate(types.BasicBoolean),
+		BytesKey:     data.MakeTypePredicate(types.BasicBytes),
 		ConsKey:      data.MakeTypePredicate(types.BasicCons),
 		ProcedureKey: data.MakeTypePredicate(types.BasicProcedure),
 		KeywordKey:   data.MakeTypePredicate(types.BasicKeyword),

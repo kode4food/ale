@@ -101,6 +101,7 @@
 ;; type-based predicates
 (make-predicate is-any       :any)
 (make-predicate is-boolean   :boolean)
+(make-predicate is-bytes     :bytes)
 (make-predicate is-cons      :cons)
 (make-predicate is-keyword   :keyword)
 (make-predicate is-macro     :macro)

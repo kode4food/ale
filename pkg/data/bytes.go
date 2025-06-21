@@ -25,7 +25,6 @@ var (
 	EmptyBytes Bytes
 
 	bytesSalt = rand.Uint64()
-	bytesType = types.MakeBasic("bytes")
 )
 
 func NewBytes(vals ...Value) Bytes {
@@ -200,7 +199,7 @@ func (b Bytes) String() string {
 }
 
 func (Bytes) Type() types.Type {
-	return bytesType
+	return types.BasicBytes
 }
 
 func (b Bytes) HashCode() uint64 {

@@ -19,6 +19,7 @@ type (
 
 var (
 	BasicBoolean   = MakeBasic("boolean")
+	BasicBytes     = MakeBasic("bytes")
 	BasicKeyword   = MakeBasic("keyword")
 	BasicProcedure = MakeBasic("procedure")
 	BasicNull      = MakeBasic("null")
