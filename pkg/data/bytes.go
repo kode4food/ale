@@ -11,14 +11,10 @@ import (
 	"github.com/kode4food/ale/internal/types"
 )
 
-type (
-	Bytes []byte
-	Byte  byte
-)
+type Bytes []byte
 
 const (
 	ErrIntegerOutOfRange = "integer out of byte range: %d"
-	ErrExpectedByte      = "byte expected: %s"
 )
 
 var (
@@ -56,7 +52,7 @@ func (b Bytes) Count() int {
 
 func (b Bytes) ElementAt(index int) (Value, bool) {
 	if index >= 0 && index < len(b) {
-		return Byte(b[index]), true
+		return Integer(b[index]), true
 	}
 	return Null, false
 }
@@ -67,7 +63,7 @@ func (b Bytes) IsEmpty() bool {
 
 func (b Bytes) Car() Value {
 	if len(b) > 0 {
-		return Byte(b[0])
+		return Integer(b[0])
 	}
 	return Null
 }
@@ -84,9 +80,9 @@ func (b Bytes) Split() (Value, Sequence, bool) {
 	case 0:
 		return Null, EmptyBytes, false
 	case 1:
-		return Byte(b[0]), EmptyBytes, true
+		return Integer(b[0]), EmptyBytes, true
 	default:
-		return Byte(b[0]), b[1:], true
+		return Integer(b[0]), b[1:], true
 	}
 }
 
@@ -192,7 +188,7 @@ func (b Bytes) String() string {
 		if i > 0 {
 			buf.WriteByte(' ')
 		}
-		buf.WriteString(Byte(v).String())
+		buf.WriteString(Integer(v).String())
 	}
 	buf.WriteString(lang.BytesEnd)
 	return buf.String()
@@ -206,18 +202,7 @@ func (b Bytes) HashCode() uint64 {
 	return bytesSalt ^ HashBytes(b)
 }
 
-func (b Byte) Equal(other Value) bool {
-	if o, ok := other.(Byte); ok {
-		return b == o
-	}
-	return false
-}
-
-func (b Byte) String() string {
-	return fmt.Sprintf("%d", b)
-}
-
-func mustToByte(v Value) Byte {
+func mustToByte(v Value) byte {
 	b, err := toByte(v)
 	if err != nil {
 		panic(err)
@@ -225,16 +210,12 @@ func mustToByte(v Value) Byte {
 	return b
 }
 
-func toByte(v Value) (Byte, error) {
-	switch v := v.(type) {
-	case Byte:
-		return v, nil
-	case Integer:
+func toByte(v Value) (byte, error) {
+	if v, ok := v.(Integer); ok {
 		if v < 0 || v > math.MaxUint8 {
 			return 0, fmt.Errorf(ErrIntegerOutOfRange, v)
 		}
-		return Byte(v), nil
-	default:
-		return 0, fmt.Errorf(ErrExpectedByte, v)
+		return byte(v), nil
 	}
+	return 0, fmt.Errorf(ErrExpectedInteger, v)
 }

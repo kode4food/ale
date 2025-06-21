@@ -11,10 +11,6 @@ func B(v bool) data.Bool {
 	return data.Bool(v)
 }
 
-func BT(v byte) data.Byte {
-	return data.Byte(v)
-}
-
 // C constructs a Cons
 func C(k, v data.Value) *data.Cons {
 	return data.NewCons(k, v)
