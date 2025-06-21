@@ -262,17 +262,17 @@ func (p *parser) identifier() (data.Value, error) {
 	return data.ParseSymbol(n)
 }
 
-func makeDottedList(v ...data.Value) data.Value {
-	l := len(v)
-	if res, ok := v[l-1].(*data.List); ok {
+func makeDottedList(vals ...data.Value) data.Value {
+	l := len(vals)
+	if res, ok := vals[l-1].(*data.List); ok {
 		for i := l - 2; i >= 0; i-- {
-			res = res.Prepend(v[i]).(*data.List)
+			res = res.Prepend(vals[i]).(*data.List)
 		}
 		return res
 	}
-	var res = data.NewCons(v[l-2], v[l-1])
+	var res = data.NewCons(vals[l-2], vals[l-1])
 	for i := l - 3; i >= 0; i-- {
-		res = data.NewCons(v[i], res)
+		res = data.NewCons(vals[i], res)
 	}
 	return res
 }

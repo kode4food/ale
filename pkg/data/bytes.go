@@ -12,8 +12,8 @@ import (
 )
 
 type (
-	Byte  byte
 	Bytes []byte
+	Byte  byte
 )
 
 const (
@@ -27,17 +27,6 @@ var (
 	bytesSalt = rand.Uint64()
 	bytesType = types.MakeBasic("bytes")
 )
-
-func (b Byte) Equal(other Value) bool {
-	if o, ok := other.(Byte); ok {
-		return b == o
-	}
-	return false
-}
-
-func (b Byte) String() string {
-	return fmt.Sprintf("%d", b)
-}
 
 func NewBytes(vals ...Value) Bytes {
 	res, err := ValuesToBytes(vals...)
@@ -216,6 +205,17 @@ func (Bytes) Type() types.Type {
 
 func (b Bytes) HashCode() uint64 {
 	return bytesSalt ^ HashBytes(b)
+}
+
+func (b Byte) Equal(other Value) bool {
+	if o, ok := other.(Byte); ok {
+		return b == o
+	}
+	return false
+}
+
+func (b Byte) String() string {
+	return fmt.Sprintf("%d", b)
 }
 
 func mustToByte(v Value) Byte {
