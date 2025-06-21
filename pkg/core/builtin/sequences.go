@@ -11,6 +11,9 @@ import (
 const ErrIndexOutOfBounds = "index out of bounds"
 
 var (
+	// Bytes constructs a new byte vector
+	Bytes = makeConstructor(data.NewBytes)
+
 	// List constructs a new list
 	List = makeConstructor(data.NewList)
 

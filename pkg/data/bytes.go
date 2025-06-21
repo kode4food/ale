@@ -14,6 +14,11 @@ type (
 	Bytes []byte
 )
 
+const (
+	ErrIntegerOutOfRange = "integer out of byte range: %d"
+	ErrExpectedByte      = "byte expected: %s"
+)
+
 var (
 	EmptyBytes Bytes
 
@@ -187,22 +192,23 @@ func (b Bytes) HashCode() uint64 {
 }
 
 func mustToByte(v Value) Byte {
-	if b, ok := toByte(v); ok {
-		return b
+	b, err := toByte(v)
+	if err != nil {
+		panic(err)
 	}
-	panic(fmt.Errorf("not a valid byte value: %s", v))
+	return b
 }
 
-func toByte(v Value) (Byte, bool) {
-	switch e := v.(type) {
+func toByte(v Value) (Byte, error) {
+	switch v := v.(type) {
 	case Byte:
-		return e, true
+		return v, nil
 	case Integer:
-		if e < 0 || e > math.MaxUint8 {
-			panic("integer out of byte range")
+		if v < 0 || v > math.MaxUint8 {
+			return 0, fmt.Errorf(ErrIntegerOutOfRange, v)
 		}
-		return Byte(e), true
+		return Byte(v), nil
 	default:
-		return 0, false
+		return 0, fmt.Errorf(ErrExpectedByte, v)
 	}
 }

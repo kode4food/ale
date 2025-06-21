@@ -20,6 +20,7 @@
 ;; sequence
 (def-builtin append)
 (def-builtin assoc)
+(def-builtin bytes)
 (def-builtin dissoc)
 (def-builtin get)
 (def-builtin length)

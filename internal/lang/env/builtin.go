@@ -7,6 +7,7 @@ const (
 
 	Append       = data.Local("append")
 	Assoc        = data.Local("assoc")
+	Bytes        = data.Local("bytes")
 	Chan         = data.Local("chan")
 	CurrentTime  = data.Local("current-time")
 	Defer        = data.Local("defer*")
