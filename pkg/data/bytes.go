@@ -5,7 +5,9 @@ import (
 	"math"
 	"math/rand/v2"
 	"slices"
+	"strings"
 
+	"github.com/kode4food/ale/internal/lang"
 	"github.com/kode4food/ale/internal/types"
 )
 
@@ -37,15 +39,27 @@ func (b Byte) String() string {
 	return fmt.Sprintf("%d", b)
 }
 
-func NewBytes(v ...Value) Bytes {
-	if len(v) == 0 {
-		return EmptyBytes
-	}
-	res := make(Bytes, len(v))
-	for i, b := range v {
-		res[i] = byte(mustToByte(b))
+func NewBytes(vals ...Value) Bytes {
+	res, err := ValuesToBytes(vals...)
+	if err != nil {
+		panic(err)
 	}
 	return res
+}
+
+func ValuesToBytes(vals ...Value) (Bytes, error) {
+	if len(vals) == 0 {
+		return EmptyBytes, nil
+	}
+	res := make(Bytes, len(vals))
+	for i, v := range vals {
+		b, err := toByte(v)
+		if err != nil {
+			return nil, err
+		}
+		res[i] = byte(b)
+	}
+	return res, nil
 }
 
 func (b Bytes) Count() int {
@@ -181,6 +195,19 @@ func (b Bytes) Equal(other Value) bool {
 		return slices.Equal(b, o)
 	}
 	return false
+}
+
+func (b Bytes) String() string {
+	var buf strings.Builder
+	buf.WriteString(lang.BytesStart)
+	for i, v := range b {
+		if i > 0 {
+			buf.WriteByte(' ')
+		}
+		buf.WriteString(Byte(v).String())
+	}
+	buf.WriteString(lang.BytesEnd)
+	return buf.String()
 }
 
 func (Bytes) Type() types.Type {

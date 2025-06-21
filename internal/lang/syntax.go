@@ -19,6 +19,8 @@ const (
 	ObjectStart = `{`
 	VectorEnd   = `]`
 	VectorStart = `[`
+	BytesStart  = ReaderPrefix + `b` + VectorStart
+	BytesEnd    = VectorEnd
 
 	// Pattern Matches
 
@@ -30,8 +32,8 @@ const (
 
 	KwdPrefix    = `:`
 	Keyword      = KwdPrefix + notStruct + `+`
-	PrePrefix    = `#`
-	Preprocessor = PrePrefix + notStruct + `*`
+	ReaderPrefix = `#`
+	Preprocessor = ReaderPrefix + notStruct + `*`
 	Identifier   = notStructPfx + notStruct + `*`
 
 	// DomainSeparator is the character used to separate a domain from the

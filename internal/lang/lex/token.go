@@ -29,6 +29,7 @@ const (
 	Number
 	ListStart
 	ListEnd
+	BytesStart
 	VectorStart
 	VectorEnd
 	ObjectStart

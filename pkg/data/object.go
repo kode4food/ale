@@ -61,13 +61,13 @@ func NewObject(pairs ...Pair) *Object {
 }
 
 // ValuesToObject interprets a set of Values as an Object
-func ValuesToObject(v ...Value) (*Object, error) {
-	if len(v)%2 != 0 {
+func ValuesToObject(vals ...Value) (*Object, error) {
+	if len(vals)%2 != 0 {
 		return nil, errors.New(ErrMapNotPaired)
 	}
 	res := EmptyObject
-	for i := len(v) - 2; i >= 0; i -= 2 {
-		res = res.Put(NewCons(v[i], v[i+1])).(*Object)
+	for i := len(vals) - 2; i >= 0; i -= 2 {
+		res = res.Put(NewCons(vals[i], vals[i+1])).(*Object)
 	}
 	return res, nil
 }

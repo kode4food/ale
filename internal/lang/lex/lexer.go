@@ -68,6 +68,7 @@ var (
 
 	Structure = Matchers{
 		prefixMatcher(lang.ListStart, tokenState(ListStart)),
+		prefixMatcher(lang.BytesStart, tokenState(BytesStart)),
 		prefixMatcher(lang.VectorStart, tokenState(VectorStart)),
 		prefixMatcher(lang.ObjectStart, tokenState(ObjectStart)),
 		prefixMatcher(lang.ListEnd, tokenState(ListEnd)),

@@ -35,10 +35,10 @@ var (
 )
 
 // NewList creates a new List instance
-func NewList(v ...Value) *List {
+func NewList(vals ...Value) *List {
 	var res *List
-	for i, u := len(v)-1, 1; i >= 0; i, u = i-1, u+1 {
-		f := v[i]
+	for i, u := len(vals)-1, 1; i >= 0; i, u = i-1, u+1 {
+		f := vals[i]
 		res = &List{
 			first: f,
 			rest:  res,

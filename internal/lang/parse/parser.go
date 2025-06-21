@@ -65,6 +65,7 @@ var (
 	syntaxSym   = env.RootSymbol("syntax-quote")
 	unquoteSym  = env.RootSymbol("unquote")
 	splicingSym = env.RootSymbol("unquote-splicing")
+	bytesSym    = env.RootSymbol("bytes")
 
 	specialNames = map[data.String]data.Value{
 		data.TrueLiteral:  data.True,
@@ -125,6 +126,8 @@ func (p *parser) value(t *lex.Token) (data.Value, error) {
 		return p.prefixed(splicingSym)
 	case lex.ListStart:
 		return p.processInclude(p.list())
+	case lex.BytesStart:
+		return p.bytes()
 	case lex.VectorStart:
 		return p.vector()
 	case lex.ObjectStart:
@@ -192,6 +195,17 @@ func (p *parser) list() (data.Value, error) {
 	return nil, p.error(ErrListNotClosed)
 }
 
+func (p *parser) bytes() (data.Value, error) {
+	v, err := p.nonDotted(lex.VectorEnd)
+	if err != nil {
+		return nil, err
+	}
+	if res, err := data.ValuesToBytes(v...); err == nil {
+		return res, nil
+	}
+	return data.NewList(append(data.Vector{bytesSym}, v...)...), nil
+}
+
 func (p *parser) vector() (data.Value, error) {
 	return p.nonDotted(lex.VectorEnd)
 }
@@ -201,11 +215,7 @@ func (p *parser) object() (data.Value, error) {
 	if err != nil {
 		return nil, err
 	}
-	res, err := data.ValuesToObject(v...)
-	if err != nil {
-		return nil, err
-	}
-	return res, nil
+	return data.ValuesToObject(v...)
 }
 
 func (p *parser) nonDotted(endToken lex.TokenType) (data.Vector, error) {
@@ -249,12 +259,7 @@ func (p *parser) identifier() (data.Value, error) {
 	if v, ok := specialNames[n]; ok {
 		return v, nil
 	}
-
-	sym, err := data.ParseSymbol(n)
-	if err != nil {
-		return nil, err
-	}
-	return sym, nil
+	return data.ParseSymbol(n)
 }
 
 func makeDottedList(v ...data.Value) data.Value {
