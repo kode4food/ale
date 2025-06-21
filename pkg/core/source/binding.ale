@@ -4,14 +4,14 @@
 (define-macro assert-args
   [() null]
   [(clause) (raise "assert-args clauses must be paired")]
-  [clauses  `(if ,(clauses 0)
+  [clauses  `(if ,(0 clauses)
                  (assert-args ,@(rest (rest clauses)))
-                 (raise ,(clauses 1)))])
+                 (raise ,(1 clauses)))])
 
 (define :private (is-binding-clause clause)
   (and (is-vector clause)
        (= 2 (length clause))
-       (is-local (clause 0))))
+       (is-local (0 clause))))
 
 (define :private (make-bindings value)
   (let-rec
@@ -32,8 +32,8 @@
   (let [b (make-bindings bindings)]
     (let ([binding (first b)]
           [next    (rest b)])
-      (let ([name  (binding 0)]
-            [value (binding 1)])
+      (let ([name  (0 binding)]
+            [value (1 binding)])
         (if (is-empty next)
             `(let [,name ,value] ,@body)
             `(let [,name ,value]

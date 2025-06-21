@@ -56,7 +56,7 @@
             (seq? clauses) "catch branch not paired")
           (lazy-seq
             (let* ([clause (first clauses)]
-                   [var    ((clause 1) 0)]
+                   [var    (0 (1 clause))]
                    [expr   (rest (rest clause))])
               (cons (list 'ale/let
                           [var err-sym]
@@ -95,8 +95,8 @@
 
               [(seq? recover)
                `(let ([rec# (recover ,(try-body block) ,(try-catch recover))]
-                      [err# (rec# 0)]
-                      [res# (rec# 1)])
+                      [err# (0 rec#)]
+                      [res# (1 rec#)])
                   (if err# (raise res#) res#))]
 
               [(seq? block) `(begin ,@block)]

@@ -115,8 +115,8 @@
       (!empty? b) "at least one for binding is required")
     (let* ([this (first b)]
            [next (rest b)]
-           [sym  (this 0)]
-           [expr (this 1)])
+           [sym  (0 this)]
+           [expr (1 this)])
       (if (empty? next)
           `(map (lambda (,sym) ,@body) (seq! ,expr))
           `(mapcat (lambda (,sym) (for ,next ,@body)) (seq! ,expr))))))

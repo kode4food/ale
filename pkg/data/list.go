@@ -1,10 +1,12 @@
 package data
 
 import (
+	"fmt"
 	"math/rand/v2"
 	"strings"
 	"sync/atomic"
 
+	"github.com/kode4food/ale/internal/debug"
 	"github.com/kode4food/ale/internal/lang"
 	"github.com/kode4food/ale/internal/types"
 )
@@ -122,7 +124,59 @@ func (l *List) ElementAt(index int) (Value, bool) {
 }
 
 func (l *List) Call(args ...Value) Value {
-	return indexedCall(l, args)
+	switch len(args) {
+	case 1:
+		start := int(args[0].(Integer))
+		res, ok := l.from(start)
+		if !ok {
+			panic(fmt.Errorf(ErrInvalidStartIndex, start))
+		}
+		return res
+
+	case 2:
+		start := int(args[0].(Integer))
+		end := int(args[1].(Integer))
+		curr, ok := l.from(start)
+		if !ok {
+			panic(fmt.Errorf(ErrInvalidIndexes, start, end))
+		}
+		res, ok := curr.take(end - start)
+		if !ok {
+			panic(fmt.Errorf(ErrInvalidIndexes, start, end))
+		}
+		return res
+	default:
+		panic(debug.ProgrammerErrorf("invalid argument count: %d", len(args)))
+	}
+}
+
+func (l *List) from(idx int) (*List, bool) {
+	if l == nil || idx < 0 || idx >= l.count {
+		return nil, false
+	}
+
+	e := l
+	for i := 0; i < idx && e != nil; i++ {
+		e = e.rest
+	}
+	return e, true
+}
+
+func (l *List) take(count int) (*List, bool) {
+	if l == nil || count < 0 || count > l.count {
+		return nil, false
+	}
+	if count == 0 {
+		return Null, true
+	}
+
+	res := make(Vector, 0, count)
+	curr := l
+	for range count {
+		res = append(res, curr.first)
+		curr = curr.rest
+	}
+	return NewList(res...), true
 }
 
 func (l *List) CheckArity(argc int) error {

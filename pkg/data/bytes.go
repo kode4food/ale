@@ -121,57 +121,11 @@ func (b Bytes) IndexOf(v Value) (int, bool) {
 }
 
 func (b Bytes) Call(args ...Value) Value {
-	if len(args) == 1 {
-		return b.callFrom(int(args[0].(Integer)))
-	}
-	return b.callRange(int(args[0].(Integer)), int(args[1].(Integer)))
-}
-
-func (b Bytes) callFrom(idx int) Value {
-	if idx < 0 {
-		panic(fmt.Errorf(ErrInvalidStartIndex, idx))
-	}
-	if ns, ok := b.from(idx); ok {
-		return ns
-	}
-	panic(fmt.Errorf(ErrInvalidStartIndex, idx))
-}
-
-func (b Bytes) callRange(idx, end int) Value {
-	if idx < 0 || end < idx {
-		panic(fmt.Errorf(ErrInvalidIndexes, idx, end))
-	}
-
-	ns, ok := b.from(idx)
-	if !ok || len(ns) == 0 && end > idx {
-		panic(fmt.Errorf(ErrInvalidIndexes, idx, end))
-	}
-
-	if res, ok := ns.take(end - idx); ok {
-		return res
-	}
-	panic(fmt.Errorf(ErrInvalidIndexes, idx, end))
+	return Bytes(sliceRangedCall(b, args))
 }
 
 func (b Bytes) CheckArity(argc int) error {
 	return CheckRangedArity(1, 2, argc)
-}
-
-func (b Bytes) from(idx int) (Bytes, bool) {
-	_, r, ok := b.splitAt(idx)
-	return r, ok
-}
-
-func (b Bytes) take(count int) (Bytes, bool) {
-	f, _, ok := b.splitAt(count)
-	return f, ok
-}
-
-func (b Bytes) splitAt(idx int) (Bytes, Bytes, bool) {
-	if idx >= 0 && idx < len(b) {
-		return b[:idx], b[idx:], true
-	}
-	return EmptyBytes, EmptyBytes, false
 }
 
 func (b Bytes) Equal(other Value) bool {

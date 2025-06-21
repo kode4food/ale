@@ -44,7 +44,7 @@ func TestMacroExpandEval(t *testing.T) {
 			(seq->list (cons 'str (cons "hello" args))))
 
 		(define-macro foo2 args
-			(foo1 (args 0) (args 1) (args 2)))
+			(foo1 (0 args) (1 args) (2 args)))
 
 		(macroexpand '(foo2 1 2 3))
 	`, S("hello123"))
@@ -54,5 +54,5 @@ func TestBadMacro(t *testing.T) {
 	as := assert.New(t)
 
 	defer as.ExpectPanic(fmt.Errorf(builtin.ErrProcedureRequired, "32"))
-	_ = builtin.Macro.Call(I(32))
+	_ = builtin.Macro.Call(F(32))
 }

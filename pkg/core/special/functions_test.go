@@ -99,8 +99,8 @@ func TestApplyEval(t *testing.T) {
 			[1 2 3])
 	`, F(6))
 
-	e := unexpectedTypeError("integer", "procedure")
-	as.PanicWith(`(apply 32 [1 2 3])`, e)
+	e := unexpectedTypeError("float", "procedure")
+	as.PanicWith(`(apply 32.5 [1 2 3])`, e)
 }
 
 func TestRestFunctionsEval(t *testing.T) {

@@ -27,7 +27,7 @@ func TestListEval(t *testing.T) {
 	as.MustEvalTo(`
 		(define x '(1 2 3 4))
 		(x 2)
-	`, F(3))
+	`, L(I(3), I(4)))
 }
 
 func TestVectorEval(t *testing.T) {
@@ -60,7 +60,7 @@ func TestVectorEval(t *testing.T) {
 	as.MustEvalTo(`
 		(define x [1 2 3 4])
 		(x 2)
-	`, F(3))
+	`, V(I(3), I(4)))
 }
 
 func TestSequencesEval(t *testing.T) {

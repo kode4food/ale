@@ -1,5 +1,11 @@
 package data
 
+import (
+	"fmt"
+
+	"github.com/kode4food/ale/internal/debug"
+)
+
 type (
 	// Sequence interfaces expose a lazily resolved sequence
 	Sequence interface {
@@ -67,19 +73,30 @@ func Last(s Sequence) (Value, bool) {
 	return res, lok
 }
 
-func indexedCall(s Indexed, args Vector) Value {
-	idx := args[0].(Integer)
-	res, ok := s.ElementAt(int(idx))
-	if !ok && len(args) > 1 {
-		return args[1]
-	}
-	return res
-}
-
 func mappedCall(m Mapped, args Vector) Value {
 	res, ok := m.Get(args[0])
 	if !ok && len(args) > 1 {
 		return args[1]
 	}
 	return res
+}
+
+func sliceRangedCall[T any](s []T, args Vector) []T {
+	switch len(args) {
+	case 1:
+		start := int(args[0].(Integer))
+		if start < 0 || start > len(s) {
+			panic(fmt.Errorf(ErrInvalidStartIndex, start))
+		}
+		return s[start:]
+	case 2:
+		start := int(args[0].(Integer))
+		end := int(args[1].(Integer))
+		if start < 0 || end < start || end > len(s) {
+			panic(fmt.Errorf(ErrInvalidIndexes, start, end))
+		}
+		return s[start:end]
+	default:
+		panic(debug.ProgrammerErrorf("invalid argument count: %d", len(args)))
+	}
 }

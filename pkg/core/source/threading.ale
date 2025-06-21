@@ -47,8 +47,8 @@
     (!empty? forms)             "at least one threaded form is required")
   (let ([step  (thread-seq->list (first forms))]
         [next  (rest forms)]
-        [name  (binding 0)]
-        [value (binding 1)])
+        [name  (0 binding)]
+        [value (1 binding)])
     (if (empty? next)
         `(let [,name ,value] ,step)
         `(let [,name ,value]
@@ -59,8 +59,8 @@
     (assert-args
       (vector? clause)      "clause must be a vector"
       (= 2 (length clause)) "clause must be paired")
-    (let ([pred (clause 0)]
-          [form (clause 1)])
+    (let ([pred (0 clause)]
+          [form (1 clause)])
       `((lambda (val) (if ,pred (,threader val ,form) val))))))
 
 (define-macro cond->

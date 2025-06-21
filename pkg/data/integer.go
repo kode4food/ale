@@ -148,6 +148,21 @@ func (Integer) IsNegInf() bool {
 	return false
 }
 
+// Call turns Integer into a Caller, allowing it to behave similar to Nth
+func (l Integer) Call(args ...Value) Value {
+	m := args[0].(Indexed)
+	res, ok := m.ElementAt(int(l))
+	if !ok && len(args) > 1 {
+		return args[1]
+	}
+	return res
+}
+
+// CheckArity performs a compile-time arity check for the Integer
+func (l Integer) CheckArity(argc int) error {
+	return CheckRangedArity(1, 2, argc)
+}
+
 // Equal compares this Integer to another for equality
 func (l Integer) Equal(r Value) bool {
 	return l == r

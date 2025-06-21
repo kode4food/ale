@@ -1,6 +1,7 @@
 package data_test
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/kode4food/ale/internal/assert"
@@ -60,14 +61,19 @@ func TestListReverse(t *testing.T) {
 	as.String("()", data.Null.Reverse())
 }
 
-func TestListCaller(t *testing.T) {
+func TestListCall(t *testing.T) {
 	as := assert.New(t)
 
-	l1 := data.NewList(I(99), I(37))
-	as.Number(99, l1.Call(I(0)))
-	as.Number(37, l1.Call(I(1)))
-	as.Nil(l1.Call(I(2)))
-	as.String("defaulted", l1.Call(I(2), S("defaulted")))
+	l1 := data.NewList(I(99), I(37), I(56), I(12))
+	as.Equal(L(I(99), I(37), I(56), I(12)), l1.Call(I(0)))
+	as.Equal(L(I(37), I(56), I(12)), l1.Call(I(1)))
+	as.Equal(L(I(37), I(56)), l1.Call(I(1), I(3)))
+
+	testSequenceCallInterface(as, l1)
+	testSequenceCallInterface(as, data.Null)
+
+	defer as.ExpectPanic(fmt.Errorf(data.ErrInvalidStartIndex, 4))
+	as.Nil(l1.Call(I(4)))
 }
 
 func TestListEquality(t *testing.T) {
@@ -122,22 +128,6 @@ func TestEmptyList(t *testing.T) {
 	as.False(ok)
 
 	as.True(types.BasicNull.Equal(l.Type()))
-}
-
-func TestListCall(t *testing.T) {
-	as := assert.New(t)
-
-	l1 := data.NewList(I(1), I(2), I(3), I(99))
-	l2 := data.Null
-
-	as.Number(2, l1.Call(I(1)))
-	as.Nil(l2.Call(I(1)))
-
-	as.String("hello", l1.Call(I(99), S("hello")))
-	as.String("hello", l2.Call(I(99), S("hello")))
-
-	testSequenceCallInterface(as, l1)
-	testSequenceCallInterface(as, l2)
 }
 
 func TestListHashCode(t *testing.T) {
