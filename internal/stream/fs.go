@@ -30,12 +30,10 @@ const (
 const defaultBlockSize = 4096
 
 const (
-	ErrExpectedDirectory    = "expected a directory, got a file: %s"
-	ErrUnknownOpenMode      = "unknown open mode: %s"
-	ErrUnexpectedReadLength = "expected to read %d bytes, got %d"
-	ErrExpectedFile         = "expected a file, got a directory: %s"
-	ErrExpectedBlockSize    = "expected a block size, got: %s"
-	ErrUnexpectedArguments  = "unexpected additional arguments: %s"
+	ErrExpectedDirectory   = "expected a directory, got a file: %s"
+	ErrUnknownOpenMode     = "unknown open mode: %s"
+	ErrExpectedFile        = "expected a file, got a directory: %s"
+	ErrUnexpectedArguments = "unexpected additional arguments: %s"
 )
 
 var fileSystemType = types.MakeBasic("file-system")
@@ -129,7 +127,7 @@ func createReader(f fs.File, s fs.FileInfo, args ...data.Value) data.Value {
 	}
 	switch args[0] {
 	case ReadAll:
-		return readAll(f, s.Size())
+		return readAll(f)
 	case ReadBlocks:
 		size := getBlockSize(defaultBlockSize, args[1:]...)
 		input, err := BlockInput(size)
@@ -138,7 +136,7 @@ func createReader(f fs.File, s fs.FileInfo, args ...data.Value) data.Value {
 		}
 		return NewReader(f, input)
 	case ReadString:
-		b := readAll(f, s.Size())
+		b := readAll(f)
 		s := unsafe.String(&b[0], len(b))
 		return data.String(s)
 	case ReadLines:
@@ -176,15 +174,24 @@ func openFile(fs fs.FS, path string) (fs.File, fs.FileInfo, error) {
 	return f, s, nil
 }
 
-func readAll(f fs.File, size int64) data.Bytes {
+func readAll(f fs.File) data.Bytes {
 	defer func() { _ = f.Close() }()
+	size, err := getFileSize(f)
+	if err != nil {
+		panic(err)
+	}
 	buf := make(data.Bytes, size)
 	l, err := f.Read(buf)
 	if err != nil {
 		panic(err)
 	}
-	if int64(l) != size {
-		panic(fmt.Errorf(ErrUnexpectedReadLength, size, l))
+	return buf[:l:l]
+}
+
+func getFileSize(f fs.File) (int64, error) {
+	fi, err := f.Stat()
+	if err != nil {
+		return 0, err
 	}
-	return buf[:l]
+	return fi.Size(), nil
 }
