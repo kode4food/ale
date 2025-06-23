@@ -12,7 +12,7 @@
     (let ([f (car body)]
           [r (cdr body)])
       (if ({:private #t :macro #t} f #f)
-          (assoc (parse-define r) f #t)
+          (assoc (parse-define r) (f . #t))
           (if (is-cons-or-list f)
               {:name (assert-type :local (car f))
                :lambda #t

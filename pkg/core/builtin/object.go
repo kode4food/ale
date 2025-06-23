@@ -6,9 +6,9 @@ import (
 	"github.com/kode4food/ale/pkg/data"
 )
 
-// ErrAssocRequiresPair is raised when a call to Assoc receives a second
-// argument other than a Pair
-const ErrAssocRequiresPair = "assoc requires a key/value combination or a pair"
+// ErrAssocRequiresPairs is raised when a call to Assoc receives an argument
+// other than a Pair
+const ErrAssocRequiresPairs = "assoc requires one or more pairs"
 
 // Object creates a new object instance
 var Object = data.MakeProcedure(func(args ...data.Value) data.Value {
@@ -29,21 +29,22 @@ var Get = data.MakeProcedure(func(args ...data.Value) data.Value {
 // Assoc returns a new Mapper containing the key/value association
 var Assoc = data.MakeProcedure(func(args ...data.Value) data.Value {
 	s := args[0].(data.Mapper)
-	if len(args) == 3 {
-		p := data.NewCons(args[1], args[2])
-		return s.Put(p)
+	for _, a := range args[1:] {
+		if p, ok := a.(data.Pair); ok {
+			s = s.Put(p).(data.Mapper)
+			continue
+		}
+		panic(errors.New(ErrAssocRequiresPairs))
 	}
-	if p, ok := args[1].(data.Pair); ok {
-		return s.Put(p)
-	}
-	panic(errors.New(ErrAssocRequiresPair))
-}, 2, 3)
+	return s
+}, 2, data.OrMore)
 
 // Dissoc returns a new Mapper with the key removed
 var Dissoc = data.MakeProcedure(func(args ...data.Value) data.Value {
 	s := args[0].(data.Mapper)
-	if _, r, ok := s.Remove(args[1]); ok {
-		return r
+	for _, k := range args[1:] {
+		_, r, _ := s.Remove(k)
+		s = r.(data.Mapper)
 	}
 	return s
-}, 2)
+}, 2, data.OrMore)

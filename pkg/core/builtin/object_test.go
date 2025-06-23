@@ -59,7 +59,7 @@ func TestObjectAssoc(t *testing.T) {
 
 	as.MustEvalTo(`
 		(define o1 {:first "first" :second "second"})
-		(define o2 (assoc o1 :first "first-replaced"))
+		(define o2 (assoc o1 (:first . "first-replaced")))
 		(define o3 (assoc o1 (:first . "also-replaced")))
 		(define o4 (dissoc o1 :first))
 		(define o5 (dissoc {} :first))
@@ -80,7 +80,7 @@ func TestObjectAssoc(t *testing.T) {
 
 	as.PanicWith(`
 		(assoc {} :not-a-pair)
-	`, errors.New(builtin.ErrAssocRequiresPair))
+	`, errors.New(builtin.ErrAssocRequiresPairs))
 
 }
 

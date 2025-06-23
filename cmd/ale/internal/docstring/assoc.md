@@ -12,7 +12,7 @@ Returns a newly mapped sequence wherein the specified key and value are associat
 
 ```scheme
 (define robert {:name "Bob" :age 45})
-(assoc robert :age 46)
+(assoc robert (:age . 46))
 ```
 
 This example returns a copy of _robert_ wherein the value associated with _:age_ has been replaced by the number _46_. The original sequence is unaffected.
