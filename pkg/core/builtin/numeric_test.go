@@ -6,6 +6,7 @@ import (
 
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
+	"github.com/kode4food/ale/internal/runtime"
 	"github.com/kode4food/ale/pkg/data"
 )
 
@@ -46,10 +47,10 @@ func TestNonNumberEval(t *testing.T) {
 
 func TestBadMathsEval(t *testing.T) {
 	as := assert.New(t)
-	e := unexpectedTypeError("string", "number")
+	err := fmt.Errorf(runtime.ErrUnexpectedType, "string", "number")
 
-	as.PanicWith(`(+ 99 "hello")`, e)
-	as.PanicWith(`(+ "hello")`, e)
+	as.PanicWith(`(+ 99 "hello")`, err)
+	as.PanicWith(`(+ "hello")`, err)
 }
 
 func TestBadNumbersEval(t *testing.T) {
@@ -99,7 +100,7 @@ func TestCompareEval(t *testing.T) {
 
 func TestBadCompareEval(t *testing.T) {
 	as := assert.New(t)
-	e := unexpectedTypeError("string", "number")
-	as.PanicWith(`(< 99 "hello")`, e)
-	as.PanicWith(`(< "hello" "there")`, e)
+	err := fmt.Errorf(runtime.ErrUnexpectedType, "string", "number")
+	as.PanicWith(`(< 99 "hello")`, err)
+	as.PanicWith(`(< "hello" "there")`, err)
 }

@@ -7,6 +7,7 @@ import (
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
 	"github.com/kode4food/ale/internal/lang/params"
+	"github.com/kode4food/ale/internal/runtime"
 )
 
 func TestFunctionEval(t *testing.T) {
@@ -24,9 +25,9 @@ func TestFunctionEval(t *testing.T) {
 }
 
 func TestBadFunctionEval(t *testing.T) {
-	symErr := unexpectedTypeError("integer", "local")
+	symErr := fmt.Errorf(runtime.ErrUnexpectedType, "integer", "local")
 	numErr := fmt.Errorf(params.ErrUnexpectedCaseSyntax, "99")
-	vecErr := unexpectedTypeError("integer", "vector")
+	vecErr := fmt.Errorf(runtime.ErrUnexpectedType, "integer", "vector")
 	invalidErr := fmt.Errorf("got number, expected local: 99")
 
 	as := assert.New(t)

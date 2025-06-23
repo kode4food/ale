@@ -1,10 +1,12 @@
 package builtin_test
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
+	"github.com/kode4food/ale/internal/runtime"
 	"github.com/kode4food/ale/internal/sequence"
 	"github.com/kode4food/ale/pkg/core/builtin"
 	"github.com/kode4food/ale/pkg/data"
@@ -101,11 +103,11 @@ func TestTakeDropEval(t *testing.T) {
 
 	as.PanicWith(
 		`(last! (drop 99 57))`,
-		unexpectedTypeError("integer", "pair"),
+		fmt.Errorf(runtime.ErrUnexpectedType, "integer", "pair"),
 	)
 	as.PanicWith(
 		`(last! (take 99 57))`,
-		unexpectedTypeError("integer", "sequence"),
+		fmt.Errorf(runtime.ErrUnexpectedType, "integer", "sequence"),
 	)
 }
 

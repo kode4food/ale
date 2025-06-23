@@ -1,8 +1,8 @@
 ---
 title: "assoc"
-description: "associates a pair with a mapped sequence"
-names: ["assoc"]
-usage: "(assoc seq pair+)"
+description: "associates pairs with a mapped sequence"
+names: ["assoc", "assoc*"]
+usage: "(assoc seq pair) (assoc* seq pair+)"
 tags: ["sequence"]
 ---
 

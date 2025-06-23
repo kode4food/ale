@@ -1,12 +1,12 @@
 ---
 title: "dissoc"
 description: "removes an association from a mapped sequence by key"
-names: ["dissoc"]
-usage: "(dissoc seq key+)"
+names: ["dissoc", "dissoc*"]
+usage: "(dissoc seq key) (dissoc* seq key+)"
 tags: ["sequence"]
 ---
 
-Returns a newly mapped sequence wherein the association identified by the provided keys is removed. If the keys don't exist, the original sequence is returned.
+Returns a newly mapped sequence wherein the associations identified by the provided keys are removed. If the keys don't exist, the original sequence is returned.
 
 #### An Example
 

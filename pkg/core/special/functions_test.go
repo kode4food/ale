@@ -15,10 +15,6 @@ import (
 	"github.com/kode4food/ale/pkg/data"
 )
 
-func unexpectedTypeError(got, expected string) error {
-	return fmt.Errorf(runtime.ErrUnexpectedType, got, expected)
-}
-
 func getPredicate(kwd data.Keyword) data.Procedure {
 	return builtin.IsA.Call(kwd).(data.Procedure)
 }
@@ -99,8 +95,8 @@ func TestApplyEval(t *testing.T) {
 			[1 2 3])
 	`, F(6))
 
-	e := unexpectedTypeError("float", "procedure")
-	as.PanicWith(`(apply 32.5 [1 2 3])`, e)
+	err := fmt.Errorf(runtime.ErrUnexpectedType, "float", "procedure")
+	as.PanicWith(`(apply 32.5 [1 2 3])`, err)
 }
 
 func TestRestFunctionsEval(t *testing.T) {

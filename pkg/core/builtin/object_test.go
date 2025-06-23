@@ -2,10 +2,12 @@ package builtin_test
 
 import (
 	"errors"
+	"fmt"
 	"testing"
 
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
+	"github.com/kode4food/ale/internal/runtime"
 	"github.com/kode4food/ale/pkg/core/builtin"
 	"github.com/kode4food/ale/pkg/data"
 )
@@ -80,7 +82,7 @@ func TestObjectAssoc(t *testing.T) {
 
 	as.PanicWith(`
 		(assoc {} :not-a-pair)
-	`, errors.New(builtin.ErrAssocRequiresPairs))
+	`, fmt.Errorf(runtime.ErrUnexpectedType, "keyword", "pair"))
 
 }
 

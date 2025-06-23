@@ -19,24 +19,31 @@
 (define (seq->vector . colls)
   (apply vector (apply concat! colls)))
 
-(define (append* coll . values)
-  ((lambda-rec append-inner (coll values)
-     (if (seq values)
-         (append-inner (append coll (first values)) (rest values))
-         coll))
-   coll values))
-
-(define (cons* coll . values)
-  ((lambda-rec cons-inner (coll values)
-     (if (seq values)
-         (cons-inner (cons (first values) coll) (rest values))
-         coll))
-   coll values))
-
-(define (conj coll . values)
+(define (conj coll value)
   (if (appendable? coll)
-      (apply append* (cons coll values))
-      (apply cons* (cons coll values))))
+      (append coll value)
+      (cons value coll)))
+
+(define :private (swap-args func)
+  (lambda (l r) (func r l)))
+
+(define-lambda fold-left
+  [(func init coll)
+    ((lambda-rec fold-inner (acc coll)
+       (if (seq coll)
+         (fold-inner (func acc (first coll)) (rest coll))
+         acc))
+      init coll)]
+  [(func coll)
+    (if (seq coll)
+      (fold-left func (first coll) (rest coll))
+      (func))])
+
+(define (assoc* coll . pairs)   (fold-left assoc coll pairs))
+(define (dissoc* coll . keys)   (fold-left dissoc coll keys))
+(define (append* coll . values) (fold-left append coll values))
+(define (cons* coll . values)   (fold-left (swap-args cons) coll values))
+(define (conj* coll . values)   (fold-left conj coll values))
 
 (define (length! coll)
   ((lambda-rec length-inner (coll prev)
@@ -86,25 +93,10 @@
              prev)))
    coll null))
 
-(define-lambda fold-left
-  [(func init coll)
-     ((lambda-rec fold-inner (acc coll)
-        (if (seq coll)
-            (fold-inner (func acc (first coll)) (rest coll))
-            acc))
-      init coll)]
-  [(func coll)
-     (if (seq coll)
-         (fold-left func (first coll) (rest coll))
-         (func))])
-
 (define (reverse! coll)
   (if (reversible? coll)
       (reverse coll)
       (fold-left conj null coll)))
-
-(define :private (swap-args func)
-  (lambda (l r) (func r l)))
 
 (define :private (make-fold-right reverser)
   (lambda

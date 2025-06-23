@@ -1,8 +1,6 @@
 package builtin
 
 import (
-	"errors"
-
 	"github.com/kode4food/ale/pkg/data"
 )
 
@@ -29,22 +27,13 @@ var Get = data.MakeProcedure(func(args ...data.Value) data.Value {
 // Assoc returns a new Mapper containing the key/value association
 var Assoc = data.MakeProcedure(func(args ...data.Value) data.Value {
 	s := args[0].(data.Mapper)
-	for _, a := range args[1:] {
-		if p, ok := a.(data.Pair); ok {
-			s = s.Put(p).(data.Mapper)
-			continue
-		}
-		panic(errors.New(ErrAssocRequiresPairs))
-	}
-	return s
-}, 2, data.OrMore)
+	p := args[1].(data.Pair)
+	return s.Put(p)
+}, 2)
 
 // Dissoc returns a new Mapper with the key removed
 var Dissoc = data.MakeProcedure(func(args ...data.Value) data.Value {
 	s := args[0].(data.Mapper)
-	for _, k := range args[1:] {
-		_, r, _ := s.Remove(k)
-		s = r.(data.Mapper)
-	}
-	return s
-}, 2, data.OrMore)
+	_, res, _ := s.Remove(args[1])
+	return res
+}, 2)

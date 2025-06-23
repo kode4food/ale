@@ -11,10 +11,6 @@ import (
 	"github.com/kode4food/ale/pkg/data"
 )
 
-func unexpectedTypeError(got, expected string) error {
-	return fmt.Errorf(runtime.ErrUnexpectedType, got, expected)
-}
-
 func TestListEval(t *testing.T) {
 	as := assert.New(t)
 	as.MustEvalTo(`(list? '(1 2 3))`, data.True)
@@ -129,7 +125,7 @@ func TestLenEval(t *testing.T) {
 
 	as.PanicWith(`
 		(length (take 10000 (range 1 1000000000)))
-	`, unexpectedTypeError("lazy sequence", "counted"))
+	`, fmt.Errorf(runtime.ErrUnexpectedType, "lazy sequence", "counted"))
 }
 
 func TestLastEval(t *testing.T) {
@@ -142,10 +138,9 @@ func TestLastEval(t *testing.T) {
 		(last! (take 10000 (range 1 1000000000 2)))
 	`, I(19999))
 
-	err := unexpectedTypeError("lazy sequence", "counted")
 	as.PanicWith(`
 		(last (take 10000 (range 1 1000000000)))
-	`, err)
+	`, fmt.Errorf(runtime.ErrUnexpectedType, "lazy sequence", "counted"))
 }
 
 func TestReverse(t *testing.T) {
@@ -157,8 +152,7 @@ func TestReverse(t *testing.T) {
 	as.MustEvalTo(`(reverse [])`, data.EmptyVector)
 	as.String(`(4 3 2 1)`, as.MustEval(`(reverse! (take 4 (range 1 1000)))`))
 
-	err := unexpectedTypeError("lazy sequence", "reverser")
 	as.PanicWith(`
 		(reverse (take 4 (range 1 1000)))
-	`, err)
+	`, fmt.Errorf(runtime.ErrUnexpectedType, "lazy sequence", "reverser"))
 }
