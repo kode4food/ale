@@ -20,13 +20,10 @@ const (
 
 func (b *bootstrap) populateBuiltins() {
 	b.functions(map[data.Local]data.Procedure{
-		env.Append:       builtin.Append,
-		env.Assoc:        builtin.Assoc,
 		env.Bytes:        builtin.Bytes,
 		env.Chan:         builtin.Chan,
 		env.CurrentTime:  builtin.CurrentTime,
 		env.Defer:        builtin.Defer,
-		env.Dissoc:       builtin.Dissoc,
 		env.Delay:        builtin.Delay,
 		env.GenSym:       builtin.GenSym,
 		env.Get:          builtin.Get,

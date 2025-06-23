@@ -21,13 +21,6 @@ var (
 	Vector = makeConstructor(data.NewVector)
 )
 
-// Append adds a value to the end of the provided AppenderKey
-var Append = data.MakeProcedure(func(args ...data.Value) data.Value {
-	a := args[0].(data.Appender)
-	s := args[1]
-	return a.Append(s)
-}, 2)
-
 // Reverse returns a reversed copy of a Sequence
 var Reverse = data.MakeProcedure(func(args ...data.Value) data.Value {
 	r := args[0].(data.Reverser)

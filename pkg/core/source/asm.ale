@@ -51,6 +51,27 @@
         resolve cons
         cdr)))
 
+(define* append
+  (lambda (seq val)
+    (asm*
+        resolve seq
+        resolve val
+        append)))
+
+(define* assoc
+  (lambda (seq pair)
+    (asm*
+        resolve seq
+        resolve pair
+        assoc)))
+
+(define* dissoc
+  (lambda (seq key)
+    (asm*
+        resolve seq
+        resolve key
+        dissoc)))
+
 (define* raise
   (lambda strs
     (asm*

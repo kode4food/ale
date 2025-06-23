@@ -18,10 +18,7 @@
 (def-builtin type-of*)
 
 ;; sequence
-(def-builtin append)
-(def-builtin assoc)
 (def-builtin bytes)
-(def-builtin dissoc)
 (def-builtin get)
 (def-builtin length)
 (def-builtin list)

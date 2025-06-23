@@ -5,13 +5,10 @@ import "github.com/kode4food/ale/pkg/data"
 const (
 	Include = data.Local("#include")
 
-	Append       = data.Local("append")
-	Assoc        = data.Local("assoc")
 	Bytes        = data.Local("bytes")
 	Chan         = data.Local("chan")
 	CurrentTime  = data.Local("current-time")
 	Defer        = data.Local("defer*")
-	Dissoc       = data.Local("dissoc")
 	Delay        = data.Local("delay*")
 	GenSym       = data.Local("gensym")
 	Get          = data.Local("get")
