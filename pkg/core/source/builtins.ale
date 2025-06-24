@@ -19,10 +19,8 @@
 
 ;; sequence
 (def-builtin bytes)
-(def-builtin length)
 (def-builtin list)
 (def-builtin object)
-(def-builtin reverse)
 (def-builtin str!)
 (def-builtin str)
 (def-builtin vector)

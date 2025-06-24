@@ -69,6 +69,7 @@ const (
 
 	// Control Flow Operations
 	CondJump // If top of stack is true, jumps to operand
+	Delay    // Wraps the proc as a promise
 	Jump     // Jumps to operand
 	Panic    // Raises error with value at top of stack
 	RetFalse // Returns the boolean false
@@ -77,16 +78,19 @@ const (
 	Return   // Returns value at top of stack
 
 	// Sequence Operations
-	Append // Pop value, append to sequence at top of stack
-	Assoc  // Pop pair, associate with mapper at top of stack
-	Car    // Pop pair, push its Address (car) part
-	Cdr    // Pop pair, push its Decrement (cdr) part
-	Cons   // Pop two values, push a new cons cell
-	Dissoc // Pop key, dissociate from mapper at top of stack
-	Empty  // Push true if sequence at top of stack is empty
-	Get    // Pop key, push value from mapper at top of stack
-	Nth    // Pop index, push value from sequence at top of stack
-	Vector // Pop N values, push as a vector (op = count)
+	Append  // Pop value, append to sequence at top of stack
+	Assoc   // Pop pair, associate with mapper at top of stack
+	Car     // Pop pair, push its Address (car) part
+	Cdr     // Pop pair, push its Decrement (cdr) part
+	Cons    // Pop two values, push a new cons cell
+	Dissoc  // Pop key, dissociate from mapper at top of stack
+	Empty   // Push true if sequence at top of stack is empty
+	Get     // Pop key, push value from mapper at top of stack
+	LazySeq // Wraps the proc as a lazy sequence
+	Length  // Replace the sequence at the top of the stack with its length
+	Nth     // Pop index, push value from sequence at top of stack
+	Reverse // Reverse the sequence at the top of the stack
+	Vector  // Pop N values, push as a vector (op = count)
 
 	// Boolean Operations
 	Eq  // Pop two values, push true if equal

@@ -49,23 +49,6 @@ func TestChan(t *testing.T) {
 	as.True(ok)
 }
 
-func makeWrapperFunc(v data.Value) data.Procedure {
-	return data.MakeProcedure(func(...data.Value) data.Value {
-		return v
-	})
-}
-
-func TestPromise(t *testing.T) {
-	as := assert.New(t)
-
-	p1 := builtin.Delay.Call(makeWrapperFunc(S("with initial")))
-	as.True(getPredicate(builtin.PromiseKey).Call(p1))
-	as.False(getPredicate(builtin.ResolvedKey).Call(p1))
-	res := p1.(data.Procedure).Call()
-	as.True(getPredicate(builtin.ResolvedKey).Call(p1))
-	as.String("with initial", res)
-}
-
 func TestGenerateEval(t *testing.T) {
 	as := assert.New(t)
 	as.MustEvalTo(`

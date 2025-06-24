@@ -44,51 +44,55 @@ func _() {
 	_ = x[TailClos-32]
 	_ = x[TailSelf-33]
 	_ = x[CondJump-34]
-	_ = x[Jump-35]
-	_ = x[Panic-36]
-	_ = x[RetFalse-37]
-	_ = x[RetNull-38]
-	_ = x[RetTrue-39]
-	_ = x[Return-40]
-	_ = x[Append-41]
-	_ = x[Assoc-42]
-	_ = x[Car-43]
-	_ = x[Cdr-44]
-	_ = x[Cons-45]
-	_ = x[Dissoc-46]
-	_ = x[Empty-47]
-	_ = x[Get-48]
-	_ = x[Nth-49]
-	_ = x[Vector-50]
-	_ = x[Eq-51]
-	_ = x[Not-52]
-	_ = x[Add-53]
-	_ = x[Div-54]
-	_ = x[Mod-55]
-	_ = x[Mul-56]
-	_ = x[Neg-57]
-	_ = x[NegInt-58]
-	_ = x[NumEq-59]
-	_ = x[NumGt-60]
-	_ = x[NumGte-61]
-	_ = x[NumLt-62]
-	_ = x[NumLte-63]
-	_ = x[PosInt-64]
-	_ = x[Sub-65]
+	_ = x[Delay-35]
+	_ = x[Jump-36]
+	_ = x[Panic-37]
+	_ = x[RetFalse-38]
+	_ = x[RetNull-39]
+	_ = x[RetTrue-40]
+	_ = x[Return-41]
+	_ = x[Append-42]
+	_ = x[Assoc-43]
+	_ = x[Car-44]
+	_ = x[Cdr-45]
+	_ = x[Cons-46]
+	_ = x[Dissoc-47]
+	_ = x[Empty-48]
+	_ = x[Get-49]
+	_ = x[LazySeq-50]
+	_ = x[Length-51]
+	_ = x[Nth-52]
+	_ = x[Reverse-53]
+	_ = x[Vector-54]
+	_ = x[Eq-55]
+	_ = x[Not-56]
+	_ = x[Add-57]
+	_ = x[Div-58]
+	_ = x[Mod-59]
+	_ = x[Mul-60]
+	_ = x[Neg-61]
+	_ = x[NegInt-62]
+	_ = x[NumEq-63]
+	_ = x[NumGt-64]
+	_ = x[NumGte-65]
+	_ = x[NumLt-66]
+	_ = x[NumLte-67]
+	_ = x[PosInt-68]
+	_ = x[Sub-69]
 }
 
 const (
-	_Opcode_name_0 = "LabelNoOpArgArgsLenArgsPopArgsPushArgsRestClosureEnvBindEnvPrivateEnvPublicEnvValueLoadNewRefRefBindRefValueStoreDupPopConstFalseNullTrueZeroCallCall0Call1Call2Call3CallSelfCallWithTailCallTailClosTailSelfCondJumpJumpPanicRetFalseRetNullRetTrueReturnAppendAssocCarCdrConsDissocEmptyGetNthVectorEqNotAddDivModMulNegNegIntNumEqNumGtNumGteNumLtNumLtePosIntSub"
+	_Opcode_name_0 = "LabelNoOpArgArgsLenArgsPopArgsPushArgsRestClosureEnvBindEnvPrivateEnvPublicEnvValueLoadNewRefRefBindRefValueStoreDupPopConstFalseNullTrueZeroCallCall0Call1Call2Call3CallSelfCallWithTailCallTailClosTailSelfCondJumpDelayJumpPanicRetFalseRetNullRetTrueReturnAppendAssocCarCdrConsDissocEmptyGetLazySeqLengthNthReverseVectorEqNotAddDivModMulNegNegIntNumEqNumGtNumGteNumLtNumLtePosIntSub"
 	_Opcode_name_1 = "OpcodeMask"
 )
 
 var (
-	_Opcode_index_0 = [...]uint16{0, 5, 9, 12, 19, 26, 34, 42, 49, 56, 66, 75, 83, 87, 93, 100, 108, 113, 116, 119, 124, 129, 133, 137, 141, 145, 150, 155, 160, 165, 173, 181, 189, 197, 205, 213, 217, 222, 230, 237, 244, 250, 256, 261, 264, 267, 271, 277, 282, 285, 288, 294, 296, 299, 302, 305, 308, 311, 314, 320, 325, 330, 336, 341, 347, 353, 356}
+	_Opcode_index_0 = [...]uint16{0, 5, 9, 12, 19, 26, 34, 42, 49, 56, 66, 75, 83, 87, 93, 100, 108, 113, 116, 119, 124, 129, 133, 137, 141, 145, 150, 155, 160, 165, 173, 181, 189, 197, 205, 213, 218, 222, 227, 235, 242, 249, 255, 261, 266, 269, 272, 276, 282, 287, 290, 297, 303, 306, 313, 319, 321, 324, 327, 330, 333, 336, 339, 345, 350, 355, 361, 366, 372, 378, 381}
 )
 
 func (i Opcode) String() string {
 	switch {
-	case i <= 65:
+	case i <= 69:
 		return _Opcode_name_0[_Opcode_index_0[i]:_Opcode_index_0[i+1]]
 	case i == 127:
 		return _Opcode_name_1

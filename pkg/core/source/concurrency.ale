@@ -1,7 +1,6 @@
 ;;;; ale core: concurrency
 
 (def-builtin chan)
-(def-builtin delay*)
 (def-builtin go*)
 
 (declare *err*)
@@ -16,6 +15,11 @@
 
 (define-macro (go . body)
   `(go-with-monitor no-op ,@body))
+
+(define (delay* proc)
+  (asm*
+      resolve proc
+      delay))
 
 (define-macro (delay . body)
   `(delay* (thunk ,@body)))

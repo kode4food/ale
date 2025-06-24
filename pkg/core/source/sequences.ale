@@ -1,36 +1,36 @@
 ;;;; ale core: standard sequences
 
-(private* make-fetcher)
-(define* make-fetcher (macro* (lambda (coll elem inst err-msg)
+(private* make-fetch)
+(define* make-fetch-err (macro* (lambda (inst coll elem err-msg)
   (apply list (concat!
     '(ale/asm*
         resolve) [coll] '(
-        resolve) [elem
-        inst] '(
+        resolve) [elem]
+        [inst] '(
         cond-jump :success
         const) [err-msg] '(
         panic
     :success))))))
 
-(private* make-fetcher-default)
-(define* make-fetcher-default (macro* (lambda (coll elem inst)
+(private* make-fetch-def)
+(define* make-fetch-def (macro* (lambda (inst coll elem def-val)
   (apply list (concat!
     '(ale/asm*
         resolve) [coll] '(
-        resolve) [elem
-        inst] '(
+        resolve) [elem]
+        [inst] '(
         cond-jump :success
-        resolve default
+        resolve) [def-val] '(
         return
      :success))))))
 
 (define-lambda get
-  [(coll key)         (make-fetcher coll key get "key not found")]
-  [(coll key default) (make-fetcher-default coll key get)])
+  [(coll key)         (make-fetch-err get coll key "key not found")]
+  [(coll key default) (make-fetch-def get coll key default)])
 
 (define-lambda nth
-  [(coll idx)         (make-fetcher coll idx nth "index out of bounds")]
-  [(coll idx default) (make-fetcher-default coll idx nth)])
+  [(coll idx)         (make-fetch-err nth coll idx "index out of bounds")]
+  [(coll idx default) (make-fetch-def nth coll idx default)])
 
 (define (seq value)
   (if (and (seq? value) (!empty? value))
@@ -124,6 +124,11 @@
                (last-inner r f))
              prev)))
    coll null))
+
+(define (reverse coll)
+  (asm*
+      resolve coll
+      reverse))
 
 (define (reverse! coll)
   (if (reversible? coll)

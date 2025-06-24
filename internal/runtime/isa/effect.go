@@ -85,6 +85,7 @@ var Effects = map[Opcode]*Effect{
 
 	// Control Flow Operations
 	CondJump: {Pop: 1, Operand: Labels},
+	Delay:    {Pop: 1, Push: 1},
 	Jump:     {Operand: Labels},
 	Panic:    {Pop: 1, Exit: true},
 	RetFalse: {Exit: true},
@@ -93,16 +94,19 @@ var Effects = map[Opcode]*Effect{
 	Return:   {Pop: 1, Exit: true},
 
 	// Sequence Operations
-	Append: {Pop: 2, Push: 1},
-	Assoc:  {Pop: 2, Push: 1},
-	Car:    {Pop: 1, Push: 1},
-	Cdr:    {Pop: 1, Push: 1},
-	Cons:   {Pop: 2, Push: 1},
-	Dissoc: {Pop: 2, Push: 1},
-	Get:    {Pop: 2, Push: 2},
-	Nth:    {Pop: 2, Push: 2},
-	Empty:  {Pop: 1, Push: 1},
-	Vector: {Push: 1, DPop: true, Operand: Stack},
+	Append:  {Pop: 2, Push: 1},
+	Assoc:   {Pop: 2, Push: 1},
+	Car:     {Pop: 1, Push: 1},
+	Cdr:     {Pop: 1, Push: 1},
+	Cons:    {Pop: 2, Push: 1},
+	Dissoc:  {Pop: 2, Push: 1},
+	Empty:   {Pop: 1, Push: 1},
+	Get:     {Pop: 2, Push: 2},
+	LazySeq: {Pop: 1, Push: 1},
+	Length:  {Pop: 1, Push: 1},
+	Nth:     {Pop: 2, Push: 2},
+	Reverse: {Pop: 1, Push: 1},
+	Vector:  {Push: 1, DPop: true, Operand: Stack},
 
 	// Boolean Operations
 	Eq:  {Pop: 2, Push: 1},

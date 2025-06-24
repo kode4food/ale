@@ -35,6 +35,19 @@ func NewLazy(r LazyResolver) data.Sequence {
 	}
 }
 
+func MakeLazyResolver(p data.Procedure) LazyResolver {
+	return func() (data.Value, data.Sequence, bool) {
+		r := p.Call()
+		if r != data.Null {
+			s := r.(data.Sequence)
+			if sf, sr, ok := s.Split(); ok {
+				return sf, sr, true
+			}
+		}
+		return data.Null, data.Null, false
+	}
+}
+
 func (l *lazySequence) resolve() *lazySequence {
 	l.once(func() {
 		l.result, l.rest, l.ok = l.resolver()

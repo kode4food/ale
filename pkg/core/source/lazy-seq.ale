@@ -1,6 +1,9 @@
 ;;;; ale core: lazy sequences
 
-(def-builtin lazy-seq*)
+(define (lazy-seq* proc)
+  (asm*
+      resolve proc
+      lazy-seq))
 
 (define-macro (lazy-seq . body)
   `(lazy-seq* (thunk ,@body)))

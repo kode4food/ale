@@ -29,12 +29,6 @@ var Chan = data.MakeProcedure(func(args ...data.Value) data.Value {
 	return stream.NewChannel(size)
 }, 0, 1)
 
-// Delay instantiates a new eventually fulfilled promise
-var Delay = data.MakeProcedure(func(args ...data.Value) data.Value {
-	resolver := args[0].(data.Procedure)
-	return sync.NewPromise(resolver)
-}, 1)
-
 // isResolved returns whether the specified promise has been resolved
 func isResolved(v data.Value) bool {
 	if p, ok := v.(*sync.Promise); ok {

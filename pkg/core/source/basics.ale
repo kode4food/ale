@@ -30,10 +30,16 @@
 
 (private* is-empty)
 (define* is-empty
-  (lambda (seq)
+  (lambda (coll)
     (asm*
-        resolve seq
+        resolve coll
         empty)))
+
+(define* length
+  (lambda (coll)
+    (asm*
+        resolve coll
+        length)))
 
 (define* apply
   (lambda (func . args)

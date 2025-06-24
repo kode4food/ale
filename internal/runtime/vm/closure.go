@@ -8,6 +8,7 @@ import (
 	"github.com/kode4food/ale/internal/debug"
 	"github.com/kode4food/ale/internal/runtime/isa"
 	"github.com/kode4food/ale/internal/sequence"
+	"github.com/kode4food/ale/internal/sync"
 	"github.com/kode4food/ale/pkg/data"
 	"github.com/kode4food/ale/pkg/env"
 )
@@ -286,6 +287,10 @@ CurrentPC:
 			goto CurrentPC
 		}
 
+	case isa.Delay:
+		SP1 := SP + 1
+		MEM[SP1] = sync.NewPromise(MEM[SP1].(data.Procedure))
+
 	case isa.Jump:
 		PC = int(INST.Operand())
 		goto CurrentPC
@@ -349,6 +354,15 @@ CurrentPC:
 		MEM[SP1] = data.Bool(ok)
 		MEM[SP2] = res
 
+	case isa.LazySeq:
+		SP1 := SP + 1
+		r := sequence.MakeLazyResolver(MEM[SP1].(data.Procedure))
+		MEM[SP1] = sequence.NewLazy(r)
+
+	case isa.Length:
+		SP1 := SP + 1
+		MEM[SP1] = data.Integer(MEM[SP1].(data.Counted).Count())
+
 	case isa.Nth:
 		SP1 := SP + 1
 		SP2 := SP1 + 1
@@ -357,6 +371,10 @@ CurrentPC:
 		res, ok := s.ElementAt(int(idx))
 		MEM[SP1] = data.Bool(ok)
 		MEM[SP2] = res
+
+	case isa.Reverse:
+		SP1 := SP + 1
+		MEM[SP1] = MEM[SP1].(data.Reverser).Reverse()
 
 	case isa.Vector:
 		op := INST.Operand()
@@ -444,7 +462,6 @@ CurrentPC:
 
 	default:
 		panic(debug.ProgrammerErrorf(ErrBadInstruction, INST))
-
 	}
 
 	PC++

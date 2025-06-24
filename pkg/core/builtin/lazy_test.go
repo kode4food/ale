@@ -7,30 +7,7 @@ import (
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
 	"github.com/kode4food/ale/internal/runtime"
-	"github.com/kode4food/ale/internal/sequence"
-	"github.com/kode4food/ale/pkg/core/builtin"
-	"github.com/kode4food/ale/pkg/data"
 )
-
-func TestLazySequence(t *testing.T) {
-	as := assert.New(t)
-
-	var i int
-	var p data.Procedure
-
-	p = data.MakeProcedure(func(...data.Value) data.Value {
-		if i < 10 {
-			p := builtin.LazySequence.Call(p).(data.Prepender)
-			res := p.Prepend(data.Integer(i))
-			i++
-			return res
-		}
-		return data.Null
-	}, 0)
-
-	s := builtin.LazySequence.Call(p).(data.Sequence)
-	as.String(`[0 1 2 3 4 5 6 7 8 9]`, sequence.ToVector(s))
-}
 
 func TestRangeEval(t *testing.T) {
 	as := assert.New(t)
