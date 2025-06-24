@@ -1,8 +1,6 @@
 package builtin
 
 import (
-	"errors"
-
 	"github.com/kode4food/ale/pkg/data"
 )
 
@@ -33,19 +31,6 @@ var Length = data.MakeProcedure(func(args ...data.Value) data.Value {
 	l := s.Count()
 	return data.Integer(l)
 }, 1)
-
-// Nth returns the nth element of the provided sequence or a default
-var Nth = data.MakeProcedure(func(args ...data.Value) data.Value {
-	s := args[0].(data.Indexed)
-	i := args[1].(data.Integer)
-	if res, ok := s.ElementAt(int(i)); ok {
-		return res
-	}
-	if len(args) > 2 {
-		return args[2]
-	}
-	panic(errors.New(ErrIndexOutOfBounds))
-}, 2, 3)
 
 func makeConstructor[T data.Value](orig func(...data.Value) T) data.Procedure {
 	return data.MakeProcedure(func(args ...data.Value) data.Value {

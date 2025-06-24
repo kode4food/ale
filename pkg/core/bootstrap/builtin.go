@@ -32,7 +32,6 @@ func (b *bootstrap) populateBuiltins() {
 		env.Length:       builtin.Length,
 		env.List:         builtin.List,
 		env.Macro:        builtin.Macro,
-		env.Nth:          builtin.Nth,
 		env.Object:       builtin.Object,
 		env.Read:         builtin.Read,
 		env.Recover:      builtin.Recover,

@@ -17,7 +17,6 @@ const (
 	Length       = data.Local("length")
 	List         = data.Local("list")
 	Macro        = data.Local("macro*")
-	Nth          = data.Local("nth")
 	Object       = data.Local("object")
 	Read         = data.Local("read")
 	Recover      = data.Local("recover")

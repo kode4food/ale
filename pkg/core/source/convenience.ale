@@ -68,6 +68,3 @@
 
 (define-macro (thunk . forms)
   `(lambda () ,@forms))
-
-(define-macro (: target method . args)
-  `((get ,target ,method) ,@args))

@@ -1,5 +1,37 @@
 ;;;; ale core: standard sequences
 
+(private* make-fetcher)
+(define* make-fetcher (macro* (lambda (seq key inst err-msg)
+  (apply list (concat!
+    '(ale/asm*
+        resolve) [seq] '(
+        resolve) [key
+        inst] '(
+        cond-jump :success
+        const) [err-msg] '(
+        panic
+    :success))))))
+
+(private* make-fetcher-default)
+(define* make-fetcher-default (macro* (lambda (seq key inst)
+  (apply list (concat!
+    '(ale/asm*
+        resolve) [seq] '(
+        resolve) [key
+        inst] '(
+        cond-jump :success
+        resolve default
+        return
+     :success))))))
+
+(define-lambda get
+  [(seq key)         (make-fetcher seq key get "key not found")]
+  [(seq key default) (make-fetcher-default seq key get)])
+
+(define-lambda nth
+  [(seq idx)         (make-fetcher seq idx nth "index out of bounds")]
+  [(seq idx default) (make-fetcher-default seq idx nth)])
+
 (define (seq value)
   (if (and (seq? value) (!empty? value))
       value
@@ -111,3 +143,6 @@
 (define foldl fold-left)
 (define foldr fold-right)
 (define reduce fold-left)
+
+(define-macro (: target method . args)
+  `((get ,target ,method) ,@args))

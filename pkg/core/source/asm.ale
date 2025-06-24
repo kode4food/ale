@@ -72,27 +72,6 @@
         resolve key
         dissoc)))
 
-(define* get
-  (lambda
-    [(seq key)
-       (asm*
-           resolve seq
-           resolve key
-           get
-           cond-jump :success
-           const "key not found in mapped"
-           panic
-        :success)]
-    [(seq key default)
-       (asm*
-           resolve seq
-           resolve key
-           get
-           cond-jump :success
-           resolve default
-           return
-        :success)]))
-
 (define* raise
   (lambda strs
     (asm*
