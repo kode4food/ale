@@ -8,8 +8,7 @@
 (define first car)
 (define rest cdr)
 
-(private* make-comparator)
-(define* make-comparator (macro* (lambda (f r inst)
+(define-macro :private (make-comparator f r inst)
   (apply list (concat!
     '(ale/asm*
          private prev :val
@@ -39,7 +38,7 @@
          jump :loop
      :success
          true
-     :end))))))
+     :end))))
 
 (define (eq f . r)
   (make-comparator f r eq))

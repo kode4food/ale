@@ -1,7 +1,6 @@
 ;;;; ale core: numerics
 
-(private* make-reducer)
-(define* make-reducer (macro* (lambda (args init inst)
+(define-macro :private (make-reducer args init inst)
   (apply list (concat!
     '(ale/asm*
         private accum :val
@@ -24,7 +23,7 @@
         store rest
         jump :loop
     :end
-        load accum))))))
+        load accum))))
 
 (define (+ . args) (make-reducer args 0 add))
 (define (* . args) (make-reducer args 1 mul))

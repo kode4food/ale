@@ -1,7 +1,6 @@
 ;;;; ale core: standard sequences
 
-(private* make-fetch)
-(define* make-fetch-err (macro* (lambda (inst coll elem err-msg)
+(define-macro :private (make-fetch-err inst coll elem err-msg)
   (apply list (concat!
     '(ale/asm*
         resolve) [coll] '(
@@ -10,10 +9,9 @@
         cond-jump :found
         const) [err-msg] '(
         panic
-    :found))))))
+    :found))))
 
-(private* make-fetch-def)
-(define* make-fetch-def (macro* (lambda (inst coll elem def-val)
+(define-macro :private (make-fetch-def inst coll elem def-val)
   (apply list (concat!
     '(ale/asm*
         resolve) [coll] '(
@@ -22,7 +20,7 @@
         cond-jump :found
         resolve) [def-val] '(
         return
-     :found))))))
+     :found))))
 
 (define-lambda get
   [(coll key)         (make-fetch-err get coll key "key not found")]
