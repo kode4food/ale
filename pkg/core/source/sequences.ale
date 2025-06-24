@@ -7,10 +7,10 @@
         resolve) [coll] '(
         resolve) [elem]
         [inst] '(
-        cond-jump :success
+        cond-jump :found
         const) [err-msg] '(
         panic
-    :success))))))
+    :found))))))
 
 (private* make-fetch-def)
 (define* make-fetch-def (macro* (lambda (inst coll elem def-val)
@@ -19,10 +19,10 @@
         resolve) [coll] '(
         resolve) [elem]
         [inst] '(
-        cond-jump :success
+        cond-jump :found
         resolve) [def-val] '(
         return
-     :success))))))
+     :found))))))
 
 (define-lambda get
   [(coll key)         (make-fetch-err get coll key "key not found")]

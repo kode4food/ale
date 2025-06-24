@@ -24,8 +24,8 @@
          cond-jump :success
          load prev
          load rest
-         car
-         ) [inst] '(
+         car)
+         [inst] '(
          cond-jump :next
          false
          jump :end
