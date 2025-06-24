@@ -1,11 +1,11 @@
 ;;;; ale core: standard sequences
 
 (private* make-fetcher)
-(define* make-fetcher (macro* (lambda (seq key inst err-msg)
+(define* make-fetcher (macro* (lambda (coll elem inst err-msg)
   (apply list (concat!
     '(ale/asm*
-        resolve) [seq] '(
-        resolve) [key
+        resolve) [coll] '(
+        resolve) [elem
         inst] '(
         cond-jump :success
         const) [err-msg] '(
@@ -13,11 +13,11 @@
     :success))))))
 
 (private* make-fetcher-default)
-(define* make-fetcher-default (macro* (lambda (seq key inst)
+(define* make-fetcher-default (macro* (lambda (coll elem inst)
   (apply list (concat!
     '(ale/asm*
-        resolve) [seq] '(
-        resolve) [key
+        resolve) [coll] '(
+        resolve) [elem
         inst] '(
         cond-jump :success
         resolve default
@@ -25,12 +25,12 @@
      :success))))))
 
 (define-lambda get
-  [(seq key)         (make-fetcher seq key get "key not found")]
-  [(seq key default) (make-fetcher-default seq key get)])
+  [(coll key)         (make-fetcher coll key get "key not found")]
+  [(coll key default) (make-fetcher-default coll key get)])
 
 (define-lambda nth
-  [(seq idx)         (make-fetcher seq idx nth "index out of bounds")]
-  [(seq idx default) (make-fetcher-default seq idx nth)])
+  [(coll idx)         (make-fetcher coll idx nth "index out of bounds")]
+  [(coll idx default) (make-fetcher-default coll idx nth)])
 
 (define (seq value)
   (if (and (seq? value) (!empty? value))
