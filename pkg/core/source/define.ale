@@ -47,15 +47,15 @@
 
 (define-macro (lambda-rec name . forms)
   (if (is-local name)
-    `(label ,name (lambda ,@forms))
-    `(lambda ,name ,@forms)))
+      `(label ,name (lambda ,@forms))
+      `(lambda ,name ,@forms)))
 
 ;; case and some macros require it
 (define (map! func coll)
   (if (is-empty coll)
-    '()
-    (cons (func (car coll))
-          (map! func (cdr coll)))))
+      '()
+      (cons (func (car coll))
+            (map! func (cdr coll)))))
 
 (define-macro declare
   [(name) `(public* ,name)]

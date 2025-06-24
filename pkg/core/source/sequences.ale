@@ -61,13 +61,13 @@
   [(func init coll)
     ((lambda-rec fold-inner (acc coll)
        (if (seq coll)
-         (fold-inner (func acc (first coll)) (rest coll))
-         acc))
+           (fold-inner (func acc (first coll)) (rest coll))
+           acc))
       init coll)]
   [(func coll)
     (if (seq coll)
-      (fold-left func (first coll) (rest coll))
-      (func))])
+        (fold-left func (first coll) (rest coll))
+        (func))])
 
 (define (assoc* coll . pairs)   (fold-left assoc coll pairs))
 (define (dissoc* coll . keys)   (fold-left dissoc coll keys))
@@ -79,9 +79,9 @@
   ((lambda-rec length-inner (coll prev)
      (if (counted? coll)
          (+ prev (length coll))
-       (if (seq coll)
-           (length-inner (rest coll) (inc prev))
-           prev)))
+         (if (seq coll)
+             (length-inner (rest coll) (inc prev))
+             prev)))
    coll 0))
 
 (define nth!
