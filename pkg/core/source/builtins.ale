@@ -19,7 +19,6 @@
 
 ;; sequence
 (def-builtin bytes)
-(def-builtin get)
 (def-builtin length)
 (def-builtin list)
 (def-builtin nth)

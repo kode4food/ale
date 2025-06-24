@@ -345,9 +345,7 @@ CurrentPC:
 	case isa.Get:
 		SP1 := SP + 1
 		SP2 := SP1 + 1
-		s := MEM[SP2].(data.Mapped)
-		p := MEM[SP1].(data.Pair)
-		res, ok := s.Get(p)
+		res, ok := MEM[SP2].(data.Mapped).Get(MEM[SP1])
 		MEM[SP1] = data.Bool(ok)
 		MEM[SP2] = res
 

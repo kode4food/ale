@@ -26,7 +26,6 @@ func (b *bootstrap) populateBuiltins() {
 		env.Defer:        builtin.Defer,
 		env.Delay:        builtin.Delay,
 		env.GenSym:       builtin.GenSym,
-		env.Get:          builtin.Get,
 		env.Go:           builtin.Go,
 		env.IsA:          builtin.IsA,
 		env.LazySequence: builtin.LazySequence,

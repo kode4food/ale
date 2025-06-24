@@ -11,7 +11,6 @@ const (
 	Defer        = data.Local("defer*")
 	Delay        = data.Local("delay*")
 	GenSym       = data.Local("gensym")
-	Get          = data.Local("get")
 	Go           = data.Local("go*")
 	IsA          = data.Local("is-a*")
 	LazySequence = data.Local("lazy-seq*")
