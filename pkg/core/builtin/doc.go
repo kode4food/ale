@@ -1,3 +1,3 @@
-// Package builtin provides the functions that serve as the bootstrapped
-// routines for the system's runtime environment.
+// Package builtin provides runtime functions that are only possible as Go
+// functions, or are more easily implemented in Go than in Ale
 package builtin

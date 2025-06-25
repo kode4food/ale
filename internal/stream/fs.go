@@ -113,15 +113,15 @@ func getDirEntryType(s fs.DirEntry) data.Keyword {
 func bindOpen(fs fs.FS) data.Procedure {
 	return data.MakeProcedure(func(args ...data.Value) data.Value {
 		path := args[0].(data.String)
-		f, s, err := openFile(fs, path.String())
+		f, err := openFile(fs, path.String())
 		if err != nil {
 			panic(err)
 		}
-		return createReader(f, s, args[1:]...)
+		return createReader(f, args[1:]...)
 	}, 1, 3)
 }
 
-func createReader(f fs.File, s fs.FileInfo, args ...data.Value) data.Value {
+func createReader(f fs.File, args ...data.Value) data.Value {
 	if len(args) == 0 {
 		return NewReader(f, RuneInput)
 	}
@@ -157,21 +157,21 @@ func getBlockSize(def int, args ...data.Value) int {
 	}
 }
 
-func openFile(fs fs.FS, path string) (fs.File, fs.FileInfo, error) {
+func openFile(fs fs.FS, path string) (fs.File, error) {
 	f, err := fs.Open(path)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 	s, err := f.Stat()
 	if err != nil {
 		_ = f.Close()
-		return nil, nil, err
+		return nil, err
 	}
 	if s.IsDir() {
 		_ = f.Close()
-		return nil, nil, fmt.Errorf(ErrExpectedFile, path)
+		return nil, fmt.Errorf(ErrExpectedFile, path)
 	}
-	return f, s, nil
+	return f, nil
 }
 
 func readAll(f fs.File) data.Bytes {

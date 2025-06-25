@@ -1,2 +1,2 @@
-// Package read provides the system's standard lexer and reader
+// Package data provides a reader interface for Ale source code
 package read
