@@ -18,7 +18,7 @@ var Go = data.MakeProcedure(func(args ...data.Value) data.Value {
 		fn.Call(callArgs...)
 	}()
 	return data.Null
-}, 1)
+}, 1, data.OrMore)
 
 // Chan instantiates a new go channel
 var Chan = data.MakeProcedure(func(args ...data.Value) data.Value {
