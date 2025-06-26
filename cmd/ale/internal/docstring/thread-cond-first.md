@@ -16,7 +16,6 @@ Like `->`, but each form is paired with a test condition. The form is only appli
         [(> 12) (* 2)]    ; Applies if > 12: 15 * 2 = 30
         [(< 25) (/ 3)]    ; Doesn't apply (30 is not < 25)
         [true (- 1)])     ; Always applies: 30 - 1 = 29
-; Returns 29
 ```
 
 #### Another Example
