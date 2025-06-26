@@ -3,23 +3,23 @@
 (define-macro :private (make-fetch-err inst coll elem err-msg)
   (apply list (concat!
     '(ale/asm*
-        resolve) [coll] '(
-        resolve) [elem]
-        [inst] '(
-        cond-jump :found
-        const) [err-msg] '(
-        panic
+         resolve) [coll] '(
+         resolve) [elem]
+         [inst] '(
+         cond-jump :found
+         const) [err-msg] '(
+         panic
     :found))))
 
 (define-macro :private (make-fetch-def inst coll elem def-val)
   (apply list (concat!
     '(ale/asm*
-        resolve) [coll] '(
-        resolve) [elem]
-        [inst] '(
-        cond-jump :found
-        resolve) [def-val] '(
-        return
+         resolve) [coll] '(
+         resolve) [elem]
+         [inst] '(
+         cond-jump :found
+         resolve) [def-val] '(
+         return
      :found))))
 
 (define-lambda get
