@@ -12,7 +12,7 @@ Like `->>`, but each form is paired with a test condition. The form is only appl
 
 ```scheme
 (cond->> [1 2 3 4 5]
-         [seq?    (map (lambda (x) (* x 2)))]  ; doubles: [2 4 6 8 10]
+         [seq?    (map (lambda (x) (\* x 2)))]  ; doubles: [2 4 6 8 10]
          [!empty? (filter even?)]              ; keeps evens: [2 4 6 8 10]
          [(> 2)   (take 3)]                    ; takes first 3: [2 4 6]
          [false   (concat [0])])               ; skipped
