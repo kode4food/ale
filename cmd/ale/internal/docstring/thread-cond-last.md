@@ -22,7 +22,7 @@ Like `->>`, but each form is paired with a test condition. The form is only appl
 
 ```scheme
 (cond->> [1 2 3]
-         [seq? (filter even?)]    ; predicate true, filters to [2]
+         [seq?   (filter even?)]  ; predicate true, filters to [2]
          [empty? (concat [4 5])]  ; predicate false, skips concat
-         [true (take 1)])         ; takes first element
+         [true   (take 1)])       ; takes first element
 ```

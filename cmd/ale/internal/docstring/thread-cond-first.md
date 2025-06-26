@@ -12,18 +12,18 @@ Like `->`, but each form is paired with a test condition. The form is only appli
 
 ```scheme
 (cond-> 10
-        [true (+ 5)]     ; Always applies: 10 + 5 = 15
+        [true   (+ 5)]   ; Always applies: 10 + 5 = 15
         [(> 12) (\* 2)]   ; Applies if > 12: 15 \* 2 = 30
         [(< 25) (/ 3)]   ; Doesn't apply (30 is not < 25)
-        [true (- 1)])    ; Always applies: 30 - 1 = 29
+        [true   (- 1)])  ; Always applies: 30 - 1 = 29
 ```
 
 #### Another Example
 
 ```scheme
 (cond-> {}
-        [(empty?) (assoc (:name . "John"))]
-        [(length) (assoc (:size . "non-empty"))]
+        [empty?            (assoc (:name . "John"))]
+        [!empty?           (assoc (:size . "non-empty"))]
         [(contains? :name) (assoc (:greeting . "Hello"))]
-        [(object?) (assoc (:type . "object"))])
+        [object?           (assoc (:type . "object"))])
 ```
