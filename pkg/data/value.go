@@ -59,6 +59,15 @@ func Equal(l, r Value) bool {
 	return l.Equal(r)
 }
 
+// Call returns the Bool value regardless of the arguments passed
+func (b Bool) Call(...Value) Value {
+	return b
+}
+
+func (b Bool) CheckArity(int) error {
+	return nil
+}
+
 // Equal compares this Bool to another for equality
 func (b Bool) Equal(other Value) bool {
 	return b == other

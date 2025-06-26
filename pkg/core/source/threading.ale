@@ -61,7 +61,10 @@
       (= 2 (length clause)) "clause must be paired")
     (let ([pred (0 clause)]
           [form (1 clause)])
-      `((lambda (val) (if ,pred (,threader val ,form) val))))))
+      `((lambda (val)
+          (if (,threader val ,pred)
+              (,threader val ,form)
+              val))))))
 
 (define-macro cond->
   [(value) value]

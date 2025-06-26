@@ -166,15 +166,13 @@ CurrentPC:
 		MEM[LP+int(INST.Operand())] = MEM[SP]
 
 	// Stack and Constant Operations:
-	case isa.Dup:
-		MEM[SP] = MEM[SP+1]
-		SP--
-
-	case isa.Pop:
-		SP++
 
 	case isa.Const:
 		MEM[SP] = c.Constants[INST.Operand()]
+		SP--
+
+	case isa.Dup:
+		MEM[SP] = MEM[SP+1]
 		SP--
 
 	case isa.False:
@@ -184,6 +182,14 @@ CurrentPC:
 	case isa.Null:
 		MEM[SP] = data.Null
 		SP--
+
+	case isa.Pop:
+		SP++
+
+	case isa.Swap:
+		SP1 := SP + 1
+		SP2 := SP1 + 1
+		MEM[SP1], MEM[SP2] = MEM[SP2], MEM[SP1]
 
 	case isa.True:
 		MEM[SP] = data.True

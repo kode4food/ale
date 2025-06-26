@@ -30,6 +30,16 @@
   [(coll idx)         (make-fetch-err nth coll idx "index out of bounds")]
   [(coll idx default) (make-fetch-def nth coll idx default)])
 
+(define (contains? coll key)
+  (if (mapped? coll)
+      (asm*
+          resolve coll
+          resolve key
+          get
+          swap
+          pop)
+      false))
+
 (define (seq value)
   (if (and (seq? value) (!empty? value))
       value

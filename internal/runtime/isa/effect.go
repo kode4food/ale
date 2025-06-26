@@ -63,11 +63,12 @@ var Effects = map[Opcode]*Effect{
 	Store:    {Pop: 1, Operand: Locals},
 
 	// Stack and Constant Operations
-	Dup:   {Pop: 1, Push: 2},
-	Pop:   {Pop: 1},
 	Const: {Push: 1, Operand: Constants},
+	Dup:   {Pop: 1, Push: 2},
 	False: {Push: 1},
 	Null:  {Push: 1},
+	Pop:   {Pop: 1},
+	Swap:  {Pop: 2, Push: 2},
 	True:  {Push: 1},
 	Zero:  {Push: 1},
 

@@ -47,11 +47,12 @@ const (
 	Store    // Pop value, stores in local (op = index)
 
 	// Stack and Constant Operations
-	Dup   // Duplicates the top of the stack
-	Pop   // Discards the top of the stack
 	Const // Push constant (op = index)
+	Dup   // Duplicates the top of the stack
 	False // Push the boolean false
 	Null  // Push the null value
+	Pop   // Discards the top of the stack
+	Swap  // Swaps the top two values on the stack
 	True  // Push the boolean true
 	Zero  // Push the integer zero
 
