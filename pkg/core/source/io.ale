@@ -33,17 +33,13 @@
   (apply print forms)
   (: *out* :write *newline*))
 
-(define :private (paired-vector? value)
-  (and (vector? value)
-       (pair? value)))
-
 (define :private (with-open-close value)
   (let [c (:close value)]
     (if (procedure? c) c no-op)))
 
 (define-macro (with-open bindings . body)
   (assert-args
-    (paired-vector? bindings) "with-open bindings must be a key-value vector")
+    (vector-pair? bindings) "with-open bindings must be a key-value vector")
   (cond
     [(= (length bindings) 0)
      `(begin ,@body)]

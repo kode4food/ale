@@ -1,5 +1,13 @@
 ;;;; ale core: binding
 
+(define :private (vector-pair? clause)
+  (and (is-vector clause)
+       (= 2 (length clause))))
+
+(define :private (binding-clause? clause)
+  (and (vector-pair? clause)
+       (is-local (0 clause))))
+
 (private assert-args)
 (define-macro assert-args
   [() null]
@@ -8,19 +16,14 @@
                  (assert-args ,@(rest (rest clauses)))
                  (raise ,(1 clauses)))])
 
-(define :private (is-binding-clause clause)
-  (and (is-vector clause)
-       (= 2 (length clause))
-       (is-local (0 clause))))
-
 (define :private (make-bindings value)
   (let-rec
     [is-bindings
      (lambda (value)
-       (or (is-binding-clause value)
+       (or (binding-clause? value)
            (and (is-list value)
                 (or (is-empty value)
-                    (and (is-binding-clause (first value))
+                    (and (binding-clause? (first value))
                          (is-bindings (rest value)))))))]
     (assert-args
       (is-bindings value) (str "invalid binding: " value))

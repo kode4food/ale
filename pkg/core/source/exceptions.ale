@@ -8,14 +8,9 @@
                (list? clause)
                (eq sym (first clause))))
 
-        (lambda-rec is-catch-binding (form)
-          (and (vector? form)
-               (= 2 (length form))
-               (local? (form 1))))
-
         (lambda-rec is-catch (clause parsed)
           (and (is-call 'catch clause)
-               (is-catch-binding (nth clause 1))
+               (binding-clause? (nth clause 1))
                (!seq? (:block parsed))))
 
         (lambda-rec is-finally (clause parsed)
