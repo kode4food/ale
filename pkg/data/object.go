@@ -222,7 +222,11 @@ func (o *Object) CheckArity(argc int) error {
 }
 
 func (o *Object) Call(args ...Value) Value {
-	return mappedCall(o, args)
+	res, ok := o.Get(args[0])
+	if !ok && len(args) > 1 {
+		return args[1]
+	}
+	return res
 }
 
 func (o *Object) Equal(other Value) bool {

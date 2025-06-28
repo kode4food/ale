@@ -8,6 +8,7 @@ import (
 	"github.com/kode4food/ale/internal/debug"
 	"github.com/kode4food/ale/internal/lang"
 	"github.com/kode4food/ale/internal/lang/lex"
+	"github.com/kode4food/ale/internal/sequence"
 	"github.com/kode4food/ale/pkg/data"
 	"github.com/kode4food/ale/pkg/env"
 	"github.com/kode4food/ale/pkg/read"
@@ -33,7 +34,7 @@ func (r *REPL) Do(line []rune, pos int) ([][]rune, int) {
 func (r *REPL) autoComplete(buf string) ([]string, int) {
 	src := data.String(buf)
 	seq := read.MustTokenize(src)
-	if l, ok := data.Last(seq); ok {
+	if l, ok := sequence.Last(seq); ok {
 		if l, ok := l.(*lex.Token); ok && l.Type() == lex.Identifier {
 			pfx := string(l.Value().(data.String))
 			return r.prefixedSymbols(pfx), len(pfx)

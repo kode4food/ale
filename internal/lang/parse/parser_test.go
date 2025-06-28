@@ -8,6 +8,7 @@ import (
 	. "github.com/kode4food/ale/internal/assert/helpers"
 	"github.com/kode4food/ale/internal/lang/lex"
 	"github.com/kode4food/ale/internal/lang/parse"
+	"github.com/kode4food/ale/internal/sequence"
 	"github.com/kode4food/ale/pkg/data"
 	"github.com/kode4food/ale/pkg/read"
 )
@@ -132,7 +133,7 @@ func testReaderError(t *testing.T, src, err string, args ...any) {
 
 	ns := assert.GetTestNamespace()
 	tr := read.MustFromString(ns, S(src))
-	data.Last(tr)
+	sequence.Last(tr)
 }
 
 func TestReaderErrors(t *testing.T) {

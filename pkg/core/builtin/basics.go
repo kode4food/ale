@@ -46,7 +46,7 @@ var Read = data.MakeProcedure(func(args ...data.Value) data.Value {
 	v := args[0]
 	s := v.(data.Sequence)
 	res := read.MustFromString(emptyNamespace, sequence.ToString(s))
-	if v, ok := data.Last(res); ok {
+	if v, ok := sequence.Last(res); ok {
 		return v
 	}
 	return data.Null

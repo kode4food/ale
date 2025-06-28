@@ -1,4 +1,4 @@
-package data_test
+package sequence_test
 
 import (
 	"testing"
@@ -9,22 +9,22 @@ import (
 	"github.com/kode4food/ale/pkg/data"
 )
 
-func TestLastOfSequence(t *testing.T) {
+func TestLast(t *testing.T) {
 	as := assert.New(t)
 
-	v, ok := data.Last(data.Null)
+	v, ok := sequence.Last(data.Null)
 	as.Nil(v)
 	as.False(ok)
 
-	v, ok = data.Last(L(S("this"), S("is"), S("last")))
+	v, ok = sequence.Last(L(S("this"), S("is"), S("last")))
 	as.String("last", v)
 	as.True(ok)
 
-	v, ok = data.Last(V(S("this"), S("is"), S("last")))
+	v, ok = sequence.Last(V(S("this"), S("is"), S("last")))
 	as.String("last", v)
 	as.True(ok)
 
-	v, ok = data.Last(sequence.NewLazy(
+	v, ok = sequence.Last(sequence.NewLazy(
 		func() (data.Value, data.Sequence, bool) {
 			return S("hello"), data.Null, true
 		},
@@ -32,17 +32,10 @@ func TestLastOfSequence(t *testing.T) {
 	as.String("hello", v)
 	as.True(ok)
 
-	_, ok = data.Last(sequence.NewLazy(
+	_, ok = sequence.Last(sequence.NewLazy(
 		func() (data.Value, data.Sequence, bool) {
 			return data.Null, data.Null, false
 		},
 	))
 	as.False(ok)
-}
-
-func testSequenceCallInterface(as *assert.Wrapper, s data.Procedure) {
-	as.NotNil(s.CheckArity(0))
-	as.NoError(s.CheckArity(1))
-	as.NoError(s.CheckArity(2))
-	as.NotNil(s.CheckArity(3))
 }

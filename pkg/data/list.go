@@ -135,7 +135,6 @@ func (l *List) Call(args ...Value) Value {
 			panic(fmt.Errorf(ErrInvalidStartIndex, start))
 		}
 		return res
-
 	case 2:
 		start := int(args[0].(Integer))
 		end := int(args[1].(Integer))

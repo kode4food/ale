@@ -142,3 +142,10 @@ func TestListHashCode(t *testing.T) {
 	as.Equal(l1.HashCode(), l4.HashCode())
 	as.Equal(l2.HashCode(), l4.HashCode())
 }
+
+func testSequenceCallInterface(as *assert.Wrapper, s data.Procedure) {
+	as.NotNil(s.CheckArity(0))
+	as.NoError(s.CheckArity(1))
+	as.NoError(s.CheckArity(2))
+	as.NotNil(s.CheckArity(3))
+}
