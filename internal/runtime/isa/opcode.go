@@ -27,89 +27,89 @@ const (
 	Label Opcode = iota // Marks a label (not executed)
 	NoOp                // No operation
 
-	// Argument, Environemnt and Closure Operations
+	// Argument, Environment and Closure Operations
 	Arg        // Push the Nth argument (op = index)
 	ArgsLen    // Push the number of arguments
-	ArgsPop    // Pop argument stack frame
-	ArgsPush   // Push N arguments (op = count)
-	ArgsRest   // Push rest of arguments as a vector
+	ArgsPop    // Pop argument stack, restore previous arguments
+	ArgsPush   // Push argument stack, replace with popped values (op = count)
+	ArgsRest   // Push remaining arguments as a vector (op = start index)
 	Closure    // Push captured value (op = index)
-	EnvBind    // Pop name and value, binds value to global symbol
-	EnvPrivate // Pop symbol, marks as private in namespace
-	EnvPublic  // Pop symbol, marks as public in namespace
-	EnvValue   // Resolves namespace symbol at top of stack
+	EnvBind    // Pop symbol and value, binds value to namespace symbol
+	EnvPrivate // Pop symbol, mark as private in namespace
+	EnvPublic  // Pop symbol, mark as public in namespace
+	EnvValue   // Pop symbol, resolve it from namespace
 
 	// Reference and Register Operations
 	Load     // Push local value (op = index)
 	NewRef   // Push a new unbound Ref
 	RefBind  // Pop ref and value, sets ref.Value to value
-	RefValue // Loads ref.Value from ref at top of stack
-	Store    // Pop value, stores in local (op = index)
+	RefValue // Pop ref, push ref.Value
+	Store    // Pop value, store in local (op = index)
 
 	// Stack and Constant Operations
 	Const // Push constant (op = index)
-	Dup   // Duplicates the top of the stack
+	Dup   // Push a duplicate of the top of the stack
 	False // Push the boolean false
 	Null  // Push the null value
-	Pop   // Discards the top of the stack
-	Swap  // Swaps the top two values on the stack
+	Pop   // Pop (discard) the top of the stack
+	Swap  // Swap the top two values on the stack
 	True  // Push the boolean true
 	Zero  // Push the integer zero
 
 	// Call Operations
-	Call     // Calls proc with N args (op = count)
-	Call0    // Calls proc with zero arguments
-	Call1    // Calls proc with one argument
-	Call2    // Calls proc with two arguments
-	Call3    // Calls proc with three arguments
-	CallSelf // Calls current closure with N args (op = count)
-	CallWith // Calls proc with args from a sequence
-	TailCall // Dynamic tail call with N args (op = count)
-	TailClos // Tail call to a closure with N args (op = count)
-	TailSelf // Tail call to self with N args (op = count)
+	Call     // Pop proc, pop N args, call proc, push result (op = count)
+	Call0    // Pop proc, call with zero args, push result
+	Call1    // Pop proc, pop 1 arg, call proc, push result
+	Call2    // Pop proc, pop 2 args, call proc, push result
+	Call3    // Pop proc, pop 3 args, call proc, push result
+	CallSelf // Pop N args, call current closure (op = count)
+	CallWith // Pop proc, pop sequence, call proc with seq values (op = count)
+	TailCall // Pop proc, pop N args, dynamic tail call (op = count)
+	TailClos // Pop closure, pop N args, tail call (op = count)
+	TailSelf // Pop N args, tail call (op = count)
 
 	// Control Flow Operations
-	CondJump // If top of stack is true, jumps to operand
-	Delay    // Wraps the proc as a promise
-	Jump     // Jumps to operand
-	Panic    // Raises error with value at top of stack
-	RetFalse // Returns the boolean false
-	RetNull  // Returns the null value
-	RetTrue  // Returns the boolean true
-	Return   // Returns value at top of stack
+	CondJump // Pop value, if not false, jump to operand
+	Delay    // Pop proc, wrap as promise, push promise
+	Jump     // Jump to operand
+	Panic    // Pop value, raise as error from VM
+	RetFalse // Return the boolean false from VM
+	RetNull  // Return the null value from VM
+	RetTrue  // Return the boolean true from VM
+	Return   // Pop value, return value from VM
 
 	// Sequence Operations
-	Append  // Pop value, append to sequence at top of stack
-	Assoc   // Pop pair, associate with mapper at top of stack
-	Car     // Pop pair, push its Address (car) part
-	Cdr     // Pop pair, push its Decrement (cdr) part
-	Cons    // Pop two values, push a new cons cell
-	Dissoc  // Pop key, dissociate from mapper at top of stack
-	Empty   // Push true if sequence at top of stack is empty
-	Get     // Pop key, push value from mapper at top of stack
-	LazySeq // Wraps the proc as a lazy sequence
-	Length  // Replace the sequence at the top of the stack with its length
-	Nth     // Pop index, push value from sequence at top of stack
-	Reverse // Reverse the sequence at the top of the stack
+	Append  // Pop value, pop sequence, append value to sequence, push result
+	Assoc   // Pop pair, pop mapper, associate pair with mapper, push result
+	Car     // Pop pair, push pair's Address (car) part
+	Cdr     // Pop pair, push pair's Decrement (cdr) part
+	Cons    // Pop car, pop cdr, push new cons cell
+	Dissoc  // Pop key, pop mapper, dissociate key from mapper, push result
+	Empty   // Pop sequence, push true if sequence is empty
+	Get     // Pop key, pop mapper, push found status and value from mapper
+	LazySeq // Pop proc, wrap as lazy sequence, push lazy sequence
+	Length  // Pop sequence, push sequence length
+	Nth     // Pop index, pop indexed, push from status and value from indexed
+	Reverse // Pop sequence, push reversed sequence
 	Vector  // Pop N values, push as a vector (op = count)
 
 	// Boolean Operations
 	Eq  // Pop two values, push true if equal
-	Not // Boolean negation of top of stack
+	Not // Pop value, push boolean negation of value
 
 	// Numeric Operations
 	Add    // Pop two numbers, push their sum
 	Div    // Pop two numbers, push their quotient
-	Mod    // Pop two numbers, push remainder of division
+	Mod    // Pop two numbers, push the remainder of division
 	Mul    // Pop two numbers, push their product
-	Neg    // Negates the number at top of stack
-	NegInt // Push negative integer (operand)
+	Neg    // Pop number, push negated value of number
+	NegInt // Push negative integer (int = operand)
 	NumEq  // Pop two numbers, push true if equal
 	NumGt  // Pop two numbers, push true if second > first
 	NumGte // Pop two numbers, push true if second >= first
 	NumLt  // Pop two numbers, push true if second < first
 	NumLte // Pop two numbers, push true if second <= first
-	PosInt // Push positive integer (operand)
+	PosInt // Push positive integer (int = operand)
 	Sub    // Pop two numbers, push their difference
 )
 
