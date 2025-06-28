@@ -134,8 +134,8 @@ func MustResolveValue(ns Namespace, s data.Symbol) data.Value {
 	return v
 }
 
-// MustGetQualified attempts to retrieve a namespace for the specified
-// domain. If the namespace does not exist, it will create it, or panic.
+// MustGetQualified attempts to retrieve a namespace for the specified domain.
+// If the namespace does not exist, it will create it, or panic.
 func MustGetQualified(e *Environment, n data.Local) Namespace {
 	ns, err := e.GetQualified(n)
 	if err == nil {

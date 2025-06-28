@@ -14,8 +14,7 @@ func MakeTypePredicate(t types.Type) *TypePredicate {
 }
 
 // TypePredicateOf returns a TypePredicate for the Types of the given Values.
-// If more than one Value is provided, the Union of their Types will be
-// returned
+// If more than one Value is provided, the Union of their Types is returned
 func TypePredicateOf(f Value, r ...Value) *TypePredicate {
 	if len(r) == 0 {
 		return MakeTypePredicate(typeOf(f))
