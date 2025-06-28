@@ -25,12 +25,12 @@ type (
 const (
 	Nothing ActOn = iota
 	Arguments
+	Captured
 	Constants
 	Integer
 	Labels
 	Locals
 	Stack
-	Values
 )
 
 // ErrEffectNotDeclared is raised when an attempt to forcefully retrieve an
@@ -49,7 +49,7 @@ var Effects = map[Opcode]*Effect{
 	ArgsPop:    {},
 	ArgsPush:   {DPop: true, Operand: Arguments},
 	ArgsRest:   {Push: 1, Operand: Arguments},
-	Closure:    {Push: 1, Operand: Values},
+	Closure:    {Push: 1, Operand: Captured},
 	EnvBind:    {Pop: 2},
 	EnvPrivate: {Pop: 1},
 	EnvPublic:  {Pop: 1},
