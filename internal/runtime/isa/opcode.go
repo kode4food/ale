@@ -34,10 +34,10 @@ const (
 	ArgsPush   // Push argument stack, replace with popped values (op = count)
 	ArgsRest   // Push remaining arguments as a vector (op = start index)
 	Closure    // Push captured value (op = index)
-	EnvBind    // Pop symbol and value, binds value to namespace symbol
-	EnvPrivate // Pop symbol, mark as private in namespace
-	EnvPublic  // Pop symbol, mark as public in namespace
-	EnvValue   // Pop symbol, resolve it from namespace
+	EnvBind    // Pop local and value, binds value to local in namespace
+	EnvPrivate // Pop local, mark as private in namespace
+	EnvPublic  // Pop local, mark as public in namespace
+	EnvValue   // Pop local, resolve it from namespace
 
 	// Reference and Register Operations
 	Load     // Push local value (op = index)
@@ -63,7 +63,7 @@ const (
 	Call2    // Pop proc, pop 2 args, call proc, push result
 	Call3    // Pop proc, pop 3 args, call proc, push result
 	CallSelf // Pop N args, call current closure (op = count)
-	CallWith // Pop proc, pop sequence, call proc with seq values (op = count)
+	CallWith // Pop proc, pop sequence, call proc with seq values
 	TailCall // Pop proc, pop N args, dynamic tail call (op = count)
 	TailClos // Pop closure, pop N args, tail call (op = count)
 	TailSelf // Pop N args, tail call (op = count)
