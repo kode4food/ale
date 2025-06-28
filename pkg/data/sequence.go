@@ -2,8 +2,6 @@ package data
 
 import (
 	"fmt"
-
-	"github.com/kode4food/ale/internal/debug"
 )
 
 type (
@@ -81,22 +79,22 @@ func mappedCall(m Mapped, args Vector) Value {
 	return res
 }
 
-func sliceRangedCall[T any](s []T, args Vector) []T {
+func sliceRangedCall[T any](s []T, args Vector) ([]T, error) {
 	switch len(args) {
 	case 1:
 		start := int(args[0].(Integer))
 		if start < 0 || start > len(s) {
-			panic(fmt.Errorf(ErrInvalidStartIndex, start))
+			return nil, fmt.Errorf(ErrInvalidStartIndex, start)
 		}
-		return s[start:]
+		return s[start:], nil
 	case 2:
 		start := int(args[0].(Integer))
 		end := int(args[1].(Integer))
 		if start < 0 || end < start || end > len(s) {
-			panic(fmt.Errorf(ErrInvalidIndexes, start, end))
+			return nil, fmt.Errorf(ErrInvalidIndexes, start, end)
 		}
-		return s[start:end]
+		return s[start:end], nil
 	default:
-		panic(debug.ProgrammerErrorf("invalid argument count: %d", len(args)))
+		return nil, fmt.Errorf(ErrRangedArity, 1, 2, len(args))
 	}
 }

@@ -217,12 +217,12 @@ func (o *Object) IsEmpty() bool {
 	return o == nil
 }
 
-func (o *Object) Call(args ...Value) Value {
-	return mappedCall(o, args)
-}
-
 func (o *Object) CheckArity(argc int) error {
 	return CheckRangedArity(1, 2, argc)
+}
+
+func (o *Object) Call(args ...Value) Value {
+	return mappedCall(o, args)
 }
 
 func (o *Object) Equal(other Value) bool {

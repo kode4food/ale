@@ -120,12 +120,16 @@ func (b Bytes) IndexOf(v Value) (int, bool) {
 	return i, i != -1
 }
 
-func (b Bytes) Call(args ...Value) Value {
-	return Bytes(sliceRangedCall(b, args))
-}
-
 func (b Bytes) CheckArity(argc int) error {
 	return CheckRangedArity(1, 2, argc)
+}
+
+func (b Bytes) Call(args ...Value) Value {
+	res, err := sliceRangedCall(b, args)
+	if err != nil {
+		panic(err)
+	}
+	return Bytes(res)
 }
 
 func (b Bytes) Equal(other Value) bool {

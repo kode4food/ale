@@ -107,12 +107,16 @@ func (v Vector) IndexOf(val Value) (int, bool) {
 	return i, i != -1
 }
 
-func (v Vector) Call(args ...Value) Value {
-	return Vector(sliceRangedCall(v, args))
-}
-
 func (v Vector) CheckArity(argc int) error {
 	return CheckRangedArity(1, 2, argc)
+}
+
+func (v Vector) Call(args ...Value) Value {
+	res, err := sliceRangedCall(v, args)
+	if err != nil {
+		panic(err)
+	}
+	return Vector(res)
 }
 
 func (v Vector) Equal(other Value) bool {

@@ -6,7 +6,6 @@ import (
 	"strings"
 	"sync/atomic"
 
-	"github.com/kode4food/ale/internal/debug"
 	"github.com/kode4food/ale/internal/lang"
 	"github.com/kode4food/ale/internal/types"
 )
@@ -123,6 +122,10 @@ func (l *List) ElementAt(index int) (Value, bool) {
 	return e.Car(), true
 }
 
+func (l *List) CheckArity(argc int) error {
+	return CheckRangedArity(1, 2, argc)
+}
+
 func (l *List) Call(args ...Value) Value {
 	switch len(args) {
 	case 1:
@@ -146,7 +149,7 @@ func (l *List) Call(args ...Value) Value {
 		}
 		return res
 	default:
-		panic(debug.ProgrammerErrorf("invalid argument count: %d", len(args)))
+		panic(fmt.Errorf(ErrRangedArity, 1, 2, len(args)))
 	}
 }
 
@@ -177,10 +180,6 @@ func (l *List) take(count int) (*List, bool) {
 		curr = curr.rest
 	}
 	return NewList(res...), true
-}
-
-func (l *List) CheckArity(argc int) error {
-	return CheckRangedArity(1, 2, argc)
 }
 
 func (l *List) Equal(other Value) bool {
