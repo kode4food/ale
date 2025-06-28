@@ -2,6 +2,7 @@ package bootstrap
 
 import (
 	"fmt"
+	"os"
 
 	lang "github.com/kode4food/ale/internal/lang/env"
 	"github.com/kode4food/ale/internal/stream"
@@ -15,18 +16,18 @@ import (
 const InitFile = "bootstrap.ale"
 
 func (b *bootstrap) populateAssets() {
-	//defer func() {
-	//	if rec := recover(); rec != nil {
-	//		_, _ = fmt.Fprint(os.Stderr, "\nBootstrap Error\n\n")
-	//		if ev, ok := rec.(error); ok {
-	//			msg := ev.Error()
-	//			_, _ = fmt.Fprintf(os.Stderr, "%s\n\n", msg)
-	//		} else {
-	//			_, _ = fmt.Fprintf(os.Stderr, "%s\n\n", rec)
-	//		}
-	//		os.Exit(-1)
-	//	}
-	//}()
+	defer func() {
+		if rec := recover(); rec != nil {
+			_, _ = fmt.Fprint(os.Stderr, "\nBootstrap Error\n\n")
+			if ev, ok := rec.(error); ok {
+				msg := ev.Error()
+				_, _ = fmt.Fprintf(os.Stderr, "%s\n\n", msg)
+			} else {
+				_, _ = fmt.Fprintf(os.Stderr, "%s\n\n", rec)
+			}
+			os.Exit(-1)
+		}
+	}()
 
 	ns := b.environment.GetRoot()
 	if err := populateFileSystem(ns); err != nil {
