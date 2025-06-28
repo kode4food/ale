@@ -115,7 +115,7 @@
 (define-macro (for seq-exprs . body)
   (let [b (make-bindings seq-exprs)]
     (assert-args
-      (!empty? b) "at least one for binding is required")
+      [(!empty? b) (str "one or more for bindings required: " b)])
     (let* ([this (first b)]
            [next (rest b)]
            [sym  (0 this)]

@@ -48,7 +48,7 @@
 
         (lambda-rec try-catch-branch (clauses err-sym)
           (assert-args
-            (seq? clauses) "catch branch not paired")
+            [(seq? clauses) (str "invalid catch branch: " clauses)])
           (lazy-seq
             (let* ([clause (first clauses)]
                    [var    (0 (1 clause))]

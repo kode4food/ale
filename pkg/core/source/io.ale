@@ -39,7 +39,7 @@
 
 (define-macro (with-open bindings . body)
   (assert-args
-    (vector-pair? bindings) "with-open bindings must be a key-value vector")
+    [(vector-pair? bindings) (str "invalid with-open bindings: " bindings)])
   (cond
     [(= (length bindings) 0)
      `(begin ,@body)]

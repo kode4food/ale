@@ -20,7 +20,7 @@
   [clauses
      (let [clause (first clauses)]
        (assert-args
-         (vector-pair? clause) (str "invalid cond clause: " clause))
+         [(vector-pair? clause) (str "invalid cond clause: " clause)])
        (let ([test   (0 clause)]
              [branch (1 clause)])
          `(if ,test
@@ -38,7 +38,7 @@
         [clauses
            (let [clause (first clauses)]
              (assert-args
-               (vector-pair? clause) (str "invalid case clause: " clause))
+               [(vector-pair? clause) (str "invalid case clause: " clause)])
              (let ([test   (0 clause)]
                    [branch (1 clause)]
                    [next   (rest clauses)])
@@ -55,7 +55,7 @@
      `(if-let ,binding ,then null)]
   [(binding then else)
      (assert-args
-       (binding-clause? binding) (str "invalid if-let binding: " binding))
+       [(binding-clause? binding) (str "invalid if-let binding: " binding)])
      (let ([sym  (0 binding)]
            [test (1 binding)])
        `(let [,sym ,test]

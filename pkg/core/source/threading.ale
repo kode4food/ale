@@ -43,8 +43,8 @@
 
 (define-macro (let-> binding . forms)
   (assert-args
-    (binding-clause? binding) "binding clause must be a paired vector"
-    (!empty? forms)           "at least one threaded form is required")
+    [(binding-clause? binding) (str "invalid binding: " binding)]
+    [(!empty? forms)           "one or more threaded forms required"])
   (let ([step  (thread-seq->list (first forms))]
         [next  (rest forms)]
         [name  (0 binding)]
@@ -57,7 +57,7 @@
 (define :private (make-cond-clause threader)
   (lambda (clause)
     (assert-args
-      (vector-pair? clause) "clause must be a paired vector")
+      [(vector-pair? clause) (str "invalid cond clause: " clause)])
     (let ([pred (0 clause)]
           [form (1 clause)])
       `((lambda (val)

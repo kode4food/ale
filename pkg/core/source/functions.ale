@@ -8,11 +8,11 @@
                 [fnName (first (rest fnList))]
                 [fnRest (rest (rest fnList))])
            (assert-args
-             (and (list? fnList)
-                  (or (eq fnSym 'lambda-rec)
-                      (eq fnSym 'ale/lambda-rec))
-                  (local? fnName))
-             "bindings must contain named procedures")
+             [(and (list? fnList)
+                   (or (eq fnSym 'lambda-rec)
+                       (eq fnSym 'ale/lambda-rec))
+                   (local? fnName))
+              (str "binding must contain named procedure: " fnList)])
            (parse-bindings (append out [fnName fnList]) (rest in)))
          `(let-rec ,(seq->list out) ,@body)))
    [] bindings))
@@ -21,7 +21,7 @@
   [(func) func]
   [(func . first-args)
      (assert-args
-       (procedure? func) "partial requires a procedure")
+       [(procedure? func) (str "partial requires a procedure: " func)])
      (lambda rest-args
        (apply func (apply append* (cons first-args rest-args))))])
 

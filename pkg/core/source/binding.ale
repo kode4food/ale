@@ -11,10 +11,13 @@
 (private assert-args)
 (define-macro assert-args
   [() null]
-  [(clause) (raise "assert-args clauses must be paired")]
-  [clauses  `(if ,(0 clauses)
-                 (assert-args ,@(rest (rest clauses)))
-                 (raise ,(1 clauses)))])
+  [clauses
+     (let [clause (first clauses)]
+       (if (vector-pair? clause)
+           `(if ,(0 clause)
+                (assert-args ,@(rest clauses))
+                (raise ,(1 clause)))
+           (raise (str "invalid assert-args clause: " clause))))])
 
 (define :private (make-bindings value)
   (let-rec
@@ -26,7 +29,7 @@
                     (and (binding-clause? (first value))
                          (is-bindings (rest value)))))))]
     (assert-args
-      (is-bindings value) (str "invalid binding: " value))
+      [(is-bindings value) (str "invalid binding: " value)])
     (if (is-vector value)
         (list value)
         value)))
