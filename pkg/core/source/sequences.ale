@@ -150,11 +150,11 @@
     [(func coll)
        (fold-left (swap-args func) (reverser coll))]))
 
-(define fold-right (make-fold-right reverse))
+(define fold-right  (make-fold-right reverse))
 (define fold-right! (make-fold-right reverse!))
 
-(define foldl fold-left)
-(define foldr fold-right)
+(define foldl  fold-left)
+(define foldr  fold-right)
 (define reduce fold-left)
 
 (define-macro (: target method . args)

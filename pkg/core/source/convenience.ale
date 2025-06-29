@@ -1,12 +1,12 @@
 ;;;; ale core: some conveniences
 
 (define null '())
-(define true #t)
+(define true  #t)
 (define false #f)
-(define λ lambda)
+(define λ     lambda)
 
 (define first car)
-(define rest cdr)
+(define rest  cdr)
 
 (define-macro :private (make-comparator f r inst)
   (apply list (concat!

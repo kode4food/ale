@@ -46,18 +46,16 @@
 
 (define modulo mod)
 
-(define (= f . r) (make-comparator f r num-eq))
-(define (< f . r) (make-comparator f r num-lt))
+(define (= f . r)  (make-comparator f r num-eq))
+(define (< f . r)  (make-comparator f r num-lt))
 (define (<= f . r) (make-comparator f r num-lte))
-(define (> f . r) (make-comparator f r num-gt))
+(define (> f . r)  (make-comparator f r num-gt))
 (define (>= f . r) (make-comparator f r num-gte))
-
-(define (!= f . r)
-  (asm* eval (make-comparator f r num-eq) not))
+(define (!= f . r) (asm* eval (make-comparator f r num-eq) not))
 
 (define :private (is-zero value) (= value 0))
 (define :private (is-even value) (= (mod value 2) 0))
-(define :private (is-odd value) (= (mod value 2) 1))
+(define :private (is-odd value)  (= (mod value 2) 1))
 
 (define (inc value) (+ value 1))
 (define (dec value) (- value 1))
@@ -70,4 +68,4 @@
 
 (define +inf *pos-inf*)
 (define -inf *neg-inf*)
-(define nan (- +inf +inf))
+(define nan  (- +inf +inf))
