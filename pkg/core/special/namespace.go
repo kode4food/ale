@@ -169,18 +169,18 @@ func buildImports(a *data.List) (imports, error) {
 			if len(f) != 2 {
 				return nil, errors.New(ErrUnpairedBindings)
 			}
-			k, ok := f[0].(data.Local)
+			alias, ok := f[0].(data.Local)
 			if !ok {
 				return nil, fmt.Errorf(ErrExpectedName, f[0])
 			}
-			v, ok := f[1].(data.Local)
+			name, ok := f[1].(data.Local)
 			if !ok {
 				return nil, fmt.Errorf(ErrExpectedName, f[1])
 			}
-			if _, ok := res[k]; ok {
-				return nil, fmt.Errorf(ErrDuplicateName, k)
+			if _, ok := res[alias]; ok {
+				return nil, fmt.Errorf(ErrDuplicateName, alias)
 			}
-			res[k] = v
+			res[alias] = name
 		default:
 			return nil, fmt.Errorf(ErrUnexpectedImport, f)
 		}
@@ -190,7 +190,7 @@ func buildImports(a *data.List) (imports, error) {
 
 func performImports(from, to env.Namespace, i imports) error {
 	le := map[data.Local]*env.Entry{}
-	for name, alias := range i {
+	for alias, name := range i {
 		e, _, err := from.Resolve(name)
 		if err != nil {
 			return err
