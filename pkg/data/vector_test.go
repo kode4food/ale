@@ -64,6 +64,10 @@ func TestVectorCall(t *testing.T) {
 	as.Equal(v1[1:], v1.Call(I(1)))
 	as.Equal(data.EmptyVector, v1.Call(I(4)))
 
+	as.Equal(v1[1:2], v1.Call(I(1), I(2)))
+	as.Equal(v1[:2], v1.Call(I(0), I(2)))
+	as.Equal(v1[3:4], v1.Call(I(3), I(4)))
+
 	testSequenceCallInterface(as, v1)
 }
 
