@@ -28,4 +28,5 @@ func TestNamespaceDefinition(t *testing.T) {
 
 	as.MustEvalTo(`(import some-namespace y) y`, I(100))
 	as.MustEvalTo(`(import some-namespace [x99 x]) x99`, I(99))
+	as.MustEvalTo(`(import some-namespace (x y)) [y x]`, V(I(100), I(99)))
 }
