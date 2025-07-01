@@ -29,7 +29,23 @@ const (
 	ErrDivideByZero = "divide by zero"
 )
 
-var intSalt = rand.Uint64()
+var (
+	intSalt = rand.Uint64()
+
+	// compile-time checks for interface implementation
+	_ interface {
+		Hashed
+		Number
+		Procedure
+		Typed
+	} = Integer(0)
+
+	_ interface {
+		Hashed
+		Number
+		Typed
+	} = (*BigInt)(nil)
+)
 
 // ParseInteger attempts to parse a string representing an integer
 func ParseInteger(s string) (Number, error) {

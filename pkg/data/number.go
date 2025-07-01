@@ -4,8 +4,7 @@ import "github.com/kode4food/ale/internal/debug"
 
 // Number describes a numeric value of some kind
 type Number interface {
-	Hashed
-	Typed
+	Value
 	Cmp(Number) Comparison
 	Add(Number) Number
 	Sub(Number) Number

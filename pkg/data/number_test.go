@@ -413,7 +413,7 @@ func testNumberChecks(as *assert.Wrapper, n data.Number) {
 	as.False(n.IsNaN())
 	as.False(n.IsPosInf())
 	as.False(n.IsNegInf())
-	as.True(types.BasicNumber.Equal(n.Type()))
+	as.True(types.BasicNumber.Equal(n.(data.Typed).Type()))
 }
 
 func TestNumberChecks(t *testing.T) {

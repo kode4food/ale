@@ -33,6 +33,19 @@ const (
 var (
 	ratSalt = rand.Uint64()
 	one     = big.NewInt(1)
+
+	// compile-time checks for interface implementation
+	_ interface {
+		Hashed
+		Number
+		Typed
+	} = Float(0)
+
+	_ interface {
+		Hashed
+		Number
+		Typed
+	} = (*Ratio)(nil)
 )
 
 // ParseFloat attempts to parse a string representing a float
