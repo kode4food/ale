@@ -14,7 +14,7 @@ func TestBytes(t *testing.T) {
 	v1 := data.NewBytes(I(85), I(95), I(28), I(25))
 	as.Number(4, v1.Count())
 	as.Number(85, v1.Car())
-	as.Number(3, v1.Cdr().(data.CountedSequence).Count())
+	as.Number(3, v1.Cdr().(data.Counted).Count())
 	as.False(v1.IsEmpty())
 
 	r, ok := v1.ElementAt(2)

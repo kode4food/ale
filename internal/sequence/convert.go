@@ -22,14 +22,14 @@ func ToVector(s data.Sequence) data.Vector {
 	switch s := s.(type) {
 	case data.Vector:
 		return s
-	case data.CountedSequence:
+	case data.Counted:
 		return countedToVector(s)
 	default:
 		return uncountedToVector(s)
 	}
 }
 
-func countedToVector(s data.CountedSequence) data.Vector {
+func countedToVector(s data.Counted) data.Vector {
 	res := make(data.Vector, s.Count())
 	idx := 0
 	for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {

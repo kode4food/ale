@@ -62,7 +62,7 @@ func (w *sliceWrapper) Unwrap(v data.Value) (reflect.Value, error) {
 	switch in := v.(type) {
 	case data.Vector:
 		return w.unwrapVector(in)
-	case data.CountedSequence:
+	case data.Counted:
 		return w.unwrapCounted(in)
 	case data.Sequence:
 		return w.unwrapUncounted(in)
@@ -85,7 +85,7 @@ func (w *sliceWrapper) unwrapVector(in data.Vector) (reflect.Value, error) {
 }
 
 func (w *sliceWrapper) unwrapCounted(
-	in data.CountedSequence,
+	in data.Counted,
 ) (reflect.Value, error) {
 	inLen := in.Count()
 	out := reflect.MakeSlice(w.typ, inLen, inLen)

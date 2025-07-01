@@ -34,7 +34,7 @@ func (dumpTest) Equal(data.Value) bool                    { return false }
 var _ interface {
 	data.Named
 	data.Typed
-	data.CountedSequence
+	data.Counted
 } = dumpTest{}
 
 func TestDumpString(t *testing.T) {

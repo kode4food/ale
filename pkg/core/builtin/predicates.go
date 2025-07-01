@@ -74,8 +74,8 @@ var (
 		VectorKey:    data.MakeTypePredicate(types.BasicVector),
 
 		AppenderKey:  makeGoTypePredicate[data.Appender](),
-		CountedKey:   makeGoTypePredicate[data.CountedSequence](),
-		IndexedKey:   makeGoTypePredicate[data.IndexedSequence](),
+		CountedKey:   makeGoTypePredicate[data.Counted](),
+		IndexedKey:   makeGoTypePredicate[data.Indexed](),
 		LocalKey:     makeGoTypePredicate[data.Local](),
 		MappedKey:    makeGoTypePredicate[data.Mapper](),
 		QualifiedKey: makeGoTypePredicate[data.Qualified](),

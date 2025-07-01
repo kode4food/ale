@@ -41,7 +41,7 @@ var (
 
 	// compile-time checks for interface implementation
 	_ interface {
-		CountedSequence
+		Counted
 		Hashed
 		Mapper
 		Procedure

@@ -75,7 +75,7 @@ func (d dumped) String() string {
 }
 
 func dumpCount(v Value) (Value, bool) {
-	if c, ok := v.(CountedSequence); ok {
+	if c, ok := v.(Counted); ok {
 		return Integer(c.Count()), true
 	}
 	return Null, false

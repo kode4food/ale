@@ -14,7 +14,7 @@ func TestVector(t *testing.T) {
 	v1 := data.NewVector(S("hello"), S("how"), S("are"), S("you?"))
 	as.Number(4, v1.Count())
 	as.String("hello", v1.Car())
-	as.Number(3, v1.Cdr().(data.CountedSequence).Count())
+	as.Number(3, v1.Cdr().(data.Counted).Count())
 
 	r, ok := v1.ElementAt(2)
 	as.True(ok)
