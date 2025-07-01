@@ -18,7 +18,17 @@ type Procedure struct {
 	hash atomic.Uint64
 }
 
-var procSalt = rand.Uint64()
+var (
+	procSalt = rand.Uint64()
+
+	// compile-time checks for interface implementation
+	_ interface {
+		data.Hashed
+		data.Mapped
+		data.Procedure
+		data.Typed
+	} = (*Procedure)(nil)
+)
 
 func MakeProcedure(run *isa.Runnable, arity data.ArityChecker) *Procedure {
 	return &Procedure{

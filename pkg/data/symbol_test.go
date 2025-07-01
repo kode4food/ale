@@ -13,9 +13,9 @@ import (
 func TestSymbolType(t *testing.T) {
 	as := assert.New(t)
 
-	as.True(types.BasicSymbol.Equal(LS("hello").Type()))
-	as.True(types.BasicSymbol.Equal(QS("ale", "hello").Type()))
-	as.False(types.BasicBoolean.Equal(QS("ale", "hello").Type()))
+	as.True(types.BasicSymbol.Equal(LS("hello").(data.Typed).Type()))
+	as.True(types.BasicSymbol.Equal(QS("ale", "hello").(data.Typed).Type()))
+	as.False(types.BasicBoolean.Equal(QS("ale", "hello").(data.Typed).Type()))
 }
 
 func TestLocalSymbolEquality(t *testing.T) {

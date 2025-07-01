@@ -17,11 +17,13 @@ type (
 
 	// Typed is the generic interface for data that are typed
 	Typed interface {
+		Value
 		Type() types.Type
 	}
 
 	// Mapped is the interface for Values that have accessible properties
 	Mapped interface {
+		Value
 		Get(Value) (Value, bool)
 	}
 )
@@ -43,6 +45,13 @@ const (
 var (
 	trueHash  = rand.Uint64()
 	falseHash = rand.Uint64()
+
+	// compile-time checks for interface implementation
+	_ interface {
+		Hashed
+		Procedure
+		Typed
+	} = False
 )
 
 func Equal(l, r Value) bool {

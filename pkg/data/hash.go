@@ -7,6 +7,7 @@ import (
 
 // Hashed can return a hash code for the value
 type Hashed interface {
+	Value
 	HashCode() uint64
 }
 

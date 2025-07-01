@@ -21,6 +21,17 @@ var (
 	EmptyBytes Bytes
 
 	bytesSalt = rand.Uint64()
+
+	// compile-time checks for interface implementation
+	_ interface {
+		Appender
+		Hashed
+		Indexed
+		Prepender
+		Procedure
+		Reverser
+		Typed
+	} = Bytes{}
 )
 
 func NewBytes(vals ...Value) Bytes {

@@ -10,7 +10,17 @@ import (
 // Keyword is a Value that represents a Name that resolves to itself
 type Keyword string
 
-var kwdSalt = rand.Uint64()
+var (
+	kwdSalt = rand.Uint64()
+
+	// compile-time checks for interface implementation
+	_ interface {
+		Hashed
+		Named
+		Procedure
+		Typed
+	} = Keyword("")
+)
 
 // Name returns the name of the Keyword
 func (k Keyword) Name() Local {

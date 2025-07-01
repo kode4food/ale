@@ -16,8 +16,6 @@ type (
 	// Symbol is an identifier that can be resolved
 	Symbol interface {
 		symbol() // marker
-		Typed
-		Value
 		Named
 	}
 
@@ -26,6 +24,7 @@ type (
 
 	// Named is the generic interface for data that are named
 	Named interface {
+		Value
 		Name() Local
 	}
 
@@ -74,6 +73,19 @@ var (
 
 	qualRegex = regexp.MustCompile("^" + lang.Qualified + "$")
 	lclRegex  = regexp.MustCompile("^" + lang.Local + "$")
+
+	// compile-time checks for interface implementation
+	_ interface {
+		Hashed
+		Symbol
+		Typed
+	} = (Local)(Local(""))
+
+	_ interface {
+		Hashed
+		Qualified
+		Typed
+	} = (*qualified)(nil)
 )
 
 // NewGeneratedSymbol creates a generated Symbol
