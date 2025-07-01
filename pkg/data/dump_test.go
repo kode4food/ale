@@ -24,8 +24,18 @@ func (dumpTest) Type() types.Type {
 	return types.BasicList
 }
 
-func (dumpTest) String() string        { return "" }
-func (dumpTest) Equal(data.Value) bool { return false }
+func (dumpTest) IsEmpty() bool                            { return false }
+func (dumpTest) Car() data.Value                          { return nil }
+func (dumpTest) Cdr() data.Value                          { return nil }
+func (dumpTest) Split() (data.Value, data.Sequence, bool) { return nil, nil, true }
+func (dumpTest) String() string                           { return "" }
+func (dumpTest) Equal(data.Value) bool                    { return false }
+
+var _ interface {
+	data.Named
+	data.Typed
+	data.CountedSequence
+} = dumpTest{}
 
 func TestDumpString(t *testing.T) {
 	as := assert.New(t)

@@ -20,16 +20,6 @@ type (
 		Type() types.Type
 	}
 
-	// Counted interfaces allow a Value to return a count of its items
-	Counted interface {
-		Count() int
-	}
-
-	// Indexed is the interface for data that have indexed elements
-	Indexed interface {
-		ElementAt(int) (Value, bool)
-	}
-
 	// Mapped is the interface for Values that have accessible properties
 	Mapped interface {
 		Get(Value) (Value, bool)

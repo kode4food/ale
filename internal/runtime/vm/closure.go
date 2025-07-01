@@ -367,12 +367,12 @@ CurrentPC:
 
 	case isa.Length:
 		SP1 := SP + 1
-		MEM[SP1] = data.Integer(MEM[SP1].(data.Counted).Count())
+		MEM[SP1] = data.Integer(MEM[SP1].(data.CountedSequence).Count())
 
 	case isa.Nth:
 		SP1 := SP + 1
 		SP2 := SP1 + 1
-		s := MEM[SP2].(data.Indexed)
+		s := MEM[SP2].(data.IndexedSequence)
 		idx := MEM[SP1].(data.Integer)
 		res, ok := s.ElementAt(int(idx))
 		MEM[SP1] = data.Bool(ok)

@@ -36,14 +36,19 @@ type (
 
 	// RandomAccess provides a Sequence that supports random access
 	RandomAccess interface {
-		Sequence
-		Indexed
-		Counted
+		IndexedSequence
+		CountedSequence
 	}
 
 	// CountedSequence is a Sequence that returns a count of its items
 	CountedSequence interface {
 		Sequence
-		Counted
+		Count() int
+	}
+
+	// IndexedSequence is a Sequence that has indexed elements
+	IndexedSequence interface {
+		Sequence
+		ElementAt(int) (Value, bool)
 	}
 )

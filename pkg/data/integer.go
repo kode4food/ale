@@ -150,7 +150,7 @@ func (Integer) IsNegInf() bool {
 
 // Call turns Integer into a Caller, allowing it to behave similar to Nth
 func (l Integer) Call(args ...Value) Value {
-	m := args[0].(Indexed)
+	m := args[0].(IndexedSequence)
 	res, ok := m.ElementAt(int(l))
 	if !ok && len(args) > 1 {
 		return args[1]
