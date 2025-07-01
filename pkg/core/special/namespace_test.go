@@ -11,20 +11,20 @@ import (
 func TestNamespaceDefinition(t *testing.T) {
 	as := assert.New(t)
 
-	as.MustEvalTo(`
+	d := as.MustEval(`
 		(define-namespace some-namespace
 			(define x 99)
 			(define y 100)
 		)
-		(import some-namespace x)
-		x
-	`, I(99))
+	`).(data.Vector)
+	_, ok1 := d.IndexOf(LS("x"))
+	_, ok2 := d.IndexOf(LS("y"))
+	as.True(ok1 && ok2)
 
-	r := as.MustEval(`(import some-namespace)`).(data.Vector)
-	_, ok := r.IndexOf(LS("x"))
-	as.True(ok)
-	_, ok = r.IndexOf(LS("y"))
-	as.True(ok)
+	i := as.MustEval(`(import some-namespace)`).(data.Vector)
+	_, ok1 = i.IndexOf(LS("x"))
+	_, ok2 = i.IndexOf(LS("y"))
+	as.True(ok1 && ok2)
 
 	as.MustEvalTo(`(import some-namespace y) y`, I(100))
 	as.MustEvalTo(`(import some-namespace [x99 x]) x99`, I(99))
