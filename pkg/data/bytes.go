@@ -31,6 +31,7 @@ var (
 		Procedure
 		Reverser
 		Typed
+		fmt.Stringer
 	} = Bytes{}
 )
 

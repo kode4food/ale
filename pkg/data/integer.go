@@ -38,12 +38,14 @@ var (
 		Number
 		Procedure
 		Typed
+		fmt.Stringer
 	} = Integer(0)
 
 	_ interface {
 		Hashed
 		Number
 		Typed
+		fmt.Stringer
 	} = (*BigInt)(nil)
 )
 

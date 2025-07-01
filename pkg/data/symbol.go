@@ -79,12 +79,14 @@ var (
 		Hashed
 		Symbol
 		Typed
+		fmt.Stringer
 	} = (Local)(Local(""))
 
 	_ interface {
 		Hashed
 		Qualified
 		Typed
+		fmt.Stringer
 	} = (*qualified)(nil)
 )
 

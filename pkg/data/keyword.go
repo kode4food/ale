@@ -1,6 +1,7 @@
 package data
 
 import (
+	"fmt"
 	"math/rand/v2"
 
 	"github.com/kode4food/ale/internal/lang"
@@ -19,6 +20,7 @@ var (
 		Named
 		Procedure
 		Typed
+		fmt.Stringer
 	} = Keyword("")
 )
 

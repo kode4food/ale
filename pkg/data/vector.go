@@ -1,6 +1,7 @@
 package data
 
 import (
+	"fmt"
 	"math/rand/v2"
 	"slices"
 	"strings"
@@ -28,6 +29,7 @@ var (
 		Procedure
 		Reverser
 		Typed
+		fmt.Stringer
 	} = EmptyVector
 )
 

@@ -1,6 +1,7 @@
 package data
 
 import (
+	"fmt"
 	"math/rand/v2"
 	"strings"
 
@@ -35,6 +36,7 @@ var (
 		Hashed
 		Pair
 		Typed
+		fmt.Stringer
 	} = (*Cons)(nil)
 )
 

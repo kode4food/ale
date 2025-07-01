@@ -3,6 +3,7 @@ package data
 import (
 	"cmp"
 	"errors"
+	"fmt"
 	"math/rand/v2"
 	"slices"
 	"strings"
@@ -46,6 +47,7 @@ var (
 		Mapper
 		Procedure
 		Typed
+		fmt.Stringer
 	} = (*Object)(nil)
 )
 

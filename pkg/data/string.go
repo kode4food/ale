@@ -48,6 +48,7 @@ var (
 		Procedure
 		Reverser
 		Typed
+		fmt.Stringer
 	} = EmptyString
 )
 

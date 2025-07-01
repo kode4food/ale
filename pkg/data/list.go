@@ -32,6 +32,7 @@ var (
 		Procedure
 		Reverser
 		Typed
+		fmt.Stringer
 	} = Null
 )
 
