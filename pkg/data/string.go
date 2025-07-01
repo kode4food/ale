@@ -44,8 +44,8 @@ var (
 	// compile-time checks for interface implementation
 	_ interface {
 		Hashed
+		Indexed
 		Procedure
-		RandomAccess
 		Reverser
 		Typed
 	} = EmptyString

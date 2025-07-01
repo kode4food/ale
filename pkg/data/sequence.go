@@ -34,12 +34,6 @@ type (
 		Reverse() Sequence
 	}
 
-	// RandomAccess provides a Sequence that supports random access
-	RandomAccess interface {
-		Indexed
-		Counted
-	}
-
 	// Counted is a Sequence that returns a count of its items
 	Counted interface {
 		Sequence
@@ -48,7 +42,7 @@ type (
 
 	// Indexed is a Sequence that has indexed elements
 	Indexed interface {
-		Sequence
+		Counted
 		ElementAt(int) (Value, bool)
 	}
 )

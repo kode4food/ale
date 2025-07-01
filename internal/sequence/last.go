@@ -8,7 +8,7 @@ func Last(s data.Sequence) (data.Value, bool) {
 		return data.Null, false
 	}
 
-	if i, ok := s.(data.RandomAccess); ok {
+	if i, ok := s.(data.Indexed); ok {
 		return i.ElementAt(i.Count() - 1)
 	}
 

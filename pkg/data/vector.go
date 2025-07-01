@@ -23,9 +23,9 @@ var (
 	_ interface {
 		Appender
 		Hashed
+		Indexed
 		Prepender
 		Procedure
-		RandomAccess
 		Reverser
 		Typed
 	} = EmptyVector
