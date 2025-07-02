@@ -109,3 +109,14 @@ func TestReverse(t *testing.T) {
 		S("犬 yzal eht revo depmuj 狐 nwòrb kciuq ehT"),
 	)
 }
+
+func TestStringAppend(t *testing.T) {
+	as := assert.New(t)
+
+	s1 := S("hello, ")
+	s2 := S("there!")
+	s3 := s1.Append(s2).(data.String)
+	as.String("hello, there!", s3)
+
+	as.MustEvalTo(`(append "😎" "⚽")`, S("😎⚽"))
+}

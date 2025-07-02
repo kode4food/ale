@@ -14,6 +14,7 @@ import (
 type Bytes []byte
 
 const (
+	ErrExpectedBytes     = "value is not bytes: %s"
 	ErrIntegerOutOfRange = "integer out of byte range: %d"
 )
 
@@ -27,7 +28,6 @@ var (
 		Appender
 		Hashed
 		Indexed
-		Prepender
 		Procedure
 		Reverser
 		Typed
@@ -98,20 +98,19 @@ func (b Bytes) Split() (Value, Sequence, bool) {
 	}
 }
 
-func (b Bytes) Prepend(v Value) Sequence {
-	vb := mustToByte(v)
-	res := make(Bytes, len(b)+1)
-	res[0] = byte(vb)
-	copy(res[1:], b)
-	return res
-}
-
 func (b Bytes) Append(v Value) Sequence {
-	vb := mustToByte(v)
-	res := make(Bytes, len(b)+1)
-	copy(res, b)
-	res[len(b)] = byte(vb)
-	return res
+	switch v := v.(type) {
+	case Bytes:
+		return slices.Concat(b, v)
+	case Integer:
+		a := mustToByte(v)
+		res := make(Bytes, len(b)+1)
+		copy(res, b)
+		res[len(res)-1] = a
+		return res
+	default:
+		panic(fmt.Errorf(ErrExpectedBytes, v))
+	}
 }
 
 func (b Bytes) Reverse() Sequence {

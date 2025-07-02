@@ -29,23 +29,17 @@ func TestBytes(t *testing.T) {
 	_, ok = v1.IndexOf(I(100))
 	as.False(ok)
 
-	v2 := v1.Prepend(I(14)).(data.Bytes)
+	v2 := v1.Append(I(14)).(data.Bytes)
 	as.Number(5, v2.Count())
 	as.Number(4, v1.Count())
 
-	v3 := v2.Append(I(9)).(data.Bytes)
-	r, ok = v3.ElementAt(5)
-	as.True(ok)
-	as.Number(9, r)
-	as.Number(6, v3.Count())
-
-	r, ok = v3.ElementAt(0)
+	r, ok = v2.ElementAt(4)
 	as.True(ok)
 	as.Number(14, r)
 
-	r, ok = v3.ElementAt(3)
-	as.True(ok)
-	as.Number(28, r)
+	v3 := v2.Append(data.Bytes{101, 102, 103}).(data.Bytes)
+	as.Equal(8, v3.Count())
+	as.String(`#b[85 95 28 25 14 101 102 103]`, v3)
 }
 
 func TestBytesReverse(t *testing.T) {

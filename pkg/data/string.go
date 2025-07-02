@@ -18,6 +18,9 @@ type String string
 const EmptyString = String("")
 
 const (
+	// ErrExpectedString is raised when a passed value is not a String
+	ErrExpectedString = "value is not a string: %s"
+
 	// ErrInvalidIndexes is raised when an attempt to take a substring receives
 	// invalid start and end indexes
 	ErrInvalidIndexes = "%d and %d are not valid start/end indices"
@@ -43,6 +46,7 @@ var (
 
 	// compile-time checks for interface implementation
 	_ interface {
+		Appender
 		Hashed
 		Indexed
 		Procedure
@@ -99,6 +103,13 @@ func (s String) ElementAt(index int) (Value, bool) {
 		return String(r), true
 	}
 	return Null, false
+}
+
+func (s String) Append(v Value) Sequence {
+	if v, ok := v.(String); ok {
+		return s + v
+	}
+	panic(fmt.Errorf(ErrExpectedString, v))
 }
 
 func (s String) Reverse() Sequence {

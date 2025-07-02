@@ -30,6 +30,12 @@ var (
 	dumpKeys = basics.SortedKeysFunc(dumpMap, func(l, r Value) int {
 		return cmp.Compare(l.(Keyword), r.(Keyword))
 	})
+
+	// compile-time checks for interface implementation
+	_ interface {
+		Mapped
+		fmt.Stringer
+	} = dumped{}
 )
 
 // DumpMapped takes a Value and dumps out a bunch of info as a Mapped
