@@ -80,7 +80,7 @@ var (
 		Symbol
 		Typed
 		fmt.Stringer
-	} = (Local)(Local(""))
+	} = Local("")
 
 	_ interface {
 		Hashed
