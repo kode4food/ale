@@ -42,7 +42,7 @@ func help(...data.Value) data.Value {
 }
 
 func docSymbol(sym data.Symbol) {
-	name := string(sym.Name())
+	name := string(sym.Local())
 	if name == "doc" {
 		docSymbolList()
 		return

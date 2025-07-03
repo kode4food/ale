@@ -74,7 +74,7 @@ func (se *syntaxEnv) generateSymbol(s data.Symbol) (data.Symbol, bool) {
 		return nil, false
 	}
 
-	n := string(s.Name())
+	n := string(s.Local())
 	if len(n) <= 1 || !strings.HasSuffix(n, "#") {
 		return nil, false
 	}
@@ -163,7 +163,7 @@ func (se *syntaxEnv) qualifySymbol(s data.Symbol) data.Value {
 	if q, ok := s.(data.Qualified); ok {
 		return q
 	}
-	name := s.Name()
+	name := s.Local()
 	if _, in, err := se.ns.Resolve(name); err == nil {
 		return data.NewQualifiedSymbol(name, in.Domain())
 	}

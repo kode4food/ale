@@ -8,7 +8,7 @@ import (
 	"github.com/kode4food/ale/internal/types"
 )
 
-// Keyword is a Value that represents a Name that resolves to itself
+// Keyword is a Value that represents a Local that resolves to itself
 type Keyword string
 
 var (

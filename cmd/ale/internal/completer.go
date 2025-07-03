@@ -88,7 +88,7 @@ func (r *REPL) prefixedDomains(res []string, s data.Local) []string {
 
 func (r *REPL) prefixedQualified(s data.Qualified) []string {
 	domain := s.Domain()
-	name := s.Name().String()
+	name := s.Local().String()
 	ns := env.MustGetQualified(r.ns.Environment(), s.Domain())
 	res := basics.Map(
 		basics.Filter(ns.Declared(),

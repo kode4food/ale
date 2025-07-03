@@ -21,8 +21,8 @@ type (
 
 	// Symbol is an identifier that can be resolved
 	Symbol interface {
-		symbol() // marker
-		Named
+		Value
+		Local() Local
 	}
 
 	// Qualified represents a domain-qualified symbol
@@ -95,7 +95,7 @@ func NewGeneratedSymbol(name Local) Symbol {
 	return gen.Local(name)
 }
 
-// ParseSymbol parses a qualified Name and produces a Symbol
+// ParseSymbol parses a qualified Local and produces a Symbol
 func ParseSymbol(s String) (Symbol, error) {
 	n := string(s)
 	if qualRegex.MatchString(n) {
@@ -111,7 +111,7 @@ func ParseSymbol(s String) (Symbol, error) {
 	return nil, fmt.Errorf(ErrInvalidSymbol, n)
 }
 
-// MustParseSymbol parses a qualified Name and produces a Symbol or explodes
+// MustParseSymbol parses a qualified Local and produces a Symbol or explodes
 func MustParseSymbol(s String) Symbol {
 	sym, err := ParseSymbol(s)
 	if err != nil {
@@ -168,9 +168,7 @@ func (g *SymbolGenerator) str() string {
 	return string(res)
 }
 
-func (Local) symbol() {}
-
-func (l Local) Name() Local {
+func (l Local) Local() Local {
 	return l
 }
 
@@ -198,9 +196,7 @@ func NewQualifiedSymbol(name Local, domain Local) Symbol {
 	}
 }
 
-func (qualified) symbol() {}
-
-func (s qualified) Name() Local {
+func (s qualified) Local() Local {
 	return s.name
 }
 

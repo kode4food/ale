@@ -111,9 +111,9 @@ func ResolveSymbol(ns Namespace, s data.Symbol) (*Entry, Namespace, error) {
 		if err != nil {
 			return nil, nil, err
 		}
-		return resolvePublic(ns, qns, q.Name())
+		return resolvePublic(ns, qns, q.Local())
 	}
-	return ns.Resolve(s.Name())
+	return ns.Resolve(s.Local())
 }
 
 // ResolveValue attempts to resolve a symbol to a bound value

@@ -52,7 +52,7 @@ func TestSymbolParsing(t *testing.T) {
 	s, err := data.ParseSymbol("domain/name1")
 	if as.NoError(err) {
 		as.String("domain", s.(data.Qualified).Domain())
-		as.String("name1", s.(data.Qualified).Name())
+		as.String("name1", s.(data.Qualified).Local())
 	}
 
 	s, err = data.ParseSymbol("some space")
@@ -77,11 +77,11 @@ func TestMustSymbolParsing(t *testing.T) {
 
 	s1 := data.MustParseSymbol("domain/name1").(data.Qualified)
 	as.String("domain", s1.Domain())
-	as.String("name1", s1.Name())
+	as.String("name1", s1.Local())
 	as.String("domain/name1", s1)
 
 	s2 := data.MustParseSymbol("name2").(data.Local)
-	as.String("name2", s2.Name())
+	as.String("name2", s2.Local())
 }
 
 func TestSymbolGeneration(t *testing.T) {
