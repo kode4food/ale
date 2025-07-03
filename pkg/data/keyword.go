@@ -17,17 +17,11 @@ var (
 	// compile-time checks for interface implementation
 	_ interface {
 		Hashed
-		Named
 		Procedure
 		Typed
 		fmt.Stringer
 	} = Keyword("")
 )
-
-// Name returns the name of the Keyword
-func (k Keyword) Name() Local {
-	return Local(k)
-}
 
 // Call turns Keyword into a Caller
 func (k Keyword) Call(args ...Value) Value {

@@ -61,7 +61,7 @@ func (p *Parser) next(s data.Sequence) (Emit, data.Sequence, error) {
 	switch t := f.(type) {
 	case data.Keyword:
 		return func(e *Encoder) error {
-			e.Emit(isa.Label, e.getLabelIndex(t.Name()))
+			e.Emit(isa.Label, e.getLabelIndex(t))
 			return nil
 		}, r, nil
 	case data.Local:

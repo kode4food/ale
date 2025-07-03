@@ -120,7 +120,7 @@ func (e *Encoder) makeLabelToWord() asmToOperand {
 				val = v
 			}
 			if val, ok := val.(data.Keyword); ok {
-				return e.getLabelIndex(val.Name()), nil
+				return e.getLabelIndex(val), nil
 			}
 			return toOperand(e, val)
 		},

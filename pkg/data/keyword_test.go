@@ -13,7 +13,7 @@ func TestKeyword(t *testing.T) {
 	as := assert.New(t)
 
 	k1 := data.Keyword("hello")
-	as.String("hello", k1.Name())
+	as.String("hello", string(k1))
 	as.String(":hello", k1)
 
 	as.True(types.BasicKeyword.Equal(k1.Type()))

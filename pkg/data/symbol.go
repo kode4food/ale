@@ -13,23 +13,17 @@ import (
 )
 
 type (
-	// Symbol is an identifier that can be resolved
-	Symbol interface {
-		symbol() // marker
-		Named
-	}
-
-	// Locals represent a set of Local
-	Locals []Local
-
 	// Named is the generic interface for data that are named
 	Named interface {
 		Value
 		Name() Local
 	}
 
-	// Local represents an unqualified symbol that requires resolution
-	Local string
+	// Symbol is an identifier that can be resolved
+	Symbol interface {
+		symbol() // marker
+		Named
+	}
 
 	// Qualified represents a domain-qualified symbol
 	Qualified interface {
@@ -44,6 +38,12 @@ type (
 		sync.Mutex
 		maxPos int
 	}
+
+	// Local represents an unqualified symbol that requires resolution
+	Local string
+
+	// Locals represent a set of Local
+	Locals []Local
 
 	qualified struct {
 		domain Local

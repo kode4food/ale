@@ -11,7 +11,7 @@ type (
 		encoder.Encoder
 		*Parser
 		args    map[data.Local]data.Value
-		labels  map[data.Local]isa.Operand
+		labels  map[data.Keyword]isa.Operand
 		private map[data.Local]data.Local
 	}
 
@@ -44,7 +44,7 @@ func (p *Parser) wrapEncoder(
 		Parser:  p,
 		Encoder: e,
 		args:    a,
-		labels:  map[data.Local]isa.Operand{},
+		labels:  map[data.Keyword]isa.Operand{},
 		private: map[data.Local]data.Local{},
 	}
 }
@@ -59,7 +59,7 @@ func (e *Encoder) Child() encoder.Encoder {
 	return &res
 }
 
-func (e *Encoder) getLabelIndex(n data.Local) isa.Operand {
+func (e *Encoder) getLabelIndex(n data.Keyword) isa.Operand {
 	if idx, ok := e.labels[n]; ok {
 		return idx
 	}
