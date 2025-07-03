@@ -93,7 +93,7 @@ func dumpInstance(v Value) (Value, bool) {
 
 func dumpName(v Value) (Value, bool) {
 	if n, ok := v.(Named); ok {
-		return n.Name(), true
+		return Local(n.Name()), true
 	}
 	return Null, false
 }

@@ -31,9 +31,9 @@ func TestPredicateOf(t *testing.T) {
 	obj := data.TypePredicateOf(o)
 	union := data.TypePredicateOf(l, o)
 
-	as.Equal(LS("list"), list.Name())
-	as.Equal(LS("object"), obj.Name())
-	as.Equal(LS("union(list,object)"), union.Name())
+	as.Equal(N("list"), list.Name())
+	as.Equal(N("object"), obj.Name())
+	as.Equal(N("union(list,object)"), union.Name())
 
 	as.True(list.Call(l))
 	as.False(obj.Call(l))

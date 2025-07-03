@@ -13,12 +13,6 @@ import (
 )
 
 type (
-	// Named is the generic interface for data that are named
-	Named interface {
-		Value
-		Name() Local
-	}
-
 	// Symbol is an identifier that can be resolved
 	Symbol interface {
 		Value
@@ -40,7 +34,7 @@ type (
 	}
 
 	// Local represents an unqualified symbol that requires resolution
-	Local string
+	Local Name
 
 	// Locals represent a set of Local
 	Locals []Local

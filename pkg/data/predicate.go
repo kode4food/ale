@@ -30,8 +30,8 @@ func (t *TypePredicate) Type() types.Type {
 	return typePredicateType
 }
 
-func (t *TypePredicate) Name() Local {
-	return Local(t.typ.Name())
+func (t *TypePredicate) Name() Name {
+	return Name(t.typ.Name())
 }
 
 func (t *TypePredicate) Call(args ...Value) Value {

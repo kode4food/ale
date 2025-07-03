@@ -12,7 +12,7 @@ import (
 
 type dumpTest struct{}
 
-func (dumpTest) Name() data.Local {
+func (dumpTest) Name() data.Name {
 	return "dump-test"
 }
 

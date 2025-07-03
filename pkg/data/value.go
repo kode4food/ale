@@ -10,12 +10,21 @@ type (
 	// Bool represents the data True or False
 	Bool bool
 
+	// Name represents a Value's name. Not itself a Value
+	Name string
+
 	// Value is the generic interface for all data
 	Value interface {
 		Equal(Value) bool
 	}
 
-	// Typed is the generic interface for data that are typed
+	// Named is the generic interface for values that are named
+	Named interface {
+		Value
+		Name() Name
+	}
+
+	// Typed is the generic interface for values that are typed
 	Typed interface {
 		Value
 		Type() types.Type
