@@ -12,7 +12,7 @@ import (
 type (
 	// Pair represents the interface for a binary structure, such as a Cons
 	Pair interface {
-		Value
+		Typed
 		Car() Value
 		Cdr() Value
 	}
@@ -35,7 +35,6 @@ var (
 	_ interface {
 		Hashed
 		Pair
-		Typed
 		fmt.Stringer
 	} = (*Cons)(nil)
 )

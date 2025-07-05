@@ -9,7 +9,15 @@ import (
 // Call represents a macro's calling signature
 type Call func(env.Namespace, ...data.Value) data.Value
 
-var CallType = types.MakeBasic("macro")
+var (
+	CallType = types.MakeBasic("macro")
+
+	// compile-time checks for interface implementation
+	_ interface {
+		data.Mapped
+		data.Typed
+	} = Call(nil)
+)
 
 // Type makes Call a typed value
 func (Call) Type() types.Type {

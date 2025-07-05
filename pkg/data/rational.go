@@ -38,14 +38,12 @@ var (
 	_ interface {
 		Hashed
 		Number
-		Typed
 		fmt.Stringer
 	} = Float(0)
 
 	_ interface {
 		Hashed
 		Number
-		Typed
 		fmt.Stringer
 	} = (*Ratio)(nil)
 )

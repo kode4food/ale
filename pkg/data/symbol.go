@@ -15,7 +15,7 @@ import (
 type (
 	// Symbol is an identifier that can be resolved
 	Symbol interface {
-		Value
+		Typed
 		Local() Local
 	}
 
@@ -72,14 +72,12 @@ var (
 	_ interface {
 		Hashed
 		Symbol
-		Typed
 		fmt.Stringer
 	} = Local("")
 
 	_ interface {
 		Hashed
 		Qualified
-		Typed
 		fmt.Stringer
 	} = (*qualified)(nil)
 )

@@ -4,10 +4,6 @@ import (
 	"github.com/kode4food/ale/pkg/data"
 )
 
-// ErrIndexOutOfBounds is raised when a call to Nth receives an index outside
-// the bounds of the sequence being accessed
-const ErrIndexOutOfBounds = "index out of bounds"
-
 var (
 	// Bytes constructs a new byte vector
 	Bytes = makeConstructor(data.NewBytes)

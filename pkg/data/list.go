@@ -31,7 +31,6 @@ var (
 		Prepender
 		Procedure
 		Reverser
-		Typed
 		fmt.Stringer
 	} = Null
 )

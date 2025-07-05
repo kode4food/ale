@@ -26,7 +26,6 @@ var (
 		data.Hashed
 		data.Mapped
 		data.Procedure
-		data.Typed
 	} = (*Procedure)(nil)
 )
 

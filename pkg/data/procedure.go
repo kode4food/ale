@@ -14,7 +14,7 @@ type (
 
 	// Procedure is any Value that provides a calling interface
 	Procedure interface {
-		Value
+		Typed
 		Call(...Value) Value
 		CheckArity(int) error
 	}
@@ -29,7 +29,6 @@ type (
 var _ interface {
 	Mapped
 	Procedure
-	Typed
 } = (*procedure)(nil)
 
 // MakeProcedure constructs a Procedure from a func that matches the standard
