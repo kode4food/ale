@@ -5,6 +5,7 @@ import (
 	"github.com/kode4food/ale/internal/compiler/procedure"
 	"github.com/kode4food/ale/internal/runtime/isa"
 	"github.com/kode4food/ale/internal/runtime/vm"
+	"github.com/kode4food/ale/pkg/data"
 )
 
 type procEncoder struct {
@@ -22,17 +23,20 @@ func Procedure(e encoder.Encoder, build Builder) (*vm.Procedure, error) {
 		return nil, err
 	}
 
-	cells := enc.Closure
-	clen := len(cells)
-	if clen == 0 {
-		// nothing needed to be captured from local variables, so pass the
-		// newly instantiated closure through
-		if err := Literal(e, fn.Call()); err != nil {
-			return nil, err
-		}
-		return fn, nil
+	if enc.HasClosure() {
+		return captureClosure(e, fn, enc.Closure)
 	}
 
+	if err := Literal(e, fn.Call()); err != nil {
+		return nil, err
+	}
+	return fn, nil
+}
+
+func captureClosure(
+	e encoder.Encoder, fn *vm.Procedure, cells data.Locals,
+) (*vm.Procedure, error) {
+	clen := len(cells)
 	for i := clen - 1; i >= 0; i-- {
 		if err := Local(e, cells[i]); err != nil {
 			return nil, err

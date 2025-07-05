@@ -2,12 +2,11 @@ package generate
 
 import (
 	"github.com/kode4food/ale/internal/compiler/encoder"
+	"github.com/kode4food/ale/internal/runtime/isa"
 	"github.com/kode4food/ale/pkg/data"
 	"github.com/kode4food/ale/pkg/env"
 	"github.com/kode4food/ale/pkg/macro"
 )
-
-var consSym = env.RootSymbol("cons")
 
 // Value encodes an expression
 func Value(e encoder.Encoder, v data.Value) error {
@@ -40,12 +39,14 @@ func expanded(e encoder.Encoder, v data.Value) error {
 
 // Cons encodes a cons pair
 func Cons(e encoder.Encoder, c *data.Cons) error {
-	f, err := resolveBuiltIn(e, consSym)
-	if err != nil {
+	if err := Value(e, c.Cdr()); err != nil {
 		return err
 	}
-	args := data.Vector{c.Car(), c.Cdr()}
-	return callStatic(e, f, args)
+	if err := Value(e, c.Car()); err != nil {
+		return err
+	}
+	e.Emit(isa.Cons)
+	return nil
 }
 
 func resolveBuiltIn(

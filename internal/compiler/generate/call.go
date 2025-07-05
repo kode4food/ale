@@ -25,25 +25,31 @@ func Call(e encoder.Encoder, l *data.List) error {
 }
 
 func callValue(e encoder.Encoder, v data.Value, args data.Vector) error {
-	if s, ok := v.(data.Symbol); ok {
-		return callSymbol(e, s, args)
+	switch s := v.(type) {
+	case data.Qualified:
+		return callGlobalSymbol(e, s, args)
+	case data.Local:
+		return callLocalSymbol(e, s, args)
+	default:
+		return callNonSymbol(e, v, args)
 	}
-	return callNonSymbol(e, v, args)
 }
 
-func callSymbol(e encoder.Encoder, s data.Symbol, args data.Vector) error {
-	if l, ok := s.(data.Local); ok {
-		if s, ok := e.ResolveScoped(l); ok {
-			switch s.Scope {
-			case encoder.LocalScope, encoder.ArgScope:
-				return callDynamic(e, l, args)
-			case encoder.ClosureScope:
-				if isSelfCalling(e, s) {
-					return callSelf(e, args)
-				}
+func callLocalSymbol(e encoder.Encoder, l data.Local, args data.Vector) error {
+	if s, ok := e.ResolveScoped(l); ok {
+		switch s.Scope {
+		case encoder.LocalScope, encoder.ArgScope:
+			return callDynamic(e, l, args)
+		case encoder.ClosureScope:
+			if isSelfCalling(e, s) {
+				return callSelf(e, args)
 			}
 		}
 	}
+	return callGlobalSymbol(e, l, args)
+}
+
+func callGlobalSymbol(e encoder.Encoder, s data.Symbol, args data.Vector) error {
 	globals := e.Globals()
 	if v, err := env.ResolveValue(globals, s); err == nil {
 		switch v := v.(type) {

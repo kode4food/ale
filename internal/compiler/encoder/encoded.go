@@ -53,6 +53,10 @@ func (e *Encoded) WithConstants(c data.Vector) *Encoded {
 	return &res
 }
 
+func (e *Encoded) HasClosure() bool {
+	return len(e.Closure) > 0
+}
+
 // Runnable takes an Encoded and finalizes it into a Runnable that the abstract
 // machine can execute. Jumps are resolved and unused constants are discarded.
 func (e *Encoded) Runnable() (*isa.Runnable, error) {

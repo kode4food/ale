@@ -21,15 +21,11 @@ func TestPair(t *testing.T) {
 	as.Instructions(isa.Instructions{
 		isa.Const.New(0),
 		isa.Const.New(1),
-		isa.Const.New(2),
-		isa.Call.New(2),
+		isa.Cons.New(),
 		isa.Return.New(),
 	}, enc1.Code)
 
 	c := enc1.Constants
 	as.Equal(S("right"), c[0])
 	as.Equal(S("left"), c[1])
-
-	cons := assert.GetRootSymbol(e1, "cons")
-	as.Equal(cons, c[2])
 }
