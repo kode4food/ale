@@ -11,11 +11,11 @@
 
 ;; procedures
 (def-builtin gensym)
-(def-builtin is-a*)
-(def-builtin macro*)
+(def-builtin %is-a)
+(def-builtin macro)
 (def-builtin read)
 (def-builtin sym)
-(def-builtin type-of*)
+(def-builtin %type-of)
 
 ;; sequence
 (def-builtin bytes)

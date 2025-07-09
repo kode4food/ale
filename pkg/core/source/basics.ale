@@ -1,7 +1,7 @@
 ;;;; ale core: basics
 
-(define* if
-  (special*
+(%define if
+  (special
     [(predicate consequent alternative)
           eval predicate
           cond-jump :consequent
@@ -19,29 +19,29 @@
           eval consequent
       :end]))
 
-(define* assert-type
+(%define assert-type
   (lambda (type value)
-    (let [pred (is-a* type)]
+    (let [pred (%is-a type)]
       (if (pred value)
           value
-          (raise "got " (:name (type-of* value))
+          (raise "got " (:name (%type-of value))
                  ", expected " (cdr (str type))
                  ": " (str! value))))))
 
-(private* is-empty)
-(define* is-empty
+(%private is-empty)
+(%define is-empty
   (lambda (coll)
-    (asm*
+    (asm
         resolve coll
         empty)))
 
-(define* length
+(%define length
   (lambda (coll)
-    (asm*
+    (asm
         resolve coll
         length)))
 
-(define* apply
+(%define apply
   (lambda (func . args)
     (let-rec
       [flatten-args
@@ -50,13 +50,13 @@
               (assert-type :sequence (car args))
               (cons (car args) (flatten-args (cdr args)))))]
       (let [flat-args (flatten-args args)]
-        (asm*
+        (asm
             resolve flat-args
             resolve func
             call-with)))))
 
 ;; syntax-quoting requires it
-(define* concat!
+(%define concat!
   (lambda colls
     (let-rec
       [concat-inner
@@ -71,13 +71,13 @@
                                  (append head (car f)))))))]
       (concat-inner colls []))))
 
-(define* label
-  (macro*
+(%define label
+  (macro
     (lambda (name form)
       `(let-rec [,name ,form] ,name))))
 
-(define* and
-  (macro*
+(%define and
+  (macro
     (lambda
       [() #t]
       [(clause) clause]
@@ -87,8 +87,8 @@
                 (and ,@(cdr clauses))
                 and#))])))
 
-(define* or
-  (macro*
+(%define or
+  (macro
     (lambda
       [() #f]
       [(clause) clause]
@@ -98,11 +98,11 @@
                 or#
                 (or ,@(cdr clauses))))])))
 
-(private* make-predicate)
-(define* make-predicate (macro* (lambda (name type)
+(%private make-predicate)
+(%define make-predicate (macro (lambda (name type)
   `(begin
-     (private* ,name)
-     (define* ,name (is-a* ,type))))))
+     (%private ,name)
+     (%define ,name (%is-a ,type))))))
 
 ;; type-based predicates
 (make-predicate is-any       :any)

@@ -41,7 +41,7 @@ func TestBootstrapInto(t *testing.T) {
 	e := bootstrap.TopLevelEnvironment()
 	ns := e.GetRoot()
 
-	_, ok := as.IsBound(ns, "define*").(compiler.Call)
+	_, ok := as.IsBound(ns, "%define").(compiler.Call)
 	as.True(ok)
 }
 

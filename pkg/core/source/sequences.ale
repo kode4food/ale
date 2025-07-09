@@ -2,7 +2,7 @@
 
 (define-macro :private (make-fetch-err inst coll elem err-msg)
   (apply list (concat!
-    '(ale/asm*
+    '(ale/asm
          resolve) [coll] '(
          resolve) [elem]
          [inst] '(
@@ -13,7 +13,7 @@
 
 (define-macro :private (make-fetch-def inst coll elem def-val)
   (apply list (concat!
-    '(ale/asm*
+    '(ale/asm
          resolve) [coll] '(
          resolve) [elem]
          [inst] '(
@@ -32,7 +32,7 @@
 
 (define (contains? coll key)
   (if (mapped? coll)
-      (asm*
+      (asm
           resolve coll
           resolve key
           get
@@ -134,7 +134,7 @@
    coll null))
 
 (define (reverse coll)
-  (asm*
+  (asm
       resolve coll
       reverse))
 

@@ -22,6 +22,9 @@ const (
 	BytesStart  = ReaderPrefix + `b` + VectorStart
 	BytesEnd    = VectorEnd
 
+	TrueLiteral  = ReaderPrefix + `t`
+	FalseLiteral = ReaderPrefix + `f`
+
 	// Pattern Matches
 
 	structure    = `(){}\[\]\s\"`

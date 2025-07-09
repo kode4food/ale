@@ -3,6 +3,7 @@ package data
 import (
 	"math/rand/v2"
 
+	"github.com/kode4food/ale/internal/lang"
 	"github.com/kode4food/ale/internal/types"
 )
 
@@ -41,14 +42,8 @@ const (
 	// True represents the boolean value of True
 	True Bool = true
 
-	// TrueLiteral represents the literal value of True
-	TrueLiteral = "#t"
-
 	// False represents the boolean value of false
 	False Bool = false
-
-	// FalseLiteral represents the literal value of False
-	FalseLiteral = "#f"
 )
 
 var (
@@ -84,9 +79,9 @@ func (b Bool) Equal(other Value) bool {
 // String converts this Value into a string
 func (b Bool) String() string {
 	if b {
-		return TrueLiteral
+		return lang.TrueLiteral
 	}
-	return FalseLiteral
+	return lang.FalseLiteral
 }
 
 // Type returns the Type for this Bool Value

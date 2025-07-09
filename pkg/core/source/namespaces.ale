@@ -1,13 +1,13 @@
 
 ;;;; ale core: namespaces
 
-(def-special mk-ns*)
-(def-special declared*)
+(def-special %mk-ns)
+(def-special declared)
 (def-special import)
 
 (define-macro (define-namespace name . forms)
   (let [in-ns (gensym 'in-ns)]
     `(begin
-      (eval '(define ,in-ns (mk-ns* ,name)))
+      (eval '(define ,in-ns (%mk-ns ,name)))
       ,@(map! (lambda (f) `(eval '(,in-ns ,f))) forms)
-      (eval '(declared* ,name)))))
+      (eval '(declared ,name)))))

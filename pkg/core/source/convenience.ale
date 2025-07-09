@@ -10,7 +10,7 @@
 
 (define-macro :private (make-comparator f r inst)
   (apply list (concat!
-    '(ale/asm*
+    '(ale/asm
          private prev :val
          resolve) [f] '(
          store prev
@@ -44,7 +44,7 @@
   (make-comparator f r eq))
 
 (define (!eq f . r)
-  (asm* eval (make-comparator f r eq) not))
+  (asm eval (make-comparator f r eq) not))
 
 (define (not value)
   (if value false true))
@@ -63,7 +63,7 @@
   (lambda _ value))
 
 (define (is-a type value)
-  ((is-a* type) value))
+  ((%is-a type) value))
 
 (define-macro (thunk . forms)
   `(lambda () ,@forms))

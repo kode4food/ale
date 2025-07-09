@@ -11,7 +11,7 @@ import (
 func TestUnknownDirective(t *testing.T) {
 	as := assert.New(t)
 	as.ErrorWith(`
-		(asm*
+		(asm
 			locals-push
 			definitely-not-a-directive
 			locals-pop)
@@ -21,18 +21,18 @@ func TestUnknownDirective(t *testing.T) {
 func TestBadArgs(t *testing.T) {
 	as := assert.New(t)
 	as.ErrorWith(`
-		(asm* const)
+		(asm const)
 	`, fmt.Errorf(asm.ErrTooFewArguments, "const", 1))
 
 	as.ErrorWith(`
-		(asm* resolve 99)
+		(asm resolve 99)
 	`, fmt.Errorf(asm.ErrExpectedType, "symbol", "99"))
 }
 
 func TestUnknownForm(t *testing.T) {
 	as := assert.New(t)
 	as.ErrorWith(`
-		(asm*
+		(asm
 			locals-push
 			{:not "valid"}
 			locals-pop)
@@ -42,20 +42,20 @@ func TestUnknownForm(t *testing.T) {
 func TestBadBlocks(t *testing.T) {
 	as := assert.New(t)
 	as.ErrorWith(`
-	  (special* body
+	  (special body
 		  for-each [val body]
 			  eval val))
 	`, fmt.Errorf(asm.ErrExpectedEndOfBlock))
 
 	as.ErrorWith(`
-	  (special* body
+	  (special body
 		  for-each [val body]
 			  definitely-not-a-directive
 		  end))
 	`, fmt.Errorf(asm.ErrUnknownDirective, "definitely-not-a-directive"))
 
 	as.ErrorWith(`
-	  (special* body
+	  (special body
 		  for-each [val body]
 			  eval val
               null

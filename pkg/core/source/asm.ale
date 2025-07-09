@@ -1,88 +1,88 @@
 ;;;; ale core: assembler bootstrapping
 
-(def-special asm*)
-(def-special special*)
+(def-special asm)
+(def-special special)
 
-(asm*
-    eval (special* (name)
+(asm
+    eval (special (name)
         const name
         dup
         env-public)
-    const public*
+    const %public
     env-bind
 
-    eval (special* (name)
+    eval (special (name)
         const name
         dup
         env-private)
-    const private*
+    const %private
     env-bind
 
-    eval (special* (name value)
+    eval (special (name value)
         eval value
         dup
         const name
         env-bind)
-    const define*
+    const %define
     env-bind
     ; block evaluator will pop this
     null)
 
-(define* quote
-  (special* (form)
+(%define quote
+  (special (form)
       const form))
 
-(define* cons
+(%define cons
   (lambda (car cdr)
-    (asm*
+    (asm
         resolve cdr
         resolve car
         cons)))
 
-(define* car
+(%define car
   (lambda (cons)
-    (asm*
+    (asm
         resolve cons
         car)))
 
-(define* cdr
+(%define cdr
   (lambda (cons)
-    (asm*
+    (asm
         resolve cons
         cdr)))
 
-(define* append
+(%define append
   (lambda (seq val)
-    (asm*
+    (asm
         resolve seq
         resolve val
         append)))
 
-(define* assoc
+(%define assoc
   (lambda (seq pair)
-    (asm*
+    (asm
         resolve seq
         resolve pair
         assoc)))
 
-(define* dissoc
+(%define dissoc
   (lambda (seq key)
-    (asm*
+    (asm
         resolve seq
         resolve key
         dissoc)))
 
-(define* raise
+(%define raise
   (lambda strs
-    (asm*
+    (asm
         resolve strs
         resolve ale/str
         call-with
         panic
         null)))
 
-(define* begin
-  (special* body
+(%define begin
+  (special body
       null
       for-each [val body]
           pop

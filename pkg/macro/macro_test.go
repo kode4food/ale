@@ -27,7 +27,7 @@ func TestExpand(t *testing.T) {
 	as.MustEvalTo(
 		`(macroexpand '(define (name . _) "hello"))`,
 		read.MustFromString(ns,
-			`(ale/define* name (ale/label name (ale/lambda _ "hello")))`,
+			`(ale/%define name (ale/label name (ale/lambda _ "hello")))`,
 		).Car(),
 	)
 }
@@ -39,7 +39,7 @@ func TestExpand1(t *testing.T) {
 	as.MustEvalTo(
 		`(macroexpand-1 '(define (name . _) (or false true)))`,
 		read.MustFromString(ns,
-			`(ale/define* name (ale/label name (ale/lambda _ (or false true))))`,
+			`(ale/%define name (ale/label name (ale/lambda _ (or false true))))`,
 		).Car(),
 	)
 }

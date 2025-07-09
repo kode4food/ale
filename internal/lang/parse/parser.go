@@ -68,8 +68,8 @@ var (
 	bytesSym    = env.RootSymbol("bytes")
 
 	specialNames = map[data.String]data.Value{
-		data.TrueLiteral:  data.True,
-		data.FalseLiteral: data.False,
+		lang.TrueLiteral:  data.True,
+		lang.FalseLiteral: data.False,
 	}
 
 	collectionErrors = map[lex.TokenType]string{

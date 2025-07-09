@@ -1,13 +1,13 @@
 ;;;; ale core: definition facilities
 
-(private* is-cons-or-list)
-(define* is-cons-or-list
+(%private is-cons-or-list)
+(%define is-cons-or-list
   (lambda (value)
     (or (is-cons value)
         (is-list value))))
 
-(private* parse-define)
-(define* parse-define
+(%private parse-define)
+(%define parse-define
   (lambda (body)
     (let ([f (car body)]
           [r (cdr body)])
@@ -20,23 +20,23 @@
               {:name (assert-type :local f)
                :body (car r)})))))
 
-(define* define
-  (macro*
+(%define define
+  (macro
     (lambda body
       ; we're so early days that let* hasn't been defined yet
       (let [parsed (parse-define body)]
         (let ([name (:name parsed)]
               [body (:body parsed)])
-          (let [value (if (:macro parsed #f) `(macro* ,body) body)]
+          (let [value (if (:macro parsed #f) `(macro ,body) body)]
             (let [labeled (if (:lambda parsed #f) `(label ,name ,value) value)]
               (if (:private parsed #f)
-                  `(begin (private* ,name) (define* ,name ,labeled))
-                  `(define* ,name ,labeled)))))))))
+                  `(begin (%private ,name) (%define ,name ,labeled))
+                  `(%define ,name ,labeled)))))))))
 
 (define :macro (define-macro . forms)
   (let [name (car forms)]
     (if (is-local name)
-        `(define ,name (label ,name (macro* (lambda ,@(cdr forms)))))
+        `(define ,name (label ,name (macro (lambda ,@(cdr forms)))))
         `(define :macro ,@forms))))
 
 (define-macro (define-lambda . forms)
@@ -58,9 +58,9 @@
             (map! func (cdr coll)))))
 
 (define-macro declare
-  [(name) `(public* ,name)]
-  [names `(begin ,@(map! (lambda (n) (list 'ale/public* n)) names))])
+  [(name) `(%public ,name)]
+  [names `(begin ,@(map! (lambda (n) (list 'ale/%public n)) names))])
 
 (define-macro private
-  [(name) `(private* ,name)]
-  [names `(begin ,@(map! (lambda (n) (list 'ale/private* n)) names))])
+  [(name) `(%private ,name)]
+  [names `(begin ,@(map! (lambda (n) (list 'ale/%private n)) names))])

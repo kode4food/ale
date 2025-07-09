@@ -84,8 +84,8 @@ var (
 	}
 )
 
-// TypeOf returns a CallType Predicate for the Types of the given Values. If
-// more than one Value is provided, the Union of their Types will be returned
+// TypeOf returns a Type Predicate for the Types of the given Values. If more
+// than one Value is provided, the Union of their Types will be returned
 var TypeOf = data.MakeProcedure(func(args ...data.Value) data.Value {
 	return data.TypePredicateOf(args[0], args[1:]...)
 }, 1, data.OrMore)

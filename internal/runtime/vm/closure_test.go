@@ -68,8 +68,8 @@ func TestClosureEqual(t *testing.T) {
 func TestClosureBindOrShadow(t *testing.T) {
 	as := assert.New(t)
 	as.MustEvalTo(`
-		(private* is-99)
-		(define* is-99 99)
+		(%private is-99)
+		(%define is-99 99)
         is-99
 	`, I(99))
 }

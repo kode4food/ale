@@ -13,8 +13,8 @@ import (
 func TestAddition(t *testing.T) {
 	as := assert.New(t)
 	as.MustEvalTo(`
-		(define* test
-			(lambda () (asm* pos-int 1 pos-int 2 add)))
+		(%define test
+			(lambda () (asm pos-int 1 pos-int 2 add)))
 		(test)
 	`, I(3))
 }
@@ -22,9 +22,9 @@ func TestAddition(t *testing.T) {
 func TestJump(t *testing.T) {
 	as := assert.New(t)
 	as.MustEvalTo(`
-		(define* test
+		(%define test
 			(lambda ()
-				(asm*
+				(asm
 					local some-value :val
 					true
 					store some-value
@@ -43,7 +43,7 @@ func TestLabelError(t *testing.T) {
 	as := assert.New(t)
 
 	as.ErrorWith(`
-		(asm*
+		(asm
 			true
 			cond-jump "not-a-label"
 		:not-a-label)
@@ -61,7 +61,7 @@ func TestLabelNumbering(t *testing.T) {
 		isa.NoOp.New(),
 		isa.Label.New(1),
 	}, `
-		(asm*
+		(asm
 			jump :second
 			no-op
 			jump :first
@@ -74,12 +74,12 @@ func TestLabelNumbering(t *testing.T) {
 func TestOperandSizeError(t *testing.T) {
 	as := assert.New(t)
 	as.MustEvalTo(
-		fmt.Sprintf("(asm* pos-int %d)", isa.OperandMask),
+		fmt.Sprintf("(asm pos-int %d)", isa.OperandMask),
 		I(int64(isa.OperandMask)),
 	)
 
 	as.ErrorWith(
-		fmt.Sprintf("(asm* pos-int %d)", isa.OperandMask+1),
+		fmt.Sprintf("(asm pos-int %d)", isa.OperandMask+1),
 		fmt.Errorf(isa.ErrExpectedOperand, isa.OperandMask+1),
 	)
 }

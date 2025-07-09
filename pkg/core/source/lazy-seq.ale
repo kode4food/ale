@@ -1,12 +1,12 @@
 ;;;; ale core: lazy sequences
 
-(define (lazy-seq* proc)
-  (asm*
+(define (%lazy-seq proc)
+  (asm
       resolve proc
       lazy-seq))
 
 (define-macro (lazy-seq . body)
-  `(lazy-seq* (thunk ,@body)))
+  `(%lazy-seq (thunk ,@body)))
 
 (define (take count coll)
   ((lambda-rec take-inner (count coll)

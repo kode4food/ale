@@ -60,8 +60,8 @@ func TestProcedurePredicatesEval(t *testing.T) {
 	as := assert.New(t)
 	as.MustEvalTo(`(procedure? if)`, data.False)
 	as.MustEvalTo(`(!procedure? if)`, data.True)
-	as.MustEvalTo(`(special? define*)`, data.True)
-	as.MustEvalTo(`(!special? define*)`, data.False)
+	as.MustEvalTo(`(special? %define)`, data.True)
+	as.MustEvalTo(`(!special? %define)`, data.False)
 	as.MustEvalTo(`(procedure? 99)`, data.False)
 	as.MustEvalTo(`(!procedure? 99)`, data.True)
 }

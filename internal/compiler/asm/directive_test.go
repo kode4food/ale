@@ -15,12 +15,12 @@ import (
 func TestConstant(t *testing.T) {
 	as := assert.New(t)
 	as.MustEvalTo(
-		`(asm* const ("this is a list" 1 2 3))`,
+		`(asm const ("this is a list" 1 2 3))`,
 		L(S("this is a list"), I(1), I(2), I(3)),
 	)
 
 	as.MustEvalTo(
-		`(asm* const 1 const 2 const 3 add add)`,
+		`(asm const 1 const 2 const 3 add add)`,
 		I(6),
 	)
 }
@@ -28,7 +28,7 @@ func TestConstant(t *testing.T) {
 func TestOutOfScopeError(t *testing.T) {
 	as := assert.New(t)
 	as.ErrorWith(`
-		(asm*
+		(asm
 			locals-push
 			local wont-be-found :val
 			const "hello"
@@ -41,7 +41,7 @@ func TestOutOfScopeError(t *testing.T) {
 func TestLocalScopeError(t *testing.T) {
 	as := assert.New(t)
 	as.ErrorWith(`
-		(asm*
+		(asm
 			locals-pop
 			local hello :val)
 	`, errors.New(encoder.ErrNoLocalScope))
@@ -49,7 +49,7 @@ func TestLocalScopeError(t *testing.T) {
 
 func TestEval(t *testing.T) {
 	as := assert.New(t)
-	as.MustEvalTo(`(asm* eval (+ 1 2))`, I(3))
+	as.MustEvalTo(`(asm eval (+ 1 2))`, I(3))
 	as.MustEncodedAs(isa.Instructions{
 		isa.PosInt.New(2),
 		isa.PosInt.New(1),
@@ -57,7 +57,7 @@ func TestEval(t *testing.T) {
 		isa.Call.New(2),
 		isa.Return.New(),
 	}, `
-	(asm*
+	(asm
 		eval (+ 1 2)
 		return)
 	`)

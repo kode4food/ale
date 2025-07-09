@@ -1,6 +1,6 @@
 ;;;; ale core: exceptions
 
-(def-builtin defer*)
+(def-builtin defer)
 (def-builtin recover)
 
 (letfn [(lambda-rec is-call (sym clause)
@@ -84,7 +84,7 @@
               [(seq? cleanup)
                (let ([first# (rest (first cleanup))]
                      [rest#  (conj parsed [:finally (rest cleanup)])])
-                 `(defer*
+                 `(defer
                     (thunk ,(try-catch-finally rest#))
                     (thunk ,@first#)))]
 
