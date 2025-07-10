@@ -8,7 +8,7 @@ const (
 	Bytes       = data.Local("bytes")
 	Chan        = data.Local("chan")
 	CurrentTime = data.Local("current-time")
-	Defer       = data.Local("defer")
+	Defer       = data.Local("%defer")
 	GenSym      = data.Local("gensym")
 	Go          = data.Local("%go")
 	IsA         = data.Local("%is-a")
