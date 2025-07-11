@@ -88,7 +88,7 @@ func (t typeList) basicType() (basic, bool) {
 		return nil, false
 	}
 	for _, n := range t[1:] {
-		if n, ok := n.(basic); ok && f.Kind() == n.Kind() {
+		if n, ok := n.(basic); ok && f.ID() == n.ID() {
 			continue
 		}
 		return nil, false

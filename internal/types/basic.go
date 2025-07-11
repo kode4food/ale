@@ -1,19 +1,19 @@
 package types
 
-import "github.com/google/uuid"
+import "sync/atomic"
 
 type (
-	// Kind uniquely identifies a Type within a process
-	Kind uuid.UUID
+	// ID uniquely identifies a Type within a process
+	ID uint64
 
 	basic interface {
 		Type
-		Kind() Kind
+		ID() ID
 	}
 
 	Basic struct {
 		name string
-		kind Kind
+		id   ID
 	}
 )
 
@@ -31,17 +31,19 @@ var (
 	BasicCons      = MakeBasic("cons")
 	BasicVector    = MakeBasic("vector")
 	BasicUnion     = MakeBasic("union")
+
+	idCounter atomic.Uint64
 )
 
 func MakeBasic(name string) *Basic {
 	return &Basic{
-		kind: Kind(uuid.New()),
+		id:   ID(idCounter.Add(1)),
 		name: name,
 	}
 }
 
-func (b *Basic) Kind() Kind {
-	return b.kind
+func (b *Basic) ID() ID {
+	return b.id
 }
 
 func (b *Basic) Name() string {
@@ -50,14 +52,14 @@ func (b *Basic) Name() string {
 
 func (b *Basic) Accepts(_ *Checker, other Type) bool {
 	if other, ok := other.(basic); ok {
-		return b == other || b.kind == other.Kind()
+		return b == other || b.id == other.ID()
 	}
 	return false
 }
 
 func (b *Basic) Equal(other Type) bool {
 	if other, ok := other.(*Basic); ok {
-		return b == other || b.kind == other.kind && b.name == other.name
+		return b == other || b.id == other.id && b.name == other.name
 	}
 	return false
 }
