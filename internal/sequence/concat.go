@@ -8,24 +8,24 @@ func Concat(s ...data.Sequence) data.Sequence {
 		return data.Null
 	case 1:
 		return s[0]
-	}
+	default:
+		var next LazyResolver
+		curr := s[0]
+		rest := s[1:]
 
-	var next LazyResolver
-	curr := s[0]
-	rest := s[1:]
-
-	next = func() (data.Value, data.Sequence, bool) {
-		var f data.Value
-		var ok bool
-		if f, curr, ok = curr.Split(); ok {
-			return f, NewLazy(next), true
+		next = func() (data.Value, data.Sequence, bool) {
+			var f data.Value
+			var ok bool
+			if f, curr, ok = curr.Split(); ok {
+				return f, NewLazy(next), true
+			}
+			if len(rest) == 1 {
+				return rest[0].Split()
+			}
+			curr = rest[0]
+			rest = rest[1:]
+			return next()
 		}
-		if len(rest) == 1 {
-			return rest[0].Split()
-		}
-		curr = rest[0]
-		rest = rest[1:]
-		return next()
+		return NewLazy(next)
 	}
-	return NewLazy(next)
 }
