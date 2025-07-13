@@ -1,8 +1,6 @@
 package builtin
 
-import (
-	"github.com/kode4food/ale/pkg/data"
-)
+import "github.com/kode4food/ale/pkg/data"
 
 var (
 	// Bytes constructs a new byte vector
