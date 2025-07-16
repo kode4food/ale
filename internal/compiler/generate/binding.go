@@ -30,7 +30,7 @@ func Locals(e encoder.Encoder, bindings Bindings, body Builder) error {
 		}
 	}
 
-	// EnvBind the popped expression results to names
+	// Bind the popped expression results to names
 	for i := len(bindings) - 1; i >= 0; i-- {
 		b := bindings[i]
 		l, err := e.AddLocal(b.Name, encoder.ValueCell)
@@ -67,7 +67,7 @@ func MutualLocals(e encoder.Encoder, bindings Bindings, body Builder) error {
 		}
 	}
 
-	// EnvBind the references
+	// Bind the references
 	for i := len(cells) - 1; i >= 0; i-- {
 		c := cells[i]
 		e.Emit(isa.Load, c.Index)

@@ -28,7 +28,7 @@ func Global(e encoder.Encoder, s data.Symbol) error {
 
 // Reference encodes a potential retrieval and dereference
 func Reference(e encoder.Encoder, l data.Local) error {
-	c, err := resolveLocal(e, l)
+	c, err := local(e, l)
 	if err != nil {
 		return err
 	}
@@ -40,13 +40,11 @@ func Reference(e encoder.Encoder, l data.Local) error {
 
 // Local encodes a local retrieval, but not dereference
 func Local(e encoder.Encoder, l data.Local) error {
-	_, err := resolveLocal(e, l)
+	_, err := local(e, l)
 	return err
 }
 
-func resolveLocal(
-	e encoder.Encoder, l data.Local,
-) (*encoder.ScopedCell, error) {
+func local(e encoder.Encoder, l data.Local) (*encoder.ScopedCell, error) {
 	if s, ok := e.ResolveScoped(l); ok {
 		switch s.Scope {
 		case encoder.LocalScope:
