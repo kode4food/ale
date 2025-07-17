@@ -5,9 +5,8 @@ go:
   - 1.21.x
 
 before_script:
-  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-  - chmod +x ./cc-test-reporter
-  - ./cc-test-reporter before-build
+  - curl https://qlty.sh | sh
+  - qlty coverage publish cover.out
 
 script:
   - make test
