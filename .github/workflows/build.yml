@@ -1,4 +1,4 @@
-name: Go Build
+name: Build
 on:
   push:
     branches: [main]

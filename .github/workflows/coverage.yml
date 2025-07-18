@@ -1,4 +1,4 @@
-name: Go Coverage
+name: Coverage
 on:
   push:
     branches: [main]
