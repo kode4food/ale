@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"slices"
 	"strings"
 
 	"github.com/kode4food/ale/internal/debug"
@@ -26,7 +27,17 @@ const (
 	UserDomain = data.Local("user")
 )
 
-var notPaired = fmt.Sprintf(parse.ErrPrefixedNotPaired, "")
+var (
+	recoverable = []string{
+		parse.ErrListNotClosed,
+		parse.ErrVectorNotClosed,
+		parse.ErrObjectNotClosed,
+		lex.ErrStringNotTerminated,
+		lex.ErrCommentNotTerminated,
+	}
+
+	notPaired = fmt.Sprintf(parse.ErrPrefixedNotPaired, "")
+)
 
 // EvaluateStdIn reads from StdIn and evaluates it
 func EvaluateStdIn() {
@@ -119,12 +130,10 @@ func isRecoverable(err error) bool {
 		err = e
 	}
 	msg := err.Error()
-	return msg == parse.ErrListNotClosed ||
-		msg == parse.ErrVectorNotClosed ||
-		msg == parse.ErrObjectNotClosed ||
-		msg == lex.ErrStringNotTerminated ||
-		msg == lex.ErrCommentNotTerminated ||
-		strings.HasPrefix(msg, notPaired)
+	if slices.Contains(recoverable, msg) {
+		return true
+	}
+	return strings.HasPrefix(msg, notPaired)
 }
 
 func mustEvalBuffer(src []byte) {

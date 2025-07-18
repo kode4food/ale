@@ -64,16 +64,20 @@ func (intWrapper[T]) Unwrap(v data.Value) (reflect.Value, error) {
 			return reflect.ValueOf(res), nil
 		}
 	case *data.BigInt:
-		if bi := (*big.Int)(i); bi.IsInt64() {
-			if res, ok := int64ToInt[T](bi.Int64()); ok {
-				return reflect.ValueOf(res), nil
-			}
+		bi := (*big.Int)(i)
+		if !bi.IsInt64() {
+			break
+		}
+		if res, ok := int64ToInt[T](bi.Int64()); ok {
+			return reflect.ValueOf(res), nil
 		}
 	case *data.Ratio:
-		if r := (*big.Rat)(i); r.IsInt() {
-			if res, ok := int64ToInt[T](r.Num().Int64()); ok {
-				return reflect.ValueOf(res), nil
-			}
+		r := (*big.Rat)(i)
+		if !r.IsInt() {
+			break
+		}
+		if res, ok := int64ToInt[T](r.Num().Int64()); ok {
+			return reflect.ValueOf(res), nil
 		}
 	}
 	bits := int(unsafe.Sizeof(T(0))) * 8
@@ -89,31 +93,38 @@ func (uintWrapper[_]) Wrap(_ *Context, v reflect.Value) (data.Value, error) {
 	return (*data.BigInt)(bi), nil
 }
 
-func (uintWrapper[T]) Unwrap(v data.Value) (reflect.Value, error) {
+func (w uintWrapper[T]) Unwrap(v data.Value) (reflect.Value, error) {
 	switch i := v.(type) {
 	case data.Integer:
-		if i >= 0 {
-			if res, ok := uint64ToUint[T](uint64(i)); ok {
-				return reflect.ValueOf(res), nil
-			}
+		if i < 0 {
+			break
+		}
+		if res, ok := uint64ToUint[T](uint64(i)); ok {
+			return reflect.ValueOf(res), nil
 		}
 	case data.Float:
 		if res, ok := floatToUint[T](float64(i)); ok {
 			return reflect.ValueOf(res), nil
 		}
 	case *data.BigInt:
-		if bi := (*big.Int)(i); bi.IsUint64() {
-			if res, ok := uint64ToUint[T](bi.Uint64()); ok {
-				return reflect.ValueOf(res), nil
-			}
+		bi := (*big.Int)(i)
+		if !bi.IsUint64() {
+			break
+		}
+		if res, ok := uint64ToUint[T](bi.Uint64()); ok {
+			return reflect.ValueOf(res), nil
 		}
 	case *data.Ratio:
-		if r := (*big.Rat)(i); r.IsInt() {
-			if bi := r.Num(); bi.IsUint64() {
-				if res, ok := uint64ToUint[T](r.Num().Uint64()); ok {
-					return reflect.ValueOf(res), nil
-				}
-			}
+		r := (*big.Rat)(i)
+		if !r.IsInt() {
+			break
+		}
+		bi := r.Num()
+		if !bi.IsUint64() {
+			break
+		}
+		if res, ok := uint64ToUint[T](bi.Uint64()); ok {
+			return reflect.ValueOf(res), nil
 		}
 	}
 	bits := int(unsafe.Sizeof(T(0))) * 8

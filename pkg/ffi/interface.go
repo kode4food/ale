@@ -89,18 +89,24 @@ func (w *methodWrapper) wrapMethod(v reflect.Value) data.Procedure {
 }
 
 func (w *intfWrapper) Unwrap(v data.Value) (reflect.Value, error) {
+	if res, ok := getReceiver(v); ok {
+		if w.Type != res.Type() {
+			return _zero, errors.New(ErrInterfaceTypeMismatch)
+		}
+		return res, nil
+	}
+	return _zero, errors.New(ErrInterfaceCoercionNotSupported)
+}
+
+func getReceiver(v data.Value) (reflect.Value, bool) {
 	if v, ok := v.(*data.Object); ok {
 		if r, ok := v.Get(ReceiverKey); ok {
 			if r, ok := r.(receiver); ok {
-				res := reflect.Value(r)
-				if w.Type != res.Type() {
-					return _zero, errors.New(ErrInterfaceTypeMismatch)
-				}
-				return res, nil
+				return reflect.Value(r), true
 			}
 		}
 	}
-	return _zero, errors.New(ErrInterfaceCoercionNotSupported)
+	return _zero, false
 }
 
 func (receiver) Equal(data.Value) bool {

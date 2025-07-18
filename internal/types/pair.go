@@ -43,11 +43,13 @@ func (p *Pair) Accepts(c *Checker, other Type) bool {
 
 func (p *Pair) Equal(other Type) bool {
 	if other, ok := other.(*Pair); ok {
-		return p == other ||
-			p.name == other.name &&
-				p.basic.Equal(other.basic) &&
-				p.car.Equal(other.car) &&
-				p.cdr.Equal(other.cdr)
+		if p == other {
+			return true
+		}
+		return p.name == other.name &&
+			p.basic.Equal(other.basic) &&
+			p.car.Equal(other.car) &&
+			p.cdr.Equal(other.cdr)
 	}
 	return false
 }

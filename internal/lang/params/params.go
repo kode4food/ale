@@ -70,21 +70,10 @@ func ParseCases(s data.Sequence) (*ParamCases, error) {
 	f := s.Car()
 	switch f.(type) {
 	case *data.List, *data.Cons, data.Local:
-		c, err := parseParamCase(s)
-		if err != nil {
-			return nil, err
-		}
-		if err := res.addParamCase(c); err != nil {
-			return nil, err
-		}
-		return res, nil
+		return res, addParsedCase(res, s)
 	case data.Vector:
 		for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {
-			c, err := parseParamCase(f.(data.Vector))
-			if err != nil {
-				return nil, err
-			}
-			if err := res.addParamCase(c); err != nil {
+			if err := addParsedCase(res, f.(data.Vector)); err != nil {
 				return nil, err
 			}
 		}
@@ -92,6 +81,14 @@ func ParseCases(s data.Sequence) (*ParamCases, error) {
 	default:
 		return nil, fmt.Errorf(ErrUnexpectedCaseSyntax, f)
 	}
+}
+
+func addParsedCase(pc *ParamCases, s data.Sequence) error {
+	c, err := parseParamCase(s)
+	if err != nil {
+		return err
+	}
+	return pc.addParamCase(c)
 }
 
 func (pc *ParamCases) MakeArgFetchers() []ArgFetcher {

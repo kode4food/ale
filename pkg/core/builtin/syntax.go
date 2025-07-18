@@ -93,25 +93,33 @@ func (se *syntaxEnv) quoteSequence(s data.Sequence) (data.Value, error) {
 	case data.String:
 		return s, nil
 	case *data.List:
-		if s == data.Null {
-			return s, nil
-		}
-		e, err := se.quoteElements(s)
-		if err != nil {
-			return nil, err
-		}
-		return data.NewList(applySym, listSym, e), nil
+		return se.quoteList(s)
 	case data.Vector:
-		e, err := se.quoteElements(s)
-		if err != nil {
-			return nil, err
-		}
-		return data.NewList(applySym, vectorSym, e), nil
+		return se.quoteVector(s)
 	case *data.Object:
 		return se.quoteObject(s)
 	default:
 		return nil, fmt.Errorf(ErrUnsupportedSyntaxQuote, s)
 	}
+}
+
+func (se *syntaxEnv) quoteList(s *data.List) (data.Value, error) {
+	if s == data.Null {
+		return s, nil
+	}
+	e, err := se.quoteElements(s)
+	if err != nil {
+		return nil, err
+	}
+	return data.NewList(applySym, listSym, e), nil
+}
+
+func (se *syntaxEnv) quoteVector(s data.Vector) (data.Value, error) {
+	e, err := se.quoteElements(s)
+	if err != nil {
+		return nil, err
+	}
+	return data.NewList(applySym, vectorSym, e), nil
 }
 
 func (se *syntaxEnv) quotePair(c data.Pair) (data.Value, error) {
