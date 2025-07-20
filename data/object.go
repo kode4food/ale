@@ -10,7 +10,7 @@ import (
 	"sync/atomic"
 
 	"github.com/kode4food/ale"
-	"github.com/kode4food/ale/internal/data"
+	data "github.com/kode4food/ale/data/internal"
 	"github.com/kode4food/ale/internal/lang"
 	"github.com/kode4food/ale/internal/types"
 )

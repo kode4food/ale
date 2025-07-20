@@ -1,10 +1,10 @@
-package data_test
+package internal_test
 
 import (
 	"testing"
 
+	data "github.com/kode4food/ale/data/internal"
 	"github.com/kode4food/ale/internal/basics"
-	"github.com/kode4food/ale/internal/data"
 	"github.com/stretchr/testify/assert"
 )
 

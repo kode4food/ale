@@ -5,10 +5,10 @@ import (
 	"testing"
 	"time"
 
+	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
 	"github.com/kode4food/ale/internal/stream"
-	"github.com/kode4food/ale/data"
 )
 
 func TestChannel(t *testing.T) {
