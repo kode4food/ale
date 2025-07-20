@@ -18,13 +18,13 @@ func TestObjectAccepts(t *testing.T) {
 	as.Equal("object(number->keyword)", o2.Name())
 	as.Equal("object(string->procedure)", o3.Name())
 
-	as.True(types.Accepts(o1, o1))
-	as.False(types.Accepts(o1, o2))
-	as.True(types.Accepts(o1, o3))
+	as.True(o1.Accepts(o1))
+	as.False(o1.Accepts(o2))
+	as.True(o1.Accepts(o3))
 
-	as.True(types.Accepts(types.BasicObject, o1))
-	as.False(types.Accepts(o1, types.BasicObject))
-	as.False(types.Accepts(o1, types.BasicBoolean))
+	as.True(types.BasicObject.Accepts(o1))
+	as.False(o1.Accepts(types.BasicObject))
+	as.False(o1.Accepts(types.BasicBoolean))
 }
 
 func TestObjectEqual(t *testing.T) {

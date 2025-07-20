@@ -16,13 +16,13 @@ func TestList(t *testing.T) {
 
 	as.Equal("list(number)", v1.Name())
 
-	as.True(types.Accepts(v1, v1))
-	as.False(types.Accepts(v1, v2))
-	as.True(types.Accepts(v3, v1))
+	as.True(v1.Accepts(v1))
+	as.False(v1.Accepts(v2))
+	as.True(v3.Accepts(v1))
 
-	as.False(types.Accepts(types.BasicVector, v1))
-	as.True(types.Accepts(types.BasicList, v1))
-	as.False(types.Accepts(v1, types.BasicList))
+	as.False(types.BasicVector.Accepts(v1))
+	as.True(types.BasicList.Accepts(v1))
+	as.False(v1.Accepts(types.BasicList))
 }
 
 func TestVector(t *testing.T) {
@@ -34,11 +34,11 @@ func TestVector(t *testing.T) {
 
 	as.Equal("vector(number)", v1.Name())
 
-	as.True(types.Accepts(v1, v1))
-	as.False(types.Accepts(v1, v2))
-	as.True(types.Accepts(v3, v1))
+	as.True(v1.Accepts(v1))
+	as.False(v1.Accepts(v2))
+	as.True(v3.Accepts(v1))
 
-	as.False(types.Accepts(types.BasicList, v1))
-	as.True(types.Accepts(types.BasicVector, v1))
-	as.False(types.Accepts(v1, types.BasicVector))
+	as.False(types.BasicList.Accepts(v1))
+	as.True(types.BasicVector.Accepts(v1))
+	as.False(v1.Accepts(types.BasicVector))
 }

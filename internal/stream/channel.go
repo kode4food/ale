@@ -3,9 +3,10 @@ package stream
 import (
 	"runtime"
 
+	"github.com/kode4food/ale"
+	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/sync"
 	"github.com/kode4food/ale/internal/types"
-	"github.com/kode4food/ale/pkg/data"
 )
 
 type (
@@ -16,15 +17,15 @@ type (
 	}
 
 	chanEmitter struct {
-		ch chan<- data.Value
+		ch chan<- ale.Value
 		cl runtime.Cleanup
 	}
 
 	chanSequence struct {
 		once sync.Action
-		ch   <-chan data.Value
+		ch   <-chan ale.Value
 
-		result data.Value
+		result ale.Value
 		rest   data.Sequence
 		ok     bool
 	}
@@ -40,7 +41,7 @@ var (
 
 // NewChannel produces an Emitter and Sequence pair
 func NewChannel(size int) *Channel {
-	ch := make(chan data.Value, size)
+	ch := make(chan ale.Value, size)
 	e := newEmitter(ch)
 	s := NewChannelSequence(ch)
 
@@ -51,11 +52,11 @@ func NewChannel(size int) *Channel {
 	}
 }
 
-func (c *Channel) Type() types.Type {
+func (c *Channel) Type() ale.Type {
 	return chanType
 }
 
-func (c *Channel) Get(key data.Value) (data.Value, bool) {
+func (c *Channel) Get(key ale.Value) (ale.Value, bool) {
 	switch key {
 	case EmitKey:
 		return c.Emit, true
@@ -68,14 +69,14 @@ func (c *Channel) Get(key data.Value) (data.Value, bool) {
 	}
 }
 
-func (c *Channel) Equal(other data.Value) bool {
+func (c *Channel) Equal(other ale.Value) bool {
 	return c == other
 }
 
 // newEmitter produces an Emitter for sending values to a Go chan
-func newEmitter(ch chan<- data.Value) *chanEmitter {
+func newEmitter(ch chan<- ale.Value) *chanEmitter {
 	r := &chanEmitter{ch: ch}
-	r.cl = runtime.AddCleanup(r, func(c chan<- data.Value) {
+	r.cl = runtime.AddCleanup(r, func(c chan<- ale.Value) {
 		defer func() { _ = recover() }()
 		close(c)
 	}, r.ch)
@@ -83,7 +84,7 @@ func newEmitter(ch chan<- data.Value) *chanEmitter {
 }
 
 // Write will send a Value to the Go chan
-func (e *chanEmitter) Write(v data.Value) {
+func (e *chanEmitter) Write(v ale.Value) {
 	e.ch <- v
 }
 
@@ -96,7 +97,7 @@ func (e *chanEmitter) Close() (err error) {
 }
 
 // NewChannelSequence produces a new Sequence whose values come from a Go chan
-func NewChannelSequence(ch <-chan data.Value) data.Sequence {
+func NewChannelSequence(ch <-chan ale.Value) data.Sequence {
 	return &chanSequence{
 		once: sync.Once(),
 		ch:   ch,
@@ -121,20 +122,20 @@ func (c *chanSequence) IsEmpty() bool {
 	return !c.resolve().ok
 }
 
-func (c *chanSequence) Car() data.Value {
+func (c *chanSequence) Car() ale.Value {
 	return c.resolve().result
 }
 
-func (c *chanSequence) Cdr() data.Value {
+func (c *chanSequence) Cdr() ale.Value {
 	return c.resolve().rest
 }
 
-func (c *chanSequence) Split() (data.Value, data.Sequence, bool) {
+func (c *chanSequence) Split() (ale.Value, data.Sequence, bool) {
 	r := c.resolve()
 	return r.result, r.rest, r.ok
 }
 
-func (c *chanSequence) Prepend(v data.Value) data.Sequence {
+func (c *chanSequence) Prepend(v ale.Value) data.Sequence {
 	return &chanSequence{
 		once:   sync.Never(),
 		ok:     true,
@@ -143,14 +144,14 @@ func (c *chanSequence) Prepend(v data.Value) data.Sequence {
 	}
 }
 
-func (c *chanSequence) Type() types.Type {
+func (c *chanSequence) Type() ale.Type {
 	return chanSequenceType
 }
 
-func (c *chanSequence) Equal(other data.Value) bool {
+func (c *chanSequence) Equal(other ale.Value) bool {
 	return c == other
 }
 
-func (c *chanSequence) Get(key data.Value) (data.Value, bool) {
+func (c *chanSequence) Get(key ale.Value) (ale.Value, bool) {
 	return data.DumpMapped(c).Get(key)
 }

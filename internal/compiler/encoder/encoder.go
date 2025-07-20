@@ -3,10 +3,11 @@ package encoder
 import (
 	"slices"
 
+	"github.com/kode4food/ale"
+	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/env"
 	"github.com/kode4food/ale/internal/basics"
 	"github.com/kode4food/ale/internal/runtime/isa"
-	"github.com/kode4food/ale/pkg/data"
-	"github.com/kode4food/ale/pkg/env"
 )
 
 type (
@@ -19,7 +20,7 @@ type (
 		Globals() env.Namespace
 		NewLabel() isa.Operand
 
-		AddConstant(data.Value) isa.Operand
+		AddConstant(ale.Value) isa.Operand
 
 		PushParams(data.Locals, bool)
 		PopParams()

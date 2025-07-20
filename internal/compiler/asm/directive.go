@@ -4,10 +4,11 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/kode4food/ale"
+	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/basics"
 	"github.com/kode4food/ale/internal/compiler/encoder"
 	"github.com/kode4food/ale/internal/compiler/generate"
-	"github.com/kode4food/ale/pkg/data"
 )
 
 const (
@@ -64,7 +65,7 @@ func getDirectiveCalls() namedAsmParsers {
 	}
 }
 
-func constCall(_ *Parser, args ...data.Value) (Emit, error) {
+func constCall(_ *Parser, args ...ale.Value) (Emit, error) {
 	return func(e *Encoder) error {
 		if v, ok := e.resolveEncoderArg(args[0]); ok {
 			return generate.Literal(e, v)
@@ -73,7 +74,7 @@ func constCall(_ *Parser, args ...data.Value) (Emit, error) {
 	}, nil
 }
 
-func evaluateCall(_ *Parser, args ...data.Value) (Emit, error) {
+func evaluateCall(_ *Parser, args ...ale.Value) (Emit, error) {
 	return func(e *Encoder) error {
 		if v, ok := e.resolveEncoderArg(args[0]); ok {
 			return generate.Value(e, v)
@@ -92,7 +93,7 @@ func publicNamer(e *Encoder, l data.Local) (data.Local, error) {
 	return l, nil
 }
 
-func popLocalsCall(*Parser, ...data.Value) (Emit, error) {
+func popLocalsCall(*Parser, ...ale.Value) (Emit, error) {
 	return func(e *Encoder) error {
 		return e.PopLocals()
 	}, nil
@@ -104,14 +105,14 @@ func privateNamer(e *Encoder, l data.Local) (data.Local, error) {
 	return p, nil
 }
 
-func pushLocalsCall(*Parser, ...data.Value) (Emit, error) {
+func pushLocalsCall(*Parser, ...ale.Value) (Emit, error) {
 	return func(e *Encoder) error {
 		e.PushLocals()
 		return nil
 	}, nil
 }
 
-func resolveCall(_ *Parser, args ...data.Value) (Emit, error) {
+func resolveCall(_ *Parser, args ...ale.Value) (Emit, error) {
 	s, err := assertType[data.Symbol](symType, args[0])
 	if err != nil {
 		return nil, err
@@ -130,7 +131,7 @@ func resolveCall(_ *Parser, args ...data.Value) (Emit, error) {
 
 func parseLocalEncoder(inst data.Local, toName asmToName) asmParse {
 	return parseArgs(inst, 2,
-		func(p *Parser, args ...data.Value) (Emit, error) {
+		func(p *Parser, args ...ale.Value) (Emit, error) {
 			l, err := assertType[data.Local](nameType, args[0])
 			if err != nil {
 				return nil, err
@@ -179,7 +180,7 @@ func makeCellTypeNames() string {
 	return buf.String()
 }
 
-func assertType[T data.Value](expected string, val data.Value) (T, error) {
+func assertType[T ale.Value](expected string, val ale.Value) (T, error) {
 	res, ok := val.(T)
 	if !ok {
 		var zero T
@@ -188,6 +189,6 @@ func assertType[T data.Value](expected string, val data.Value) (T, error) {
 	return res, nil
 }
 
-func typeError(expected string, val data.Value) error {
+func typeError(expected string, val ale.Value) error {
 	return fmt.Errorf(ErrExpectedType, expected, data.ToString(val))
 }

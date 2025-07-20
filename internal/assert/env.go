@@ -1,8 +1,9 @@
 package assert
 
 import (
-	"github.com/kode4food/ale/pkg/data"
-	"github.com/kode4food/ale/pkg/env"
+	"github.com/kode4food/ale"
+	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/env"
 )
 
 func (w *Wrapper) IsNotDeclared(ns env.Namespace, n data.Local) {
@@ -27,7 +28,7 @@ func (w *Wrapper) IsNotBound(ns env.Namespace, n data.Local) {
 	}
 }
 
-func (w *Wrapper) IsBound(ns env.Namespace, n data.Local) data.Value {
+func (w *Wrapper) IsBound(ns env.Namespace, n data.Local) ale.Value {
 	w.Helper()
 	e, in, err := ns.Resolve(n)
 	if w.NoError(err) {

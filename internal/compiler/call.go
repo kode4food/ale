@@ -1,13 +1,14 @@
 package compiler
 
 import (
+	"github.com/kode4food/ale"
+	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/compiler/encoder"
 	"github.com/kode4food/ale/internal/types"
-	"github.com/kode4food/ale/pkg/data"
 )
 
 // Call represents a code-generating function for the compiler
-type Call func(encoder.Encoder, ...data.Value) error
+type Call func(encoder.Encoder, ...ale.Value) error
 
 var (
 	CallType = types.MakeBasic("special")
@@ -15,20 +16,20 @@ var (
 	// compile-time checks for interface implementation
 	_ interface {
 		data.Mapped
-		data.Typed
+		ale.Typed
 	} = Call(nil)
 )
 
 // Type makes Call a typed value
-func (Call) Type() types.Type {
+func (Call) Type() ale.Type {
 	return CallType
 }
 
 // Equal makes Call a typed Value
-func (Call) Equal(data.Value) bool {
+func (Call) Equal(ale.Value) bool {
 	return false
 }
 
-func (c Call) Get(key data.Value) (data.Value, bool) {
+func (c Call) Get(key ale.Value) (ale.Value, bool) {
 	return data.DumpMapped(c).Get(key)
 }

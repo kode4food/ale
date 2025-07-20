@@ -5,7 +5,7 @@ import (
 	"path"
 	"strings"
 
-	"github.com/kode4food/ale/pkg/data"
+	"github.com/kode4food/ale/data"
 )
 
 func (r *REPL) saveHistory() {

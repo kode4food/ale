@@ -3,6 +3,7 @@ package types_test
 import (
 	"testing"
 
+	"github.com/kode4food/ale"
 	"github.com/kode4food/ale/internal/types"
 	"github.com/stretchr/testify/assert"
 )
@@ -12,11 +13,11 @@ func TestApplicableAccepts(t *testing.T) {
 
 	a1 := types.MakeApplicable(
 		types.Signature{
-			Params: []types.Type{types.BasicNumber, types.BasicNumber},
+			Params: []ale.Type{types.BasicNumber, types.BasicNumber},
 			Result: types.BasicBoolean,
 		},
 		types.Signature{
-			Params: []types.Type{types.BasicNumber},
+			Params: []ale.Type{types.BasicNumber},
 			Result: types.BasicBoolean,
 		},
 	)
@@ -24,19 +25,19 @@ func TestApplicableAccepts(t *testing.T) {
 
 	a2 := types.MakeApplicable(
 		types.Signature{
-			Params: []types.Type{types.BasicSymbol, types.BasicBoolean},
+			Params: []ale.Type{types.BasicSymbol, types.BasicBoolean},
 			Result: types.BasicBoolean,
 		},
 		types.Signature{
-			Params: []types.Type{},
+			Params: []ale.Type{},
 			Result: types.BasicNumber,
 		},
 		types.Signature{
-			Params: []types.Type{types.BasicNumber},
+			Params: []ale.Type{types.BasicNumber},
 			Result: types.BasicBoolean,
 		},
 		types.Signature{
-			Params: []types.Type{types.BasicNumber, types.BasicNumber},
+			Params: []ale.Type{types.BasicNumber, types.BasicNumber},
 			Result: types.BasicBoolean,
 		},
 	)
@@ -46,20 +47,20 @@ func TestApplicableAccepts(t *testing.T) {
 		a2.Name(),
 	)
 
-	as.True(types.Accepts(a1, a1))
-	as.True(types.Accepts(a1, a2))
-	as.False(types.Accepts(a2, a1))
-	as.True(types.Accepts(a2, a2))
+	as.True(a1.Accepts(a1))
+	as.True(a1.Accepts(a2))
+	as.False(a2.Accepts(a1))
+	as.True(a2.Accepts(a2))
 
-	as.False(types.Accepts(a1, types.BasicNumber))
-	as.False(types.Accepts(a1, types.BasicProcedure))
-	as.True(types.Accepts(types.BasicProcedure, a1))
-	as.False(types.Accepts(types.BasicNumber, a1))
+	as.False(a1.Accepts(types.BasicNumber))
+	as.False(a1.Accepts(types.BasicProcedure))
+	as.True(types.BasicProcedure.Accepts(a1))
+	as.False(types.BasicNumber.Accepts(a1))
 
 	u1 := types.MakeUnion(a1, a2)
 	u2 := types.MakeUnion(types.MakeListOf(types.BasicSymbol), a1)
-	as.True(types.Accepts(types.BasicProcedure, u1))
-	as.False(types.Accepts(types.BasicProcedure, u2))
+	as.True(types.BasicProcedure.Accepts(u1))
+	as.False(types.BasicProcedure.Accepts(u2))
 }
 
 func TestApplicableRest(t *testing.T) {
@@ -67,24 +68,24 @@ func TestApplicableRest(t *testing.T) {
 
 	a1 := types.MakeApplicable(
 		types.Signature{
-			Params: []types.Type{types.BasicNumber, types.BasicNumber},
+			Params: []ale.Type{types.BasicNumber, types.BasicNumber},
 			Result: types.BasicBoolean,
 		},
 	)
 	a2 := types.MakeApplicable(
 		types.Signature{
-			Params:    []types.Type{types.BasicNumber, types.BasicNumber},
+			Params:    []ale.Type{types.BasicNumber, types.BasicNumber},
 			TakesRest: true,
 			Result:    types.BasicBoolean,
 		},
 	)
 	a3 := types.MakeApplicable(
 		types.Signature{
-			Params: []types.Type{types.BasicNumber, types.BasicNumber},
+			Params: []ale.Type{types.BasicNumber, types.BasicNumber},
 			Result: types.BasicBoolean,
 		},
 		types.Signature{
-			Params:    []types.Type{types.BasicNumber, types.BasicNumber},
+			Params:    []ale.Type{types.BasicNumber, types.BasicNumber},
 			TakesRest: true,
 			Result:    types.BasicBoolean,
 		},
@@ -92,12 +93,12 @@ func TestApplicableRest(t *testing.T) {
 
 	as.Equal(`procedure(number.number->boolean)`, a2.Name())
 
-	as.True(types.Accepts(a1, a1))
-	as.False(types.Accepts(a1, a2))
-	as.False(types.Accepts(a3, a1))
-	as.False(types.Accepts(a3, a2))
-	as.True(types.Accepts(a1, a3))
-	as.True(types.Accepts(a2, a3))
+	as.True(a1.Accepts(a1))
+	as.False(a1.Accepts(a2))
+	as.False(a3.Accepts(a1))
+	as.False(a3.Accepts(a2))
+	as.True(a1.Accepts(a3))
+	as.True(a2.Accepts(a3))
 }
 
 func TestApplicableEqual(t *testing.T) {
@@ -105,36 +106,36 @@ func TestApplicableEqual(t *testing.T) {
 
 	a1 := types.MakeApplicable(
 		types.Signature{
-			Params: []types.Type{types.BasicNumber, types.BasicNumber},
+			Params: []ale.Type{types.BasicNumber, types.BasicNumber},
 			Result: types.BasicBoolean,
 		},
 	)
 	a2 := types.MakeApplicable(
 		types.Signature{
-			Params:    []types.Type{types.BasicNumber, types.BasicNumber},
+			Params:    []ale.Type{types.BasicNumber, types.BasicNumber},
 			TakesRest: true,
 			Result:    types.BasicBoolean,
 		},
 	)
 	a3 := types.MakeApplicable(
 		types.Signature{
-			Params: []types.Type{types.BasicNumber, types.BasicBoolean},
+			Params: []ale.Type{types.BasicNumber, types.BasicBoolean},
 			Result: types.BasicBoolean,
 		},
 	)
 	a4 := types.MakeApplicable(
 		types.Signature{
-			Params: []types.Type{types.BasicNumber, types.BasicBoolean},
+			Params: []ale.Type{types.BasicNumber, types.BasicBoolean},
 			Result: types.BasicBoolean,
 		},
 		types.Signature{
-			Params: []types.Type{types.BasicNumber, types.BasicBoolean},
+			Params: []ale.Type{types.BasicNumber, types.BasicBoolean},
 			Result: types.BasicBoolean,
 		},
 	)
 	a5 := types.MakeApplicable(
 		types.Signature{
-			Params: []types.Type{
+			Params: []ale.Type{
 				types.BasicNumber, types.BasicBoolean, types.BasicList,
 			},
 			Result: types.BasicBoolean,

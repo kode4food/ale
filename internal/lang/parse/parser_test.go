@@ -9,8 +9,8 @@ import (
 	"github.com/kode4food/ale/internal/lang/lex"
 	"github.com/kode4food/ale/internal/lang/parse"
 	"github.com/kode4food/ale/internal/sequence"
-	"github.com/kode4food/ale/pkg/data"
-	"github.com/kode4food/ale/pkg/read"
+	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/read"
 )
 
 func TestReadList(t *testing.T) {

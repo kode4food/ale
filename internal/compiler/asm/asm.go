@@ -3,9 +3,10 @@ package asm
 import (
 	"sync"
 
+	"github.com/kode4food/ale"
+	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/compiler/encoder"
 	"github.com/kode4food/ale/internal/debug"
-	"github.com/kode4food/ale/pkg/data"
 )
 
 type (
@@ -18,7 +19,7 @@ var (
 	calls     namedAsmParsers
 )
 
-func MakeAsm(args ...data.Value) EmitBuilder {
+func MakeAsm(args ...ale.Value) EmitBuilder {
 	forms := data.Vector(args)
 	return func(p *Parser) (Emit, error) {
 		return p.sequence(forms)

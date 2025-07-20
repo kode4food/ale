@@ -1,13 +1,17 @@
 package types
 
-import "sync/atomic"
+import (
+	"sync/atomic"
+
+	"github.com/kode4food/ale"
+)
 
 type (
 	// ID uniquely identifies a Type within a process
 	ID uint64
 
 	basic interface {
-		Type
+		ale.Type
 		ID() ID
 	}
 
@@ -50,14 +54,14 @@ func (b *Basic) Name() string {
 	return b.name
 }
 
-func (b *Basic) Accepts(_ *Checker, other Type) bool {
+func (b *Basic) Accepts(other ale.Type) bool {
 	if other, ok := other.(basic); ok {
 		return b == other || b.id == other.ID()
 	}
 	return false
 }
 
-func (b *Basic) Equal(other Type) bool {
+func (b *Basic) Equal(other ale.Type) bool {
 	if other, ok := other.(*Basic); ok {
 		return b == other || b.id == other.id && b.name == other.name
 	}

@@ -3,11 +3,12 @@ package stream
 import (
 	"io"
 
-	"github.com/kode4food/ale/pkg/data"
+	"github.com/kode4food/ale"
+	"github.com/kode4food/ale/data"
 )
 
 // Writer is used to emit or write values to a stream
-type Writer func(data.Value)
+type Writer func(ale.Value)
 
 const (
 	// WriteKey is key used to write to a Writer
@@ -24,7 +25,7 @@ const (
 )
 
 func bindWriter(w Writer) data.Procedure {
-	return data.MakeProcedure(func(args ...data.Value) data.Value {
+	return data.MakeProcedure(func(args ...ale.Value) ale.Value {
 		for _, f := range args {
 			w(f)
 		}
@@ -33,7 +34,7 @@ func bindWriter(w Writer) data.Procedure {
 }
 
 func bindCloser(c io.Closer) data.Procedure {
-	return data.MakeProcedure(func(args ...data.Value) data.Value {
+	return data.MakeProcedure(func(args ...ale.Value) ale.Value {
 		_ = c.Close()
 		return data.Null
 	}, 0)

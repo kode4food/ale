@@ -3,16 +3,17 @@ package sequence_test
 import (
 	"testing"
 
+	"github.com/kode4food/ale"
+	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
 	"github.com/kode4food/ale/internal/sequence"
-	"github.com/kode4food/ale/pkg/data"
 )
 
 func TestFilter(t *testing.T) {
 	as := assert.New(t)
 
-	filterTest := func(v data.Value) bool {
+	filterTest := func(v ale.Value) bool {
 		return string(v.(data.String)) != "filtered out"
 	}
 
@@ -39,7 +40,7 @@ func TestFiltered(t *testing.T) {
 	as := assert.New(t)
 
 	l := L(S("first"), S("middle"), S("last"))
-	fn1 := func(v data.Value) bool {
+	fn1 := func(v ale.Value) bool {
 		return string(v.(data.String)) != "middle"
 	}
 	w1 := sequence.Filter(l, fn1)

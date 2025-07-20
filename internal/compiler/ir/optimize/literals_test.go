@@ -7,7 +7,7 @@ import (
 	"github.com/kode4food/ale/internal/compiler/encoder"
 	"github.com/kode4food/ale/internal/compiler/ir/optimize"
 	"github.com/kode4food/ale/internal/runtime/isa"
-	"github.com/kode4food/ale/pkg/env"
+	"github.com/kode4food/ale/env"
 )
 
 func TestLiterals(t *testing.T) {

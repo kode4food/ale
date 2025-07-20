@@ -1,13 +1,14 @@
 package generate
 
 import (
+	"github.com/kode4food/ale"
+	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/compiler/encoder"
 	"github.com/kode4food/ale/internal/runtime/isa"
-	"github.com/kode4food/ale/pkg/data"
 )
 
 // Literal encodes a literal (constant) value
-func Literal(e encoder.Encoder, v data.Value) error {
+func Literal(e encoder.Encoder, v ale.Value) error {
 	if v == data.Null {
 		return Null(e)
 	}
@@ -53,7 +54,7 @@ func Bool(e encoder.Encoder, n data.Bool) error {
 	return nil
 }
 
-func constant(e encoder.Encoder, v data.Value) error {
+func constant(e encoder.Encoder, v ale.Value) error {
 	index := e.AddConstant(v)
 	e.Emit(isa.Const, index)
 	return nil

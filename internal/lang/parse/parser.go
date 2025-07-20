@@ -4,10 +4,11 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/kode4food/ale"
+	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/env"
 	"github.com/kode4food/ale/internal/lang"
 	"github.com/kode4food/ale/internal/lang/lex"
-	"github.com/kode4food/ale/pkg/data"
-	"github.com/kode4food/ale/pkg/env"
 )
 
 // parser is a stateful iteration interface for a Token stream that is piloted
@@ -67,7 +68,7 @@ var (
 	splicingSym = env.RootSymbol("unquote-splicing")
 	bytesSym    = env.RootSymbol("bytes")
 
-	specialNames = map[data.String]data.Value{
+	specialNames = map[data.String]ale.Value{
 		lang.TrueLiteral:  data.True,
 		lang.FalseLiteral: data.False,
 	}
@@ -78,7 +79,7 @@ var (
 	}
 )
 
-func (p *parser) nextValue() (data.Value, bool, error) {
+func (p *parser) nextValue() (ale.Value, bool, error) {
 	t, err := p.nextToken()
 	if err != nil {
 		return nil, false, p.maybeWrap(err)
@@ -114,7 +115,7 @@ func (p *parser) maybeWrap(err error) error {
 	return err
 }
 
-func (p *parser) value(t *lex.Token) (data.Value, error) {
+func (p *parser) value(t *lex.Token) (ale.Value, error) {
 	switch t.Type() {
 	case lex.QuoteMarker:
 		return p.prefixed(quoteSym)
@@ -149,7 +150,7 @@ func (p *parser) value(t *lex.Token) (data.Value, error) {
 	}
 }
 
-func (p *parser) prefixed(s data.Symbol) (data.Value, error) {
+func (p *parser) prefixed(s data.Symbol) (ale.Value, error) {
 	v, ok, err := p.nextValue()
 	if err != nil {
 		return nil, err
@@ -160,7 +161,7 @@ func (p *parser) prefixed(s data.Symbol) (data.Value, error) {
 	return nil, p.errorf(ErrPrefixedNotPaired, s)
 }
 
-func (p *parser) list() (data.Value, error) {
+func (p *parser) list() (ale.Value, error) {
 	res := data.Vector{}
 	var sawDotAt = -1
 	for pos := 0; ; pos++ {
@@ -195,7 +196,7 @@ func (p *parser) list() (data.Value, error) {
 	return nil, p.error(ErrListNotClosed)
 }
 
-func (p *parser) bytes() (data.Value, error) {
+func (p *parser) bytes() (ale.Value, error) {
 	v, err := p.nonDotted(lex.VectorEnd)
 	if err != nil {
 		return nil, err
@@ -206,11 +207,11 @@ func (p *parser) bytes() (data.Value, error) {
 	return data.NewList(append(data.Vector{bytesSym}, v...)...), nil
 }
 
-func (p *parser) vector() (data.Value, error) {
+func (p *parser) vector() (ale.Value, error) {
 	return p.nonDotted(lex.VectorEnd)
 }
 
-func (p *parser) object() (data.Value, error) {
+func (p *parser) object() (ale.Value, error) {
 	v, err := p.nonDotted(lex.ObjectEnd)
 	if err != nil {
 		return nil, err
@@ -249,12 +250,12 @@ func (p *parser) errorf(text string, a ...any) error {
 	return fmt.Errorf(text, a...)
 }
 
-func (p *parser) keyword() data.Value {
+func (p *parser) keyword() ale.Value {
 	n := p.token.Value().(data.String)
 	return data.Keyword(n[1:])
 }
 
-func (p *parser) identifier() (data.Value, error) {
+func (p *parser) identifier() (ale.Value, error) {
 	n := p.token.Value().(data.String)
 	if v, ok := specialNames[n]; ok {
 		return v, nil
@@ -262,7 +263,7 @@ func (p *parser) identifier() (data.Value, error) {
 	return data.ParseSymbol(n)
 }
 
-func makeDottedList(vals ...data.Value) data.Value {
+func makeDottedList(vals ...ale.Value) ale.Value {
 	l := len(vals)
 	if res, ok := vals[l-1].(*data.List); ok {
 		for i := l - 2; i >= 0; i-- {

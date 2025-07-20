@@ -3,12 +3,13 @@ package parse
 import (
 	"fmt"
 
+	"github.com/kode4food/ale"
+	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/env"
 	lang "github.com/kode4food/ale/internal/lang/env"
 	"github.com/kode4food/ale/internal/lang/lex"
 	"github.com/kode4food/ale/internal/sequence"
 	"github.com/kode4food/ale/internal/stream"
-	"github.com/kode4food/ale/pkg/data"
-	"github.com/kode4food/ale/pkg/env"
 )
 
 const (
@@ -16,7 +17,7 @@ const (
 	ErrExpectedFileSystem = "expected file system, got: %s"
 )
 
-func (p *parser) processInclude(v data.Value, err error) (data.Value, error) {
+func (p *parser) processInclude(v ale.Value, err error) (ale.Value, error) {
 	if err != nil {
 		return v, err
 	}
@@ -39,7 +40,7 @@ func (p *parser) processInclude(v data.Value, err error) (data.Value, error) {
 	return p.value(t)
 }
 
-func parseInclude(v data.Value) (string, bool, error) {
+func parseInclude(v ale.Value) (string, bool, error) {
 	l, ok := v.(*data.List)
 	if !ok || l.IsEmpty() {
 		return "", false, nil

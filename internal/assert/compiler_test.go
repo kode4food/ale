@@ -5,7 +5,7 @@ import (
 
 	"github.com/kode4food/ale/internal/assert"
 	"github.com/kode4food/ale/internal/runtime/isa"
-	"github.com/kode4food/ale/pkg/data"
+	"github.com/kode4food/ale/data"
 )
 
 func TestEncodesAs(t *testing.T) {

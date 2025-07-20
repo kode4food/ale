@@ -3,16 +3,17 @@ package types_test
 import (
 	"testing"
 
+	"github.com/kode4food/ale"
+	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/types"
-	"github.com/kode4food/ale/pkg/data"
 	"github.com/stretchr/testify/assert"
 )
 
 type notABasic struct{}
 
-func (n notABasic) Name() string                            { return "" }
-func (n notABasic) Accepts(*types.Checker, types.Type) bool { return false }
-func (n notABasic) Equal(types.Type) bool                   { return false }
+func (n notABasic) Name() string          { return "" }
+func (n notABasic) Accepts(ale.Type) bool { return false }
+func (n notABasic) Equal(ale.Type) bool   { return false }
 
 func TestBasicAccepts(t *testing.T) {
 	as := assert.New(t)
@@ -23,16 +24,16 @@ func TestBasicAccepts(t *testing.T) {
 
 	as.Equal("number", i99.Name())
 	as.Equal("boolean", bTrue.Name())
-	as.True(types.Accepts(i99, i0))
-	as.False(types.Accepts(i99, bTrue))
+	as.True(i99.Accepts(i0))
+	as.False(i99.Accepts(bTrue))
 
-	as.True(types.Accepts(i99, i99))
-	as.False(types.Accepts(i99, types.BasicAny))
+	as.True(i99.Accepts(i99))
+	as.False(i99.Accepts(types.BasicAny))
 	as.False(
-		types.Accepts(i99, types.MakeUnion(types.BasicSymbol, types.BasicCons)),
+		i99.Accepts(types.MakeUnion(types.BasicSymbol, types.BasicCons)),
 	)
-	as.False(types.Accepts(types.BasicBoolean, notABasic{}))
-	as.True(types.Accepts(types.BasicAny, notABasic{}))
+	as.False(types.BasicBoolean.Accepts(notABasic{}))
+	as.True(types.BasicAny.Accepts(notABasic{}))
 }
 
 func TestBasicEqual(t *testing.T) {

@@ -5,10 +5,11 @@ import (
 	"slices"
 	"sync/atomic"
 
+	"github.com/kode4food/ale"
+	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/basics"
 	"github.com/kode4food/ale/internal/runtime/isa"
 	"github.com/kode4food/ale/internal/types"
-	"github.com/kode4food/ale/pkg/data"
 )
 
 // Procedure encapsulates the initial environment of an abstract machine
@@ -38,7 +39,7 @@ func MakeProcedure(run *isa.Runnable, arity data.ArityChecker) *Procedure {
 
 // Call allows an abstract machine Procedure to be called to instantiate a
 // Closure. Only the compiler invokes this calling interface.
-func (p *Procedure) Call(values ...data.Value) data.Value {
+func (p *Procedure) Call(values ...ale.Value) ale.Value {
 	return &Closure{
 		Procedure: p,
 		captured:  slices.Clone(values),
@@ -51,16 +52,16 @@ func (p *Procedure) CheckArity(int) error {
 }
 
 // Type makes Procedure a typed value
-func (p *Procedure) Type() types.Type {
+func (p *Procedure) Type() ale.Type {
 	return types.BasicProcedure
 }
 
-func (p *Procedure) Get(key data.Value) (data.Value, bool) {
+func (p *Procedure) Get(key ale.Value) (ale.Value, bool) {
 	return data.DumpMapped(p).Get(key)
 }
 
 // Equal compares this Procedure to another for equality
-func (p *Procedure) Equal(other data.Value) bool {
+func (p *Procedure) Equal(other ale.Value) bool {
 	if other, ok := other.(*Procedure); ok {
 		if p == other {
 			return true

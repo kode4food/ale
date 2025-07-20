@@ -3,10 +3,11 @@ package sequence_test
 import (
 	"testing"
 
+	"github.com/kode4food/ale"
+	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
 	"github.com/kode4food/ale/internal/sequence"
-	"github.com/kode4food/ale/pkg/data"
 )
 
 func TestLast(t *testing.T) {
@@ -25,7 +26,7 @@ func TestLast(t *testing.T) {
 	as.True(ok)
 
 	v, ok = sequence.Last(sequence.NewLazy(
-		func() (data.Value, data.Sequence, bool) {
+		func() (ale.Value, data.Sequence, bool) {
 			return S("hello"), data.Null, true
 		},
 	))
@@ -33,7 +34,7 @@ func TestLast(t *testing.T) {
 	as.True(ok)
 
 	_, ok = sequence.Last(sequence.NewLazy(
-		func() (data.Value, data.Sequence, bool) {
+		func() (ale.Value, data.Sequence, bool) {
 			return data.Null, data.Null, false
 		},
 	))

@@ -4,16 +4,17 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/kode4food/ale"
+	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
 	"github.com/kode4food/ale/internal/lang/lex"
 	"github.com/kode4food/ale/internal/sequence"
-	"github.com/kode4food/ale/pkg/data"
-	"github.com/kode4food/ale/pkg/read"
-	rdata "github.com/kode4food/ale/pkg/read/data"
+	"github.com/kode4food/ale/read"
+	rdata "github.com/kode4food/ale/read/data"
 )
 
-func T(t lex.TokenType, v data.Value) *lex.Token {
+func T(t lex.TokenType, v ale.Value) *lex.Token {
 	return t.FromValue(``, v)
 }
 
@@ -26,7 +27,7 @@ func assertToken(t *testing.T, like *lex.Token, value *lex.Token) {
 func assertTokenSequence(t *testing.T, s data.Sequence, tokens []*lex.Token) {
 	t.Helper()
 	as := assert.New(t)
-	var f data.Value
+	var f ale.Value
 	var r = s
 	var ok bool
 	for _, l := range tokens {

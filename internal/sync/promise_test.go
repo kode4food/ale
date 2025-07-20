@@ -4,15 +4,16 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/kode4food/ale"
+	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
 	"github.com/kode4food/ale/internal/sync"
-	"github.com/kode4food/ale/pkg/data"
 )
 
 func TestPromiseCaller(t *testing.T) {
 	as := assert.New(t)
-	p1 := sync.NewPromise(data.MakeProcedure(func(...data.Value) data.Value {
+	p1 := sync.NewPromise(data.MakeProcedure(func(...ale.Value) ale.Value {
 		return S("hello")
 	}, 0))
 	as.String("hello", p1.Call())
@@ -20,7 +21,7 @@ func TestPromiseCaller(t *testing.T) {
 
 func TestPromiseFailure(t *testing.T) {
 	as := assert.New(t)
-	p1 := sync.NewPromise(data.MakeProcedure(func(...data.Value) data.Value {
+	p1 := sync.NewPromise(data.MakeProcedure(func(...ale.Value) ale.Value {
 		panic(errors.New("explosion"))
 	}, 0))
 	defer as.ExpectPanic(errors.New("explosion"))

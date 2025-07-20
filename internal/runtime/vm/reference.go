@@ -1,13 +1,15 @@
 package vm
 
-import "github.com/kode4food/ale/pkg/data"
+import (
+	"github.com/kode4food/ale"
+)
 
 // Ref encapsulates a reference to a Value
 type Ref struct {
-	data.Value
+	ale.Value
 }
 
-func (r *Ref) Equal(other data.Value) bool {
+func (r *Ref) Equal(other ale.Value) bool {
 	if other, ok := other.(*Ref); ok {
 		return r == other || r.Value.Equal(other.Value)
 	}

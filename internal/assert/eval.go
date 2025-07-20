@@ -1,12 +1,13 @@
 package assert
 
 import (
-	"github.com/kode4food/ale/pkg/data"
-	"github.com/kode4food/ale/pkg/eval"
+	"github.com/kode4food/ale"
+	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/eval"
 )
 
 // MustEval will evaluate source code on behalf of the test framework
-func (w *Wrapper) MustEval(src string) data.Value {
+func (w *Wrapper) MustEval(src string) ale.Value {
 	w.Helper()
 	res, err := w.Eval(src)
 	if err != nil {
@@ -15,14 +16,14 @@ func (w *Wrapper) MustEval(src string) data.Value {
 	return res
 }
 
-func (w *Wrapper) Eval(src string) (data.Value, error) {
+func (w *Wrapper) Eval(src string) (ale.Value, error) {
 	w.Helper()
 	ns := GetTestNamespace()
 	return eval.String(ns, data.String(src))
 }
 
 // MustEvalTo will evaluate source code and test for an expected result
-func (w *Wrapper) MustEvalTo(src string, expect data.Value) {
+func (w *Wrapper) MustEvalTo(src string, expect ale.Value) {
 	w.Helper()
 	w.Equal(expect, w.MustEval(src))
 }

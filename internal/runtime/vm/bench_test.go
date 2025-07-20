@@ -3,18 +3,19 @@ package vm_test
 import (
 	"testing"
 
+	"github.com/kode4food/ale"
+	"github.com/kode4food/ale/core/bootstrap"
+	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/eval"
 	. "github.com/kode4food/ale/internal/assert/helpers"
 	"github.com/kode4food/ale/internal/runtime/isa"
-	"github.com/kode4food/ale/pkg/core/bootstrap"
-	"github.com/kode4food/ale/pkg/data"
-	"github.com/kode4food/ale/pkg/eval"
 )
 
-func numExplicitSum(n1, n2, n3 data.Integer) data.Value {
+func numExplicitSum(n1, n2, n3 data.Integer) ale.Value {
 	return n1.Add(n2).Add(n3)
 }
 
-func numLoopSum(args ...data.Value) data.Value {
+func numLoopSum(args ...ale.Value) ale.Value {
 	var sum data.Number = I(0)
 	for _, a := range args {
 		sum = sum.Add(a.(data.Integer))

@@ -7,7 +7,7 @@ import (
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
 	"github.com/kode4food/ale/internal/lang/params"
-	"github.com/kode4food/ale/pkg/data"
+	"github.com/kode4food/ale/data"
 )
 
 func TestReachability(t *testing.T) {

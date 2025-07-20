@@ -8,15 +8,16 @@ import (
 	"slices"
 	"strings"
 
+	"github.com/kode4food/ale"
+	"github.com/kode4food/ale/core/bootstrap"
+	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/env"
+	"github.com/kode4food/ale/eval"
 	"github.com/kode4food/ale/internal/debug"
 	"github.com/kode4food/ale/internal/lang/lex"
 	"github.com/kode4food/ale/internal/lang/parse"
 	"github.com/kode4food/ale/internal/sequence"
-	"github.com/kode4food/ale/pkg/core/bootstrap"
-	"github.com/kode4food/ale/pkg/data"
-	"github.com/kode4food/ale/pkg/env"
-	"github.com/kode4food/ale/pkg/eval"
-	"github.com/kode4food/ale/pkg/read"
+	"github.com/kode4food/ale/read"
 )
 
 const (
@@ -96,7 +97,7 @@ func (r *REPL) evalBlock(ns env.Namespace, seq data.Sequence) error {
 	return nil
 }
 
-func (r *REPL) evalForm(ns env.Namespace, f data.Value) error {
+func (r *REPL) evalForm(ns env.Namespace, f ale.Value) error {
 	defer func() {
 		if err := toError(recover()); err != nil {
 			r.outputError(err)
@@ -118,7 +119,7 @@ func toError(i any) error {
 	switch i := i.(type) {
 	case error:
 		return i
-	case data.Value:
+	case ale.Value:
 		return errors.New(data.ToString(i))
 	default:
 		panic(debug.ProgrammerErrorf("non-standard error: %s", i))

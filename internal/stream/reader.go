@@ -6,12 +6,13 @@ import (
 	"fmt"
 	"io"
 
+	"github.com/kode4food/ale"
+	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/sequence"
-	"github.com/kode4food/ale/pkg/data"
 )
 
 // InputFunc is a callback used to unmarshal values from a Reader
-type InputFunc func(*bufio.Reader) (data.Value, bool)
+type InputFunc func(*bufio.Reader) (ale.Value, bool)
 
 const (
 	ErrInvalidBlockSize = "block size must be greater than zero: %d"
@@ -22,7 +23,7 @@ func NewReader(r io.Reader, i InputFunc) data.Sequence {
 	var resolver sequence.LazyResolver
 	br := bufio.NewReader(r)
 
-	resolver = func() (data.Value, data.Sequence, bool) {
+	resolver = func() (ale.Value, data.Sequence, bool) {
 		if v, ok := i(br); ok {
 			return v, sequence.NewLazy(resolver), true
 		}
@@ -41,7 +42,7 @@ func BlockInput(size int) (InputFunc, error) {
 	if size <= 0 {
 		return nil, fmt.Errorf(ErrInvalidBlockSize, size)
 	}
-	return func(r *bufio.Reader) (data.Value, bool) {
+	return func(r *bufio.Reader) (ale.Value, bool) {
 		b := make(data.Bytes, size)
 		n, err := r.Read(b)
 		if err == nil || errors.Is(err, io.EOF) && n > 0 {
@@ -52,7 +53,7 @@ func BlockInput(size int) (InputFunc, error) {
 }
 
 // LineInput is the standard single line input function
-func LineInput(r *bufio.Reader) (data.Value, bool) {
+func LineInput(r *bufio.Reader) (ale.Value, bool) {
 	l, err := r.ReadBytes('\n')
 	if err == nil {
 		return data.String(l[0 : len(l)-1]), true
@@ -64,7 +65,7 @@ func LineInput(r *bufio.Reader) (data.Value, bool) {
 }
 
 // RuneInput is the standard single rune input function
-func RuneInput(r *bufio.Reader) (data.Value, bool) {
+func RuneInput(r *bufio.Reader) (ale.Value, bool) {
 	if c, _, err := r.ReadRune(); err == nil {
 		return data.String(c), true
 	}

@@ -14,9 +14,9 @@ func TestConsAccepts(t *testing.T) {
 	c2 := types.MakeCons(types.BasicNumber, types.BasicString)
 	c3 := types.MakeCons(types.BasicNull, types.BasicString)
 
-	as.True(types.Accepts(c1, c1))
-	as.False(types.Accepts(c1, c2))
-	as.True(types.Accepts(c1, c3))
+	as.True(c1.Accepts(c1))
+	as.False(c1.Accepts(c2))
+	as.True(c1.Accepts(c3))
 }
 
 func TestConsEqual(t *testing.T) {

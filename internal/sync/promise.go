@@ -1,8 +1,9 @@
 package sync
 
 import (
+	"github.com/kode4food/ale"
+	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/types"
-	"github.com/kode4food/ale/pkg/data"
 )
 
 type (
@@ -34,7 +35,7 @@ func NewPromise(resolver data.Procedure) *Promise {
 	}
 }
 
-func (p *Promise) Call(...data.Value) data.Value {
+func (p *Promise) Call(...ale.Value) ale.Value {
 	p.once(func() {
 		defer func() {
 			if rec := recover(); rec != nil {
@@ -49,7 +50,7 @@ func (p *Promise) Call(...data.Value) data.Value {
 	if p.status == promiseFailed {
 		panic(p.result)
 	}
-	return p.result.(data.Value)
+	return p.result.(ale.Value)
 }
 
 func (p *Promise) CheckArity(c int) error {
@@ -60,14 +61,14 @@ func (p *Promise) IsResolved() bool {
 	return p.status != promisePending
 }
 
-func (p *Promise) Type() types.Type {
+func (p *Promise) Type() ale.Type {
 	return PromiseType
 }
 
-func (p *Promise) Equal(other data.Value) bool {
+func (p *Promise) Equal(other ale.Value) bool {
 	return p == other
 }
 
-func (p *Promise) Get(key data.Value) (data.Value, bool) {
+func (p *Promise) Get(key ale.Value) (ale.Value, bool) {
 	return data.DumpMapped(p).Get(key)
 }

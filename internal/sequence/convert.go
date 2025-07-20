@@ -3,7 +3,7 @@ package sequence
 import (
 	"strings"
 
-	"github.com/kode4food/ale/pkg/data"
+	"github.com/kode4food/ale/data"
 )
 
 // ToList takes any sequence and converts it to a List

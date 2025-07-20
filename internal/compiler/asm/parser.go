@@ -5,9 +5,10 @@ import (
 	"fmt"
 	"slices"
 
+	"github.com/kode4food/ale"
+	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/runtime/isa"
 	"github.com/kode4food/ale/internal/sequence"
-	"github.com/kode4food/ale/pkg/data"
 )
 
 type (
@@ -19,7 +20,7 @@ type (
 	namedAsmParsers map[data.Local]asmParse
 
 	asmParse     func(*Parser, data.Sequence) (Emit, data.Sequence, error)
-	asmArgsParse func(*Parser, ...data.Value) (Emit, error)
+	asmArgsParse func(*Parser, ...ale.Value) (Emit, error)
 )
 
 const (

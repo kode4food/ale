@@ -1,5 +1,7 @@
 package types
 
+import "github.com/kode4food/ale"
+
 // Any accepts a Value of any other Type
 type Any struct{ *Basic }
 
@@ -7,11 +9,11 @@ var BasicAny = &Any{
 	Basic: MakeBasic("any"),
 }
 
-func (*Any) Accepts(*Checker, Type) bool {
+func (*Any) Accepts(ale.Type) bool {
 	return true
 }
 
-func (a *Any) Equal(other Type) bool {
+func (a *Any) Equal(other ale.Type) bool {
 	_, ok := other.(*Any)
 	return ok
 }

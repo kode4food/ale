@@ -4,10 +4,11 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/kode4food/ale"
+	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/env"
 	"github.com/kode4food/ale/internal/basics"
 	str "github.com/kode4food/ale/internal/strings"
-	"github.com/kode4food/ale/pkg/data"
-	"github.com/kode4food/ale/pkg/env"
 )
 
 type (
@@ -78,7 +79,7 @@ func (i Instruction) StackChange() (int, error) {
 }
 
 // Equal compares this Instruction to another for equality
-func (i Instruction) Equal(other data.Value) bool {
+func (i Instruction) Equal(other ale.Value) bool {
 	return i == other
 }
 

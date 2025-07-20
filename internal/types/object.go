@@ -1,17 +1,21 @@
 package types
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/kode4food/ale"
+)
 
 // Object describes a typed set of Key/Value Pairs
 type Object struct {
 	basic
-	key   Type
-	value Type
+	key   ale.Type
+	value ale.Type
 }
 
 // MakeObject declares a new ObjectType that will only allow keys and values of
 // the provided types
-func MakeObject(key Type, value Type) *Object {
+func MakeObject(key ale.Type, value ale.Type) *Object {
 	return &Object{
 		basic: BasicObject,
 		key:   key,
@@ -19,11 +23,11 @@ func MakeObject(key Type, value Type) *Object {
 	}
 }
 
-func (o *Object) Key() Type {
+func (o *Object) Key() ale.Type {
 	return o.key
 }
 
-func (o *Object) Value() Type {
+func (o *Object) Value() ale.Type {
 	return o.value
 }
 
@@ -33,17 +37,24 @@ func (o *Object) Name() string {
 	)
 }
 
-func (o *Object) Accepts(c *Checker, other Type) bool {
+func (o *Object) Accepts(other ale.Type) bool {
 	if other, ok := other.(*Object); ok {
-		return o == other ||
-			o.basic.Accepts(c, other) &&
-				c.AcceptsChild(o.key, other.Key()) &&
-				c.AcceptsChild(o.value, other.Value())
+		return o == other || compoundAccepts(o, other)
 	}
 	return false
 }
 
-func (o *Object) Equal(other Type) bool {
+func (o *Object) accepts(c *cycleChecker, other ale.Type) bool {
+	if other, ok := other.(*Object); ok {
+		return o == other ||
+			o.basic.Accepts(other.basic) &&
+				c.acceptsChild(o.key, other.Key()) &&
+				c.acceptsChild(o.value, other.Value())
+	}
+	return false
+}
+
+func (o *Object) Equal(other ale.Type) bool {
 	if other, ok := other.(*Object); ok {
 		return o == other ||
 			o.basic.Equal(other.basic) &&

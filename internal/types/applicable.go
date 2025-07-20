@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/kode4food/ale"
 	"github.com/kode4food/ale/internal/basics"
 )
 
@@ -18,8 +19,8 @@ type (
 
 	// Signature describes an ApplicableType calling signature
 	Signature struct {
-		Result    Type
-		Params    []Type
+		Result    ale.Type
+		Params    []ale.Type
 		TakesRest bool
 	}
 
@@ -44,7 +45,14 @@ func (a *Applicable) Name() string {
 	return fmt.Sprintf("%s(%s)", a.basic.Name(), a.name())
 }
 
-func (a *Applicable) Accepts(c *Checker, other Type) bool {
+func (a *Applicable) Accepts(other ale.Type) bool {
+	if other, ok := other.(*Applicable); ok {
+		return a == other || compoundAccepts(a, other)
+	}
+	return false
+}
+
+func (a *Applicable) accepts(c *cycleChecker, other ale.Type) bool {
 	if other, ok := other.(*Applicable); ok {
 		if a == other {
 			return true
@@ -60,7 +68,7 @@ func (a *Applicable) Accepts(c *Checker, other Type) bool {
 	return false
 }
 
-func (a *Applicable) Equal(other Type) bool {
+func (a *Applicable) Equal(other ale.Type) bool {
 	if other, ok := other.(*Applicable); ok {
 		return a == other ||
 			a.basic.Equal(other.basic) &&
@@ -84,7 +92,7 @@ func (s Signature) argNames() string {
 	return fmt.Sprintf("%s.%s", params, rest)
 }
 
-func (s Signature) acceptsFromSignatures(c *Checker, other []Signature) bool {
+func (s Signature) acceptsFromSignatures(c *cycleChecker, other []Signature) bool {
 	for _, o := range other {
 		if s.accepts(c, o) {
 			return true
@@ -93,8 +101,8 @@ func (s Signature) acceptsFromSignatures(c *Checker, other []Signature) bool {
 	return false
 }
 
-func (s Signature) accepts(c *Checker, other Signature) bool {
-	if !c.AcceptsChild(s.Result, other.Result) {
+func (s Signature) accepts(c *cycleChecker, other Signature) bool {
+	if !c.acceptsChild(s.Result, other.Result) {
 		return false
 	}
 	sp := s.Params
@@ -103,7 +111,7 @@ func (s Signature) accepts(c *Checker, other Signature) bool {
 		return false
 	}
 	for i, p := range sp {
-		if !c.AcceptsChild(p, op[i]) {
+		if !c.acceptsChild(p, op[i]) {
 			return false
 		}
 	}

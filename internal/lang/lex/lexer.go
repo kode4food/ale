@@ -6,13 +6,14 @@ import (
 	"slices"
 	"strings"
 
+	"github.com/kode4food/ale"
+	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/basics"
 	"github.com/kode4food/ale/internal/debug"
 	"github.com/kode4food/ale/internal/lang"
 	"github.com/kode4food/ale/internal/lang/env"
 	"github.com/kode4food/ale/internal/sequence"
 	"github.com/kode4food/ale/internal/types"
-	"github.com/kode4food/ale/pkg/data"
 )
 
 type (
@@ -109,7 +110,7 @@ func Match(src data.String, m Matcher) data.Sequence {
 	var t *Token
 	input := string(src)
 
-	resolver = func() (data.Value, data.Sequence, bool) {
+	resolver = func() (ale.Value, data.Sequence, bool) {
 		t, input = m(input)
 		t.SetLocation(line, column)
 		if t.Type() != EOF {
@@ -124,7 +125,7 @@ func Match(src data.String, m Matcher) data.Sequence {
 
 // StripWhitespace filters away all whitespace Tokens from a Lexer Sequence
 func StripWhitespace(s data.Sequence) data.Sequence {
-	return sequence.Filter(s, func(v data.Value) bool {
+	return sequence.Filter(s, func(v ale.Value) bool {
 		return !v.(*Token).IsWhitespace()
 	})
 }
@@ -142,12 +143,12 @@ func (m Matchers) Error() Matchers {
 	})
 }
 
-func (i *Include) Equal(other data.Value) bool {
+func (i *Include) Equal(other ale.Value) bool {
 	_, ok := other.(*Include)
 	return ok
 }
 
-func (i *Include) Type() types.Type {
+func (i *Include) Type() ale.Type {
 	return includeType
 }
 

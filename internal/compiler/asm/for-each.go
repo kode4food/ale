@@ -3,7 +3,8 @@ package asm
 import (
 	"fmt"
 
-	"github.com/kode4food/ale/pkg/data"
+	"github.com/kode4food/ale"
+	"github.com/kode4food/ale/data"
 )
 
 // Error messages
@@ -55,7 +56,7 @@ func parseForEachCall(
 	}, rest, nil
 }
 
-func parseForEachBinding(v data.Value) (data.Local, data.Value, error) {
+func parseForEachBinding(v ale.Value) (data.Local, ale.Value, error) {
 	b, err := assertType[data.Vector](pairType, v)
 	if err != nil {
 		return "", nil, err

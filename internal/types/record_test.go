@@ -49,14 +49,14 @@ func TestRecordAccepts(t *testing.T) {
 
 	as.Equal(`record("first"->string,"last"->keyword)`, r3.Name())
 
-	as.True(types.Accepts(r1, r1))
-	as.True(types.Accepts(r1, r2))
-	as.False(types.Accepts(r2, r1))
-	as.False(types.Accepts(r1, r3))
-	as.False(types.Accepts(r3, r1))
+	as.True(r1.Accepts(r1))
+	as.True(r1.Accepts(r2))
+	as.False(r2.Accepts(r1))
+	as.False(r1.Accepts(r3))
+	as.False(r3.Accepts(r1))
 
-	as.False(types.Accepts(r1, types.BasicObject))
-	as.True(types.Accepts(types.BasicObject, r1))
+	as.False(r1.Accepts(types.BasicObject))
+	as.True(types.BasicObject.Accepts(r1))
 }
 
 func TestRecordEqual(t *testing.T) {

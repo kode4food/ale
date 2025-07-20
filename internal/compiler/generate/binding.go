@@ -1,14 +1,15 @@
 package generate
 
 import (
+	"github.com/kode4food/ale"
+	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/compiler/encoder"
 	"github.com/kode4food/ale/internal/runtime/isa"
-	"github.com/kode4food/ale/pkg/data"
 )
 
 type (
 	Binding struct {
-		data.Value
+		ale.Value
 		Name data.Local
 	}
 
@@ -80,7 +81,7 @@ func MutualLocals(e encoder.Encoder, bindings Bindings, body Builder) error {
 	return e.PopLocals()
 }
 
-func BoundValue(e encoder.Encoder, c *encoder.IndexedCell, v data.Value) error {
+func BoundValue(e encoder.Encoder, c *encoder.IndexedCell, v ale.Value) error {
 	be := &bindEncoder{
 		Encoder: e,
 		cell:    c,

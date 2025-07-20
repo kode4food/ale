@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/kode4food/ale"
 	"github.com/kode4food/ale/internal/basics"
 )
 
@@ -18,7 +19,7 @@ type (
 
 	// Field describes one of the fields of a RecordType
 	Field struct {
-		Value Type
+		Value ale.Type
 		Name  string
 	}
 
@@ -42,7 +43,17 @@ func (r *Record) Name() string {
 	return fmt.Sprintf("record(%s)", r.name())
 }
 
-func (r *Record) Accepts(c *Checker, other Type) bool {
+func (r *Record) Accepts(other ale.Type) bool {
+	if other, ok := other.(*Record); ok {
+		if r == other {
+			return true
+		}
+		return compoundAccepts(r, other)
+	}
+	return false
+}
+
+func (r *Record) accepts(c *cycleChecker, other ale.Type) bool {
 	if other, ok := other.(*Record); ok {
 		if r == other {
 			return true
@@ -54,7 +65,7 @@ func (r *Record) Accepts(c *Checker, other Type) bool {
 		}
 		om := fields(of).toMap()
 		for k, v := range rf.toMap() {
-			if tv, ok := om[k]; !ok || !c.AcceptsChild(v, tv) {
+			if tv, ok := om[k]; !ok || !c.acceptsChild(v, tv) {
 				return false
 			}
 		}
@@ -63,15 +74,15 @@ func (r *Record) Accepts(c *Checker, other Type) bool {
 	return false
 }
 
-func (r *Record) Equal(other Type) bool {
+func (r *Record) Equal(other ale.Type) bool {
 	if other, ok := other.(*Record); ok {
 		return r == other || r.basic.Equal(other.basic) && r.equal(other.fields)
 	}
 	return false
 }
 
-func (f fields) toMap() map[string]Type {
-	res := map[string]Type{}
+func (f fields) toMap() map[string]ale.Type {
+	res := map[string]ale.Type{}
 	for _, p := range f {
 		res[p.Name] = p.Value
 	}

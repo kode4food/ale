@@ -17,11 +17,11 @@ func TestTuple(t *testing.T) {
 
 	as.Equal("tuple(keyword,number)", t1.Name())
 
-	as.True(types.Accepts(t1, t1))
-	as.True(types.Accepts(t1, t3))
-	as.False(types.Accepts(t2, t1))
-	as.False(types.Accepts(t2, t4))
-	as.False(types.Accepts(t4, t1))
+	as.True(t1.Accepts(t1))
+	as.True(t1.Accepts(t3))
+	as.False(t2.Accepts(t1))
+	as.False(t2.Accepts(t4))
+	as.False(t4.Accepts(t1))
 
-	as.False(types.Accepts(t1, types.BasicNull))
+	as.False(t1.Accepts(types.BasicNull))
 }

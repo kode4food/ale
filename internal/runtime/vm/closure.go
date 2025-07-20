@@ -5,12 +5,13 @@ import (
 	"slices"
 	"sync/atomic"
 
+	"github.com/kode4food/ale"
+	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/env"
 	"github.com/kode4food/ale/internal/debug"
 	"github.com/kode4food/ale/internal/runtime/isa"
 	"github.com/kode4food/ale/internal/sequence"
 	"github.com/kode4food/ale/internal/sync"
-	"github.com/kode4food/ale/pkg/data"
-	"github.com/kode4food/ale/pkg/env"
 )
 
 type (
@@ -51,7 +52,7 @@ func (c *Closure) Captured() data.Vector {
 }
 
 // Call turns Closure into a Procedure, and serves as the virtual machine
-func (c *Closure) Call(args ...data.Value) data.Value {
+func (c *Closure) Call(args ...ale.Value) ale.Value {
 	var MEM data.Vector
 	var CODE isa.Instructions
 	var PC, LP, SP int
@@ -479,7 +480,7 @@ func (c *Closure) CheckArity(i int) error {
 	return c.ArityChecker(i)
 }
 
-func (c *Closure) Equal(other data.Value) bool {
+func (c *Closure) Equal(other ale.Value) bool {
 	if other, ok := other.(*Closure); ok {
 		return c == other ||
 			c.Procedure.Equal(other.Procedure) &&
@@ -501,7 +502,7 @@ func (c *Closure) HashCode() uint64 {
 	return res
 }
 
-func bindOrShadow(ns env.Namespace, n data.Local, v data.Value) error {
+func bindOrShadow(ns env.Namespace, n data.Local, v ale.Value) error {
 	e, in, err := ns.Resolve(n)
 	if err != nil || in != ns {
 		return env.BindPublic(ns, n, v)

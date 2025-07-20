@@ -3,10 +3,11 @@ package sequence_test
 import (
 	"testing"
 
+	"github.com/kode4food/ale"
+	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
 	"github.com/kode4food/ale/internal/sequence"
-	"github.com/kode4food/ale/pkg/data"
 )
 
 func TestLazySeq(t *testing.T) {
@@ -14,7 +15,7 @@ func TestLazySeq(t *testing.T) {
 	as := assert.New(t)
 
 	i := 0
-	inc = func() (data.Value, data.Sequence, bool) {
+	inc = func() (ale.Value, data.Sequence, bool) {
 		if i >= 10 {
 			return data.Null, data.Null, false
 		}

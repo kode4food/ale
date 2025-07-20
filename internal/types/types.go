@@ -4,41 +4,25 @@ import (
 	"cmp"
 	"strings"
 
+	"github.com/kode4food/ale"
 	"github.com/kode4food/ale/internal/basics"
 )
 
-type (
-	// Type describes the type compatibility for a Value
-	Type interface {
-		// Name identifies this Type
-		Name() string
+type typeList []ale.Type
 
-		// Accepts determines if this Type will accept the provided Type for
-		// binding. This will generally mean that the provided Type satisfies
-		// the contract of the receiver. A Checker is provided to track the
-		// state of the Type checking
-		Accepts(*Checker, Type) bool
-
-		// Equal determines if the provided Type is an equivalent definition
-		Equal(Type) bool
-	}
-
-	typeList []Type
-)
-
-func Equal(l, r Type) bool {
+func Equal(l, r ale.Type) bool {
 	return l.Equal(r)
 }
 
 func (t typeList) sorted() typeList {
-	return basics.SortedFunc(t, func(l, r Type) int {
+	return basics.SortedFunc(t, func(l, r ale.Type) int {
 		return cmp.Compare(l.Name(), r.Name())
 	})
 }
 
 func (t typeList) deduplicated() typeList {
 	var res typeList
-	var last Type
+	var last ale.Type
 	for _, t := range t.sorted() {
 		if t == last {
 			continue
@@ -99,7 +83,7 @@ func (t typeList) basicType() (basic, bool) {
 func (t typeList) equal(other typeList) bool {
 	tf := t.flatten()
 	of := other.flatten()
-	return basics.EqualFunc(tf, of, func(l, r Type) bool {
+	return basics.EqualFunc(tf, of, func(l, r ale.Type) bool {
 		return l.Equal(r)
 	})
 }

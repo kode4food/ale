@@ -7,7 +7,7 @@ import (
 	. "github.com/kode4food/ale/internal/assert/helpers"
 	"github.com/kode4food/ale/internal/compiler/procedure"
 	"github.com/kode4food/ale/internal/runtime/isa"
-	"github.com/kode4food/ale/pkg/data"
+	"github.com/kode4food/ale/data"
 )
 
 func TestFromEncoder(t *testing.T) {

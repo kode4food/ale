@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/kode4food/ale"
 	"github.com/kode4food/ale/cmd/ale/internal/console"
-	"github.com/kode4food/ale/pkg/data"
+	"github.com/kode4food/ale/data"
 )
 
 type sentinel struct{}
@@ -40,7 +41,7 @@ func (r *REPL) nsSpace() string {
 	return strings.Repeat(" ", len(ns))
 }
 
-func (r *REPL) outputResult(v data.Value) {
+func (r *REPL) outputResult(v ale.Value) {
 	if v == nothing {
 		return
 	}
@@ -55,6 +56,6 @@ func (r *REPL) outputError(err error) {
 	fmt.Println(res)
 }
 
-func (sentinel) Equal(data.Value) bool {
+func (sentinel) Equal(ale.Value) bool {
 	return false
 }

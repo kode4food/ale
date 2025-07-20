@@ -3,7 +3,7 @@ package encoder
 import (
 	"github.com/kode4food/ale/internal/basics"
 	"github.com/kode4food/ale/internal/runtime/isa"
-	"github.com/kode4food/ale/pkg/data"
+	"github.com/kode4food/ale/data"
 )
 
 func (e *encoder) ResolveClosure(n data.Local) (*IndexedCell, bool) {

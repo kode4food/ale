@@ -6,12 +6,13 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/kode4food/ale/pkg/data"
+	"github.com/kode4food/ale"
+	"github.com/kode4food/ale/data"
 )
 
 type (
 	ParamCase struct {
-		Signature data.Value
+		Signature ale.Value
 		Body      data.Sequence
 		Params    data.Locals
 		Rest      bool
@@ -278,7 +279,7 @@ func (c *ParamCase) makeArgFetcher() ArgFetcher {
 	}
 }
 
-func parseParamNames(v data.Value) (data.Locals, bool, error) {
+func parseParamNames(v ale.Value) (data.Locals, bool, error) {
 	switch v := v.(type) {
 	case data.Local:
 		return data.Locals{v}, true, nil

@@ -5,8 +5,9 @@ import (
 	"io/fs"
 	"unsafe"
 
+	"github.com/kode4food/ale"
+	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/types"
-	"github.com/kode4food/ale/pkg/data"
 )
 
 type FileSystem struct {
@@ -46,12 +47,12 @@ func WrapFileSystem(fileSystem fs.FS) *FileSystem {
 	}
 }
 
-func (f *FileSystem) Type() types.Type {
+func (f *FileSystem) Type() ale.Type {
 	return fileSystemType
 }
 
 // Get returns the value associated with the specified key, if it exists.
-func (f *FileSystem) Get(key data.Value) (data.Value, bool) {
+func (f *FileSystem) Get(key ale.Value) (ale.Value, bool) {
 	switch key {
 	case ListKey:
 		return f.List, true
@@ -62,12 +63,12 @@ func (f *FileSystem) Get(key data.Value) (data.Value, bool) {
 	}
 }
 
-func (f *FileSystem) Equal(other data.Value) bool {
+func (f *FileSystem) Equal(other ale.Value) bool {
 	return f == other
 }
 
 func bindList(fileSystem fs.FS) data.Procedure {
-	return data.MakeProcedure(func(args ...data.Value) data.Value {
+	return data.MakeProcedure(func(args ...ale.Value) ale.Value {
 		path := args[0].(data.String)
 		f, err := fileSystem.Open(path.String())
 		if err != nil {
@@ -111,7 +112,7 @@ func getDirEntryType(s fs.DirEntry) data.Keyword {
 }
 
 func bindOpen(fs fs.FS) data.Procedure {
-	return data.MakeProcedure(func(args ...data.Value) data.Value {
+	return data.MakeProcedure(func(args ...ale.Value) ale.Value {
 		path := args[0].(data.String)
 		f, err := openFile(fs, path.String())
 		if err != nil {
@@ -121,7 +122,7 @@ func bindOpen(fs fs.FS) data.Procedure {
 	}, 1, 3)
 }
 
-func createReader(f fs.File, args ...data.Value) data.Value {
+func createReader(f fs.File, args ...ale.Value) ale.Value {
 	if len(args) == 0 {
 		return NewReader(f, RuneInput)
 	}
@@ -146,7 +147,7 @@ func createReader(f fs.File, args ...data.Value) data.Value {
 	}
 }
 
-func getBlockSize(def int, args ...data.Value) int {
+func getBlockSize(def int, args ...ale.Value) int {
 	switch len(args) {
 	case 0:
 		return def

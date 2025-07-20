@@ -4,14 +4,15 @@ import (
 	"sync"
 	"unsafe"
 
+	"github.com/kode4food/ale"
+	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/debug"
-	"github.com/kode4food/ale/pkg/data"
 )
 
 const (
 	bucketCount = 64
 	mb          = 1024 * 1024
-	spanSize    = mb / int(unsafe.Sizeof(data.Value(nil)))
+	spanSize    = mb / int(unsafe.Sizeof(ale.Value(nil)))
 )
 
 type (

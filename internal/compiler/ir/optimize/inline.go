@@ -4,13 +4,14 @@ import (
 	"cmp"
 	"slices"
 
+	"github.com/kode4food/ale"
+	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/basics"
 	"github.com/kode4food/ale/internal/compiler/encoder"
 	"github.com/kode4food/ale/internal/compiler/ir/visitor"
 	"github.com/kode4food/ale/internal/debug"
 	"github.com/kode4food/ale/internal/runtime/isa"
 	"github.com/kode4food/ale/internal/runtime/vm"
-	"github.com/kode4food/ale/pkg/data"
 )
 
 type (
@@ -128,7 +129,7 @@ func (m *inlineMapper) reindex(
 	return res
 }
 
-func (m *inlineMapper) addConstant(val data.Value) isa.Operand {
+func (m *inlineMapper) addConstant(val ale.Value) isa.Operand {
 	c := m.constants
 	if idx, ok := c.IndexOf(val); ok {
 		return isa.Operand(idx)

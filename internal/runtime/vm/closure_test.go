@@ -5,12 +5,13 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/kode4food/ale"
+	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/env"
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
 	"github.com/kode4food/ale/internal/runtime/isa"
 	"github.com/kode4food/ale/internal/runtime/vm"
-	"github.com/kode4food/ale/pkg/data"
-	"github.com/kode4food/ale/pkg/env"
 )
 
 var constants = data.Vector{
@@ -35,12 +36,12 @@ func makeClosure(code isa.Instructions) data.Procedure {
 	return closure.(data.Procedure)
 }
 
-func runCode(code isa.Instructions) data.Value {
+func runCode(code isa.Instructions) ale.Value {
 	fn := makeClosure(code)
 	return fn.Call(S("arg"))
 }
 
-func testResult(t *testing.T, res data.Value, code isa.Instructions) {
+func testResult(t *testing.T, res ale.Value, code isa.Instructions) {
 	as := assert.New(t)
 	r := runCode(code)
 	as.Equal(res, r)

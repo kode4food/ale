@@ -1,20 +1,21 @@
 package sequence
 
 import (
+	"github.com/kode4food/ale"
+	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/sync"
 	"github.com/kode4food/ale/internal/types"
-	"github.com/kode4food/ale/pkg/data"
 )
 
 type (
 	// LazyResolver is used to resolve the elements of a lazy Sequence
-	LazyResolver func() (data.Value, data.Sequence, bool)
+	LazyResolver func() (ale.Value, data.Sequence, bool)
 
 	lazySequence struct {
 		once     sync.Action
 		resolver LazyResolver
 
-		result data.Value
+		result ale.Value
 		rest   data.Sequence
 		ok     bool
 	}
@@ -36,7 +37,7 @@ func NewLazy(r LazyResolver) data.Sequence {
 }
 
 func MakeLazyResolver(p data.Procedure) LazyResolver {
-	return func() (data.Value, data.Sequence, bool) {
+	return func() (ale.Value, data.Sequence, bool) {
 		r := p.Call()
 		if r != data.Null {
 			s := r.(data.Sequence)
@@ -60,20 +61,20 @@ func (l *lazySequence) IsEmpty() bool {
 	return !l.resolve().ok
 }
 
-func (l *lazySequence) Car() data.Value {
+func (l *lazySequence) Car() ale.Value {
 	return l.resolve().result
 }
 
-func (l *lazySequence) Cdr() data.Value {
+func (l *lazySequence) Cdr() ale.Value {
 	return l.resolve().rest
 }
 
-func (l *lazySequence) Split() (data.Value, data.Sequence, bool) {
+func (l *lazySequence) Split() (ale.Value, data.Sequence, bool) {
 	r := l.resolve()
 	return r.result, r.rest, l.ok
 }
 
-func (l *lazySequence) Prepend(v data.Value) data.Sequence {
+func (l *lazySequence) Prepend(v ale.Value) data.Sequence {
 	return &lazySequence{
 		once:   sync.Never(),
 		ok:     true,
@@ -82,14 +83,14 @@ func (l *lazySequence) Prepend(v data.Value) data.Sequence {
 	}
 }
 
-func (l *lazySequence) Type() types.Type {
+func (l *lazySequence) Type() ale.Type {
 	return lazySequenceType
 }
 
-func (l *lazySequence) Equal(other data.Value) bool {
+func (l *lazySequence) Equal(other ale.Value) bool {
 	return l == other
 }
 
-func (l *lazySequence) Get(key data.Value) (data.Value, bool) {
+func (l *lazySequence) Get(key ale.Value) (ale.Value, bool) {
 	return data.DumpMapped(l).Get(key)
 }

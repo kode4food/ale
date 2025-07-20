@@ -5,7 +5,7 @@ import (
 	"github.com/kode4food/ale/internal/compiler/ir/analysis"
 	"github.com/kode4food/ale/internal/compiler/ir/optimize"
 	"github.com/kode4food/ale/internal/runtime/vm"
-	"github.com/kode4food/ale/pkg/data"
+	"github.com/kode4food/ale/data"
 )
 
 // FromEncoded instantiates an abstract machine Procedure from the provided

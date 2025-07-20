@@ -6,8 +6,9 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/kode4food/ale"
+	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/debug"
-	"github.com/kode4food/ale/pkg/data"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -49,7 +50,7 @@ func (w *Wrapper) String(expect string, expr any) {
 		w.Assertions.Equal(expect, s)
 	case data.Local:
 		w.Assertions.Equal(expect, string(s))
-	case data.Value:
+	case ale.Value:
 		w.Assertions.Equal(expect, data.ToString(s))
 	default:
 		panic(debug.ProgrammerErrorf(ErrInvalidTestExpression, expr))
@@ -80,8 +81,8 @@ func (w *Wrapper) Equal(expect any, expr any) {
 	case data.Number:
 		num := expr.(data.Number)
 		w.Assertions.Equal(data.EqualTo, expect.Cmp(num))
-	case data.Value:
-		if expr, ok := expr.(data.Value); ok {
+	case ale.Value:
+		if expr, ok := expr.(ale.Value); ok {
 			w.True(expect.Equal(expr))
 			return
 		}
@@ -112,14 +113,14 @@ func (w *Wrapper) False(expr any) {
 }
 
 // Contains check if the expected string is in the provided Value
-func (w *Wrapper) Contains(expect string, expr data.Value) {
+func (w *Wrapper) Contains(expect string, expr ale.Value) {
 	w.Helper()
 	val := data.ToString(expr)
 	w.Assertions.True(strings.Contains(val, expect))
 }
 
 // NotContains checks if the expected string is not in the provided Value
-func (w *Wrapper) NotContains(expect string, expr data.Value) {
+func (w *Wrapper) NotContains(expect string, expr ale.Value) {
 	w.Helper()
 	val := data.ToString(expr)
 	w.Assertions.False(strings.Contains(val, expect))
@@ -188,7 +189,7 @@ func (w *Wrapper) ExpectNoPanic() {
 }
 
 // MustGet retrieves a Value from a Mapped or explodes
-func (w *Wrapper) MustGet(m data.Mapped, k data.Value) data.Value {
+func (w *Wrapper) MustGet(m data.Mapped, k ale.Value) ale.Value {
 	if v, ok := m.Get(k); ok {
 		return v
 	}

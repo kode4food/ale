@@ -3,6 +3,9 @@ package optimize_test
 import (
 	"testing"
 
+	"github.com/kode4food/ale"
+	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/env"
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
 	"github.com/kode4food/ale/internal/compiler/encoder"
@@ -10,8 +13,6 @@ import (
 	"github.com/kode4food/ale/internal/compiler/procedure"
 	"github.com/kode4food/ale/internal/runtime/isa"
 	"github.com/kode4food/ale/internal/runtime/vm"
-	"github.com/kode4food/ale/pkg/data"
-	"github.com/kode4food/ale/pkg/env"
 )
 
 func mustFromEncoded(e *encoder.Encoded) *vm.Procedure {
@@ -26,7 +27,7 @@ func getInlineTestNamespace() env.Namespace {
 	e := env.NewEnvironment()
 	ns := e.GetRoot()
 
-	bind := func(n data.Local, fn func(enc encoder.Encoder), a ...data.Value) {
+	bind := func(n data.Local, fn func(enc encoder.Encoder), a ...ale.Value) {
 		enc := encoder.NewEncoder(ns)
 		fn(enc)
 		proc := mustFromEncoded(enc.Encode())

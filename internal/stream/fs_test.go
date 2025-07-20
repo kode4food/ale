@@ -8,7 +8,7 @@ import (
 	. "github.com/kode4food/ale/internal/assert/helpers"
 	"github.com/kode4food/ale/internal/sequence"
 	"github.com/kode4food/ale/internal/stream"
-	"github.com/kode4food/ale/pkg/data"
+	"github.com/kode4food/ale/data"
 )
 
 //go:embed test_assets/*

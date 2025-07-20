@@ -6,12 +6,13 @@ import (
 	"os"
 	"runtime"
 
+	"github.com/kode4food/ale"
 	"github.com/kode4food/ale/cmd/ale/internal/console"
+	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/env"
 	"github.com/kode4food/ale/internal/compiler"
 	"github.com/kode4food/ale/internal/compiler/encoder"
 	"github.com/kode4food/ale/internal/compiler/generate"
-	"github.com/kode4food/ale/pkg/data"
-	"github.com/kode4food/ale/pkg/env"
 )
 
 func (r *REPL) registerBuiltIns() {
@@ -23,7 +24,7 @@ func (r *REPL) registerBuiltIns() {
 	r.registerBuiltIn("use", r.makeUse())
 }
 
-func (r *REPL) registerBuiltIn(n data.Local, v data.Value) {
+func (r *REPL) registerBuiltIn(n data.Local, v ale.Value) {
 	ns := r.getBuiltInsNamespace()
 	_ = env.BindPublic(ns, n, v)
 }
@@ -32,8 +33,8 @@ func (r *REPL) getBuiltInsNamespace() env.Namespace {
 	return r.ns.Environment().GetRoot()
 }
 
-func (r *REPL) makeUse() data.Value {
-	return compiler.Call(func(e encoder.Encoder, args ...data.Value) error {
+func (r *REPL) makeUse() ale.Value {
+	return compiler.Call(func(e encoder.Encoder, args ...ale.Value) error {
 		if err := data.CheckFixedArity(1, len(args)); err != nil {
 			return err
 		}
@@ -47,20 +48,20 @@ func (r *REPL) makeUse() data.Value {
 	})
 }
 
-func shutdown(...data.Value) data.Value {
+func shutdown(...ale.Value) ale.Value {
 	idx := rand.IntN(len(farewells))
 	fmt.Println(farewells[idx])
 	os.Exit(0)
 	return nothing
 }
 
-func debugInfo(...data.Value) data.Value {
+func debugInfo(...ale.Value) ale.Value {
 	runtime.GC()
 	fmt.Println("Number of goroutines: ", runtime.NumGoroutine())
 	return nothing
 }
 
-func cls(...data.Value) data.Value {
+func cls(...ale.Value) ale.Value {
 	fmt.Println(console.Clear)
 	return nothing
 }

@@ -9,9 +9,9 @@ import (
 	"github.com/kode4food/ale/internal/lang"
 	"github.com/kode4food/ale/internal/lang/lex"
 	"github.com/kode4food/ale/internal/sequence"
-	"github.com/kode4food/ale/pkg/data"
-	"github.com/kode4food/ale/pkg/env"
-	"github.com/kode4food/ale/pkg/read"
+	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/env"
+	"github.com/kode4food/ale/read"
 )
 
 var emptyStrings []string

@@ -1,21 +1,22 @@
 package asm
 
 import (
+	"github.com/kode4food/ale"
+	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/compiler/encoder"
 	"github.com/kode4food/ale/internal/runtime/isa"
-	"github.com/kode4food/ale/pkg/data"
 )
 
 type (
 	Encoder struct {
 		encoder.Encoder
 		*Parser
-		args    map[data.Local]data.Value
+		args    map[data.Local]ale.Value
 		labels  map[data.Keyword]isa.Operand
 		private map[data.Local]data.Local
 	}
 
-	asmToOperand func(*Encoder, data.Value) (isa.Operand, error)
+	asmToOperand func(*Encoder, ale.Value) (isa.Operand, error)
 	asmToName    func(*Encoder, data.Local) (data.Local, error)
 )
 
@@ -34,9 +35,9 @@ var gen = data.NewSymbolGenerator()
 func noAsmEmit(_ *Encoder) error { return nil }
 
 func (p *Parser) wrapEncoder(
-	e encoder.Encoder, args ...data.Value,
+	e encoder.Encoder, args ...ale.Value,
 ) *Encoder {
-	a := make(map[data.Local]data.Value, len(args))
+	a := make(map[data.Local]ale.Value, len(args))
 	for i, k := range p.params {
 		a[k] = args[i]
 	}
@@ -75,7 +76,7 @@ func (e *Encoder) resolvePrivate(l data.Local) data.Local {
 	return l
 }
 
-func (e *Encoder) resolveEncoderArg(v data.Value) (data.Value, bool) {
+func (e *Encoder) resolveEncoderArg(v ale.Value) (ale.Value, bool) {
 	if v, ok := v.(data.Local); ok {
 		if res, ok := e.args[v]; ok {
 			return res, true

@@ -3,11 +3,11 @@ package asm
 import (
 	"errors"
 
+	"github.com/kode4food/ale"
 	"github.com/kode4food/ale/internal/compiler"
 	"github.com/kode4food/ale/internal/compiler/encoder"
 	"github.com/kode4food/ale/internal/lang/params"
 	"github.com/kode4food/ale/internal/runtime/isa"
-	"github.com/kode4food/ale/pkg/data"
 )
 
 // Error messages
@@ -34,7 +34,7 @@ func MakeSpecial(pc *params.ParamCases) EmitBuilder {
 		ac := pc.MakeArityChecker()
 		fetchers := pc.MakeArgFetchers()
 
-		fn := func(e encoder.Encoder, args ...data.Value) error {
+		fn := func(e encoder.Encoder, args ...ale.Value) error {
 			if err := ac(len(args)); err != nil {
 				return err
 			}

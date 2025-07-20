@@ -5,9 +5,10 @@ import (
 	"fmt"
 	"slices"
 
+	"github.com/kode4food/ale"
+	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/runtime/isa"
 	"github.com/kode4food/ale/internal/strings"
-	"github.com/kode4food/ale/pkg/data"
 )
 
 var asmEffects = excludeEffects([]isa.Opcode{
@@ -55,7 +56,7 @@ func makeStandaloneEmit(oc isa.Opcode) asmParse {
 
 func makeOperandEmit(oc isa.Opcode) asmParse {
 	return parseArgs(data.Local(oc.String()), 1,
-		func(p *Parser, args ...data.Value) (Emit, error) {
+		func(p *Parser, args ...ale.Value) (Emit, error) {
 			return func(e *Encoder) error {
 				ops, err := e.toOperands(oc, args)
 				if err != nil {
@@ -97,7 +98,7 @@ func (e *Encoder) getToOperandFor(ao isa.ActOn) asmToOperand {
 
 func (e *Encoder) makeNameToWord() asmToOperand {
 	return wrapToOperandError(ErrUnexpectedName,
-		func(e *Encoder, val data.Value) (isa.Operand, error) {
+		func(e *Encoder, val ale.Value) (isa.Operand, error) {
 			if v, ok := e.resolveEncoderArg(val); ok {
 				val = v
 			}
@@ -115,7 +116,7 @@ func (e *Encoder) makeNameToWord() asmToOperand {
 
 func (e *Encoder) makeLabelToWord() asmToOperand {
 	return wrapToOperandError(ErrUnexpectedLabel,
-		func(e *Encoder, val data.Value) (isa.Operand, error) {
+		func(e *Encoder, val ale.Value) (isa.Operand, error) {
 			if v, ok := e.resolveEncoderArg(val); ok {
 				val = v
 			}
@@ -128,7 +129,7 @@ func (e *Encoder) makeLabelToWord() asmToOperand {
 }
 
 func wrapToOperandError(errStr string, toOperand asmToOperand) asmToOperand {
-	return func(e *Encoder, val data.Value) (isa.Operand, error) {
+	return func(e *Encoder, val ale.Value) (isa.Operand, error) {
 		res, err := toOperand(e, val)
 		if err != nil {
 			return 0, errors.Join(fmt.Errorf(errStr, val), err)
@@ -137,7 +138,7 @@ func wrapToOperandError(errStr string, toOperand asmToOperand) asmToOperand {
 	}
 }
 
-func toOperand(_ *Encoder, val data.Value) (isa.Operand, error) {
+func toOperand(_ *Encoder, val ale.Value) (isa.Operand, error) {
 	if val, ok := val.(data.Integer); ok {
 		if isa.IsValidOperand(int(val)) {
 			return isa.Operand(val), nil

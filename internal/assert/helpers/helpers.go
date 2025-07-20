@@ -3,7 +3,8 @@ package helpers
 import (
 	"fmt"
 
-	"github.com/kode4food/ale/pkg/data"
+	"github.com/kode4food/ale"
+	"github.com/kode4food/ale/data"
 )
 
 // B constructs a Bool
@@ -12,7 +13,7 @@ func B(v bool) data.Bool {
 }
 
 // C constructs a Cons
-func C(k, v data.Value) *data.Cons {
+func C(k, v ale.Value) *data.Cons {
 	return data.NewCons(k, v)
 }
 
@@ -32,7 +33,7 @@ func K(s string) data.Keyword {
 }
 
 // L constructs a List
-func L(args ...data.Value) *data.List {
+func L(args ...ale.Value) *data.List {
 	return data.NewList(args...)
 }
 
@@ -71,6 +72,6 @@ func S(s string) data.String {
 }
 
 // V constructs a Vector
-func V(args ...data.Value) data.Vector {
+func V(args ...ale.Value) data.Vector {
 	return args
 }

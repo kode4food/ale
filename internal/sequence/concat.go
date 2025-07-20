@@ -1,6 +1,9 @@
 package sequence
 
-import "github.com/kode4food/ale/pkg/data"
+import (
+	"github.com/kode4food/ale"
+	"github.com/kode4food/ale/data"
+)
 
 func Concat(s ...data.Sequence) data.Sequence {
 	switch len(s) {
@@ -13,8 +16,8 @@ func Concat(s ...data.Sequence) data.Sequence {
 		curr := s[0]
 		rest := s[1:]
 
-		next = func() (data.Value, data.Sequence, bool) {
-			var f data.Value
+		next = func() (ale.Value, data.Sequence, bool) {
+			var f ale.Value
 			var ok bool
 			if f, curr, ok = curr.Split(); ok {
 				return f, NewLazy(next), true

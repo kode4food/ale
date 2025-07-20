@@ -3,7 +3,7 @@ package lex
 import (
 	"fmt"
 
-	"github.com/kode4food/ale/pkg/data"
+	"github.com/kode4food/ale"
 )
 
 type (
@@ -13,7 +13,7 @@ type (
 	// Token is a lexer value
 	Token struct {
 		input  string
-		value  data.Value
+		value  ale.Value
 		typ    TokenType
 		line   int
 		column int
@@ -58,7 +58,7 @@ func (t TokenType) From(input string) *Token {
 
 // FromValue constructs a new Token for this TokenType with its input and an
 // associated Value
-func (t TokenType) FromValue(input string, v data.Value) *Token {
+func (t TokenType) FromValue(input string, v ale.Value) *Token {
 	return &Token{
 		typ:   t,
 		input: input,
@@ -83,7 +83,7 @@ func (t *Token) Type() TokenType {
 }
 
 // Value returns the scanned data.Value for this Token
-func (t *Token) Value() data.Value {
+func (t *Token) Value() ale.Value {
 	return t.value
 }
 
@@ -98,7 +98,7 @@ func (t *Token) Column() int {
 }
 
 // Equal compares this Token to another for equality
-func (t *Token) Equal(other data.Value) bool {
+func (t *Token) Equal(other ale.Value) bool {
 	if other, ok := other.(*Token); ok {
 		return t == other || t.typ == other.typ && t.value.Equal(other.value)
 	}

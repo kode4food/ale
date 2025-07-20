@@ -1,6 +1,6 @@
 package env
 
-import "github.com/kode4food/ale/pkg/data"
+import "github.com/kode4food/ale/data"
 
 const (
 	Include = data.Local("#include")

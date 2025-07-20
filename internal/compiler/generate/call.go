@@ -1,12 +1,13 @@
 package generate
 
 import (
+	"github.com/kode4food/ale"
+	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/env"
 	"github.com/kode4food/ale/internal/compiler"
 	"github.com/kode4food/ale/internal/compiler/encoder"
 	"github.com/kode4food/ale/internal/runtime/isa"
 	"github.com/kode4food/ale/internal/sequence"
-	"github.com/kode4food/ale/pkg/data"
-	"github.com/kode4food/ale/pkg/env"
 )
 
 type (
@@ -24,7 +25,7 @@ func Call(e encoder.Encoder, l *data.List) error {
 	return callValue(e, f, args)
 }
 
-func callValue(e encoder.Encoder, v data.Value, args data.Vector) error {
+func callValue(e encoder.Encoder, v ale.Value, args data.Vector) error {
 	switch s := v.(type) {
 	case data.Qualified:
 		return callGlobalSymbol(e, s, args)
@@ -62,7 +63,7 @@ func callGlobalSymbol(e encoder.Encoder, s data.Symbol, args data.Vector) error 
 	return callDynamic(e, s, args)
 }
 
-func callNonSymbol(e encoder.Encoder, v data.Value, args data.Vector) error {
+func callNonSymbol(e encoder.Encoder, v ale.Value, args data.Vector) error {
 	if compiler.IsEvaluable(v) {
 		return callDynamic(e, v, args)
 	}
@@ -84,19 +85,19 @@ func callStatic(e encoder.Encoder, p data.Procedure, args data.Vector) error {
 	return callWith(e, emitFunc, emitArgs)
 }
 
-func staticLiteral(e encoder.Encoder, fn data.Value) funcEmitter {
+func staticLiteral(e encoder.Encoder, fn ale.Value) funcEmitter {
 	return func() error {
 		return Literal(e, fn)
 	}
 }
 
-func callDynamic(e encoder.Encoder, v data.Value, args data.Vector) error {
+func callDynamic(e encoder.Encoder, v ale.Value, args data.Vector) error {
 	emitFunc := dynamicEval(e, v)
 	emitArgs := makeArgs(e, args)
 	return callWith(e, emitFunc, emitArgs)
 }
 
-func dynamicEval(e encoder.Encoder, v data.Value) funcEmitter {
+func dynamicEval(e encoder.Encoder, v ale.Value) funcEmitter {
 	return func() error {
 		return Value(e, v)
 	}
