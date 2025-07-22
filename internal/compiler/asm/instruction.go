@@ -13,7 +13,7 @@ import (
 
 var asmEffects = excludeEffects([]isa.Opcode{
 	isa.Call0, isa.Call1, isa.Call2, isa.Call3, isa.CallSelf, isa.Const,
-	isa.TailCall, isa.TailClos, isa.TailSelf,
+	isa.Label, isa.TailCall, isa.TailClos, isa.TailSelf,
 })
 
 func getInstructionCalls() namedAsmParsers {
