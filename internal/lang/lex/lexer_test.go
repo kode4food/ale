@@ -44,15 +44,17 @@ func assertTokenSequence(t *testing.T, s data.Sequence, tokens []*lex.Token) {
 func TestCreateLexer(t *testing.T) {
 	as := assert.New(t)
 	l := read.MustTokenize("hello")
-	as.NotNil(l)
-	f, r, ok := l.Split()
-	as.True(ok)
-	as.True(r.IsEmpty())
-	tk, ok := f.(*lex.Token)
-	as.NotNil(tk)
-	as.True(ok)
-	as.String("hello", tk.Value())
-	as.Equal(lex.Identifier, tk.Type())
+	if as.NotNil(l) {
+		f, r, ok := l.Split()
+		as.True(ok)
+		as.True(r.IsEmpty())
+		tk, ok := f.(*lex.Token)
+		if as.NotNil(tk) {
+			as.True(ok)
+			as.String("hello", tk.Value())
+			as.Equal(lex.Identifier, tk.Type())
+		}
+	}
 }
 
 func TestKeyword(t *testing.T) {

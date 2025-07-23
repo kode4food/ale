@@ -3,10 +3,10 @@ package env_test
 import (
 	"testing"
 
-	"github.com/kode4food/ale/internal/assert"
-	. "github.com/kode4food/ale/internal/assert/helpers"
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/env"
+	"github.com/kode4food/ale/internal/assert"
+	. "github.com/kode4food/ale/internal/assert/helpers"
 )
 
 func TestSnapshot(t *testing.T) {
@@ -23,17 +23,18 @@ func TestSnapshot(t *testing.T) {
 
 	e2 := env.NewEnvironment()
 	ns2 := ns1.Snapshot(e2)
-	as.Equal(LS("some-ns"), ns2.Domain())
-	as.Equal(e2, ns2.Environment())
+	if as.NotNil(ns2) {
+		as.Equal(LS("some-ns"), ns2.Domain())
+		as.Equal(e2, ns2.Environment())
 
-	as.NoError(env.BindPublic(ns2, "second-child", data.True))
-	as.NotNil(ns2)
-
-	d := ns2.Declared()
-	as.Equal(2, len(d))
-	as.Equal(data.True, as.IsBound(ns2, "public-child"))
-	as.Equal(data.True, as.IsBound(ns2, "second-child"))
-	as.IsNotDeclared(ns1, "second-child")
+		if as.NoError(env.BindPublic(ns2, "second-child", data.True)) {
+			d := ns2.Declared()
+			as.Equal(2, len(d))
+			as.Equal(data.True, as.IsBound(ns2, "public-child"))
+			as.Equal(data.True, as.IsBound(ns2, "second-child"))
+			as.IsNotDeclared(ns1, "second-child")
+		}
+	}
 }
 
 func TestChainedSnapshotErrors(t *testing.T) {
@@ -47,15 +48,16 @@ func TestChainedSnapshotErrors(t *testing.T) {
 	e, err := ns1.Public(sym1)
 	if as.NoError(err) {
 		as.IsNotBound(ns1, sym1)
-	}
 
-	as.NoError(e.Bind(data.True))
-	e2 := e1.Snapshot()
-	as.NotNil(e2)
+		if as.NoError(e.Bind(data.True)) {
+			e2 := e1.Snapshot()
+			as.NotNil(e2)
 
-	sym2 := data.Local("also-unbound-but-resolved")
-	_, err = root.Public(sym2)
-	if as.NoError(err) {
-		as.IsNotBound(root, sym2)
+			sym2 := data.Local("also-unbound-but-resolved")
+			_, err = root.Public(sym2)
+			if as.NoError(err) {
+				as.IsNotBound(root, sym2)
+			}
+		}
 	}
 }

@@ -5,11 +5,11 @@ import (
 	"slices"
 	"testing"
 
+	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/env"
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
 	lang "github.com/kode4food/ale/internal/lang/env"
-	"github.com/kode4food/ale/data"
-	"github.com/kode4food/ale/env"
 )
 
 func TestDeclarations(t *testing.T) {
@@ -31,17 +31,14 @@ func TestDeclarations(t *testing.T) {
 	as.Equal(LS("public2"), n[1])
 
 	e2, in, err := root.Resolve(n[0])
-	if as.NoError(err) {
-		as.NotNil(e2)
-		as.NotNil(in)
-	}
+	if as.NoError(err) && as.NotNil(e2) && as.NotNil(in) {
+		as.Equal(n[0], e2.Name())
+		as.Equal(root, in)
 
-	as.Equal(n[0], e2.Name())
-	as.Equal(root, in)
-
-	e3, err := root.Public(n[0])
-	if as.NoError(err) {
-		as.Equal(e2, e3)
+		e3, err := root.Public(n[0])
+		if as.NoError(err) {
+			as.Equal(e2, e3)
+		}
 	}
 }
 
@@ -95,28 +92,22 @@ func TestRedeclaration(t *testing.T) {
 	e := env.NewEnvironment()
 	root := e.GetRoot()
 	d1, err := root.Public("some-name")
-	if as.NoError(err) {
-		as.NotNil(d1)
-	}
-
-	d2, err := root.Public("some-name")
-	if as.NoError(err) {
-		as.NotNil(d2)
-		as.Equal(d1, d2)
+	if as.NoError(err) && as.NotNil(d1) {
+		d2, err := root.Public("some-name")
+		if as.NoError(err) && as.NotNil(d2) {
+			as.Equal(d1, d2)
+		}
 	}
 
 	_, err = root.Private("some-name")
 	as.EqualError(err, fmt.Sprintf(env.ErrNameAlreadyDeclared, "some-name"))
 
 	d3, err := root.Private("other-name")
-	if as.NoError(err) {
-		as.NotNil(d3)
-	}
-
-	d4, err := root.Private("other-name")
-	if as.NoError(err) {
-		as.NotNil(d4)
-		as.Equal(d3, d4)
+	if as.NoError(err) && as.NotNil(d3) {
+		d4, err := root.Private("other-name")
+		if as.NoError(err) && as.NotNil(d4) {
+			as.Equal(d3, d4)
+		}
 	}
 
 	_, err = root.Public("other-name")

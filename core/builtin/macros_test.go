@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/kode4food/ale/internal/assert"
-	. "github.com/kode4food/ale/internal/assert/helpers"
 	"github.com/kode4food/ale/core/builtin"
 	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/internal/assert"
+	. "github.com/kode4food/ale/internal/assert/helpers"
 )
 
 func TestMacroPredicatesEval(t *testing.T) {

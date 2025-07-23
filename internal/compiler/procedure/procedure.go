@@ -1,11 +1,11 @@
 package procedure
 
 import (
+	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/compiler/encoder"
 	"github.com/kode4food/ale/internal/compiler/ir/analysis"
 	"github.com/kode4food/ale/internal/compiler/ir/optimize"
 	"github.com/kode4food/ale/internal/runtime/vm"
-	"github.com/kode4food/ale/data"
 )
 
 // FromEncoded instantiates an abstract machine Procedure from the provided

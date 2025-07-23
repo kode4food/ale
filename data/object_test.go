@@ -70,16 +70,15 @@ func TestValuesToObject(t *testing.T) {
 	}
 
 	o, err = data.ValuesToObject(K("kwd"), S("value"))
-	if as.NoError(err) {
-		as.NotNil(o)
+	if as.NoError(err) && as.NotNil(o) {
 		as.Number(1, o.Count())
 		as.False(o.IsEmpty())
 	}
 
 	o, err = data.ValuesToObject(K("kwd"))
-	as.Nil(o)
-	as.NotNil(err)
-	as.EqualError(err, data.ErrMapNotPaired)
+	if as.Nil(o) && as.NotNil(err) {
+		as.EqualError(err, data.ErrMapNotPaired)
+	}
 }
 
 func TestObjectRemoval(t *testing.T) {

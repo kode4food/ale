@@ -12,13 +12,13 @@ func TestTypePredicateCall(t *testing.T) {
 	as := assert.New(t)
 	l1 := L(I(1), I(2), I(3))
 	pred := data.TypePredicateOf(l1)
-	as.NotNil(pred)
-
-	l2 := L(I(9))
-	v1 := V(I(10))
-	as.True(pred.Call(l1))
-	as.True(pred.Call(l2))
-	as.False(pred.Call(v1))
+	if as.NotNil(pred) {
+		l2 := L(I(9))
+		v1 := V(I(10))
+		as.True(pred.Call(l1))
+		as.True(pred.Call(l2))
+		as.False(pred.Call(v1))
+	}
 }
 
 func TestPredicateOf(t *testing.T) {

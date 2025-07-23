@@ -27,13 +27,15 @@ func TestFromString(t *testing.T) {
 	as := assert.New(t)
 	ns := assert.GetTestNamespace()
 	tr := MustFromString(ns, "99")
-	as.NotNil(tr)
-	as.Equal(I(99), tr.Car())
+	if as.NotNil(tr) {
+		as.Equal(I(99), tr.Car())
+	}
 }
 
 func TestTokenize(t *testing.T) {
 	as := assert.New(t)
 	tr := MustTokenize("99")
-	as.NotNil(tr)
-	as.Equal(lex.Number.FromValue("99", I(99)), tr.Car())
+	if as.NotNil(tr) {
+		as.Equal(lex.Number.FromValue("99", I(99)), tr.Car())
+	}
 }

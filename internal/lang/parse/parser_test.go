@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
 	"github.com/kode4food/ale/internal/lang/lex"
 	"github.com/kode4food/ale/internal/lang/parse"
 	"github.com/kode4food/ale/internal/sequence"
-	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/read"
 )
 
@@ -61,6 +61,7 @@ func TestReadVector(t *testing.T) {
 	v := tr.Car()
 	vector, ok := v.(data.Vector)
 	as.True(ok)
+	as.Equal(3, vector.Count())
 
 	res, ok := vector.ElementAt(0)
 	as.True(ok)
@@ -73,6 +74,29 @@ func TestReadVector(t *testing.T) {
 	res, ok = vector.ElementAt(2)
 	as.True(ok)
 	as.Number(55.120, res)
+}
+
+func TestBytes(t *testing.T) {
+	as := assert.New(t)
+
+	ns := assert.GetTestNamespace()
+	tr := read.MustFromString(ns, `#b[99 42 55]`)
+	v := tr.Car()
+	b, ok := v.(data.Bytes)
+	as.True(ok)
+	as.Equal(3, b.Count())
+
+	res, ok := b.ElementAt(0)
+	as.True(ok)
+	as.Number(99, res)
+
+	res, ok = b.ElementAt(1)
+	as.True(ok)
+	as.Number(42, res)
+
+	res, ok = b.ElementAt(2)
+	as.True(ok)
+	as.Number(55, res)
 }
 
 func TestReadMap(t *testing.T) {
@@ -139,6 +163,7 @@ func testReaderError(t *testing.T, src, err string, args ...any) {
 func TestReaderErrors(t *testing.T) {
 	testReaderError(t, "(99 100 ", parse.ErrListNotClosed)
 	testReaderError(t, "[99 100 ", parse.ErrVectorNotClosed)
+	testReaderError(t, "#b[99 100 ", parse.ErrVectorNotClosed)
 	testReaderError(t, "{:key 99", parse.ErrObjectNotClosed)
 
 	testReaderError(t, "99 100)", parse.ErrUnmatchedListEnd)

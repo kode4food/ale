@@ -25,7 +25,7 @@ const (
 	ErrInvalidTestExpression = "invalid test expression: %v"
 
 	// ErrProperErrorNotRaised is raised when a panic is expected but not seen
-	ErrProperErrorNotRaised = "proper error not raised"
+	ErrProperErrorNotRaised = "proper error not raised, expected: %s"
 
 	// ErrCannotMakeString is raised when a value can't be made into a string
 	ErrCannotMakeString = "can't convert value to string"
@@ -155,7 +155,7 @@ func (w *Wrapper) ExpectPanic(err any) {
 		w.ExpectError(err, rec)
 		return
 	}
-	panic(ErrProperErrorNotRaised)
+	panic(fmt.Errorf(ErrProperErrorNotRaised, err))
 }
 
 func (w *Wrapper) ExpectError(expected, err any) {

@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/kode4food/ale/internal/assert"
-	. "github.com/kode4food/ale/internal/assert/helpers"
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/ffi"
+	"github.com/kode4food/ale/internal/assert"
+	. "github.com/kode4food/ale/internal/assert/helpers"
 )
 
 type ArrayTest struct {
@@ -47,11 +47,12 @@ func TestArrayUnwrap(t *testing.T) {
 		return res
 	}).(data.Procedure)
 	out := f.Call(V(I(1), I(2), I(3))).(data.Vector)
-	as.NotNil(out)
-	as.Equal(3, len(out))
-	as.Equal(I(2), out[0])
-	as.Equal(I(4), out[1])
-	as.Equal(I(6), out[2])
+	if as.NotNil(out) {
+		as.Equal(3, len(out))
+		as.Equal(I(2), out[0])
+		as.Equal(I(4), out[1])
+		as.Equal(I(6), out[2])
+	}
 }
 
 func TestArrayEval(t *testing.T) {
@@ -89,11 +90,12 @@ func TestByteArrayUnwrap(t *testing.T) {
 		return res
 	}).(data.Procedure)
 	out1 := f1.Call(data.Bytes{1, 2, 3}).(data.Bytes)
-	as.NotNil(out1)
-	as.Equal(3, len(out1))
-	as.Equal(byte(2), out1[0])
-	as.Equal(byte(4), out1[1])
-	as.Equal(byte(6), out1[2])
+	if as.NotNil(out1) {
+		as.Equal(3, len(out1))
+		as.Equal(byte(2), out1[0])
+		as.Equal(byte(4), out1[1])
+		as.Equal(byte(6), out1[2])
+	}
 
 	f2 := ffi.MustWrap(func(a [3]byte) string {
 		res := ""
@@ -104,14 +106,16 @@ func TestByteArrayUnwrap(t *testing.T) {
 	}).(data.Procedure)
 
 	out2 := f2.Call(data.Bytes{1, 2, 3}).(data.String)
-	as.NotNil(out2)
-	as.Equal(3, len(out2))
-	as.Equal("123", string(out2))
+	if as.NotNil(out2) {
+		as.Equal(3, len(out2))
+		as.Equal("123", string(out2))
+	}
 
 	out3 := f2.Call(S("123")).(data.String)
-	as.NotNil(out3)
-	as.Equal(6, len(out3))
-	as.Equal("495051", string(out3))
+	if as.NotNil(out3) {
+		as.Equal(6, len(out3))
+		as.Equal("495051", string(out3))
+	}
 }
 
 func TestByteArrayStruct(t *testing.T) {

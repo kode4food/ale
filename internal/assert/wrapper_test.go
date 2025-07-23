@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
 	"github.com/kode4food/ale/internal/sync"
-	"github.com/kode4food/ale/data"
 )
 
 func TestTheStringTests(t *testing.T) {

@@ -6,9 +6,9 @@ import (
 	"runtime"
 	"slices"
 
+	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/debug"
 	"github.com/kode4food/ale/internal/strings"
-	"github.com/kode4food/ale/data"
 )
 
 type aleRuntimeError struct {

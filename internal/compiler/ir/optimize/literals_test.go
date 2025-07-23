@@ -3,11 +3,11 @@ package optimize_test
 import (
 	"testing"
 
+	"github.com/kode4food/ale/env"
 	"github.com/kode4food/ale/internal/assert"
 	"github.com/kode4food/ale/internal/compiler/encoder"
 	"github.com/kode4food/ale/internal/compiler/ir/optimize"
 	"github.com/kode4food/ale/internal/runtime/isa"
-	"github.com/kode4food/ale/env"
 )
 
 func TestLiterals(t *testing.T) {

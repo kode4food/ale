@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"os"
 
-	lang "github.com/kode4food/ale/internal/lang/env"
-	"github.com/kode4food/ale/internal/stream"
 	"github.com/kode4food/ale/core/source"
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/env"
 	"github.com/kode4food/ale/eval"
+	lang "github.com/kode4food/ale/internal/lang/env"
+	"github.com/kode4food/ale/internal/stream"
 	"github.com/kode4food/ale/read"
 )
 

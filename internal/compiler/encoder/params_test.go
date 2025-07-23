@@ -3,10 +3,10 @@ package encoder_test
 import (
 	"testing"
 
+	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
 	"github.com/kode4food/ale/internal/compiler/encoder"
-	"github.com/kode4food/ale/data"
 )
 
 func TestArgs(t *testing.T) {

@@ -1,11 +1,11 @@
 package generate
 
 import (
+	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/env"
 	"github.com/kode4food/ale/internal/compiler/encoder"
 	"github.com/kode4food/ale/internal/debug"
 	"github.com/kode4food/ale/internal/runtime/isa"
-	"github.com/kode4food/ale/data"
-	"github.com/kode4food/ale/env"
 )
 
 // Global encodes a global symbol constant or retrieval, depending on whether

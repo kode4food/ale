@@ -12,6 +12,7 @@ func TestFromString(t *testing.T) {
 	as := assert.New(t)
 	ns := assert.GetTestNamespace()
 	tr := read.MustFromString(ns, "99")
-	as.NotNil(tr)
-	as.Equal(I(99), tr.Car())
+	if as.NotNil(tr) {
+		as.Equal(I(99), tr.Car())
+	}
 }

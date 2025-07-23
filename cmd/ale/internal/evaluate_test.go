@@ -4,18 +4,19 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/kode4food/ale/env"
 	"github.com/kode4food/ale/internal/assert"
 	"github.com/kode4food/ale/internal/lang/parse"
-	"github.com/kode4food/ale/env"
 )
 
 func panicWithRec(t *testing.T, recoverable bool, msg string, fn func()) {
 	as := assert.New(t)
 	defer func() {
 		if err := toError(recover()); err != nil {
-			as.NotNil(err)
-			as.Equal(recoverable, isRecoverable(err))
-			as.ErrorContains(err, msg)
+			if as.NotNil(err) {
+				as.Equal(recoverable, isRecoverable(err))
+				as.ErrorContains(err, msg)
+			}
 		}
 	}()
 	fn()

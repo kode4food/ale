@@ -3,9 +3,9 @@ package vm_test
 import (
 	"testing"
 
+	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/assert"
 	"github.com/kode4food/ale/internal/runtime/vm"
-	"github.com/kode4food/ale/data"
 )
 
 func TestProcedureHashCode(t *testing.T) {

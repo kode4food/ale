@@ -3,12 +3,12 @@ package special_test
 import (
 	"testing"
 
-	"github.com/kode4food/ale/internal/assert"
-	. "github.com/kode4food/ale/internal/assert/helpers"
 	"github.com/kode4food/ale/core/bootstrap"
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/env"
 	"github.com/kode4food/ale/eval"
+	"github.com/kode4food/ale/internal/assert"
+	. "github.com/kode4food/ale/internal/assert/helpers"
 )
 
 func TestQuoteEval(t *testing.T) {
@@ -53,10 +53,11 @@ func TestUnquoteEval(t *testing.T) {
 	e := bootstrap.DevNullEnvironment()
 	ns := e.GetAnonymous()
 
-	as.NoError(env.BindPublic(ns, "foo", F(456)))
-	r1, err := eval.String(ns, `'[123 ,foo]`)
-	if as.NoError(err) {
-		as.String("[123 (ale/unquote foo)]", r1)
+	if as.NoError(env.BindPublic(ns, "foo", F(456))) {
+		r1, err := eval.String(ns, `'[123 ,foo]`)
+		if as.NoError(err) {
+			as.String("[123 (ale/unquote foo)]", r1)
+		}
 	}
 }
 

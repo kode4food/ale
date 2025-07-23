@@ -3,10 +3,10 @@ package ffi_test
 import (
 	"testing"
 
-	"github.com/kode4food/ale/internal/assert"
-	. "github.com/kode4food/ale/internal/assert/helpers"
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/ffi"
+	"github.com/kode4food/ale/internal/assert"
+	. "github.com/kode4food/ale/internal/assert/helpers"
 )
 
 type stateInfo struct {
@@ -40,9 +40,9 @@ func TestStructCycle(t *testing.T) {
 	si.Loop = si
 
 	res, err := ffi.Wrap(si)
-	as.Nil(res)
-	as.NotNil(err)
-	as.Equal(ffi.ErrCycleDetected, err.Error())
+	if as.Nil(res) && as.NotNil(err) {
+		as.Equal(ffi.ErrCycleDetected, err.Error())
+	}
 }
 
 func TestStructUnwrap(t *testing.T) {

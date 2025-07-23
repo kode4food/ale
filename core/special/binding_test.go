@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/kode4food/ale/core/special"
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
-	"github.com/kode4food/ale/core/special"
 )
 
 func TestLet(t *testing.T) {

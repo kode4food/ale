@@ -39,6 +39,7 @@ func TestBuiltInUse(t *testing.T) {
 	as.Nil(use(encoder.NewEncoder(ns1), nsName))
 
 	ns2 := repl.GetNS()
-	as.NotNil(ns2)
-	as.String("test-ns", ns2.Domain())
+	if as.NotNil(ns2) {
+		as.String("test-ns", ns2.Domain())
+	}
 }

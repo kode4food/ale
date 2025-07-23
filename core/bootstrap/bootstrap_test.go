@@ -3,12 +3,12 @@ package bootstrap_test
 import (
 	"testing"
 
-	"github.com/kode4food/ale/internal/assert"
-	"github.com/kode4food/ale/internal/compiler"
-	lang "github.com/kode4food/ale/internal/lang/env"
 	"github.com/kode4food/ale/core/bootstrap"
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/env"
+	"github.com/kode4food/ale/internal/assert"
+	"github.com/kode4food/ale/internal/compiler"
+	lang "github.com/kode4food/ale/internal/lang/env"
 )
 
 func TestDevNullEnvironment(t *testing.T) {

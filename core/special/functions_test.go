@@ -5,14 +5,14 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/kode4food/ale/core/bootstrap"
+	"github.com/kode4food/ale/core/builtin"
+	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
 	"github.com/kode4food/ale/internal/lang/params"
 	"github.com/kode4food/ale/internal/lang/parse"
 	"github.com/kode4food/ale/internal/runtime"
-	"github.com/kode4food/ale/core/bootstrap"
-	"github.com/kode4food/ale/core/builtin"
-	"github.com/kode4food/ale/data"
 )
 
 func getPredicate(kwd data.Keyword) data.Procedure {

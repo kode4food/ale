@@ -11,8 +11,7 @@ import (
 func TestMakeChecker(t *testing.T) {
 	as := assert.New(t)
 	fn1, err := data.MakeArityChecker()
-	if as.NoError(err) {
-		as.NotNil(fn1)
+	if as.NoError(err) && as.NotNil(fn1) {
 		as.Nil(fn1(-1))
 		as.Nil(fn1(1000))
 	}

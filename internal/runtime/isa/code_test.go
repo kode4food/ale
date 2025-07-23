@@ -16,11 +16,10 @@ func TestInstructions(t *testing.T) {
 	as.String("cond-jump 27", i1)
 
 	defer func() {
-		if rec := recover(); rec != nil {
+		rec := recover()
+		if as.NotNil(rec) {
 			err := fmt.Errorf(isa.ErrBadInstruction, isa.CondJump)
 			as.Equal(err, rec)
-		} else {
-			as.Fail("proper error not raised")
 		}
 	}()
 

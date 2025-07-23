@@ -3,10 +3,10 @@ package ffi_test
 import (
 	"testing"
 
-	"github.com/kode4food/ale/internal/assert"
-	. "github.com/kode4food/ale/internal/assert/helpers"
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/ffi"
+	"github.com/kode4food/ale/internal/assert"
+	. "github.com/kode4food/ale/internal/assert/helpers"
 )
 
 func TestVoidResult(t *testing.T) {
@@ -15,11 +15,12 @@ func TestVoidResult(t *testing.T) {
 	f := ffi.MustWrap(func(i int) {
 		b = i == 37
 	}).(data.Procedure)
-	as.NotNil(f)
-	as.False(b)
-	r := f.Call(I(37))
-	as.Nil(r)
-	as.True(b)
+	if as.NotNil(f) {
+		as.False(b)
+		r := f.Call(I(37))
+		as.Nil(r)
+		as.True(b)
+	}
 }
 
 func TestSingleResult(t *testing.T) {
@@ -27,9 +28,10 @@ func TestSingleResult(t *testing.T) {
 	f := ffi.MustWrap(func(i int) int {
 		return i * 2
 	}).(data.Procedure)
-	as.NotNil(f)
-	r := f.Call(I(5))
-	as.Equal(I(10), r)
+	if as.NotNil(f) {
+		r := f.Call(I(5))
+		as.Equal(I(10), r)
+	}
 }
 
 func TestVectorResult(t *testing.T) {
@@ -37,10 +39,11 @@ func TestVectorResult(t *testing.T) {
 	f := ffi.MustWrap(func(i int, s string) (int, string) {
 		return i * 2, s + "-modified"
 	}).(data.Procedure)
-	as.NotNil(f)
-	r := f.Call(I(4), S("hello")).(data.Vector)
-	as.Equal(I(8), r[0])
-	as.Equal(S("hello-modified"), r[1])
+	if as.NotNil(f) {
+		r := f.Call(I(4), S("hello")).(data.Vector)
+		as.Equal(I(8), r[0])
+		as.Equal(S("hello-modified"), r[1])
+	}
 }
 
 func TestVoidFuncUnwrap(t *testing.T) {
@@ -56,8 +59,9 @@ func TestVoidFuncUnwrap(t *testing.T) {
 	}).(data.Procedure)
 	inFunc := ffi.MustWrap(mark)
 	res := f.Call(inFunc)
-	as.NotNil(res)
-	as.Contains(":type procedure", res)
+	if as.NotNil(res) {
+		as.Contains(":type procedure", res)
+	}
 }
 
 func TestValueFuncUnwrap(t *testing.T) {

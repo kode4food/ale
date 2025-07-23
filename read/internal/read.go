@@ -1,10 +1,10 @@
 package internal
 
 import (
-	"github.com/kode4food/ale/internal/lang/lex"
-	"github.com/kode4food/ale/internal/lang/parse"
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/env"
+	"github.com/kode4food/ale/internal/lang/lex"
+	"github.com/kode4food/ale/internal/lang/parse"
 )
 
 type (

@@ -19,27 +19,23 @@ func TestSequenceConversions(t *testing.T) {
 	l3 := sequence.ToList(l2)
 
 	a1, err := sequence.ToObject(l3)
-	if as.NoError(err) {
-		as.NotNil(a1)
+	if as.NoError(err) && as.NotNil(a1) {
+		a2, err := sequence.ToObject(a1)
+		if as.NoError(err) && as.NotNil(a2) {
+			l4 := L(S("hello"), data.Null, S("there"), v1)
+			s1 := sequence.ToString(l4)
+			s2 := sequence.ToString(s1)
+
+			as.String(`["hello" "there"]`, v1)
+			as.Identical(v1, v2)
+			as.String(`("hello" "there")`, l2)
+			as.Identical(l2, l3)
+			as.String(`{"hello" "there"}`, a1)
+			as.Identical(a1, a2)
+			as.String(`hellothere["hello" "there"]`, s1)
+			as.Identical(s1, s2)
+		}
 	}
-
-	a2, err := sequence.ToObject(a1)
-	if as.NoError(err) {
-		as.NotNil(a2)
-	}
-
-	l4 := L(S("hello"), data.Null, S("there"), v1)
-	s1 := sequence.ToString(l4)
-	s2 := sequence.ToString(s1)
-
-	as.String(`["hello" "there"]`, v1)
-	as.Identical(v1, v2)
-	as.String(`("hello" "there")`, l2)
-	as.Identical(l2, l3)
-	as.String(`{"hello" "there"}`, a1)
-	as.Identical(a1, a2)
-	as.String(`hellothere["hello" "there"]`, s1)
-	as.Identical(s1, s2)
 }
 
 func alwaysTrue(ale.Value) bool {
@@ -55,25 +51,21 @@ func TestUncountedConversions(t *testing.T) {
 	l3 := sequence.ToList(l2)
 
 	a1, err := sequence.ToObject(sequence.Filter(l3, alwaysTrue))
-	if as.NoError(err) {
-		as.NotNil(a1)
+	if as.NoError(err) && as.NotNil(a1) {
+		a2, err := sequence.ToObject(a1)
+		if as.NoError(err) && as.NotNil(a1) {
+			l4 := sequence.Filter(L(S("hello"), data.Null, S("there"), v1), alwaysTrue)
+			s1 := sequence.ToString(l4)
+
+			as.String(`["hello" "there"]`, v1)
+			as.Identical(v1, v2)
+			as.String(`("hello" "there")`, l2)
+			as.Identical(l2, l3)
+			as.String(`{"hello" "there"}`, a1)
+			as.Identical(a1, a2)
+			as.String(`hellothere["hello" "there"]`, s1)
+		}
 	}
-
-	a2, err := sequence.ToObject(a1)
-	if as.NoError(err) {
-		as.NotNil(a1)
-	}
-
-	l4 := sequence.Filter(L(S("hello"), data.Null, S("there"), v1), alwaysTrue)
-	s1 := sequence.ToString(l4)
-
-	as.String(`["hello" "there"]`, v1)
-	as.Identical(v1, v2)
-	as.String(`("hello" "there")`, l2)
-	as.Identical(l2, l3)
-	as.String(`{"hello" "there"}`, a1)
-	as.Identical(a1, a2)
-	as.String(`hellothere["hello" "there"]`, s1)
 }
 
 func TestMappedSequenceError(t *testing.T) {

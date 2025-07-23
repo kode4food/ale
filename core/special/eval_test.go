@@ -3,12 +3,12 @@ package special_test
 import (
 	"testing"
 
+	core "github.com/kode4food/ale/core/special"
+	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
 	"github.com/kode4food/ale/internal/compiler"
 	"github.com/kode4food/ale/internal/runtime/isa"
-	core "github.com/kode4food/ale/core/special"
-	"github.com/kode4food/ale/data"
 )
 
 func TestEval(t *testing.T) {

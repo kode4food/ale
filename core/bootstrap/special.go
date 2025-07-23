@@ -1,10 +1,10 @@
 package bootstrap
 
 import (
-	"github.com/kode4food/ale/internal/compiler"
-	"github.com/kode4food/ale/internal/lang/env"
 	"github.com/kode4food/ale/core/special"
 	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/internal/compiler"
+	"github.com/kode4food/ale/internal/lang/env"
 )
 
 func (b *bootstrap) populateSpecialForms() {

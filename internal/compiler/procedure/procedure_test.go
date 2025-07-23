@@ -3,11 +3,11 @@ package procedure_test
 import (
 	"testing"
 
+	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
 	"github.com/kode4food/ale/internal/compiler/procedure"
 	"github.com/kode4food/ale/internal/runtime/isa"
-	"github.com/kode4food/ale/data"
 )
 
 func TestFromEncoder(t *testing.T) {
@@ -18,15 +18,14 @@ func TestFromEncoder(t *testing.T) {
 	e1.Emit(isa.Return)
 
 	l, err := procedure.FromEncoded(e1.Encode())
-	if as.NoError(err) {
-		as.NotNil(l)
+	if as.NoError(err) && as.NotNil(l) {
 		as.NoError(l.CheckArity(-1))
+
+		c, ok := l.Call().(data.Procedure)
+		as.True(ok)
+		if as.NotNil(c) {
+			as.Equal(I(4), c.Call(S("one"), S("two"), S("three"), S("four")))
+			as.Contains(":type procedure", c)
+		}
 	}
-
-	c, ok := l.Call().(data.Procedure)
-	as.True(ok)
-	as.NotNil(c)
-
-	as.Equal(I(4), c.Call(S("one"), S("two"), S("three"), S("four")))
-	as.Contains(":type procedure", c)
 }

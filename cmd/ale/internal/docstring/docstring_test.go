@@ -6,10 +6,10 @@ import (
 	"testing"
 
 	"github.com/kode4food/ale/cmd/ale/internal/docstring"
-	"github.com/kode4food/ale/internal/assert"
-	. "github.com/kode4food/ale/internal/assert/helpers"
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/env"
+	"github.com/kode4food/ale/internal/assert"
+	. "github.com/kode4food/ale/internal/assert/helpers"
 )
 
 func TestDocString(t *testing.T) {
@@ -38,10 +38,7 @@ func TestDocumentedBuiltinsExist(t *testing.T) {
 			continue
 		}
 		res, in, err := env.ResolveSymbol(ns, LS(name))
-		if as.NoError(err) {
-			as.NotNil(res)
-			as.NotNil(in)
-		}
+		_ = as.NoError(err) && as.NotNil(res) && as.NotNil(in)
 	}
 }
 
@@ -74,10 +71,10 @@ func TestMustGet(t *testing.T) {
 	as := assert.New(t)
 
 	d := docstring.MustGet("doc")
-	as.NotNil(d)
-
-	defer as.ExpectPanic(
-		fmt.Errorf(docstring.ErrSymbolNotDocumented, "blah"),
-	)
-	_ = docstring.MustGet("blah")
+	if as.NotNil(d) {
+		defer as.ExpectPanic(
+			fmt.Errorf(docstring.ErrSymbolNotDocumented, "blah"),
+		)
+		_ = docstring.MustGet("blah")
+	}
 }

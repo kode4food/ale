@@ -1,8 +1,8 @@
 package encoder
 
 import (
-	"github.com/kode4food/ale/internal/runtime/isa"
 	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/internal/runtime/isa"
 )
 
 type (

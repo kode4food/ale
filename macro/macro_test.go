@@ -13,11 +13,11 @@ func TestMacroCall(t *testing.T) {
 
 	d, ok := as.MustEval(`define`).(macro.Call)
 	as.True(ok)
-	as.NotNil(d)
-
-	as.Equal(macro.CallType, d.Type())
-	as.False(d.Equal(d))
-	as.Contains(":type macro", d)
+	if as.NotNil(d) {
+		as.Equal(macro.CallType, d.Type())
+		as.False(d.Equal(d))
+		as.Contains(":type macro", d)
+	}
 }
 
 func TestExpand(t *testing.T) {

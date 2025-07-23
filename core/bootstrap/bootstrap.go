@@ -3,13 +3,13 @@ package bootstrap
 import (
 	"os"
 
+	"github.com/kode4food/ale/core/builtin"
+	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/env"
 	"github.com/kode4food/ale/internal/compiler"
 	lang "github.com/kode4food/ale/internal/lang/env"
 	"github.com/kode4food/ale/internal/stream"
 	"github.com/kode4food/ale/internal/sync"
-	"github.com/kode4food/ale/core/builtin"
-	"github.com/kode4food/ale/data"
-	"github.com/kode4food/ale/env"
 	"github.com/kode4food/ale/macro"
 )
 

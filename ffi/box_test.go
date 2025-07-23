@@ -5,8 +5,8 @@ import (
 	"testing"
 	"unsafe"
 
-	"github.com/kode4food/ale/internal/assert"
 	"github.com/kode4food/ale/ffi"
+	"github.com/kode4food/ale/internal/assert"
 )
 
 func TestUintptrBoxing(t *testing.T) {

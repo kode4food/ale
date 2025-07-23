@@ -1,9 +1,9 @@
 package bootstrap
 
 import (
-	"github.com/kode4food/ale/internal/lang/env"
 	"github.com/kode4food/ale/core/builtin"
 	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/internal/lang/env"
 	"github.com/kode4food/ale/macro"
 )
 

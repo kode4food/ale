@@ -4,13 +4,13 @@ import (
 	"bytes"
 	"testing"
 
+	"github.com/kode4food/ale/core/bootstrap"
+	"github.com/kode4food/ale/env"
+	"github.com/kode4food/ale/eval"
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
 	lang "github.com/kode4food/ale/internal/lang/env"
 	"github.com/kode4food/ale/internal/stream"
-	"github.com/kode4food/ale/core/bootstrap"
-	"github.com/kode4food/ale/env"
-	"github.com/kode4food/ale/eval"
 )
 
 func testOutput(t *testing.T, src, expected string) {
@@ -21,15 +21,16 @@ func testOutput(t *testing.T, src, expected string) {
 
 	e := env.NewEnvironment()
 	ns := e.GetRoot()
-	as.NoError(env.BindPublic(ns, lang.Out, O(
+	if as.NoError(env.BindPublic(ns, lang.Out, O(
 		C(stream.WriteKey, w),
-	)))
-	bootstrap.Into(e)
+	))) {
+		bootstrap.Into(e)
 
-	anon := e.GetAnonymous()
-	as.Nil(eval.String(anon, S(src)))
+		anon := e.GetAnonymous()
+		as.Nil(eval.String(anon, S(src)))
 
-	as.String(expected, buf.String())
+		as.String(expected, buf.String())
+	}
 }
 
 func TestIOEval(t *testing.T) {
