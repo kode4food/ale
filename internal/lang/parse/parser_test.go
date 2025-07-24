@@ -152,12 +152,14 @@ func TestReadNestedList(t *testing.T) {
 
 func testReaderError(t *testing.T, src, err string, args ...any) {
 	as := assert.New(t)
-
-	defer as.ExpectPanic(fmt.Errorf(err, args...))
-
-	ns := assert.GetTestNamespace()
-	tr := read.MustFromString(ns, S(src))
-	sequence.Last(tr)
+	as.Panics(
+		func() {
+			ns := assert.GetTestNamespace()
+			tr := read.MustFromString(ns, S(src))
+			_, _ = sequence.Last(tr)
+		},
+		fmt.Errorf(err, args...),
+	)
 }
 
 func TestReaderErrors(t *testing.T) {

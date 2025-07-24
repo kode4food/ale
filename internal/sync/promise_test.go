@@ -24,8 +24,7 @@ func TestPromiseFailure(t *testing.T) {
 	p1 := sync.NewPromise(data.MakeProcedure(func(...ale.Value) ale.Value {
 		panic(errors.New("explosion"))
 	}, 0))
-	defer as.ExpectPanic(errors.New("explosion"))
-	p1.Call()
+	as.Panics(func() { _ = p1.Call() }, errors.New("explosion"))
 }
 
 func TestPromiseEval(t *testing.T) {

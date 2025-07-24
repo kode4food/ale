@@ -72,8 +72,10 @@ func TestListCall(t *testing.T) {
 	testSequenceCallInterface(as, l1)
 	testSequenceCallInterface(as, data.Null)
 
-	defer as.ExpectPanic(fmt.Errorf(data.ErrInvalidStartIndex, 4))
-	as.Nil(l1.Call(I(4)))
+	as.Panics(
+		func() { _ = l1.Call(I(4)) },
+		fmt.Errorf(data.ErrInvalidStartIndex, 4),
+	)
 }
 
 func TestListEquality(t *testing.T) {

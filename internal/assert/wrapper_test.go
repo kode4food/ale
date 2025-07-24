@@ -18,8 +18,11 @@ func TestTheStringTests(t *testing.T) {
 	as.String(":hello", K("hello"))
 	as.String("hello", LS("hello"))
 
-	defer as.ExpectPanic(fmt.Errorf(assert.ErrInvalidTestExpression, "10"))
-	as.String("10", 10)
+	as.Panics(
+		func() { as.String("10", 10) },
+		fmt.Errorf(assert.ErrInvalidTestExpression, "10"),
+	)
+
 }
 
 func TestTheFloatTests(t *testing.T) {
@@ -30,8 +33,10 @@ func TestTheFloatTests(t *testing.T) {
 	as.Number(10, 10.0)
 	as.Number(10, 10)
 
-	defer as.ExpectPanic(fmt.Errorf(assert.ErrInvalidTestExpression, "10"))
-	as.Number(10, "10")
+	as.Panics(
+		func() { as.Number(10, "10") },
+		fmt.Errorf(assert.ErrInvalidTestExpression, "10"),
+	)
 }
 
 func TestEquality(t *testing.T) {
@@ -77,20 +82,6 @@ func TestIdentical(t *testing.T) {
 	as.Equal(l1, l1)
 	as.NotIdentical(l1, l2)
 	as.Equal(l1, l2)
-}
-
-func TestMustGetExplosion(t *testing.T) {
-	as := assert.New(t)
-	// Can handle errors in multiple forms
-	err := S(fmt.Sprintf(assert.ErrValueNotFound, K("hello")))
-	defer as.ExpectPanic(err)
-	as.MustGet(O(), K("hello"))
-}
-
-func TestMustGetNonExplosion(t *testing.T) {
-	as := assert.New(t)
-	defer as.ExpectNoPanic()
-	as.MustGet(O(C(K("hello"), S("world"))), K("hello"))
 }
 
 func TestExpectProgrammerError(t *testing.T) {

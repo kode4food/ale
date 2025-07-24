@@ -49,8 +49,10 @@ func testResult(t *testing.T, res ale.Value, code isa.Instructions) {
 
 func testPanic(t *testing.T, errStr string, code isa.Instructions) {
 	as := assert.New(t)
-	defer as.ExpectPanic(errors.New(errStr))
-	runCode(code)
+	as.Panics(
+		func() { _ = runCode(code) },
+		errors.New(errStr),
+	)
 }
 
 func TestClosureEqual(t *testing.T) {

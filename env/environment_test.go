@@ -41,8 +41,10 @@ func TestResolveSymbol(t *testing.T) {
 	as.NoError(err)
 
 	ls := LS("private-parent")
-	defer as.ExpectPanic(fmt.Errorf(env.ErrNameNotDeclared, ls))
-	mustResolveSymbol(ns, ls)
+	as.Panics(
+		func() { _ = mustResolveSymbol(ns, ls) },
+		fmt.Errorf(env.ErrNameNotDeclared, ls),
+	)
 }
 
 func TestResolveValue(t *testing.T) {
@@ -69,8 +71,10 @@ func TestResolveValue(t *testing.T) {
 	}
 
 	ls := LS("private-parent")
-	defer as.ExpectPanic(fmt.Errorf(env.ErrNameNotDeclared, ls))
-	env.MustResolveValue(ns, ls)
+	as.Panics(
+		func() { _ = env.MustResolveValue(ns, ls) },
+		fmt.Errorf(env.ErrNameNotDeclared, ls),
+	)
 }
 
 func TestDomains(t *testing.T) {

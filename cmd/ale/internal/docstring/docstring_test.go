@@ -72,9 +72,9 @@ func TestMustGet(t *testing.T) {
 
 	d := docstring.MustGet("doc")
 	if as.NotNil(d) {
-		defer as.ExpectPanic(
+		as.Panics(
+			func() { _ = docstring.MustGet("blah") },
 			fmt.Errorf(docstring.ErrSymbolNotDocumented, "blah"),
 		)
-		_ = docstring.MustGet("blah")
 	}
 }

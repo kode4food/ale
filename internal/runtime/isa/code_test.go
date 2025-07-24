@@ -60,8 +60,8 @@ func TestInstructionSplit(t *testing.T) {
 
 func TestInstructionOperandSizeError(t *testing.T) {
 	as := assert.New(t)
-	defer as.ExpectPanic(
+	as.Panics(
+		func() { _ = isa.PosInt.New(isa.OperandMask + 1) },
 		fmt.Errorf(isa.ErrExpectedOperand, isa.OperandMask+1),
 	)
-	isa.PosInt.New(isa.OperandMask + 1)
 }

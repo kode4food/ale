@@ -52,7 +52,8 @@ func TestMacroExpandEval(t *testing.T) {
 
 func TestBadMacro(t *testing.T) {
 	as := assert.New(t)
-
-	defer as.ExpectPanic(fmt.Errorf(builtin.ErrProcedureRequired, "32"))
-	_ = builtin.Macro.Call(F(32))
+	as.Panics(
+		func() { _ = builtin.Macro.Call(F(32)) },
+		fmt.Errorf(builtin.ErrProcedureRequired, "32"),
+	)
 }

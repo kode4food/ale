@@ -148,16 +148,6 @@ func (w *Wrapper) Compare(c data.Comparison, l data.Number, r data.Number) {
 	w.Assertions.Equal(c, l.Cmp(r))
 }
 
-// ExpectPanic is used with defer to make sure an error was triggered
-func (w *Wrapper) ExpectPanic(err any) {
-	w.Helper()
-	if rec := recover(); rec != nil {
-		w.ExpectError(err, rec)
-		return
-	}
-	panic(fmt.Errorf(ErrProperErrorNotRaised, err))
-}
-
 func (w *Wrapper) ExpectError(expected, err any) {
 	errStr := w.mustMakeString(err)
 	pfx := w.mustMakeString(expected)
@@ -179,13 +169,6 @@ func (w *Wrapper) ExpectProgrammerError(errStr string) {
 		}
 	}
 	w.Fail(ErrProperErrorNotRaised)
-}
-
-// ExpectNoPanic is used with defer to make sure no error occurs
-func (w *Wrapper) ExpectNoPanic() {
-	w.Helper()
-	rec := recover()
-	w.Nil(rec)
 }
 
 // MustGet retrieves a Value from a Mapped or explodes

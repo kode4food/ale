@@ -2,6 +2,7 @@ package stream_test
 
 import (
 	"embed"
+	"fmt"
 	"testing"
 
 	"github.com/kode4food/ale/data"
@@ -29,6 +30,11 @@ func TestWrapFileSystemList(t *testing.T) {
 				C(S("dir2"), stream.Dir),
 			), res)
 		}
+
+		as.Panics(
+			func() { _ = c.(data.Procedure).Call(S("not-a-dir")) },
+			fmt.Errorf(stream.ErrExpectedDirectory, "not-a-dir"),
+		)
 	}
 }
 

@@ -37,6 +37,5 @@ func (w *Wrapper) ErrorWith(src string, err any) {
 // PanicWith evaluates source code and expects a panic to happen
 func (w *Wrapper) PanicWith(src string, err any) {
 	w.Helper()
-	defer w.ExpectPanic(err)
-	w.MustEval(src)
+	w.Panics(func() { _ = w.MustEval(src) }, err)
 }

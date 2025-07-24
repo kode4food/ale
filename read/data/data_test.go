@@ -20,6 +20,8 @@ func TestFromString(t *testing.T) {
 	d2 := rdata.MustFromString(ns, `(#include "hello")`)
 	as.Equal(L(LS("#include"), S("hello")), d2.Car())
 
-	defer as.ExpectPanic(fmt.Errorf(lex.ErrUnexpectedCharacters, "'"))
-	rdata.MustFromString(ns, `(1 2 '3)`).Car()
+	as.Panics(
+		func() { _ = rdata.MustFromString(ns, `(1 2 '3)`).Car() },
+		fmt.Errorf(lex.ErrUnexpectedCharacters, "'"),
+	)
 }

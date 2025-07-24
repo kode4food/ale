@@ -36,8 +36,10 @@ func TestObject(t *testing.T) {
 	as.Nil(v)
 	as.Equal(o2, r)
 
-	defer as.ExpectPanic(fmt.Errorf(assert.ErrValueNotFound, ":missing"))
-	as.MustGet(o2, K("missing"))
+	as.Panics(
+		func() { _ = as.MustGet(o2, K("missing")) },
+		fmt.Errorf(assert.ErrValueNotFound, ":missing"),
+	)
 }
 
 func TestEmptyObject(t *testing.T) {
