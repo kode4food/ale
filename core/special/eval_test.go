@@ -52,7 +52,8 @@ func TestEvalErrors(t *testing.T) {
 	err := special.Eval(e1, LS("list"), I(1))
 	as.ExpectError(err, fmt.Errorf(data.ErrFixedArity, 1, 2))
 
-	err = special.Eval(e1, L(LS("not-found")))
+	e2 := assert.GetTestEncoder()
+	err = special.Eval(e2, L(LS("not-found")))
 	as.ExpectError(err, fmt.Errorf(env.ErrNameNotDeclared, LS("not-found")))
 }
 
