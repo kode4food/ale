@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/kode4food/ale"
-	main "github.com/kode4food/ale/cmd/ale/internal"
+	"github.com/kode4food/ale/cmd/ale/internal"
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
 	"github.com/kode4food/ale/internal/compiler"
@@ -14,7 +14,7 @@ import (
 func TestREPL(t *testing.T) {
 	as := assert.New(t)
 
-	r := main.NewREPL()
+	r := internal.NewREPL()
 	as.NotNil(r)
 }
 
@@ -31,7 +31,7 @@ func asEncoder(t *testing.T, v ale.Value) compiler.Call {
 func TestBuiltInUse(t *testing.T) {
 	as := assert.New(t)
 
-	repl := main.NewREPL()
+	repl := internal.NewREPL()
 	ns1 := repl.GetNS()
 	v := as.IsBound(ns1, "use")
 	use := asEncoder(t, v)

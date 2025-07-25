@@ -43,6 +43,8 @@ func TestNonNumberEval(t *testing.T) {
 	as.MustEvalTo(`(-inf? -99)`, data.False)
 
 	as.MustEvalTo(`(nan? 99)`, data.False)
+	as.MustEvalTo(`(nan? (/ 0.0 0))`, data.True)
+	as.MustEvalTo(`(nan? "hello")`, data.False)
 }
 
 func TestBadMathsEval(t *testing.T) {

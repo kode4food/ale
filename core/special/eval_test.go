@@ -1,10 +1,12 @@
 package special_test
 
 import (
+	"fmt"
 	"testing"
 
-	core "github.com/kode4food/ale/core/special"
+	"github.com/kode4food/ale/core/special"
 	"github.com/kode4food/ale/data"
+	"github.com/kode4food/ale/env"
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
 	"github.com/kode4food/ale/internal/compiler"
@@ -16,7 +18,7 @@ func TestEval(t *testing.T) {
 
 	add := L(LS("+"), I(1), I(2))
 	e1 := assert.GetTestEncoder()
-	as.Nil(core.Eval(e1,
+	as.Nil(special.Eval(e1,
 		add.Prepend(LS("list")),
 	))
 	e1.Emit(isa.Return)
@@ -43,12 +45,23 @@ func TestEval(t *testing.T) {
 	as.Equal(I(3), f.Call(add))
 }
 
+func TestEvalErrors(t *testing.T) {
+	as := assert.New(t)
+
+	e1 := assert.GetTestEncoder()
+	err := special.Eval(e1, LS("list"), I(1))
+	as.ExpectError(err, fmt.Errorf(data.ErrFixedArity, 1, 2))
+
+	err = special.Eval(e1, L(LS("not-found")))
+	as.ExpectError(err, fmt.Errorf(env.ErrNameNotDeclared, LS("not-found")))
+}
+
 func TestMacroExpand(t *testing.T) {
-	testMacroExpandWith(t, core.MacroExpand)
+	testMacroExpandWith(t, special.MacroExpand)
 }
 
 func TestMacroExpand1(t *testing.T) {
-	testMacroExpandWith(t, core.MacroExpand1)
+	testMacroExpandWith(t, special.MacroExpand1)
 }
 
 func testMacroExpandWith(t *testing.T, enc compiler.Call) {

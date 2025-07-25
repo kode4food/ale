@@ -4,10 +4,12 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/kode4food/ale"
 	"github.com/kode4food/ale/core/builtin"
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/assert"
 	. "github.com/kode4food/ale/internal/assert/helpers"
+	"github.com/kode4food/ale/macro"
 )
 
 func TestMacroPredicatesEval(t *testing.T) {
@@ -56,4 +58,15 @@ func TestBadMacro(t *testing.T) {
 		func() { _ = builtin.Macro.Call(F(32)) },
 		fmt.Errorf(builtin.ErrProcedureRequired, "32"),
 	)
+
+	ns := assert.GetTestEnvironment().GetRoot()
+	m := builtin.Macro.Call(data.MakeProcedure(
+		func(...ale.Value) ale.Value {
+			return data.False
+		}, 1),
+	).(macro.Call)
+
+	as.Panics(
+		func() { m(ns, I(1), I(2)) },
+		fmt.Errorf(data.ErrFixedArity, 1, 2))
 }
