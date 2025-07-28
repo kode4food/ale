@@ -29,7 +29,7 @@ type (
 
 // MakeApplicable declares an ApplicableType that will only allow an applicable
 // value capable of the provided signature set
-func MakeApplicable(first Signature, rest ...Signature) *Applicable {
+func MakeApplicable(first Signature, rest ...Signature) ale.Type {
 	all := append(signatures{first}, rest...)
 	return &Applicable{
 		basic:      BasicProcedure,
@@ -52,7 +52,7 @@ func (a *Applicable) Accepts(other ale.Type) bool {
 	return false
 }
 
-func (a *Applicable) accepts(c *cycleChecker, other ale.Type) bool {
+func (a *Applicable) accepts(c *checker, other ale.Type) bool {
 	if other, ok := other.(*Applicable); ok {
 		if a == other {
 			return true
@@ -92,7 +92,7 @@ func (s Signature) argNames() string {
 	return fmt.Sprintf("%s.%s", params, rest)
 }
 
-func (s Signature) acceptsFromSignatures(c *cycleChecker, other []Signature) bool {
+func (s Signature) acceptsFromSignatures(c *checker, other []Signature) bool {
 	for _, o := range other {
 		if s.accepts(c, o) {
 			return true
@@ -101,7 +101,7 @@ func (s Signature) acceptsFromSignatures(c *cycleChecker, other []Signature) boo
 	return false
 }
 
-func (s Signature) accepts(c *cycleChecker, other Signature) bool {
+func (s Signature) accepts(c *checker, other Signature) bool {
 	if !c.acceptsChild(s.Result, other.Result) {
 		return false
 	}

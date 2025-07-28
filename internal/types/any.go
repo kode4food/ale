@@ -6,7 +6,7 @@ import "github.com/kode4food/ale"
 type Any struct{ *Basic }
 
 var BasicAny = &Any{
-	Basic: MakeBasic("any"),
+	Basic: makeBasic("any"),
 }
 
 func (*Any) Accepts(ale.Type) bool {

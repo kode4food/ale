@@ -40,7 +40,7 @@ func (p *Pair) Accepts(other ale.Type) bool {
 	return false
 }
 
-func (p *Pair) accepts(c *cycleChecker, other ale.Type) bool {
+func (p *Pair) accepts(c *checker, other ale.Type) bool {
 	if other, ok := other.(*Pair); ok {
 		return p == other ||
 			p.basic.Accepts(other.basic) &&

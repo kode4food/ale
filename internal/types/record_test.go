@@ -99,7 +99,7 @@ func TestRecordEqual(t *testing.T) {
 		},
 	)
 
-	cpy := *r1
+	cpy := *r1.(*types.Record)
 	as.True(r1.Equal(r1))
 	as.True(r1.Equal(&cpy))
 	as.False(r1.Equal(r2))

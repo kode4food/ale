@@ -55,7 +55,7 @@ func (u *Union) Accepts(other ale.Type) bool {
 	}
 }
 
-func (u *Union) accepts(c *cycleChecker, other ale.Type) bool {
+func (u *Union) accepts(c *checker, other ale.Type) bool {
 	switch other := other.(type) {
 	case *Union:
 		return u == other || u.acceptsUnion(c, other)
@@ -74,7 +74,7 @@ func (u *Union) Equal(other ale.Type) bool {
 	return false
 }
 
-func (u *Union) acceptsUnion(c *cycleChecker, other *Union) bool {
+func (u *Union) acceptsUnion(c *checker, other *Union) bool {
 	for _, o := range other.Options() {
 		if !u.acceptsType(c, o) {
 			return false
@@ -83,7 +83,7 @@ func (u *Union) acceptsUnion(c *cycleChecker, other *Union) bool {
 	return true
 }
 
-func (u *Union) acceptsType(c *cycleChecker, other ale.Type) bool {
+func (u *Union) acceptsType(c *checker, other ale.Type) bool {
 	return slices.ContainsFunc(u.options, func(t ale.Type) bool {
 		return c.acceptsChild(t, other)
 	})

@@ -28,7 +28,7 @@ type (
 
 // MakeRecord declares a new RecordType that only allows a fixed set of Field
 // entries, each being identified by a BasicKeyword and having a specified Type
-func MakeRecord(fields ...Field) *Record {
+func MakeRecord(fields ...Field) ale.Type {
 	return &Record{
 		basic:  BasicObject,
 		fields: fields,
@@ -53,7 +53,7 @@ func (r *Record) Accepts(other ale.Type) bool {
 	return false
 }
 
-func (r *Record) accepts(c *cycleChecker, other ale.Type) bool {
+func (r *Record) accepts(c *checker, other ale.Type) bool {
 	if other, ok := other.(*Record); ok {
 		if r == other {
 			return true

@@ -22,24 +22,28 @@ type (
 )
 
 var (
-	BasicBoolean   = MakeBasic("boolean")
-	BasicBytes     = MakeBasic("bytes")
-	BasicKeyword   = MakeBasic("keyword")
-	BasicProcedure = MakeBasic("procedure")
-	BasicNull      = MakeBasic("null")
-	BasicNumber    = MakeBasic("number")
-	BasicString    = MakeBasic("string")
-	BasicSymbol    = MakeBasic("symbol")
-	BasicList      = MakeBasic("list")
-	BasicObject    = MakeBasic("object")
-	BasicCons      = MakeBasic("cons")
-	BasicVector    = MakeBasic("vector")
-	BasicUnion     = MakeBasic("union")
+	BasicBoolean   = makeBasic("boolean")
+	BasicBytes     = makeBasic("bytes")
+	BasicKeyword   = makeBasic("keyword")
+	BasicProcedure = makeBasic("procedure")
+	BasicNull      = makeBasic("null")
+	BasicNumber    = makeBasic("number")
+	BasicString    = makeBasic("string")
+	BasicSymbol    = makeBasic("symbol")
+	BasicList      = makeBasic("list")
+	BasicObject    = makeBasic("object")
+	BasicCons      = makeBasic("cons")
+	BasicVector    = makeBasic("vector")
+	BasicUnion     = makeBasic("union")
 
 	idCounter atomic.Uint64
 )
 
-func MakeBasic(name string) *Basic {
+func MakeBasic(name string) ale.Type {
+	return makeBasic(name)
+}
+
+func makeBasic(name string) *Basic {
 	return &Basic{
 		id:   ID(idCounter.Add(1)),
 		name: name,

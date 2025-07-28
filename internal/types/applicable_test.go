@@ -142,7 +142,7 @@ func TestApplicableEqual(t *testing.T) {
 		},
 	)
 
-	cpy := *a1
+	cpy := *a1.(*types.Applicable)
 	as.True(a1.Equal(a1))
 	as.True(a1.Equal(&cpy))
 	as.False(a1.Equal(a2))

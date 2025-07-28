@@ -15,7 +15,7 @@ type Object struct {
 
 // MakeObject declares a new ObjectType that will only allow keys and values of
 // the provided types
-func MakeObject(key ale.Type, value ale.Type) *Object {
+func MakeObject(key ale.Type, value ale.Type) ale.Type {
 	return &Object{
 		basic: BasicObject,
 		key:   key,
@@ -44,7 +44,7 @@ func (o *Object) Accepts(other ale.Type) bool {
 	return false
 }
 
-func (o *Object) accepts(c *cycleChecker, other ale.Type) bool {
+func (o *Object) accepts(c *checker, other ale.Type) bool {
 	if other, ok := other.(*Object); ok {
 		return o == other ||
 			o.basic.Accepts(other.basic) &&
