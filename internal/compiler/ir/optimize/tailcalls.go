@@ -3,6 +3,7 @@ package optimize
 import (
 	"github.com/kode4food/ale/internal/compiler/encoder"
 	"github.com/kode4food/ale/internal/compiler/ir/visitor"
+	"github.com/kode4food/ale/internal/debug"
 	"github.com/kode4food/ale/internal/runtime/isa"
 	"github.com/kode4food/ale/internal/runtime/vm"
 )
@@ -57,4 +58,21 @@ func (m tailCallMapper) canTailCall(i isa.Instruction) (*vm.Closure, bool) {
 		return c, ok
 	}
 	return nil, true
+}
+
+func getCallArgCount(i isa.Instruction) isa.Operand {
+	switch i.Opcode() {
+	case isa.Call0:
+		return 0
+	case isa.Call1:
+		return 1
+	case isa.Call2:
+		return 2
+	case isa.Call3:
+		return 3
+	case isa.Call, isa.CallSelf:
+		return i.Operand()
+	default:
+		panic(debug.ProgrammerError("invalid call instruction matched"))
+	}
 }
