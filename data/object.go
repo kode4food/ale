@@ -262,8 +262,8 @@ func (o *Object) isIn(other *Object) bool {
 	return true
 }
 
-func (*Object) Type() ale.Type {
-	return types.BasicObject
+func (o *Object) Type() ale.Type {
+	return types.MakeLiteral(types.BasicObject, o)
 }
 
 func (o *Object) HashCode() uint64 {

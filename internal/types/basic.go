@@ -10,12 +10,12 @@ type (
 	// ID uniquely identifies a Type within a process
 	ID uint64
 
-	basic interface {
+	Basic interface {
 		ale.Type
 		ID() ID
 	}
 
-	Basic struct {
+	basic struct {
 		name string
 		id   ID
 	}
@@ -39,34 +39,34 @@ var (
 	idCounter atomic.Uint64
 )
 
-func MakeBasic(name string) ale.Type {
+func MakeBasic(name string) Basic {
 	return makeBasic(name)
 }
 
-func makeBasic(name string) *Basic {
-	return &Basic{
+func makeBasic(name string) *basic {
+	return &basic{
 		id:   ID(idCounter.Add(1)),
 		name: name,
 	}
 }
 
-func (b *Basic) ID() ID {
+func (b *basic) ID() ID {
 	return b.id
 }
 
-func (b *Basic) Name() string {
+func (b *basic) Name() string {
 	return b.name
 }
 
-func (b *Basic) Accepts(other ale.Type) bool {
-	if other, ok := other.(basic); ok {
+func (b *basic) Accepts(other ale.Type) bool {
+	if other, ok := other.(Basic); ok {
 		return b == other || b.id == other.ID()
 	}
 	return false
 }
 
-func (b *Basic) Equal(other ale.Type) bool {
-	if other, ok := other.(*Basic); ok {
+func (b *basic) Equal(other ale.Type) bool {
+	if other, ok := other.(*basic); ok {
 		return b == other || b.id == other.id && b.name == other.name
 	}
 	return false

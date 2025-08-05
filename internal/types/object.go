@@ -8,7 +8,7 @@ import (
 
 // Object describes a typed set of Key/Value Pairs
 type Object struct {
-	basic
+	Basic
 	key   ale.Type
 	value ale.Type
 }
@@ -17,7 +17,7 @@ type Object struct {
 // the provided types
 func MakeObject(key ale.Type, value ale.Type) ale.Type {
 	return &Object{
-		basic: BasicObject,
+		Basic: BasicObject,
 		key:   key,
 		value: value,
 	}
@@ -33,7 +33,7 @@ func (o *Object) Value() ale.Type {
 
 func (o *Object) Name() string {
 	return fmt.Sprintf("%s(%s->%s)",
-		o.basic.Name(), o.key.Name(), o.value.Name(),
+		o.Basic.Name(), o.key.Name(), o.value.Name(),
 	)
 }
 
@@ -47,7 +47,7 @@ func (o *Object) Accepts(other ale.Type) bool {
 func (o *Object) accepts(c *checker, other ale.Type) bool {
 	if other, ok := other.(*Object); ok {
 		return o == other ||
-			o.basic.Accepts(other.basic) &&
+			o.Basic.Accepts(other.Basic) &&
 				c.acceptsChild(o.key, other.Key()) &&
 				c.acceptsChild(o.value, other.Value())
 	}
@@ -57,7 +57,7 @@ func (o *Object) accepts(c *checker, other ale.Type) bool {
 func (o *Object) Equal(other ale.Type) bool {
 	if other, ok := other.(*Object); ok {
 		return o == other ||
-			o.basic.Equal(other.basic) &&
+			o.Basic.Equal(other.Basic) &&
 				o.key.Equal(other.key) &&
 				o.value.Equal(other.value)
 	}

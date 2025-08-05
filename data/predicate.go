@@ -30,11 +30,11 @@ func TypePredicateOf(f ale.Value, r ...ale.Value) *TypePredicate {
 }
 
 func (t *TypePredicate) Type() ale.Type {
-	return typePredicateType
+	return types.MakeLiteral(typePredicateType, t)
 }
 
-func (t *TypePredicate) Name() Name {
-	return Name(t.typ.Name())
+func (t *TypePredicate) String() string {
+	return t.typ.Name()
 }
 
 func (t *TypePredicate) Call(args ...ale.Value) ale.Value {

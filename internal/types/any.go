@@ -3,10 +3,10 @@ package types
 import "github.com/kode4food/ale"
 
 // Any accepts a Value of any other Type
-type Any struct{ *Basic }
+type Any struct{ *basic }
 
 var BasicAny = &Any{
-	Basic: makeBasic("any"),
+	basic: makeBasic("any"),
 }
 
 func (*Any) Accepts(ale.Type) bool {

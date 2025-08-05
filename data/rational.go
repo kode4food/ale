@@ -153,8 +153,8 @@ func (l Float) String() string {
 }
 
 // Type returns the Type for this Float Value
-func (Float) Type() ale.Type {
-	return types.BasicNumber
+func (l Float) Type() ale.Type {
+	return types.MakeLiteral(types.BasicNumber, l)
 }
 
 // HashCode returns a hash code for this Float
@@ -279,8 +279,8 @@ func (l *Ratio) String() string {
 }
 
 // Type returns the Type for this Ratio Value
-func (*Ratio) Type() ale.Type {
-	return types.BasicNumber
+func (l *Ratio) Type() ale.Type {
+	return types.MakeLiteral(types.BasicNumber, l)
 }
 
 // HashCode returns a hash code for this Ratio

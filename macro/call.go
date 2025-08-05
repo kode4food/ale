@@ -21,8 +21,8 @@ var (
 )
 
 // Type makes Call a typed value
-func (Call) Type() ale.Type {
-	return CallType
+func (c Call) Type() ale.Type {
+	return types.MakeLiteral(CallType, c)
 }
 
 // Equal compares this Call to another for equality

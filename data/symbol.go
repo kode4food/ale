@@ -169,8 +169,8 @@ func (l Local) Equal(other ale.Value) bool {
 	return l == other
 }
 
-func (Local) Type() ale.Type {
-	return types.BasicSymbol
+func (l Local) Type() ale.Type {
+	return types.MakeLiteral(types.BasicSymbol, l)
 }
 
 func (l Local) String() string {
@@ -201,8 +201,8 @@ func (s qualified) Equal(other ale.Value) bool {
 	return s == other
 }
 
-func (qualified) Type() ale.Type {
-	return types.BasicSymbol
+func (s qualified) Type() ale.Type {
+	return types.MakeLiteral(types.BasicSymbol, s)
 }
 
 func (s qualified) String() string {

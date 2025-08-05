@@ -196,8 +196,8 @@ func (l Integer) String() string {
 }
 
 // Type returns the Type for this Integer Value
-func (Integer) Type() ale.Type {
-	return types.BasicNumber
+func (l Integer) Type() ale.Type {
+	return types.MakeLiteral(types.BasicNumber, l)
 }
 
 func (l Integer) float() Float {
@@ -325,8 +325,8 @@ func (l *BigInt) String() string {
 }
 
 // Type returns the Type for this BigInt Value
-func (*BigInt) Type() ale.Type {
-	return types.BasicNumber
+func (l *BigInt) Type() ale.Type {
+	return types.MakeLiteral(types.BasicNumber, l)
 }
 
 // HashCode returns a hash code for this BigInt

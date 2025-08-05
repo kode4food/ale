@@ -14,7 +14,8 @@ func TestMacroCall(t *testing.T) {
 	d, ok := as.MustEval(`define`).(macro.Call)
 	as.True(ok)
 	if as.NotNil(d) {
-		as.Equal(macro.CallType, d.Type())
+		as.False(d.Type().Accepts(macro.CallType))
+		as.True(macro.CallType.Accepts(d.Type()))
 		as.False(d.Equal(d))
 		as.Contains(":type macro", d)
 	}

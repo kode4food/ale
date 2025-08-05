@@ -16,7 +16,7 @@ func TestKeyword(t *testing.T) {
 	as.String("hello", string(k1))
 	as.String(":hello", k1)
 
-	as.True(types.BasicKeyword.Equal(k1.Type()))
+	as.True(types.BasicKeyword.Accepts(k1.Type()))
 }
 
 func TestKeywordCaller(t *testing.T) {

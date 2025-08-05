@@ -227,7 +227,7 @@ func (l *List) Type() ale.Type {
 	if l == nil {
 		return types.BasicNull
 	}
-	return types.BasicList
+	return types.MakeLiteral(types.BasicList, l)
 }
 
 func (l *List) HashCode() uint64 {

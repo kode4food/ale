@@ -149,7 +149,7 @@ func (i *Include) Equal(other ale.Value) bool {
 }
 
 func (i *Include) Type() ale.Type {
-	return includeType
+	return types.MakeLiteral(includeType, i)
 }
 
 func ExhaustiveMatcher(all ...Matchers) Matcher {

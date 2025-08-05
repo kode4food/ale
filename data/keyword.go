@@ -50,8 +50,8 @@ func (k Keyword) String() string {
 }
 
 // Type returns the Type for this Keyword Value
-func (Keyword) Type() ale.Type {
-	return types.BasicKeyword
+func (k Keyword) Type() ale.Type {
+	return types.MakeLiteral(types.BasicKeyword, k)
 }
 
 // HashCode returns the hash code for this Keyword

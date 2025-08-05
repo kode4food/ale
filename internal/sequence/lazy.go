@@ -84,7 +84,7 @@ func (l *lazySequence) Prepend(v ale.Value) data.Sequence {
 }
 
 func (l *lazySequence) Type() ale.Type {
-	return lazySequenceType
+	return types.MakeLiteral(lazySequenceType, l)
 }
 
 func (l *lazySequence) Equal(other ale.Value) bool {

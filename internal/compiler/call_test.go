@@ -13,7 +13,7 @@ func TestCall(t *testing.T) {
 	as := assert.New(t)
 	f1 := func(encoder.Encoder, ...ale.Value) error { return nil }
 	c1 := compiler.Call(f1)
-	as.String("special", c1.Type().Name())
-	as.Contains(`:type special`, c1)
-	as.Contains(`:instance `, c1)
+	as.True(compiler.CallType.Accepts(c1.Type()))
+	as.False(c1.Type().Accepts(compiler.CallType))
+	as.Contains(`special(0x`, c1)
 }

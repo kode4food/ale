@@ -48,7 +48,7 @@ func WrapFileSystem(fileSystem fs.FS) *FileSystem {
 }
 
 func (f *FileSystem) Type() ale.Type {
-	return fileSystemType
+	return types.MakeLiteral(fileSystemType, f)
 }
 
 // Get returns the value associated with the specified key, if it exists.

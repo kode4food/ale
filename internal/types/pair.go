@@ -4,7 +4,7 @@ import "github.com/kode4food/ale"
 
 // Pair describes a pair of typed Values
 type Pair struct {
-	basic
+	Basic
 	car  ale.Type
 	cdr  ale.Type
 	name string
@@ -14,7 +14,7 @@ type Pair struct {
 // elements of the provided elem Type
 func MakeCons(left, right ale.Type) ale.Type {
 	return &Pair{
-		basic: BasicCons,
+		Basic: BasicCons,
 		name:  BasicCons.Name(),
 		car:   left,
 		cdr:   right,
@@ -43,7 +43,7 @@ func (p *Pair) Accepts(other ale.Type) bool {
 func (p *Pair) accepts(c *checker, other ale.Type) bool {
 	if other, ok := other.(*Pair); ok {
 		return p == other ||
-			p.basic.Accepts(other.basic) &&
+			p.Basic.Accepts(other.Basic) &&
 				c.acceptsChild(p.car, other.Car()) &&
 				c.acceptsChild(p.cdr, other.Cdr())
 	}
@@ -56,7 +56,7 @@ func (p *Pair) Equal(other ale.Type) bool {
 			return true
 		}
 		return p.name == other.name &&
-			p.basic.Equal(other.basic) &&
+			p.Basic.Equal(other.Basic) &&
 			p.car.Equal(other.car) &&
 			p.cdr.Equal(other.cdr)
 	}

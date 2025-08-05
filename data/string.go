@@ -199,8 +199,8 @@ func (s String) String() string {
 }
 
 // Type returns the Type for this String Value
-func (String) Type() ale.Type {
-	return types.BasicString
+func (s String) Type() ale.Type {
+	return types.MakeLiteral(types.BasicString, s)
 }
 
 // HashCode returns a hash code for the String

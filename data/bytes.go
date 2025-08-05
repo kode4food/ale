@@ -164,8 +164,8 @@ func (b Bytes) String() string {
 	return buf.String()
 }
 
-func (Bytes) Type() ale.Type {
-	return types.BasicBytes
+func (b Bytes) Type() ale.Type {
+	return types.MakeLiteral(types.BasicBytes, b)
 }
 
 func (b Bytes) HashCode() uint64 {

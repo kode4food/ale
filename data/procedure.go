@@ -54,7 +54,7 @@ func (p *procedure) Call(args ...ale.Value) ale.Value {
 }
 
 func (p *procedure) Type() ale.Type {
-	return types.BasicProcedure
+	return types.MakeLiteral(types.BasicProcedure, p)
 }
 
 func (p *procedure) Equal(other ale.Value) bool {

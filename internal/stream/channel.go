@@ -53,7 +53,7 @@ func NewChannel(size int) *Channel {
 }
 
 func (c *Channel) Type() ale.Type {
-	return chanType
+	return types.MakeLiteral(chanType, c)
 }
 
 func (c *Channel) Get(key ale.Value) (ale.Value, bool) {
@@ -145,7 +145,7 @@ func (c *chanSequence) Prepend(v ale.Value) data.Sequence {
 }
 
 func (c *chanSequence) Type() ale.Type {
-	return chanSequenceType
+	return types.MakeLiteral(chanSequenceType, c)
 }
 
 func (c *chanSequence) Equal(other ale.Value) bool {

@@ -13,7 +13,7 @@ type (
 	// application. Such application may expose multiple Signatures to
 	// describe the various ways that the type can be applied
 	Applicable struct {
-		basic
+		Basic
 		signatures
 	}
 
@@ -32,7 +32,7 @@ type (
 func MakeApplicable(first Signature, rest ...Signature) ale.Type {
 	all := append(signatures{first}, rest...)
 	return &Applicable{
-		basic:      BasicProcedure,
+		Basic:      BasicProcedure,
 		signatures: all,
 	}
 }
@@ -42,7 +42,7 @@ func (a *Applicable) Signatures() []Signature {
 }
 
 func (a *Applicable) Name() string {
-	return fmt.Sprintf("%s(%s)", a.basic.Name(), a.name())
+	return fmt.Sprintf("%s(%s)", a.Basic.Name(), a.name())
 }
 
 func (a *Applicable) Accepts(other ale.Type) bool {
@@ -71,7 +71,7 @@ func (a *Applicable) accepts(c *checker, other ale.Type) bool {
 func (a *Applicable) Equal(other ale.Type) bool {
 	if other, ok := other.(*Applicable); ok {
 		return a == other ||
-			a.basic.Equal(other.basic) &&
+			a.Basic.Equal(other.Basic) &&
 				a.equal(other.signatures)
 	}
 	return false

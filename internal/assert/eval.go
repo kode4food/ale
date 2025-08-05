@@ -1,6 +1,8 @@
 package assert
 
 import (
+	"fmt"
+
 	"github.com/kode4food/ale"
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/eval"
@@ -25,7 +27,9 @@ func (w *Wrapper) Eval(src string) (ale.Value, error) {
 // MustEvalTo will evaluate source code and test for an expected result
 func (w *Wrapper) MustEvalTo(src string, expect ale.Value) {
 	w.Helper()
-	w.Equal(expect, w.MustEval(src))
+	res := w.MustEval(src)
+	fmt.Println(res)
+	w.Equal(expect, res)
 }
 
 func (w *Wrapper) ErrorWith(src string, err any) {

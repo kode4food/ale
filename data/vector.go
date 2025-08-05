@@ -142,8 +142,8 @@ func (v Vector) String() string {
 	return b.String()
 }
 
-func (Vector) Type() ale.Type {
-	return types.BasicVector
+func (v Vector) Type() ale.Type {
+	return types.MakeLiteral(types.BasicVector, v)
 }
 
 func (v Vector) HashCode() uint64 {

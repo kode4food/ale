@@ -54,7 +54,7 @@ func TestStr(t *testing.T) {
 	as.String("再", s4.Car())
 	as.String("见!", s4.Cdr())
 
-	as.True(types.BasicString.Equal(s4.Type()))
+	as.True(types.BasicString.Accepts(s4.Type()))
 }
 
 func TestEmptyStr(t *testing.T) {

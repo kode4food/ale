@@ -66,13 +66,13 @@ func (t typeList) hasAny() bool {
 	return false
 }
 
-func (t typeList) basicType() (basic, bool) {
-	f, ok := t[0].(basic)
+func (t typeList) basicType() (Basic, bool) {
+	f, ok := t[0].(Basic)
 	if !ok {
 		return nil, false
 	}
 	for _, n := range t[1:] {
-		if n, ok := n.(basic); ok && f.ID() == n.ID() {
+		if n, ok := n.(Basic); ok && f.ID() == n.ID() {
 			continue
 		}
 		return nil, false

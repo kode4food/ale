@@ -54,8 +54,8 @@ func (b Bool) String() string {
 }
 
 // Type returns the Type for this Bool Value
-func (Bool) Type() ale.Type {
-	return types.BasicBoolean
+func (b Bool) Type() ale.Type {
+	return types.MakeLiteral(types.BasicBoolean, b)
 }
 
 // HashCode returns the hash code for this Bool

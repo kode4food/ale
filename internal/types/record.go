@@ -13,7 +13,7 @@ type (
 	// Record describes an Object that allows a fixed set of fields, each of
 	// which has a keyword
 	Record struct {
-		basic
+		Basic
 		fields
 	}
 
@@ -30,7 +30,7 @@ type (
 // entries, each being identified by a BasicKeyword and having a specified Type
 func MakeRecord(fields ...Field) ale.Type {
 	return &Record{
-		basic:  BasicObject,
+		Basic:  BasicObject,
 		fields: fields,
 	}
 }
@@ -76,7 +76,7 @@ func (r *Record) accepts(c *checker, other ale.Type) bool {
 
 func (r *Record) Equal(other ale.Type) bool {
 	if other, ok := other.(*Record); ok {
-		return r == other || r.basic.Equal(other.basic) && r.equal(other.fields)
+		return r == other || r.Basic.Equal(other.Basic) && r.equal(other.fields)
 	}
 	return false
 }

@@ -53,7 +53,7 @@ func (p *Procedure) CheckArity(int) error {
 
 // Type makes Procedure a typed value
 func (p *Procedure) Type() ale.Type {
-	return types.BasicProcedure
+	return types.MakeLiteral(types.BasicProcedure, p)
 }
 
 func (p *Procedure) Get(key ale.Value) (ale.Value, bool) {

@@ -9,7 +9,7 @@ import (
 
 // Union describes a Type that can accept any of a set of Types
 type Union struct {
-	basic
+	Basic
 	name    string
 	options typeList
 }
@@ -25,13 +25,13 @@ func MakeUnion(first ale.Type, rest ...ale.Type) ale.Type {
 		return BasicAny
 	}
 	return &Union{
-		basic:   unionBasicType(all),
+		Basic:   unionBasicType(all),
 		name:    fmt.Sprintf("union(%s)", all.sorted().name()),
 		options: all,
 	}
 }
 
-func unionBasicType(t typeList) basic {
+func unionBasicType(t typeList) Basic {
 	if res, ok := t.basicType(); ok {
 		return res
 	}
@@ -68,7 +68,7 @@ func (u *Union) Equal(other ale.Type) bool {
 	if other, ok := other.(*Union); ok {
 		return u == other ||
 			u.name == other.name &&
-				u.basic.Equal(other.basic) &&
+				u.Basic.Equal(other.Basic) &&
 				u.options.equal(other.options)
 	}
 	return false

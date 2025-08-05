@@ -18,16 +18,16 @@ func MakeVectorOf(elem ale.Type) ale.Type {
 	return sequenceOf(BasicVector, elem)
 }
 
-func sequenceOf(base *Basic, elem ale.Type) ale.Type {
+func sequenceOf(base *basic, elem ale.Type) ale.Type {
 	name := fmt.Sprintf("%s(%s)", base.Name(), elem.Name())
 	first := &Pair{
-		basic: base,
+		Basic: base,
 		name:  name,
 		car:   elem,
 	}
 	rest := &Union{
 		name:    name,
-		basic:   base,
+		Basic:   base,
 		options: typeList{first, BasicNull},
 	}
 	first.cdr = rest

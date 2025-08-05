@@ -94,8 +94,8 @@ func (c *Cons) String() string {
 	return buf.String()
 }
 
-func (*Cons) Type() ale.Type {
-	return types.BasicCons
+func (c *Cons) Type() ale.Type {
+	return types.MakeLiteral(types.BasicCons, c)
 }
 
 // HashCode returns the hash code for this Cons

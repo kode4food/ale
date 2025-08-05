@@ -62,7 +62,7 @@ func (p *Promise) IsResolved() bool {
 }
 
 func (p *Promise) Type() ale.Type {
-	return PromiseType
+	return types.MakeLiteral(PromiseType, p)
 }
 
 func (p *Promise) Equal(other ale.Value) bool {
