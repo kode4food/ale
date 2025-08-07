@@ -2,7 +2,7 @@ DIST_DIR ?= ./dist
 EXE = $(DIST_DIR)/ale
 GO ?= go
 
-.PHONY: all install build test generate
+.PHONY: all install build test generate clean
 
 all: build
 
