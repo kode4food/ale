@@ -12,6 +12,12 @@ Make sure your `GOPATH` is set, then run `go install` to install the command lin
 go install github.com/kode4food/ale/cmd/ale@latest
 ```
 
+You can also install it from the cloned repository using make.
+
+```bash
+make install
+```
+
 ## How To Run A Source File
 
 Once you've installed the package, you can run it from `GOPATH/bin` like so:

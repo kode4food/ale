@@ -20,7 +20,9 @@ _cgo_export.*
 
 _testmain.go
 
-./ale
+ale
+./dist/
+
 *.exe
 *.test
 *.prof

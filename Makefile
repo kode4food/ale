@@ -1,14 +1,27 @@
-all: install
+DIST_DIR ?= ./dist
+EXE = $(DIST_DIR)/ale
+GO ?= go
 
-install: build test
-	go install github.com/kode4food/ale/cmd/ale
+.PHONY: all install build test generate
 
-test: build
-	go test ./...
-	go vet ./...
-	go run honnef.co/go/tools/cmd/staticcheck ./...
+all: build
 
-build: generate
+install: test
+	$(GO) install github.com/kode4food/ale/cmd/ale
+
+build: test
+	@mkdir -p $(DIST_DIR)
+	@rm -f $(EXE)
+	$(GO) build -o $(EXE) ./cmd/ale
+
+test: generate
+	$(GO) test ./...
+	$(GO) vet ./...
+	$(GO) run honnef.co/go/tools/cmd/staticcheck ./...
 
 generate:
-	go generate ./...
+	$(GO) generate ./...
+
+clean:
+	@rm -f $(EXE)
+	@rmdir $(DIST_DIR)
