@@ -259,7 +259,7 @@ func makeDottedList(vals ...ale.Value) ale.Value {
 	return res
 }
 
-func getValueHandlers() [lex.EOF + 1]handler {
+func getValueHandlers() *[lex.EOF + 1]handler {
 	handlersOnce.Do(func() {
 		handlers[lex.QuoteMarker] = makePrefixedHandler(quoteSym)
 		handlers[lex.SyntaxMarker] = makePrefixedHandler(syntaxSym)
@@ -276,7 +276,7 @@ func getValueHandlers() [lex.EOF + 1]handler {
 		handlers[lex.ObjectEnd] = makeErrorHandler(ErrUnmatchedObjectEnd)
 		handlers[lex.Dot] = makeErrorHandler(ErrUnexpectedDot)
 	})
-	return handlers
+	return &handlers
 }
 
 func listStartHandler(p *parser, t *lex.Token) (ale.Value, error) {
