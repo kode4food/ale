@@ -3,6 +3,7 @@ package parse
 import (
 	"errors"
 	"fmt"
+	"sync"
 
 	"github.com/kode4food/ale"
 	"github.com/kode4food/ale/data"
@@ -11,14 +12,18 @@ import (
 	"github.com/kode4food/ale/internal/lang/lex"
 )
 
-// parser is a stateful iteration interface for a Token stream that is piloted
-// by the FromString function and exposed as a LazySequence
-type parser struct {
-	ns       env.Namespace
-	tokenize Tokenizer
-	seq      data.Sequence
-	token    *lex.Token
-}
+type (
+	// parser is a stateful iteration interface for a Token stream that is piloted
+	// by the FromString function and exposed as a LazySequence
+	parser struct {
+		ns       env.Namespace
+		tokenize Tokenizer
+		seq      data.Sequence
+		token    *lex.Token
+	}
+
+	handler func(*parser, *lex.Token) (ale.Value, error)
+)
 
 const (
 	// ErrPrefixedNotPaired is raised when the parser encounters the end of the
@@ -77,6 +82,9 @@ var (
 		lex.VectorEnd: ErrVectorNotClosed,
 		lex.ObjectEnd: ErrObjectNotClosed,
 	}
+
+	handlers     [lex.EOF + 1]handler
+	handlersOnce sync.Once
 )
 
 func (p *parser) nextValue() (ale.Value, bool, error) {
@@ -116,38 +124,11 @@ func (p *parser) maybeWrap(err error) error {
 }
 
 func (p *parser) value(t *lex.Token) (ale.Value, error) {
-	switch t.Type() {
-	case lex.QuoteMarker:
-		return p.prefixed(quoteSym)
-	case lex.SyntaxMarker:
-		return p.prefixed(syntaxSym)
-	case lex.UnquoteMarker:
-		return p.prefixed(unquoteSym)
-	case lex.SpliceMarker:
-		return p.prefixed(splicingSym)
-	case lex.ListStart:
-		return p.processInclude(p.list())
-	case lex.BytesStart:
-		return p.bytes()
-	case lex.VectorStart:
-		return p.vector()
-	case lex.ObjectStart:
-		return p.object()
-	case lex.Keyword:
-		return p.keyword(), nil
-	case lex.Identifier:
-		return p.identifier()
-	case lex.ListEnd:
-		return nil, p.error(ErrUnmatchedListEnd)
-	case lex.VectorEnd:
-		return nil, p.error(ErrUnmatchedVectorEnd)
-	case lex.ObjectEnd:
-		return nil, p.error(ErrUnmatchedObjectEnd)
-	case lex.Dot:
-		return nil, p.error(ErrUnexpectedDot)
-	default:
-		return t.Value(), nil
+	handlers := getValueHandlers()
+	if handler := handlers[t.Type()]; handler != nil {
+		return handler(p, t)
 	}
+	return t.Value(), nil
 }
 
 func (p *parser) prefixed(s data.Symbol) (ale.Value, error) {
@@ -250,9 +231,9 @@ func (p *parser) errorf(text string, a ...any) error {
 	return fmt.Errorf(text, a...)
 }
 
-func (p *parser) keyword() ale.Value {
+func (p *parser) keyword() (ale.Value, error) {
 	n := p.token.Value().(data.String)
-	return data.Keyword(n[1:])
+	return data.Keyword(n[1:]), nil
 }
 
 func (p *parser) identifier() (ale.Value, error) {
@@ -276,4 +257,50 @@ func makeDottedList(vals ...ale.Value) ale.Value {
 		res = data.NewCons(vals[i], res)
 	}
 	return res
+}
+
+func getValueHandlers() [lex.EOF + 1]handler {
+	handlersOnce.Do(func() {
+		handlers[lex.QuoteMarker] = makePrefixedHandler(quoteSym)
+		handlers[lex.SyntaxMarker] = makePrefixedHandler(syntaxSym)
+		handlers[lex.UnquoteMarker] = makePrefixedHandler(unquoteSym)
+		handlers[lex.SpliceMarker] = makePrefixedHandler(splicingSym)
+		handlers[lex.ListStart] = listStartHandler
+		handlers[lex.BytesStart] = makeMethodHandler((*parser).bytes)
+		handlers[lex.VectorStart] = makeMethodHandler((*parser).vector)
+		handlers[lex.ObjectStart] = makeMethodHandler((*parser).object)
+		handlers[lex.Keyword] = makeMethodHandler((*parser).keyword)
+		handlers[lex.Identifier] = makeMethodHandler((*parser).identifier)
+		handlers[lex.ListEnd] = makeErrorHandler(ErrUnmatchedListEnd)
+		handlers[lex.VectorEnd] = makeErrorHandler(ErrUnmatchedVectorEnd)
+		handlers[lex.ObjectEnd] = makeErrorHandler(ErrUnmatchedObjectEnd)
+		handlers[lex.Dot] = makeErrorHandler(ErrUnexpectedDot)
+	})
+	return handlers
+}
+
+func listStartHandler(p *parser, t *lex.Token) (ale.Value, error) {
+	res, err := p.list()
+	if err != nil {
+		return nil, err
+	}
+	return p.processInclude(res)
+}
+
+func makePrefixedHandler(s data.Symbol) handler {
+	return func(p *parser, t *lex.Token) (ale.Value, error) {
+		return p.prefixed(s)
+	}
+}
+
+func makeMethodHandler(method func(*parser) (ale.Value, error)) handler {
+	return func(p *parser, t *lex.Token) (ale.Value, error) {
+		return method(p)
+	}
+}
+
+func makeErrorHandler(msg string) handler {
+	return func(p *parser, t *lex.Token) (ale.Value, error) {
+		return nil, p.error(msg)
+	}
 }

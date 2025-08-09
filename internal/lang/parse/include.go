@@ -17,10 +17,7 @@ const (
 	ErrExpectedFileSystem = "expected file system, got: %s"
 )
 
-func (p *parser) processInclude(v ale.Value, err error) (ale.Value, error) {
-	if err != nil {
-		return v, err
-	}
+func (p *parser) processInclude(v ale.Value) (ale.Value, error) {
 	path, ok, err := parseInclude(v)
 	if err != nil {
 		return data.Null, err
