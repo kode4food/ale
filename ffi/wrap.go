@@ -85,7 +85,7 @@ func makeWrappedType(t reflect.Type) (Wrapper, error) {
 		return wrapDataValue(t)
 	}
 
-	handlers := getHandlers()
+	handlers := getKindHandlers()
 	if handler := handlers[t.Kind()]; handler != nil {
 		return handler(t)
 	}
@@ -112,7 +112,7 @@ func (c *typeCache) put(t reflect.Type, w Wrapper) {
 	c.entries[t] = w
 }
 
-func getHandlers() *[maxkind.Value + 1]handler {
+func getKindHandlers() *[maxkind.Value + 1]handler {
 	handlersOnce.Do(func() {
 		handlers[reflect.Bool] = makeHandler(boolWrapper{})
 		handlers[reflect.Int] = makeHandler(intWrapper[int]{})
