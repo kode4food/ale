@@ -5,7 +5,7 @@ go 1.24.6
 require (
 	github.com/chzyer/readline v1.5.1
 	github.com/google/uuid v1.6.0
-	github.com/kode4food/gen-maxkind v0.1.1
+	github.com/kode4food/gen-maxkind v0.1.2
 	github.com/stretchr/testify v1.10.0
 	golang.org/x/tools v0.36.0
 	gopkg.in/yaml.v3 v3.0.1
