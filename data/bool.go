@@ -31,7 +31,6 @@ var (
 	} = False
 )
 
-// Call returns the Bool value regardless of the arguments passed
 func (b Bool) Call(...ale.Value) ale.Value {
 	return b
 }
@@ -40,12 +39,10 @@ func (b Bool) CheckArity(int) error {
 	return nil
 }
 
-// Equal compares this Bool to another for equality
 func (b Bool) Equal(other ale.Value) bool {
 	return b == other
 }
 
-// String converts this Value into a string
 func (b Bool) String() string {
 	if b {
 		return lang.TrueLiteral
@@ -53,12 +50,10 @@ func (b Bool) String() string {
 	return lang.FalseLiteral
 }
 
-// Type returns the Type for this Bool Value
 func (b Bool) Type() ale.Type {
 	return types.MakeLiteral(types.BasicBoolean, b)
 }
 
-// HashCode returns the hash code for this Bool
 func (b Bool) HashCode() uint64 {
 	if b {
 		return trueHash

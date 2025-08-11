@@ -15,7 +15,10 @@ import (
 type (
 	// Wrapper can marshal a native Go value to and from a data.Value
 	Wrapper interface {
+		// Wrap converts a native Go value to an ale.Value
 		Wrap(*Context, reflect.Value) (ale.Value, error)
+
+		// Unwrap converts an ale.Value back to a native Go value
 		Unwrap(ale.Value) (reflect.Value, error)
 	}
 

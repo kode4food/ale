@@ -8,22 +8,35 @@ import (
 type (
 	// A Node is returned when a Branched analysis is performed
 	Node interface {
+		// Code returns the instructions for this node
 		Code() isa.Instructions
+
+		// isModified returns whether this node has been modified
 		isModified() bool
 	}
 
 	// Instructions represent a series of non-branching instructions
 	Instructions interface {
 		Node
+
+		// Set updates the instructions for this node
 		Set(isa.Instructions)
 	}
 
 	// Branches represent a branching junction
 	Branches interface {
 		Node
+
+		// Prologue returns the instructions before the branching
 		Prologue() Instructions
+
+		// ThenBranch returns the then branch node
 		ThenBranch() Node
+
+		// ElseBranch returns the else branch node
 		ElseBranch() Node
+
+		// Epilogue returns the instructions after the branching
 		Epilogue() Node
 	}
 

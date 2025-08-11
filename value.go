@@ -3,6 +3,7 @@ package ale
 type (
 	// Value is the generic interface for all data
 	Value interface {
+		// Equal compares this Value to another for equality
 		Equal(Value) bool
 	}
 
@@ -22,6 +23,8 @@ type (
 
 	Typed interface {
 		Value
+
+		// Type returns the Type for this Value
 		Type() Type
 	}
 )

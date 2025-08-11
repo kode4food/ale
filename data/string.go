@@ -57,7 +57,6 @@ var (
 	} = EmptyString
 )
 
-// Car returns the first character of the String
 func (s String) Car() ale.Value {
 	if r, w := utf8.DecodeRuneInString(string(s)); w > 0 {
 		return String(r)
@@ -65,7 +64,6 @@ func (s String) Car() ale.Value {
 	return Null
 }
 
-// Cdr returns a String of all characters after the first
 func (s String) Cdr() ale.Value {
 	if _, w := utf8.DecodeRuneInString(string(s)); w > 0 {
 		return s[w:]
@@ -73,7 +71,6 @@ func (s String) Cdr() ale.Value {
 	return EmptyString
 }
 
-// Split returns the split form (First and Rest) of the Sequence
 func (s String) Split() (ale.Value, Sequence, bool) {
 	if r, w := utf8.DecodeRuneInString(string(s)); w > 0 {
 		return String(r), s[w:], true
@@ -81,17 +78,14 @@ func (s String) Split() (ale.Value, Sequence, bool) {
 	return Null, Null, false
 }
 
-// IsEmpty returns whether this sequence is empty
 func (s String) IsEmpty() bool {
 	return len(s) == 0
 }
 
-// Count returns the length of the String
 func (s String) Count() int {
 	return utf8.RuneCountInString(string(s))
 }
 
-// ElementAt returns the Character at the indexed position in the String
 func (s String) ElementAt(index int) (ale.Value, bool) {
 	if index < 0 {
 		return Null, false
@@ -188,22 +182,18 @@ func (s String) splitAt(idx int) (String, String, bool) {
 	return s[:r], s[r:], true
 }
 
-// Equal compares this String to another for equality
 func (s String) Equal(other ale.Value) bool {
 	return s == other
 }
 
-// String converts this Value into a string
 func (s String) String() string {
 	return string(s)
 }
 
-// Type returns the Type for this String Value
 func (s String) Type() ale.Type {
 	return types.MakeLiteral(types.BasicString, s)
 }
 
-// HashCode returns a hash code for the String
 func (s String) HashCode() uint64 {
 	return strSalt ^ HashString(string(s))
 }

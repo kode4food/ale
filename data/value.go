@@ -9,6 +9,8 @@ type (
 	// Named is the generic interface for values that are named
 	Named interface {
 		ale.Value
+
+		// Name returns the name of the value
 		Name() Name
 	}
 
@@ -17,6 +19,8 @@ type (
 	// Mapped is the interface for Values that have accessible properties
 	Mapped interface {
 		ale.Value
+
+		// Get returns the value associated with the given key
 		Get(ale.Value) (ale.Value, bool)
 	}
 )

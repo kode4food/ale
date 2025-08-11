@@ -29,7 +29,7 @@ const (
 	// Namespace entry that has already been bound
 	ErrNameAlreadyBound = "name is already bound in namespace: %s"
 
-	// ErrNameNotBound is raised when an attempt is mode to retrieve a value
+	// ErrNameNotBound is raised when an attempt is made to retrieve a value
 	// from a Namespace that hasn't been bound
 	ErrNameNotBound = "name is not bound in namespace: %s"
 )

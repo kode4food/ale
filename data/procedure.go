@@ -16,7 +16,11 @@ type (
 	// Procedure is any Value that provides a calling interface
 	Procedure interface {
 		ale.Typed
+
+		// Call invokes this Procedure with the provided arguments
 		Call(...ale.Value) ale.Value
+
+		// CheckArity performs a compile-time arity check
 		CheckArity(int) error
 	}
 

@@ -58,7 +58,6 @@ func ParseFloat(s string) (Number, error) {
 	return Float(res), nil
 }
 
-// Cmp compares this Float to another Number
 func (l Float) Cmp(r Number) Comparison {
 	if math.IsNaN(float64(l)) {
 		return Incomparable
@@ -74,7 +73,6 @@ func (l Float) Cmp(r Number) Comparison {
 	return Comparison(cmp.Compare(l, rf))
 }
 
-// Add adds this Float to another Number
 func (l Float) Add(r Number) Number {
 	if rf, ok := r.(Float); ok {
 		return l + rf
@@ -83,7 +81,6 @@ func (l Float) Add(r Number) Number {
 	return pl.Add(pr)
 }
 
-// Sub subtracts another Number from this Float
 func (l Float) Sub(r Number) Number {
 	if rf, ok := r.(Float); ok {
 		return l - rf
@@ -92,7 +89,6 @@ func (l Float) Sub(r Number) Number {
 	return pl.Sub(pr)
 }
 
-// Mul multiplies this Float by another Number
 func (l Float) Mul(r Number) Number {
 	if rf, ok := r.(Float); ok {
 		return l * rf
@@ -101,7 +97,6 @@ func (l Float) Mul(r Number) Number {
 	return pl.Mul(pr)
 }
 
-// Div divides this Float by another Number
 func (l Float) Div(r Number) Number {
 	if rf, ok := r.(Float); ok {
 		return l / rf
@@ -110,7 +105,6 @@ func (l Float) Div(r Number) Number {
 	return pl.Div(pr)
 }
 
-// Mod calculates the remainder of dividing this Float by another Number
 func (l Float) Mod(r Number) Number {
 	if rf, ok := r.(Float); ok {
 		res := Float(math.Mod(float64(l), float64(rf)))
@@ -123,27 +117,22 @@ func (l Float) Mod(r Number) Number {
 	return pl.Mod(pr)
 }
 
-// IsNaN returns whether this Float is not a number
 func (l Float) IsNaN() bool {
 	return math.IsNaN(float64(l))
 }
 
-// IsPosInf returns whether this Float represents positive infinity
 func (l Float) IsPosInf() bool {
 	return math.IsInf(float64(l), 1)
 }
 
-// IsNegInf returns whether this Float represents negative infinity
 func (l Float) IsNegInf() bool {
 	return math.IsInf(float64(l), -1)
 }
 
-// Equal compares this Float to another for equality
 func (l Float) Equal(r ale.Value) bool {
 	return l == r
 }
 
-// String converts this Float to a string
 func (l Float) String() string {
 	i := int64(l)
 	if Float(i) == l {
@@ -152,12 +141,10 @@ func (l Float) String() string {
 	return strings.ToLower(fmt.Sprintf("%g", l))
 }
 
-// Type returns the Type for this Float Value
 func (l Float) Type() ale.Type {
 	return types.MakeLiteral(types.BasicNumber, l)
 }
 
-// HashCode returns a hash code for this Float
 func (l Float) HashCode() uint64 {
 	return ratSalt ^ uint64(l)
 }
@@ -170,7 +157,6 @@ func ParseRatio(s string) (Number, error) {
 	return nil, fmt.Errorf(ErrExpectedRatio, s)
 }
 
-// Cmp compares this Ratio to another Number
 func (l *Ratio) Cmp(r Number) Comparison {
 	if rr, ok := r.(*Ratio); ok {
 		lb := (*big.Rat)(l)
@@ -181,7 +167,6 @@ func (l *Ratio) Cmp(r Number) Comparison {
 	return pl.Cmp(pr)
 }
 
-// Add adds this Ratio to another Number
 func (l *Ratio) Add(r Number) Number {
 	if rr, ok := r.(*Ratio); ok {
 		lb := (*big.Rat)(l)
@@ -193,7 +178,6 @@ func (l *Ratio) Add(r Number) Number {
 	return pl.Add(pr)
 }
 
-// Sub subtracts another Number from this Ratio
 func (l *Ratio) Sub(r Number) Number {
 	if rr, ok := r.(*Ratio); ok {
 		lb := (*big.Rat)(l)
@@ -205,7 +189,6 @@ func (l *Ratio) Sub(r Number) Number {
 	return pl.Sub(pr)
 }
 
-// Mul multiplies this Ratio by another Number
 func (l *Ratio) Mul(r Number) Number {
 	if rr, ok := r.(*Ratio); ok {
 		lb := (*big.Rat)(l)
@@ -217,7 +200,6 @@ func (l *Ratio) Mul(r Number) Number {
 	return pl.Mul(pr)
 }
 
-// Div divides this Ratio by another Number
 func (l *Ratio) Div(r Number) Number {
 	if rr, ok := r.(*Ratio); ok {
 		lb := (*big.Rat)(l)
@@ -229,7 +211,6 @@ func (l *Ratio) Div(r Number) Number {
 	return pl.Div(pr)
 }
 
-// Mod calculates the remainder of dividing this Ratio by another Number
 func (l *Ratio) Mod(r Number) Number {
 	if rr, ok := r.(*Ratio); ok {
 		lb := (*big.Rat)(l)
@@ -245,22 +226,18 @@ func (l *Ratio) Mod(r Number) Number {
 	return pl.Mod(pr)
 }
 
-// IsNaN returns whether this Ratio is not a number
 func (*Ratio) IsNaN() bool {
 	return false
 }
 
-// IsPosInf returns whether this Ratio represents positive infinity
 func (*Ratio) IsPosInf() bool {
 	return false
 }
 
-// IsNegInf returns whether this Ratio represents negative infinity
 func (*Ratio) IsNegInf() bool {
 	return false
 }
 
-// Equal compares this Ratio to another for equality
 func (l *Ratio) Equal(r ale.Value) bool {
 	if r, ok := r.(*Ratio); ok {
 		if l == r {
@@ -273,17 +250,14 @@ func (l *Ratio) Equal(r ale.Value) bool {
 	return false
 }
 
-// String converts this Ratio to a string
 func (l *Ratio) String() string {
 	return (*big.Rat)(l).String()
 }
 
-// Type returns the Type for this Ratio Value
 func (l *Ratio) Type() ale.Type {
 	return types.MakeLiteral(types.BasicNumber, l)
 }
 
-// HashCode returns a hash code for this Ratio
 func (l *Ratio) HashCode() uint64 {
 	br := (*big.Rat)(l)
 	return ratSalt ^ br.Num().Uint64() ^ br.Denom().Uint64()

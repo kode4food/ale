@@ -12,13 +12,28 @@ import (
 type (
 	// Namespace represents a namespace
 	Namespace interface {
+		// Environment returns the environment associated with this namespace
 		Environment() *Environment
+
+		// Domain returns the domain name of this namespace
 		Domain() data.Local
+
+		// Declared returns all declared symbols in this namespace
 		Declared() data.Locals
+
+		// Public declares a public symbol in this namespace
 		Public(data.Local) (*Entry, error)
+
+		// Private declares a private symbol in this namespace
 		Private(data.Local) (*Entry, error)
+
+		// Resolve attempts to resolve a symbol in this namespace or its parents
 		Resolve(data.Local) (*Entry, Namespace, error)
+
+		// Snapshot creates a snapshot of this namespace for another environment
 		Snapshot(*Environment) Namespace
+
+		// Import atomically adds entries from another namespace to this one
 		Import(Entries) error
 	}
 

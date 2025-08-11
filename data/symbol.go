@@ -17,12 +17,16 @@ type (
 	// Symbol is an identifier that can be resolved
 	Symbol interface {
 		ale.Typed
+
+		// Local returns the local part of the symbol
 		Local() Local
 	}
 
 	// Qualified represents a domain-qualified symbol
 	Qualified interface {
 		Symbol
+
+		// Domain returns the domain part of the qualified symbol
 		Domain() Local
 	}
 

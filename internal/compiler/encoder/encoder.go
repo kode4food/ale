@@ -13,30 +13,56 @@ import (
 type (
 	// Encoder exposes an interface for stateful compiler encoding
 	Encoder interface {
+		// Child creates a child encoder, allowing closure resolution
 		Child() Encoder
 
+		// Emit an instruction with the given opcode and operands
 		Emit(isa.Opcode, ...isa.Operand)
+
+		// Encode returns the encoded bytecode
 		Encode() *Encoded
+
+		// Globals returns the global namespace for this Encoder
 		Globals() env.Namespace
+
+		// NewLabel creates a new label for jump instructions
 		NewLabel() isa.Operand
 
+		// AddConstant adds a constant value and returns its index
 		AddConstant(ale.Value) isa.Operand
 
+		// PushParams pushes a new parameter frame
 		PushParams(data.Locals, bool)
+
+		// PopParams pops the current parameter frame
 		PopParams()
 
+		// PushLocals pushes a new local variable frame
 		PushLocals()
+
+		// PopLocals pops the current local variable frame
 		PopLocals() error
+
+		// AddLocal adds a local variable and returns its cell
 		AddLocal(data.Local, CellType) (*IndexedCell, error)
 
+		// ResolveScoped resolves a scoped variable
 		ResolveScoped(data.Local) (*ScopedCell, bool)
+
+		// ResolveClosure resolves a closure variable
 		ResolveClosure(data.Local) (*IndexedCell, bool)
+
+		// ResolveParam resolves a parameter variable
 		ResolveParam(data.Local) (*IndexedCell, bool)
+
+		// ResolveLocal resolves a local variable
 		ResolveLocal(data.Local) (*IndexedCell, bool)
 	}
 
 	WrappedEncoder interface {
 		Encoder
+
+		// Wrapped returns the wrapped encoder
 		Wrapped() Encoder
 	}
 

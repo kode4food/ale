@@ -24,7 +24,6 @@ var (
 	} = Keyword("")
 )
 
-// Call turns Keyword into a Caller
 func (k Keyword) Call(args ...ale.Value) ale.Value {
 	m := args[0].(Mapped)
 	res, ok := m.Get(k)
@@ -34,27 +33,22 @@ func (k Keyword) Call(args ...ale.Value) ale.Value {
 	return res
 }
 
-// CheckArity performs a compile-time arity check for the Keyword
 func (k Keyword) CheckArity(argc int) error {
 	return CheckRangedArity(1, 2, argc)
 }
 
-// Equal compares this Keyword to another for equality
 func (k Keyword) Equal(other ale.Value) bool {
 	return k == other
 }
 
-// String converts Keyword into a string
 func (k Keyword) String() string {
 	return lang.KwdPrefix + string(k)
 }
 
-// Type returns the Type for this Keyword Value
 func (k Keyword) Type() ale.Type {
 	return types.MakeLiteral(types.BasicKeyword, k)
 }
 
-// HashCode returns the hash code for this Keyword
 func (k Keyword) HashCode() uint64 {
 	return kwdSalt ^ HashString(string(k))
 }

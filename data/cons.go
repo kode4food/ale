@@ -14,7 +14,11 @@ type (
 	// Pair represents the interface for a binary structure, such as a Cons
 	Pair interface {
 		ale.Typed
+
+		// Car returns the first element of the Pair
 		Car() ale.Value
+
+		// Cdr returns the second element of the Pair
 		Cdr() ale.Value
 	}
 
@@ -48,17 +52,14 @@ func NewCons(car, cdr ale.Value) *Cons {
 	}
 }
 
-// Car returns the first element of a Pair
 func (c *Cons) Car() ale.Value {
 	return c.car
 }
 
-// Cdr returns the second element of a Pair
 func (c *Cons) Cdr() ale.Value {
 	return c.cdr
 }
 
-// Equal compares this Cons to another for equality
 func (c *Cons) Equal(other ale.Value) bool {
 	if other, ok := other.(*Cons); ok {
 		return c == other || c.car.Equal(other.car) && c.cdr.Equal(other.cdr)
@@ -98,7 +99,6 @@ func (c *Cons) Type() ale.Type {
 	return types.MakeLiteral(types.BasicCons, c)
 }
 
-// HashCode returns the hash code for this Cons
 func (c *Cons) HashCode() uint64 {
 	return consSalt ^ HashCode(c.car) ^ HashCode(c.cdr)
 }

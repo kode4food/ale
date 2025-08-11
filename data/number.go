@@ -8,14 +8,32 @@ import (
 // Number describes a numeric value of some kind
 type Number interface {
 	ale.Typed
+
+	// Cmp compares this Number to another Number
 	Cmp(Number) Comparison
+
+	// Add adds this Number to another Number
 	Add(Number) Number
+
+	// Sub subtracts another Number from this Number
 	Sub(Number) Number
+
+	// Mul multiplies this Number by another Number
 	Mul(Number) Number
+
+	// Div divides this Number by another Number
 	Div(Number) Number
+
+	// Mod calculates the remainder of dividing this Number by another Number
 	Mod(Number) Number
+
+	// IsNaN returns whether this Number is not a number (NaN)
 	IsNaN() bool
+
+	// IsPosInf returns whether this Number is positive infinity
 	IsPosInf() bool
+
+	// IsNegInf returns whether this Number is negative infinity
 	IsNegInf() bool
 }
 

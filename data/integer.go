@@ -59,7 +59,6 @@ func ParseInteger(s string) (Number, error) {
 	return nil, fmt.Errorf(ErrExpectedInteger, s)
 }
 
-// Cmp compares this Integer to another Number
 func (l Integer) Cmp(r Number) Comparison {
 	if ri, ok := r.(Integer); ok {
 		return Comparison(cmp.Compare(l, ri))
@@ -68,7 +67,6 @@ func (l Integer) Cmp(r Number) Comparison {
 	return pl.Cmp(pr)
 }
 
-// Add adds this Integer to another Number
 func (l Integer) Add(r Number) Number {
 	ri, ok := r.(Integer)
 	if !ok {
@@ -85,7 +83,6 @@ func (l Integer) Add(r Number) Number {
 	return (*BigInt)(lb)
 }
 
-// Sub subtracts another Number from this Integer
 func (l Integer) Sub(r Number) Number {
 	ri, ok := r.(Integer)
 	if !ok {
@@ -102,7 +99,6 @@ func (l Integer) Sub(r Number) Number {
 	return (*BigInt)(lb)
 }
 
-// Mul multiples this Integer by another Number
 func (l Integer) Mul(r Number) Number {
 	ri, ok := r.(Integer)
 	if !ok {
@@ -119,7 +115,6 @@ func (l Integer) Mul(r Number) Number {
 	return (*BigInt)(lb)
 }
 
-// Div divides this Integer by another Number
 func (l Integer) Div(r Number) Number {
 	ri, ok := r.(Integer)
 	if !ok {
@@ -133,7 +128,6 @@ func (l Integer) Div(r Number) Number {
 	return maybeWhole(res)
 }
 
-// Mod calculates the remainder of dividing this Integer by another Number
 func (l Integer) Mod(r Number) Number {
 	ri, ok := r.(Integer)
 	if !ok {
@@ -150,22 +144,18 @@ func (l Integer) Mod(r Number) Number {
 	return res
 }
 
-// IsNaN tells you that this Integer is, in fact, a Number
 func (Integer) IsNaN() bool {
 	return false
 }
 
-// IsPosInf tells you that this Integer is not positive infinity
 func (Integer) IsPosInf() bool {
 	return false
 }
 
-// IsNegInf tells you that this Integer is not negative infinity
 func (Integer) IsNegInf() bool {
 	return false
 }
 
-// Call turns Integer into a Caller, allowing it to behave similar to Nth
 func (l Integer) Call(args ...ale.Value) ale.Value {
 	m := args[0].(Indexed)
 	res, ok := m.ElementAt(int(l))
@@ -175,27 +165,22 @@ func (l Integer) Call(args ...ale.Value) ale.Value {
 	return res
 }
 
-// CheckArity performs a compile-time arity check for the Integer
 func (l Integer) CheckArity(argc int) error {
 	return CheckRangedArity(1, 2, argc)
 }
 
-// Equal compares this Integer to another for equality
 func (l Integer) Equal(r ale.Value) bool {
 	return l == r
 }
 
-// HashCode returns a hash code for this Integer
 func (l Integer) HashCode() uint64 {
 	return intSalt ^ HashInt64(int64(l))
 }
 
-// String converts this Integer to a string
 func (l Integer) String() string {
 	return fmt.Sprintf("%d", l)
 }
 
-// Type returns the Type for this Integer Value
 func (l Integer) Type() ale.Type {
 	return types.MakeLiteral(types.BasicNumber, l)
 }
@@ -214,7 +199,6 @@ func (l Integer) ratio() *Ratio {
 	return (*Ratio)(r)
 }
 
-// Cmp compares this BigInt to another Number
 func (l *BigInt) Cmp(r Number) Comparison {
 	if ri, ok := r.(*BigInt); ok {
 		lb := (*big.Int)(l)
@@ -225,7 +209,6 @@ func (l *BigInt) Cmp(r Number) Comparison {
 	return lp.Cmp(rp)
 }
 
-// Add adds this BigInt to another Number
 func (l *BigInt) Add(r Number) Number {
 	if ri, ok := r.(*BigInt); ok {
 		lb := (*big.Int)(l)
@@ -237,7 +220,6 @@ func (l *BigInt) Add(r Number) Number {
 	return lp.Add(rp)
 }
 
-// Sub subtracts another Number from this BigInt
 func (l *BigInt) Sub(r Number) Number {
 	if ri, ok := r.(*BigInt); ok {
 		lb := (*big.Int)(l)
@@ -249,7 +231,6 @@ func (l *BigInt) Sub(r Number) Number {
 	return lp.Sub(rp)
 }
 
-// Mul multiples this BigInt by another Number
 func (l *BigInt) Mul(r Number) Number {
 	if ri, ok := r.(*BigInt); ok {
 		lb := (*big.Int)(l)
@@ -261,7 +242,6 @@ func (l *BigInt) Mul(r Number) Number {
 	return lp.Mul(rp)
 }
 
-// Div divides this BigInt by another Number
 func (l *BigInt) Div(r Number) Number {
 	if ri, ok := r.(*BigInt); ok {
 		lb := (*big.Int)(l)
@@ -276,7 +256,6 @@ func (l *BigInt) Div(r Number) Number {
 	return lp.Div(rp)
 }
 
-// Mod calculates the remainder of dividing this BigInt by another Number
 func (l *BigInt) Mod(r Number) Number {
 	if ri, ok := r.(*BigInt); ok {
 		lb := (*big.Int)(l)
@@ -291,22 +270,18 @@ func (l *BigInt) Mod(r Number) Number {
 	return lp.Mod(rp)
 }
 
-// IsNaN tells you that this BigInt is, in fact, a Number
 func (*BigInt) IsNaN() bool {
 	return false
 }
 
-// IsPosInf tells you that this BigInt is not positive infinity
 func (*BigInt) IsPosInf() bool {
 	return false
 }
 
-// IsNegInf tells you that this BigInt is not negative infinity
 func (*BigInt) IsNegInf() bool {
 	return false
 }
 
-// Equal compares this BigInt to another for equality
 func (l *BigInt) Equal(r ale.Value) bool {
 	if r, ok := r.(*BigInt); ok {
 		if l == r {
@@ -319,17 +294,14 @@ func (l *BigInt) Equal(r ale.Value) bool {
 	return false
 }
 
-// String converts this BigInt to a string
 func (l *BigInt) String() string {
 	return (*big.Int)(l).String()
 }
 
-// Type returns the Type for this BigInt Value
 func (l *BigInt) Type() ale.Type {
 	return types.MakeLiteral(types.BasicNumber, l)
 }
 
-// HashCode returns a hash code for this BigInt
 func (l *BigInt) HashCode() uint64 {
 	return intSalt ^ HashBytes((*big.Int)(l).Bytes())
 }

@@ -4,10 +4,19 @@ import "github.com/kode4food/ale/internal/debug"
 
 // Visitor is an interface called back upon visiting
 type Visitor interface {
+	// EnterRoot is called when entering the root node
 	EnterRoot(Node)
+
+	// ExitRoot is called when exiting the root node
 	ExitRoot(Node)
+
+	// EnterBranches is called when entering a branches node
 	EnterBranches(Branches)
+
+	// ExitBranches is called when exiting a branches node
 	ExitBranches(Branches)
+
+	// Instructions is called when visiting an instructions node
 	Instructions(Instructions)
 }
 

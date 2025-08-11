@@ -10,6 +10,9 @@ import (
 // Hashed can return a hash code for the value
 type Hashed interface {
 	ale.Value
+
+	// HashCode returns a hash code for this Value. Hash codes are used for
+	// efficient storage and retrieval in mapped data structures like Object
 	HashCode() uint64
 }
 

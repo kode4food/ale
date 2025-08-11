@@ -12,6 +12,8 @@ type (
 
 	Basic interface {
 		ale.Type
+
+		// ID returns the unique identifier for this basic type
 		ID() ID
 	}
 
