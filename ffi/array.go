@@ -24,8 +24,8 @@ type (
 )
 
 const (
-	// ErrValueMustBeSequence is raised when an Array Unwrap call can't treat its
-	// source as a data.Sequence
+	// ErrValueMustBeSequence is raised when an Array Unwrap call can't treat
+	// its source as a data.Sequence
 	ErrValueMustBeSequence = "value must be a sequence"
 
 	// ErrBadSliceLength is raised when an Array Unwrap call receives a slice
@@ -87,7 +87,9 @@ func wrapByteArray(t reflect.Type) (Wrapper, error) {
 	}, nil
 }
 
-func (b *byteArrayWrapper) Wrap(_ *Context, v reflect.Value) (ale.Value, error) {
+func (b *byteArrayWrapper) Wrap(
+	_ *Context, v reflect.Value,
+) (ale.Value, error) {
 	if !v.CanAddr() {
 		return b.slowWrap(v)
 	}
@@ -120,7 +122,9 @@ func (b *byteArrayWrapper) Unwrap(v ale.Value) (reflect.Value, error) {
 	return out, nil
 }
 
-func (b *byteArrayWrapper) slowUnwrap(v ale.Value, out reflect.Value) (reflect.Value, error) {
+func (b *byteArrayWrapper) slowUnwrap(
+	v ale.Value, out reflect.Value,
+) (reflect.Value, error) {
 	in, err := asByteArray(v)
 	if err != nil {
 		return _zero, err

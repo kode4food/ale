@@ -13,8 +13,8 @@ import (
 )
 
 type (
-	// parser is a stateful iteration interface for a Token stream that is piloted
-	// by the FromString function and exposed as a LazySequence
+	// parser is a stateful iteration interface for a Token stream that is
+	// piloted by the FromString function and exposed as a LazySequence
 	parser struct {
 		ns       env.Namespace
 		tokenize Tokenizer

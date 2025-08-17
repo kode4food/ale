@@ -15,10 +15,7 @@ import (
 type (
 	// Wrapper can marshal a native Go value to and from a data.Value
 	Wrapper interface {
-		// Wrap converts a native Go value to an ale.Value
 		Wrap(*Context, reflect.Value) (ale.Value, error)
-
-		// Unwrap converts an ale.Value back to a native Go value
 		Unwrap(ale.Value) (reflect.Value, error)
 	}
 
@@ -88,7 +85,7 @@ func makeWrappedType(t reflect.Type) (Wrapper, error) {
 		return wrapDataValue(t)
 	}
 
-	handlers := getKindHandlers()
+	handlers := getHandlers()
 	if handler := handlers[t.Kind()]; handler != nil {
 		return handler(t)
 	}
@@ -115,7 +112,7 @@ func (c *typeCache) put(t reflect.Type, w Wrapper) {
 	c.entries[t] = w
 }
 
-func getKindHandlers() *[maxkind.Value + 1]handler {
+func getHandlers() *[maxkind.Value + 1]handler {
 	handlersOnce.Do(func() {
 		handlers[reflect.Bool] = makeHandler(boolWrapper{})
 		handlers[reflect.Int] = makeHandler(intWrapper[int]{})
