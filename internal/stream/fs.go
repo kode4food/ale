@@ -11,6 +11,7 @@ import (
 )
 
 type FileSystem struct {
+	*data.Object
 	fs   fs.FS
 	List data.Procedure
 	Open data.Procedure
@@ -39,11 +40,17 @@ const (
 
 var fileSystemType = types.MakeBasic("file-system")
 
-func WrapFileSystem(fileSystem fs.FS) *FileSystem {
+func WrapFileSystem(fs fs.FS) *FileSystem {
+	list := bindList(fs)
+	open := bindOpen(fs)
 	return &FileSystem{
-		fs:   fileSystem,
-		List: bindList(fileSystem),
-		Open: bindOpen(fileSystem),
+		fs:   fs,
+		List: list,
+		Open: open,
+		Object: data.NewObject(
+			data.NewCons(ListKey, list),
+			data.NewCons(OpenKey, open),
+		),
 	}
 }
 
@@ -51,26 +58,14 @@ func (f *FileSystem) Type() ale.Type {
 	return types.MakeLiteral(fileSystemType, f)
 }
 
-// Get returns the value associated with the specified key, if it exists.
-func (f *FileSystem) Get(key ale.Value) (ale.Value, bool) {
-	switch key {
-	case ListKey:
-		return f.List, true
-	case OpenKey:
-		return f.Open, true
-	default:
-		return nil, false
-	}
-}
-
 func (f *FileSystem) Equal(other ale.Value) bool {
 	return f == other
 }
 
-func bindList(fileSystem fs.FS) data.Procedure {
+func bindList(fs fs.FS) data.Procedure {
 	return data.MakeProcedure(func(args ...ale.Value) ale.Value {
 		path := args[0].(data.String)
-		f, err := fileSystem.Open(path.String())
+		f, err := fs.Open(path.String())
 		if err != nil {
 			panic(err)
 		}

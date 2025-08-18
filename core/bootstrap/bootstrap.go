@@ -1,6 +1,8 @@
 package bootstrap
 
 import (
+	"fmt"
+	"io/fs"
 	"os"
 
 	"github.com/kode4food/ale/core/builtin"
@@ -24,6 +26,12 @@ type (
 	macroMap   map[data.Local]macro.Call
 	specialMap map[data.Local]compiler.Call
 	procMap    map[data.Local]data.Procedure
+)
+
+// Error messages
+const (
+	ErrCannotDeclareFS = "failed to declare filesystem: %w"
+	ErrCannotBindFS    = "failed to bind filesystem: %w"
 )
 
 var (
@@ -102,4 +110,24 @@ func DevNullEnvironment() *env.Environment {
 		Into(devNull)
 	})
 	return devNull.Snapshot()
+}
+
+// BindFileSystem binds a file system to a Namespace to enable source includes
+// and other file operations. The file system is private to the Namespace
+func BindFileSystem(ns env.Namespace, f fs.FS) error {
+	e, err := ns.Private(lang.FS)
+	if err != nil {
+		return fmt.Errorf(ErrCannotDeclareFS, err)
+	}
+	if err = e.Bind(stream.WrapFileSystem(f)); err != nil {
+		return fmt.Errorf(ErrCannotBindFS, err)
+	}
+	return nil
+}
+
+// MustBindFileSystem binds a file system to a Namespace or panics if it can't
+func MustBindFileSystem(ns env.Namespace, f fs.FS) {
+	if err := BindFileSystem(ns, f); err != nil {
+		panic(err)
+	}
 }

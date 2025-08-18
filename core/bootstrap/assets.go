@@ -6,10 +6,7 @@ import (
 
 	"github.com/kode4food/ale/core/source"
 	"github.com/kode4food/ale/data"
-	"github.com/kode4food/ale/env"
 	"github.com/kode4food/ale/eval"
-	lang "github.com/kode4food/ale/internal/lang/env"
-	"github.com/kode4food/ale/internal/stream"
 	"github.com/kode4food/ale/read"
 )
 
@@ -30,7 +27,7 @@ func (b *bootstrap) populateAssets() {
 	}()
 
 	ns := b.environment.GetRoot()
-	if err := populateFileSystem(ns); err != nil {
+	if err := BindFileSystem(ns, source.Assets); err != nil {
 		panic(err)
 	}
 
@@ -43,15 +40,4 @@ func (b *bootstrap) populateAssets() {
 	if _, err := eval.Block(ns, seq); err != nil {
 		panic(err)
 	}
-}
-
-func populateFileSystem(ns env.Namespace) error {
-	e, err := ns.Private(lang.FS)
-	if err != nil {
-		return fmt.Errorf("failed to get filesystem: %w", err)
-	}
-	if err = e.Bind(stream.WrapFileSystem(source.Assets)); err != nil {
-		return fmt.Errorf("failed to bind filesystem: %w", err)
-	}
-	return nil
 }

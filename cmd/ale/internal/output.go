@@ -6,7 +6,6 @@ import (
 
 	"github.com/kode4food/ale"
 	"github.com/kode4food/ale/cmd/ale/internal/console"
-	"github.com/kode4food/ale/data"
 )
 
 type sentinel struct{}
@@ -19,6 +18,8 @@ const (
 	output = console.Bold + "%s" + console.Reset
 	good   = domain + console.Result + "[%d]= " + output
 	bad    = domain + console.Error + "[%d]! " + output
+
+	stripped = "%s [%d]= "
 )
 
 var nothing = sentinel{}
@@ -45,7 +46,11 @@ func (r *REPL) outputResult(v ale.Value) {
 	if v == nothing {
 		return
 	}
-	sv := data.ToQuotedString(v)
+
+	domain := string(r.ns.Domain())
+	offset := len(fmt.Sprintf(stripped, domain, r.idx))
+
+	sv := PrettyPrintAt(v, offset)
 	res := fmt.Sprintf(good, r.nsSpace(), r.idx, sv)
 	fmt.Println(res)
 }

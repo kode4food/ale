@@ -11,6 +11,7 @@ import (
 
 type (
 	Channel struct {
+		*data.Object
 		Emit     data.Procedure
 		Close    data.Procedure
 		Sequence data.Sequence
@@ -45,28 +46,22 @@ func NewChannel(size int) *Channel {
 	e := newEmitter(ch)
 	s := NewChannelSequence(ch)
 
+	emit := bindWriter(e.Write)
+	close := bindCloser(e)
 	return &Channel{
-		Emit:     bindWriter(e.Write),
-		Close:    bindCloser(e),
+		Emit:     emit,
+		Close:    close,
 		Sequence: s,
+		Object: data.NewObject(
+			data.NewCons(EmitKey, emit),
+			data.NewCons(CloseKey, close),
+			data.NewCons(SequenceKey, s),
+		),
 	}
 }
 
 func (c *Channel) Type() ale.Type {
 	return types.MakeLiteral(chanType, c)
-}
-
-func (c *Channel) Get(key ale.Value) (ale.Value, bool) {
-	switch key {
-	case EmitKey:
-		return c.Emit, true
-	case CloseKey:
-		return c.Close, true
-	case SequenceKey:
-		return c.Sequence, true
-	default:
-		return nil, false
-	}
 }
 
 func (c *Channel) Equal(other ale.Value) bool {

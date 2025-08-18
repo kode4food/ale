@@ -153,7 +153,14 @@ func evalBuffer(src []byte) error {
 }
 
 func makeUserNamespace() env.Namespace {
-	return env.MustGetQualified(bootstrap.TopLevelEnvironment(), UserDomain)
+	ns := env.MustGetQualified(bootstrap.TopLevelEnvironment(), UserDomain)
+	cwd, err := os.Getwd()
+	if err != nil {
+		panic(err)
+	}
+	fs := os.DirFS(cwd)
+	bootstrap.MustBindFileSystem(ns, fs)
+	return ns
 }
 
 func exitWithError() {
