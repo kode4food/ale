@@ -16,6 +16,12 @@ type Header struct {
 	Tags        []string `yaml:"tags"`
 }
 
+const (
+	startHeader = "---"
+	endHeader   = "---"
+	newLine     = "\n"
+)
+
 // Parse parses the kind of Markdown document that might be processed by a
 // static site generator. It will parse any prologue parameters into the
 // resulting object and return the remaining content as individual lines
@@ -43,22 +49,22 @@ func skipEmptyLines(lines []string) []string {
 }
 
 func parseDocument(doc string) (*Header, []string, error) {
-	lines := strings.Split(doc, "\n")
-	if strings.TrimSpace(lines[0]) != "---" {
+	lines := strings.Split(doc, newLine)
+	if strings.TrimSpace(lines[0]) != startHeader {
 		return nil, lines, nil
 	}
 
 	lines = lines[1:]
 	var rest = 1
 	for i, l := range lines {
-		if strings.TrimSpace(l) == "---" {
+		if strings.TrimSpace(l) == endHeader {
 			rest = i + 1
 			break
 		}
 	}
 
 	head := lines[:rest-1]
-	y := strings.Join(head, "\n")
+	y := strings.Join(head, newLine)
 	res, err := parseHeader(y)
 	if err != nil {
 		return nil, nil, err

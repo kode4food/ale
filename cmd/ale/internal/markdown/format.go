@@ -21,7 +21,10 @@ type (
 	}
 )
 
-const blockPrefix = "```"
+const (
+	blockStart = "```"
+	blockEnd   = "```"
+)
 
 var (
 	header = regexp.MustCompile(`^#+\s(.*)$`)
@@ -80,13 +83,13 @@ func FormatMarkdown(s string) (string, error) {
 func formatCode(lines []string) []string {
 	var res []string
 	for i := 0; i < len(lines); i++ {
-		if l := lines[i]; !strings.HasPrefix(l, blockPrefix) {
+		if l := lines[i]; !strings.HasPrefix(l, blockStart) {
 			res = append(res, l)
 			continue
 		}
 		for i = i + 1; i < len(lines); i++ {
 			c := lines[i]
-			if strings.HasPrefix(c, blockPrefix) {
+			if strings.HasPrefix(c, blockEnd) {
 				break
 			}
 			res = append(res, fmt.Sprintf("  %s", c))
