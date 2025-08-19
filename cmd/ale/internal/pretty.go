@@ -19,10 +19,6 @@ const (
 )
 
 func PrettyPrintAt(v ale.Value, offset int) string {
-	return prettyPrint(v, offset)
-}
-
-func prettyPrint(v ale.Value, offset int) string {
 	switch val := v.(type) {
 	case *data.List:
 		return prettyList(val, offset)
@@ -41,20 +37,23 @@ func prettyList(list *data.List, offset int) string {
 	if list == nil {
 		return lang.ListStart + lang.ListEnd
 	}
-
-	elementOffset := offset + indentSize
-	elements := basics.Map(sequence.ToVector(list), func(v ale.Value) string {
-		return prettyPrint(v, elementOffset)
-	})
-	return formatSequence(lang.ListStart, lang.ListEnd, elements, offset)
+	return prettySequence(sequence.ToVector(list), lang.ListStart, lang.ListEnd, offset)
 }
 
 func prettyVector(vec data.Vector, offset int) string {
+	return prettySequence(vec, lang.VectorStart, lang.VectorEnd, offset)
+}
+
+func prettySequence(elements data.Vector, start, end string, offset int) string {
+	if len(elements) == 0 {
+		return start + end
+	}
+
 	elementOffset := offset + indentSize
-	elements := basics.Map(vec, func(v ale.Value) string {
-		return prettyPrint(v, elementOffset)
+	formatted := basics.Map(elements, func(v ale.Value) string {
+		return PrettyPrintAt(v, elementOffset)
 	})
-	return formatSequence(lang.VectorStart, lang.VectorEnd, elements, offset)
+	return formatSequence(start, end, formatted, offset)
 }
 
 func prettyObject(obj *data.Object, offset int) string {
@@ -65,8 +64,8 @@ func prettyObject(obj *data.Object, offset int) string {
 	pairs := obj.Pairs()
 	elementOffset := offset + indentSize
 	formattedPairs := basics.Map(pairs, func(pair data.Pair) [2]string {
-		key := prettyPrint(pair.Car(), elementOffset)
-		value := prettyPrint(pair.Cdr(), elementOffset)
+		key := PrettyPrintAt(pair.Car(), elementOffset)
+		value := PrettyPrintAt(pair.Cdr(), elementOffset)
 		return [2]string{key, value}
 	})
 
@@ -98,9 +97,8 @@ func alignPair(key, value string, maxKeyWidth int) string {
 }
 
 func prettyCons(cons *data.Cons, offset int) string {
-	elementOffset := offset + indentSize
-	car := prettyPrint(cons.Car(), elementOffset)
-	cdr := prettyPrint(cons.Cdr(), elementOffset)
+	car := PrettyPrintAt(cons.Car(), offset)
+	cdr := PrettyPrintAt(cons.Cdr(), offset)
 	return lang.ListStart + car + SP + lang.Dot + SP + cdr + lang.ListEnd
 }
 
@@ -171,14 +169,17 @@ func writeElements(
 
 	for i := startIdx; i < len(elements); i++ {
 		elem := elements[i]
-		needsSpace := i > startIdx
-		elemWidth := len(elem) + boolToInt(needsSpace)
+		spaceWidth := 0
+		if i > startIdx {
+			spaceWidth = 1
+		}
+		elemWidth := len(elem) + spaceWidth
 
 		if lineWidth+elemWidth > availableWidth && i > startIdx {
 			return i
 		}
 
-		if needsSpace {
+		if i > startIdx {
 			buf.WriteString(SP)
 		}
 		buf.WriteString(elem)
@@ -186,11 +187,4 @@ func writeElements(
 	}
 
 	return len(elements)
-}
-
-func boolToInt(b bool) int {
-	if b {
-		return 1
-	}
-	return 0
 }
