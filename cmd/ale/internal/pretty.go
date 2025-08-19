@@ -18,6 +18,7 @@ const (
 	indentSize = 2
 )
 
+// PrettyPrintAt pretty formats a Value at the given indentation offset
 func PrettyPrintAt(v ale.Value, offset int) string {
 	switch val := v.(type) {
 	case *data.List:
@@ -33,51 +34,61 @@ func PrettyPrintAt(v ale.Value, offset int) string {
 	}
 }
 
-func prettyList(list *data.List, offset int) string {
+func prettyList(list *data.List, off int) string {
 	if list == nil {
 		return lang.ListStart + lang.ListEnd
 	}
-	return prettySequence(sequence.ToVector(list), lang.ListStart, lang.ListEnd, offset)
+	v := sequence.ToVector(list)
+	return prettySeq(v, lang.ListStart, lang.ListEnd, off)
 }
 
-func prettyVector(vec data.Vector, offset int) string {
-	return prettySequence(vec, lang.VectorStart, lang.VectorEnd, offset)
+func prettyVector(vec data.Vector, off int) string {
+	return prettySeq(vec, lang.VectorStart, lang.VectorEnd, off)
 }
 
-func prettySequence(elements data.Vector, start, end string, offset int) string {
+func prettySeq(elements data.Vector, start, end string, off int) string {
 	if len(elements) == 0 {
 		return start + end
 	}
 
-	elementOffset := offset + indentSize
+	elementOffset := off + indentSize
 	formatted := basics.Map(elements, func(v ale.Value) string {
 		return PrettyPrintAt(v, elementOffset)
 	})
-	return formatSequence(start, end, formatted, offset)
+	return formatSeq(start, end, formatted, off)
 }
 
-func prettyObject(obj *data.Object, offset int) string {
+func prettyObject(obj *data.Object, off int) string {
 	if obj == nil {
 		return lang.ObjectStart + lang.ObjectEnd
 	}
 
 	pairs := obj.Pairs()
-	elementOffset := offset + indentSize
+	elementOffset := off + indentSize
 	formattedPairs := basics.Map(pairs, func(pair data.Pair) [2]string {
 		key := PrettyPrintAt(pair.Car(), elementOffset)
 		value := PrettyPrintAt(pair.Cdr(), elementOffset)
 		return [2]string{key, value}
 	})
 
-	maxKeyWidth := findMaxKeyWidth(formattedPairs)
-	elements := basics.Map(formattedPairs, func(fp [2]string) string {
+	sortedPairs := basics.SortedFunc(formattedPairs, func(l, r [2]string) int {
+		if l[0] < r[0] {
+			return -1
+		} else if l[0] > r[0] {
+			return 1
+		}
+		return 0
+	})
+
+	maxKeyWidth := maxKeyWidth(sortedPairs)
+	elements := basics.Map(sortedPairs, func(fp [2]string) string {
 		return alignPair(fp[0], fp[1], maxKeyWidth)
 	})
 
-	return formatObject(lang.ObjectStart, lang.ObjectEnd, elements, offset)
+	return formatObject(lang.ObjectStart, lang.ObjectEnd, elements, off)
 }
 
-func findMaxKeyWidth(formattedPairs [][2]string) int {
+func maxKeyWidth(formattedPairs [][2]string) int {
 	maxWidth := 0
 	for _, fp := range formattedPairs {
 		key := fp[0]
@@ -96,22 +107,22 @@ func alignPair(key, value string, maxKeyWidth int) string {
 	return key + padding + SP + value
 }
 
-func prettyCons(cons *data.Cons, offset int) string {
-	car := PrettyPrintAt(cons.Car(), offset)
-	cdr := PrettyPrintAt(cons.Cdr(), offset)
+func prettyCons(cons *data.Cons, off int) string {
+	car := PrettyPrintAt(cons.Car(), off)
+	cdr := PrettyPrintAt(cons.Cdr(), off)
 	return lang.ListStart + car + SP + lang.Dot + SP + cdr + lang.ListEnd
 }
 
-func makeIndent(offset int) string {
-	return strings.Repeat(SP, offset)
+func makeIndent(off int) string {
+	return strings.Repeat(SP, off)
 }
 
-func lineWidth(offset int) int {
+func lineWidth(off int) int {
 	screenWidth := console.GetScreenWidth()
-	return screenWidth - offset
+	return screenWidth - off
 }
 
-func formatObject(start, end string, elements []string, offset int) string {
+func formatObject(start, end string, elements []string, off int) string {
 	if len(elements) == 0 {
 		return start + end
 	}
@@ -119,8 +130,8 @@ func formatObject(start, end string, elements []string, offset int) string {
 		return start + elements[0] + end
 	}
 
-	indent := makeIndent(offset)
-	elementIndent := makeIndent(offset + indentSize)
+	indent := makeIndent(off)
+	elementIndent := makeIndent(off + indentSize)
 	var buf strings.Builder
 	buf.WriteString(start)
 
@@ -132,38 +143,38 @@ func formatObject(start, end string, elements []string, offset int) string {
 	return buf.String()
 }
 
-func formatSequence(start, end string, elements []string, offset int) string {
+func formatSeq(start, end string, elements []string, off int) string {
 	if len(elements) == 0 {
 		return start + end
 	}
 
 	inline := start + strings.Join(elements, SP) + end
-	if len(inline) <= lineWidth(offset) && !strings.Contains(inline, NL) {
+	if len(inline) <= lineWidth(off) && !strings.Contains(inline, NL) {
 		return inline
 	}
 
-	return formatMultiline(start, end, elements, offset)
+	return formatMultiline(start, end, elements, off)
 }
 
-func formatMultiline(start, end string, elements []string, offset int) string {
-	indent := makeIndent(offset)
-	elementIndent := makeIndent(offset + indentSize)
-	availableWidth := lineWidth(offset + indentSize)
+func formatMultiline(start, end string, elements []string, off int) string {
+	indent := makeIndent(off)
+	elemIndent := makeIndent(off + indentSize)
+	availWidth := lineWidth(off + indentSize)
 
 	var buf strings.Builder
 	buf.WriteString(start)
 
 	for i := 0; i < len(elements); {
-		buf.WriteString(NL + elementIndent)
-		i = writeElements(&buf, elements, i, availableWidth)
+		buf.WriteString(NL + elemIndent)
+		i = writeElems(&buf, elements, i, availWidth)
 	}
 
 	buf.WriteString(NL + indent + end)
 	return buf.String()
 }
 
-func writeElements(
-	buf *strings.Builder, elements []string, startIdx, availableWidth int,
+func writeElems(
+	buf *strings.Builder, elements []string, startIdx, availWidth int,
 ) int {
 	lineWidth := 0
 
@@ -175,7 +186,7 @@ func writeElements(
 		}
 		elemWidth := len(elem) + spaceWidth
 
-		if lineWidth+elemWidth > availableWidth && i > startIdx {
+		if lineWidth+elemWidth > availWidth && i > startIdx {
 			return i
 		}
 
