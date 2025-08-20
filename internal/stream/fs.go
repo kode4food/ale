@@ -7,15 +7,7 @@ import (
 
 	"github.com/kode4food/ale"
 	"github.com/kode4food/ale/data"
-	"github.com/kode4food/ale/internal/types"
 )
-
-type FileSystem struct {
-	*data.Object
-	fs   fs.FS
-	List data.Procedure
-	Open data.Procedure
-}
 
 const (
 	ListKey = data.Keyword("list")
@@ -38,28 +30,11 @@ const (
 	ErrUnexpectedArguments = "unexpected additional arguments: %s"
 )
 
-var fileSystemType = types.MakeBasic("file-system")
-
-func WrapFileSystem(fs fs.FS) *FileSystem {
-	list := bindList(fs)
-	open := bindOpen(fs)
-	return &FileSystem{
-		fs:   fs,
-		List: list,
-		Open: open,
-		Object: data.NewObject(
-			data.NewCons(ListKey, list),
-			data.NewCons(OpenKey, open),
-		),
-	}
-}
-
-func (f *FileSystem) Type() ale.Type {
-	return types.MakeLiteral(fileSystemType, f)
-}
-
-func (f *FileSystem) Equal(other ale.Value) bool {
-	return f == other
+func WrapFileSystem(fs fs.FS) *data.Object {
+	return data.NewObject(
+		data.NewCons(ListKey, bindList(fs)),
+		data.NewCons(OpenKey, bindOpen(fs)),
+	)
 }
 
 func bindList(fs fs.FS) data.Procedure {

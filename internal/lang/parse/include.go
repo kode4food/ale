@@ -75,9 +75,20 @@ func fetchOpenCall(ns env.Namespace) (data.Procedure, error) {
 	if err != nil {
 		return nil, err
 	}
-	fs, ok := v.(*stream.FileSystem)
-	if !ok {
-		return nil, fmt.Errorf(ErrExpectedFileSystem, v)
+	if open, ok := getMapped[data.Procedure](v, stream.OpenKey); ok {
+		return open, nil
 	}
-	return fs.Open, nil
+	return nil, fmt.Errorf(ErrExpectedFileSystem, v)
+}
+
+func getMapped[T ale.Value](m ale.Value, key ale.Value) (T, bool) {
+	if m, ok := m.(data.Mapped); ok {
+		if v, ok := m.Get(key); ok {
+			if t, ok := v.(T); ok {
+				return t, true
+			}
+		}
+	}
+	var zero T
+	return zero, false
 }
