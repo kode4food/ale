@@ -94,12 +94,12 @@ func (v Vector) Append(e ale.Value) Sequence {
 }
 
 func (v Vector) Reverse() Sequence {
-	vl := len(v)
-	if vl <= 1 {
+	lv := len(v)
+	if lv <= 1 {
 		return v
 	}
-	res := make(Vector, vl)
-	for i, j := 0, vl-1; j >= 0; i, j = i+1, j-1 {
+	res := make(Vector, lv)
+	for i, j := 0, lv-1; j >= 0; i, j = i+1, j-1 {
 		res[i] = v[j]
 	}
 	return res

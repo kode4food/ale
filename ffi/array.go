@@ -115,8 +115,8 @@ func (b *byteArrayWrapper) Unwrap(v ale.Value) (reflect.Value, error) {
 	if err != nil {
 		return _zero, err
 	}
-	if len(in) != b.len {
-		return _zero, fmt.Errorf(ErrBadSliceLength, b.len, len(in))
+	if li := len(in); li != b.len {
+		return _zero, fmt.Errorf(ErrBadSliceLength, b.len, li)
 	}
 	copy(out.Bytes(), in)
 	return out, nil
@@ -129,8 +129,8 @@ func (b *byteArrayWrapper) slowUnwrap(
 	if err != nil {
 		return _zero, err
 	}
-	if len(in) != b.len {
-		return _zero, fmt.Errorf(ErrBadSliceLength, b.len, len(in))
+	if li := len(in); li != b.len {
+		return _zero, fmt.Errorf(ErrBadSliceLength, b.len, li)
 	}
 	for i := range b.len {
 		out.Index(i).Set(reflect.ValueOf(in[i]))

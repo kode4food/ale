@@ -7,34 +7,38 @@ import (
 
 // Equal compares two slices of the same type for equality
 func Equal[T comparable](l, r []T) bool {
-	if len(l) != len(r) {
+	ll := len(l)
+	switch {
+	case ll != len(r):
 		return false
-	}
-	if len(l) == 0 || &l[0] == &r[0] {
+	case ll == 0 || &l[0] == &r[0]:
+		return true
+	default:
+		for i, e := range l {
+			if e != r[i] {
+				return false
+			}
+		}
 		return true
 	}
-	for i, e := range l {
-		if e != r[i] {
-			return false
-		}
-	}
-	return true
 }
 
 // EqualFunc compares two slices of the same type using a custom comparison
 func EqualFunc[T any](l, r []T, cmp func(T, T) bool) bool {
-	if len(l) != len(r) {
+	ll := len(l)
+	switch {
+	case ll != len(r):
 		return false
-	}
-	if len(l) == 0 || &l[0] == &r[0] {
+	case ll == 0 || &l[0] == &r[0]:
+		return true
+	default:
+		for i, e := range l {
+			if !cmp(e, r[i]) {
+				return false
+			}
+		}
 		return true
 	}
-	for i, e := range l {
-		if !cmp(e, r[i]) {
-			return false
-		}
-	}
-	return true
 }
 
 // Find returns the first element in the slice that satisfies the predicate

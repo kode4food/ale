@@ -68,12 +68,13 @@ func markOpener(line []rune, pos int, c rune) []rune {
 	o := openers[c]
 	depth := 0
 	for i := pos; i >= 0; i-- {
-		if line[i] == o {
+		switch line[i] {
+		case o:
 			depth--
 			if depth == 0 {
 				return markMatch(line, i)
 			}
-		} else if line[i] == c {
+		case c:
 			depth++
 		}
 	}
@@ -84,12 +85,13 @@ func markCloser(line []rune, pos int, o rune) []rune {
 	c := closers[o]
 	depth := 0
 	for i := pos; i < len(line); i++ {
-		if line[i] == c {
+		switch line[i] {
+		case c:
 			depth--
 			if depth == 0 {
 				return markMatch(line, i)
 			}
-		} else if line[i] == o {
+		case o:
 			depth++
 		}
 	}

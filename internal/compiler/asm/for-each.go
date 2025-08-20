@@ -61,8 +61,8 @@ func parseForEachBinding(v ale.Value) (data.Local, ale.Value, error) {
 	if err != nil {
 		return "", nil, err
 	}
-	if len(b) != 2 {
-		return "", nil, fmt.Errorf(ErrPairExpected, len(b))
+	if lb := len(b); lb != 2 {
+		return "", nil, fmt.Errorf(ErrPairExpected, lb)
 	}
 	l, err := assertType[data.Local](nameType, b[0])
 	if err != nil {
