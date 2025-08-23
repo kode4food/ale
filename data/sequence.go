@@ -3,7 +3,7 @@ package data
 import "github.com/kode4food/ale"
 
 type (
-	// Sequence interfaces expose a lazily resolved sequence
+	// Sequence is a series of Values that can be iterated over
 	Sequence interface {
 		Pair
 

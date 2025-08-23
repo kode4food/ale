@@ -113,6 +113,17 @@
              (nth coll pos default)
              (scan coll pos (thunk default)))])))
 
+(define (index-of coll value)
+  (let-rec
+    [search
+     (lambda (coll idx)
+       (if (seq coll)
+           (if (eq (first coll) value)
+               idx
+               (search (rest coll) (inc idx)))
+           #f))]
+    (search coll 0)))
+
 (define (last coll)
   (let [s (length coll)]
     (when (> s 0)

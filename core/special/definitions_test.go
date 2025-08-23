@@ -28,7 +28,7 @@ func TestBadFunctionEval(t *testing.T) {
 	symErr := fmt.Errorf(runtime.ErrUnexpectedType, "integer", "local")
 	numErr := fmt.Errorf(params.ErrUnexpectedCaseSyntax, "99")
 	vecErr := fmt.Errorf(runtime.ErrUnexpectedType, "integer", "vector")
-	invalidErr := fmt.Errorf("got number, expected local: 99")
+	invalidErr := fmt.Errorf("got number(99), expected local")
 
 	as := assert.New(t)
 	as.PanicWith(`(define-lambda blah (name 99 bad) (name))`, symErr)

@@ -24,9 +24,8 @@
     (let [pred (%is-a type)]
       (if (pred value)
           value
-          (raise "got " (:name (%type-of value))
-                 ", expected " (cdr (str type))
-                 ": " (str! value))))))
+          (raise "got " (str (%type-of value))
+                 ", expected " (cdr (str type)))))))
 
 (%private is-empty)
 (%define is-empty

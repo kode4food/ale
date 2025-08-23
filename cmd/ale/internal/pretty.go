@@ -151,11 +151,11 @@ func formatSeq(start, end string, elems []string, off int) string {
 			return inline
 		}
 
-		return formatMultiline(start, end, elems, off)
+		return formatLines(start, end, elems, off)
 	}
 }
 
-func formatMultiline(start, end string, elems []string, off int) string {
+func formatLines(start, end string, elems []string, off int) string {
 	indent := makeIndent(off)
 	elemIndent := makeIndent(off + indentSize)
 	availWidth := lineWidth(off + indentSize)
