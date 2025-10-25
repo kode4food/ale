@@ -58,19 +58,27 @@ func TestSymbolParsing(t *testing.T) {
 
 	s, err = data.ParseSymbol("some space")
 	as.Nil(s)
-	as.EqualError(err, fmt.Sprintf(data.ErrInvalidSymbol, "some space"))
+	as.EqualError(err, fmt.Sprintf(
+		"%s: %s", data.ErrInvalidSymbol.Error(), "some space",
+	))
 
 	s, err = data.ParseSymbol("domain/")
 	as.Nil(s)
-	as.EqualError(err, fmt.Sprintf(data.ErrInvalidSymbol, "domain/"))
+	as.EqualError(err, fmt.Sprintf(
+		"%s: %s", data.ErrInvalidSymbol.Error(), "domain/",
+	))
 
 	s, err = data.ParseSymbol("/name2")
 	as.Nil(s)
-	as.EqualError(err, fmt.Sprintf(data.ErrInvalidSymbol, "/name2"))
+	as.EqualError(err, fmt.Sprintf(
+		"%s: %s", data.ErrInvalidSymbol.Error(), "/name2",
+	))
 
 	s, err = data.ParseSymbol("one/too/")
 	as.Nil(s)
-	as.EqualError(err, fmt.Sprintf(data.ErrInvalidSymbol, "one/too/"))
+	as.EqualError(err, fmt.Sprintf(
+		"%s: %s", data.ErrInvalidSymbol.Error(), "one/too/",
+	))
 }
 
 func TestMustSymbolParsing(t *testing.T) {

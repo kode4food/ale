@@ -1,7 +1,6 @@
 package ffi
 
 import (
-	"errors"
 	"reflect"
 
 	"github.com/kode4food/ale"
@@ -57,7 +56,7 @@ func (w *mapWrapper) Wrap(c *Context, v reflect.Value) (ale.Value, error) {
 func (w *mapWrapper) Unwrap(v ale.Value) (reflect.Value, error) {
 	s, ok := v.(data.Sequence)
 	if !ok {
-		return _zero, errors.New(ErrValueMustBeSequence)
+		return _zero, ErrValueMustBeSequence
 	}
 	in, err := sequence.ToObject(s)
 	if err != nil {

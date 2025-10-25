@@ -1,6 +1,7 @@
 package builtin
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/kode4food/ale"
@@ -12,7 +13,7 @@ import (
 
 // ErrProcedureRequired is raised when a call to the Macro built-in doesn't
 // receive a data.Procedure to wrap
-const ErrProcedureRequired = "argument must be a procedure: %s"
+var ErrProcedureRequired = errors.New("argument must be a procedure")
 
 // Macro converts a function into a macro
 var Macro = data.MakeProcedure(func(args ...ale.Value) ale.Value {
@@ -26,7 +27,7 @@ var Macro = data.MakeProcedure(func(args ...ale.Value) ale.Value {
 		}
 		return macro.Call(wrapper)
 	default:
-		panic(fmt.Errorf(ErrProcedureRequired, args[0]))
+		panic(fmt.Errorf("%w: %s", ErrProcedureRequired, args[0]))
 	}
 }, 1)
 

@@ -1,7 +1,6 @@
 package special
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/kode4food/ale"
@@ -21,7 +20,7 @@ func Import(e encoder.Encoder, args ...ale.Value) error {
 	}
 	name, ok := args[0].(data.Local)
 	if !ok {
-		return fmt.Errorf(ErrExpectedName, args[0])
+		return fmt.Errorf("%w: %s", ErrExpectedName, args[0])
 	}
 	from, err := e.Globals().Environment().GetQualified(name)
 	if err != nil {
@@ -52,7 +51,7 @@ func getImporter(from, to env.Namespace, args ...ale.Value) (data.Call, error) {
 	case *data.List:
 		return importNamed(from, to, v)
 	default:
-		return nil, fmt.Errorf(ErrUnexpectedImport, args[0])
+		return nil, fmt.Errorf("%w: %s", ErrUnexpectedImport, args[0])
 	}
 }
 
@@ -90,27 +89,27 @@ func buildImports(a *data.List) (imports, error) {
 		switch f := f.(type) {
 		case data.Local:
 			if _, ok := res[f]; ok {
-				return nil, fmt.Errorf(ErrDuplicateName, f)
+				return nil, fmt.Errorf("%w: %s", ErrDuplicateName, f)
 			}
 			res[f] = f
 		case data.Vector:
 			if len(f) != 2 {
-				return nil, errors.New(ErrUnpairedBindings)
+				return nil, ErrUnpairedBindings
 			}
 			alias, ok := f[0].(data.Local)
 			if !ok {
-				return nil, fmt.Errorf(ErrExpectedName, f[0])
+				return nil, fmt.Errorf("%w: %s", ErrExpectedName, f[0])
 			}
 			name, ok := f[1].(data.Local)
 			if !ok {
-				return nil, fmt.Errorf(ErrExpectedName, f[1])
+				return nil, fmt.Errorf("%w: %s", ErrExpectedName, f[1])
 			}
 			if _, ok := res[alias]; ok {
-				return nil, fmt.Errorf(ErrDuplicateName, alias)
+				return nil, fmt.Errorf("%w: %s", ErrDuplicateName, alias)
 			}
 			res[alias] = name
 		default:
-			return nil, fmt.Errorf(ErrUnexpectedImport, f)
+			return nil, fmt.Errorf("%w: %s", ErrUnexpectedImport, f)
 		}
 	}
 	return res, nil

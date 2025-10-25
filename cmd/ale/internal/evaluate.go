@@ -30,14 +30,14 @@ const (
 
 var (
 	recoverable = []string{
-		parse.ErrListNotClosed,
-		parse.ErrVectorNotClosed,
-		parse.ErrObjectNotClosed,
-		lex.ErrStringNotTerminated,
-		lex.ErrCommentNotTerminated,
+		parse.ErrListNotClosed.Error(),
+		parse.ErrVectorNotClosed.Error(),
+		parse.ErrObjectNotClosed.Error(),
+		lex.ErrStringNotTerminated.Error(),
+		lex.ErrCommentNotTerminated.Error(),
 	}
 
-	notPaired = fmt.Sprintf(parse.ErrPrefixedNotPaired, "")
+	notPaired = parse.ErrPrefixedNotPaired.Error()
 )
 
 // EvaluateStdIn reads from StdIn and evaluates it

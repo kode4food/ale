@@ -32,7 +32,7 @@ const (
 
 // ErrMapNotPaired is raised when a call to ValuesToObject receives an odd
 // number of args, meaning it won't be capable of zipping them into an Object
-const ErrMapNotPaired = "map does not contain an even number of elements"
+var ErrMapNotPaired = errors.New("map must contain an even number of elements")
 
 var (
 	// EmptyObject represents an empty Object
@@ -66,7 +66,7 @@ func NewObject(pairs ...Pair) *Object {
 // ValuesToObject interprets a set of Values as an Object
 func ValuesToObject(vals ...ale.Value) (*Object, error) {
 	if len(vals)%2 != 0 {
-		return nil, errors.New(ErrMapNotPaired)
+		return nil, ErrMapNotPaired
 	}
 	res := EmptyObject
 	for i := len(vals) - 2; i >= 0; i -= 2 {

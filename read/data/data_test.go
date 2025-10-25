@@ -22,6 +22,6 @@ func TestFromString(t *testing.T) {
 
 	as.Panics(
 		func() { _ = rdata.MustFromString(ns, `(1 2 '3)`).Car() },
-		fmt.Errorf(lex.ErrUnexpectedCharacters, "'"),
+		fmt.Errorf("%w: %s", lex.ErrUnexpectedCharacters, "'"),
 	)
 }

@@ -1,6 +1,7 @@
 package data
 
 import (
+	"errors"
 	"fmt"
 	"math/rand/v2"
 	"regexp"
@@ -62,7 +63,7 @@ const (
 
 // ErrInvalidSymbol is raised when a call to ParseSymbol can't interpret its
 // input as a proper Symbol name (local or qualified)
-const ErrInvalidSymbol = "invalid symbol: %s"
+var ErrInvalidSymbol = errors.New("invalid symbol")
 
 var (
 	gen = NewSymbolGenerator()
@@ -105,7 +106,7 @@ func ParseSymbol(s String) (Symbol, error) {
 	if lclRegex.MatchString(n) {
 		return Local(s), nil
 	}
-	return nil, fmt.Errorf(ErrInvalidSymbol, n)
+	return nil, fmt.Errorf("%w: %s", ErrInvalidSymbol, n)
 }
 
 // MustParseSymbol parses a qualified Local and produces a Symbol or explodes

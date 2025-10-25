@@ -13,7 +13,7 @@ type Context struct {
 }
 
 // ErrCycleDetected is raised when wrapping encounters a reference cycle
-const ErrCycleDetected = "cycle detected in wrapping"
+var ErrCycleDetected = errors.New("cycle detected in wrapping")
 
 // Push creates a new Context, checking the parent chain for cycles
 func (c *Context) Push(v reflect.Value) (*Context, error) {
@@ -36,14 +36,14 @@ func (c *Context) checkDuplicate(v reflect.Value) error {
 		switch cv.Kind() {
 		case reflect.Ptr:
 			if cv.Pointer() == v.Pointer() {
-				return errors.New(ErrCycleDetected)
+				return ErrCycleDetected
 			}
 		case reflect.Slice, reflect.Map:
 			if cv.IsNil() || v.IsNil() {
 				break
 			}
 			if cv.Len() == v.Len() && cv.Pointer() == v.Pointer() {
-				return errors.New(ErrCycleDetected)
+				return ErrCycleDetected
 			}
 		default:
 			// no-op

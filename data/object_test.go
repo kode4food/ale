@@ -79,7 +79,7 @@ func TestValuesToObject(t *testing.T) {
 
 	o, err = data.ValuesToObject(K("kwd"))
 	if as.Nil(o) && as.NotNil(err) {
-		as.EqualError(err, data.ErrMapNotPaired)
+		as.ErrorIs(err, data.ErrMapNotPaired)
 	}
 }
 

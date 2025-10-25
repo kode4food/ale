@@ -11,7 +11,7 @@ type valueWrapper struct{}
 
 // ErrMustImplementValue is raised when a value Unwrap call can't treat its
 // source as a data.Value
-const ErrMustImplementValue = "must implement value"
+var ErrMustImplementValue = errors.New("must implement value")
 
 var dataValue = reflect.TypeOf((*ale.Value)(nil)).Elem()
 
@@ -23,7 +23,7 @@ func (d valueWrapper) Wrap(_ *Context, v reflect.Value) (ale.Value, error) {
 	if v, ok := v.Interface().(ale.Value); ok {
 		return v, nil
 	}
-	return nil, errors.New(ErrMustImplementValue)
+	return nil, ErrMustImplementValue
 }
 
 func (d valueWrapper) Unwrap(v ale.Value) (reflect.Value, error) {

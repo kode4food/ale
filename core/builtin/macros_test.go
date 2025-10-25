@@ -56,7 +56,7 @@ func TestBadMacro(t *testing.T) {
 	as := assert.New(t)
 	as.Panics(
 		func() { _ = builtin.Macro.Call(F(32)) },
-		fmt.Errorf(builtin.ErrProcedureRequired, "32"),
+		fmt.Errorf("%w: %s", builtin.ErrProcedureRequired, "32"),
 	)
 
 	ns := assert.GetTestEnvironment().GetRoot()

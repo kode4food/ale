@@ -1,7 +1,6 @@
 package ffi
 
 import (
-	"errors"
 	"reflect"
 
 	"github.com/kode4food/ale"
@@ -68,7 +67,7 @@ func (w *sliceWrapper) Unwrap(v ale.Value) (reflect.Value, error) {
 	case data.Sequence:
 		return w.unwrapUncounted(in)
 	default:
-		return _zero, errors.New(ErrValueMustBeSequence)
+		return _zero, ErrValueMustBeSequence
 	}
 }
 

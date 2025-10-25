@@ -1,6 +1,7 @@
 package isa
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/kode4food/ale/internal/debug"
@@ -35,7 +36,7 @@ const (
 
 // ErrEffectNotDeclared is raised when an attempt to forcefully retrieve an
 // Effect fails
-const ErrEffectNotDeclared = "effect not declared for opcode: %s"
+var ErrEffectNotDeclared = errors.New("effect not declared for opcode")
 
 // Effects is a lookup table of instruction effects
 var Effects = map[Opcode]*Effect{
@@ -133,7 +134,7 @@ func GetEffect(oc Opcode) (*Effect, error) {
 	if effect, ok := Effects[oc]; ok {
 		return effect, nil
 	}
-	return nil, fmt.Errorf(ErrEffectNotDeclared, oc.String())
+	return nil, fmt.Errorf("%w: %s", ErrEffectNotDeclared, oc.String())
 }
 
 // MustGetEffect gives you effect information or explodes violently

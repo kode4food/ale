@@ -1,7 +1,6 @@
 package builtin_test
 
 import (
-	"errors"
 	"fmt"
 	"testing"
 
@@ -49,11 +48,11 @@ func TestObjectEval(t *testing.T) {
 		(x :name)
 	`, S("bob"))
 
-	as.PanicWith(`(object :too "few" :args)`, errors.New(data.ErrMapNotPaired))
+	as.PanicWith(`(object :too "few" :args)`, data.ErrMapNotPaired)
 
 	as.PanicWith(`
 		(apply object (concat '(:name "Ale") '(:age)))
-	`, errors.New(data.ErrMapNotPaired))
+	`, data.ErrMapNotPaired)
 }
 
 func TestObjectAssoc(t *testing.T) {

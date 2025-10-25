@@ -23,14 +23,9 @@ type (
 	}
 )
 
-const (
-	// ErrValueMustBeSequence is raised when an Array Unwrap call can't treat
-	// its source as a data.Sequence
-	ErrValueMustBeSequence = "value must be a sequence"
-
-	// ErrBadSliceLength is raised when an Array Unwrap call receives a slice
-	// with a length that does not match the expected length of the array
-	ErrBadSliceLength = "bad slice length: expected %d, got %d"
+var (
+	ErrValueMustBeSequence = errors.New("value must be a sequence")
+	ErrBadSliceLength      = errors.New("bad slice length")
 )
 
 func makeWrappedArray(t reflect.Type) (Wrapper, error) {
@@ -66,7 +61,7 @@ func (w *arrayWrapper) Wrap(c *Context, v reflect.Value) (ale.Value, error) {
 func (w *arrayWrapper) Unwrap(v ale.Value) (reflect.Value, error) {
 	s, ok := v.(data.Sequence)
 	if !ok {
-		return _zero, errors.New(ErrValueMustBeSequence)
+		return _zero, ErrValueMustBeSequence
 	}
 	in := sequence.ToVector(s)
 	out := reflect.New(w.typ).Elem()
@@ -116,7 +111,8 @@ func (b *byteArrayWrapper) Unwrap(v ale.Value) (reflect.Value, error) {
 		return _zero, err
 	}
 	if li := len(in); li != b.len {
-		return _zero, fmt.Errorf(ErrBadSliceLength, b.len, li)
+		return _zero, fmt.Errorf("%w: expected %d, got %d",
+			ErrBadSliceLength, b.len, li)
 	}
 	copy(out.Bytes(), in)
 	return out, nil
@@ -130,7 +126,8 @@ func (b *byteArrayWrapper) slowUnwrap(
 		return _zero, err
 	}
 	if li := len(in); li != b.len {
-		return _zero, fmt.Errorf(ErrBadSliceLength, b.len, li)
+		return _zero, fmt.Errorf("%w: expected %d, got %d",
+			ErrBadSliceLength, b.len, li)
 	}
 	for i := range b.len {
 		out.Index(i).Set(reflect.ValueOf(in[i]))
@@ -145,6 +142,6 @@ func asByteArray(v ale.Value) ([]byte, error) {
 	case data.String:
 		return []byte(v), nil
 	default:
-		return nil, errors.New(ErrValueMustBeString)
+		return nil, ErrValueMustBeString
 	}
 }

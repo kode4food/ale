@@ -48,7 +48,7 @@ func TestPredicatesEval(t *testing.T) {
 	as.PanicWith(`(null?)`, fmt.Errorf(params.ErrUnmatchedCase, 0, "1 or more"))
 
 	as.PanicWith(`(is-a :dog "woof!")`,
-		fmt.Errorf(builtin.ErrUnknownPredicate, data.Keyword("dog")),
+		fmt.Errorf("%w: %s", builtin.ErrUnknownPredicate, data.Keyword("dog")),
 	)
 }
 

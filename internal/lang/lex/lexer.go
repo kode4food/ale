@@ -1,6 +1,7 @@
 package lex
 
 import (
+	"errors"
 	"fmt"
 	"regexp"
 	"slices"
@@ -26,23 +27,23 @@ type (
 	tokenizer func(string) *Token
 )
 
-const (
+var (
 	// ErrStringNotTerminated is raised when the lexer reaches the end of its
 	// stream while scanning a string, without encountering a closing quote
-	ErrStringNotTerminated = "string has no closing quote"
+	ErrStringNotTerminated = errors.New("string has no closing quote")
 
 	// ErrCommentNotTerminated is raised when the lexer reaches the end of its
 	// stream while scanning a comment, without encountering an end marker
-	ErrCommentNotTerminated = "comment has no closing comment marker"
+	ErrCommentNotTerminated = errors.New("comment has no closing marker")
 
 	// ErrUnmatchedComment is raised when a comment end marker is encountered
 	// in the stream when no open block comment is being parsed
-	ErrUnmatchedComment = "encountered '" + lang.BlockCommentEnd +
-		"' with no open block comment"
+	ErrUnmatchedComment = errors.New("encountered '" + lang.BlockCommentEnd +
+		"' with no open block comment")
 
 	// ErrUnexpectedCharacters is raised when the lexer encounters a set of
 	// characters that don't match any of the defined scanning patterns
-	ErrUnexpectedCharacters = "unexpected characters: %s"
+	ErrUnexpectedCharacters = errors.New("unexpected characters")
 )
 
 var (
@@ -134,7 +135,7 @@ func (m Matchers) Error() Matchers {
 	return basics.Map(m, func(wrapped Matcher) Matcher {
 		return func(input string) (*Token, string) {
 			if t, rest := wrapped(input); t != nil {
-				err := fmt.Errorf(ErrUnexpectedCharacters, t.input)
+				err := fmt.Errorf("%w: %s", ErrUnexpectedCharacters, t.input)
 				s := data.String(err.Error())
 				return Error.FromValue(t.input, s), rest
 			}
@@ -242,7 +243,7 @@ func unescape(s string) string {
 func stringState(m string) *Token {
 	eos := len(m) - 1
 	if len(m) <= 1 || m[eos] != '"' {
-		err := data.String(ErrStringNotTerminated)
+		err := data.String(ErrStringNotTerminated.Error())
 		return Error.FromValue(m, err)
 	}
 	s := unescape(m[1:eos])
@@ -292,7 +293,7 @@ func identifierState(m string) *Token {
 }
 
 func errorState(m string) *Token {
-	err := fmt.Errorf(ErrUnexpectedCharacters, m)
+	err := fmt.Errorf("%w: %s", ErrUnexpectedCharacters, m)
 	return Error.FromValue(m, data.String(err.Error()))
 }
 
@@ -320,13 +321,13 @@ func blockCommentMatcher(input string) (*Token, string) {
 		}
 		i++
 	}
-	err := data.String(ErrCommentNotTerminated)
+	err := data.String(ErrCommentNotTerminated.Error())
 	return Error.FromValue(input, err), input
 }
 
 func blockCommentStrayEndMatcher(input string) (*Token, string) {
 	if strings.HasPrefix(input, lang.BlockCommentEnd) {
-		err := data.String(ErrUnmatchedComment)
+		err := data.String(ErrUnmatchedComment.Error())
 		t := Error.FromValue(lang.BlockCommentEnd, err)
 		rest := input[len(lang.BlockCommentEnd):]
 		return t, rest

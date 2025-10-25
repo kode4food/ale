@@ -1,6 +1,7 @@
 package docstring
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/kode4food/ale/cmd/ale/internal/markdown"
@@ -10,7 +11,7 @@ import (
 )
 
 // ErrSymbolNotDocumented is raised when a call to doc can't resolve a name
-const ErrSymbolNotDocumented = "symbol not documented: %s"
+var ErrSymbolNotDocumented = errors.New("symbol not documented")
 
 const extension = ".md"
 
@@ -26,7 +27,7 @@ func Get(n string) (string, error) {
 	if ok {
 		return string(res), nil
 	}
-	return "", fmt.Errorf(ErrSymbolNotDocumented, n)
+	return "", fmt.Errorf("%w: %s", ErrSymbolNotDocumented, n)
 }
 
 // MustGet resolves a registered docstring entry by name or explodes

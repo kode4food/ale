@@ -1,7 +1,6 @@
 package special_test
 
 import (
-	"errors"
 	"fmt"
 	"testing"
 
@@ -108,15 +107,15 @@ func TestRestFunctionsEval(t *testing.T) {
 
 	as.PanicWith(`
 		(lambda (x y .) "explode")
-	`, errors.New(parse.ErrInvalidListSyntax))
+	`, parse.ErrInvalidListSyntax)
 
 	as.PanicWith(`
 		(lambda (x y . z g) "explode")
-	`, errors.New(parse.ErrInvalidListSyntax))
+	`, parse.ErrInvalidListSyntax)
 
 	as.PanicWith(`
 		(lambda (x y . . z) "explode")
-	`, errors.New(parse.ErrInvalidListSyntax))
+	`, parse.ErrInvalidListSyntax)
 }
 
 func TestTailCallEval(t *testing.T) {

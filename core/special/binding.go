@@ -12,18 +12,10 @@ import (
 
 type uniqueNames map[data.Local]bool
 
-const (
-	// ErrUnpairedBindings is raised when a Let binding Vector has fewer or
-	// more than two elements
-	ErrUnpairedBindings = "binding must be a paired vector"
-
-	// ErrUnexpectedLetSyntax is raised when the Let bindings are not in the
-	// form of a List or Vector
-	ErrUnexpectedLetSyntax = "unexpected binding syntax: %s"
-
-	// ErrNameAlreadyBound is raised when there's an attempt to bind the same
-	// name more than once in a single Let scope
-	ErrNameAlreadyBound = "name is already bound in local scope: %s"
+var (
+	ErrUnpairedBindings    = errors.New("binding must be paired")
+	ErrUnexpectedLetSyntax = errors.New("unexpected binding syntax")
+	ErrNameAlreadyBound    = errors.New("name already bound")
 )
 
 // Let encodes a binding form. Binding values are evaluated first, and are then
@@ -69,7 +61,7 @@ func parseLetBindings(v ale.Value) (generate.Bindings, error) {
 		for f, r, ok := v.Split(); ok; f, r, ok = r.Split() {
 			v, ok := f.(data.Vector)
 			if !ok {
-				return nil, fmt.Errorf(ErrUnexpectedLetSyntax, f)
+				return nil, fmt.Errorf("%w: %s", ErrUnexpectedLetSyntax, f)
 			}
 			b, err := parseLetBinding(v)
 			if err != nil {
@@ -88,17 +80,17 @@ func parseLetBindings(v ale.Value) (generate.Bindings, error) {
 		}
 		return generate.Bindings{b}, nil
 	default:
-		return nil, fmt.Errorf(ErrUnexpectedLetSyntax, v)
+		return nil, fmt.Errorf("%w: %s", ErrUnexpectedLetSyntax, v)
 	}
 }
 
 func parseLetBinding(v data.Vector) (*generate.Binding, error) {
 	if len(v) != 2 {
-		return nil, errors.New(ErrUnpairedBindings)
+		return nil, ErrUnpairedBindings
 	}
 	n, ok := v[0].(data.Local)
 	if !ok {
-		return nil, fmt.Errorf(ErrExpectedName, v[0])
+		return nil, fmt.Errorf("%w: %s", ErrExpectedName, v[0])
 	}
 	return &generate.Binding{
 		Name:  n,
@@ -108,7 +100,7 @@ func parseLetBinding(v data.Vector) (*generate.Binding, error) {
 
 func (u uniqueNames) markAsBound(n data.Local) error {
 	if _, ok := u[n]; ok {
-		return fmt.Errorf(ErrNameAlreadyBound, n)
+		return fmt.Errorf("%w: %s", ErrNameAlreadyBound, n)
 	}
 	u[n] = true
 	return nil

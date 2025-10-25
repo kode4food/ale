@@ -1,6 +1,7 @@
 package special
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/kode4food/ale"
@@ -13,10 +14,10 @@ import (
 	"github.com/kode4food/ale/internal/runtime/isa"
 )
 
-const (
-	ErrExpectedName     = "name expected, got %s"
-	ErrUnexpectedImport = "unexpected import pattern: %s"
-	ErrDuplicateName    = "duplicate name(s) in import: %s"
+var (
+	ErrExpectedName     = errors.New("name expected")
+	ErrUnexpectedImport = errors.New("unexpected import pattern")
+	ErrDuplicateName    = errors.New("duplicate name in import")
 )
 
 func MakeNamespace(e encoder.Encoder, args ...ale.Value) error {
@@ -25,7 +26,7 @@ func MakeNamespace(e encoder.Encoder, args ...ale.Value) error {
 	}
 	name, ok := args[0].(data.Local)
 	if !ok {
-		return fmt.Errorf(ErrExpectedName, args[0])
+		return fmt.Errorf("%w: %s", ErrExpectedName, args[0])
 	}
 	fn := data.MakeProcedure(func(...ale.Value) ale.Value {
 		ns, err := e.Globals().Environment().NewQualified(name)
@@ -66,7 +67,7 @@ func Declared(e encoder.Encoder, args ...ale.Value) error {
 	if len(args) > 0 {
 		name, ok := args[0].(data.Local)
 		if !ok {
-			return fmt.Errorf(ErrExpectedName, args[0])
+			return fmt.Errorf("%w: %s", ErrExpectedName, args[0])
 		}
 		var err error
 		ns, err = ns.Environment().GetQualified(name)

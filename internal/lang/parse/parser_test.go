@@ -1,7 +1,7 @@
 package parse_test
 
 import (
-	"fmt"
+	"errors"
 	"testing"
 
 	"github.com/kode4food/ale/data"
@@ -150,7 +150,7 @@ func TestReadNestedList(t *testing.T) {
 	as.False(ok)
 }
 
-func testReaderError(t *testing.T, src, err string, args ...any) {
+func testReaderError(t *testing.T, src, err string) {
 	as := assert.New(t)
 	as.Panics(
 		func() {
@@ -158,35 +158,35 @@ func testReaderError(t *testing.T, src, err string, args ...any) {
 			tr := read.MustFromString(ns, S(src))
 			_, _ = sequence.Last(tr)
 		},
-		fmt.Errorf(err, args...),
+		errors.New(err),
 	)
 }
 
 func TestReaderErrors(t *testing.T) {
-	testReaderError(t, "(99 100 ", parse.ErrListNotClosed)
-	testReaderError(t, "[99 100 ", parse.ErrVectorNotClosed)
-	testReaderError(t, "#b[99 100 ", parse.ErrVectorNotClosed)
-	testReaderError(t, "{:key 99", parse.ErrObjectNotClosed)
+	testReaderError(t, "(99 100 ", parse.ErrListNotClosed.Error())
+	testReaderError(t, "[99 100 ", parse.ErrVectorNotClosed.Error())
+	testReaderError(t, "#b[99 100 ", parse.ErrVectorNotClosed.Error())
+	testReaderError(t, "{:key 99", parse.ErrObjectNotClosed.Error())
 
-	testReaderError(t, "99 100)", parse.ErrUnmatchedListEnd)
-	testReaderError(t, "99 100]", parse.ErrUnmatchedVectorEnd)
-	testReaderError(t, "99}", parse.ErrUnmatchedObjectEnd)
-	testReaderError(t, "{99}", data.ErrMapNotPaired)
+	testReaderError(t, "99 100)", parse.ErrUnmatchedListEnd.Error())
+	testReaderError(t, "99 100]", parse.ErrUnmatchedVectorEnd.Error())
+	testReaderError(t, "99}", parse.ErrUnmatchedObjectEnd.Error())
+	testReaderError(t, "{99}", data.ErrMapNotPaired.Error())
 
-	testReaderError(t, "(1 2 . 3 4)", parse.ErrInvalidListSyntax)
-	testReaderError(t, "(.)", parse.ErrInvalidListSyntax)
-	testReaderError(t, ".", parse.ErrUnexpectedDot)
+	testReaderError(t, "(1 2 . 3 4)", parse.ErrInvalidListSyntax.Error())
+	testReaderError(t, "(.)", parse.ErrInvalidListSyntax.Error())
+	testReaderError(t, ".", parse.ErrUnexpectedDot.Error())
 
-	testReaderError(t, "(", parse.ErrListNotClosed)
-	testReaderError(t, "'", parse.ErrPrefixedNotPaired, "ale/quote")
-	testReaderError(t, ",@", parse.ErrPrefixedNotPaired, "ale/unquote-splicing")
-	testReaderError(t, ",", parse.ErrPrefixedNotPaired, "ale/unquote")
+	testReaderError(t, "(", parse.ErrListNotClosed.Error())
+	testReaderError(t, "'", parse.ErrPrefixedNotPaired.Error())
+	testReaderError(t, ",@", parse.ErrPrefixedNotPaired.Error())
+	testReaderError(t, ",", parse.ErrPrefixedNotPaired.Error())
 
-	testReaderError(t, "//", data.ErrInvalidSymbol, "//")
-	testReaderError(t, "/bad", data.ErrInvalidSymbol, "/bad")
-	testReaderError(t, "bad/", data.ErrInvalidSymbol, "bad/")
-	testReaderError(t, "bad///", data.ErrInvalidSymbol, "bad///")
-	testReaderError(t, "ale/er/ror", data.ErrInvalidSymbol, "ale/er/ror")
+	testReaderError(t, "//", data.ErrInvalidSymbol.Error())
+	testReaderError(t, "/bad", data.ErrInvalidSymbol.Error())
+	testReaderError(t, "bad/", data.ErrInvalidSymbol.Error())
+	testReaderError(t, "bad///", data.ErrInvalidSymbol.Error())
+	testReaderError(t, "ale/er/ror", data.ErrInvalidSymbol.Error())
 
-	testReaderError(t, `"unterminated`, lex.ErrStringNotTerminated)
+	testReaderError(t, `"unterminated`, lex.ErrStringNotTerminated.Error())
 }

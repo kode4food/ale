@@ -1,7 +1,6 @@
 package special_test
 
 import (
-	"errors"
 	"fmt"
 	"testing"
 
@@ -19,14 +18,14 @@ func TestBindingErrors(t *testing.T) {
 	as := assert.New(t)
 
 	as.ErrorWith(`(let ([x 99][y]) (+ x y))`,
-		errors.New(special.ErrUnpairedBindings),
+		special.ErrUnpairedBindings,
 	)
 
 	as.ErrorWith(`(let ([x 99][x 99]) (+ x y))`,
-		fmt.Errorf(special.ErrNameAlreadyBound, "x"),
+		fmt.Errorf("%w: %s", special.ErrNameAlreadyBound, "x"),
 	)
 
 	as.ErrorWith(`(let (x . 99) (+ x x))`,
-		fmt.Errorf(special.ErrUnexpectedLetSyntax, "(x . 99)"),
+		fmt.Errorf("%w: %s", special.ErrUnexpectedLetSyntax, "(x . 99)"),
 	)
 }

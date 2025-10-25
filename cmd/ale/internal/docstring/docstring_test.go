@@ -22,9 +22,7 @@ func TestDocString(t *testing.T) {
 
 	s, err := docstring.Get("no-way-this-exists")
 	as.Empty(s)
-	as.EqualError(err,
-		fmt.Sprintf(docstring.ErrSymbolNotDocumented, "no-way-this-exists"),
-	)
+	as.EqualError(err, fmt.Sprintf("%s: %s", docstring.ErrSymbolNotDocumented.Error(), "no-way-this-exists"))
 }
 
 func TestDocumentedBuiltinsExist(t *testing.T) {
@@ -74,7 +72,7 @@ func TestMustGet(t *testing.T) {
 	if as.NotNil(d) {
 		as.Panics(
 			func() { _ = docstring.MustGet("blah") },
-			fmt.Errorf(docstring.ErrSymbolNotDocumented, "blah"),
+			fmt.Errorf("%w: %s", docstring.ErrSymbolNotDocumented, "blah"),
 		)
 	}
 }

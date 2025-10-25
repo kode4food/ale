@@ -1,7 +1,6 @@
 package special_test
 
 import (
-	"errors"
 	"fmt"
 	"testing"
 
@@ -29,15 +28,15 @@ func TestLetBindingErrors(t *testing.T) {
 	as := assert.New(t)
 	as.ErrorWith(`
 		(let 99 "hello")
-	`, fmt.Errorf(special.ErrUnexpectedLetSyntax, "99"))
+	`, fmt.Errorf("%w: %s", special.ErrUnexpectedLetSyntax, "99"))
 
 	as.ErrorWith(`
 		(let [a blah b] "hello")
-	`, errors.New(special.ErrUnpairedBindings))
+	`, special.ErrUnpairedBindings)
 
 	as.PanicWith(`
 		(let ((a blah)) "hello")
-	`, fmt.Errorf(special.ErrUnexpectedLetSyntax, "(a blah)"))
+	`, fmt.Errorf("%w: %s", special.ErrUnexpectedLetSyntax, "(a blah)"))
 }
 
 func TestMutualBindingsEval(t *testing.T) {

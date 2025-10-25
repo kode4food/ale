@@ -1,6 +1,7 @@
 package builtin
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 
@@ -16,7 +17,7 @@ type syntaxEnv struct {
 
 // ErrUnsupportedSyntaxQuote is raised when an attempt to syntax quote an
 // unsupported type is made. Generally on basic sequences are supported
-const ErrUnsupportedSyntaxQuote = "unsupported type in syntax quote: %s"
+var ErrUnsupportedSyntaxQuote = errors.New("unsupported type in syntax quote")
 
 var (
 	quoteSym  = env.RootSymbol("quote")
@@ -100,7 +101,7 @@ func (se *syntaxEnv) quoteSequence(s data.Sequence) (ale.Value, error) {
 	case *data.Object:
 		return se.quoteObject(s)
 	default:
-		return nil, fmt.Errorf(ErrUnsupportedSyntaxQuote, s)
+		return nil, fmt.Errorf("%w: %s", ErrUnsupportedSyntaxQuote, s)
 	}
 }
 

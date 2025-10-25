@@ -28,7 +28,7 @@ type (
 )
 
 // ErrUnsupportedType is raised when wrapping encounters an unsupported type
-const ErrUnsupportedType = "unsupported type"
+var ErrUnsupportedType = errors.New("unsupported type")
 
 var (
 	cache = makeTypeCache()
@@ -90,7 +90,7 @@ func makeWrappedType(t reflect.Type) (Wrapper, error) {
 		return handler(t)
 	}
 
-	return nil, errors.New(ErrUnsupportedType)
+	return nil, ErrUnsupportedType
 }
 
 func makeTypeCache() *typeCache {

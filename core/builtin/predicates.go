@@ -1,6 +1,7 @@
 package builtin
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/kode4food/ale"
@@ -15,7 +16,7 @@ type predicate func(ale.Value) bool
 
 // ErrUnknownPredicate is raised when a call to IsA can't resolve a built-in
 // predicate for the specified keyword
-const ErrUnknownPredicate = "unknown predicate: %s"
+var ErrUnknownPredicate = errors.New("unknown predicate")
 
 const (
 	AnyKey       = data.Keyword("any")
@@ -97,7 +98,7 @@ var IsA = data.MakeProcedure(func(args ...ale.Value) ale.Value {
 	if p, ok := predicates[kwd]; ok {
 		return p
 	}
-	panic(fmt.Errorf(ErrUnknownPredicate, kwd))
+	panic(fmt.Errorf("%w: %s", ErrUnknownPredicate, kwd))
 }, 1)
 
 func makeGoTypePredicate[T any]() data.Procedure {

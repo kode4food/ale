@@ -54,7 +54,7 @@ func TestEvalBuffer(t *testing.T) {
 		mustEvalBuffer([]byte(`(raise "boom")`))
 	})
 
-	panicWithRecoverable(t, parse.ErrListNotClosed, func() {
+	panicWithRecoverable(t, parse.ErrListNotClosed.Error(), func() {
 		mustEvalBuffer([]byte(`(no-close `))
 	})
 }

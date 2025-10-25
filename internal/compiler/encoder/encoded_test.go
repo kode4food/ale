@@ -80,5 +80,5 @@ func TestRunnableDoubleAnchor(t *testing.T) {
 		isa.Label.New(0),
 	}).Runnable()
 
-	as.EqualError(err, encoder.ErrLabelAlreadyAnchored)
+	as.ErrorIs(err, encoder.ErrLabelAlreadyAnchored)
 }

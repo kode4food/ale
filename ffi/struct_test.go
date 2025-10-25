@@ -41,7 +41,7 @@ func TestStructCycle(t *testing.T) {
 
 	res, err := ffi.Wrap(si)
 	if as.Nil(res) && as.NotNil(err) {
-		as.Equal(ffi.ErrCycleDetected, err.Error())
+		as.ErrorIs(err, ffi.ErrCycleDetected)
 	}
 }
 

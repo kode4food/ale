@@ -25,45 +25,16 @@ type (
 	handler func(*parser, *lex.Token) (ale.Value, error)
 )
 
-const (
-	// ErrPrefixedNotPaired is raised when the parser encounters the end of the
-	// stream without being able to complete a paired element, such as a quote
-	ErrPrefixedNotPaired = "end of file reached before completing %s"
-
-	// ErrUnexpectedDot is raised when the parser encounters a dot in the
-	// stream when it isn't part of an open list
-	ErrUnexpectedDot = "encountered '" + lang.Dot + "' with no open list"
-
-	// ErrInvalidListSyntax is raised when the parse encounters a misplaced dot
-	// when parsing an open list
-	ErrInvalidListSyntax = "invalid list syntax"
-
-	// ErrListNotClosed is raised when the parser encounters the end of the
-	// stream while an open list is still being parsed
-	ErrListNotClosed = "end of file reached with open list"
-
-	// ErrUnmatchedListEnd is raised when a list-end character is encountered
-	// in the stream when no open list is being parsed
-	ErrUnmatchedListEnd = "encountered '" + lang.ListEnd +
-		"' with no open list"
-
-	// ErrVectorNotClosed is raised when the parser encounters the end of the
-	// stream while an open vector is still being parsed
-	ErrVectorNotClosed = "end of file reached with open vector"
-
-	// ErrUnmatchedVectorEnd is raised when a vector-end character is
-	// encountered in the stream when no open vector is being parsed
-	ErrUnmatchedVectorEnd = "encountered '" + lang.VectorEnd +
-		"' with no open vector"
-
-	// ErrObjectNotClosed is raised when the parser encounters the end of the
-	// stream while an open object is still being parsed
-	ErrObjectNotClosed = "end of file reached with open object"
-
-	// ErrUnmatchedObjectEnd is raised when an object-end character is
-	// encountered in the stream when no open object is being parsed
-	ErrUnmatchedObjectEnd = "encountered '" + lang.ObjectEnd +
-		"' with no open object"
+var (
+	ErrPrefixedNotPaired  = errors.New("end of file before completing")
+	ErrUnexpectedDot      = errors.New("unexpected dot")
+	ErrInvalidListSyntax  = errors.New("invalid list syntax")
+	ErrListNotClosed      = errors.New("list not closed")
+	ErrUnmatchedListEnd   = errors.New("unmatched list end")
+	ErrVectorNotClosed    = errors.New("vector not closed")
+	ErrUnmatchedVectorEnd = errors.New("unmatched vector end")
+	ErrObjectNotClosed    = errors.New("object not closed")
+	ErrUnmatchedObjectEnd = errors.New("unmatched object end")
 )
 
 var (
@@ -78,7 +49,7 @@ var (
 		lang.FalseLiteral: data.False,
 	}
 
-	collectionErrors = map[lex.TokenType]string{
+	collectionErrors = map[lex.TokenType]error{
 		lex.VectorEnd: ErrVectorNotClosed,
 		lex.ObjectEnd: ErrObjectNotClosed,
 	}
@@ -111,7 +82,7 @@ func (p *parser) nextToken() (*lex.Token, error) {
 	p.token = token.(*lex.Token)
 	p.seq = seq
 	if p.token.Type() == lex.Error {
-		return nil, p.error(data.ToString(p.token.Value()))
+		return nil, errors.New(data.ToString(p.token.Value()))
 	}
 	return p.token, nil
 }
@@ -223,12 +194,12 @@ func (p *parser) nonDotted(endToken lex.TokenType) (data.Vector, error) {
 	}
 }
 
-func (p *parser) error(text string) error {
-	return errors.New(text)
+func (p *parser) error(err error) error {
+	return err
 }
 
-func (p *parser) errorf(text string, a ...any) error {
-	return fmt.Errorf(text, a...)
+func (p *parser) errorf(err error, a ...any) error {
+	return fmt.Errorf("%w: %s", err, fmt.Sprint(a...))
 }
 
 func (p *parser) keyword() (ale.Value, error) {
@@ -299,8 +270,8 @@ func makeMethodHandler(method func(*parser) (ale.Value, error)) handler {
 	}
 }
 
-func makeErrorHandler(msg string) handler {
+func makeErrorHandler(err error) handler {
 	return func(p *parser, t *lex.Token) (ale.Value, error) {
-		return nil, p.error(msg)
+		return nil, err
 	}
 }

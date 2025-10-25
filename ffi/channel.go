@@ -16,7 +16,9 @@ type channelWrapper struct {
 }
 
 // ErrChannelCoercionNotSupported is raised when a channel Unwrap is called
-const ErrChannelCoercionNotSupported = "value cannot be coerced into chan"
+var ErrChannelCoercionNotSupported = errors.New(
+	"value cannot be coerced into chan",
+)
 
 func makeWrappedChannel(t reflect.Type) (Wrapper, error) {
 	w, err := WrapType(t.Elem())
@@ -92,5 +94,5 @@ func (w *channelWrapper) makeEmitter(v reflect.Value) data.Procedure {
 }
 
 func (*channelWrapper) Unwrap(ale.Value) (reflect.Value, error) {
-	return _zero, errors.New(ErrChannelCoercionNotSupported)
+	return _zero, ErrChannelCoercionNotSupported
 }

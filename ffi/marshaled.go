@@ -2,7 +2,6 @@ package ffi
 
 import (
 	"encoding"
-	"errors"
 	"reflect"
 
 	"github.com/kode4food/ale"
@@ -41,7 +40,7 @@ func (w *marshaledWrapper) Wrap(_ *Context, v reflect.Value) (ale.Value, error) 
 func (w *marshaledWrapper) Unwrap(v ale.Value) (reflect.Value, error) {
 	s, ok := v.(data.String)
 	if !ok {
-		return _zero, errors.New(ErrValueMustBeString)
+		return _zero, ErrValueMustBeString
 	}
 	out := reflect.New(w.typ)
 	m := out.Interface().(encoding.TextUnmarshaler)

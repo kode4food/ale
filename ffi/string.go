@@ -12,7 +12,7 @@ type stringWrapper struct{}
 
 // ErrValueMustBeString is raised when a string Unwrap call can't treat its
 // source as a data.String
-const ErrValueMustBeString = "value must be a byte slice or string"
+var ErrValueMustBeString = errors.New("value must be a byte slice or string")
 
 func (stringWrapper) Wrap(_ *Context, v reflect.Value) (ale.Value, error) {
 	return data.String(v.String()), nil
@@ -29,6 +29,6 @@ func asValueOf[T string | []byte](v ale.Value) (reflect.Value, error) {
 	case data.Bytes:
 		return reflect.ValueOf(T(v)), nil
 	default:
-		return _zero, errors.New(ErrValueMustBeString)
+		return _zero, ErrValueMustBeString
 	}
 }

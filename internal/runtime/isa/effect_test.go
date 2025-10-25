@@ -15,5 +15,7 @@ func TestEffects(t *testing.T) {
 	as.Equal(isa.Labels, e1.Operand)
 
 	_, err := isa.GetEffect(isa.Opcode(5000))
-	as.EqualError(err, fmt.Sprintf(isa.ErrEffectNotDeclared, isa.Opcode(5000)))
+	as.EqualError(err, fmt.Sprintf(
+		"%s: %s", isa.ErrEffectNotDeclared.Error(), isa.Opcode(5000).String(),
+	))
 }

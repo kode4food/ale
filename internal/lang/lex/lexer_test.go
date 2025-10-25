@@ -161,7 +161,7 @@ func TestComments(t *testing.T) {
 	l2 := lex.StripWhitespace(rdata.MustTokenize("hello |# there"))
 	assertTokenSequence(t, l2, []*lex.Token{
 		T(lex.Identifier, S("hello")),
-		T(lex.Error, S(lex.ErrUnmatchedComment)),
+		T(lex.Error, S(lex.ErrUnmatchedComment.Error())),
 		T(lex.Identifier, S("there")),
 	})
 }
@@ -181,7 +181,7 @@ func TestIdentifiers(t *testing.T) {
 }
 
 func TestUnexpectedChars(t *testing.T) {
-	err := fmt.Sprintf(lex.ErrUnexpectedCharacters, "@")
+	err := fmt.Sprintf("%s: %s", lex.ErrUnexpectedCharacters.Error(), "@")
 	l1 := lex.StripWhitespace(read.MustTokenize("hello @there"))
 	assertTokenSequence(t, l1, []*lex.Token{
 		T(lex.Identifier, S("hello")),
@@ -189,7 +189,7 @@ func TestUnexpectedChars(t *testing.T) {
 		T(lex.Identifier, S("there")),
 	})
 
-	err = fmt.Sprintf(lex.ErrUnexpectedCharacters, "'")
+	err = fmt.Sprintf("%s: %s", lex.ErrUnexpectedCharacters.Error(), "'")
 	l2 := lex.StripWhitespace(rdata.MustTokenize("hello 'there"))
 	assertTokenSequence(t, l2, []*lex.Token{
 		T(lex.Identifier, S("hello")),
@@ -201,7 +201,7 @@ func TestUnexpectedChars(t *testing.T) {
 func TestUnterminatedString(t *testing.T) {
 	l := lex.StripWhitespace(read.MustTokenize(`"unterminated `))
 	assertTokenSequence(t, l, []*lex.Token{
-		T(lex.Error, S(lex.ErrStringNotTerminated)),
+		T(lex.Error, S(lex.ErrStringNotTerminated.Error())),
 	})
 }
 
