@@ -1,4 +1,4 @@
-# Ale is a Lisp Environment
+# Ale is a Lisp Environment <img src="./docs/logo.png" align="right" height="100"/>
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/kode4food/ale)](https://goreportcard.com/report/github.com/kode4food/ale) ![Build Status](https://github.com/kode4food/ale/actions/workflows/build.yml/badge.svg) [![Code Coverage](https://qlty.sh/gh/kode4food/projects/ale/coverage.svg)](https://qlty.sh/gh/kode4food/projects/ale) [![Maintainability](https://qlty.sh/gh/kode4food/projects/ale/maintainability.svg)](https://qlty.sh/gh/kode4food/projects/ale) [![GitHub](https://img.shields.io/github/license/kode4food/ale)](https://github.com/kode4food/ale/blob/main/LICENSE.md)
 
