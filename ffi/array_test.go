@@ -2,6 +2,7 @@ package ffi_test
 
 import (
 	"fmt"
+	"strings"
 	"testing"
 
 	"github.com/kode4food/ale/data"
@@ -98,11 +99,11 @@ func TestByteArrayUnwrap(t *testing.T) {
 	}
 
 	f2 := ffi.MustWrap(func(a [3]byte) string {
-		res := ""
+		var res strings.Builder
 		for _, v := range a {
-			res += fmt.Sprintf("%d", v)
+			fmt.Fprintf(&res, "%d", v)
 		}
-		return res
+		return res.String()
 	}).(data.Procedure)
 
 	out2 := f2.Call(data.Bytes{1, 2, 3}).(data.String)

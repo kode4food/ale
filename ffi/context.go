@@ -34,7 +34,7 @@ func (c *Context) checkDuplicate(v reflect.Value) error {
 	cv := c.value
 	if cv.IsValid() && v.IsValid() && cv.Type() == v.Type() {
 		switch cv.Kind() {
-		case reflect.Ptr:
+		case reflect.Pointer:
 			if cv.Pointer() == v.Pointer() {
 				return ErrCycleDetected
 			}

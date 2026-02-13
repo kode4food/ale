@@ -181,7 +181,7 @@ func wrapLine(s string, w int) []string {
 
 	var b strings.Builder
 	b.WriteString(i)
-	for _, e := range strings.Split(s, " ") {
+	for e := range strings.SplitSeq(s, " ") {
 		bl := strippedLen(b.String())
 		if bl > il {
 			if bl+strippedLen(e) >= w {

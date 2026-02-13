@@ -97,9 +97,9 @@ func NewGeneratedSymbol(name Local) Symbol {
 func ParseSymbol(s String) (Symbol, error) {
 	n := string(s)
 	if qualRegex.MatchString(n) {
-		i := strings.Index(n, lang.DomainSeparator)
-		name := Local(n[i+len(lang.DomainSeparator):])
-		domain := Local(n[:i])
+		before, after, _ := strings.Cut(n, lang.DomainSeparator)
+		name := Local(after)
+		domain := Local(before)
 		res := NewQualifiedSymbol(name, domain)
 		return res, nil
 	}

@@ -135,7 +135,7 @@ func getHandlers() *[maxkind.Value + 1]handler {
 		handlers[reflect.Func] = makeWrappedFunc
 		handlers[reflect.Interface] = makeWrappedInterface
 		handlers[reflect.Map] = makeWrappedMap
-		handlers[reflect.Ptr] = makeWrappedPointer
+		handlers[reflect.Pointer] = makeWrappedPointer
 		handlers[reflect.Slice] = makeWrappedSlice
 		handlers[reflect.String] = makeHandler(stringWrapper{})
 		handlers[reflect.Struct] = makeWrappedStruct

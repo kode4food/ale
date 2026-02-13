@@ -13,8 +13,8 @@ type marshaledWrapper struct {
 }
 
 var (
-	textMarshaler   = reflect.TypeOf((*encoding.TextMarshaler)(nil)).Elem()
-	textUnmarshaler = reflect.TypeOf((*encoding.TextUnmarshaler)(nil)).Elem()
+	textMarshaler   = reflect.TypeFor[encoding.TextMarshaler]()
+	textUnmarshaler = reflect.TypeFor[encoding.TextUnmarshaler]()
 )
 
 func isMarshaledArray(t reflect.Type) bool {

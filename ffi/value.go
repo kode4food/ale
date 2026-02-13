@@ -13,7 +13,7 @@ type valueWrapper struct{}
 // source as a data.Value
 var ErrMustImplementValue = errors.New("must implement value")
 
-var dataValue = reflect.TypeOf((*ale.Value)(nil)).Elem()
+var dataValue = reflect.TypeFor[ale.Value]()
 
 func wrapDataValue(_ reflect.Type) (Wrapper, error) {
 	return valueWrapper{}, nil

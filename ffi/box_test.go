@@ -13,7 +13,7 @@ func TestUintptrBoxing(t *testing.T) {
 	as := assert.New(t)
 
 	four2 := uintptr(42)
-	w, err := ffi.WrapType(reflect.TypeOf(four2))
+	w, err := ffi.WrapType(reflect.TypeFor[uintptr]())
 	if as.NoError(err) {
 		b1, err := w.Wrap(nil, reflect.ValueOf(four2))
 		if as.NoError(err) {
@@ -37,7 +37,7 @@ func TestUnsafePointerBoxing(t *testing.T) {
 
 	four2 := 42
 	p := unsafe.Pointer(&four2)
-	w, err := ffi.WrapType(reflect.TypeOf(p))
+	w, err := ffi.WrapType(reflect.TypeFor[unsafe.Pointer]())
 	if as.NoError(err) {
 		b1, err := w.Wrap(nil, reflect.ValueOf(p))
 		if as.NoError(err) {

@@ -18,7 +18,7 @@ func TestByteArrayWrapper(t *testing.T) {
 	if as.NoError(err) {
 		as.Equal(id1.String(), string(s.(data.String)))
 
-		w, err := ffi.WrapType(reflect.TypeOf(id1))
+		w, err := ffi.WrapType(reflect.TypeFor[uuid.UUID]())
 		if as.NoError(err) && as.NotNil(w) {
 			id2, err := w.Unwrap(s.(data.String))
 			if as.NoError(err) {
