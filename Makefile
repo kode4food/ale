@@ -2,7 +2,7 @@ DIST_DIR ?= ./dist
 EXE = $(DIST_DIR)/ale
 GO ?= go
 
-.PHONY: all install build test generate clean
+.PHONY: all install build format check test pre-commit generate clean
 
 all: build
 
@@ -14,10 +14,18 @@ build: test
 	@rm -f $(EXE)
 	$(GO) build -o $(EXE) ./cmd/ale
 
-test: generate
-	$(GO) test ./...
+format: generate
+	$(GO) run golang.org/x/tools/cmd/goimports@latest -w .
+	$(GO) fix ./...
+
+check:
 	$(GO) vet ./...
 	$(GO) run honnef.co/go/tools/cmd/staticcheck ./...
+
+test: generate check
+	$(GO) test ./...
+
+pre-commit: format test
 
 generate:
 	$(GO) generate ./...
