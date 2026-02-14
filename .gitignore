@@ -17,6 +17,7 @@ vendor
 _cgo_defun.c
 _cgo_gotypes.go
 _cgo_export.*
+.gocache
 
 _testmain.go
 

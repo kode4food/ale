@@ -1,6 +1,9 @@
 package ffi_test
 
 import (
+	"errors"
+	"fmt"
+	"math"
 	"testing"
 
 	"github.com/kode4food/ale/data"
@@ -103,4 +106,90 @@ func TestComplexWrapper(t *testing.T) {
 	r := f.Call(c1, c2).(data.Vector)
 	as.String("(18.0 . 30.0)", r[0])
 	as.String("(96.0 . 6.0)", r[1])
+}
+
+func TestIntWrapperErrorCases(t *testing.T) {
+	as := assert.New(t)
+	f := ffi.MustWrap(func(i int8) int8 {
+		return i
+	}).(data.Procedure)
+
+	as.Equal(I(99), f.Call(F(99)))
+
+	signedErr := fmt.Errorf(ffi.ErrValueMustBeSigned, 8)
+	as.Panics(func() { _ = f.Call(F(99.5)) }, signedErr)
+	as.Panics(func() { _ = f.Call(F(math.NaN())) }, signedErr)
+	as.Panics(func() { _ = f.Call(F(math.Inf(1))) }, signedErr)
+	as.Panics(func() { _ = f.Call(F(128)) }, signedErr)
+	as.Panics(func() { _ = f.Call(mustRatio(t, "3/2")) }, signedErr)
+	as.Panics(func() { _ = f.Call(mustInteger(t, "100000000000000000000")) },
+		signedErr,
+	)
+}
+
+func TestUintWrapperErrorCases(t *testing.T) {
+	as := assert.New(t)
+	f := ffi.MustWrap(func(i uint8) uint8 {
+		return i
+	}).(data.Procedure)
+
+	as.Equal(I(12), f.Call(F(12)))
+
+	unsignedErr := fmt.Errorf(ffi.ErrValueMustBeUnsigned, 8)
+	as.Panics(func() { _ = f.Call(I(-1)) }, unsignedErr)
+	as.Panics(func() { _ = f.Call(F(-1)) }, unsignedErr)
+	as.Panics(func() { _ = f.Call(F(12.5)) }, unsignedErr)
+	as.Panics(func() { _ = f.Call(F(math.NaN())) }, unsignedErr)
+	as.Panics(func() { _ = f.Call(F(math.Inf(1))) }, unsignedErr)
+	as.Panics(func() { _ = f.Call(F(256)) }, unsignedErr)
+	as.Panics(func() { _ = f.Call(mustRatio(t, "3/2")) }, unsignedErr)
+	as.Panics(func() { _ = f.Call(mustInteger(t, "100000000000000000000")) },
+		unsignedErr,
+	)
+}
+
+func TestFloatWrapperAdditionalCases(t *testing.T) {
+	as := assert.New(t)
+	f := ffi.MustWrap(func(v float64) float64 {
+		return v
+	}).(data.Procedure)
+
+	as.Equal(F(1.5), f.Call(mustRatio(t, "3/2")))
+	out := f.Call(mustInteger(t, "100000000000000000000")).(data.Float)
+	as.True(float64(out) > 0)
+	as.Panics(func() { _ = f.Call(S("bad-float")) },
+		errors.New(ffi.ErrValueMustBeFloat),
+	)
+}
+
+func TestComplexWrapperErrors(t *testing.T) {
+	as := assert.New(t)
+	f := ffi.MustWrap(func(v complex64) complex64 {
+		return v
+	}).(data.Procedure)
+
+	as.Panics(func() { _ = f.Call(S("not-cons")) },
+		errors.New(ffi.ErrValueMustBeCons),
+	)
+	as.Panics(func() { _ = f.Call(C(S("bad"), F(1))) },
+		errors.New(ffi.ErrConsMustContainFloat),
+	)
+}
+
+func mustInteger(t *testing.T, s string) data.Number {
+	t.Helper()
+	res, err := data.ParseInteger(s)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return res
+}
+
+func mustRatio(t *testing.T, s string) data.Number {
+	t.Helper()
+	res, err := data.ParseRatio(s)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return res
 }

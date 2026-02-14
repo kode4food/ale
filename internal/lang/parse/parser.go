@@ -250,7 +250,7 @@ func getValueHandlers() *[lex.EOF + 1]handler {
 	return &handlers
 }
 
-func listStartHandler(p *parser, t *lex.Token) (ale.Value, error) {
+func listStartHandler(p *parser, _ *lex.Token) (ale.Value, error) {
 	res, err := p.list()
 	if err != nil {
 		return nil, err

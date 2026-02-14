@@ -2,6 +2,7 @@ package ffi_test
 
 import (
 	"fmt"
+	"reflect"
 	"strings"
 	"testing"
 
@@ -101,7 +102,7 @@ func TestByteArrayUnwrap(t *testing.T) {
 	f2 := ffi.MustWrap(func(a [3]byte) string {
 		var res strings.Builder
 		for _, v := range a {
-			fmt.Fprintf(&res, "%d", v)
+			_, _ = fmt.Fprintf(&res, "%d", v)
 		}
 		return res.String()
 	}).(data.Procedure)
@@ -136,4 +137,37 @@ func TestByteArrayStruct(t *testing.T) {
 			C(K("ints"), V(I(0), I(0), I(0))),
 		),
 	)
+}
+
+func TestArrayUnwrapErrors(t *testing.T) {
+	as := assert.New(t)
+	f := ffi.MustWrap(func(a [3]int) [3]int {
+		return a
+	}).(data.Procedure)
+
+	as.Panics(func() { _ = f.Call(I(1)) })
+	as.Panics(func() { _ = f.Call(V(I(1), S("bad"), I(3))) })
+}
+
+func TestByteArrayUnwrapErrors(t *testing.T) {
+	as := assert.New(t)
+	f := ffi.MustWrap(func(a [3]byte) [3]byte {
+		return a
+	}).(data.Procedure)
+
+	as.Panics(func() { _ = f.Call(I(1)) })
+	as.Panics(func() { _ = f.Call(data.Bytes{1, 2}) })
+	as.Panics(func() { _ = f.Call(S("12")) })
+}
+
+func TestByteArrayWrapFastPath(t *testing.T) {
+	as := assert.New(t)
+	w, err := ffi.WrapType(reflect.TypeFor[[3]byte]())
+	if as.NoError(err) {
+		in := [3]byte{1, 2, 3}
+		out, err := w.Wrap(nil, reflect.ValueOf(&in).Elem())
+		if as.NoError(err) {
+			as.Equal(data.Bytes{1, 2, 3}, out)
+		}
+	}
 }

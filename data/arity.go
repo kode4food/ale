@@ -84,13 +84,6 @@ func CheckMinimumArity(min, count int) error {
 	return nil
 }
 
-// MustCheckMinimumArity is CheckMinimumArity, but panics if the check fails
-func MustCheckMinimumArity(min, count int) {
-	if err := CheckMinimumArity(min, count); err != nil {
-		panic(err)
-	}
-}
-
 func makeRangedChecker(min, max int) ArityChecker {
 	return func(count int) error {
 		return CheckRangedArity(min, max, count)
@@ -103,11 +96,4 @@ func CheckRangedArity(min, max, count int) error {
 		return fmt.Errorf(ErrRangedArity, min, max, count)
 	}
 	return nil
-}
-
-// MustCheckRangedArity is CheckRangedArity, but panics if the check fails
-func MustCheckRangedArity(min, max, count int) {
-	if err := CheckRangedArity(min, max, count); err != nil {
-		panic(err)
-	}
 }

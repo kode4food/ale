@@ -6,8 +6,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/kode4food/ale/internal/basics"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/kode4food/ale/internal/basics"
 )
 
 func TestEqual(t *testing.T) {

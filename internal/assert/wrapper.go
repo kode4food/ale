@@ -6,10 +6,11 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
+
 	"github.com/kode4food/ale"
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/debug"
-	"github.com/stretchr/testify/assert"
 )
 
 // Wrapper wraps testify assertions to perform checking and conversion that is

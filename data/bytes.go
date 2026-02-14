@@ -54,7 +54,7 @@ func ValuesToBytes(vals ...ale.Value) (Bytes, error) {
 		if err != nil {
 			return nil, err
 		}
-		res[i] = byte(b)
+		res[i] = b
 	}
 	return res, nil
 }
@@ -128,7 +128,7 @@ func (b Bytes) Reverse() Sequence {
 
 func (b Bytes) IndexOf(v ale.Value) (int, bool) {
 	vb := mustToByte(v)
-	i := slices.Index(b, byte(vb))
+	i := slices.Index(b, vb)
 	return i, i != -1
 }
 

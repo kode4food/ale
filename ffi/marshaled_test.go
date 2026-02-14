@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/google/uuid"
+
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/ffi"
 	"github.com/kode4food/ale/internal/assert"

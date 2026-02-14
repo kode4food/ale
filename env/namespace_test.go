@@ -113,3 +113,78 @@ func TestRedeclaration(t *testing.T) {
 	_, err = root.Public("other-name")
 	as.EqualError(err, fmt.Sprintf(env.ErrNameAlreadyDeclared, "other-name"))
 }
+
+func TestImport(t *testing.T) {
+	as := assert.New(t)
+	e := env.NewEnvironment()
+
+	src, err := e.NewQualified("src")
+	if as.NoError(err) {
+		as.NoError(env.BindPublic(src, "public-value", I(42)))
+		as.NoError(env.BindPrivate(src, "private-value", I(99)))
+	}
+
+	dst, err := e.NewQualified("dst")
+	if as.NoError(err) {
+		pub, _, err := src.Resolve("public-value")
+		if as.NoError(err) {
+			as.NoError(dst.Import(env.Entries{
+				"alias": pub,
+			}))
+		}
+	}
+
+	d := dst.Declared()
+	as.Equal(0, len(d))
+
+	e1, _, err := dst.Resolve("alias")
+	if as.NoError(err) {
+		v, err := e1.Value()
+		if as.NoError(err) {
+			as.Equal(I(42), v)
+		}
+		as.True(e1.IsPrivate())
+	}
+}
+
+func TestImportDuplicatesAndResolvePublic(t *testing.T) {
+	as := assert.New(t)
+	e := env.NewEnvironment()
+
+	from, err := e.NewQualified("from")
+	if as.NoError(err) {
+		as.NoError(env.BindPublic(from, "name", I(1)))
+	}
+
+	to, err := e.NewQualified("to")
+	if as.NoError(err) {
+		as.NoError(env.BindPublic(to, "name", I(2)))
+	}
+
+	fEntry, _, err := from.Resolve("name")
+	if as.NoError(err) {
+		err = to.Import(env.Entries{
+			"name": fEntry,
+		})
+		as.EqualError(err, fmt.Sprintf(env.ErrNameAlreadyDeclared, "[name]"))
+	}
+
+	pEntry, _, err := from.Resolve("name")
+	if as.NoError(err) {
+		as.NoError(to.Import(env.Entries{
+			"private-name": pEntry,
+		}))
+	}
+
+	q := QS("to", "private-name")
+	_, _, err = env.ResolveSymbol(e.GetRoot(), q)
+	as.EqualError(err, fmt.Sprintf(env.ErrNameNotDeclared, "private-name"))
+
+	ent, _, err := env.ResolveSymbol(to, q)
+	if as.NoError(err) && as.NotNil(ent) {
+		v, err := ent.Value()
+		if as.NoError(err) {
+			as.Equal(I(1), v)
+		}
+	}
+}

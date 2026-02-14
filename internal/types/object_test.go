@@ -3,8 +3,9 @@ package types_test
 import (
 	"testing"
 
-	"github.com/kode4food/ale/internal/types"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/kode4food/ale/internal/types"
 )
 
 func TestObjectAccepts(t *testing.T) {

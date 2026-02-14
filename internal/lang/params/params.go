@@ -321,9 +321,9 @@ func parseConsParamNames(c *data.Cons) data.Locals {
 func formatRange(r [2]int) string {
 	if r[0] == r[1] {
 		return fmt.Sprintf("%d", r[0])
-	} else {
-		return fmt.Sprintf("%d-%d", r[0], r[1])
 	}
+
+	return fmt.Sprintf("%d-%d", r[0], r[1])
 }
 
 func formatOrMore(i int) string {

@@ -4,6 +4,7 @@ package console
 
 import (
 	"github.com/chzyer/readline"
+
 	"github.com/kode4food/ale/internal/debug"
 	"github.com/kode4food/ale/internal/lang"
 )

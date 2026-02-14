@@ -37,11 +37,6 @@ func L(args ...ale.Value) *data.List {
 	return data.NewList(args...)
 }
 
-// N constructs a Name
-func N(n string) data.Name {
-	return data.Name(n)
-}
-
 // LS constructs a Local Symbol
 func LS(n string) data.Symbol {
 	return data.Local(n)

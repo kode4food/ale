@@ -3,9 +3,10 @@ package internal_test
 import (
 	"testing"
 
+	"github.com/stretchr/testify/assert"
+
 	data "github.com/kode4food/ale/data/internal"
 	"github.com/kode4food/ale/internal/basics"
-	"github.com/stretchr/testify/assert"
 )
 
 func testData[T any](t *testing.T, s *data.SparseSlice[T], m map[int]T) {
