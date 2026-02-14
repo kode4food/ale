@@ -122,9 +122,9 @@ func TestIntWrapperErrorCases(t *testing.T) {
 	as.Panics(func() { _ = f.Call(F(math.Inf(1))) }, signedErr)
 	as.Panics(func() { _ = f.Call(F(128)) }, signedErr)
 	as.Panics(func() { _ = f.Call(mustRatio(t, "3/2")) }, signedErr)
-	as.Panics(func() { _ = f.Call(mustInteger(t, "100000000000000000000")) },
-		signedErr,
-	)
+	as.Panics(func() {
+		_ = f.Call(mustInteger(t, "100000000000000000000"))
+	}, signedErr)
 }
 
 func TestUintWrapperErrorCases(t *testing.T) {
@@ -143,9 +143,9 @@ func TestUintWrapperErrorCases(t *testing.T) {
 	as.Panics(func() { _ = f.Call(F(math.Inf(1))) }, unsignedErr)
 	as.Panics(func() { _ = f.Call(F(256)) }, unsignedErr)
 	as.Panics(func() { _ = f.Call(mustRatio(t, "3/2")) }, unsignedErr)
-	as.Panics(func() { _ = f.Call(mustInteger(t, "100000000000000000000")) },
-		unsignedErr,
-	)
+	as.Panics(func() {
+		_ = f.Call(mustInteger(t, "100000000000000000000"))
+	}, unsignedErr)
 }
 
 func TestFloatWrapperAdditionalCases(t *testing.T) {
@@ -157,7 +157,8 @@ func TestFloatWrapperAdditionalCases(t *testing.T) {
 	as.Equal(F(1.5), f.Call(mustRatio(t, "3/2")))
 	out := f.Call(mustInteger(t, "100000000000000000000")).(data.Float)
 	as.True(float64(out) > 0)
-	as.Panics(func() { _ = f.Call(S("bad-float")) },
+	as.Panics(
+		func() { _ = f.Call(S("bad-float")) },
 		errors.New(ffi.ErrValueMustBeFloat),
 	)
 }
@@ -168,10 +169,12 @@ func TestComplexWrapperErrors(t *testing.T) {
 		return v
 	}).(data.Procedure)
 
-	as.Panics(func() { _ = f.Call(S("not-cons")) },
+	as.Panics(
+		func() { _ = f.Call(S("not-cons")) },
 		errors.New(ffi.ErrValueMustBeCons),
 	)
-	as.Panics(func() { _ = f.Call(C(S("bad"), F(1))) },
+	as.Panics(
+		func() { _ = f.Call(C(S("bad"), F(1))) },
 		errors.New(ffi.ErrConsMustContainFloat),
 	)
 }
