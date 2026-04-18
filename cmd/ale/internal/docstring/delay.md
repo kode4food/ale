@@ -2,11 +2,11 @@
 title: "delay"
 description: "produces a delayed evaluation"
 names: ["delay", "force", "force!", "delay-force"]
-usage: "(delay expr*)"
+usage: "(delay expr*) (force value) (force! value) (delay-force expr*)"
 tags: ["concurrency"]
 ---
 
-Returns a promise that, when forced, evaluates the expressions, returning the final evaluated result. The result is then cached, so further uses of force return the cached value immediately.
+`delay` returns a promise that evaluates its body the first time it is forced. That result is cached, so later calls return immediately. `force` resolves one promise layer, or returns non-promises unchanged. `force!` keeps forcing until the result is no longer a promise. `delay-force` delays a computation whose result should be forced once before being cached.
 
 #### An Example
 

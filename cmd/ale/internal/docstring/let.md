@@ -1,12 +1,14 @@
 ---
 title: "let"
 description: "binds local values"
-names: ["let", "let*"]
-usage: "(let ([name expr]*) form*) (let* ([name expr]*) form*)"
+names: ["let", "let*", "let-rec"]
+usage: "(let ([name expr]*) form*) (let* ([name expr]*) form*) (let-rec ([name expr]*) form*)"
 tags: ["binding"]
 ---
 
-Create a new local scope, evaluate the provided expressions, and then bind the resulting value to their respective names. It will then evaluate the specified forms within that scope and return the result of the last evaluation. The `let` form performs these bindings in parallel, whereas the `let*` form performs them sequentially.
+Create a new local scope, evaluate the provided expressions, and then bind the resulting values to their respective names. The body is evaluated within that scope and returns the result of its final form.
+
+The binding forms differ in how names can see one another. `let` performs bindings in parallel. `let*` performs bindings sequentially. `let-rec` allows recursive and mutually recursive references.
 
 #### An Example
 

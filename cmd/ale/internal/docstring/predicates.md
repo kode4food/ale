@@ -47,11 +47,4 @@ These predicates test values for specific types or properties. Each predicate ha
 
 Note that each negated predicate (`!predicate?`) returns the opposite of its corresponding positive predicate. For example, `(!even? 3)` is equivalent to `(not (even? 3))`.
 
-Some key predicate categories:
-
-- Type checking: `number?`, `boolean?`, `symbol?`, `procedure?`
-- Sequence properties: `appendable?`, `mapped?`, `mapper?`, `reversible?`
-- Symbol properties: `local?`, `qualified?`
-- Form types: `special?`, `macro?`
-- Numeric properties: `even?`, `odd?`, `inf?`, `nan?`
-- Promise state: `resolved?` (alias: `promise-forced?`)
+Some key predicate categories are type checks such as `number?`, `boolean?`, `symbol?`, and `procedure?`; sequence properties such as `appendable?`, `mapped?`, `mapper?`, and `reversible?`; symbol properties such as `local?` and `qualified?`; form types such as `special?` and `macro?`; numeric properties such as `even?`, `odd?`, `inf?`, and `nan?`; and promise state via `resolved?`, which is also exposed as `promise-forced?`.

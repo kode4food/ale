@@ -1,8 +1,8 @@
 ---
 title: "remainder (mod)"
 description: "calculates the remainder of a number sequence"
-names: ["mod"]
-usage: "(mod form+)"
+names: ["mod", "modulo"]
+usage: "(mod form+) (modulo form+)"
 tags: ["math", "number"]
 ---
 

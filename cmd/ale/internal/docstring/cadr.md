@@ -6,10 +6,7 @@ usage: "(<accessor> seq)"
 tags: ["function", "sequence"]
 ---
 
-These are compound sequence accessors that combine multiple `car` and `cdr` operations. The name of each function describes which operations to perform from right to left:
-
-- `a` represents `car` (get first element)
-- `d` represents `cdr` (get rest of list)
+These are compound sequence accessors that combine multiple `car` and `cdr` operations. The name of each function describes which operations to perform from right to left. `a` represents `car`, which gets the first element. `d` represents `cdr`, which gets the rest of the list.
 
 #### Examples
 
