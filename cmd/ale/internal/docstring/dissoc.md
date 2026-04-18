@@ -6,9 +6,7 @@ usage: "(dissoc seq key) (dissoc* seq key+)"
 tags: ["sequence"]
 ---
 
-Returns a new mapper sequence wherein the associations identified by the
-provided keys are removed. If the keys don't exist, the original sequence is
-returned.
+Returns a new mapper sequence wherein the associations identified by the provided keys are removed. If the keys don't exist, the original sequence is returned.
 
 #### An Example
 

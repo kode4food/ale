@@ -6,8 +6,7 @@ names: ["doc"]
 draft: true
 ---
 
-Displays the documentation for the specified form if any exists. This is a
-REPL-only function.
+Displays the documentation for the specified form if any exists. This is a REPL-only function.
 
 #### An Example
 

@@ -6,9 +6,7 @@ usage: "(mapped? form+) (!mapped? form+)"
 tags: ["sequence", "predicate"]
 ---
 
-If all forms evaluate to mapped values, then this function will return _#t_
-(true). A mapped value supports keyed lookup through functions like `get` and
-`contains?`.
+If all forms evaluate to mapped values, then this function will return _#t_ (true). A mapped value supports keyed lookup through functions like `get` and `contains?`.
 
 #### An Example
 
