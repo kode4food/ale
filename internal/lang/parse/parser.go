@@ -31,6 +31,7 @@ var (
 	ErrInvalidListSyntax  = errors.New("invalid list syntax")
 	ErrListNotClosed      = errors.New("list not closed")
 	ErrUnmatchedListEnd   = errors.New("unmatched list end")
+	ErrSetNotClosed       = errors.New("set not closed")
 	ErrVectorNotClosed    = errors.New("vector not closed")
 	ErrUnmatchedVectorEnd = errors.New("unmatched vector end")
 	ErrObjectNotClosed    = errors.New("object not closed")
@@ -47,11 +48,6 @@ var (
 	specialNames = map[data.String]ale.Value{
 		lang.TrueLiteral:  data.True,
 		lang.FalseLiteral: data.False,
-	}
-
-	collectionErrors = map[lex.TokenType]error{
-		lex.VectorEnd: ErrVectorNotClosed,
-		lex.ObjectEnd: ErrObjectNotClosed,
 	}
 
 	handlers     [lex.EOF + 1]handler
@@ -149,7 +145,7 @@ func (p *parser) list() (ale.Value, error) {
 }
 
 func (p *parser) bytes() (ale.Value, error) {
-	v, err := p.nonDotted(lex.VectorEnd)
+	v, err := p.nonDotted(lex.VectorEnd, ErrVectorNotClosed)
 	if err != nil {
 		return nil, err
 	}
@@ -160,18 +156,28 @@ func (p *parser) bytes() (ale.Value, error) {
 }
 
 func (p *parser) vector() (ale.Value, error) {
-	return p.nonDotted(lex.VectorEnd)
+	return p.nonDotted(lex.VectorEnd, ErrVectorNotClosed)
+}
+
+func (p *parser) set() (ale.Value, error) {
+	v, err := p.nonDotted(lex.ObjectEnd, ErrSetNotClosed)
+	if err != nil {
+		return nil, err
+	}
+	return data.ValuesToSet(v...), nil
 }
 
 func (p *parser) object() (ale.Value, error) {
-	v, err := p.nonDotted(lex.ObjectEnd)
+	v, err := p.nonDotted(lex.ObjectEnd, ErrObjectNotClosed)
 	if err != nil {
 		return nil, err
 	}
 	return data.ValuesToObject(v...)
 }
 
-func (p *parser) nonDotted(endToken lex.TokenType) (data.Vector, error) {
+func (p *parser) nonDotted(
+	endToken lex.TokenType, missingErr error,
+) (data.Vector, error) {
 	res := data.Vector{}
 	for {
 		t, err := p.nextToken()
@@ -179,7 +185,7 @@ func (p *parser) nonDotted(endToken lex.TokenType) (data.Vector, error) {
 			return nil, err
 		}
 		if t == nil {
-			return nil, p.error(collectionErrors[endToken])
+			return nil, p.error(missingErr)
 		}
 		switch t.Type() {
 		case endToken:
@@ -238,6 +244,7 @@ func getValueHandlers() *[lex.EOF + 1]handler {
 		handlers[lex.SpliceMarker] = makePrefixedHandler(splicingSym)
 		handlers[lex.ListStart] = listStartHandler
 		handlers[lex.BytesStart] = makeMethodHandler((*parser).bytes)
+		handlers[lex.SetStart] = makeMethodHandler((*parser).set)
 		handlers[lex.VectorStart] = makeMethodHandler((*parser).vector)
 		handlers[lex.ObjectStart] = makeMethodHandler((*parser).object)
 		handlers[lex.Keyword] = makeMethodHandler((*parser).keyword)

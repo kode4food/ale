@@ -77,6 +77,17 @@ func TestToObjectEval(t *testing.T) {
 	as.MustEvalTo(`(mapped? (seq->object '(:name "Ale" :age 45)))`, data.True)
 }
 
+func TestSetEval(t *testing.T) {
+	as := assert.New(t)
+	as.MustEvalTo(`(set? #{1 2 2 3})`, data.True)
+	as.MustEvalTo(`(set? (set 1 2 3 1))`, data.True)
+	as.MustEvalTo(`(mapped? #{:name :age})`, data.True)
+	as.MustEvalTo(`(mapper? #{:name :age})`, data.False)
+	as.MustEvalTo(`(contains? #{:name :age} :name)`, data.True)
+	as.MustEvalTo(`(contains? #{:name :age} :missing)`, data.False)
+	as.MustEvalTo(`(length (seq->set [1 2 2 3]))`, I(3))
+}
+
 func TestToVectorEval(t *testing.T) {
 	as := assert.New(t)
 	as.MustEvalTo(`(vector? (seq->vector (list 1 2 3)))`, data.True)

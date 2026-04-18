@@ -14,6 +14,9 @@ var (
 
 	// Vector creates a new vector
 	Vector = makeConstructor(data.NewVector)
+
+	// Set creates a new set
+	Set = makeConstructor(data.NewSet)
 )
 
 func makeConstructor[T ale.Value](orig func(...ale.Value) T) data.Procedure {

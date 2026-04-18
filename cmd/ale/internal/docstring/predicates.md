@@ -1,7 +1,7 @@
 ---
 title: "predicates"
 description: "type and value testing functions"
-names: ["any?", "!any?", "appendable?", "!appendable?", "boolean?", "!boolean?", "cons?", "!cons?", "even?", "!even?", "inf?", "!inf?", "-inf?", "!-inf?", "local?", "!local?", "macro?", "!macro?", "nan?", "!nan?", "number?", "!number?", "odd?", "!odd?", "pair?", "!pair?", "procedure?", "!procedure?", "qualified?", "!qualified?", "resolved?", "!resolved?", "promise-forced?", "!promise-forced?", "reversible?", "!reversible?", "special?", "!special?", "symbol?", "!symbol?"]
+names: ["any?", "!any?", "appendable?", "!appendable?", "boolean?", "!boolean?", "cons?", "!cons?", "even?", "!even?", "inf?", "!inf?", "-inf?", "!-inf?", "local?", "!local?", "macro?", "!macro?", "mapped?", "!mapped?", "mapper?", "!mapper?", "nan?", "!nan?", "number?", "!number?", "odd?", "!odd?", "pair?", "!pair?", "procedure?", "!procedure?", "qualified?", "!qualified?", "resolved?", "!resolved?", "promise-forced?", "!promise-forced?", "reversible?", "!reversible?", "special?", "!special?", "symbol?", "!symbol?"]
 usage: "(<predicate> value)"
 tags: ["function", "predicate"]
 ---
@@ -50,7 +50,7 @@ Note that each negated predicate (`!predicate?`) returns the opposite of its cor
 Some key predicate categories:
 
 - Type checking: `number?`, `boolean?`, `symbol?`, `procedure?`
-- Sequence properties: `appendable?`, `reversible?`
+- Sequence properties: `appendable?`, `mapped?`, `mapper?`, `reversible?`
 - Symbol properties: `local?`, `qualified?`
 - Form types: `special?`, `macro?`
 - Numeric properties: `even?`, `odd?`, `inf?`, `nan?`

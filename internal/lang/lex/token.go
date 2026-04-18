@@ -30,6 +30,7 @@ const (
 	ListStart
 	ListEnd
 	BytesStart
+	SetStart
 	VectorStart
 	VectorEnd
 	ObjectStart

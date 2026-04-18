@@ -127,6 +127,7 @@
 (make-predicate is-list       :list)
 (make-predicate is-local      :local)
 (make-predicate is-mapped     :mapped)
+(make-predicate is-mapper     :mapper)
 (make-predicate is-nan        :nan)
 (make-predicate is-pair       :pair)
 (make-predicate is-promise    :promise)
@@ -134,3 +135,4 @@
 (make-predicate is-resolved   :resolved)
 (make-predicate is-reversible :reverser)
 (make-predicate is-seq        :sequence)
+(make-predicate is-set        :set)

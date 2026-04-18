@@ -24,7 +24,9 @@ func TestObject(t *testing.T) {
 	as.False(getPredicate(builtin.ObjectKey).Call(I(99)))
 
 	as.True(getPredicate(builtin.MappedKey).Call(a1))
+	as.True(getPredicate(builtin.MapperKey).Call(a1))
 	as.False(getPredicate(builtin.MappedKey).Call(I(99)))
+	as.False(getPredicate(builtin.MapperKey).Call(I(99)))
 }
 
 func TestObjectEval(t *testing.T) {
@@ -88,10 +90,16 @@ func TestObjectAssoc(t *testing.T) {
 func TestMappedEval(t *testing.T) {
 	as := assert.New(t)
 	as.MustEvalTo(`(mapped? {:name "Ale" :age 45})`, data.True)
+	as.MustEvalTo(`(mapper? {:name "Ale" :age 45})`, data.True)
 	as.MustEvalTo(`(mapped? (object :name "Ale" :age 45))`, data.True)
+	as.MustEvalTo(`(mapper? (object :name "Ale" :age 45))`, data.True)
 	as.MustEvalTo(`(mapped? '(:name "Ale" :age 45))`, data.False)
+	as.MustEvalTo(`(mapper? '(:name "Ale" :age 45))`, data.False)
 	as.MustEvalTo(`(mapped? [:name "Ale" :age 45])`, data.False)
+	as.MustEvalTo(`(mapper? [:name "Ale" :age 45])`, data.False)
 	as.MustEvalTo(`(!mapped? '(:name "Ale" :age 45))`, data.True)
 	as.MustEvalTo(`(!mapped? '(:name "Ale" :age 45))`, data.True)
 	as.MustEvalTo(`(!mapped? [:name "Ale" :age 45])`, data.True)
+	as.MustEvalTo(`(!mapper? '(:name "Ale" :age 45))`, data.True)
+	as.MustEvalTo(`(!mapper? [:name "Ale" :age 45])`, data.True)
 }

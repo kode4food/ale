@@ -28,6 +28,8 @@ func PrettyPrintAt(v ale.Value, offset int) string {
 		return prettyVector(val, offset)
 	case *data.Object:
 		return prettyObject(val, offset)
+	case *data.Set:
+		return prettySet(val, offset)
 	case *data.Cons:
 		return prettyCons(val, offset)
 	default:
@@ -82,6 +84,19 @@ func prettyObject(o *data.Object, off int) string {
 	})
 
 	return formatObject(lang.ObjectStart, lang.ObjectEnd, elems, off)
+}
+
+func prettySet(s *data.Set, off int) string {
+	if s == nil {
+		return lang.SetStart + lang.ObjectEnd
+	}
+
+	elementOffset := off + indentSize
+	formatted := basics.Map(s.Members(), func(v ale.Value) string {
+		return PrettyPrintAt(v, elementOffset)
+	})
+	sorted := basics.SortedFunc(formatted, cmp.Compare[string])
+	return formatSeq(lang.SetStart, lang.ObjectEnd, sorted, off)
 }
 
 func maxKeyWidth(pairs [][2]string) int {

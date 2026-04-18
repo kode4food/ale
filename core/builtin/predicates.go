@@ -33,6 +33,7 @@ const (
 	LocalKey     = data.Keyword("local")
 	MacroKey     = data.Keyword("macro")
 	MappedKey    = data.Keyword("mapped")
+	MapperKey    = data.Keyword("mapper")
 	NaNKey       = data.Keyword("nan")
 	NullKey      = data.Keyword("null")
 	NumberKey    = data.Keyword("number")
@@ -43,6 +44,7 @@ const (
 	ResolvedKey  = data.Keyword("resolved")
 	ReverserKey  = data.Keyword("reverser")
 	SequenceKey  = data.Keyword("sequence")
+	SetKey       = data.Keyword("set")
 	SpecialKey   = data.Keyword("special")
 	StringKey    = data.Keyword("string")
 	SymbolKey    = data.Keyword("symbol")
@@ -71,6 +73,7 @@ var (
 		ObjectKey:    data.MakeTypePredicate(types.BasicObject),
 		PromiseKey:   data.MakeTypePredicate(sync.PromiseType),
 		SpecialKey:   data.MakeTypePredicate(compiler.CallType),
+		SetKey:       data.MakeTypePredicate(types.BasicSet),
 		StringKey:    data.MakeTypePredicate(types.BasicString),
 		SymbolKey:    data.MakeTypePredicate(types.BasicSymbol),
 		VectorKey:    data.MakeTypePredicate(types.BasicVector),
@@ -79,7 +82,8 @@ var (
 		CountedKey:   makeGoTypePredicate[data.Counted](),
 		IndexedKey:   makeGoTypePredicate[data.Indexed](),
 		LocalKey:     makeGoTypePredicate[data.Local](),
-		MappedKey:    makeGoTypePredicate[data.Mapper](),
+		MappedKey:    makeGoTypePredicate[data.Mapped](),
+		MapperKey:    makeGoTypePredicate[data.Mapper](),
 		QualifiedKey: makeGoTypePredicate[data.Qualified](),
 		ReverserKey:  makeGoTypePredicate[data.Reverser](),
 		SequenceKey:  makeGoTypePredicate[data.Sequence](),

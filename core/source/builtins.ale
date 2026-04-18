@@ -21,6 +21,7 @@
 (def-builtin bytes)
 (def-builtin list)
 (def-builtin object)
+(def-builtin set)
 (def-builtin str!)
 (def-builtin str)
 (def-builtin vector)

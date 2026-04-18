@@ -53,6 +53,9 @@
 (define (seq->object . colls)
   (apply object (apply concat! colls)))
 
+(define (seq->set . colls)
+  (apply set (apply concat! colls)))
+
 (define (seq->list . colls)
   (apply list (apply concat! colls)))
 

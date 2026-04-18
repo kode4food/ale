@@ -18,6 +18,7 @@ const (
 	Read        = data.Local("read")
 	Recover     = data.Local("recover")
 	ReaderStr   = data.Local("str!")
+	Set         = data.Local("set")
 	Str         = data.Local("str")
 	Sym         = data.Local("sym")
 	TypeOf      = data.Local("%type-of")

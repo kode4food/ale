@@ -31,6 +31,8 @@ func expanded(e encoder.Encoder, v ale.Value) error {
 		return Vector(e, v)
 	case *data.Object:
 		return Object(e, v)
+	case *data.Set:
+		return Set(e, v)
 	case *data.Cons:
 		return Cons(e, v)
 	default:

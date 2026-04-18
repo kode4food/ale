@@ -10,6 +10,7 @@ import (
 var (
 	vectorSym = env.RootSymbol("vector")
 	objectSym = env.RootSymbol("object")
+	setSym    = env.RootSymbol("set")
 )
 
 // Block encodes a set of expressions, returning only the final evaluation
@@ -68,4 +69,16 @@ func Object(e encoder.Encoder, a *data.Object) error {
 		return err
 	}
 	return callStatic(e, f, args)
+}
+
+// Set encodes a set
+func Set(e encoder.Encoder, s *data.Set) error {
+	if s.IsEmpty() {
+		return Literal(e, data.EmptySet)
+	}
+	f, err := resolveBuiltIn(e, setSym)
+	if err != nil {
+		return err
+	}
+	return callStatic(e, f, s.Members())
 }

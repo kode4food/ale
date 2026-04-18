@@ -1,17 +1,19 @@
 ---
 title: "mapped?"
-description: "tests whether the provided forms are mapped"
+description: "tests whether the provided forms support keyed lookup"
 names: ["mapped?", "!mapped?"]
 usage: "(mapped? form+) (!mapped? form+)"
 tags: ["sequence", "predicate"]
 ---
 
-If all forms evaluate to a mapped type, then this function will return _#t_ (true). The first non-mapped will result in the function returning _#f_ (false).
+If all forms evaluate to mapped values, then this function will return _#t_
+(true). A mapped value supports keyed lookup through functions like `get` and
+`contains?`.
 
 #### An Example
 
 ```scheme
-(mapped? {:name "bill"} {:name "peggy"} [1 2 3])
+(mapped? {:name "bill"} #{:name :age} [1 2 3])
 ```
 
 This example will return _#f_ (false) because the third form is a vector.

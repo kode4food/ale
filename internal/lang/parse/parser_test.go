@@ -110,6 +110,25 @@ func TestReadMap(t *testing.T) {
 	as.Number(2, m.Count())
 }
 
+func TestReadSet(t *testing.T) {
+	as := assert.New(t)
+
+	ns := assert.GetTestNamespace()
+	tr := read.MustFromString(ns, `#{:name :name :age}`)
+	v := tr.Car()
+	s, ok := v.(*data.Set)
+	as.True(ok)
+	as.Number(2, s.Count())
+
+	member, ok := s.Get(K("name"))
+	as.True(ok)
+	as.Equal(K("name"), member)
+
+	member, ok = s.Get(K("age"))
+	as.True(ok)
+	as.Equal(K("age"), member)
+}
+
 func TestReadNestedList(t *testing.T) {
 	as := assert.New(t)
 
@@ -167,6 +186,7 @@ func TestReaderErrors(t *testing.T) {
 	testReaderError(t, "[99 100 ", parse.ErrVectorNotClosed.Error())
 	testReaderError(t, "#b[99 100 ", parse.ErrVectorNotClosed.Error())
 	testReaderError(t, "{:key 99", parse.ErrObjectNotClosed.Error())
+	testReaderError(t, "#{99 100 ", parse.ErrSetNotClosed.Error())
 
 	testReaderError(t, "99 100)", parse.ErrUnmatchedListEnd.Error())
 	testReaderError(t, "99 100]", parse.ErrUnmatchedVectorEnd.Error())

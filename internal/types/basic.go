@@ -34,6 +34,7 @@ var (
 	BasicSymbol    = makeBasic("symbol")
 	BasicList      = makeBasic("list")
 	BasicObject    = makeBasic("object")
+	BasicSet       = makeBasic("set")
 	BasicCons      = makeBasic("cons")
 	BasicVector    = makeBasic("vector")
 	BasicUnion     = makeBasic("union")

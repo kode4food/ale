@@ -33,6 +33,7 @@ func (b *bootstrap) populateBuiltins() {
 		env.Read:        builtin.Read,
 		env.Recover:     builtin.Recover,
 		env.ReaderStr:   builtin.ReaderStr,
+		env.Set:         builtin.Set,
 		env.Str:         builtin.Str,
 		env.Sym:         builtin.Sym,
 		env.TypeOf:      builtin.TypeOf,

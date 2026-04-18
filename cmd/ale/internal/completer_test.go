@@ -22,10 +22,11 @@ func TestREPLDoBasic(t *testing.T) {
 
 	res, idx = r.Do([]rune("(seq->"), 6)
 	as.Equal(0, idx)
-	as.Equal(3, len(res))
+	as.Equal(4, len(res))
 	as.Equal("list ", string(res[0]))
 	as.Equal("object ", string(res[1]))
-	as.Equal("vector ", string(res[2]))
+	as.Equal("set ", string(res[2]))
+	as.Equal("vector ", string(res[3]))
 }
 
 func TestREPLDoNamespaced(t *testing.T) {
@@ -39,10 +40,11 @@ func TestREPLDoNamespaced(t *testing.T) {
 
 	res, idx = r.Do([]rune("(ale/seq->"), 10)
 	as.Equal(0, idx)
-	as.Equal(3, len(res))
+	as.Equal(4, len(res))
 	as.Equal("list ", string(res[0]))
 	as.Equal("object ", string(res[1]))
-	as.Equal("vector ", string(res[2]))
+	as.Equal("set ", string(res[2]))
+	as.Equal("vector ", string(res[3]))
 }
 
 func TestREPLDoEmptyResults(t *testing.T) {

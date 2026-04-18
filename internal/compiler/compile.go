@@ -9,7 +9,7 @@ import (
 // evaluation
 func IsEvaluable(v ale.Value) bool {
 	switch v.(type) {
-	case data.Symbol, *data.List, data.Vector, *data.Object:
+	case data.Symbol, *data.List, data.Vector, *data.Object, *data.Set:
 		return true
 	default:
 		return false

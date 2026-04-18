@@ -20,6 +20,7 @@ const (
 	VectorEnd   = `]`
 	VectorStart = `[`
 	BytesStart  = ReaderPrefix + `b` + VectorStart
+	SetStart    = ReaderPrefix + ObjectStart
 	BytesEnd    = VectorEnd
 
 	TrueLiteral  = ReaderPrefix + `t`

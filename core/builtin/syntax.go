@@ -25,6 +25,7 @@ var (
 	listSym   = env.RootSymbol("list")
 	vectorSym = env.RootSymbol("vector")
 	objectSym = env.RootSymbol("object")
+	setSym    = env.RootSymbol("set")
 	applySym  = env.RootSymbol("apply")
 	concatSym = env.RootSymbol("concat!")
 
@@ -100,6 +101,8 @@ func (se *syntaxEnv) quoteSequence(s data.Sequence) (ale.Value, error) {
 		return se.quoteVector(s)
 	case *data.Object:
 		return se.quoteObject(s)
+	case *data.Set:
+		return se.quoteSet(s)
 	default:
 		return nil, fmt.Errorf("%w: %s", ErrUnsupportedSyntaxQuote, s)
 	}
@@ -147,6 +150,14 @@ func (se *syntaxEnv) quoteObject(as *data.Object) (ale.Value, error) {
 		return nil, err
 	}
 	return data.NewList(applySym, objectSym, e), nil
+}
+
+func (se *syntaxEnv) quoteSet(s *data.Set) (ale.Value, error) {
+	e, err := se.quoteElements(s)
+	if err != nil {
+		return nil, err
+	}
+	return data.NewList(applySym, setSym, e), nil
 }
 
 func (se *syntaxEnv) quoteElements(s data.Sequence) (ale.Value, error) {
