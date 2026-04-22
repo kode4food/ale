@@ -1,8 +1,6 @@
 package vm
 
-import (
-	"github.com/kode4food/ale"
-)
+import "github.com/kode4food/ale"
 
 // Ref encapsulates a reference to a Value
 type Ref struct {

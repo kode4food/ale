@@ -15,44 +15,44 @@ type SparseSlice[T any] struct {
 }
 
 // NewSparseSlice initializes an empty SparseSlice
-func NewSparseSlice[T any]() *SparseSlice[T] {
-	return nil
+func NewSparseSlice[T any]() SparseSlice[T] {
+	return SparseSlice[T]{}
 }
 
 // Set returns a new SparseSlice with the value set at the specified index.
-func (s *SparseSlice[T]) Set(idx int, value T) *SparseSlice[T] {
+func (s SparseSlice[T]) Set(idx int, value T) SparseSlice[T] {
 	if !s.Contains(idx) {
 		return s.insert(idx, value)
 	}
 	return s.replace(idx, value)
 }
 
-func (s *SparseSlice[T]) insert(idx int, value T) *SparseSlice[T] {
-	if s == nil {
-		return &SparseSlice[T]{
+func (s SparseSlice[T]) insert(idx int, value T) SparseSlice[T] {
+	if s.mask == 0 {
+		return SparseSlice[T]{
 			data: []T{value},
 			mask: 1 << idx,
 		}
 	}
 	pos := bits.OnesCount64(s.mask & ((1 << idx) - 1))
-	return &SparseSlice[T]{
+	return SparseSlice[T]{
 		data: slices.Insert(s.data, pos, value),
 		mask: s.mask | (1 << idx),
 	}
 }
 
-func (s *SparseSlice[T]) replace(idx int, value T) *SparseSlice[T] {
+func (s SparseSlice[T]) replace(idx int, value T) SparseSlice[T] {
 	data := slices.Clone(s.data)
 	pos := s.position(idx)
 	data[pos] = value
-	return &SparseSlice[T]{
+	return SparseSlice[T]{
 		data: data,
 		mask: s.mask,
 	}
 }
 
 // Get retrieves a value at a specific index, returning false if it’s not set.
-func (s *SparseSlice[T]) Get(idx int) (T, bool) {
+func (s SparseSlice[T]) Get(idx int) (T, bool) {
 	if !s.Contains(idx) {
 		var zero T
 		return zero, false
@@ -62,53 +62,50 @@ func (s *SparseSlice[T]) Get(idx int) (T, bool) {
 }
 
 // Unset returns a new SparseSlice with the specified index possibly removed.
-func (s *SparseSlice[T]) Unset(idx int) *SparseSlice[T] {
+func (s SparseSlice[T]) Unset(idx int) SparseSlice[T] {
 	if !s.Contains(idx) {
 		return s
 	}
 	mask := s.mask & ^(1 << idx)
 	if mask == 0 {
-		return nil
+		return SparseSlice[T]{}
 	}
 	pos := s.position(idx)
-	return &SparseSlice[T]{
+	return SparseSlice[T]{
 		data: slices.Concat(s.data[:pos], s.data[pos+1:]),
 		mask: mask,
 	}
 }
 
-func (s *SparseSlice[T]) IsEmpty() bool {
-	return s == nil || s.mask == 0
+func (s SparseSlice[T]) IsEmpty() bool {
+	return s.mask == 0
 }
 
-func (s *SparseSlice[T]) HighIndex() int {
-	if s == nil {
+func (s SparseSlice[T]) HighIndex() int {
+	if s.mask == 0 {
 		return -1
 	}
 	return 63 - bits.LeadingZeros64(s.mask)
 }
 
-func (s *SparseSlice[T]) LowIndex() int {
-	if s == nil {
+func (s SparseSlice[T]) LowIndex() int {
+	if s.mask == 0 {
 		return -1
 	}
 	return bits.TrailingZeros64(s.mask)
 }
 
-func (s *SparseSlice[T]) Contains(idx int) bool {
-	return s != nil && (s.mask&(1<<idx)) != 0
+func (s SparseSlice[T]) Contains(idx int) bool {
+	return (s.mask & (1 << idx)) != 0
 }
 
-func (s *SparseSlice[T]) RawData() ([]T, uint64) {
-	if s == nil {
-		return nil, 0
-	}
+func (s SparseSlice[T]) RawData() ([]T, uint64) {
 	return s.data, s.mask
 }
 
-func (s *SparseSlice[T]) All() iter.Seq2[int, T] {
+func (s SparseSlice[T]) All() iter.Seq2[int, T] {
 	return func(yield func(int, T) bool) {
-		if s == nil {
+		if s.mask == 0 {
 			return
 		}
 		low, high := s.LowIndex(), s.HighIndex()
@@ -122,13 +119,13 @@ func (s *SparseSlice[T]) All() iter.Seq2[int, T] {
 	}
 }
 
-func (s *SparseSlice[T]) Values() iter.Seq[T] {
-	if s == nil {
+func (s SparseSlice[T]) Values() iter.Seq[T] {
+	if s.mask == 0 {
 		return slices.Values([]T(nil))
 	}
 	return slices.Values(s.data)
 }
 
-func (s *SparseSlice[T]) position(idx int) int {
+func (s SparseSlice[T]) position(idx int) int {
 	return bits.OnesCount64(s.mask & ((1 << idx) - 1))
 }

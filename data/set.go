@@ -23,7 +23,7 @@ const (
 type Set struct {
 	value     ale.Value
 	valueHash uint64
-	children  *data.SparseSlice[*Set]
+	children  data.SparseSlice[*Set]
 	count     int
 	hash      atomic.Uint64
 }
@@ -147,7 +147,7 @@ func (s *Set) remove(v ale.Value, vh, shifted uint64) (ale.Value, *Set, bool) {
 }
 
 func (s *Set) copyWithChildAt(idx int, child *Set) *Set {
-	var children *data.SparseSlice[*Set]
+	var children data.SparseSlice[*Set]
 	if child != nil {
 		children = s.children.Set(idx, child)
 	} else {
@@ -313,10 +313,7 @@ func (s *Set) childSets() []*Set {
 	return res
 }
 
-func sumSetCount(c *data.SparseSlice[*Set]) int {
-	if c == nil {
-		return 0
-	}
+func sumSetCount(c data.SparseSlice[*Set]) int {
 	var res int
 	raw, _ := c.RawData()
 	for _, child := range raw {

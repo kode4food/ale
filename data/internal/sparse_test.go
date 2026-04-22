@@ -9,7 +9,7 @@ import (
 	"github.com/kode4food/ale/internal/basics"
 )
 
-func testData[T any](t *testing.T, s *data.SparseSlice[T], m map[int]T) {
+func testData[T any](t *testing.T, s data.SparseSlice[T], m map[int]T) {
 	testDataAll(t, s, m)
 	k := basics.SortedKeys(m)
 	a := make([]T, 0, len(k))
@@ -19,7 +19,7 @@ func testData[T any](t *testing.T, s *data.SparseSlice[T], m map[int]T) {
 	testDataValues(t, s, a)
 }
 
-func testDataAll[T any](t *testing.T, s *data.SparseSlice[T], m map[int]T) {
+func testDataAll[T any](t *testing.T, s data.SparseSlice[T], m map[int]T) {
 	as := assert.New(t)
 	l := 0
 	for idx, v := range s.All() {
@@ -31,7 +31,7 @@ func testDataAll[T any](t *testing.T, s *data.SparseSlice[T], m map[int]T) {
 	as.Equal(l, len(m))
 }
 
-func testDataValues[T any](t *testing.T, s *data.SparseSlice[T], d []T) {
+func testDataValues[T any](t *testing.T, s data.SparseSlice[T], d []T) {
 	as := assert.New(t)
 	i := 0
 	for v := range s.Values() {
@@ -109,7 +109,7 @@ func TestSparseSliceUnset(t *testing.T) {
 
 	s = s.Unset(6)
 	as.True(s.IsEmpty())
-	as.Nil(s)
+	as.Equal(data.SparseSlice[int]{}, s)
 }
 
 func TestSparseSliceReplace(t *testing.T) {

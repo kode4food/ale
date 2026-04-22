@@ -19,7 +19,7 @@ import (
 type Object struct {
 	pair     Pair
 	keyHash  uint64
-	children *data.SparseSlice[*Object]
+	children data.SparseSlice[*Object]
 	count    int
 	hash     atomic.Uint64
 }
@@ -163,7 +163,7 @@ func (o *Object) remove(k ale.Value, kh, shifted uint64) (ale.Value, *Object, bo
 }
 
 func (o *Object) copyWithChildAt(idx int, child *Object) *Object {
-	var children *data.SparseSlice[*Object]
+	var children data.SparseSlice[*Object]
 	if child != nil {
 		children = o.children.Set(idx, child)
 	} else {
@@ -333,10 +333,7 @@ func (o *Object) childObjects() []*Object {
 	return res
 }
 
-func sumObjectCount(c *data.SparseSlice[*Object]) int {
-	if c == nil {
-		return 0
-	}
+func sumObjectCount(c data.SparseSlice[*Object]) int {
 	var res int
 	raw, _ := c.RawData()
 	for _, r := range raw {
