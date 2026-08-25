@@ -1,6 +1,6 @@
 module github.com/kode4food/ale
 
-go 1.25.7
+go 1.26.0
 
 require (
 	github.com/chzyer/readline v1.5.1
@@ -9,7 +9,7 @@ require (
 	github.com/stretchr/testify v1.11.1
 	golang.org/x/tools v0.48.0
 	gopkg.in/yaml.v3 v3.0.1
-	honnef.co/go/tools v0.7.0
+	honnef.co/go/tools v0.8.1
 )
 
 require (
