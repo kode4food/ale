@@ -1,6 +1,8 @@
 package encoder
 
 import (
+	"slices"
+
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/basics"
 	"github.com/kode4food/ale/internal/runtime/isa"
@@ -27,8 +29,8 @@ func (e *encoder) PopParams() {
 
 func (e *encoder) ResolveParam(n data.Local) (*IndexedCell, bool) {
 	params := e.params
-	for i := len(params) - 1; i >= 0; i-- {
-		p := params[i]
+	for _, p := range slices.Backward(params) {
+
 		if c, ok := resolveParam(p, n); ok {
 			return c, ok
 		}

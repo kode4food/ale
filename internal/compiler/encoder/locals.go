@@ -3,6 +3,7 @@ package encoder
 import (
 	"errors"
 	"fmt"
+	"slices"
 
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/runtime/isa"
@@ -60,8 +61,8 @@ func (e *encoder) AddLocal(n data.Local, t CellType) (*IndexedCell, error) {
 
 func (e *encoder) ResolveLocal(n data.Local) (*IndexedCell, bool) {
 	scopes := e.locals
-	for i := len(scopes) - 1; i >= 0; i-- {
-		scope := scopes[i]
+	for _, scope := range slices.Backward(scopes) {
+
 		if l, ok := scope[n]; ok {
 			return l, true
 		}

@@ -1,6 +1,8 @@
 package generate
 
 import (
+	"slices"
+
 	"github.com/kode4food/ale"
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/internal/compiler/encoder"
@@ -32,8 +34,8 @@ func Locals(e encoder.Encoder, bindings Bindings, body Builder) error {
 	}
 
 	// Bind the popped expression results to names
-	for i := len(bindings) - 1; i >= 0; i-- {
-		b := bindings[i]
+	for _, b := range slices.Backward(bindings) {
+
 		l, err := e.AddLocal(b.Name, encoder.ValueCell)
 		if err != nil {
 			return err
@@ -69,8 +71,8 @@ func MutualLocals(e encoder.Encoder, bindings Bindings, body Builder) error {
 	}
 
 	// Bind the references
-	for i := len(cells) - 1; i >= 0; i-- {
-		c := cells[i]
+	for _, c := range slices.Backward(cells) {
+
 		e.Emit(isa.Load, c.Index)
 		e.Emit(isa.RefBind)
 	}

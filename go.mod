@@ -1,23 +1,24 @@
 module github.com/kode4food/ale
 
-go 1.25.7
+go 1.27
+
+toolchain go1.27.0
 
 require (
 	github.com/chzyer/readline v1.5.1
 	github.com/google/uuid v1.6.0
 	github.com/kode4food/gen-maxkind v0.1.2
-	github.com/stretchr/testify v1.11.1
-	golang.org/x/tools v0.48.0
+	github.com/stretchr/testify v1.12.1
+	golang.org/x/tools v0.49.0
 	gopkg.in/yaml.v3 v3.0.1
-	honnef.co/go/tools v0.7.0
+	honnef.co/go/tools v0.8.1
 )
 
 require (
-	github.com/BurntSushi/toml v1.5.0 // indirect
-	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/pmezard/go-difflib v1.0.0 // indirect
-	golang.org/x/exp/typeparams v0.0.0-20250606033433-dcc06ee1d476 // indirect
-	golang.org/x/mod v0.38.0 // indirect
+	github.com/BurntSushi/toml v1.6.0 // indirect
+	go.yaml.in/yaml/v3 v3.0.5 // indirect
+	golang.org/x/exp/typeparams v0.0.0-20260824195058-e88cd73687aa // indirect
+	golang.org/x/mod v0.40.0 // indirect
 	golang.org/x/sync v0.22.0 // indirect
 	golang.org/x/sys v0.47.0 // indirect
 )

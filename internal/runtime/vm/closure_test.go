@@ -24,13 +24,11 @@ var constants = data.Vector{
 
 func makeClosure(code isa.Instructions) data.Procedure {
 	proc := &vm.Procedure{
-		Runnable: isa.Runnable{
-			Code:       code,
-			Constants:  constants,
-			StackSize:  16,
-			LocalCount: 10,
-			Globals:    env.NewEnvironment().GetAnonymous(),
-		},
+		Code:       code,
+		Constants:  constants,
+		StackSize:  16,
+		LocalCount: 10,
+		Globals:    env.NewEnvironment().GetAnonymous(),
 	}
 	closure := proc.Call(S("Closure"))
 	return closure.(data.Procedure)
