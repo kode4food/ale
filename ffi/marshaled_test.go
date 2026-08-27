@@ -3,8 +3,7 @@ package ffi_test
 import (
 	"reflect"
 	"testing"
-
-	"github.com/google/uuid"
+	"uuid"
 
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/ffi"

@@ -6,7 +6,6 @@ toolchain go1.27.0
 
 require (
 	github.com/chzyer/readline v1.5.1
-	github.com/google/uuid v1.6.0
 	github.com/kode4food/gen-maxkind v0.1.2
 	github.com/stretchr/testify v1.12.1
 	golang.org/x/tools v0.49.0
