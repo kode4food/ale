@@ -36,7 +36,7 @@ func (s SparseSlice[T]) insert(idx int, value T) SparseSlice[T] {
 	}
 	pos := bits.OnesCount64(s.mask & ((1 << idx) - 1))
 	return SparseSlice[T]{
-		data: slices.Insert(s.data, pos, value),
+		data: slices.Concat(s.data[:pos], []T{value}, s.data[pos:]),
 		mask: s.mask | (1 << idx),
 	}
 }

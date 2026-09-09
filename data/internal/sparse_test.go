@@ -80,6 +80,36 @@ func TestSparseSliceSetGet(t *testing.T) {
 	as.False(ok)
 }
 
+func TestSparseSlicePersistence(t *testing.T) {
+	s := data.NewSparseSlice[int]().Set(0, 10).Set(1, 20).Set(2, 30)
+	next := s.Set(3, 40)
+
+	_, ok := s.Get(3)
+	assert.False(t, ok)
+	value, ok := next.Get(3)
+	assert.True(t, ok)
+	assert.Equal(t, 40, value)
+}
+
+// TestSparseSliceInsertIsolation covers inserts made from a shared parent.
+// Growing a slice in place would let one result overwrite the other's storage
+func TestSparseSliceInsertIsolation(t *testing.T) {
+	as := assert.New(t)
+	parent := data.NewSparseSlice[int]().Set(0, 10).Set(2, 30).Set(4, 50)
+
+	left := parent.Set(1, 20)
+	right := parent.Set(3, 40)
+
+	testData(t, left, map[int]int{0: 10, 1: 20, 2: 30, 4: 50})
+	testData(t, right, map[int]int{0: 10, 2: 30, 3: 40, 4: 50})
+	testData(t, parent, map[int]int{0: 10, 2: 30, 4: 50})
+
+	as.False(left.Contains(3))
+	as.False(right.Contains(1))
+	as.False(parent.Contains(1))
+	as.False(parent.Contains(3))
+}
+
 func TestSparseSliceUnset(t *testing.T) {
 	as := assert.New(t)
 	s := data.NewSparseSlice[int]()
