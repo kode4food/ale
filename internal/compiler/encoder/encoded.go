@@ -2,7 +2,6 @@ package encoder
 
 import (
 	"errors"
-	"slices"
 
 	"github.com/kode4food/ale/data"
 	"github.com/kode4food/ale/env"
@@ -183,7 +182,9 @@ func (f *finalizer) stripAdjacentJumps() {
 }
 
 func removeInstruction(inst isa.Instructions, idx int) isa.Instructions {
-	res := slices.Concat(inst[:idx], inst[idx+1:])
+	res := make(isa.Instructions, 0, len(inst)-1)
+	res = append(res, inst[:idx]...)
+	res = append(res, inst[idx+1:]...)
 	for j, inst := range res {
 		oc, op := inst.Split()
 		if (oc == isa.Jump || oc == isa.CondJump) && op > isa.Operand(idx) {

@@ -3,7 +3,6 @@ package params
 import (
 	"errors"
 	"fmt"
-	"slices"
 	"strings"
 
 	"github.com/kode4food/ale"
@@ -270,7 +269,9 @@ func (c *ParamCase) makeArgFetcher() ArgFetcher {
 			if len(args) < cl-1 {
 				return args, false
 			}
-			res := append(slices.Clone(args[:cl-1]), args[cl-1:])
+			res := make(data.Vector, cl)
+			copy(res, args[:cl-1])
+			res[cl-1] = args[cl-1:]
 			return res, true
 		}
 	}

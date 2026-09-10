@@ -56,7 +56,10 @@ func replaceRedundantLocals(c isa.Instructions) (isa.Instructions, bool) {
 			if next.Operand() != op || hasConflictingLoadStore(c[idx+2:], op) {
 				break
 			}
-			c = slices.Concat(c[:idx], c[idx+2:])
+			dst := make(isa.Instructions, 0, len(c)-2)
+			dst = append(dst, c[:idx]...)
+			dst = append(dst, c[idx+2:]...)
+			c = dst
 			dirty = true
 			continue
 
@@ -70,10 +73,11 @@ func replaceRedundantLocals(c isa.Instructions) (isa.Instructions, bool) {
 			if hasConflictingStore(c[idx+2:], from, to) {
 				break
 			}
-			c = slices.Concat(
-				c[:idx],
-				mapIneffectiveLoads(c[idx+2:], isa.Load.New(to), inst),
-			)
+			tail := mapIneffectiveLoads(c[idx+2:], isa.Load.New(to), inst)
+			dst := make(isa.Instructions, 0, idx+len(tail))
+			dst = append(dst, c[:idx]...)
+			dst = append(dst, tail...)
+			c = dst
 			dirty = true
 			continue
 

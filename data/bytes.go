@@ -102,7 +102,10 @@ func (b Bytes) Split() (ale.Value, Sequence, bool) {
 func (b Bytes) Append(v ale.Value) Sequence {
 	switch v := v.(type) {
 	case Bytes:
-		return slices.Concat(b, v)
+		res := make(Bytes, len(b)+len(v))
+		copy(res, b)
+		copy(res[len(b):], v)
+		return res
 	case Integer:
 		a := mustToByte(v)
 		res := make(Bytes, len(b)+1)
