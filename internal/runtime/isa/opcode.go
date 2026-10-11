@@ -21,7 +21,7 @@ const (
 	OperandMask = ^Operand(OpcodeMask) >> OpcodeSize
 )
 
-//go:generate go run golang.org/x/tools/cmd/stringer -type=Opcode
+//go:generate go tool stringer -type=Opcode
 const (
 	// Ignored Opcodes
 	Label Opcode = iota // Marks a label (not executed)

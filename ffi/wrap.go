@@ -1,4 +1,4 @@
-//go:generate go run github.com/kode4food/gen-maxkind
+//go:generate go tool gen-maxkind
 package ffi
 
 import (
