@@ -27,8 +27,10 @@ type (
 	handler func(reflect.Type) (Wrapper, error)
 )
 
-// ErrUnsupportedType is raised when wrapping encounters an unsupported type
-var ErrUnsupportedType = errors.New("unsupported type")
+var (
+	// ErrUnsupportedType is raised when wrapping encounters an unsupported type
+	ErrUnsupportedType = errors.New("unsupported type")
+)
 
 var (
 	cache = makeTypeCache()

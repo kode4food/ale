@@ -14,9 +14,11 @@ import (
 
 type predicate func(ale.Value) bool
 
-// ErrUnknownPredicate is raised when a call to IsA can't resolve a built-in predicate for the
-// specified keyword
-var ErrUnknownPredicate = errors.New("unknown predicate")
+var (
+	// ErrUnknownPredicate is raised when a call to IsA can't resolve a built-in predicate for the
+	// specified keyword
+	ErrUnknownPredicate = errors.New("unknown predicate")
+)
 
 const (
 	AnyKey       = data.Keyword("any")

@@ -61,9 +61,11 @@ const (
 	genSymOverflow = uint8(len(SymbolGenDigits))
 )
 
-// ErrInvalidSymbol is raised when a call to ParseSymbol can't interpret its input as a proper
-// Symbol name (local or qualified)
-var ErrInvalidSymbol = errors.New("invalid symbol")
+var (
+	// ErrInvalidSymbol is raised when a call to ParseSymbol can't interpret its input as a proper
+	// Symbol name (local or qualified)
+	ErrInvalidSymbol = errors.New("invalid symbol")
+)
 
 var (
 	gen = NewSymbolGenerator()

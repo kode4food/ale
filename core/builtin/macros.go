@@ -11,9 +11,11 @@ import (
 	"github.com/kode4food/ale/macro"
 )
 
-// ErrProcedureRequired is raised when a call to the Macro built-in doesn't receive a data.Procedure
-// to wrap
-var ErrProcedureRequired = errors.New("argument must be a procedure")
+var (
+	// ErrProcedureRequired is raised when a call to the Macro built-in doesn't receive a
+	// data.Procedure to wrap
+	ErrProcedureRequired = errors.New("argument must be a procedure")
+)
 
 // Macro converts a function into a macro
 var Macro = data.MakeProcedure(func(args ...ale.Value) ale.Value {

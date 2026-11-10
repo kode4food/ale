@@ -15,9 +15,9 @@ type channelWrapper struct {
 	dir  reflect.ChanDir
 }
 
-// ErrChannelCoercionNotSupported is raised when a channel Unwrap is called
-var ErrChannelCoercionNotSupported = errors.New(
-	"value cannot be coerced into chan",
+var (
+	// ErrChannelCoercionNotSupported is raised when a channel Unwrap is called
+	ErrChannelCoercionNotSupported = errors.New("value cannot be coerced into chan")
 )
 
 func makeWrappedChannel(t reflect.Type) (Wrapper, error) {

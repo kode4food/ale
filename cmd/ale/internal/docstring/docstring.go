@@ -10,8 +10,10 @@ import (
 	"github.com/kode4food/ale/internal/sync"
 )
 
-// ErrSymbolNotDocumented is raised when a call to doc can't resolve a name
-var ErrSymbolNotDocumented = errors.New("symbol not documented")
+var (
+	// ErrSymbolNotDocumented is raised when a call to doc can't resolve a name
+	ErrSymbolNotDocumented = errors.New("symbol not documented")
+)
 
 const extension = ".md"
 

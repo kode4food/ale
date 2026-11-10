@@ -15,9 +15,11 @@ type syntaxEnv struct {
 	genSyms map[string]data.Symbol
 }
 
-// ErrUnsupportedSyntaxQuote is raised when an attempt to syntax quote an unsupported type is made.
-// Generally on basic sequences are supported
-var ErrUnsupportedSyntaxQuote = errors.New("unsupported type in syntax quote")
+var (
+	// ErrUnsupportedSyntaxQuote is raised when an attempt to syntax quote an unsupported type
+	// is made. Generally on basic sequences are supported
+	ErrUnsupportedSyntaxQuote = errors.New("unsupported type in syntax quote")
+)
 
 var (
 	quoteSym  = env.RootSymbol("quote")

@@ -30,9 +30,11 @@ const (
 	bucketMask = bucketSize - 1
 )
 
-// ErrMapNotPaired is raised when a call to ValuesToObject receives an odd number of args, meaning
-// it won't be capable of zipping them into an Object
-var ErrMapNotPaired = errors.New("map must contain an even number of elements")
+var (
+	// ErrMapNotPaired is raised when a call to ValuesToObject receives an odd number of args,
+	// meaning it won't be capable of zipping them into an Object
+	ErrMapNotPaired = errors.New("map must contain an even number of elements")
+)
 
 var (
 	// EmptyObject represents an empty Object

@@ -12,8 +12,10 @@ type Context struct {
 	child  bool
 }
 
-// ErrCycleDetected is raised when wrapping encounters a reference cycle
-var ErrCycleDetected = errors.New("cycle detected in wrapping")
+var (
+	// ErrCycleDetected is raised when wrapping encounters a reference cycle
+	ErrCycleDetected = errors.New("cycle detected in wrapping")
+)
 
 // Push creates a new Context, checking the parent chain for cycles
 func (c *Context) Push(v reflect.Value) (*Context, error) {

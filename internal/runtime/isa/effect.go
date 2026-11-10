@@ -34,8 +34,10 @@ const (
 	Stack
 )
 
-// ErrEffectNotDeclared is raised when an attempt to forcefully retrieve an Effect fails
-var ErrEffectNotDeclared = errors.New("effect not declared for opcode")
+var (
+	// ErrEffectNotDeclared is raised when an attempt to forcefully retrieve an Effect fails
+	ErrEffectNotDeclared = errors.New("effect not declared for opcode")
+)
 
 // Effects is a lookup table of instruction effects
 var Effects = map[Opcode]*Effect{

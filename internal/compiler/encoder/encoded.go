@@ -35,9 +35,11 @@ type (
 	}
 )
 
-// ErrLabelAlreadyAnchored is raised when the finalizer identifies that a label has been anchored
-// more than once in the Instructions stream
-var ErrLabelAlreadyAnchored = errors.New("label has already been anchored")
+var (
+	// ErrLabelAlreadyAnchored is raised when the finalizer identifies that a label has been
+	// anchored more than once in the Instructions stream
+	ErrLabelAlreadyAnchored = errors.New("label has already been anchored")
+)
 
 func (e *Encoded) WithCode(c isa.Instructions) *Encoded {
 	res := *e
