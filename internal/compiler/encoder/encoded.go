@@ -10,9 +10,8 @@ import (
 )
 
 type (
-	// Encoded is a snapshot of the current Encoder's state. It is used as an
-	// intermediate step in the compilation process, particularly as input to
-	// the optimizer.
+	// Encoded is a snapshot of the current Encoder's state. It is used as an intermediate step in
+	// the compilation process, particularly as input to the optimizer.
 	Encoded struct {
 		Code      isa.Instructions
 		Globals   env.Namespace
@@ -36,8 +35,8 @@ type (
 	}
 )
 
-// ErrLabelAlreadyAnchored is raised when the finalizer identifies that a label
-// has been anchored more than once in the Instructions stream
+// ErrLabelAlreadyAnchored is raised when the finalizer identifies that a label has been anchored
+// more than once in the Instructions stream
 var ErrLabelAlreadyAnchored = errors.New("label has already been anchored")
 
 func (e *Encoded) WithCode(c isa.Instructions) *Encoded {
@@ -56,8 +55,8 @@ func (e *Encoded) HasClosure() bool {
 	return len(e.Closure) > 0
 }
 
-// Runnable takes an Encoded and finalizes it into a Runnable that the abstract
-// machine can execute. Jumps are resolved and unused constants are discarded.
+// Runnable takes an Encoded and finalizes it into a Runnable that the abstract machine can execute.
+// Jumps are resolved and unused constants are discarded.
 func (e *Encoded) Runnable() (*isa.Runnable, error) {
 	f := &finalizer{
 		Encoded:  e,

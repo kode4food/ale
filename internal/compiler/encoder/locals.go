@@ -16,8 +16,8 @@ const (
 	// ErrNoLocalScope is raised when no local scope has been created
 	ErrNoLocalScope = "no local scopes have been pushed"
 
-	// ErrDuplicateName is raised when an attempt is made to register a
-	// duplicated name within the same local scope
+	// ErrDuplicateName is raised when an attempt is made to register a duplicated name within the
+	// same local scope
 	ErrDuplicateName = "name duplicated in scope: %s"
 )
 

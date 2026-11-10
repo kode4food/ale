@@ -25,9 +25,7 @@ type (
 )
 
 var (
-	inlineCallOpcode = []isa.Opcode{
-		isa.Call0, isa.Call1, isa.Call2, isa.Call3, isa.Call,
-	}
+	inlineCallOpcode = []isa.Opcode{isa.Call0, isa.Call1, isa.Call2, isa.Call3, isa.Call}
 
 	inlineCallPattern = visitor.Pattern{{isa.Const}, inlineCallOpcode}
 
@@ -100,9 +98,7 @@ func (m *inlineMapper) relabel(c isa.Instructions) isa.Instructions {
 	return res
 }
 
-func (m *inlineMapper) reindex(
-	p *vm.Closure, c isa.Instructions,
-) isa.Instructions {
+func (m *inlineMapper) reindex(p *vm.Closure, c isa.Instructions) isa.Instructions {
 	res := slices.Clone(c)
 	pc := p.Captured()
 	captured := operandMap{}
@@ -165,9 +161,7 @@ func (m *inlineMapper) returns(c isa.Instructions) isa.Instructions {
 	return res
 }
 
-func (m *inlineMapper) transformArgs(
-	c isa.Instructions, argc isa.Operand,
-) isa.Instructions {
+func (m *inlineMapper) transformArgs(c isa.Instructions, argc isa.Operand) isa.Instructions {
 	switch argc {
 	case 0:
 		if !hasAnyArgInstruction(c) {

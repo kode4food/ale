@@ -14,12 +14,12 @@ type stackSizes struct {
 }
 
 const (
-	// ErrBadStackTermination is raised when the analyzer verifies a branch
-	// that ends in a non-empty state
+	// ErrBadStackTermination is raised when the analyzer verifies a branch that ends in a non-empty
+	// state
 	ErrBadStackTermination = "invalid stack end-state: %d"
 
-	// ErrBadBranchTermination is raised when the analyzer verifies parallel
-	// branches that end with a different stack size
+	// ErrBadBranchTermination is raised when the analyzer verifies parallel branches that end with
+	// a different stack size
 	ErrBadBranchTermination = "branches should end in the same state"
 )
 
@@ -34,8 +34,7 @@ func verifyStackSize(code isa.Instructions) error {
 	return nil
 }
 
-// CalculateStackSize returns the maximum depth for the stack based on the
-// Instructions provided.
+// CalculateStackSize returns the maximum depth for the stack based on the Instructions provided.
 func CalculateStackSize(code isa.Instructions) (isa.Operand, error) {
 	s := new(stackSizes)
 	if err := s.calculateNode(visitor.Branched(code)); err != nil {

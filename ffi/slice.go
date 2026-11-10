@@ -84,9 +84,7 @@ func (w *sliceWrapper) unwrapVector(in data.Vector) (reflect.Value, error) {
 	return out, nil
 }
 
-func (w *sliceWrapper) unwrapCounted(
-	in data.Counted,
-) (reflect.Value, error) {
+func (w *sliceWrapper) unwrapCounted(in data.Counted) (reflect.Value, error) {
 	inLen := in.Count()
 	out := reflect.MakeSlice(w.typ, inLen, inLen)
 	var r data.Sequence = in
@@ -102,9 +100,7 @@ func (w *sliceWrapper) unwrapCounted(
 	return out, nil
 }
 
-func (w *sliceWrapper) unwrapUncounted(
-	in data.Sequence,
-) (reflect.Value, error) {
+func (w *sliceWrapper) unwrapUncounted(in data.Sequence) (reflect.Value, error) {
 	out := reflect.MakeSlice(w.typ, 0, 0)
 	for f, r, ok := in.Split(); ok; f, r, ok = r.Split() {
 		v, err := w.elem.Unwrap(f)
@@ -116,9 +112,7 @@ func (w *sliceWrapper) unwrapUncounted(
 	return out, nil
 }
 
-func (w *byteSliceWrapper) Wrap(
-	_ *Context, v reflect.Value,
-) (ale.Value, error) {
+func (w *byteSliceWrapper) Wrap(_ *Context, v reflect.Value) (ale.Value, error) {
 	m := v.Interface().([]byte)
 	return data.Bytes(m), nil
 }

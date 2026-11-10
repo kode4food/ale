@@ -24,9 +24,7 @@ func TestRunnableJump(t *testing.T) {
 	}).Runnable()
 
 	if as.NoError(err) {
-		as.Equal(isa.Instructions{
-			isa.Jump.New(0),
-		}, i1.Code)
+		as.Equal(isa.Instructions{isa.Jump.New(0)}, i1.Code)
 	}
 }
 
@@ -44,10 +42,7 @@ func TestRunnableCondJump(t *testing.T) {
 	}).Runnable()
 
 	if as.NoError(err) {
-		as.Equal(isa.Instructions{
-			isa.False.New(),
-			isa.CondJump.New(0),
-		}, i1.Code)
+		as.Equal(isa.Instructions{isa.False.New(), isa.CondJump.New(0)}, i1.Code)
 	}
 }
 
@@ -66,19 +61,14 @@ func TestRunnableForwardJump(t *testing.T) {
 	}).Runnable()
 
 	if as.NoError(err) {
-		as.Equal(isa.Instructions{
-			isa.Jump.New(0),
-		}, i1.Code)
+		as.Equal(isa.Instructions{isa.Jump.New(0)}, i1.Code)
 	}
 }
 
 func TestRunnableDoubleAnchor(t *testing.T) {
 	as := assert.New(t)
 
-	_, err := makeEncoded(isa.Instructions{
-		isa.Label.New(0),
-		isa.Label.New(0),
-	}).Runnable()
+	_, err := makeEncoded(isa.Instructions{isa.Label.New(0), isa.Label.New(0)}).Runnable()
 
 	as.ErrorIs(err, encoder.ErrLabelAlreadyAnchored)
 }

@@ -28,21 +28,21 @@ type (
 )
 
 var (
-	// ErrStringNotTerminated is raised when the lexer reaches the end of its
-	// stream while scanning a string, without encountering a closing quote
+	// ErrStringNotTerminated is raised when the lexer reaches the end of its stream while scanning
+	// a string, without encountering a closing quote
 	ErrStringNotTerminated = errors.New("string has no closing quote")
 
-	// ErrCommentNotTerminated is raised when the lexer reaches the end of its
-	// stream while scanning a comment, without encountering an end marker
+	// ErrCommentNotTerminated is raised when the lexer reaches the end of its stream while scanning
+	// a comment, without encountering an end marker
 	ErrCommentNotTerminated = errors.New("comment has no closing marker")
 
-	// ErrUnmatchedComment is raised when a comment end marker is encountered
-	// in the stream when no open block comment is being parsed
+	// ErrUnmatchedComment is raised when a comment end marker is encountered in the stream when no
+	// open block comment is being parsed
 	ErrUnmatchedComment = errors.New("encountered '" + lang.BlockCommentEnd +
 		"' with no open block comment")
 
-	// ErrUnexpectedCharacters is raised when the lexer encounters a set of
-	// characters that don't match any of the defined scanning patterns
+	// ErrUnexpectedCharacters is raised when the lexer encounters a set of characters that don't
+	// match any of the defined scanning patterns
 	ErrUnexpectedCharacters = errors.New("unexpected characters")
 )
 

@@ -22,12 +22,12 @@ const (
 	// ErrExpectedString is raised when a passed value is not a String
 	ErrExpectedString = "value is not a string: %s"
 
-	// ErrInvalidIndexes is raised when an attempt to take a substring receives
-	// invalid start and end indexes
+	// ErrInvalidIndexes is raised when an attempt to take a substring receives invalid start and
+	// end indexes
 	ErrInvalidIndexes = "%d and %d are not valid start/end indices"
 
-	// ErrInvalidStartIndex is raised when an attempt to take a substring of a
-	// String specifies an ending index that is lower than the starting index
+	// ErrInvalidStartIndex is raised when an attempt to take a substring of a String specifies an
+	// ending index that is lower than the starting index
 	ErrInvalidStartIndex = "%d is an invalid start index"
 )
 

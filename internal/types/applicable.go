@@ -9,9 +9,9 @@ import (
 )
 
 type (
-	// Applicable describes a Type that can be the target of a function
-	// application. Such application may expose multiple Signatures to
-	// describe the various ways that the type can be applied
+	// Applicable describes a Type that can be the target of a function application. Such
+	// application may expose multiple Signatures to describe the various ways that the type can be
+	// applied
 	Applicable struct {
 		Basic
 		signatures
@@ -27,8 +27,8 @@ type (
 	signatures []Signature
 )
 
-// MakeApplicable declares an ApplicableType that will only allow an applicable
-// value capable of the provided signature set
+// MakeApplicable declares an ApplicableType that will only allow an applicable value capable of the
+// provided signature set
 func MakeApplicable(first Signature, rest ...Signature) ale.Type {
 	all := append(signatures{first}, rest...)
 	return &Applicable{

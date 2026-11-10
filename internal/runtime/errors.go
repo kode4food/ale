@@ -17,8 +17,8 @@ type aleRuntimeError struct {
 	message string
 }
 
-// ErrUnexpectedType maps a Go interface conversion error to something that
-// will make more sense to an Ale program
+// ErrUnexpectedType maps a Go interface conversion error to something that will make more sense to
+// an Ale program
 const ErrUnexpectedType = "got %s, expected %s"
 
 var interfaceConversion = [...]*regexp.Regexp{
@@ -38,8 +38,8 @@ var interfaceConversion = [...]*regexp.Regexp{
 func AleRuntimeError(wrapped error, format string, a ...any) error {
 	message := fmt.Sprintf(format, a...)
 	object, _ := data.ValuesToObject(
-		data.Keyword("message"), data.String(message),
-		data.Keyword("wrapped"), data.String(wrapped.Error()),
+		data.Keyword("message"), data.String(message), data.Keyword("wrapped"),
+		data.String(wrapped.Error()),
 	)
 	return &aleRuntimeError{
 		Object:  object,

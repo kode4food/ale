@@ -79,12 +79,10 @@ func TestTakeDropEval(t *testing.T) {
 	`, F(4))
 
 	as.PanicWith(
-		`(last! (drop 99 57))`,
-		fmt.Errorf(runtime.ErrUnexpectedType, "integer", "pair"),
+		`(last! (drop 99 57))`, fmt.Errorf(runtime.ErrUnexpectedType, "integer", "pair"),
 	)
 	as.PanicWith(
-		`(last! (take 99 57))`,
-		fmt.Errorf(runtime.ErrUnexpectedType, "integer", "sequence"),
+		`(last! (take 99 57))`, fmt.Errorf(runtime.ErrUnexpectedType, "integer", "sequence"),
 	)
 }
 

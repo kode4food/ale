@@ -11,13 +11,8 @@ type optimizer func(*encoder.Encoded) *encoder.Encoded
 
 // Encoded takes an Encoded representation and returns an optimized one
 var Encoded = compose(
-	splitReturns,
-	callsInTailPosition,
-	selfCallsInTailPosition,
-	inlineCalls,
-	repeatWhenModified(redundantLocals, ineffectivePushes),
-	literalReturns,
-	dedicatedCalls,
+	splitReturns, callsInTailPosition, selfCallsInTailPosition, inlineCalls,
+	repeatWhenModified(redundantLocals, ineffectivePushes), literalReturns, dedicatedCalls,
 )
 
 func compose(first optimizer, rest ...optimizer) optimizer {

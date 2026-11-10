@@ -73,11 +73,8 @@ func TestObjectAssoc(t *testing.T) {
 		 (:first o5) (:second o5)]
 	`,
 		V(
-			S("first"), S("second"),
-			S("first-replaced"), S("second"),
-			S("also-replaced"), S("second"),
-			data.Null, S("second"),
-			data.Null, data.Null,
+			S("first"), S("second"), S("first-replaced"), S("second"), S("also-replaced"),
+			S("second"), data.Null, S("second"), data.Null, data.Null,
 		),
 	)
 

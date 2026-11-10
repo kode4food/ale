@@ -51,10 +51,8 @@ func TestChannel(t *testing.T) {
 		as.Number(1, seq.Car())
 		as.Number(2, seq.Cdr().(data.Pair).Car())
 		as.Number(3, seq.Cdr().(data.Pair).Cdr().(data.Pair).Car())
-		as.False(seq.Cdr().(data.Pair).Cdr().(data.Pair).Cdr().(data.Sequence).
-			IsEmpty())
-		as.String("foo", seq.Cdr().(data.Pair).Cdr().(data.Pair).
-			Cdr().(data.Pair).Car())
+		as.False(seq.Cdr().(data.Pair).Cdr().(data.Pair).Cdr().(data.Sequence).IsEmpty())
+		as.String("foo", seq.Cdr().(data.Pair).Cdr().(data.Pair).Cdr().(data.Pair).Car())
 		as.False(seq.Cdr().(data.Pair).Cdr().(data.Pair).Cdr().(data.Pair).
 			Cdr().(data.Sequence).IsEmpty())
 		as.String("bar", seq.Cdr().(data.Pair).Cdr().(data.Pair).

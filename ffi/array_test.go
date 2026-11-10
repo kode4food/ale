@@ -132,10 +132,7 @@ func TestByteArrayStruct(t *testing.T) {
 				return
 			},
 		},
-		O(
-			C(K("bytes"), data.Bytes{98, 100, 102}),
-			C(K("ints"), V(I(0), I(0), I(0))),
-		),
+		O(C(K("bytes"), data.Bytes{98, 100, 102}), C(K("ints"), V(I(0), I(0), I(0)))),
 	)
 }
 

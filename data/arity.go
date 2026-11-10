@@ -6,25 +6,24 @@ import (
 )
 
 const (
-	// ErrFixedArity is raised when there are too few or many arguments
-	// provided to a fixed ArityChecker
+	// ErrFixedArity is raised when there are too few or many arguments provided to a fixed
+	// ArityChecker
 	ErrFixedArity = "expected %d arguments, got %d"
 
-	// ErrMinimumArity is raised when there are too few arguments provided to a
-	// minimum ArityChecker
+	// ErrMinimumArity is raised when there are too few arguments provided to a minimum ArityChecker
 	ErrMinimumArity = "expected at least %d arguments, got %d"
 
-	// ErrRangedArity is raised when there are too few or many arguments
-	// provided to a ranged ArityChecker
+	// ErrRangedArity is raised when there are too few or many arguments provided to a ranged
+	// ArityChecker
 	ErrRangedArity = "expected between %d and %d arguments, got %d"
 
-	// ErrTooManyArguments is raised when there are too many arguments provided
-	// to a maximum ArityChecker
+	// ErrTooManyArguments is raised when there are too many arguments provided to a maximum
+	// ArityChecker
 	ErrTooManyArguments = "too many arity check arguments"
 )
 
-// OrMore is the constant used when you want to tell MakeArityChecker to
-// generate a minimum arity checker
+// OrMore is the constant used when you want to tell MakeArityChecker to generate a minimum arity
+// checker
 const OrMore = -1
 
 // MakeArityChecker produces an arity checker based on its parameters

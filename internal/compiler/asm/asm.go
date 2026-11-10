@@ -39,10 +39,7 @@ func Encode(e encoder.Encoder, build EmitBuilder) error {
 
 func getCalls() namedAsmParsers {
 	callsOnce.Do(func() {
-		calls = mergeCalls(
-			getInstructionCalls(),
-			getDirectiveCalls(),
-		)
+		calls = mergeCalls(getInstructionCalls(), getDirectiveCalls())
 	})
 	return calls
 }

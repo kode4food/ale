@@ -19,8 +19,7 @@ func TestTheStringTests(t *testing.T) {
 	as.String("hello", LS("hello"))
 
 	as.Panics(
-		func() { as.String("10", 10) },
-		fmt.Errorf(assert.ErrInvalidTestExpression, "10"),
+		func() { as.String("10", 10) }, fmt.Errorf(assert.ErrInvalidTestExpression, "10"),
 	)
 
 }
@@ -34,8 +33,7 @@ func TestTheFloatTests(t *testing.T) {
 	as.Number(10, 10)
 
 	as.Panics(
-		func() { as.Number(10, "10") },
-		fmt.Errorf(assert.ErrInvalidTestExpression, "10"),
+		func() { as.Number(10, "10") }, fmt.Errorf(assert.ErrInvalidTestExpression, "10"),
 	)
 }
 

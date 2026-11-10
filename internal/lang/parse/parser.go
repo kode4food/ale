@@ -13,8 +13,8 @@ import (
 )
 
 type (
-	// parser is a stateful iteration interface for a Token stream that is
-	// piloted by the FromString function and exposed as a LazySequence
+	// parser is a stateful iteration interface for a Token stream that is piloted by the FromString
+	// function and exposed as a LazySequence
 	parser struct {
 		ns       env.Namespace
 		tokenize Tokenizer
@@ -175,9 +175,7 @@ func (p *parser) object() (ale.Value, error) {
 	return data.ValuesToObject(v...)
 }
 
-func (p *parser) nonDotted(
-	endToken lex.TokenType, missingErr error,
-) (data.Vector, error) {
+func (p *parser) nonDotted(endToken lex.TokenType, missingErr error) (data.Vector, error) {
 	res := data.Vector{}
 	for {
 		t, err := p.nextToken()

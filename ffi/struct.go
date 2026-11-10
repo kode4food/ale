@@ -21,8 +21,7 @@ type (
 	}
 )
 
-// AleTag identifies the tag used to specify the kwd used when wrapping a
-// struct as an Object
+// AleTag identifies the tag used to specify the kwd used when wrapping a struct as an Object
 const AleTag = "ale"
 
 func makeWrappedStruct(t reflect.Type) (Wrapper, error) {

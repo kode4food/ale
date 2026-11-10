@@ -41,10 +41,7 @@ func TestUnsafePointerBoxing(t *testing.T) {
 	if as.NoError(err) {
 		b1, err := w.Wrap(nil, reflect.ValueOf(p))
 		if as.NoError(err) {
-			as.Equal(
-				unsafe.Pointer(&four2),
-				b1.(*ffi.Boxed[unsafe.Pointer]).Value.UnsafePointer(),
-			)
+			as.Equal(unsafe.Pointer(&four2), b1.(*ffi.Boxed[unsafe.Pointer]).Value.UnsafePointer())
 		}
 
 		u, err := w.Unwrap(b1)

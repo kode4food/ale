@@ -6,9 +6,7 @@ import (
 )
 
 // Branch constructs predicate, consequent, alternative branching
-func Branch(
-	e encoder.Encoder, predicate, consequent, alternative Builder,
-) error {
+func Branch(e encoder.Encoder, predicate, consequent, alternative Builder) error {
 	thenLabel := e.NewLabel()
 	endLabel := e.NewLabel()
 

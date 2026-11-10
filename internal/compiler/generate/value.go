@@ -52,9 +52,7 @@ func Cons(e encoder.Encoder, c *data.Cons) error {
 	return nil
 }
 
-func resolveBuiltIn(
-	e encoder.Encoder, sym data.Symbol,
-) (data.Procedure, error) {
+func resolveBuiltIn(e encoder.Encoder, sym data.Symbol) (data.Procedure, error) {
 	ge := e.Globals().Environment()
 	root := ge.GetRoot()
 	res, err := env.ResolveValue(root, sym)

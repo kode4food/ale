@@ -28,35 +28,33 @@ type (
 )
 
 const (
-	// ErrNoCasesDefined is raised when a call to Lambda doesn't include any
-	// parameter cases definitions.
+	// ErrNoCasesDefined is raised when a call to Lambda doesn't include any parameter cases
+	// definitions.
 	ErrNoCasesDefined = "no parameter cases defined"
 
-	// ErrUnexpectedCaseSyntax is raised when a call to Lambda doesn't include
-	// a proper parameter case initializer. If it first encounters a Vector,
-	// the parsing will assume multiple parameter cases, otherwise it will
-	// assume a single parameter case
+	// ErrUnexpectedCaseSyntax is raised when a call to Lambda doesn't include a proper parameter
+	// case initializer. If it first encounters a Vector, the parsing will assume multiple parameter
+	// cases, otherwise it will assume a single parameter case
 	ErrUnexpectedCaseSyntax = "unexpected case syntax: %s"
 
-	// ErrUnexpectedParamSyntax is raised when a Lambda parameter case is
-	// represented by an unexpected syntax. Valid syntax representations are
-	// data.List, data.Cons, or data.Local
+	// ErrUnexpectedParamSyntax is raised when a Lambda parameter case is represented by an
+	// unexpected syntax. Valid syntax representations are data.List, data.Cons, or data.Local
 	ErrUnexpectedParamSyntax = "unexpected parameter syntax: %s"
 
-	// ErrNoCaseBodyDefined is raised when a Lambda parameter case defines its
-	// parameters, but not an associated body to evaluate
+	// ErrNoCaseBodyDefined is raised when a Lambda parameter case defines its parameters, but not
+	// an associated body to evaluate
 	ErrNoCaseBodyDefined = "no parameter case body: %s"
 
-	// ErrUnreachableCase is raised when a Lambda parameter is defined that
-	// would otherwise be impossible to reach given previous definitions
+	// ErrUnreachableCase is raised when a Lambda parameter is defined that would otherwise be
+	// impossible to reach given previous definitions
 	ErrUnreachableCase = "unreachable parameter case: %s"
 
-	// ErrUnmatchedCase is raised when a Lambda is called and the number of
-	// arguments provided doesn't match any of the declared parameter cases
+	// ErrUnmatchedCase is raised when a Lambda is called and the number of arguments provided
+	// doesn't match any of the declared parameter cases
 	ErrUnmatchedCase = "got %d arguments, expected %s"
 
-	// ErrNoMatchingParamPattern is raised when none of the parameter patterns
-	// for a Lambda were capable of being matched
+	// ErrNoMatchingParamPattern is raised when none of the parameter patterns for a Lambda were
+	// capable of being matched
 	ErrNoMatchingParamPattern = "no matching parameter pattern"
 )
 

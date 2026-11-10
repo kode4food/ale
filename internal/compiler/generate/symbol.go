@@ -8,8 +8,8 @@ import (
 	"github.com/kode4food/ale/internal/runtime/isa"
 )
 
-// Global encodes a global symbol constant or retrieval, depending on whether
-// the symbol is already bound in the environment
+// Global encodes a global symbol constant or retrieval, depending on whether the symbol is already
+// bound in the environment
 func Global(e encoder.Encoder, s data.Symbol) error {
 	entry, _, err := env.ResolveSymbol(e.Globals(), s)
 	if err != nil {

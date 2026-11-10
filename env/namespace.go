@@ -50,12 +50,12 @@ type (
 )
 
 const (
-	// ErrNameAlreadyDeclared is raised when an attempt to declare a name is
-	// performed that has already been declared with different privacy
+	// ErrNameAlreadyDeclared is raised when an attempt to declare a name is performed that has
+	// already been declared with different privacy
 	ErrNameAlreadyDeclared = "name already declared in namespace: %s"
 
-	// ErrNameNotDeclared is raised when an attempt to forcefully resolve an
-	// undeclared name in the Namespace fails
+	// ErrNameNotDeclared is raised when an attempt to forcefully resolve an undeclared name in the
+	// Namespace fails
 	ErrNameNotDeclared = "name not declared in namespace: %s"
 )
 
@@ -165,9 +165,7 @@ func (ns *namespace) checkDuplicates(names data.Locals) error {
 	return nil
 }
 
-func resolvePublic(
-	from Namespace, in Namespace, n data.Local,
-) (*Entry, Namespace, error) {
+func resolvePublic(from Namespace, in Namespace, n data.Local) (*Entry, Namespace, error) {
 	if e, ns, err := in.Resolve(n); err == nil {
 		if !e.IsPrivate() || from == in && in == ns {
 			return e, ns, nil

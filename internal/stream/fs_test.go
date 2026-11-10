@@ -24,10 +24,8 @@ func TestWrapFileSystemList(t *testing.T) {
 		res := c.(data.Procedure).Call(S("test_assets"))
 		if as.NotNil(res) {
 			as.Equal(O(
-				C(S("test1.txt"), stream.File),
-				C(S("test2.txt"), stream.File),
-				C(S("dir1"), stream.Dir),
-				C(S("dir2"), stream.Dir),
+				C(S("test1.txt"), stream.File), C(S("test2.txt"), stream.File),
+				C(S("dir1"), stream.Dir), C(S("dir2"), stream.Dir),
 			), res)
 		}
 
@@ -45,9 +43,7 @@ func TestWrapFileSystemReadAll(t *testing.T) {
 		c, ok := fs.Get(stream.OpenKey)
 		as.True(ok)
 
-		res := c.(data.Procedure).Call(
-			S("test_assets/test1.txt"), stream.ReadAll,
-		)
+		res := c.(data.Procedure).Call(S("test_assets/test1.txt"), stream.ReadAll)
 		b, ok := res.(data.Bytes)
 		as.True(ok)
 		as.String("test file 1 in root\n", data.String(b))
@@ -61,9 +57,7 @@ func TestWrapFileSystemReadLines(t *testing.T) {
 		c, ok := fs.Get(stream.OpenKey)
 		as.True(ok)
 
-		r := c.(data.Procedure).Call(
-			S("test_assets/test2.txt"), stream.ReadLines,
-		)
+		r := c.(data.Procedure).Call(S("test_assets/test2.txt"), stream.ReadLines)
 		res := sequence.ToVector(r.(data.Sequence))
 		as.Equal(2, res.Count())
 		as.String("test file 2 in root", res[0])
@@ -82,9 +76,7 @@ func TestWrapFileSystemReadStringAndRunes(t *testing.T) {
 		s := sequence.ToString(r.(data.Sequence))
 		as.String("test file 1 in root\n", s)
 
-		v := c.(data.Procedure).Call(
-			S("test_assets/test1.txt"), stream.ReadString,
-		)
+		v := c.(data.Procedure).Call(S("test_assets/test1.txt"), stream.ReadString)
 		as.String("test file 1 in root\n", v)
 	}
 }
@@ -96,16 +88,12 @@ func TestWrapFileSystemReadBlocks(t *testing.T) {
 		c, ok := fs.Get(stream.OpenKey)
 		as.True(ok)
 
-		r1 := c.(data.Procedure).Call(
-			S("test_assets/test1.txt"), stream.ReadBlocks,
-		)
+		r1 := c.(data.Procedure).Call(S("test_assets/test1.txt"), stream.ReadBlocks)
 		v1 := sequence.ToVector(r1.(data.Sequence))
 		as.Equal(1, v1.Count())
 		as.String("test file 1 in root\n", data.String(v1[0].(data.Bytes)))
 
-		r2 := c.(data.Procedure).Call(
-			S("test_assets/test1.txt"), stream.ReadBlocks, I(4),
-		)
+		r2 := c.(data.Procedure).Call(S("test_assets/test1.txt"), stream.ReadBlocks, I(4))
 		v2 := sequence.ToVector(r2.(data.Sequence))
 		as.Equal(5, v2.Count())
 		as.String("test", data.String(v2[0].(data.Bytes)))
@@ -131,9 +119,7 @@ func TestWrapFileSystemOpenErrors(t *testing.T) {
 			_ = open.Call(S("test_assets/test1.txt"), stream.ReadBlocks, I(0))
 		})
 		as.Panics(func() {
-			_ = open.Call(
-				S("test_assets/test1.txt"), stream.ReadBlocks, I(4), I(8),
-			)
+			_ = open.Call(S("test_assets/test1.txt"), stream.ReadBlocks, I(4), I(8))
 		})
 		as.Panics(func() {
 			_ = open.Call(S("test_assets/dir1"), stream.ReadAll)

@@ -7,10 +7,7 @@ import (
 
 var (
 	// dedicatedCalls convert generic Call instructions into dedicated ones
-	dedicatedCalls = globalReplace(
-		visitor.Pattern{{isa.Call}},
-		dedicatedCallMapper,
-	)
+	dedicatedCalls = globalReplace(visitor.Pattern{{isa.Call}}, dedicatedCallMapper)
 
 	mappedDedicatedCalls = map[isa.Operand]isa.Instructions{
 		0: {isa.Call0.New()},

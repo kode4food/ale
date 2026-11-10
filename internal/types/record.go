@@ -10,8 +10,7 @@ import (
 )
 
 type (
-	// Record describes an Object that allows a fixed set of fields, each of
-	// which has a keyword
+	// Record describes an Object that allows a fixed set of fields, each of which has a keyword
 	Record struct {
 		Basic
 		fields
@@ -26,8 +25,8 @@ type (
 	fields []Field
 )
 
-// MakeRecord declares a new RecordType that only allows a fixed set of Field
-// entries, each being identified by a BasicKeyword and having a specified Type
+// MakeRecord declares a new RecordType that only allows a fixed set of Field entries, each being
+// identified by a BasicKeyword and having a specified Type
 func MakeRecord(fields ...Field) ale.Type {
 	return &Record{
 		Basic:  BasicObject,

@@ -65,8 +65,7 @@ func (e *Environment) GetAnonymous() Namespace {
 	return chain(e.root, e.newNamespace(lang.AnonymousDomain))
 }
 
-// NewQualified creates a new namespace for the specified domain if it doesn't
-// already exist.
+// NewQualified creates a new namespace for the specified domain if it doesn't already exist.
 func (e *Environment) NewQualified(n data.Local) (Namespace, error) {
 	if n == lang.RootDomain {
 		return nil, fmt.Errorf(ErrNamespaceExists, lang.RootDomain)
@@ -102,9 +101,8 @@ func (e *Environment) newNamespace(n data.Local) Namespace {
 	}
 }
 
-// ResolveSymbol attempts to resolve a symbol. If it's a qualified symbol, it
-// will be retrieved directly from the identified namespace. Otherwise, it will
-// be searched in the current namespace
+// ResolveSymbol attempts to resolve a symbol. If it's a qualified symbol, it will be retrieved
+// directly from the identified namespace. Otherwise, it will be searched in the current namespace
 func ResolveSymbol(ns Namespace, s data.Symbol) (*Entry, Namespace, error) {
 	if q, ok := s.(data.Qualified); ok {
 		e := ns.Environment()
@@ -135,9 +133,8 @@ func MustResolveValue(ns Namespace, s data.Symbol) ale.Value {
 	return v
 }
 
-// MustGetQualified attempts to retrieve a namespace for the specified domain.
-// If the namespace does not exist, it will attempt to create it. If creation
-// fails, it will panic.
+// MustGetQualified attempts to retrieve a namespace for the specified domain. If the namespace does
+// not exist, it will attempt to create it. If creation fails, it will panic.
 func MustGetQualified(e *Environment, n data.Local) Namespace {
 	ns, err := e.GetQualified(n)
 	if err == nil {

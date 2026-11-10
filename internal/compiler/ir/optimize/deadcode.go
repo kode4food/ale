@@ -9,8 +9,8 @@ import (
 	"github.com/kode4food/ale/internal/runtime/isa"
 )
 
-// ineffectivePushes deletes values pushed to the stack for no reason,
-// specifically if they're literals followed immediately by a pop instruction
+// ineffectivePushes deletes values pushed to the stack for no reason, specifically if they're
+// literals followed immediately by a pop instruction
 var ineffectivePushes = globalReplace(
 	visitor.Pattern{
 		selectEffects(func(e *isa.Effect) bool {
@@ -21,8 +21,8 @@ var ineffectivePushes = globalReplace(
 	removeInstructions,
 )
 
-// redundantLocals deletes or rewrites Load and Store combinations that result
-// in excessive memory location access or modification
+// redundantLocals deletes or rewrites Load and Store combinations that result in excessive memory
+// location access or modification
 func redundantLocals(e *encoder.Encoded) *encoder.Encoded {
 	if c, ok := replaceRedundantLocals(e.Code); ok {
 		return e.WithCode(c)

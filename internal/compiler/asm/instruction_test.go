@@ -73,10 +73,7 @@ func TestLabelNumbering(t *testing.T) {
 
 func TestOperandSizeError(t *testing.T) {
 	as := assert.New(t)
-	as.MustEvalTo(
-		fmt.Sprintf("(asm pos-int %d)", isa.OperandMask),
-		I(int64(isa.OperandMask)),
-	)
+	as.MustEvalTo(fmt.Sprintf("(asm pos-int %d)", isa.OperandMask), I(int64(isa.OperandMask)))
 
 	as.ErrorWith(
 		fmt.Sprintf("(asm pos-int %d)", isa.OperandMask+1),

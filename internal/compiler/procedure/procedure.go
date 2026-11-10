@@ -8,8 +8,7 @@ import (
 	"github.com/kode4food/ale/internal/runtime/vm"
 )
 
-// FromEncoded instantiates an abstract machine Procedure from the provided
-// Encoded representation
+// FromEncoded instantiates an abstract machine Procedure from the provided Encoded representation
 func FromEncoded(e *encoder.Encoded) (*vm.Procedure, error) {
 	if err := analysis.Verify(e.Code); err != nil {
 		return nil, err

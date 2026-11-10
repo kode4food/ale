@@ -48,8 +48,7 @@ func testResult(t *testing.T, res ale.Value, code isa.Instructions) {
 func testPanic(t *testing.T, errStr string, code isa.Instructions) {
 	as := assert.New(t)
 	as.Panics(
-		func() { _ = runCode(code) },
-		errors.New(errStr),
+		func() { _ = runCode(code) }, errors.New(errStr),
 	)
 }
 
@@ -90,15 +89,9 @@ func TestSimple(t *testing.T) {
 		isa.Return.New(),
 	})
 
-	testResult(t, S("Closure"), isa.Instructions{
-		isa.Closure.New(0),
-		isa.Return.New(),
-	})
+	testResult(t, S("Closure"), isa.Instructions{isa.Closure.New(0), isa.Return.New()})
 
-	testResult(t, S("arg"), isa.Instructions{
-		isa.Arg.New(0),
-		isa.Return.New(),
-	})
+	testResult(t, S("arg"), isa.Instructions{isa.Arg.New(0), isa.Return.New()})
 }
 
 func TestPopAndDup(t *testing.T) {
@@ -133,51 +126,25 @@ func TestPopAndDup(t *testing.T) {
 }
 
 func TestReturns(t *testing.T) {
-	testResult(t, data.Null, isa.Instructions{
-		isa.Null.New(),
-		isa.Return.New(),
-	})
+	testResult(t, data.Null, isa.Instructions{isa.Null.New(), isa.Return.New()})
 
-	testResult(t, I(2), isa.Instructions{
-		isa.PosInt.New(2),
-		isa.Return.New(),
-	})
+	testResult(t, I(2), isa.Instructions{isa.PosInt.New(2), isa.Return.New()})
 
-	testResult(t, data.True, isa.Instructions{
-		isa.True.New(),
-		isa.Return.New(),
-	})
+	testResult(t, data.True, isa.Instructions{isa.True.New(), isa.Return.New()})
 
-	testResult(t, data.False, isa.Instructions{
-		isa.False.New(),
-		isa.Return.New(),
-	})
+	testResult(t, data.False, isa.Instructions{isa.False.New(), isa.Return.New()})
 
-	testResult(t, data.True, isa.Instructions{
-		isa.RetTrue.New(),
-	})
+	testResult(t, data.True, isa.Instructions{isa.RetTrue.New()})
 
-	testResult(t, data.False, isa.Instructions{
-		isa.RetFalse.New(),
-	})
+	testResult(t, data.False, isa.Instructions{isa.RetFalse.New()})
 
-	testResult(t, data.Null, isa.Instructions{
-		isa.RetNull.New(),
-	})
+	testResult(t, data.Null, isa.Instructions{isa.RetNull.New()})
 }
 
 func TestUnary(t *testing.T) {
-	testResult(t, I(-1), isa.Instructions{
-		isa.PosInt.New(1),
-		isa.Neg.New(),
-		isa.Return.New(),
-	})
+	testResult(t, I(-1), isa.Instructions{isa.PosInt.New(1), isa.Neg.New(), isa.Return.New()})
 
-	testResult(t, data.False, isa.Instructions{
-		isa.True.New(),
-		isa.Not.New(),
-		isa.Return.New(),
-	})
+	testResult(t, data.False, isa.Instructions{isa.True.New(), isa.Not.New(), isa.Return.New()})
 }
 
 func TestCalls(t *testing.T) {
@@ -199,11 +166,7 @@ func TestCalls(t *testing.T) {
 		isa.Return.New(),
 	})
 
-	testResult(t, I(0), isa.Instructions{
-		isa.Const.New(3),
-		isa.Call0.New(),
-		isa.Return.New(),
-	})
+	testResult(t, I(0), isa.Instructions{isa.Const.New(3), isa.Call0.New(), isa.Return.New()})
 }
 
 func TestMaths(t *testing.T) {
@@ -402,33 +365,21 @@ func TestArgs(t *testing.T) {
 	as := assert.New(t)
 	args := data.Vector{S("arg1"), S("arg2"), S("arg3"), S("arg4")}
 
-	c1 := makeClosure(isa.Instructions{
-		isa.ArgsLen.New(),
-		isa.Return.New(),
-	})
+	c1 := makeClosure(isa.Instructions{isa.ArgsLen.New(), isa.Return.New()})
 	r1 := c1.Call(args...)
 	as.Equal(I(4), r1)
 
-	c2 := makeClosure(isa.Instructions{
-		isa.Arg.New(1),
-		isa.Return.New(),
-	})
+	c2 := makeClosure(isa.Instructions{isa.Arg.New(1), isa.Return.New()})
 	r2 := c2.Call(args...)
 	as.Equal(S("arg2"), r2)
 
-	c3 := makeClosure(isa.Instructions{
-		isa.ArgsRest.New(2),
-		isa.Return.New(),
-	})
+	c3 := makeClosure(isa.Instructions{isa.ArgsRest.New(2), isa.Return.New()})
 	r3 := c3.Call(args...)
 	as.Equal(V(S("arg3"), S("arg4")), r3)
 }
 
 func TestErrors(t *testing.T) {
-	testPanic(t, "a thrown error", isa.Instructions{
-		isa.Const.New(2),
-		isa.Panic.New(),
-	})
+	testPanic(t, "a thrown error", isa.Instructions{isa.Const.New(2), isa.Panic.New()})
 }
 
 func TestForUnimplementedOpcodes(t *testing.T) {
@@ -441,9 +392,7 @@ func TestForUnimplementedOpcodes(t *testing.T) {
 					case isa.Label:
 						// continue
 					default:
-						as.NotEqual(
-							rec, fmt.Sprintf("unknown opcode: %s", oc),
-						)
+						as.NotEqual(rec, fmt.Sprintf("unknown opcode: %s", oc))
 					}
 				}
 			}()
@@ -469,9 +418,7 @@ func TestBadOpcode(t *testing.T) {
 
 func TestUnexpectedLabel(t *testing.T) {
 	as := assert.New(t)
-	defer as.ExpectProgrammerError(
-		fmt.Sprintf(vm.ErrUnexpectedLabel, 0),
-	)
+	defer as.ExpectProgrammerError(fmt.Sprintf(vm.ErrUnexpectedLabel, 0))
 	runCode(isa.Instructions{isa.Instruction(isa.Label)})
 }
 

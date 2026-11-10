@@ -12,14 +12,9 @@ import (
 func TestObject(t *testing.T) {
 	as := assert.New(t)
 
-	o1 := data.NewObject(
-		C(K("parent"), S("i am the parent")),
-		C(K("name"), S("parent")),
-	)
+	o1 := data.NewObject(C(K("parent"), S("i am the parent")), C(K("name"), S("parent")))
 
-	o2 := o1.Put(
-		C(K("child"), S("i am the child")),
-	).(*data.Object).Put(
+	o2 := o1.Put(C(K("child"), S("i am the child"))).(*data.Object).Put(
 		C(K("name"), S("child")),
 	).(*data.Object)
 
@@ -121,10 +116,7 @@ func TestObjectRemoval(t *testing.T) {
 func TestObjectCall(t *testing.T) {
 	as := assert.New(t)
 
-	o1 := data.NewObject(
-		C(K("parent"), S("i am the parent")),
-		C(K("name"), S("parent")),
-	)
+	o1 := data.NewObject(C(K("parent"), S("i am the parent")), C(K("name"), S("parent")))
 
 	as.String("i am the parent", o1.Call(K("parent")))
 	as.Nil(o1.Call(K("missing")))
@@ -140,10 +132,7 @@ func TestObjectCall(t *testing.T) {
 func TestObjectIterate(t *testing.T) {
 	as := assert.New(t)
 
-	o1 := data.NewObject(
-		C(K("first"), S("first value")),
-		C(K("second"), S("second value")),
-	)
+	o1 := data.NewObject(C(K("first"), S("first value")), C(K("second"), S("second value")))
 	as.Equal(2, o1.Count())
 
 	f1, r1, ok := o1.Split()
@@ -163,11 +152,7 @@ func TestObjectIterate(t *testing.T) {
 
 func TestObjectSplitDeterminism(t *testing.T) {
 	as := assert.New(t)
-	o := data.NewObject(
-		C(K("z"), I(1024)),
-		C(K("x"), I(5)),
-		C(K("y"), I(99)),
-	)
+	o := data.NewObject(C(K("z"), I(1024)), C(K("x"), I(5)), C(K("y"), I(99)))
 	f1, r1, ok := o.Split()
 	r1Str := data.ToString(r1)
 	as.True(ok)
@@ -181,11 +166,7 @@ func TestObjectSplitDeterminism(t *testing.T) {
 
 func TestObjectCarCdr(t *testing.T) {
 	as := assert.New(t)
-	o := data.NewObject(
-		C(K("z"), I(1024)),
-		C(K("x"), I(5)),
-		C(K("y"), I(99)),
-	)
+	o := data.NewObject(C(K("z"), I(1024)), C(K("x"), I(5)), C(K("y"), I(99)))
 	a1 := o.Car()
 	d1 := o.Cdr()
 	dStr := data.ToString(d1)
@@ -199,11 +180,7 @@ func TestObjectCarCdr(t *testing.T) {
 
 func TestObjectEquality(t *testing.T) {
 	as := assert.New(t)
-	o1 := data.NewObject(
-		C(K("z"), I(1024)),
-		C(K("x"), I(5)),
-		C(K("y"), I(99)),
-	)
+	o1 := data.NewObject(C(K("z"), I(1024)), C(K("x"), I(5)), C(K("y"), I(99)))
 	o2 := data.NewObject( // Content same
 		C(K("z"), I(1024)),
 		C(K("x"), I(5)),
@@ -234,23 +211,10 @@ func TestObjectEquality(t *testing.T) {
 
 func TestObjectHash(t *testing.T) {
 	as := assert.New(t)
-	o1 := data.NewObject(
-		C(K("z"), I(1024)),
-		C(K("x"), I(5)),
-		C(K("y"), I(99)),
-	)
-	o2 := data.NewObject(
-		C(K("y"), I(99)),
-		C(K("x"), I(5)),
-		C(K("z"), I(1024)),
-	)
-	o3 := data.NewObject(
-		C(K("y"), I(99)),
-		C(K("z"), I(1024)),
-	)
-	o4 := data.NewObject(
-		C(K("y"), I(99)),
-	)
+	o1 := data.NewObject(C(K("z"), I(1024)), C(K("x"), I(5)), C(K("y"), I(99)))
+	o2 := data.NewObject(C(K("y"), I(99)), C(K("x"), I(5)), C(K("z"), I(1024)))
+	o3 := data.NewObject(C(K("y"), I(99)), C(K("z"), I(1024)))
+	o4 := data.NewObject(C(K("y"), I(99)))
 	o5 := data.NewObject()
 	as.Equal(o1.HashCode(), o2.HashCode())
 	as.NotEqual(o1.HashCode(), o3.HashCode())

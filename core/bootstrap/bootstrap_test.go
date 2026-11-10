@@ -17,8 +17,8 @@ func TestDevNullEnvironment(t *testing.T) {
 	e := bootstrap.DevNullEnvironment()
 	ns := e.GetRoot()
 
-	// It's okay to snapshot an environment if nobody has attempted to resolve
-	// an unbound namespace value
+	// It's okay to snapshot an environment if nobody has attempted to resolve an unbound namespace
+	// value
 	as.IsNotBound(ns, lang.Args)
 	v, ok := as.IsBound(ns, lang.In).(data.Sequence)
 	as.True(ok)

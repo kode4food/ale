@@ -59,10 +59,7 @@ func TestUnionEqual(t *testing.T) {
 	u1 := types.MakeUnion(types.BasicKeyword, types.BasicNumber)
 	u2 := types.MakeUnion(types.BasicList, types.BasicVector)
 	u3 := types.MakeUnion(u1, u2)
-	u4 := types.MakeUnion(
-		types.BasicList, types.BasicVector,
-		types.BasicKeyword, types.BasicNumber,
-	)
+	u4 := types.MakeUnion(types.BasicList, types.BasicVector, types.BasicKeyword, types.BasicNumber)
 	u5 := types.MakeUnion(types.BasicNumber, types.BasicKeyword)
 
 	as.True(u1.Equal(u1))

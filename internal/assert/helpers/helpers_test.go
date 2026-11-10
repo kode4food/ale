@@ -16,10 +16,8 @@ func TestHelpers(t *testing.T) {
 			#t (1 . 2.3))
 		`,
 		L(
-			I(1), R(1, 2), LS("hello"),
-			O(C(QS("ale", "hello"), S("string"))),
-			O(C(K("kwd"), V(S("a"), S("vector")))),
-			B(true), C(I(1), F(2.3)),
+			I(1), R(1, 2), LS("hello"), O(C(QS("ale", "hello"), S("string"))),
+			O(C(K("kwd"), V(S("a"), S("vector")))), B(true), C(I(1), F(2.3)),
 		),
 	)
 }

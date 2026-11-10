@@ -42,8 +42,7 @@ func TestResolveSymbol(t *testing.T) {
 
 	ls := LS("private-parent")
 	as.Panics(
-		func() { _ = mustResolveSymbol(ns, ls) },
-		fmt.Errorf(env.ErrNameNotDeclared, ls),
+		func() { _ = mustResolveSymbol(ns, ls) }, fmt.Errorf(env.ErrNameNotDeclared, ls),
 	)
 }
 
@@ -72,8 +71,7 @@ func TestResolveValue(t *testing.T) {
 
 	ls := LS("private-parent")
 	as.Panics(
-		func() { _ = env.MustResolveValue(ns, ls) },
-		fmt.Errorf(env.ErrNameNotDeclared, ls),
+		func() { _ = env.MustResolveValue(ns, ls) }, fmt.Errorf(env.ErrNameNotDeclared, ls),
 	)
 }
 
@@ -84,11 +82,7 @@ func TestDomains(t *testing.T) {
 	ns1 := env.MustGetQualified(e, "domain1")
 	ns2 := env.MustGetQualified(e, "domain2")
 
-	l := data.Locals{
-		e.GetRoot().Domain(),
-		ns1.Domain(),
-		ns2.Domain(),
-	}
+	l := data.Locals{e.GetRoot().Domain(), ns1.Domain(), ns2.Domain()}
 	slices.Sort(l)
 	r := e.Domains()
 	slices.Sort(r)

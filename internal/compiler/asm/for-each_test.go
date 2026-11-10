@@ -12,8 +12,7 @@ func TestForEachParsingErrors(t *testing.T) {
 	as := assert.New(t)
 
 	as.ErrorWith(
-		`(asm for-each)`,
-		fmt.Errorf(asm.ErrExpectedType, "binding pair", ""),
+		`(asm for-each)`, fmt.Errorf(asm.ErrExpectedType, "binding pair", ""),
 	)
 
 	as.ErrorWith(`

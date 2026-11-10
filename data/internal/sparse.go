@@ -6,9 +6,9 @@ import (
 	"slices"
 )
 
-// SparseSlice manages a sparse slice of elements, only allocating enough space
-// to satisfy the current set. It uses a 64-bit int as its mask, and is limited
-// to 64 elements. It performs no range checking, so use wisely
+// SparseSlice manages a sparse slice of elements, only allocating enough space to satisfy the
+// current set. It uses a 64-bit int as its mask, and is limited to 64 elements. It performs no
+// range checking, so use wisely
 type SparseSlice[T any] struct {
 	data []T
 	mask uint64

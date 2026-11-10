@@ -37,8 +37,8 @@ type Number interface {
 	IsNegInf() bool
 }
 
-// errCouldNotPurify is raised when the purify function cannot convert the two
-// operands to a common type. This is a programmer error
+// errCouldNotPurify is raised when the purify function cannot convert the two operands to a common
+// type. This is a programmer error
 const errCouldNotPurify = "could not purify: %v and %v"
 
 // purify performs automatic contagion of operands

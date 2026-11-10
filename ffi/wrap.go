@@ -39,8 +39,8 @@ var (
 	handlersOnce sync.Once
 )
 
-// Wrap takes a native Go value, potentially builds a Wrapper for its type, and
-// returns a marshaled data.Value from the Wrapper
+// Wrap takes a native Go value, potentially builds a Wrapper for its type, and returns a marshaled
+// data.Value from the Wrapper
 func Wrap(i any) (ale.Value, error) {
 	v := reflect.ValueOf(i)
 	w, err := WrapType(v.Type())
@@ -69,8 +69,7 @@ func WrapType(t reflect.Type) (Wrapper, error) {
 	s := new(struct{ Wrapper })
 	cache.put(t, s)
 
-	// register the final Wrapper, and wire it into the stub for those Wrappers
-	// that may refer to it
+	// register the final Wrapper, and wire it into the stub for those Wrappers that may refer to it
 	w, err := makeWrappedType(t)
 	if err != nil {
 		return nil, err
@@ -139,9 +138,7 @@ func getHandlers() *[maxkind.Value + 1]handler {
 		handlers[reflect.Slice] = makeWrappedSlice
 		handlers[reflect.String] = makeHandler(stringWrapper{})
 		handlers[reflect.Struct] = makeWrappedStruct
-		handlers[reflect.UnsafePointer] = makeHandler(
-			boxedWrapper[unsafe.Pointer]{},
-		)
+		handlers[reflect.UnsafePointer] = makeHandler(boxedWrapper[unsafe.Pointer]{})
 	})
 	return &handlers
 }

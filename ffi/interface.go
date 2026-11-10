@@ -24,12 +24,11 @@ type (
 )
 
 const (
-	// ErrInterfaceTypeMismatch is raised when an interface of the receiver in
-	// a data.Object doesn't match the expected wrapped interface
+	// ErrInterfaceTypeMismatch is raised when an interface of the receiver in a data.Object doesn't
+	// match the expected wrapped interface
 	ErrInterfaceTypeMismatch = "interface type mismatch"
 
-	// ErrInterfaceCoercionNotSupported is raised when the value to unwrap
-	// isn't a data.Object
+	// ErrInterfaceCoercionNotSupported is raised when the value to unwrap isn't a data.Object
 	ErrInterfaceCoercionNotSupported = "value cannot be coerced into interface"
 )
 
@@ -76,10 +75,7 @@ func (w *intfWrapper) Wrap(c *Context, v reflect.Value) (ale.Value, error) {
 	res := make(data.Pairs, len(w.methods)+1)
 	res[len(res)-1] = data.NewCons(ReceiverKey, receiver(v))
 	for idx, m := range w.methods {
-		res[idx] = data.NewCons(
-			data.Keyword(m.name),
-			m.wrapMethod(v),
-		)
+		res[idx] = data.NewCons(data.Keyword(m.name), m.wrapMethod(v))
 	}
 	return data.NewObject(res...), nil
 }

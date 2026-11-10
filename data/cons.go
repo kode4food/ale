@@ -25,8 +25,8 @@ type (
 	// Pairs represents multiple pairs
 	Pairs []Pair
 
-	// Cons cells are the standard implementation of a Pair. Unlike other Pairs
-	// (ex: List, Vector), it is not treated as a Sequence
+	// Cons cells are the standard implementation of a Pair. Unlike other Pairs (ex: List, Vector),
+	// it is not treated as a Sequence
 	Cons struct {
 		car ale.Value
 		cdr ale.Value

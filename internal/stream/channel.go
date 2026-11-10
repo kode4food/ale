@@ -39,8 +39,7 @@ func NewChannel(size int) *data.Object {
 	s := NewChannelSequence(ch)
 
 	return data.NewObject(
-		data.NewCons(EmitKey, bindWriter(e.Write)),
-		data.NewCons(CloseKey, bindCloser(e)),
+		data.NewCons(EmitKey, bindWriter(e.Write)), data.NewCons(CloseKey, bindCloser(e)),
 		data.NewCons(SequenceKey, s),
 	)
 }

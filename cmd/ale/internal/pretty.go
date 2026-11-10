@@ -187,9 +187,7 @@ func formatLines(start, end string, elems []string, off int) string {
 	return buf.String()
 }
 
-func writeElems(
-	buf *strings.Builder, elems []string, startIdx, availWidth int,
-) int {
+func writeElems(buf *strings.Builder, elems []string, startIdx, availWidth int) int {
 	lineWidth := 0
 
 	for i := startIdx; i < len(elems); i++ {

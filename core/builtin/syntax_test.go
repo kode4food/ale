@@ -11,7 +11,6 @@ import (
 func TestQuoteObject(t *testing.T) {
 	as := assert.New(t)
 	as.MustEvalTo(
-		"(let [x :hello] `{,x 99})",
-		O(data.NewCons(K("hello"), I(99))),
+		"(let [x :hello] `{,x 99})", O(data.NewCons(K("hello"), I(99))),
 	)
 }

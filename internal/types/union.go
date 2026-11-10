@@ -14,8 +14,8 @@ type Union struct {
 	options typeList
 }
 
-// MakeUnion declares a *Union based on at least one provided Type. If any of
-// the provided types is a types.Any, then types.Any will be returned
+// MakeUnion declares a *Union based on at least one provided Type. If any of the provided types is
+// a types.Any, then types.Any will be returned
 func MakeUnion(first ale.Type, rest ...ale.Type) ale.Type {
 	if len(rest) == 0 {
 		return first

@@ -16,8 +16,8 @@ func MakeTypePredicate(t ale.Type) *TypePredicate {
 	return &TypePredicate{typ: t}
 }
 
-// TypePredicateOf returns a TypePredicate for the Types of the given Values.
-// If more than one Value is provided, the Union of their Types is returned
+// TypePredicateOf returns a TypePredicate for the Types of the given Values. If more than one Value
+// is provided, the Union of their Types is returned
 func TypePredicateOf(f ale.Value, r ...ale.Value) *TypePredicate {
 	if len(r) == 0 {
 		return MakeTypePredicate(typeOf(f))

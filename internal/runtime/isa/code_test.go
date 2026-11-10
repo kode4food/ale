@@ -28,11 +28,7 @@ func TestInstructions(t *testing.T) {
 
 func TestInstructionsString(t *testing.T) {
 	as := assert.New(t)
-	inst := isa.Instructions{
-		isa.Const.New(0),
-		isa.CondJump.New(2),
-		isa.Return.New(),
-	}
+	inst := isa.Instructions{isa.Const.New(0), isa.CondJump.New(2), isa.Return.New()}
 	as.String("const 0\ncond-jump 2\nreturn", inst.String())
 }
 

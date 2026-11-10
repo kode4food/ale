@@ -27,16 +27,15 @@ const (
 	// ErrUnknownDirective is raised when an unknown directive is called
 	ErrUnknownDirective = "unknown directive: %s"
 
-	// ErrUnexpectedForm is raised when an unexpected form is encountered in
-	// the assembler block
+	// ErrUnexpectedForm is raised when an unexpected form is encountered in the assembler block
 	ErrUnexpectedForm = "unexpected form: %s"
 
-	// ErrTooFewArguments is raised when an instruction is encountered in the
-	// assembler block not accompanied by enough operands
+	// ErrTooFewArguments is raised when an instruction is encountered in the assembler block not
+	// accompanied by enough operands
 	ErrTooFewArguments = "incomplete %s instruction, args expected: %d"
 
-	// ErrExpectedEndOfBlock is raised when an end-of-block marker is expected
-	// but an end of stream is encountered instead
+	// ErrExpectedEndOfBlock is raised when an end-of-block marker is expected but an end of stream
+	// is encountered instead
 	ErrExpectedEndOfBlock = "expected end of block"
 )
 
@@ -115,9 +114,7 @@ func (p *Parser) block(s data.Sequence) (Emit, data.Sequence, error) {
 	return p.blockRest(next, rest)
 }
 
-func (p *Parser) blockRest(
-	emit Emit, r data.Sequence,
-) (Emit, data.Sequence, error) {
+func (p *Parser) blockRest(emit Emit, r data.Sequence) (Emit, data.Sequence, error) {
 	next, rest, err := p.block(r)
 	if err != nil {
 		return nil, nil, err

@@ -12,16 +12,16 @@ import (
 )
 
 const (
-	// ErrBadNameResolution is raised when an attempt is made to bind a local
-	// using an argument to the encoder that is not a Local symbol
+	// ErrBadNameResolution is raised when an attempt is made to bind a local using an argument to
+	// the encoder that is not a Local symbol
 	ErrBadNameResolution = "encoder argument is not a name: %s"
 
-	// ErrUnknownLocalType is raised when a local or private is declared that
-	// doesn't have a proper disposition (var, ref, rest)
+	// ErrUnknownLocalType is raised when a local or private is declared that doesn't have a proper
+	// disposition (var, ref, rest)
 	ErrUnknownLocalType = "unexpected local type: %s, expected: %s"
 
-	// ErrExpectedType is raised when a value of a certain type is expected,
-	// but not provided at the current position
+	// ErrExpectedType is raised when a value of a certain type is expected, but not provided at the
+	// current position
 	ErrExpectedType = "expected %s, got: %s"
 )
 

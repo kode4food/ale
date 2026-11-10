@@ -7,9 +7,9 @@ import (
 )
 
 type (
-	// Pattern is a replacement pattern for the visitor. The second level of
-	// the array identifies the possible matching Opcodes, while the first
-	// level identifies the sequence in which they should appear
+	// Pattern is a replacement pattern for the visitor. The second level of the array identifies
+	// the possible matching Opcodes, while the first level identifies the sequence in which they
+	// should appear
 	Pattern [][]isa.Opcode
 
 	// Mapper maps one set of instructions to another
@@ -23,8 +23,8 @@ type (
 
 const AnyOpcode = isa.OpcodeMask + 1
 
-// Replace visits all Instruction nodes and if any of the instructions therein
-// match the provided Pattern, they will be replaced using the provided Mapper
+// Replace visits all Instruction nodes and if any of the instructions therein match the provided
+// Pattern, they will be replaced using the provided Mapper
 func Replace(pattern Pattern, mapper Mapper) *Replacer {
 	return &Replacer{
 		pattern: pattern,

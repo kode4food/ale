@@ -136,9 +136,7 @@ func TestApplicableEqual(t *testing.T) {
 	)
 	a5 := types.MakeApplicable(
 		types.Signature{
-			Params: []ale.Type{
-				types.BasicNumber, types.BasicBoolean, types.BasicList,
-			},
+			Params: []ale.Type{types.BasicNumber, types.BasicBoolean, types.BasicList},
 			Result: types.BasicBoolean,
 		},
 	)

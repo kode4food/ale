@@ -31,16 +31,9 @@ func TestBranch(t *testing.T) {
 		isa.CondJump.New(0),
 	}, b.Prologue().Code())
 
-	as.Instructions(isa.Instructions{
-		isa.PosInt.New(1),
-	}, b.ThenBranch().Code())
+	as.Instructions(isa.Instructions{isa.PosInt.New(1)}, b.ThenBranch().Code())
 
-	as.Instructions(isa.Instructions{
-		isa.Zero.New(),
-	}, b.ElseBranch().Code())
+	as.Instructions(isa.Instructions{isa.Zero.New()}, b.ElseBranch().Code())
 
-	as.Instructions(isa.Instructions{
-		isa.Pop.New(),
-		isa.Return.New(),
-	}, b.Epilogue().Code())
+	as.Instructions(isa.Instructions{isa.Pop.New(), isa.Return.New()}, b.Epilogue().Code())
 }

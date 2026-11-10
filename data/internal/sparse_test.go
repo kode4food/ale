@@ -91,8 +91,8 @@ func TestSparseSlicePersistence(t *testing.T) {
 	assert.Equal(t, 40, value)
 }
 
-// TestSparseSliceInsertIsolation covers inserts made from a shared parent.
-// Growing a slice in place would let one result overwrite the other's storage
+// TestSparseSliceInsertIsolation covers inserts made from a shared parent. Growing a slice in place
+// would let one result overwrite the other's storage
 func TestSparseSliceInsertIsolation(t *testing.T) {
 	as := assert.New(t)
 	parent := data.NewSparseSlice[int]().Set(0, 10).Set(2, 30).Set(4, 50)

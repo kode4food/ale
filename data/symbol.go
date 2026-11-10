@@ -61,8 +61,8 @@ const (
 	genSymOverflow = uint8(len(SymbolGenDigits))
 )
 
-// ErrInvalidSymbol is raised when a call to ParseSymbol can't interpret its
-// input as a proper Symbol name (local or qualified)
+// ErrInvalidSymbol is raised when a call to ParseSymbol can't interpret its input as a proper
+// Symbol name (local or qualified)
 var ErrInvalidSymbol = errors.New("invalid symbol")
 
 var (
@@ -118,8 +118,8 @@ func MustParseSymbol(s String) Symbol {
 	return sym
 }
 
-// NewSymbolGenerator creates a new symbol generator. In general, it is safe to
-// use the global generator because it only maintains an incrementer
+// NewSymbolGenerator creates a new symbol generator. In general, it is safe to use the global
+// generator because it only maintains an incrementer
 func NewSymbolGenerator() *SymbolGenerator {
 	return &SymbolGenerator{
 		prefix: strconv.FormatUint(uint64(rand.Uint32()), 36),

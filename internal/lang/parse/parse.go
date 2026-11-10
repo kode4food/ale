@@ -11,9 +11,7 @@ import (
 type Tokenizer func(data.String) (data.Sequence, error)
 
 // FromString returns a Lazy Sequence of scanned data structures
-func FromString(
-	ns env.Namespace, tokenize Tokenizer, str data.String,
-) (data.Sequence, error) {
+func FromString(ns env.Namespace, tokenize Tokenizer, str data.String) (data.Sequence, error) {
 	lexer, err := tokenize(str)
 	if err != nil {
 		return nil, err

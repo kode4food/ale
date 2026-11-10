@@ -20,8 +20,7 @@ func TestReader(t *testing.T) {
 	as.String("1", r1.Car())
 	as.String("2", r1.Cdr().(data.Pair).Car())
 	as.String("ö", r1.Cdr().(data.Pair).Cdr().(data.Pair).Car())
-	as.String("3", r1.Cdr().(data.Pair).Cdr().(data.Pair).
-		Cdr().(data.Pair).Car())
+	as.String("3", r1.Cdr().(data.Pair).Cdr().(data.Pair).Cdr().(data.Pair).Car())
 	as.String("4", r1.Cdr().(data.Pair).Cdr().(data.Pair).
 		Cdr().(data.Pair).Cdr().(data.Pair).Car())
 	s1 := r1.Cdr().(data.Pair).Cdr().(data.Pair).Cdr().(data.Pair).

@@ -13,14 +13,10 @@ var (
 		isa.True:  isa.RetTrue,
 	}
 
-	// literalReturns convert some literal instructions followed by a return
-	// instruction into single instruction (ret-true, ret-zero, etc...)
+	// literalReturns convert some literal instructions followed by a return instruction into single
+	// instruction (ret-true, ret-zero, etc...)
 	literalReturns = globalReplace(
-		visitor.Pattern{
-			basics.MapKeys(literalReturnMap),
-			{isa.Return},
-		},
-		literalReturnMapper,
+		visitor.Pattern{basics.MapKeys(literalReturnMap), {isa.Return}}, literalReturnMapper,
 	)
 )
 

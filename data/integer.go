@@ -21,12 +21,11 @@ type (
 )
 
 const (
-	// ErrExpectedInteger is raised when the value provided to ParseInteger
-	// can't be interpreted as an integer
+	// ErrExpectedInteger is raised when the value provided to ParseInteger can't be interpreted as
+	// an integer
 	ErrExpectedInteger = "value is not an integer: %s"
 
-	// ErrDivideByZero is raised when an attempt is made to perform integer
-	// division by zero
+	// ErrDivideByZero is raised when an attempt is made to perform integer division by zero
 	ErrDivideByZero = "divide by zero"
 )
 

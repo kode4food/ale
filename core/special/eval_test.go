@@ -18,9 +18,7 @@ func TestEval(t *testing.T) {
 
 	add := L(LS("+"), I(1), I(2))
 	e1 := assert.GetTestEncoder()
-	as.Nil(special.Eval(e1,
-		add.Prepend(LS("list")),
-	))
+	as.Nil(special.Eval(e1, add.Prepend(LS("list"))))
 	e1.Emit(isa.Return)
 
 	enc1 := e1.Encode()

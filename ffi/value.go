@@ -9,8 +9,7 @@ import (
 
 type valueWrapper struct{}
 
-// ErrMustImplementValue is raised when a value Unwrap call can't treat its
-// source as a data.Value
+// ErrMustImplementValue is raised when a value Unwrap call can't treat its source as a data.Value
 var ErrMustImplementValue = errors.New("must implement value")
 
 var dataValue = reflect.TypeFor[ale.Value]()

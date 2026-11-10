@@ -94,10 +94,7 @@ func TestVectorSplit(t *testing.T) {
 
 	as.True(ok)
 	as.Equal(S("hello"), f)
-	as.Equal(
-		data.Vector{S("how"), S("are"), S("you?")},
-		r.(data.Vector),
-	)
+	as.Equal(data.Vector{S("how"), S("are"), S("you?")}, r.(data.Vector))
 
 	v2 := data.NewVector(S("hello"))
 	f, r, ok = v2.Split()
@@ -114,9 +111,7 @@ func TestVectorAsKey(t *testing.T) {
 	as := assert.New(t)
 
 	o1, err := data.ValuesToObject(
-		V(S("hello"), S("there")), I(42),
-		V(S("hello")), I(96),
-		V(S("there")), I(128),
+		V(S("hello"), S("there")), I(42), V(S("hello")), I(96), V(S("there")), I(128),
 	)
 
 	if as.NoError(err) {

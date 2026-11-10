@@ -96,9 +96,7 @@ func (b *BranchScanner) Scan(code isa.Instructions) Node {
 	}
 }
 
-func (b *BranchScanner) splitCondJump(
-	code isa.Instructions, condJumpIdx int,
-) *branches {
+func (b *BranchScanner) splitCondJump(code isa.Instructions, condJumpIdx int) *branches {
 	prologue := &instructions{
 		code: code[0 : condJumpIdx+1],
 	}

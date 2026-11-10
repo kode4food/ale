@@ -41,9 +41,9 @@ var (
 	devNull      *env.Environment
 )
 
-// Into sets up initial built-ins and populateAssets. Useful if you're wiring
-// up your own Environments. Otherwise, calls to TopLevelEnvironment and
-// DevNullEnvironment will perform this action for you.
+// Into sets up initial built-ins and populateAssets. Useful if you're wiring up your own
+// Environments. Otherwise, calls to TopLevelEnvironment and DevNullEnvironment will perform this
+// action for you.
 func Into(e *env.Environment) {
 	b := &bootstrap{
 		environment: e,
@@ -67,8 +67,8 @@ func ProcessArgs(e *env.Environment) {
 	mustBindPublic(e.GetRoot(), lang.Args, builtin.Args())
 }
 
-// StandardIO binds *in*, *out*, and *err* to the operating system's standard
-// input and output facilities
+// StandardIO binds *in*, *out*, and *err* to the operating system's standard input and output
+// facilities
 func StandardIO(e *env.Environment) {
 	ns := e.GetRoot()
 	mustBindPublic(ns, lang.In, stream.NewReader(os.Stdin, stream.LineInput))
@@ -76,8 +76,8 @@ func StandardIO(e *env.Environment) {
 	mustBindPublic(ns, lang.Err, stream.NewWriter(os.Stderr, stream.StrOutput))
 }
 
-// DevNull binds *in*, *out*, and *err* to the operating system's bit bucket
-// device (usually /dev/null)
+// DevNull binds *in*, *out*, and *err* to the operating system's bit bucket device (usually
+// /dev/null)
 func DevNull(e *env.Environment) {
 	ns := e.GetRoot()
 	devNull, _ := os.OpenFile(os.DevNull, os.O_RDWR, 0666)
@@ -86,9 +86,9 @@ func DevNull(e *env.Environment) {
 	mustBindPublic(ns, lang.Err, stream.NewWriter(devNull, stream.StrOutput))
 }
 
-// TopLevelEnvironment configures an environment that could be used at the
-// top-level of the system, such as the REPL. It has access to the *env*,
-// *args*, and operating system's standard in/out/err file streams.
+// TopLevelEnvironment configures an environment that could be used at the top-level of the system,
+// such as the REPL. It has access to the *env*, *args*, and operating system's standard in/out/err
+// file streams.
 func TopLevelEnvironment() *env.Environment {
 	topLevelOnce(func() {
 		topLevel = env.NewEnvironment()
@@ -100,9 +100,9 @@ func TopLevelEnvironment() *env.Environment {
 	return topLevel.Snapshot()
 }
 
-// DevNullEnvironment configures a bootstrapped environment completely isolated
-// from the top-level of the system. All I/O is rerouted to and from the
-// operating system's bit bucket device (usually /dev/null)
+// DevNullEnvironment configures a bootstrapped environment completely isolated from the top-level
+// of the system. All I/O is rerouted to and from the operating system's bit bucket device (usually
+// /dev/null)
 func DevNullEnvironment() *env.Environment {
 	devNullOnce(func() {
 		devNull = env.NewEnvironment()
@@ -112,8 +112,8 @@ func DevNullEnvironment() *env.Environment {
 	return devNull.Snapshot()
 }
 
-// BindFileSystem binds a file system to a Namespace to enable source includes
-// and other file operations. The file system is private to the Namespace
+// BindFileSystem binds a file system to a Namespace to enable source includes and other file
+// operations. The file system is private to the Namespace
 func BindFileSystem(ns env.Namespace, f fs.FS) error {
 	e, err := ns.Private(lang.FS)
 	if err != nil {

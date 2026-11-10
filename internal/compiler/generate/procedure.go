@@ -33,9 +33,7 @@ func Procedure(e encoder.Encoder, build Builder) (*vm.Procedure, error) {
 	return fn, nil
 }
 
-func captureClosure(
-	e encoder.Encoder, fn *vm.Procedure, cells data.Locals,
-) (*vm.Procedure, error) {
+func captureClosure(e encoder.Encoder, fn *vm.Procedure, cells data.Locals) (*vm.Procedure, error) {
 	clen := len(cells)
 	for i := clen - 1; i >= 0; i-- {
 		if err := Local(e, cells[i]); err != nil {

@@ -40,8 +40,8 @@ const (
 	Preprocessor = ReaderPrefix + notStruct + `*`
 	Identifier   = notStructPfx + notStruct + `*`
 
-	// DomainSeparator is the character used to separate a domain from the
-	// local component of a qualified symbol
+	// DomainSeparator is the character used to separate a domain from the local component of a
+	// qualified symbol
 	DomainSeparator = `/`
 
 	localStart = `[^` + structPfx + DomainSeparator + `]`

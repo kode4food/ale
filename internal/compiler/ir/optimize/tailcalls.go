@@ -11,26 +11,20 @@ import (
 type tailCallMapper struct{ *encoder.Encoded }
 
 var (
-	tailCallOpcode = []isa.Opcode{
-		isa.Call0, isa.Call1, isa.Call2, isa.Call3, isa.Call,
-	}
+	tailCallOpcode = []isa.Opcode{isa.Call0, isa.Call1, isa.Call2, isa.Call3, isa.Call}
 
-	tailCallPattern = visitor.Pattern{
-		{visitor.AnyOpcode}, tailCallOpcode, {isa.Return},
-	}
+	tailCallPattern = visitor.Pattern{{visitor.AnyOpcode}, tailCallOpcode, {isa.Return}}
 
 	selfCallsInTailPosition = globalReplace(
 		visitor.Pattern{{isa.CallSelf}, {isa.Return}},
 		func(i isa.Instructions) isa.Instructions {
-			return isa.Instructions{
-				isa.TailSelf.New(getCallArgCount(i[0])),
-			}
+			return isa.Instructions{isa.TailSelf.New(getCallArgCount(i[0]))}
 		},
 	)
 )
 
-// callsInTailPosition replaces calls in tail position that are not self-calls
-// with a tail-call instruction
+// callsInTailPosition replaces calls in tail position that are not self-calls with a tail-call
+// instruction
 func callsInTailPosition(e *encoder.Encoded) *encoder.Encoded {
 	m := &tailCallMapper{e}
 	r := visitor.Replace(tailCallPattern, m.perform)
@@ -46,10 +40,7 @@ func (m tailCallMapper) perform(i isa.Instructions) isa.Instructions {
 	if c != nil {
 		inst = isa.TailClos
 	}
-	return isa.Instructions{
-		i[0],
-		inst.New(getCallArgCount(i[1])),
-	}
+	return isa.Instructions{i[0], inst.New(getCallArgCount(i[1]))}
 }
 
 func (m tailCallMapper) canTailCall(i isa.Instruction) (*vm.Closure, bool) {

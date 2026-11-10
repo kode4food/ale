@@ -42,9 +42,7 @@ func canMapArgsToLocals(c isa.Instructions, argc isa.Operand) bool {
 	return highArg < int(argc)
 }
 
-func mapArgsToLocals(
-	c isa.Instructions, argsBase, argc isa.Operand,
-) isa.Instructions {
+func mapArgsToLocals(c isa.Instructions, argsBase, argc isa.Operand) isa.Instructions {
 	al := makeArgLocalMap(c, argsBase)
 	res := make(isa.Instructions, 0, len(c)+int(argc))
 	for i := range int(argc) {

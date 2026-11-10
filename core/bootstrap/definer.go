@@ -20,20 +20,12 @@ const (
 func (b *bootstrap) populateDefiners() {
 	ns := b.environment.GetRoot()
 
-	mustBindPrivate(ns, defBuiltInName,
-		makeDefiner(b.procMap, ErrBuiltInNotFound),
-	)
-	mustBindPrivate(ns, defSpecialName,
-		makeDefiner(b.specialMap, ErrSpecialNotFound),
-	)
-	mustBindPrivate(ns, defMacroName,
-		makeDefiner(b.macroMap, ErrMacroNotFound),
-	)
+	mustBindPrivate(ns, defBuiltInName, makeDefiner(b.procMap, ErrBuiltInNotFound))
+	mustBindPrivate(ns, defSpecialName, makeDefiner(b.specialMap, ErrSpecialNotFound))
+	mustBindPrivate(ns, defMacroName, makeDefiner(b.macroMap, ErrMacroNotFound))
 }
 
-func makeDefiner[T ale.Value](
-	m map[data.Local]T, errStr string,
-) compiler.Call {
+func makeDefiner[T ale.Value](m map[data.Local]T, errStr string) compiler.Call {
 	return func(e encoder.Encoder, args ...ale.Value) error {
 		if err := data.CheckFixedArity(1, len(args)); err != nil {
 			return err

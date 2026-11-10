@@ -22,9 +22,8 @@ func paramBranchFor(c isa.Instructions, argc isa.Operand) isa.Instructions {
 
 func getParamBranch(b visitor.Branches, argc isa.Operand) isa.Instructions {
 	if len(b.Epilogue().Code()) != 0 {
-		// compiled procedures don't include epilogues in the arity branching
-		// logic, so if any node along the path has an epilogue, then we can't
-		// inline the 'then' branch
+		// compiled procedures don't include epilogues in the arity branching logic, so if any node
+		// along the path has an epilogue, then we can't inline the 'then' branch
 		return nil
 	}
 	oc, op, ok := isParamCase(b)

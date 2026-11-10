@@ -98,10 +98,7 @@ func TestBytesSplit(t *testing.T) {
 
 	as.True(ok)
 	as.Equal(I(85), f)
-	as.Equal(
-		data.Bytes{95, 28, 25},
-		r.(data.Bytes),
-	)
+	as.Equal(data.Bytes{95, 28, 25}, r.(data.Bytes))
 
 	v2 := data.NewBytes(I(85))
 	f, r, ok = v2.Split()
@@ -117,11 +114,7 @@ func TestBytesSplit(t *testing.T) {
 func TestBytesAsKey(t *testing.T) {
 	as := assert.New(t)
 
-	o1, err := data.ValuesToObject(
-		V(I(85), I(20)), I(42),
-		V(I(85)), I(96),
-		V(I(20)), I(128),
-	)
+	o1, err := data.ValuesToObject(V(I(85), I(20)), I(42), V(I(85)), I(96), V(I(20)), I(128))
 
 	if as.NoError(err) {
 		v, ok := o1.Get(V(I(85)))

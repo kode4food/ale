@@ -21,9 +21,7 @@ func testOutput(t *testing.T, src, expected string) {
 
 	e := env.NewEnvironment()
 	ns := e.GetRoot()
-	if as.NoError(env.BindPublic(ns, lang.Out, O(
-		C(stream.WriteKey, w),
-	))) {
+	if as.NoError(env.BindPublic(ns, lang.Out, O(C(stream.WriteKey, w)))) {
 		bootstrap.Into(e)
 
 		anon := e.GetAnonymous()

@@ -7,11 +7,7 @@ import (
 
 var (
 	Tokenize = internal.MakeTokenizer(lex.ExhaustiveMatcher(
-		lex.Ignorable,
-		lex.Structure,
-		lex.Quoting,
-		lex.Values,
-		lex.Preprocessors,
+		lex.Ignorable, lex.Structure, lex.Quoting, lex.Values, lex.Preprocessors,
 	))
 
 	MustTokenize   = internal.MakeMustTokenizer(Tokenize)

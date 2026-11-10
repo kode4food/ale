@@ -106,7 +106,11 @@ func (s *Set) put(v ale.Value, vh, shifted uint64) *Set {
 		}
 		bucket = next
 	} else {
-		bucket = &Set{value: v, valueHash: vh, count: 1}
+		bucket = &Set{
+			value:     v,
+			valueHash: vh,
+			count:     1,
+		}
 	}
 
 	children := s.children.Set(idx, bucket)

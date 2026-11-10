@@ -12,9 +12,8 @@ type (
 		// Name identifies this Type
 		Name() string
 
-		// Accepts determines if this Type will accept the provided Type for
-		// binding. This will generally mean that the provided Type satisfies
-		// the contract of the receiver.
+		// Accepts determines if this Type will accept the provided Type for binding. This will
+		// generally mean that the provided Type satisfies the contract of the receiver.
 		Accepts(Type) bool
 
 		// Equal determines if the provided Type is an equivalent definition

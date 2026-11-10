@@ -30,8 +30,8 @@ const (
 	bucketMask = bucketSize - 1
 )
 
-// ErrMapNotPaired is raised when a call to ValuesToObject receives an odd
-// number of args, meaning it won't be capable of zipping them into an Object
+// ErrMapNotPaired is raised when a call to ValuesToObject receives an odd number of args, meaning
+// it won't be capable of zipping them into an Object
 var ErrMapNotPaired = errors.New("map must contain an even number of elements")
 
 var (
@@ -52,8 +52,8 @@ var (
 	} = (*Object)(nil)
 )
 
-// NewObject instantiates a new Object instance. Based on Phil Bagwell's Hashed
-// Array Mapped Trie data structure. More information on HAMT's can be found at
+// NewObject instantiates a new Object instance. Based on Phil Bagwell's Hashed Array Mapped Trie
+// data structure. More information on HAMT's can be found at
 // http://lampwww.epfl.ch/papers/idealhashtrees.pdf
 func NewObject(pairs ...Pair) *Object {
 	res := EmptyObject
@@ -122,7 +122,11 @@ func (o *Object) put(p Pair, kh, shifted uint64) *Object {
 	if ok {
 		bucket = bucket.put(p, kh, shifted>>bucketBits)
 	} else {
-		bucket = &Object{pair: p, keyHash: kh, count: 1}
+		bucket = &Object{
+			pair:    p,
+			keyHash: kh,
+			count:   1,
+		}
 	}
 
 	children := o.children.Set(idx, bucket)

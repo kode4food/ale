@@ -21,12 +21,12 @@ type (
 )
 
 const (
-	// ErrUnexpectedName is raised when a local name is referenced that hasn't
-	// been declared as part of the assembler encoder's scope
+	// ErrUnexpectedName is raised when a local name is referenced that hasn't been declared as part
+	// of the assembler encoder's scope
 	ErrUnexpectedName = "unexpected local name: %s"
 
-	// ErrUnexpectedLabel is raised when a jump or cond-jump instruction refers
-	// to a label that hasn't been anchored in the assembler block
+	// ErrUnexpectedLabel is raised when a jump or cond-jump instruction refers to a label that
+	// hasn't been anchored in the assembler block
 	ErrUnexpectedLabel = "unexpected label: %s"
 )
 
@@ -34,9 +34,7 @@ var gen = data.NewSymbolGenerator()
 
 func noAsmEmit(_ *Encoder) error { return nil }
 
-func (p *Parser) wrapEncoder(
-	e encoder.Encoder, args ...ale.Value,
-) *Encoder {
+func (p *Parser) wrapEncoder(e encoder.Encoder, args ...ale.Value) *Encoder {
 	a := make(map[data.Local]ale.Value, len(args))
 	for i, k := range p.params {
 		a[k] = args[i]

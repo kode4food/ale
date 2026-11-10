@@ -158,8 +158,7 @@ func TestFloatWrapperAdditionalCases(t *testing.T) {
 	out := f.Call(mustInteger(t, "100000000000000000000")).(data.Float)
 	as.True(float64(out) > 0)
 	as.Panics(
-		func() { _ = f.Call(S("bad-float")) },
-		errors.New(ffi.ErrValueMustBeFloat),
+		func() { _ = f.Call(S("bad-float")) }, errors.New(ffi.ErrValueMustBeFloat),
 	)
 }
 
@@ -170,12 +169,10 @@ func TestComplexWrapperErrors(t *testing.T) {
 	}).(data.Procedure)
 
 	as.Panics(
-		func() { _ = f.Call(S("not-cons")) },
-		errors.New(ffi.ErrValueMustBeCons),
+		func() { _ = f.Call(S("not-cons")) }, errors.New(ffi.ErrValueMustBeCons),
 	)
 	as.Panics(
-		func() { _ = f.Call(C(S("bad"), F(1))) },
-		errors.New(ffi.ErrConsMustContainFloat),
+		func() { _ = f.Call(C(S("bad"), F(1))) }, errors.New(ffi.ErrConsMustContainFloat),
 	)
 }
 

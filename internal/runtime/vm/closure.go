@@ -29,20 +29,20 @@ type (
 
 // Error messages
 const (
-	// ErrBadInstruction is raised when the VM encounters an Opcode that has
-	// not been properly mapped
+	// ErrBadInstruction is raised when the VM encounters an Opcode that has not been properly
+	// mapped
 	ErrBadInstruction = "unknown instruction encountered: %s"
 
-	// ErrEmptyArgStack is raised when the VM encounters an instruction to pop
-	// the argument stack, but the head of the stack is empty
+	// ErrEmptyArgStack is raised when the VM encounters an instruction to pop the argument stack,
+	// but the head of the stack is empty
 	ErrEmptyArgStack = "attempt to pop empty argument stack"
 
-	// ErrUnexpectedLabel is raised when the VM encounters a label that should
-	// have otherwise been stripped when the instructions were made Runnable
+	// ErrUnexpectedLabel is raised when the VM encounters a label that should have otherwise been
+	// stripped when the instructions were made Runnable
 	ErrUnexpectedLabel = "unexpected label encountered: %d"
 
-	// ErrUnexpectedNoOp is raised when the VM encounters a NoOp instruction
-	// that should have been stripped when the instructions were made Runnable
+	// ErrUnexpectedNoOp is raised when the VM encounters a NoOp instruction that should have been
+	// stripped when the instructions were made Runnable
 	ErrUnexpectedNoOp = "unexpected no-op encountered"
 )
 

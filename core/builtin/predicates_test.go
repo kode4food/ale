@@ -65,7 +65,7 @@ func TestTypeOf(t *testing.T) {
 		 (eq l-pred (%type-of []))
          (eq l-pred (%type-of '()))]
 	`, V(
-		data.True, data.True, data.False, data.False, data.False, data.False,
-		data.False, data.False,
+		data.True, data.True, data.False, data.False, data.False, data.False, data.False,
+		data.False,
 	))
 }

@@ -46,9 +46,8 @@ func TestConsAsKey(t *testing.T) {
 	as := assert.New(t)
 
 	o1, err := data.ValuesToObject(
-		C(S("hello"), S("there")), I(42),
-		C(S("hello"), S("you")), I(96),
-		C(S("there"), S("there")), I(128),
+		C(S("hello"), S("there")), I(42), C(S("hello"), S("you")), I(96), C(S("there"), S("there")),
+		I(128),
 	)
 
 	if as.NoError(err) {

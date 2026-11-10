@@ -82,9 +82,7 @@ func wrapByteArray(t reflect.Type) (Wrapper, error) {
 	}, nil
 }
 
-func (b *byteArrayWrapper) Wrap(
-	_ *Context, v reflect.Value,
-) (ale.Value, error) {
+func (b *byteArrayWrapper) Wrap(_ *Context, v reflect.Value) (ale.Value, error) {
 	if !v.CanAddr() {
 		return b.slowWrap(v)
 	}
@@ -111,23 +109,19 @@ func (b *byteArrayWrapper) Unwrap(v ale.Value) (reflect.Value, error) {
 		return _zero, err
 	}
 	if li := len(in); li != b.len {
-		return _zero, fmt.Errorf("%w: expected %d, got %d",
-			ErrBadSliceLength, b.len, li)
+		return _zero, fmt.Errorf("%w: expected %d, got %d", ErrBadSliceLength, b.len, li)
 	}
 	copy(out.Bytes(), in)
 	return out, nil
 }
 
-func (b *byteArrayWrapper) slowUnwrap(
-	v ale.Value, out reflect.Value,
-) (reflect.Value, error) {
+func (b *byteArrayWrapper) slowUnwrap(v ale.Value, out reflect.Value) (reflect.Value, error) {
 	in, err := asByteArray(v)
 	if err != nil {
 		return _zero, err
 	}
 	if li := len(in); li != b.len {
-		return _zero, fmt.Errorf("%w: expected %d, got %d",
-			ErrBadSliceLength, b.len, li)
+		return _zero, fmt.Errorf("%w: expected %d, got %d", ErrBadSliceLength, b.len, li)
 	}
 	for i := range b.len {
 		out.Index(i).Set(reflect.ValueOf(in[i]))

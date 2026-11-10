@@ -9,8 +9,8 @@ import (
 
 // Error messages
 const (
-	// ErrPairExpected is raised when a vector is provided, but does not
-	// contain exactly two elements
+	// ErrPairExpected is raised when a vector is provided, but does not contain exactly two
+	// elements
 	ErrPairExpected = "binding pair expected, got %d elements"
 )
 
@@ -21,9 +21,7 @@ const (
 	seqType  = "sequence"
 )
 
-func parseForEachCall(
-	p *Parser, s data.Sequence,
-) (Emit, data.Sequence, error) {
+func parseForEachCall(p *Parser, s data.Sequence) (Emit, data.Sequence, error) {
 	f, r, ok := s.Split()
 	if !ok {
 		return nil, nil, typeError(pairType, f)

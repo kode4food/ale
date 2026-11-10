@@ -10,9 +10,7 @@ import (
 
 func TestEncodesAs(t *testing.T) {
 	as := assert.New(t)
-	as.MustEncodedAs(isa.Instructions{
-		isa.PosInt.New(2),
-	}, `2`)
+	as.MustEncodedAs(isa.Instructions{isa.PosInt.New(2)}, `2`)
 }
 
 func TestGetRootSymbol(t *testing.T) {

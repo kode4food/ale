@@ -18,7 +18,5 @@ func TestLiterals(t *testing.T) {
 	e1.Emit(isa.Null)
 	e1.Emit(isa.Return)
 
-	as.Instructions(isa.Instructions{
-		isa.RetNull.New(),
-	}, optimize.Encoded(e1.Encode()).Code)
+	as.Instructions(isa.Instructions{isa.RetNull.New()}, optimize.Encoded(e1.Encode()).Code)
 }

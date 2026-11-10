@@ -13,16 +13,14 @@ import (
 	"github.com/kode4food/ale/internal/debug"
 )
 
-// Wrapper wraps testify assertions to perform checking and conversion that is
-// system-specific
+// Wrapper wraps testify assertions to perform checking and conversion that is system-specific
 type Wrapper struct {
 	*testing.T
 	*assert.Assertions
 }
 
 const (
-	// ErrInvalidTestExpression is raised when a check encounters a test value
-	// that is not expected
+	// ErrInvalidTestExpression is raised when a check encounters a test value that is not expected
 	ErrInvalidTestExpression = "invalid test expression: %v"
 
 	// ErrProperErrorNotRaised is raised when a panic is expected but not seen
@@ -159,8 +157,7 @@ func (w *Wrapper) ExpectError(expected, err any) {
 	}
 }
 
-// ExpectProgrammerError is used with defer to make sure a programmer error
-// was triggered
+// ExpectProgrammerError is used with defer to make sure a programmer error was triggered
 func (w *Wrapper) ExpectProgrammerError(errStr string) {
 	w.Helper()
 	if rec := recover(); rec != nil {

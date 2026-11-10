@@ -21,14 +21,11 @@ func NewWriter(w io.Writer, o OutputFunc) *data.Object {
 
 	if c, ok := w.(io.Closer); ok {
 		return data.NewObject(
-			data.NewCons(WriteKey, bindWriter(writer)),
-			data.NewCons(CloseKey, bindCloser(c)),
+			data.NewCons(WriteKey, bindWriter(writer)), data.NewCons(CloseKey, bindCloser(c)),
 		)
 	}
 
-	return data.NewObject(
-		data.NewCons(WriteKey, bindWriter(writer)),
-	)
+	return data.NewObject(data.NewCons(WriteKey, bindWriter(writer)))
 }
 
 // StrOutput is the standard string-based output function

@@ -13,8 +13,7 @@ type Object struct {
 	value ale.Type
 }
 
-// MakeObject declares a new ObjectType that will only allow keys and values of
-// the provided types
+// MakeObject declares a new ObjectType that will only allow keys and values of the provided types
 func MakeObject(key ale.Type, value ale.Type) ale.Type {
 	return &Object{
 		Basic: BasicObject,
@@ -32,9 +31,7 @@ func (o *Object) Value() ale.Type {
 }
 
 func (o *Object) Name() string {
-	return fmt.Sprintf("%s(%s->%s)",
-		o.Basic.Name(), o.key.Name(), o.value.Name(),
-	)
+	return fmt.Sprintf("%s(%s->%s)", o.Basic.Name(), o.key.Name(), o.value.Name())
 }
 
 func (o *Object) Accepts(other ale.Type) bool {

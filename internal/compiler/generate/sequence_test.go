@@ -16,16 +16,10 @@ func TestBlock(t *testing.T) {
 	as.NoError(generate.Block(e1, V()))
 	e1.Emit(isa.Return)
 
-	as.Instructions(isa.Instructions{
-		isa.Null.New(),
-		isa.Return.New(),
-	}, e1.Encode().Code)
+	as.Instructions(isa.Instructions{isa.Null.New(), isa.Return.New()}, e1.Encode().Code)
 
 	e2 := assert.GetTestEncoder()
-	as.NoError(generate.Block(e2, V(
-		L(LS("+"), I(1), I(2)),
-		B(true),
-	)))
+	as.NoError(generate.Block(e2, V(L(LS("+"), I(1), I(2)), B(true))))
 	e2.Emit(isa.Return)
 
 	enc2 := e2.Encode()

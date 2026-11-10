@@ -69,9 +69,7 @@ func makeOperandEmit(oc isa.Opcode) asmParse {
 	)
 }
 
-func (e *Encoder) toOperands(
-	oc isa.Opcode, args data.Vector,
-) ([]isa.Operand, error) {
+func (e *Encoder) toOperands(oc isa.Opcode, args data.Vector) ([]isa.Operand, error) {
 	res := make([]isa.Operand, len(args))
 	for i, a := range args {
 		ao := isa.Effects[oc].Operand

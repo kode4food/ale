@@ -25,12 +25,12 @@ type (
 )
 
 const (
-	// ErrNameAlreadyBound is raised when an attempt is made to bind a
-	// Namespace entry that has already been bound
+	// ErrNameAlreadyBound is raised when an attempt is made to bind a Namespace entry that has
+	// already been bound
 	ErrNameAlreadyBound = "name is already bound in namespace: %s"
 
-	// ErrNameNotBound is raised when an attempt is made to retrieve a value
-	// from a Namespace that hasn't been bound
+	// ErrNameNotBound is raised when an attempt is made to retrieve a value from a Namespace that
+	// hasn't been bound
 	ErrNameNotBound = "name is not bound in namespace: %s"
 )
 

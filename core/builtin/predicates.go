@@ -14,8 +14,8 @@ import (
 
 type predicate func(ale.Value) bool
 
-// ErrUnknownPredicate is raised when a call to IsA can't resolve a built-in
-// predicate for the specified keyword
+// ErrUnknownPredicate is raised when a call to IsA can't resolve a built-in predicate for the
+// specified keyword
 var ErrUnknownPredicate = errors.New("unknown predicate")
 
 const (
@@ -90,8 +90,8 @@ var (
 	}
 )
 
-// TypeOf returns a Type Predicate for the Types of the given Values. If more
-// than one Value is provided, the Union of their Types will be returned
+// TypeOf returns a Type Predicate for the Types of the given Values. If more than one Value is
+// provided, the Union of their Types will be returned
 var TypeOf = data.MakeProcedure(func(args ...ale.Value) ale.Value {
 	return data.TypePredicateOf(args[0], args[1:]...)
 }, 1, data.OrMore)

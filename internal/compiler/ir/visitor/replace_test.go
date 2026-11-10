@@ -15,7 +15,5 @@ func TestReplace(t *testing.T) {
 	e1.Emit(isa.False)
 	e1.Emit(isa.Return)
 
-	as.Instructions(isa.Instructions{
-		isa.RetFalse.New(),
-	}, optimize.Encoded(e1.Encode()).Code)
+	as.Instructions(isa.Instructions{isa.RetFalse.New()}, optimize.Encoded(e1.Encode()).Code)
 }

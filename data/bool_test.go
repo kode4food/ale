@@ -19,10 +19,7 @@ func TestBools(t *testing.T) {
 	as.String("#t", data.True)
 	as.String("#f", data.False)
 
-	obj := O(
-		C(data.True, S("is true")),
-		C(data.False, S("is false")),
-	)
+	obj := O(C(data.True, S("is true")), C(data.False, S("is false")))
 	as.String("is true", as.MustGet(obj, data.True))
 	as.String("is false", as.MustGet(obj, data.False))
 }

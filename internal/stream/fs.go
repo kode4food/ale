@@ -31,10 +31,7 @@ const (
 )
 
 func WrapFileSystem(fs fs.FS) *data.Object {
-	return data.NewObject(
-		data.NewCons(ListKey, bindList(fs)),
-		data.NewCons(OpenKey, bindOpen(fs)),
-	)
+	return data.NewObject(data.NewCons(ListKey, bindList(fs)), data.NewCons(OpenKey, bindOpen(fs)))
 }
 
 func bindList(fs fs.FS) data.Procedure {
@@ -67,9 +64,7 @@ func listDirectory(f fs.File) (*data.Object, error) {
 	}
 	res := data.EmptyObject
 	for _, e := range entries {
-		res = res.Put(
-			data.NewCons(data.String(e.Name()), getDirEntryType(e)),
-		).(*data.Object)
+		res = res.Put(data.NewCons(data.String(e.Name()), getDirEntryType(e))).(*data.Object)
 	}
 	return res, nil
 }

@@ -73,8 +73,7 @@ func TestListCall(t *testing.T) {
 	testSequenceCallInterface(as, data.Null)
 
 	as.Panics(
-		func() { _ = l1.Call(I(4)) },
-		fmt.Errorf(data.ErrInvalidStartIndex, 4),
+		func() { _ = l1.Call(I(4)) }, fmt.Errorf(data.ErrInvalidStartIndex, 4),
 	)
 }
 
@@ -99,9 +98,7 @@ func TestListAsKey(t *testing.T) {
 	as := assert.New(t)
 
 	o1, err := data.ValuesToObject(
-		L(S("hello"), S("there")), I(42),
-		L(S("hello")), I(96),
-		L(S("there")), I(128),
+		L(S("hello"), S("there")), I(42), L(S("hello")), I(96), L(S("there")), I(128),
 	)
 
 	if as.NoError(err) {

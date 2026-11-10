@@ -42,9 +42,7 @@ func (w *channelWrapper) Wrap(_ *Context, v reflect.Value) (ale.Value, error) {
 			data.NewCons(stream.CloseKey, w.makeClose(v)),
 		), nil
 	case r:
-		return data.NewObject(
-			data.NewCons(stream.SequenceKey, w.makeSequence(v)),
-		), nil
+		return data.NewObject(data.NewCons(stream.SequenceKey, w.makeSequence(v))), nil
 	case s:
 		return data.NewObject(
 			data.NewCons(stream.EmitKey, w.makeEmitter(v)),

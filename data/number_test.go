@@ -386,12 +386,7 @@ func TestNumberHashing(t *testing.T) {
 	n3 := mustParseInteger("1")
 	n4 := mustParseRatio("1/2")
 
-	o := O(
-		C(n1, data.True),
-		C(n2, data.True),
-		C(n3, data.True),
-		C(n4, data.True),
-	)
+	o := O(C(n1, data.True), C(n2, data.True), C(n3, data.True), C(n4, data.True))
 
 	v, ok := o.Get(n1)
 	as.True(ok)

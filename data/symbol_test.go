@@ -58,27 +58,19 @@ func TestSymbolParsing(t *testing.T) {
 
 	s, err = data.ParseSymbol("some space")
 	as.Nil(s)
-	as.EqualError(err, fmt.Sprintf(
-		"%s: %s", data.ErrInvalidSymbol.Error(), "some space",
-	))
+	as.EqualError(err, fmt.Sprintf("%s: %s", data.ErrInvalidSymbol.Error(), "some space"))
 
 	s, err = data.ParseSymbol("domain/")
 	as.Nil(s)
-	as.EqualError(err, fmt.Sprintf(
-		"%s: %s", data.ErrInvalidSymbol.Error(), "domain/",
-	))
+	as.EqualError(err, fmt.Sprintf("%s: %s", data.ErrInvalidSymbol.Error(), "domain/"))
 
 	s, err = data.ParseSymbol("/name2")
 	as.Nil(s)
-	as.EqualError(err, fmt.Sprintf(
-		"%s: %s", data.ErrInvalidSymbol.Error(), "/name2",
-	))
+	as.EqualError(err, fmt.Sprintf("%s: %s", data.ErrInvalidSymbol.Error(), "/name2"))
 
 	s, err = data.ParseSymbol("one/too/")
 	as.Nil(s)
-	as.EqualError(err, fmt.Sprintf(
-		"%s: %s", data.ErrInvalidSymbol.Error(), "one/too/",
-	))
+	as.EqualError(err, fmt.Sprintf("%s: %s", data.ErrInvalidSymbol.Error(), "one/too/"))
 }
 
 func TestMustSymbolParsing(t *testing.T) {
@@ -110,11 +102,7 @@ func TestSymbolGeneration(t *testing.T) {
 func TestSymbolHashing(t *testing.T) {
 	as := assert.New(t)
 
-	obj := O(
-		C(LS("first"), I(1)),
-		C(LS("second"), I(2)),
-		C(QS("ale", "third"), I(3)),
-	)
+	obj := O(C(LS("first"), I(1)), C(LS("second"), I(2)), C(QS("ale", "third"), I(3)))
 
 	as.Number(1, as.MustGet(obj, LS("first")))
 	as.Number(2, as.MustGet(obj, LS("second")))

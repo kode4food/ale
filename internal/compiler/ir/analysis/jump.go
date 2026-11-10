@@ -7,12 +7,11 @@ import (
 )
 
 const (
-	// ErrLabelNotAnchored is raised when a label hasn't been placed in an
-	// isa.Instructions stream
+	// ErrLabelNotAnchored is raised when a label hasn't been placed in an isa.Instructions stream
 	ErrLabelNotAnchored = "label not anchored: %d"
 
-	// ErrLabelMultipleAnchors is raised when a label has been placed more than
-	// once in an isa.Instructions stream
+	// ErrLabelMultipleAnchors is raised when a label has been placed more than once in an
+	// isa.Instructions stream
 	ErrLabelMultipleAnchors = "label anchored multiple times: %d"
 )
 

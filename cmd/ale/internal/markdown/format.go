@@ -8,9 +8,9 @@ import (
 	"github.com/kode4food/ale/cmd/ale/internal/console"
 )
 
-// This is *not* a full-featured Markdown formatter, or even a compliant one
-// for that matter. It only supports the productions that are used by the
-// system's documentation strings and will likely not evolve much beyond that
+// This is *not* a full-featured Markdown formatter, or even a compliant one for that matter. It
+// only supports the productions that are used by the system's documentation strings and will likely
+// not evolve much beyond that
 
 type (
 	formatter func(string) string
@@ -44,12 +44,30 @@ var (
 	}
 
 	docFormatters = [...]*patternFormatter{
-		{comment, formatComment},
-		{ticks, trimmedFormatter("`", console.Code)},
-		{ticks, trimmedFormatter("`", console.Code)},
-		{double, trimmedFormatter(`**`, console.Bold)},
-		{stars, trimmedFormatter(`*`, console.Italic)},
-		{unders, trimmedFormatter(`_`, console.Result)},
+		{
+			comment,
+			formatComment,
+		},
+		{
+			ticks,
+			trimmedFormatter("`", console.Code),
+		},
+		{
+			ticks,
+			trimmedFormatter("`", console.Code),
+		},
+		{
+			double,
+			trimmedFormatter(`**`, console.Bold),
+		},
+		{
+			stars,
+			trimmedFormatter(`*`, console.Italic),
+		},
+		{
+			unders,
+			trimmedFormatter(`_`, console.Result),
+		},
 	}
 
 	escaped = regexp.MustCompile(`\\.`)

@@ -59,9 +59,7 @@ func TestCreateLexer(t *testing.T) {
 
 func TestKeyword(t *testing.T) {
 	l := lex.StripWhitespace(read.MustTokenize("  :hello  "))
-	assertTokenSequence(t, l, []*lex.Token{
-		T(lex.Keyword, K("hello")),
-	})
+	assertTokenSequence(t, l, []*lex.Token{T(lex.Keyword, K("hello"))})
 }
 
 func TestWhitespace(t *testing.T) {
@@ -71,10 +69,7 @@ func TestWhitespace(t *testing.T) {
 
 func TestEmptyList(t *testing.T) {
 	l := lex.StripWhitespace(read.MustTokenize(" ( \t ) "))
-	assertTokenSequence(t, l, []*lex.Token{
-		T(lex.ListStart, S("(")),
-		T(lex.ListEnd, S(")")),
-	})
+	assertTokenSequence(t, l, []*lex.Token{T(lex.ListStart, S("(")), T(lex.ListEnd, S(")"))})
 }
 
 func TestNumbers(t *testing.T) {
@@ -101,9 +96,7 @@ func TestNumbers(t *testing.T) {
 func TestBadNumbers(t *testing.T) {
 	err := fmt.Sprintf(data.ErrExpectedInteger, S("0xffj-k"))
 	l := read.MustTokenize("0xffj-k")
-	assertTokenSequence(t, l, []*lex.Token{
-		T(lex.Error, S(err)),
-	})
+	assertTokenSequence(t, l, []*lex.Token{T(lex.Error, S(err))})
 }
 
 func TestStrings(t *testing.T) {
@@ -119,9 +112,7 @@ func TestStrings(t *testing.T) {
 func TestMultiLine(t *testing.T) {
 	as := assert.New(t)
 
-	l := lex.StripWhitespace(
-		read.MustTokenize("   \"hello there\"\n\"how's life?\"\n\n  99"),
-	)
+	l := lex.StripWhitespace(read.MustTokenize("   \"hello there\"\n\"how's life?\"\n\n  99"))
 	assertTokenSequence(t, l, []*lex.Token{
 		T(lex.String, S(`hello there`)),
 		T(lex.String, S(`how's life?`)),
@@ -200,9 +191,7 @@ func TestUnexpectedChars(t *testing.T) {
 
 func TestUnterminatedString(t *testing.T) {
 	l := lex.StripWhitespace(read.MustTokenize(`"unterminated `))
-	assertTokenSequence(t, l, []*lex.Token{
-		T(lex.Error, S(lex.ErrStringNotTerminated.Error())),
-	})
+	assertTokenSequence(t, l, []*lex.Token{T(lex.Error, S(lex.ErrStringNotTerminated.Error()))})
 }
 
 func TestTokenEquality(t *testing.T) {

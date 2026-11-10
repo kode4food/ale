@@ -36,8 +36,7 @@ var _ interface {
 	Procedure
 } = (*procedure)(nil)
 
-// MakeProcedure constructs a Procedure from a func that matches the standard
-// calling signature
+// MakeProcedure constructs a Procedure from a func that matches the standard calling signature
 func MakeProcedure(c Call, arity ...int) Procedure {
 	check, err := MakeArityChecker(arity...)
 	if err != nil {

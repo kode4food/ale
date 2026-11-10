@@ -10,8 +10,7 @@ import (
 
 type boolWrapper struct{}
 
-// ErrValueMustBeBool is raised when a boolean Unwrap call can't treat its
-// source as a data.Bool
+// ErrValueMustBeBool is raised when a boolean Unwrap call can't treat its source as a data.Bool
 var ErrValueMustBeBool = errors.New("value must be a bool")
 
 var (

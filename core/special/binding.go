@@ -18,21 +18,19 @@ var (
 	ErrNameAlreadyBound    = errors.New("name already bound")
 )
 
-// Let encodes a binding form. Binding values are evaluated first, and are then
-// bound to fresh names, meaning that mutual recursion is not supported
+// Let encodes a binding form. Binding values are evaluated first, and are then bound to fresh
+// names, meaning that mutual recursion is not supported
 func Let(e encoder.Encoder, args ...ale.Value) error {
 	return performBinding(e, generate.Locals, args...)
 }
 
-// LetMutual encodes a binding form. First fresh names are introduced, and then
-// binding values are evaluated with access to those names via the MutualScope
+// LetMutual encodes a binding form. First fresh names are introduced, and then binding values are
+// evaluated with access to those names via the MutualScope
 func LetMutual(e encoder.Encoder, args ...ale.Value) error {
 	return performBinding(e, generate.MutualLocals, args...)
 }
 
-func performBinding(
-	e encoder.Encoder, b generate.Binder, args ...ale.Value,
-) error {
+func performBinding(e encoder.Encoder, b generate.Binder, args ...ale.Value) error {
 	bindings, body, err := parseLet(args...)
 	if err != nil {
 		return err

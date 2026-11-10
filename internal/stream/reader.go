@@ -36,8 +36,7 @@ func NewReader(r io.Reader, i InputFunc) data.Sequence {
 	return sequence.NewLazy(resolver)
 }
 
-// BlockInput creates an InputFunc that reads up to a fixed number of bytes
-// from the Reader.
+// BlockInput creates an InputFunc that reads up to a fixed number of bytes from the Reader.
 func BlockInput(size int) (InputFunc, error) {
 	if size <= 0 {
 		return nil, fmt.Errorf(ErrInvalidBlockSize, size)

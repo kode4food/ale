@@ -46,8 +46,7 @@ func TestEvalBuffer(t *testing.T) {
 
 	as.NoError(evalBuffer([]byte(`"hello world"`)))
 	as.EqualError(
-		evalBuffer([]byte(`(unknown)`)),
-		fmt.Sprintf(env.ErrNameNotDeclared, "unknown"),
+		evalBuffer([]byte(`(unknown)`)), fmt.Sprintf(env.ErrNameNotDeclared, "unknown"),
 	)
 
 	panicWith(t, "boom", func() {

@@ -12,8 +12,8 @@ import (
 
 // Error messages
 const (
-	// ErrUnexpectedParameter is raised when an encoder parameter is not found.
-	// These are declared using the special* built-in
+	// ErrUnexpectedParameter is raised when an encoder parameter is not found. These are declared
+	// using the special* built-in
 	ErrUnexpectedParameter = "unexpected parameter name: %s"
 )
 

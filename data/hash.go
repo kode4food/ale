@@ -11,8 +11,8 @@ import (
 type Hashed interface {
 	ale.Value
 
-	// HashCode returns a hash code for this Value. Hash codes are used for
-	// efficient storage and retrieval in mapped data structures like Object
+	// HashCode returns a hash code for this Value. Hash codes are used for efficient storage and
+	// retrieval in mapped data structures like Object
 	HashCode() uint64
 }
 
@@ -23,9 +23,9 @@ var (
 	int64Hashes = makeCachedInt64Hashes()
 )
 
-// HashCode returns a hash code for the provided Value. If the Value implements
-// the Hashed interface, it will call us the HashCode() method. Otherwise, it
-// will create a hash code from the stringified form of the Value
+// HashCode returns a hash code for the provided Value. If the Value implements the Hashed
+// interface, it will call us the HashCode() method. Otherwise, it will create a hash code from the
+// stringified form of the Value
 func HashCode(v ale.Value) uint64 {
 	if h, ok := v.(Hashed); ok {
 		return h.HashCode()

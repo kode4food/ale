@@ -20,9 +20,7 @@ func TestIneffectivePushes(t *testing.T) {
 	e1.Emit(isa.Pop)
 	e1.Emit(isa.Return)
 
-	as.Instructions(isa.Instructions{
-		isa.RetTrue.New(),
-	}, optimize.Encoded(e1.Encode()).Code)
+	as.Instructions(isa.Instructions{isa.RetTrue.New()}, optimize.Encoded(e1.Encode()).Code)
 }
 
 func TestIneffectiveStores(t *testing.T) {
@@ -35,9 +33,7 @@ func TestIneffectiveStores(t *testing.T) {
 	e1.Emit(isa.Load, 0)
 	e1.Emit(isa.Return)
 
-	as.Instructions(isa.Instructions{
-		isa.RetTrue.New(),
-	}, optimize.Encoded(e1.Encode()).Code)
+	as.Instructions(isa.Instructions{isa.RetTrue.New()}, optimize.Encoded(e1.Encode()).Code)
 
 	e2 := encoder.NewEncoder(ns)
 	e2.Emit(isa.PosInt, 1)

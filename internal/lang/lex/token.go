@@ -57,8 +57,7 @@ func (t TokenType) From(input string) *Token {
 	}
 }
 
-// FromValue constructs a new Token for this TokenType with its input and an
-// associated Value
+// FromValue constructs a new Token for this TokenType with its input and an associated Value
 func (t TokenType) FromValue(input string, v ale.Value) *Token {
 	return &Token{
 		typ:   t,

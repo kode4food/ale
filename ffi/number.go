@@ -29,24 +29,23 @@ type (
 )
 
 const (
-	// ErrValueMustBeSigned is raised when an int Unwrap call can't properly
-	// size its source as a signed integer
+	// ErrValueMustBeSigned is raised when an int Unwrap call can't properly size its source as a
+	// signed integer
 	ErrValueMustBeSigned = "value must be a %d-bit signed integer"
 
-	// ErrValueMustBeUnsigned is raised when a uint Unwrap call can't properly
-	// size its source as an unsigned integer
+	// ErrValueMustBeUnsigned is raised when a uint Unwrap call can't properly size its source as an
+	// unsigned integer
 	ErrValueMustBeUnsigned = "value must be a %d-bit unsigned integer"
 
-	// ErrValueMustBeCons is raised when a complex Unwrap call can't treat its
-	// source as a data.Cons
+	// ErrValueMustBeCons is raised when a complex Unwrap call can't treat its source as a data.Cons
 	ErrValueMustBeCons = "value must be a cons cell"
 
-	// ErrValueMustBeFloat is raised when a float Unwrap call can't treat its
-	// source as a data.Integer or data.Float
+	// ErrValueMustBeFloat is raised when a float Unwrap call can't treat its source as a
+	// data.Integer or data.Float
 	ErrValueMustBeFloat = "value must be a float"
 
-	// ErrConsMustContainFloat is raised when a complex Unwrap call can't treat
-	// its source's components as data.Floats
+	// ErrConsMustContainFloat is raised when a complex Unwrap call can't treat its source's
+	// components as data.Floats
 	ErrConsMustContainFloat = "components must be float values"
 )
 

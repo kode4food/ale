@@ -12,9 +12,8 @@ import (
 )
 
 type (
-	// Word represents the atomic unit of the ISA's Instruction stream. We've
-	// chosen a size that best aligns to the host architecture's standard word
-	// size for alignment reasons
+	// Word represents the atomic unit of the ISA's Instruction stream. We've chosen a size that
+	// best aligns to the host architecture's standard word size for alignment reasons
 	Word uintptr
 
 	// Instruction represents a single instruction and its operand
@@ -23,8 +22,8 @@ type (
 	// Instructions represent a set of Instructions
 	Instructions []Instruction
 
-	// Runnable is a finalized representation of the Encoded state that can be
-	// executed by the abstract machine
+	// Runnable is a finalized representation of the Encoded state that can be executed by the
+	// abstract machine
 	Runnable struct {
 		Constants  data.Vector
 		Globals    env.Namespace
@@ -35,12 +34,12 @@ type (
 )
 
 const (
-	// ErrBadInstruction is raised when a call to isa.New can't succeed due to
-	// either missing or excessive operands
+	// ErrBadInstruction is raised when a call to isa.New can't succeed due to either missing or
+	// excessive operands
 	ErrBadInstruction = "instruction operand mismatch: %s"
 
-	// ErrExpectedOperand is raised when an Operand isn't represented by an
-	// unsigned Word that will fit within the number of Operand bits
+	// ErrExpectedOperand is raised when an Operand isn't represented by an unsigned Word that will
+	// fit within the number of Operand bits
 	ErrExpectedOperand = "expected unsigned operand: %d"
 )
 
